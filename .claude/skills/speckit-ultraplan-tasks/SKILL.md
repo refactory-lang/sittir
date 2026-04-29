@@ -51,10 +51,11 @@ Overwrite `$TASKS` (tasks.md) with the full breakdown using this format:
 
 - [ ] T001: [Concrete, single-concern task — one commit]
 - [ ] T002: [Concrete, single-concern task — one commit]
-...
+      ...
 ```
 
 Rules:
+
 - Each task must be independently implementable (one logical change, one commit)
 - Group tasks in implementation order; add a blank line between phases if needed
 - Include setup, implementation, test, and documentation tasks

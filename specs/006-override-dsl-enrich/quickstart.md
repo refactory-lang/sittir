@@ -13,32 +13,34 @@ This is the canonical shape a grammar maintainer starts from when authoring or u
 // packages/python/overrides.ts
 // @ts-nocheck — grammar.js is untyped
 
-import base from '../../node_modules/.pnpm/tree-sitter-python@0.25.0/node_modules/tree-sitter-python/grammar.js'
-import { transform, role, enrich, field } from '../codegen/src/dsl/index.ts'
+import base from '../../node_modules/.pnpm/tree-sitter-python@0.25.0/node_modules/tree-sitter-python/grammar.js';
+import { transform, role, enrich, field } from '../codegen/src/dsl/index.ts';
 
 export default grammar(enrich(base), {
-  name: 'python',
+	name: 'python',
 
-  rules: {
-    // Role declarations — map external tokens to structural roles.
-    // role() records the binding and returns the symbol unchanged.
-    _indent: ($) => role($._indent, 'indent'),
-    _dedent: ($) => role($._dedent, 'dedent'),
-    _newline: ($) => role($._newline, 'newline'),
+	rules: {
+		// Role declarations — map external tokens to structural roles.
+		// role() records the binding and returns the symbol unchanged.
+		_indent: ($) => role($._indent, 'indent'),
+		_dedent: ($) => role($._dedent, 'dedent'),
+		_newline: ($) => role($._newline, 'newline'),
 
-    // Transform API — patches specific positions without rewriting the rule
-    comparison_operator: ($, original) => transform(original, {
-      0: field('left'),
-      1: field('comparators'),
-    }),
+		// Transform API — patches specific positions without rewriting the rule
+		comparison_operator: ($, original) =>
+			transform(original, {
+				0: field('left'),
+				1: field('comparators')
+			}),
 
-    // Path-addressed patch — reach into a nested structure
-    class_pattern: ($, original) => transform(original, {
-      '0': field('dotted_name'),
-      '2': field('arguments'),
-    }),
-  },
-})
+		// Path-addressed patch — reach into a nested structure
+		class_pattern: ($, original) =>
+			transform(original, {
+				'0': field('dotted_name'),
+				'2': field('arguments')
+			})
+	}
+});
 ```
 
 ---

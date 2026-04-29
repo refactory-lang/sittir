@@ -23,6 +23,7 @@ fn sample_leaf() -> NodeData {
         text: Some("foo".to_string()),
         span: Some(Span { start: 42, end: 45 }),
         node_id: Some(7),
+        format: None,
     }
 }
 
@@ -43,6 +44,7 @@ fn sample_branch() -> NodeData {
         text: None,
         span: None,
         node_id: None,
+        format: None,
     }
 }
 
@@ -95,7 +97,7 @@ fn no_unexpected_top_level_keys() {
     // Any other top-level `$`-key is a contract violation.
     const ALLOWED: &[&str] = &[
         "$type", "$source", "$named",
-        "$fields", "$children", "$text", "$span", "$nodeId",
+        "$fields", "$children", "$text", "$span", "$nodeId", "$format",
     ];
     let json = serde_json::to_string(&sample_branch()).unwrap();
     let v = wire(&json);

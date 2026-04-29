@@ -3,31 +3,38 @@
 ## Chat Log Export by Agent
 
 ### Claude Code
+
 ```bash
 claude export --format markdown > session.md
 ```
 
 ### GitHub Copilot (VS Code)
+
 1. Copilot Chat panel → `...` menu → Export Chat History
 2. Save as markdown
 
 ### Cursor
+
 1. Command Palette (`Ctrl/Cmd+Shift+P`)
 2. "Cursor: Export Chat History"
 
 ### Aider
+
 ```bash
 # Auto-logged to:
 cat .aider.chat.history.md
 ```
 
 ### Continue
+
 1. Panel → History icon → Export
 
 ### Windsurf
+
 1. Cascade panel → History → Export
 
 ### Fallback
+
 ```bash
 # Before starting session:
 script -q session.log
@@ -94,6 +101,7 @@ zip -r feedback-$(date +%Y%m%d).zip feedback-data/
 ## Privacy Checklist
 
 Before sharing, remove:
+
 - [ ] API keys and tokens
 - [ ] Passwords and credentials
 - [ ] Personal identifiable information
@@ -101,6 +109,7 @@ Before sharing, remove:
 - [ ] Customer data
 
 Keep:
+
 - [x] Workflow steps and decisions
 - [x] Friction points and clarifications
 - [x] Template sections used/skipped

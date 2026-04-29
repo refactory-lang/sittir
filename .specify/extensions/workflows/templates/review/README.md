@@ -69,18 +69,21 @@ The review follows these steps:
 Document findings in one of three outcomes:
 
 **✅ Approved**: Implementation meets requirements
+
 - All acceptance criteria met
 - Tests passing
 - No blocking issues
 - Ready for merge
 
 **⚠️ Approved with Notes**: Minor issues that don't block
+
 - Implementation is functional
 - Minor improvements suggested
 - Can be addressed later
 - OK to merge with follow-up
 
 **❌ Needs Changes**: Issues must be fixed
+
 - Bugs or regressions found
 - Acceptance criteria not met
 - Tests failing or missing
@@ -89,12 +92,14 @@ Document findings in one of three outcomes:
 ### 4. Update Tasks
 
 For approved work:
+
 - Mark completed tasks as done in `tasks.md`
 - Update task checkboxes: `[ ]` → `[X]`
 
 ### 5. Generate Report
 
 Produce a summary including:
+
 - Tasks reviewed and status
 - Key findings and feedback
 - Tests executed and results
@@ -127,17 +132,20 @@ Tests executed and their results.
 ## Findings
 
 ### What Worked Well
+
 - Positive aspects of the implementation
 
 ### Issues Found (if any)
+
 - List of issues, bugs, or concerns
 - Severity: Critical / High / Medium / Low
 
 ## Tasks Completed
 
 List of tasks marked as complete:
-- [X] T001: Task description
-- [X] T002: Task description
+
+- [x] T001: Task description
+- [x] T002: Task description
 
 ## Recommendations
 
@@ -153,6 +161,7 @@ What should happen next (merge, fix issues, etc.)
 The Review workflow enforces these quality standards:
 
 ### Code Quality
+
 - ✅ Follows project coding standards
 - ✅ No obvious bugs or logic errors
 - ✅ Proper error handling
@@ -160,18 +169,21 @@ The Review workflow enforces these quality standards:
 - ✅ No placeholder/TODO/FIXME code in the reviewed scope unless justified and tracked
 
 ### Testing
+
 - ✅ Tests exist for new functionality
 - ✅ All tests pass
 - ✅ Edge cases covered
 - ✅ No test regressions
 
 ### Documentation
+
 - ✅ Code is documented appropriately
 - ✅ Public APIs have clear documentation
 - ✅ Complex logic is explained
 - ✅ README updated if needed
 
 ### Specification Alignment
+
 - ✅ Meets acceptance criteria
 - ✅ Follows design decisions
 - ✅ Matches expected behavior
@@ -299,6 +311,7 @@ The Review workflow updates these files:
 ---
 
 **Next Steps**:
+
 - Run `/speckit.review` to review completed implementation work
 - Address any issues found during review
 - Mark tasks as complete when approved

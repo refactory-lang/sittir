@@ -11,6 +11,7 @@ Heuristics applied to grammar.json rules **without** node-types.json. All happen
 ### H1: Rule Classification
 
 **Logic:** For each rule in grammar.rules, determine modelType by structure:
+
 1. Kind in grammar.supertypes → SupertypeRule
 2. `hasFields(rule)` (contains FIELD nodes) → BranchRule
 3. `hasChildren(rule)` (contains non-FIELD SYMBOLs) → ContainerRule
@@ -24,16 +25,18 @@ Classification and extraction happen together — the extraction result determin
 
 **Input:** Rule for a kind listed in grammar.supertypes (CHOICE of SYMBOLs)
 **Logic:**
+
 - Walk CHOICE branches, collect SYMBOL names as subtypes
 - Recursively expand nested `_`-prefixed supertypes
 - Cycle detection via visited set
 - Result: `SupertypeRule { subtypes: string[] }`
-**Example:** `_expression` → subtypes: [binary_expression, call_expression, identifier, ...]
+  **Example:** `_expression` → subtypes: [binary_expression, call_expression, identifier, ...]
 
 ### H3: Field Extraction (`extractFields`)
 
 **Input:** Rule with FIELD nodes
 **Logic:**
+
 - Walk rule tree for FIELD nodes → per-field metadata
 - Detect multiplicity from REPEAT/REPEAT1 wrapping
 - Detect optionality from CHOICE+BLANK
@@ -46,6 +49,7 @@ Classification and extraction happen together — the extraction result determin
 
 **Input:** Rule with non-FIELD SYMBOLs but no FIELDs
 **Logic:**
+
 - Walk rule tree for SYMBOL references
 - Same multiplicity/optionality detection as fields
 - Separator detection from REPEAT+SEQ patterns
@@ -55,28 +59,31 @@ Classification and extraction happen together — the extraction result determin
 
 **Input:** Grammar rule for a kind
 **Logic:**
+
 - Unwrap PREC, TOKEN, IMMEDIATE_TOKEN wrappers
 - If result is a single STRING → keyword with that text
 - If result is SEQ of all STRINGs → keyword with concatenated text
 - Otherwise → null (not a keyword)
-**Examples:** `self` → "self", `mutable_specifier` → "mut"
+  **Examples:** `self` → "self", `mutable_specifier` → "mut"
 
 ### H6: Enum Value Detection (`extractEnumValues`)
 
 **Input:** Grammar rule (+ grammar for ALIAS fallback)
 **Logic:**
+
 - **Direct pattern:** Rule is CHOICE of STRINGs → values are those strings
   - Example: TypeScript `predefined_type` = CHOICE("any", "number", "boolean", ...)
 - **ALIAS fallback:** If no direct rule, search ALL grammar rules for ALIAS nodes producing this kind
   - Example: Rust `primitive_type` only defined via ALIAS in other rules
   - Collect all aliased STRING values
 - Result: sorted array of values, or empty (not enum-like)
-**Distinction:** Non-empty values → EnumRule. Empty values → LeafRule.
+  **Distinction:** Non-empty values → EnumRule. Empty values → LeafRule.
 
 ### H7: Pattern Extraction (`extractPattern`)
 
 **Input:** Grammar rule for a leaf kind
 **Logic:** Recursively build regex from rule tree:
+
 - PATTERN → use as-is
 - STRING → escape regex special chars
 - SEQ → concatenate
@@ -84,7 +91,7 @@ Classification and extraction happen together — the extraction result determin
 - REPEAT → `(...)*`
 - REPEAT1 → `(...)+`
 - TOKEN/IMMEDIATE_TOKEN → unwrap and recurse
-**Example:** `integer_literal` pattern from its grammar rule
+  **Example:** `integer_literal` pattern from its grammar rule
 
 ---
 
@@ -94,17 +101,19 @@ Classification and extraction happen together — the extraction result determin
 
 **Input:** node-types.json entries
 **Logic:**
+
 - Has `subtypes` → SupertypeModel
 - Not named → TokenModel
 - Has `fields` with >0 keys → BranchModel
 - Has `children` but no fields → ContainerModel
 - Otherwise → LeafModel (refined during reconcile)
-**Authority:** node-types.json is authoritative for what kinds exist in the AST
+  **Authority:** node-types.json is authoritative for what kinds exist in the AST
 
 ### NT2: Field/Child Initialization
 
 **Input:** node-types.json field/children entries
 **Logic:**
+
 - Each field entry → FieldModel with `required`, `multiple`, `kinds` from NT types
 - Children entry → ChildModel[] with same attributes
 - Anonymous tokens in NT `types` array are just kinds (strings)
@@ -117,6 +126,7 @@ Classification and extraction happen together — the extraction result determin
 
 **Input:** NT-initialized model + EnrichedRule
 **Logic:**
+
 - Same modelType → enrich with grammar data (merge fields, attach rule)
 - Grammar narrows → promote model:
   - leaf → keyword (grammar found constant text)
@@ -128,6 +138,7 @@ Classification and extraction happen together — the extraction result determin
 
 **Input:** NT-derived fields + grammar-derived fields
 **Logic:**
+
 - NT provides: required, multiple, kinds (from types array)
 - Grammar provides: additional kinds (from rule walking), separators
 - Union kind sets from both sources
@@ -141,34 +152,38 @@ Classification and extraction happen together — the extraction result determin
 
 **When:** Walking enriched rule, encountering a SYMBOL with `_`-prefixed name
 **Logic:**
+
 - Don't emit as a member directly
 - Instead, recursively walk the abstract symbol's own rule
 - Extract its fields and children into the parent's member list
 - Cycle prevention via visited set
-**Example:** `_call_signature` inlines `type_parameters`, `parameters`, `return_type` into parent
+  **Example:** `_call_signature` inlines `type_parameters`, `parameters`, `return_type` into parent
 
 ### M2: CHOICE with Same Fields (branch merging)
 
 **When:** CHOICE where all branches contain the same field names
 **Logic:**
+
 - Collect FieldModels from every branch
 - Union their kind sets
 - Emit single merged set of field members with combined kinds
 - If CHOICE had BLANK branch, mark all fields as optional
-**Example:** `binary_expression` with PREC_LEFT branches for each operator precedence level. All branches have left/operator/right. Operators union into the operator field's kinds.
+  **Example:** `binary_expression` with PREC_LEFT branches for each operator precedence level. All branches have left/operator/right. Operators union into the operator field's kinds.
 
 ### M3: CHOICE with Different Fields (preserve as choice member)
 
 **When:** CHOICE where branches have different field names
 **Logic:**
+
 - Emit as `{ member: 'choice', branches: [...] }`
 - Each branch is independently projected to NodeMember[]
 - Rare case. Preserves structural information.
-**Example:** `visibility_modifier` with branches `"pub"` vs `"pub" "(" path ")"` (different field structures)
+  **Example:** `visibility_modifier` with branches `"pub"` vs `"pub" "(" path ")"` (different field structures)
 
 ### M4: REPEAT/REPEAT1 Multiplicity
 
 **Logic:**
+
 - Content of REPEAT/REPEAT1 produces ListFieldModel/ListChildModel (`multiple: true`)
 - REPEAT (0+) also makes content optional
 - REPEAT1 (1+) keeps required status
@@ -176,6 +191,7 @@ Classification and extraction happen together — the extraction result determin
 ### M5: CHOICE+BLANK Optionality
 
 **Logic:**
+
 - CHOICE containing a BLANK branch makes all other branches optional
 - Fields inside become `required: false`
 - Tokens inside become `optional: true`
@@ -184,9 +200,10 @@ Classification and extraction happen together — the extraction result determin
 ### M6: Named ALIAS Handling
 
 **Logic:**
+
 - ALIAS with `named: true` → emit as child member (it's an explicit typed child)
 - ALIAS with `named: false` → unwrap and recurse into content
-**Example:** `shorthand_field_initializer` has named alias for `identifier`
+  **Example:** `shorthand_field_initializer` has named alias for `identifier`
 
 ---
 
@@ -196,9 +213,10 @@ Classification and extraction happen together — the extraction result determin
 
 **Input:** A NodeModel after members applied and all grammar data merged
 **Logic:**
+
 - BranchModel with no fields and only children → ContainerModel
 - Other cases as discovered during implementation
-**When:** After all enrichment, some models may need type correction
+  **When:** After all enrichment, some models may need type correction
 
 ---
 
@@ -207,6 +225,7 @@ Classification and extraction happen together — the extraction result determin
 ### S1: Operator Context Inference (`inferTokenAliases`)
 
 **Logic:**
+
 1. For each anonymous operator token (e.g., `&&`, `+`, `-`)
 2. Walk all grammar rules to find FIELD nodes containing this token as a STRING
 3. Record each (parentKind, fieldName, token) triple
@@ -221,6 +240,7 @@ Classification and extraction happen together — the extraction result determin
 ### S2: Punctuation Context Inference
 
 **Logic:**
+
 - Same as S1 but for non-operator punctuation
 - `::` in `scoped_identifier` → `PathSeparator`
 - `->` in `function_type` → `ReturnArrow`
@@ -235,6 +255,7 @@ Classification and extraction happen together — the extraction result determin
 
 **Input:** NodeModel
 **Logic:**
+
 - `typeName`: PascalCase of kind (`function_item` → `FunctionItem`, `_expression` → `Expression`)
 - `factoryName`: camelCase of kind (`function_item` → `functionItem`, `_expression` → `expression`)
 
@@ -242,11 +263,13 @@ Classification and extraction happen together — the extraction result determin
 
 **Input:** FieldModel
 **Logic:**
+
 - `propertyName`: camelCase of field name (`return_type` → `returnType`)
 
 ### Emitter Derivations
 
 Emitters derive suffixed names from `typeName`:
+
 - `configType`: typeName + "Config" (`FunctionItemConfig`)
 - `treeType`: typeName + "Tree" (`FunctionItemTree`)
 
@@ -257,6 +280,7 @@ Emitters derive suffixed names from `typeName`:
 ### O1: Signature Interning (`computeSignatures`)
 
 **Logic:**
+
 - Compute JSON key from kind sets per field/child
 - Multiple fields/children with identical kind sets share same signature object
 - Two signature types: FieldSignature, ChildSignature
@@ -264,18 +288,21 @@ Emitters derive suffixed names from `typeName`:
 ### O2: Field List Deduplication (`identifyFieldLists`)
 
 **Logic:**
+
 - Find fields across different kinds that have identical kind sets
 - These can share the same TypeScript type expression in generated code
 
 ### O3: Child List Deduplication (`identifyChildLists`)
 
 **Logic:**
+
 - Find children across different kinds with identical kind sets
 - These can share the same children type/handler
 
 ### O4: Enum Pattern Detection (`identifyEnumPatterns`)
 
 **Logic:**
+
 - Find EnumModel kinds that share the same value set
 - These can share type definitions
 
@@ -285,24 +312,26 @@ Emitters derive suffixed names from `typeName`:
 
 Emitters that need to partition a field's kinds for code generation use projection helpers computed from hydrated `NodeModel[]` references:
 
-| Projection | What | Used by |
-|-----------|------|---------|
-| `leafKinds` | Kinds that are leaves (read `.text()`) | assign.ts, from.ts |
-| `branchKinds` | Kinds that are branches (recurse into) | assign.ts, from.ts |
-| `expandedAll` | All concrete kinds after supertype expansion | assign.ts dispatch tables |
-| `expandedBranch` | Only branch kinds after supertype expansion | from.ts resolution |
-| `collapsedKinds` | PascalCase names after supertype folding | types.ts, factories.ts type expressions |
+| Projection       | What                                         | Used by                                 |
+| ---------------- | -------------------------------------------- | --------------------------------------- |
+| `leafKinds`      | Kinds that are leaves (read `.text()`)       | assign.ts, from.ts                      |
+| `branchKinds`    | Kinds that are branches (recurse into)       | assign.ts, from.ts                      |
+| `expandedAll`    | All concrete kinds after supertype expansion | assign.ts dispatch tables               |
+| `expandedBranch` | Only branch kinds after supertype expansion  | from.ts resolution                      |
+| `collapsedKinds` | PascalCase names after supertype folding     | types.ts, factories.ts type expressions |
 
 ### Supertype Expansion
+
 - For each supertype kind in a field's `kinds`, look up subtypes
 - Add all concrete descendants
 - `expandedAll` = leaf + branch concrete kinds
 - `expandedBranch` = only branch concrete kinds
 
 ### Supertype Collapsing (for TypeScript type expressions)
+
 - Given a set of concrete kinds, find supertypes that cover subsets
 - If supertype S covers ALL of a subset → fold to S
 - **Subset pruning:** If S1's subtypes strictly subset of S2's, and S2 is present, remove S1
 - Remaining uncovered kinds listed individually
 - All names converted to PascalCase
-**Example:** {IntLit, FloatLit, StringLit} where all are in `_literal` → `Literal`
+  **Example:** {IntLit, FloatLit, StringLit} where all are in `_literal` → `Literal`

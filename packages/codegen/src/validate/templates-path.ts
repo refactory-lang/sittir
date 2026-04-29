@@ -18,10 +18,10 @@
  * one file instead of four.
  */
 
-import { readFileSync, readdirSync, statSync } from 'node:fs'
-import { join } from 'node:path'
-import { parse as parseYaml } from 'yaml'
-import type { RulesConfig, TemplateRule } from '@sittir/types'
+import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { join } from 'node:path';
+import { parse as parseYaml } from 'yaml';
+import type { RulesConfig, TemplateRule } from '@sittir/types';
 
 /**
  * Returns true when `err` is a Node.js-shaped filesystem error carrying
@@ -29,11 +29,14 @@ import type { RulesConfig, TemplateRule } from '@sittir/types'
  * `catch` to the filesystem-not-present case without swallowing
  * permission errors (EACCES) or resource limits (EMFILE).
  */
-export function isNodeError(err: unknown, code?: string): err is NodeJS.ErrnoException {
-    if (!err || typeof err !== 'object') return false
-    const candidate = err as { code?: unknown }
-    if (typeof candidate.code !== 'string') return false
-    return code === undefined || candidate.code === code
+export function isNodeError(
+	err: unknown,
+	code?: string
+): err is NodeJS.ErrnoException {
+	if (!err || typeof err !== 'object') return false;
+	const candidate = err as { code?: unknown };
+	if (typeof candidate.code !== 'string') return false;
+	return code === undefined || candidate.code === code;
 }
 
 /**
@@ -46,18 +49,18 @@ export function isNodeError(err: unknown, code?: string): err is NodeJS.ErrnoExc
  * empty).
  */
 export function deriveRuleKinds(templatesPath: string): Set<string> {
-    const dirEntries = tryReadDirEntries(templatesPath)
-    if (dirEntries !== null) {
-        return new Set(
-            dirEntries
-                .filter((f) => f.endsWith('.jinja'))
-                .map((f) => f.slice(0, -'.jinja'.length)),
-        )
-    }
-    const content = tryReadFile(templatesPath)
-    if (content === null) return new Set()
-    const config = parseYaml(content) as RulesConfig
-    return new Set(Object.keys(config.rules ?? {}))
+	const dirEntries = tryReadDirEntries(templatesPath);
+	if (dirEntries !== null) {
+		return new Set(
+			dirEntries
+				.filter((f) => f.endsWith('.jinja'))
+				.map((f) => f.slice(0, -'.jinja'.length))
+		);
+	}
+	const content = tryReadFile(templatesPath);
+	if (content === null) return new Set();
+	const config = parseYaml(content) as RulesConfig;
+	return new Set(Object.keys(config.rules ?? {}));
 }
 
 /**
@@ -74,25 +77,25 @@ export function deriveRuleKinds(templatesPath: string): Set<string> {
  * @param bodyReader Optional per-body transformation.
  */
 export function loadRulesFromPath(
-    templatesPath: string,
-    bodyReader?: (kind: string, body: string) => TemplateRule,
+	templatesPath: string,
+	bodyReader?: (kind: string, body: string) => TemplateRule
 ): Record<string, TemplateRule> {
-    const dirEntries = tryReadDirEntries(templatesPath)
-    if (dirEntries !== null) {
-        const rules: Record<string, TemplateRule> = {}
-        for (const name of dirEntries) {
-            if (!name.endsWith('.jinja')) continue
-            const kind = name.slice(0, -'.jinja'.length)
-            const body = readFileSync(join(templatesPath, name), 'utf-8')
-            const stripped = body.replace(/^\{#[^#]*#\}\s*/, '')
-            rules[kind] = bodyReader ? bodyReader(kind, stripped) : stripped
-        }
-        return rules
-    }
-    const content = tryReadFile(templatesPath)
-    if (content === null) return {}
-    const config = parseYaml(content) as RulesConfig
-    return (config as { rules?: Record<string, TemplateRule> }).rules ?? {}
+	const dirEntries = tryReadDirEntries(templatesPath);
+	if (dirEntries !== null) {
+		const rules: Record<string, TemplateRule> = {};
+		for (const name of dirEntries) {
+			if (!name.endsWith('.jinja')) continue;
+			const kind = name.slice(0, -'.jinja'.length);
+			const body = readFileSync(join(templatesPath, name), 'utf-8');
+			const stripped = body.replace(/^\{#[^#]*#\}\s*/, '');
+			rules[kind] = bodyReader ? bodyReader(kind, stripped) : stripped;
+		}
+		return rules;
+	}
+	const content = tryReadFile(templatesPath);
+	if (content === null) return {};
+	const config = parseYaml(content) as RulesConfig;
+	return (config as { rules?: Record<string, TemplateRule> }).rules ?? {};
 }
 
 /**
@@ -101,15 +104,15 @@ export function loadRulesFromPath(
  * Other filesystem errors (EACCES, EMFILE) propagate.
  */
 function tryReadDirEntries(path: string): string[] | null {
-    let stat: ReturnType<typeof statSync>
-    try {
-        stat = statSync(path)
-    } catch (err) {
-        if (isNodeError(err, 'ENOENT') || isNodeError(err, 'ENOTDIR')) return null
-        throw err
-    }
-    if (!stat.isDirectory()) return null
-    return readdirSync(path)
+	let stat: ReturnType<typeof statSync>;
+	try {
+		stat = statSync(path);
+	} catch (err) {
+		if (isNodeError(err, 'ENOENT') || isNodeError(err, 'ENOTDIR')) return null;
+		throw err;
+	}
+	if (!stat.isDirectory()) return null;
+	return readdirSync(path);
 }
 
 /**
@@ -117,10 +120,10 @@ function tryReadDirEntries(path: string): string[] | null {
  * missing read errors (EACCES, EMFILE, EIO) propagate.
  */
 function tryReadFile(path: string): string | null {
-    try {
-        return readFileSync(path, 'utf-8')
-    } catch (err) {
-        if (isNodeError(err, 'ENOENT') || isNodeError(err, 'EISDIR')) return null
-        throw err
-    }
+	try {
+		return readFileSync(path, 'utf-8');
+	} catch (err) {
+		if (isNodeError(err, 'ENOENT') || isNodeError(err, 'EISDIR')) return null;
+		throw err;
+	}
 }

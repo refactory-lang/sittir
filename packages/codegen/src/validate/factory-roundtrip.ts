@@ -10,27 +10,27 @@
  * 5. Re-parse and verify the kind exists
  */
 
-import { createRequire } from 'node:module';
 import { readNode, createRenderer } from '@sittir/core';
-import type { AnyNodeData, NodeFieldValue } from '@sittir/types';
+import type { AnyNodeData, NodeFieldValue, NodeId } from '@sittir/types';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
 import { deriveRuleKinds } from './templates-path.ts';
 import { loadRawEntries } from './node-types-loader.ts';
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
-	treeHandle,
 	buildReadHandle,
 	findFirst,
+	findNativeNodeId,
 	collectKinds,
 	buildKindToSupertypes,
 	wrapForReparse,
 	loadReadTreeNode,
 	walkWrappedTree,
 	nodeToConfig,
+	emitValidatorMetrics,
 	type TSNode,
 	type TSTree,
-	type WrappedNodeData,
+	type WrappedNodeData
 } from './common.ts';
 
 /** Find a node anywhere in the tree by its numeric id. Used by the
@@ -52,7 +52,11 @@ function findNodeById(node: TSNode, nodeId: number): TSNode | null {
  * Anonymous tokens compared byte-exactly so silently dropped content
  * (commas, operators, terminators) fails the check.
  */
-function astStructuralDiff(a: TSNode, b: TSNode, path: string = ''): string | null {
+function astStructuralDiff(
+	a: TSNode,
+	b: TSNode,
+	path: string = ''
+): string | null {
 	if (a.type !== b.type) {
 		return `${path || 'root'}: type ${a.type} ≠ ${b.type}`;
 	}
@@ -99,8 +103,6 @@ function findNodeAt(node: TSNode, kind: string, offset: number): TSNode | null {
 	return null;
 }
 
-const require = createRequire(import.meta.url);
-
 // ---------------------------------------------------------------------------
 // Strip runtime metadata to simulate factory output
 // ---------------------------------------------------------------------------
@@ -111,7 +113,11 @@ const require = createRequire(import.meta.url);
  * metadata from tree-sitter, all children are named NodeData objects.
  */
 function stripToFactory(data: AnyNodeData): AnyNodeData {
-	const result: AnyNodeData = { $type: data.$type, $source: 'factory', $named: true };
+	const result: AnyNodeData = {
+		$type: data.$type,
+		$source: 'factory',
+		$named: true
+	};
 
 	if (data.$text !== undefined) result.$text = data.$text;
 	if (data.$variant !== undefined) result.$variant = data.$variant;
@@ -120,7 +126,11 @@ function stripToFactory(data: AnyNodeData): AnyNodeData {
 		const fields: { [key: string]: NodeFieldValue } = {};
 		for (const [key, value] of Object.entries(data.$fields)) {
 			if (Array.isArray(value)) {
-				fields[key] = value.map(v => typeof v === 'object' && v !== null ? stripToFactory(v as AnyNodeData) : v) as readonly (AnyNodeData | string | number)[];
+				fields[key] = value.map((v) =>
+					typeof v === 'object' && v !== null
+						? stripToFactory(v as AnyNodeData)
+						: v
+				) as readonly (AnyNodeData | string | number)[];
 			} else if (typeof value === 'object' && value !== null) {
 				fields[key] = stripToFactory(value as AnyNodeData);
 			} else {
@@ -133,8 +143,12 @@ function stripToFactory(data: AnyNodeData): AnyNodeData {
 	if (data.$children) {
 		// Factory nodes only have named children — filter anonymous
 		result.$children = (data.$children as AnyNodeData[])
-			.filter(c => c.$named !== false)
-			.map(c => typeof c === 'object' && c !== null ? stripToFactory(c as AnyNodeData) : c);
+			.filter((c) => c.$named !== false)
+			.map((c) =>
+				typeof c === 'object' && c !== null
+					? stripToFactory(c as AnyNodeData)
+					: c
+			);
 	}
 
 	return result;
@@ -144,14 +158,14 @@ function stripToFactory(data: AnyNodeData): AnyNodeData {
 const FACTORY_MODULE_PATHS: Record<string, string> = {
 	rust: '../../../rust/src/factories.ts',
 	typescript: '../../../typescript/src/factories.ts',
-	python: '../../../python/src/factories.ts',
+	python: '../../../python/src/factories.ts'
 };
 
 /** Relative path from codegen/src/validate to language package factory-map.json5 */
 const FACTORY_MAP_PATHS: Record<string, string> = {
 	rust: '../../../rust/factory-map.json5',
 	typescript: '../../../typescript/factory-map.json5',
-	python: '../../../python/factory-map.json5',
+	python: '../../../python/factory-map.json5'
 };
 
 /** Load the JSON5 factory metadata file. Emitted by emitFactoryMap;
@@ -164,7 +178,13 @@ async function loadFactoryMap(grammar: string): Promise<{
 	polymorphVariants: PolymorphVariantMap;
 }> {
 	const p = FACTORY_MAP_PATHS[grammar];
-	if (!p) return { factoryShapes: {}, fieldAliasMap: {}, factoryFields: {}, polymorphVariants: {} };
+	if (!p)
+		return {
+			factoryShapes: {},
+			fieldAliasMap: {},
+			factoryFields: {},
+			polymorphVariants: {}
+		};
 	const { readFileSync } = await import('node:fs');
 	const content = readFileSync(new URL(p, import.meta.url).pathname, 'utf-8');
 	// Strip `// ...` line comments so JSON.parse accepts the body.
@@ -174,7 +194,7 @@ async function loadFactoryMap(grammar: string): Promise<{
 		factoryShapes: data.factoryShapes ?? {},
 		fieldAliasMap: data.fieldAliasMap ?? {},
 		factoryFields: data.factoryFields ?? {},
-		polymorphVariants: data.polymorphVariants ?? {},
+		polymorphVariants: data.polymorphVariants ?? {}
 	};
 }
 
@@ -196,8 +216,20 @@ export interface FactoryRoundTripResult {
 	 * missing field surface, dropped children slots, wrong defaults.
 	 */
 	astMatchPass: number;
-	errors: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[];
-	astMismatches: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[];
+	errors: {
+		kind: string;
+		entry?: string;
+		message: string;
+		input?: string;
+		rendered?: string;
+	}[];
+	astMismatches: {
+		kind: string;
+		entry?: string;
+		message: string;
+		input?: string;
+		rendered?: string;
+	}[];
 }
 
 /**
@@ -228,10 +260,19 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	let factoryFields: Record<string, readonly string[]> = {};
 	let polymorphVariants: PolymorphVariantMap = {};
 	if (!factoryModulePath) {
-		return { factoryMap, factoryShapes, fieldAliasMap, factoryFields, polymorphVariants, importFailure: null };
+		return {
+			factoryMap,
+			factoryShapes,
+			fieldAliasMap,
+			factoryFields,
+			polymorphVariants,
+			importFailure: null
+		};
 	}
 	try {
-		const factoryModule = await import(new URL(factoryModulePath, import.meta.url).pathname);
+		const factoryModule = await import(
+			new URL(factoryModulePath, import.meta.url).pathname
+		);
 		factoryMap = factoryModule._factoryMap ?? {};
 		// Validator-only metadata lives in factory-map.json5 — pure
 		// data, loaded separately from the factory functions.
@@ -240,11 +281,25 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 		fieldAliasMap = mapData.fieldAliasMap;
 		factoryFields = mapData.factoryFields;
 		polymorphVariants = mapData.polymorphVariants;
-		return { factoryMap, factoryShapes, fieldAliasMap, factoryFields, polymorphVariants, importFailure: null };
+		return {
+			factoryMap,
+			factoryShapes,
+			fieldAliasMap,
+			factoryFields,
+			polymorphVariants,
+			importFailure: null
+		};
 	} catch (e) {
 		const message = `[validate-factory-roundtrip] failed to load ${factoryModulePath}: ${(e as Error)?.message ?? e}`;
 		console.error(message);
-		return { factoryMap, factoryShapes, fieldAliasMap, factoryFields, polymorphVariants, importFailure: { message } };
+		return {
+			factoryMap,
+			factoryShapes,
+			fieldAliasMap,
+			factoryFields,
+			polymorphVariants,
+			importFailure: { message }
+		};
 	}
 }
 
@@ -260,7 +315,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
  *   wrap layer is not available.
  */
 async function loadWrapperBasedAliasResolver(
-	grammar: string,
+	grammar: string
 ): Promise<((handle: any) => any) | null> {
 	return loadReadTreeNode(grammar);
 }
@@ -291,12 +346,18 @@ function initKindEntryDeduplicator(): Set<string> {
  */
 function recordFactoryModuleLoadFailure(
 	importFailure: { message: string } | null,
-	errors: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[],
+	errors: {
+		kind: string;
+		entry?: string;
+		message: string;
+		input?: string;
+		rendered?: string;
+	}[]
 ): void {
 	if (importFailure) {
 		errors.push({
 			kind: '(factory-module-load)',
-			message: importFailure.message,
+			message: importFailure.message
 		});
 	}
 }
@@ -315,7 +376,7 @@ function recordFactoryModuleLoadFailure(
 function resolveNodeForKind(
 	kind: string,
 	rootNode: TSNode,
-	nodeIdToEffectiveType: Map<number, string>,
+	nodeIdToEffectiveType: Map<number, string>
 ): TSNode | null {
 	let node1: TSNode | null = null;
 	for (const [nid, et] of nodeIdToEffectiveType) {
@@ -368,7 +429,13 @@ function buildFactoryNodeData(
 	treeHandle: any,
 	entryName: string,
 	inputSource: string,
-	errors: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[],
+	errors: {
+		kind: string;
+		entry?: string;
+		message: string;
+		input?: string;
+		rendered?: string;
+	}[]
 ): AnyNodeData | null {
 	if (!readData.$fields && !readData.$children) {
 		// Leaf — render its text directly by preserving the original.
@@ -383,7 +450,14 @@ function buildFactoryNodeData(
 		if (shape === 'config') {
 			const recursive = process?.env?.SITTIR_VALIDATE_RECURSIVE === '1';
 			const config = recursive
-				? nodeToConfig(readData, { tree: treeHandle, factoryMap, factoryShapes, fieldAliasMap, factoryFields, polymorphVariants })
+				? nodeToConfig(readData, {
+						tree: treeHandle,
+						factoryMap,
+						factoryShapes,
+						fieldAliasMap,
+						factoryFields,
+						polymorphVariants
+					})
 				: nodeToConfig(readData, { polymorphVariants });
 			return factory(config) as AnyNodeData;
 		} else if (shape === 'text') {
@@ -396,15 +470,16 @@ function buildFactoryNodeData(
 		} else {
 			// shape === 'children' — container factory.
 			const namedChildren = (readData.$children ?? []).filter(
-				(c: any) => c?.$named !== false,
+				(c: any) => c?.$named !== false
 			);
 			return (factory as (...args: unknown[]) => AnyNodeData)(...namedChildren);
 		}
 	} catch (e) {
 		errors.push({
-			kind: renderedKind, entry: entryName,
+			kind: renderedKind,
+			entry: entryName,
 			message: `factory threw: ${(e as Error)?.message?.slice(0, 100) ?? String(e)}`,
-			input: inputSource,
+			input: inputSource
 		});
 		return null;
 	}
@@ -434,9 +509,14 @@ function wrapAndReparseRendered(
 	renderedKind: string,
 	grammar: string,
 	kindToSupertypes: Map<string, string[]>,
-	parser: { parse(text: string): TSTree | null },
+	parser: { parse(text: string): TSTree | null }
 ): { wrapped: { text: string; offset: number } | null; tree2: TSTree | null } {
-	const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes);
+	const wrapped = wrapForReparse(
+		rendered,
+		renderedKind,
+		grammar,
+		kindToSupertypes
+	);
 	if (wrapped === null) {
 		return { wrapped: null, tree2: null };
 	}
@@ -463,9 +543,12 @@ function wrapAndReparseRendered(
 function locateNodeInReparsedTree(
 	tree2: TSTree,
 	targetKind: string,
-	wrapped: { text: string; offset: number },
+	wrapped: { text: string; offset: number }
 ): TSNode | null {
-	return findNodeAt(tree2.rootNode, targetKind, wrapped.offset) ?? findFirst(tree2.rootNode, targetKind);
+	return (
+		findNodeAt(tree2.rootNode, targetKind, wrapped.offset) ??
+		findFirst(tree2.rootNode, targetKind)
+	);
 }
 
 /**
@@ -491,11 +574,23 @@ function recordAstStructuralComparison(
 	entryName: string,
 	inputSource: string,
 	rendered: string,
-	astMismatches: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[],
+	astMismatches: {
+		kind: string;
+		entry?: string;
+		message: string;
+		input?: string;
+		rendered?: string;
+	}[]
 ): boolean {
 	const diff = astStructuralDiff(node1, node2);
 	if (diff) {
-		astMismatches.push({ kind: renderedKind, entry: entryName, message: diff.slice(0, 160), input: inputSource, rendered });
+		astMismatches.push({
+			kind: renderedKind,
+			entry: entryName,
+			message: diff.slice(0, 160),
+			input: inputSource,
+			rendered
+		});
 		return false;
 	}
 	return true;
@@ -504,6 +599,7 @@ function recordAstStructuralComparison(
 export async function validateFactoryRoundTrip(
 	grammar: string,
 	templatesPath: string,
+	backend?: 'native' | 'typescript'
 ): Promise<FactoryRoundTripResult> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
@@ -514,14 +610,32 @@ export async function validateFactoryRoundTrip(
 	const { render } = createRenderer(templatesPath);
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
-	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, polymorphVariants, importFailure } =
-		await loadFactoryModuleForGrammar(grammar);
+	const {
+		factoryMap,
+		factoryShapes,
+		fieldAliasMap,
+		factoryFields,
+		polymorphVariants,
+		importFailure
+	} = await loadFactoryModuleForGrammar(grammar);
 
 	const readTreeNodeFn = await loadWrapperBasedAliasResolver(grammar);
 
 	const entries = loadCorpusEntries(grammar);
-	const errors: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[] = [];
-	const astMismatches: { kind: string; entry?: string; message: string; input?: string; rendered?: string }[] = [];
+	const errors: {
+		kind: string;
+		entry?: string;
+		message: string;
+		input?: string;
+		rendered?: string;
+	}[] = [];
+	const astMismatches: {
+		kind: string;
+		entry?: string;
+		message: string;
+		input?: string;
+		rendered?: string;
+	}[] = [];
 	const testedPairs = initKindEntryDeduplicator();
 	let pass = 0;
 	let astMatchPass = 0;
@@ -542,7 +656,7 @@ export async function validateFactoryRoundTrip(
 			skip: 0,
 			astMatchPass: 0,
 			errors,
-			astMismatches: [],
+			astMismatches: []
 		};
 	}
 
@@ -550,7 +664,7 @@ export async function validateFactoryRoundTrip(
 		const tree1 = parser.parse(entry.source) as TSTree;
 		if (tree1.rootNode.hasError) continue;
 
-		const handle = buildReadHandle(grammar, tree1, entry.source);
+		const handle = buildReadHandle(grammar, tree1, entry.source, backend);
 		const kinds = new Set(collectKinds(tree1.rootNode));
 		const nodeIdToEffectiveType = new Map<number, string>();
 		if (readTreeNodeFn) {
@@ -567,16 +681,29 @@ export async function validateFactoryRoundTrip(
 			testedPairs.add(pairKey);
 			total++;
 
-			const node1 = resolveNodeForKind(kind, tree1.rootNode, nodeIdToEffectiveType);
+			const node1 = resolveNodeForKind(
+				kind,
+				tree1.rootNode,
+				nodeIdToEffectiveType
+			);
 			if (!node1) continue;
 			const inputSource = node1.text;
 
 			// readNode → direct factory call → render → re-parse
-			const rawReadData = readNode(handle, node1.id);
+			// Native engine uses Rust-heap pointer IDs; WASM engine uses
+			// linear-memory IDs. Resolve via the native data tree. If the
+			// kind is an alias target that the native engine emits under its
+			// underlying rule name (e.g. `with_clause_bare` → `with_clause`),
+			// findNativeNodeId returns null — skip rather than fall back to a
+			// mismatched WASM ID.
+			const nativeId = findNativeNodeId(handle, kind);
+			if (nativeId === null && handle.read) continue;
+			const rawReadData = readNode(handle, nativeId ?? (node1.id as NodeId));
 			const effective = nodeIdToEffectiveType.get(node1.id);
-			const readData = effective && effective !== rawReadData.$type
-				? { ...rawReadData, $type: effective }
-				: rawReadData;
+			const readData =
+				effective && effective !== rawReadData.$type
+					? { ...rawReadData, $type: effective }
+					: rawReadData;
 			const renderedKind = readData.$type;
 			const targetKind = rawReadData.$type;
 
@@ -591,20 +718,23 @@ export async function validateFactoryRoundTrip(
 				handle,
 				entry.name,
 				inputSource,
-				errors,
+				errors
 			);
 			if (factoryData === null) continue;
 
 			try {
 				const rendered = render(factoryData);
-				if (!rendered.trim()) { skip++; continue; }
+				if (!rendered.trim()) {
+					skip++;
+					continue;
+				}
 
 				const { wrapped, tree2 } = wrapAndReparseRendered(
 					rendered,
 					renderedKind,
 					grammar,
 					kindToSupertypes,
-					parser,
+					parser
 				);
 
 				if (wrapped === null) {
@@ -614,27 +744,55 @@ export async function validateFactoryRoundTrip(
 				}
 
 				if (tree2 === null) {
-					errors.push({ kind: renderedKind, entry: entry.name, message: `re-parse error: "${rendered.slice(0, 60)}"`, input: inputSource, rendered });
+					errors.push({
+						kind: renderedKind,
+						entry: entry.name,
+						message: `re-parse error: "${rendered.slice(0, 60)}"`,
+						input: inputSource,
+						rendered
+					});
 					continue;
 				}
 
 				const node2 = locateNodeInReparsedTree(tree2, targetKind, wrapped);
 				if (!node2) {
-					errors.push({ kind: renderedKind, entry: entry.name, message: `kind not found in re-parse (rendered: "${rendered.slice(0, 60)}")`, input: inputSource, rendered });
+					errors.push({
+						kind: renderedKind,
+						entry: entry.name,
+						message: `kind not found in re-parse (rendered: "${rendered.slice(0, 60)}")`,
+						input: inputSource,
+						rendered
+					});
 					continue;
 				}
 
 				pass++;
 
-				if (recordAstStructuralComparison(node1, node2, renderedKind, entry.name, inputSource, rendered, astMismatches)) {
+				if (
+					recordAstStructuralComparison(
+						node1,
+						node2,
+						renderedKind,
+						entry.name,
+						inputSource,
+						rendered,
+						astMismatches
+					)
+				) {
 					astMatchPass++;
 				}
 			} catch (e) {
-				errors.push({ kind: renderedKind, entry: entry.name, message: `${(e as Error).message.slice(0, 80)}`, input: inputSource });
+				errors.push({
+					kind: renderedKind,
+					entry: entry.name,
+					message: `${(e as Error).message.slice(0, 80)}`,
+					input: inputSource
+				});
 			}
 		}
 	}
 
+	emitValidatorMetrics();
 	return {
 		grammar,
 		total,
@@ -643,15 +801,21 @@ export async function validateFactoryRoundTrip(
 		skip,
 		astMatchPass,
 		errors,
-		astMismatches,
+		astMismatches
 	};
 }
 
-export function formatFactoryRoundTripReport(result: FactoryRoundTripResult): string {
+export function formatFactoryRoundTripReport(
+	result: FactoryRoundTripResult
+): string {
 	const lines: string[] = [];
 	const icon = result.fail === 0 ? 'v' : 'x';
-	lines.push(`  ${icon} ${result.pass}/${result.total} factory round-trip (${result.skip} skipped, ${result.errors.length} errors)`);
-	lines.push(`    ast-match ${result.astMatchPass}/${result.total} (${result.astMismatches.length} structural mismatches)`);
+	lines.push(
+		`  ${icon} ${result.pass}/${result.total} factory round-trip (${result.skip} skipped, ${result.errors.length} errors)`
+	);
+	lines.push(
+		`    ast-match ${result.astMatchPass}/${result.total} (${result.astMismatches.length} structural mismatches)`
+	);
 	if (result.errors.length > 0) {
 		for (const e of result.errors) {
 			lines.push(`    x ${e.kind}: ${e.message}`);

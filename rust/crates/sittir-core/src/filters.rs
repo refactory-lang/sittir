@@ -71,12 +71,53 @@ pub fn joinby<S: AsRef<str>>(
     }
     let prefix = if leading { sep } else { "" };
     let suffix = if trailing { sep } else { "" };
-    let joined = xs
-        .iter()
-        .map(|s| s.as_ref())
-        .collect::<Vec<_>>()
-        .join(sep);
+    let joined = join_with_line_comment_fix(xs, sep);
     Ok(format!("{prefix}{joined}{suffix}"))
+}
+
+/// Detect whether a rendered child ends with a `//` or `#` line-terminated
+/// comment. Mirrors the TS `endsLineComment` helper in
+/// `packages/core/src/templates/nunjucks-env.ts` — used by the join helpers
+/// to force a `\n` separator after a line-comment-ending child so the
+/// following sibling doesn't get folded into the comment at reparse time.
+fn ends_line_comment(s: &str) -> bool {
+    let trimmed = s.trim_end_matches([' ', '\t']);
+    if trimmed.ends_with('\n') {
+        return false;
+    }
+    // Find the start of the last line (everything after the final `\n`).
+    let last_line_start = trimmed.rfind('\n').map_or(0, |i| i + 1);
+    let last_line = &trimmed[last_line_start..];
+    let stripped = last_line.trim_start();
+    stripped.starts_with("//") || stripped.starts_with('#')
+}
+
+/// Join `xs` with `sep`, but force `\n` instead of `sep` after any element
+/// that ends with a line-terminated comment (`//` or `#`). Joining with
+/// ` ` would otherwise fold the next sibling into the comment at reparse
+/// time. Cluster J (016): mirrors the TS Nunjucks `join` filter so the
+/// two engines stay byte-identical on fixtures containing `// comment`
+/// followed by a statement (e.g. rust block round-trip).
+fn join_with_line_comment_fix<S: AsRef<str>>(xs: &[S], sep: &str) -> String {
+    if xs.is_empty() {
+        return String::new();
+    }
+    if xs.len() == 1 {
+        return xs[0].as_ref().to_string();
+    }
+    let mut out = String::new();
+    for (i, item) in xs.iter().enumerate() {
+        let s = item.as_ref();
+        out.push_str(s);
+        if i + 1 < xs.len() {
+            if ends_line_comment(s) {
+                out.push('\n');
+            } else {
+                out.push_str(sep);
+            }
+        }
+    }
+    out
 }
 
 /// Presence test — true when a field is absent / empty / whitespace-only.
@@ -95,21 +136,59 @@ pub fn isBlank(s: &str, _values: &dyn askama::Values) -> Result<bool, askama::Er
     Ok(s.trim().is_empty())
 }
 
-/// Inverse of `isBlank` — true when a field has non-whitespace content.
-/// Sugar for `{% if not (foo | isBlank) %}`; used as
-/// `{% if foo | isPresent %}`.
+/// Private trait powering the generic `isPresent` filter.
 ///
-/// Works on both scalar (`String`) and list fields — by convention the
-/// generated struct emits a field's scalar form (`foo`) alongside its
-/// list form (`foo_list`) for every user-declared field; `isPresent`
-/// always targets the scalar. The scalar for list-shaped fields is the
-/// pre-joined string, so an empty list reduces to empty string which
-/// reads as "not present" (matches the TS engine's semantics where a
-/// never-populated field and an empty-array field both render as
-/// blank).
-#[allow(non_snake_case)]
-pub fn isPresent(s: &str, _values: &dyn askama::Values) -> Result<bool, askama::Error> {
-    Ok(!s.trim().is_empty())
+/// Two implementations exist:
+/// - `str` / `String` — non-whitespace text is "present".
+/// - `Vec<S>` — a non-empty list is "present".
+///
+/// The `Vec` case arises when generated template structs expose the
+/// `children` slot as `Vec<String>` and the `.jinja` template uses
+/// `children | isPresent` to gate rendering (e.g. `jsx_expression`,
+/// `named_imports`, `object`, `switch_body`, and their equivalents in
+/// the python and rust grammars). The TS/Nunjucks engine treats any
+/// non-empty array as present; this trait mirrors that semantic on the
+/// Rust/askama side.
+pub(crate) trait PresenceCheck {
+    fn is_present_check(&self) -> bool;
+}
+
+impl PresenceCheck for str {
+    fn is_present_check(&self) -> bool {
+        !self.trim().is_empty()
+    }
+}
+
+impl PresenceCheck for String {
+    fn is_present_check(&self) -> bool {
+        !self.trim().is_empty()
+    }
+}
+
+impl<S> PresenceCheck for Vec<S> {
+    fn is_present_check(&self) -> bool {
+        !self.is_empty()
+    }
+}
+
+/// Inverse of `isBlank` — true when a field has non-whitespace content
+/// (for scalar fields) or is non-empty (for list fields).
+///
+/// Used as `{% if foo | isPresent %}` in Jinja templates. Works for:
+/// - `String` / `str` fields — non-blank string is present.
+/// - `Vec<String>` fields — non-empty list is present (e.g. the
+///   `children` slot on nodes like `jsx_expression`, `named_imports`,
+///   `object`, `switch_body`, `class_body` in generated template
+///   structs for the typescript, python, and rust grammars).
+///
+/// Matches the TS engine's semantics where an empty string and an
+/// empty array both render as "not present".
+#[allow(non_snake_case, private_bounds)]
+pub fn isPresent<T: PresenceCheck + ?Sized>(
+    s: &T,
+    _values: &dyn askama::Values,
+) -> Result<bool, askama::Error> {
+    Ok(s.is_present_check())
 }
 
 /// Probe `values` for a flank-anon text registered under `key`. Returns

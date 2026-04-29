@@ -21,9 +21,9 @@ The five concerns, symptoms first:
    calls `loadTemplates`.
 
 2. **Template variant dispatch is structurally broken but hidden.** Across
-   all three grammars, most polymorph parent templates have *identical*
+   all three grammars, most polymorph parent templates have _identical_
    entries across every form (`struct_item` renders `$VIS struct $NAME
-   $TYPE_PARAMS $$$CHILDREN` for `brace`, `tuple`, and `unit` alike). In
+$TYPE_PARAMS $$$CHILDREN` for `brace`, `tuple`, and `unit` alike). In
    these cases `variants:` is dead weight — the variant child has its own
    kind and template, and `$$$CHILDREN` delegates to it. A `grep`
    inventory (11 variants blocks in rust, 8 in typescript, 2 in python)
@@ -33,7 +33,7 @@ The five concerns, symptoms first:
    and `_match_block`):
 
    | Rule                             | Why forms differ                                              |
-   |----------------------------------|---------------------------------------------------------------|
+   | -------------------------------- | ------------------------------------------------------------- |
    | `rust/visibility_modifier`       | `pub` (bare) vs `pub(crate)` (with parens + in-clause)        |
    | `typescript/export_statement`    | Star export, type export, export assignment, namespace export |
    | `typescript/call_expression`     | With/without type_arguments, optional chaining                |
@@ -176,6 +176,7 @@ factory emitter's `$variant`-stamping call site, regenerated
 `packages/{rust,typescript,python}/templates.yaml`.
 
 **Validation**:
+
 - Round-trip corpus ceilings unchanged across all three grammars.
 - After regeneration, only the three genuine-variant rules
   (`rust/visibility_modifier`, `typescript/export_statement`,
@@ -190,12 +191,12 @@ Extract consumption logic into a `prepare(node, rule)` step that produces:
 
 ```ts
 interface PreparedRender {
-    readonly fields: Record<string, string>;    // pre-rendered field slots
-    readonly children: readonly string[];       // pre-rendered unconsumed named children
-    readonly variant: string;                   // node.$variant ?? ''
-    readonly text: string;                      // node.$text ?? ''
-    readonly trailingSep: boolean;              // flankSep trailing match
-    readonly leadingSep: boolean;               // flankSep leading match
+	readonly fields: Record<string, string>; // pre-rendered field slots
+	readonly children: readonly string[]; // pre-rendered unconsumed named children
+	readonly variant: string; // node.$variant ?? ''
+	readonly text: string; // node.$text ?? ''
+	readonly trailingSep: boolean; // flankSep trailing match
+	readonly leadingSep: boolean; // flankSep leading match
 }
 ```
 
@@ -232,17 +233,20 @@ Pull the tree-sitter-independent placement logic out of
 ```ts
 // Pure function: tree-sitter independent
 interface ChildInfo {
-    readonly kind: string;
-    readonly fieldName: string | undefined;
-    readonly text: string;
-    readonly named: boolean;
-    readonly node: AnyNodeData;   // already read recursively
+	readonly kind: string;
+	readonly fieldName: string | undefined;
+	readonly text: string;
+	readonly named: boolean;
+	readonly node: AnyNodeData; // already read recursively
 }
 
 function placeChildren(
-    children: readonly ChildInfo[],
-    parentKind: string,
-): { fields: Record<string, AnyNodeData | AnyNodeData[]>; children: AnyNodeData[] };
+	children: readonly ChildInfo[],
+	parentKind: string
+): {
+	fields: Record<string, AnyNodeData | AnyNodeData[]>;
+	children: AnyNodeData[];
+};
 ```
 
 `readNode` becomes: (a) walk tree-sitter, collecting `ChildInfo[]`, (b)
@@ -276,7 +280,7 @@ ADR if allowlist-gating is adopted.
 - **P-001 (Generated code is derived, not authored)** — Task 2's
   identical-variant collapse fixes the codegen emitter, not the generated
   YAML. The three genuinely-variant rules remain because the grammar
-  *says* they branch; codegen reflects that faithfully.
+  _says_ they branch; codegen reflects that faithfully.
 - **P-005 (Single source of truth)** — `$variant` naming has one source
   (the form name stripped of codegen prefixes); factory output and
   template keys both derive from it.

@@ -36,10 +36,24 @@ import { buildGrammarModel } from './grammar-model.ts';
 import type { HydratedNodeModel } from './node-model.ts';
 import { isTupleChildren, eachChildSlot } from './node-model.ts';
 import { structuralNodes } from './emitters/utils.ts';
-import type { OverridesConfig, OverrideFieldDef, OverrideTypeRef } from './overrides.ts';
+import type {
+	OverridesConfig,
+	OverrideFieldDef,
+	OverrideTypeRef
+} from './overrides.ts';
 import { RESERVED_FIELD_NAMES } from './overrides.ts';
 
-export { listBranchKinds, listLeafKinds, listKeywordTokens, listOperatorTokens, loadRawEntries, registerGrammarPath, collectRequiredTokens, listSupertypes, listLeafValues } from './grammar-reader.ts';
+export {
+	listBranchKinds,
+	listLeafKinds,
+	listKeywordTokens,
+	listOperatorTokens,
+	loadRawEntries,
+	registerGrammarPath,
+	collectRequiredTokens,
+	listSupertypes,
+	listLeafValues
+} from './grammar-reader.ts';
 
 export interface CodegenConfig {
 	/** Grammar language (e.g., 'rust', 'typescript', 'python') */
@@ -92,7 +106,9 @@ export interface GeneratedFiles {
  *
  * Pure REPEAT nodes (single slot, multiple) are skipped — they use $$$CHILDREN.
  */
-function generateTupleChildOverrides(nodes: HydratedNodeModel[]): OverridesConfig {
+function generateTupleChildOverrides(
+	nodes: HydratedNodeModel[]
+): OverridesConfig {
 	const overrides: OverridesConfig = {};
 
 	for (const node of structuralNodes(nodes)) {
@@ -101,7 +117,12 @@ function generateTupleChildOverrides(nodes: HydratedNodeModel[]): OverridesConfi
 		const fields: Record<string, OverrideFieldDef> = {};
 
 		if (isTupleChildren(node.children)) {
-			const slots = node.children as readonly { multiple: boolean; required?: boolean; name?: string | null; kinds: readonly { kind: string; modelType?: string }[] }[];
+			const slots = node.children as readonly {
+				multiple: boolean;
+				required?: boolean;
+				name?: string | null;
+				kinds: readonly { kind: string; modelType?: string }[];
+			}[];
 
 			for (let i = 0; i < slots.length; i++) {
 				const slot = slots[i]!;
@@ -111,7 +132,7 @@ function generateTupleChildOverrides(nodes: HydratedNodeModel[]): OverridesConfi
 
 				// Build types array from slot kinds
 				// Only token models are truly anonymous — keywords are named nodes
-				const types: OverrideTypeRef[] = slot.kinds.map(k => {
+				const types: OverrideTypeRef[] = slot.kinds.map((k) => {
 					const mt = (k as any).modelType;
 					return { type: k.kind, named: mt !== 'token' };
 				});
@@ -120,42 +141,58 @@ function generateTupleChildOverrides(nodes: HydratedNodeModel[]): OverridesConfi
 				const slotName = slot.name;
 				let fieldName: string;
 
-				if (slotName && !slotName.startsWith('NEEDS_NAME') && !RESERVED_FIELD_NAMES.has(slotName)) {
+				if (
+					slotName &&
+					!slotName.startsWith('NEEDS_NAME') &&
+					!RESERVED_FIELD_NAMES.has(slotName)
+				) {
 					fieldName = slotName;
 				} else if (RESERVED_FIELD_NAMES.has(slotName ?? '')) {
 					// Skip reserved field names — can't be used as override field names
 					continue;
 				} else {
 					fieldName = slotName ?? `NEEDS_NAME_${i}`;
-					const kindList = slot.kinds.map(k => k.kind).join(', ');
-					console.warn(`[overrides] ${node.kind}: ${fieldName} — position ${i} (${kindList}) needs a field name`);
+					const kindList = slot.kinds.map((k) => k.kind).join(', ');
+					console.warn(
+						`[overrides] ${node.kind}: ${fieldName} — position ${i} (${kindList}) needs a field name`
+					);
 				}
 
 				fields[fieldName] = {
 					types,
 					multiple: slot.multiple,
 					required: slot.required ?? false,
-					position: i,
+					position: i
 				};
 			}
 		} else {
 			// SINGLE child slot — generate override if the kind is a concrete named type
 			// (not a supertype/hidden rule starting with _). Nodes whose sole content IS
 			// the child (wrappers like parenthesized_expression) keep $CHILDREN.
-			const slot = node.children as { multiple: boolean; required?: boolean; name?: string | null; kinds: readonly { kind: string; modelType?: string }[] };
+			const slot = node.children as {
+				multiple: boolean;
+				required?: boolean;
+				name?: string | null;
+				kinds: readonly { kind: string; modelType?: string }[];
+			};
 
 			// Skip pure REPEAT (list children) — these are $$CHILDREN content
-			if (slot.multiple) { /* keep as $$$CHILDREN */ }
+			if (slot.multiple) {
+				/* keep as $$$CHILDREN */
+			}
 			// Skip if kinds include any supertype/hidden (starts with _) — too abstract to name
-			else if (slot.kinds.some(k => k.kind.startsWith('_'))) { /* keep as $CHILDREN */ }
+			else if (slot.kinds.some((k) => k.kind.startsWith('_'))) {
+				/* keep as $CHILDREN */
+			}
 			// Single concrete kind → promote to named override field
 			// Only when we can derive a meaningful name (single kind → kind-as-name)
 			else if (slot.kinds.length === 1) {
 				const fieldName = slot.kinds[0]!.kind;
 				// Skip reserved field names
-				if (RESERVED_FIELD_NAMES.has(fieldName)) { /* keep as $CHILDREN */ }
-				else {
-					const types: OverrideTypeRef[] = slot.kinds.map(k => {
+				if (RESERVED_FIELD_NAMES.has(fieldName)) {
+					/* keep as $CHILDREN */
+				} else {
+					const types: OverrideTypeRef[] = slot.kinds.map((k) => {
 						const mt = (k as any).modelType;
 						return { type: k.kind, named: mt !== 'token' };
 					});
@@ -164,7 +201,7 @@ function generateTupleChildOverrides(nodes: HydratedNodeModel[]): OverridesConfi
 						types,
 						multiple: slot.multiple,
 						required: slot.required ?? false,
-						position: 0,
+						position: 0
 					};
 				}
 			}
@@ -191,7 +228,10 @@ function overridesPath(grammar: string): string {
  * kinds/fields not already present.
  * Returns true if the file was updated.
  */
-function mergeAutoOverridesToDisk(grammar: string, autoOverrides: OverridesConfig): boolean {
+function mergeAutoOverridesToDisk(
+	grammar: string,
+	autoOverrides: OverridesConfig
+): boolean {
 	const path = overridesPath(grammar);
 	const disk: OverridesConfig = existsSync(path)
 		? JSON.parse(readFileSync(path, 'utf-8'))
@@ -272,14 +312,19 @@ export function generate(cfg: CodegenConfig): GeneratedFiles {
 
 	// Use new pipeline's HydratedNodeModel[] for emitters
 	const allNewNodes = [...newModel.models.values()];
-	const nodes: HydratedNodeModel[] = cfg.nodes && cfg.nodes.length > 0
-		? allNewNodes.filter(n => cfg.nodes!.includes(n.kind))
-		: allNewNodes;
+	const nodes: HydratedNodeModel[] =
+		cfg.nodes && cfg.nodes.length > 0
+			? allNewNodes.filter((n) => cfg.nodes!.includes(n.kind))
+			: allNewNodes;
 
 	return {
 		grammar: emitGrammar({ grammar: cfg.grammar }),
 		types: emitTypes({ grammar: cfg.grammar, nodes }),
-		templatesYaml: emitTemplatesYaml({ grammar: cfg.grammar, nodes, grammarSha: '' }),
+		templatesYaml: emitTemplatesYaml({
+			grammar: cfg.grammar,
+			nodes,
+			grammarSha: ''
+		}),
 		factories: emitFactories({ grammar: cfg.grammar, nodes }),
 		wrap: emitWrap({ grammar: cfg.grammar, nodes }),
 		utils: emitClientUtils({ nodes }),
@@ -290,6 +335,6 @@ export function generate(cfg: CodegenConfig): GeneratedFiles {
 		tests: emitTests({ grammar: cfg.grammar, nodes }),
 		typeTests: emitTypeTests({ nodes }),
 		config: emitConfig({ grammar: cfg.grammar }),
-		nodeModel,
+		nodeModel
 	};
 }

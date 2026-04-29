@@ -34,23 +34,23 @@ Baseline was 142 distinct warnings (122 no-useless-fallback-in-spread, 18 no-unu
 
 ## Line counts — baseline vs final
 
-| Grammar | File | Baseline | Final | Δ |
-|---|---|---|---|---|
-| rust | types.ts | 4004 | 4859 | +855 |
-| rust | factories.ts | 4395 | 4587 | +192 |
-| rust | from.ts | 1956 | 1956 | 0 |
-| rust | wrap.ts | 1876 | 1868 | −8 |
-| rust | ir.ts | 199 | 581 | +382 |
-| typescript | types.ts | 3959 | 4958 | +999 |
-| typescript | factories.ts | 4904 | 5066 | +162 |
-| typescript | from.ts | 2198 | 2198 | 0 |
-| typescript | wrap.ts | 2100 | 2092 | −8 |
-| typescript | ir.ts | 227 | 367 | +140 |
-| python | types.ts | 2538 | 3139 | +601 |
-| python | factories.ts | 2886 | 3014 | +128 |
-| python | from.ts | 1366 | 1366 | 0 |
-| python | wrap.ts | 1290 | 1282 | −8 |
-| python | ir.ts | 142 | 300 | +158 |
+| Grammar    | File         | Baseline | Final | Δ    |
+| ---------- | ------------ | -------- | ----- | ---- |
+| rust       | types.ts     | 4004     | 4859  | +855 |
+| rust       | factories.ts | 4395     | 4587  | +192 |
+| rust       | from.ts      | 1956     | 1956  | 0    |
+| rust       | wrap.ts      | 1876     | 1868  | −8   |
+| rust       | ir.ts        | 199      | 581   | +382 |
+| typescript | types.ts     | 3959     | 4958  | +999 |
+| typescript | factories.ts | 4904     | 5066  | +162 |
+| typescript | from.ts      | 2198     | 2198  | 0    |
+| typescript | wrap.ts      | 2100     | 2092  | −8   |
+| typescript | ir.ts        | 227      | 367   | +140 |
+| python     | types.ts     | 2538     | 3139  | +601 |
+| python     | factories.ts | 2886     | 3014  | +128 |
+| python     | from.ts      | 1366     | 1366  | 0    |
+| python     | wrap.ts      | 1290     | 1282  | −8   |
+| python     | ir.ts        | 142      | 300   | +158 |
 
 Net change after the legacy alias drop (Phase 9): ~700+ lines clawed back
 per grammar's types.ts vs the pre-drop measurement, while the new surface
@@ -91,20 +91,20 @@ and `_union_*` aliases were inlined (US4).
 `const <supertype>` block ALSO attached to `ir.<supertype>`. This is the
 tree-shake-friendly topology that SC-011 called for. Max line per file:
 
-| Grammar | Baseline max line | Final max line | SC-005 target |
-|---|---|---|---|
-| rust | 3831 chars | 443 chars | < 500 ✅ |
-| typescript | ~3600 chars | 404 chars | < 500 ✅ |
-| python | ~2800 chars | 296 chars | < 500 ✅ |
+| Grammar    | Baseline max line | Final max line | SC-005 target |
+| ---------- | ----------------- | -------------- | ------------- |
+| rust       | 3831 chars        | 443 chars      | < 500 ✅      |
+| typescript | ~3600 chars       | 404 chars      | < 500 ✅      |
+| python     | ~2800 chars       | 296 chars      | < 500 ✅      |
 
 ---
 
 ## Pattern sweep — zero-match targets
 
-| Pattern | Baseline | Final | SC | Story |
-|---|---|---|---|---|
-| `grep '_union_' packages/*/src/types.ts` | 3 | 0 | SC-003 | US4 |
-| `grep 'interface _NodeData' packages/*/src/wrap.ts` | 3 | 0 | (implicit) | US4 |
+| Pattern                                             | Baseline | Final | SC         | Story |
+| --------------------------------------------------- | -------- | ----- | ---------- | ----- |
+| `grep '_union_' packages/*/src/types.ts`            | 3        | 0     | SC-003     | US4   |
+| `grep 'interface _NodeData' packages/*/src/wrap.ts` | 3        | 0     | (implicit) | US4   |
 
 The SC-002 target (`_attach` removal) and SC-004 target (`as unknown as
 WrappedNode<K>` removal) were both **kept with inline documentation**:
@@ -128,16 +128,16 @@ Both decisions are tracked as "rejected after investigation, reason:
 
 ## Per-story summary
 
-| Story | Status | Commit | Landing highlights |
-|---|---|---|---|
-| **US1** | ✅ | 4526f5f | `NamespaceMap`, `NodeNs<T>`, per-kind `Ns` interfaces, `ConfigFor<K>` / `FluentFor<K>` / `LooseFor<K>` / `TreeFor<K>` generic accessors, declaration-merged `namespace X { Config; Fluent; Loose; Tree; Kind; }` sugar. Convergence tests landed per-grammar (codegen can't dep on its output). |
-| **US2** | ✅ | 086a857 | `is.ts` emitter with `IsGuards` + `AssertGuards` interfaces, per-kind `is.<guardKey>` + supertype guards, `isTree` / `isNode` shape guards, `assert.<guardKey>` throwing forms. Overloaded signatures narrow through `NamespaceMap`. |
-| **US3** | ✅ | c952e5b | `from.ts` quick-return via `isNodeData` + namespace imports (`F.` / `FR.`), per-resolver single `(input as T.<Parent>.Loose).propertyName` cast replaces per-field casts. |
-| **US4** | ✅ | b4a9fb8 | Inline field unions at the field site (no more `_union_Foo_Bar_Baz`), import `_NodeData` from `@sittir/types`, document `_attach` rationale. |
-| **US5** | ✅ | 3442b8e | `ir.ts` namespace imports + tree-shakeable supertype group consts attached to `ir.*`. SC-005 + SC-012 verified. |
-| **US6** | ✅ | 331c2a7 | Zero-warning generated output + CI `--deny-warnings` enforcement. Bonus: fluent setter params renamed to `value` / `values`; base kinds use `T.${Type}.Config` namespace sugar. |
-| **US7** | ✅ | 6dfa127 | `$`-prefix metadata rename (`$type` / `$source` / `$fields` / `$children` / `$text` / `$named` / `$variant` / `$span` / `$nodeId`). `$source: 'ts' \| 'sg' \| 'factory'` provenance tag on every producer. Python's `type_alias_statement` collision fully resolved. |
-| **Phase 9 alias drop** | ✅ | this PR | Dropped base-kind `XConfig` / `LooseX` / `ConfigMap` / `LooseMap` aliases. Polymorph UForm aliases kept (forms aren't in `NamespaceMap`). `XxxTree` interfaces kept (factories reference them by name in `replace()` signatures). |
+| Story                  | Status | Commit  | Landing highlights                                                                                                                                                                                                                                                                              |
+| ---------------------- | ------ | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **US1**                | ✅     | 4526f5f | `NamespaceMap`, `NodeNs<T>`, per-kind `Ns` interfaces, `ConfigFor<K>` / `FluentFor<K>` / `LooseFor<K>` / `TreeFor<K>` generic accessors, declaration-merged `namespace X { Config; Fluent; Loose; Tree; Kind; }` sugar. Convergence tests landed per-grammar (codegen can't dep on its output). |
+| **US2**                | ✅     | 086a857 | `is.ts` emitter with `IsGuards` + `AssertGuards` interfaces, per-kind `is.<guardKey>` + supertype guards, `isTree` / `isNode` shape guards, `assert.<guardKey>` throwing forms. Overloaded signatures narrow through `NamespaceMap`.                                                            |
+| **US3**                | ✅     | c952e5b | `from.ts` quick-return via `isNodeData` + namespace imports (`F.` / `FR.`), per-resolver single `(input as T.<Parent>.Loose).propertyName` cast replaces per-field casts.                                                                                                                       |
+| **US4**                | ✅     | b4a9fb8 | Inline field unions at the field site (no more `_union_Foo_Bar_Baz`), import `_NodeData` from `@sittir/types`, document `_attach` rationale.                                                                                                                                                    |
+| **US5**                | ✅     | 3442b8e | `ir.ts` namespace imports + tree-shakeable supertype group consts attached to `ir.*`. SC-005 + SC-012 verified.                                                                                                                                                                                 |
+| **US6**                | ✅     | 331c2a7 | Zero-warning generated output + CI `--deny-warnings` enforcement. Bonus: fluent setter params renamed to `value` / `values`; base kinds use `T.${Type}.Config` namespace sugar.                                                                                                                 |
+| **US7**                | ✅     | 6dfa127 | `$`-prefix metadata rename (`$type` / `$source` / `$fields` / `$children` / `$text` / `$named` / `$variant` / `$span` / `$nodeId`). `$source: 'ts' \| 'sg' \| 'factory'` provenance tag on every producer. Python's `type_alias_statement` collision fully resolved.                            |
+| **Phase 9 alias drop** | ✅     | this PR | Dropped base-kind `XConfig` / `LooseX` / `ConfigMap` / `LooseMap` aliases. Polymorph UForm aliases kept (forms aren't in `NamespaceMap`). `XxxTree` interfaces kept (factories reference them by name in `replace()` signatures).                                                               |
 
 ---
 

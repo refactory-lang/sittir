@@ -17,15 +17,13 @@
  */
 export async function validateFull(
 	source: string,
-	parser: unknown,
+	parser: unknown
 ): Promise<string> {
 	const p = parser as
 		| { parse(source: string): { rootNode: { hasError: boolean } } | null }
 		| undefined;
 	if (!p) {
-		throw new Error(
-			'Full validation requires a tree-sitter Parser instance',
-		);
+		throw new Error('Full validation requires a tree-sitter Parser instance');
 	}
 	const tree = p.parse(source);
 	if (!tree) throw new Error('tree-sitter parse returned null');

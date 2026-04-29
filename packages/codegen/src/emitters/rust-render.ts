@@ -15,19 +15,17 @@
  * (T017) owns filesystem I/O and the template-directory copy.
  */
 
-import type { NodeMap } from '../compiler/types.ts'
-import type { AssembledNode } from '../compiler/node-map.ts'
+import type { NodeMap } from '../compiler/types.ts';
+import type { AssembledNode } from '../compiler/node-map.ts';
 import {
-	AssembledBranch,
 	AssembledContainer,
-	AssembledPolymorph,
-	AssembledGroup,
-} from '../compiler/node-map.ts'
-import type { TemplateFile } from './template-hash.ts'
-import { computeTemplateBundleHash } from './template-hash.ts'
+	AssembledPolymorph
+} from '../compiler/node-map.ts';
+import type { TemplateFile } from './template-hash.ts';
+import { computeTemplateBundleHash } from './template-hash.ts';
 
 /** Grammars the emitter supports. Matches the three per-grammar packages. */
-export type Grammar = 'rust' | 'typescript' | 'python'
+export type Grammar = 'rust' | 'typescript' | 'python';
 
 /**
  * Output of a single emit pass. Each field names a file path
@@ -37,25 +35,25 @@ export type Grammar = 'rust' | 'typescript' | 'python'
  */
 export interface RustRenderEmit {
 	/** `packages/{lang}/rust-render/src/hash.rs` */
-	hashRs: { path: string; contents: string }
+	hashRs: { path: string; contents: string };
 	/** `packages/{lang}/src/hash.ts` */
-	hashTs: { path: string; contents: string }
+	hashTs: { path: string; contents: string };
 	/** `packages/{lang}/rust-render/src/templates.rs` (T027/T028/T029) */
-	templatesRs: { path: string; contents: string }
+	templatesRs: { path: string; contents: string };
 	/** `packages/{lang}/rust-render/src/lib.rs` (T028 — exposes render_dispatch) */
-	libRs: { path: string; contents: string }
+	libRs: { path: string; contents: string };
 	/** `packages/{lang}/rust-render/Cargo.toml` (T031) */
-	cargoToml: { path: string; contents: string }
+	cargoToml: { path: string; contents: string };
 	/** Per-kind set of field names emitted as `Vec<String>` (list shape).
 	 *  Used by the cli.ts template-copy step to rewrite scalar-filter
 	 *  calls (e.g. `| isPresent`) into their list-variant counterparts
 	 *  (`| isPresentList`) when the field is list-shaped. */
-	listShapedFieldsByKind: Map<string, Set<string>>
+	listShapedFieldsByKind: Map<string, Set<string>>;
 }
 
 function hashRsHeader(lang: Grammar): string {
 	return `// @generated from packages/${lang}/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --rust-render
+// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src
 //
 // This file carries the SHA-256 digest of the template bundle at codegen
 // time. The napi binding (sittir-${lang}-napi) exports it as
@@ -63,23 +61,23 @@ function hashRsHeader(lang: Grammar): string {
 // (packages/${lang}/src/backend.ts) compares it against the TS-side
 // hash to detect drift between the baked Rust binary and the TS
 // templates, falling through to the TS engine on mismatch (FR-020).
-`
+`;
 }
 
 function hashTsHeader(lang: Grammar): string {
 	return `// @generated from packages/${lang}/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --rust-render
+// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src
 //
 // Companion to packages/${lang}/rust-render/src/hash.rs; the two must
 // agree byte-for-byte at runtime for the native backend to be picked
 // (FR-020). Mismatch is caught by packages/${lang}/src/backend.ts and
 // falls through to the TS engine silently.
-`
+`;
 }
 
 function templatesRsHeader(lang: Grammar): string {
 	return `// @generated from packages/${lang}/node-model.json5 and packages/${lang}/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --rust-render
+// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src
 //
 // Per-kind askama template structs + render_dispatch + GrammarMeta impl
 // for the ${lang} grammar. Every struct in this file is backed by a
@@ -93,14 +91,14 @@ function templatesRsHeader(lang: Grammar): string {
 // Askama parses each \`.jinja\` at \`cargo build\` time — any mismatch
 // between a template's referenced variables and its backing struct's
 // fields is caught at compile time (FR-008). If you see a build error
-// here, the codegen is out of sync: regenerate via the command above.`
+// here, the codegen is out of sync: regenerate via the command above.`;
 }
 
 function cargoTomlContents(lang: Grammar): string {
 	// Keep synced with the T005 stub shape. askama/serde/sittir-core are
 	// workspace-declared so the per-crate manifests inherit versions.
 	return `# @generated from packages/${lang}/node-model.json5 — do not hand-edit.
-# Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --rust-render
+# Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src
 [package]
 name = "sittir-${lang}-render"
 version = "0.0.0"
@@ -114,7 +112,7 @@ description = "Generated render dispatch for the ${lang} grammar — codegen out
 sittir-core = { path = "../../../rust/crates/sittir-core" }
 askama = { workspace = true }
 serde = { workspace = true }
-`
+`;
 }
 
 // ----------------------------------------------------------------------
@@ -140,16 +138,32 @@ serde = { workspace = true }
 // promoted keyword field). Dropping it here would shadow the field
 // lookup at struct-derive time.
 const RESERVED_IDENTS = new Set([
-	'true', 'false', 'none', 'null', 'empty',
-	'and', 'or', 'not', 'is',
-	'if', 'elif', 'else', 'endif',
-	'for', 'endfor',
-	'loop',
-])
+	'true',
+	'false',
+	'none',
+	'null',
+	'empty',
+	'and',
+	'or',
+	'not',
+	'is',
+	'if',
+	'elif',
+	'else',
+	'endif',
+	'for',
+	'endfor',
+	'loop'
+]);
 
 const SHARED_POSITIONAL = new Set([
-	'children', 'children_list', 'variant', 'text', 'trailing_sep', 'leading_sep',
-])
+	'children',
+	'children_list',
+	'variant',
+	'text',
+	'trailing_sep',
+	'leading_sep'
+]);
 
 /**
  * Template variable shape — scalar (rendered as a single joined string)
@@ -157,7 +171,7 @@ const SHARED_POSITIONAL = new Set([
  * or a `join*` filter). The distinction drives the generated struct's
  * field type: `String` for scalar, `Vec<String>` for list.
  */
-type IdentShape = 'scalar' | 'list'
+type IdentShape = 'scalar' | 'list';
 
 /**
  * Extract the set of variable identifiers referenced by a Jinja
@@ -178,41 +192,43 @@ type IdentShape = 'scalar' | 'list'
  * a String can't be iterated).
  */
 function scanTemplateIdentifiers(body: string): Map<string, IdentShape> {
-	const out = new Map<string, IdentShape>()
+	const out = new Map<string, IdentShape>();
 	const record = (id: string, shape: IdentShape): void => {
-		if (RESERVED_IDENTS.has(id)) return
-		const prior = out.get(id)
-		if (prior === 'list' || shape === 'list') out.set(id, 'list')
-		else if (prior === undefined) out.set(id, 'scalar')
-	}
+		if (RESERVED_IDENTS.has(id)) return;
+		const prior = out.get(id);
+		if (prior === 'list' || shape === 'list') out.set(id, 'list');
+		else if (prior === undefined) out.set(id, 'scalar');
+	};
 
 	// {{ expr | filter(...) }} — first identifier is the source.
 	// If the very first filter is join / joinWithTrailing / joinWithLeading /
 	// joinWithFlanks the source is list-shaped (the filter iterates).
-	const exprRe = /\{\{-?\s*([a-zA-Z_][a-zA-Z0-9_]*)([^}]*?)-?\}\}/g
-	let m: RegExpExecArray | null
+	const exprRe = /\{\{-?\s*([a-zA-Z_][a-zA-Z0-9_]*)([^}]*?)-?\}\}/g;
+	let m: RegExpExecArray | null;
 	while ((m = exprRe.exec(body)) !== null) {
-		const id = m[1]!
-		const rest = m[2] ?? ''
-		const firstFilter = /\|\s*([a-zA-Z_][a-zA-Z0-9_]*)/.exec(rest)
-		const filterName = firstFilter?.[1] ?? ''
-		const isJoin = filterName === 'join'
-			|| filterName === 'joinWithTrailing'
-			|| filterName === 'joinWithLeading'
-			|| filterName === 'joinWithFlanks'
-		record(id, isJoin ? 'list' : 'scalar')
+		const id = m[1]!;
+		const rest = m[2] ?? '';
+		const firstFilter = /\|\s*([a-zA-Z_][a-zA-Z0-9_]*)/.exec(rest);
+		const filterName = firstFilter?.[1] ?? '';
+		const isJoin =
+			filterName === 'join' ||
+			filterName === 'joinWithTrailing' ||
+			filterName === 'joinWithLeading' ||
+			filterName === 'joinWithFlanks';
+		record(id, isJoin ? 'list' : 'scalar');
 	}
 	// {% if expr %} / {% elif expr %} — first identifier in the condition.
-	const ifRe = /\{%-?\s*(?:if|elif)\s+([a-zA-Z_][a-zA-Z0-9_]*)\b/g
+	const ifRe = /\{%-?\s*(?:if|elif)\s+([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
 	while ((m = ifRe.exec(body)) !== null) {
-		record(m[1]!, 'scalar')
+		record(m[1]!, 'scalar');
 	}
 	// {% for x in y %} — y is the iterable.
-	const forRe = /\{%-?\s*for\s+[a-zA-Z_][a-zA-Z0-9_]*\s+in\s+([a-zA-Z_][a-zA-Z0-9_]*)\b/g
+	const forRe =
+		/\{%-?\s*for\s+[a-zA-Z_][a-zA-Z0-9_]*\s+in\s+([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
 	while ((m = forRe.exec(body)) !== null) {
-		record(m[1]!, 'list')
+		record(m[1]!, 'list');
 	}
-	return out
+	return out;
 }
 
 // ----------------------------------------------------------------------
@@ -220,14 +236,59 @@ function scanTemplateIdentifiers(body: string): Map<string, IdentShape> {
 // ----------------------------------------------------------------------
 
 const RUST_KEYWORDS = new Set([
-	'as', 'break', 'const', 'continue', 'crate', 'else', 'enum', 'extern',
-	'false', 'fn', 'for', 'if', 'impl', 'in', 'let', 'loop', 'match', 'mod',
-	'move', 'mut', 'pub', 'ref', 'return', 'self', 'Self', 'static', 'struct',
-	'super', 'trait', 'true', 'type', 'unsafe', 'use', 'where', 'while',
-	'async', 'await', 'dyn', 'abstract', 'become', 'box', 'do', 'final',
-	'macro', 'override', 'priv', 'typeof', 'unsized', 'virtual', 'yield',
-	'try', 'union',
-])
+	'as',
+	'break',
+	'const',
+	'continue',
+	'crate',
+	'else',
+	'enum',
+	'extern',
+	'false',
+	'fn',
+	'for',
+	'if',
+	'impl',
+	'in',
+	'let',
+	'loop',
+	'match',
+	'mod',
+	'move',
+	'mut',
+	'pub',
+	'ref',
+	'return',
+	'self',
+	'Self',
+	'static',
+	'struct',
+	'super',
+	'trait',
+	'true',
+	'type',
+	'unsafe',
+	'use',
+	'where',
+	'while',
+	'async',
+	'await',
+	'dyn',
+	'abstract',
+	'become',
+	'box',
+	'do',
+	'final',
+	'macro',
+	'override',
+	'priv',
+	'typeof',
+	'unsized',
+	'virtual',
+	'yield',
+	'try',
+	'union'
+]);
 
 /** Keywords that CANNOT be raw identifiers in Rust — they must be
  *  renamed. Used to emit `${kw}_` as a disambiguated field name; the
@@ -237,7 +298,7 @@ const RUST_KEYWORDS = new Set([
  *  reference these names will fail compilation — they require a
  *  template-author-side fix (rename the grammar field or a codegen
  *  pre-pass that renames at emit time). */
-const RUST_NON_RAWABLE_KEYWORDS = new Set(['crate', 'self', 'super', 'Self'])
+const RUST_NON_RAWABLE_KEYWORDS = new Set(['crate', 'self', 'super', 'Self']);
 
 /** Rust keyword → raw-identifier form. Askama lets us declare the
  *  struct field under `r#kw` and still use `{{ kw }}` in the template
@@ -245,9 +306,9 @@ const RUST_NON_RAWABLE_KEYWORDS = new Set(['crate', 'self', 'super', 'Self'])
  *  A small set (`crate` / `self` / `super` / `Self`) can't be raw-
  *  identifier'd — those get a `_`-suffix rename. */
 function rustFieldIdent(id: string): string {
-	if (RUST_NON_RAWABLE_KEYWORDS.has(id)) return `${id}_`
-	if (RUST_KEYWORDS.has(id)) return `r#${id}`
-	return id
+	if (RUST_NON_RAWABLE_KEYWORDS.has(id)) return `${id}_`;
+	if (RUST_KEYWORDS.has(id)) return `r#${id}`;
+	return id;
 }
 
 /** Struct name: PascalCase(kind). Mirrors the AssembledNode.typeName
@@ -258,8 +319,8 @@ function rustFieldIdent(id: string): string {
  *  is the `_`-stripped form for hidden user-facing aliases); falls back
  *  to a pascal conversion for bare kinds. */
 function structNameFor(kind: string, node: AssembledNode | undefined): string {
-	if (node) return `${node.typeName}Template`
-	return `${pascal(kind)}Template`
+	if (node) return `${node.typeName}Template`;
+	return `${pascal(kind)}Template`;
 }
 
 function pascal(s: string): string {
@@ -267,8 +328,8 @@ function pascal(s: string): string {
 		.replace(/^_+/, '') // strip leading underscores (hidden-kind marker)
 		.split('_')
 		.filter(Boolean)
-		.map(p => p.charAt(0).toUpperCase() + p.slice(1))
-		.join('')
+		.map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+		.join('');
 }
 
 // ----------------------------------------------------------------------
@@ -276,46 +337,52 @@ function pascal(s: string): string {
 // ----------------------------------------------------------------------
 
 interface EmittedField {
-	name: string           // raw grammar field name
-	shape: IdentShape      // scalar → String, list → Vec<String>
+	name: string; // raw grammar field name
+	shape: IdentShape; // scalar → String, list → Vec<String>
 }
 
 interface EmittedStruct {
-	name: string
-	kind: string
-	fields: EmittedField[] // non-shared variable names referenced by the template
+	name: string;
+	kind: string;
+	fields: EmittedField[]; // non-shared variable names referenced by the template
 }
 
-function emitStruct(kind: string, body: string, node: AssembledNode | undefined): EmittedStruct {
-	const name = structNameFor(kind, node)
-	const idents = scanTemplateIdentifiers(body)
-	const fields: EmittedField[] = []
+function emitStruct(
+	kind: string,
+	body: string,
+	node: AssembledNode | undefined
+): EmittedStruct {
+	const name = structNameFor(kind, node);
+	const idents = scanTemplateIdentifiers(body);
+	const fields: EmittedField[] = [];
 	for (const [id, shape] of idents) {
-		if (SHARED_POSITIONAL.has(id)) continue
-		fields.push({ name: id, shape })
+		if (SHARED_POSITIONAL.has(id)) continue;
+		fields.push({ name: id, shape });
 	}
-	fields.sort((a, b) => a.name.localeCompare(b.name))
-	return { name, kind, fields }
+	fields.sort((a, b) => a.name.localeCompare(b.name));
+	return { name, kind, fields };
 }
 
-function rustFieldType(shape: IdentShape): string {
-	return shape === 'list' ? 'Vec<String>' : 'String'
+function _rustFieldType(shape: IdentShape): string {
+	return shape === 'list' ? 'Vec<String>' : 'String';
 }
 
 function renderStructDefs(structs: EmittedStruct[]): string {
-	const lines: string[] = []
+	const lines: string[] = [];
 	for (const s of structs) {
-		lines.push(`#[derive(::askama::Template)]`)
-		lines.push(`#[template(path = ${JSON.stringify(`${s.kind}.jinja`)}, escape = "none")]`)
-		lines.push(`pub struct ${s.name} {`)
+		lines.push(`#[derive(::askama::Template)]`);
+		lines.push(
+			`#[template(path = ${JSON.stringify(`${s.kind}.jinja`)}, escape = "none")]`
+		);
+		lines.push(`pub struct ${s.name} {`);
 		// Shared positional fields (always emitted — keeps the struct
 		// uniform even when a template doesn't reference them).
-		lines.push(`    pub children: Vec<String>,`)
-		lines.push(`    pub children_list: Vec<String>,`)
-		lines.push(`    pub variant: String,`)
-		lines.push(`    pub text: String,`)
-		lines.push(`    pub trailing_sep: bool,`)
-		lines.push(`    pub leading_sep: bool,`)
+		lines.push(`    pub children: Vec<String>,`);
+		lines.push(`    pub children_list: Vec<String>,`);
+		lines.push(`    pub variant: String,`);
+		lines.push(`    pub text: String,`);
+		lines.push(`    pub trailing_sep: bool,`);
+		lines.push(`    pub leading_sep: bool,`);
 		// Each user-declared field always emits BOTH a scalar and a
 		// list view (mirrors the shared `children` + `children_list`
 		// pattern). Templates that interpolate / check presence use
@@ -326,60 +393,78 @@ function renderStructDefs(structs: EmittedStruct[]): string {
 		// "not present" via `| isPresent`, so no separate filter is
 		// needed — we never permit null arrays, only empty ones.
 		for (const f of s.fields) {
-			lines.push(`    pub ${rustFieldIdent(f.name)}: String,`)
-			lines.push(`    pub ${rustFieldIdent(f.name)}_list: Vec<String>,`)
+			lines.push(`    pub ${rustFieldIdent(f.name)}: String,`);
+			lines.push(`    pub ${rustFieldIdent(f.name)}_list: Vec<String>,`);
 		}
-		lines.push(`}`)
-		lines.push('')
+		lines.push(`}`);
+		lines.push('');
 	}
-	return lines.join('\n')
+	return lines.join('\n');
 }
 
 function renderDispatchFn(structs: EmittedStruct[]): string {
-	const lines: string[] = []
-	lines.push(`use ::askama::Template as _AskamaTemplate;`)
-	lines.push('')
-	lines.push(`/// Render the given NodeData kind using its generated askama template struct.`)
-	lines.push(`/// Matches on the source kind name (\`_X\` for hidden user-facing aliases,`)
-	lines.push(`/// \`X\` for visible) — mirrors what NodeData.\$type carries at runtime.`)
-	lines.push(`///`)
-	lines.push(`/// The render uses \`render_with_values(ctx.as_values())\` so the`)
-	lines.push(`/// flank-aware filters (\`joinWithTrailing\` / \`joinWithLeading\` /`)
-	lines.push(`/// \`joinWithFlanks\`) can read \`trailing_anon\` / \`leading_anon\` from`)
-	lines.push(`/// the context — matching the TS engine's \`_trailing_anon\` /`)
-	lines.push(`/// \`_leading_anon\` side-channel on the children array.`)
-	lines.push(`pub fn render_dispatch(`)
-	lines.push(`    kind: &str,`)
-	lines.push(`    ctx: &::sittir_core::prepare::TemplateContext,`)
-	lines.push(`) -> Result<String, ::askama::Error> {`)
-	lines.push(`    let _values = ctx.as_values();`)
-	lines.push(`    match kind {`)
+	const lines: string[] = [];
+	lines.push(`use ::askama::Template as _AskamaTemplate;`);
+	lines.push('');
+	lines.push(
+		`/// Render the given NodeData kind using its generated askama template struct.`
+	);
+	lines.push(
+		`/// Matches on the source kind name (\`_X\` for hidden user-facing aliases,`
+	);
+	lines.push(
+		`/// \`X\` for visible) — mirrors what NodeData.$type carries at runtime.`
+	);
+	lines.push(`///`);
+	lines.push(
+		`/// The render uses \`render_with_values(ctx.as_values())\` so the`
+	);
+	lines.push(
+		`/// flank-aware filters (\`joinWithTrailing\` / \`joinWithLeading\` /`
+	);
+	lines.push(
+		`/// \`joinWithFlanks\`) can read \`trailing_anon\` / \`leading_anon\` from`
+	);
+	lines.push(`/// the context — matching the TS engine's \`_trailing_anon\` /`);
+	lines.push(`/// \`_leading_anon\` side-channel on the children array.`);
+	lines.push(`pub fn render_dispatch(`);
+	lines.push(`    kind: &str,`);
+	lines.push(`    ctx: &::sittir_core::prepare::TemplateContext,`);
+	lines.push(`) -> Result<String, ::askama::Error> {`);
+	lines.push(`    let _values = ctx.as_values();`);
+	lines.push(`    match kind {`);
 	for (const s of structs) {
-		lines.push(`        ${JSON.stringify(s.kind)} => {`)
-		lines.push(`            let t = ${s.name} {`)
-		lines.push(`                children: ctx.children_list.clone(),`)
-		lines.push(`                children_list: ctx.children_list.clone(),`)
-		lines.push(`                variant: ctx.variant.clone(),`)
-		lines.push(`                text: ctx.text.clone(),`)
-		lines.push(`                trailing_sep: ctx.trailing_sep,`)
-		lines.push(`                leading_sep: ctx.leading_sep,`)
+		lines.push(`        ${JSON.stringify(s.kind)} => {`);
+		lines.push(`            let t = ${s.name} {`);
+		lines.push(`                children: ctx.children_list.clone(),`);
+		lines.push(`                children_list: ctx.children_list.clone(),`);
+		lines.push(`                variant: ctx.variant.clone(),`);
+		lines.push(`                text: ctx.text.clone(),`);
+		lines.push(`                trailing_sep: ctx.trailing_sep,`);
+		lines.push(`                leading_sep: ctx.leading_sep,`);
 		for (const f of s.fields) {
 			// Dual-view: populate both scalar (joined) and list (per-
 			// element) forms from TemplateContext. Both default to
 			// empty so optional fields don't panic on absence.
-			lines.push(`                ${rustFieldIdent(f.name)}: ctx.fields.get(${JSON.stringify(f.name)}).cloned().unwrap_or_default(),`)
-			lines.push(`                ${rustFieldIdent(f.name)}_list: ctx.fields_list.get(${JSON.stringify(f.name)}).cloned().unwrap_or_default(),`)
+			lines.push(
+				`                ${rustFieldIdent(f.name)}: ctx.fields.get(${JSON.stringify(f.name)}).cloned().unwrap_or_default(),`
+			);
+			lines.push(
+				`                ${rustFieldIdent(f.name)}_list: ctx.fields_list.get(${JSON.stringify(f.name)}).cloned().unwrap_or_default(),`
+			);
 		}
-		lines.push(`            };`)
-		lines.push(`            t.render_with_values(&_values)`)
-		lines.push(`        }`)
+		lines.push(`            };`);
+		lines.push(`            t.render_with_values(&_values)`);
+		lines.push(`        }`);
 	}
-	lines.push(`        other => Err(::askama::Error::Custom(`)
-	lines.push(`            format!("render_dispatch: no template for kind '{}'", other).into(),`)
-	lines.push(`        )),`)
-	lines.push(`    }`)
-	lines.push(`}`)
-	return lines.join('\n')
+	lines.push(`        other => Err(::askama::Error::Custom(`);
+	lines.push(
+		`            format!("render_dispatch: no template for kind '{}'", other).into(),`
+	);
+	lines.push(`        )),`);
+	lines.push(`    }`);
+	lines.push(`}`);
+	return lines.join('\n');
 }
 
 // ----------------------------------------------------------------------
@@ -387,25 +472,25 @@ function renderDispatchFn(structs: EmittedStruct[]): string {
 // ----------------------------------------------------------------------
 
 interface MetaData {
-	separators: Map<string, string> // kind → separator
-	listContainers: Set<string>
-	variants: Map<string, Map<string, string>> // parentKind → (childKind → label)
+	separators: Map<string, string>; // kind → separator
+	listContainers: Set<string>;
+	variants: Map<string, Map<string, string>>; // parentKind → (childKind → label)
 }
 
 function collectMetaData(nodeMap: NodeMap): MetaData {
-	const separators = new Map<string, string>()
-	const listContainers = new Set<string>()
-	const variants = new Map<string, Map<string, string>>()
+	const separators = new Map<string, string>();
+	const listContainers = new Set<string>();
+	const variants = new Map<string, Map<string, string>>();
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!node.userFacing) continue
+		if (!node.userFacing) continue;
 		// Separator / list-container — only meaningful on containers and
 		// branches that expose a repeat separator. `AssembledContainer`
 		// surfaces one directly; branches/polymorphs don't in general.
 		if (node instanceof AssembledContainer) {
-			const sep = node.separator
-			if (sep !== undefined) separators.set(kind, sep)
+			const sep = node.separator;
+			if (sep !== undefined) separators.set(kind, sep);
 			// Every container with children is a list-container.
-			if (node.children.length > 0) listContainers.add(kind)
+			if (node.children.length > 0) listContainers.add(kind);
 		}
 		// Variant-branching polymorphs — `variantChildKinds` holds the
 		// ordered list of alias-target kinds. Map each child kind to the
@@ -413,13 +498,13 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 		// on the same string the TS side emits via readTreeNode's
 		// $variant enrichment.
 		if (node instanceof AssembledPolymorph) {
-			const map = new Map<string, string>()
+			const map = new Map<string, string>();
 			for (const form of node.forms) {
 				// Map form.parentKind's primary child-symbol (form.name's
 				// alias source) → form.name. The tagging is approximate:
 				// we lean on form.name which is the short label the
 				// template's `variant == "xxx"` chain compares against.
-				map.set(form.kind, form.name)
+				map.set(form.kind, form.name);
 				// If this form wraps a single variant child, register the
 				// alias-target kind too so runtime dispatch hits either
 				// spelling.
@@ -428,63 +513,79 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 				// Heuristic pairing: first form that hasn't been paired
 				// yet with a variantChildKind.
 				if (!map.has(childKind)) {
-					const unpaired = node.forms.find(f => !Array.from(map.values()).includes(f.name) || true)
-					if (unpaired) map.set(childKind, unpaired.name)
+					const unpaired = node.forms.find(
+						(f) => !Array.from(map.values()).includes(f.name) || true
+					);
+					if (unpaired) map.set(childKind, unpaired.name);
 				}
 			}
-			if (map.size > 0) variants.set(kind, map)
+			if (map.size > 0) variants.set(kind, map);
 		}
 	}
-	return { separators, listContainers, variants }
+	return { separators, listContainers, variants };
 }
 
 function renderGrammarMeta(lang: Grammar, meta: MetaData): string {
-	const lines: string[] = []
-	lines.push(`/// Per-grammar metadata — separator / variant-label / list-container tables.`)
-	lines.push(`/// Implements the \`sittir_core::prepare::GrammarMeta\` trait.`)
-	lines.push(`pub struct ${pascal(lang)}GrammarMeta;`)
-	lines.push('')
-	lines.push(`impl ::sittir_core::prepare::GrammarMeta for ${pascal(lang)}GrammarMeta {`)
+	const lines: string[] = [];
+	lines.push(
+		`/// Per-grammar metadata — separator / variant-label / list-container tables.`
+	);
+	lines.push(`/// Implements the \`sittir_core::prepare::GrammarMeta\` trait.`);
+	lines.push(`pub struct ${pascal(lang)}GrammarMeta;`);
+	lines.push('');
+	lines.push(
+		`impl ::sittir_core::prepare::GrammarMeta for ${pascal(lang)}GrammarMeta {`
+	);
 	// separator_for
-	lines.push(`    fn separator_for(&self, kind: &str) -> Option<&str> {`)
-	lines.push(`        match kind {`)
-	const sortedSeps = Array.from(meta.separators.entries()).sort(([a], [b]) => a.localeCompare(b))
+	lines.push(`    fn separator_for(&self, kind: &str) -> Option<&str> {`);
+	lines.push(`        match kind {`);
+	const sortedSeps = Array.from(meta.separators.entries()).sort(([a], [b]) =>
+		a.localeCompare(b)
+	);
 	for (const [k, s] of sortedSeps) {
-		lines.push(`            ${JSON.stringify(k)} => Some(${JSON.stringify(s)}),`)
+		lines.push(
+			`            ${JSON.stringify(k)} => Some(${JSON.stringify(s)}),`
+		);
 	}
-	lines.push(`            _ => None,`)
-	lines.push(`        }`)
-	lines.push(`    }`)
+	lines.push(`            _ => None,`);
+	lines.push(`        }`);
+	lines.push(`    }`);
 	// variant_for
-	lines.push(`    fn variant_for(&self, parent_kind: &str, child_kind: &str) -> Option<&str> {`)
-	lines.push(`        match (parent_kind, child_kind) {`)
-	const sortedVariants: [string, string, string][] = []
+	lines.push(
+		`    fn variant_for(&self, parent_kind: &str, child_kind: &str) -> Option<&str> {`
+	);
+	lines.push(`        match (parent_kind, child_kind) {`);
+	const sortedVariants: [string, string, string][] = [];
 	for (const [parent, m] of meta.variants) {
 		for (const [child, label] of m) {
-			sortedVariants.push([parent, child, label])
+			sortedVariants.push([parent, child, label]);
 		}
 	}
-	sortedVariants.sort((a, b) => a[0].localeCompare(b[0]) || a[1].localeCompare(b[1]))
+	sortedVariants.sort(
+		(a, b) => a[0].localeCompare(b[0]) || a[1].localeCompare(b[1])
+	);
 	for (const [p, c, l] of sortedVariants) {
-		lines.push(`            (${JSON.stringify(p)}, ${JSON.stringify(c)}) => Some(${JSON.stringify(l)}),`)
+		lines.push(
+			`            (${JSON.stringify(p)}, ${JSON.stringify(c)}) => Some(${JSON.stringify(l)}),`
+		);
 	}
-	lines.push(`            _ => None,`)
-	lines.push(`        }`)
-	lines.push(`    }`)
+	lines.push(`            _ => None,`);
+	lines.push(`        }`);
+	lines.push(`    }`);
 	// is_list_container
-	lines.push(`    fn is_list_container(&self, kind: &str) -> bool {`)
-	lines.push(`        matches!(kind,`)
-	const sortedList = Array.from(meta.listContainers).sort()
+	lines.push(`    fn is_list_container(&self, kind: &str) -> bool {`);
+	lines.push(`        matches!(kind,`);
+	const sortedList = Array.from(meta.listContainers).sort();
 	if (sortedList.length === 0) {
-		lines.push(`            _ if false => true`)
+		lines.push(`            _ if false => true`);
 	} else {
-		const arms = sortedList.map(k => JSON.stringify(k)).join(' | ')
-		lines.push(`            ${arms}`)
+		const arms = sortedList.map((k) => JSON.stringify(k)).join(' | ');
+		lines.push(`            ${arms}`);
 	}
-	lines.push(`        )`)
-	lines.push(`    }`)
-	lines.push(`}`)
-	return lines.join('\n')
+	lines.push(`        )`);
+	lines.push(`    }`);
+	lines.push(`}`);
+	return lines.join('\n');
 }
 
 // ----------------------------------------------------------------------
@@ -493,14 +594,14 @@ function renderGrammarMeta(lang: Grammar, meta: MetaData): string {
 
 function libRsContents(lang: Grammar): string {
 	return `// @generated from packages/${lang}/node-model.json5 — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --rust-render
+// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src
 
 pub mod hash;
 pub mod templates;
 
 pub use hash::TEMPLATE_BUNDLE_HASH;
 pub use templates::{render_dispatch, ${pascal(lang)}GrammarMeta};
-`
+`;
 }
 
 // ----------------------------------------------------------------------
@@ -515,19 +616,19 @@ pub use templates::{render_dispatch, ${pascal(lang)}GrammarMeta};
  */
 export function emitHashFiles(
 	lang: Grammar,
-	files: readonly TemplateFile[],
+	files: readonly TemplateFile[]
 ): { hashRs: RustRenderEmit['hashRs']; hashTs: RustRenderEmit['hashTs'] } {
-	const hash = computeTemplateBundleHash(files)
+	const hash = computeTemplateBundleHash(files);
 	return {
 		hashRs: {
 			path: `packages/${lang}/rust-render/src/hash.rs`,
-			contents: `${hashRsHeader(lang)}\npub const TEMPLATE_BUNDLE_HASH: &str = "${hash}";\n`,
+			contents: `${hashRsHeader(lang)}\npub const TEMPLATE_BUNDLE_HASH: &str = "${hash}";\n`
 		},
 		hashTs: {
 			path: `packages/${lang}/src/hash.ts`,
-			contents: `${hashTsHeader(lang)}\nexport const TEMPLATE_BUNDLE_HASH = '${hash}'\n`,
-		},
-	}
+			contents: `${hashTsHeader(lang)}\nexport const TEMPLATE_BUNDLE_HASH = '${hash}'\n`
+		}
+	};
 }
 
 /**
@@ -545,23 +646,25 @@ export function emitHashFiles(
 export function emitRenderCrate(
 	lang: Grammar,
 	files: readonly TemplateFile[],
-	nodeMap: NodeMap,
+	nodeMap: NodeMap
 ): RustRenderEmit {
-	const { hashRs, hashTs } = emitHashFiles(lang, files)
-	const structs: EmittedStruct[] = []
+	const { hashRs, hashTs } = emitHashFiles(lang, files);
+	const structs: EmittedStruct[] = [];
 	// Same order the hash function sorts under — deterministic output.
-	const sortedFiles = [...files].sort((a, b) => a.filename.localeCompare(b.filename))
+	const sortedFiles = [...files].sort((a, b) =>
+		a.filename.localeCompare(b.filename)
+	);
 	for (const f of sortedFiles) {
-		if (!f.filename.endsWith('.jinja')) continue
-		const kind = f.filename.slice(0, -'.jinja'.length)
-		const node = nodeMap.nodes.get(kind)
+		if (!f.filename.endsWith('.jinja')) continue;
+		const kind = f.filename.slice(0, -'.jinja'.length);
+		const node = nodeMap.nodes.get(kind);
 		// Only user-facing nodes get templates emitted (see templates.ts
 		// emitJinjaTemplates); if the jinja file exists, the node exists
 		// and is userFacing. Fall through on missing — emit a struct with
 		// just shared fields.
-		structs.push(emitStruct(kind, f.content, node))
+		structs.push(emitStruct(kind, f.content, node));
 	}
-	const meta = collectMetaData(nodeMap)
+	const meta = collectMetaData(nodeMap);
 	const templatesRs = [
 		templatesRsHeader(lang),
 		'',
@@ -589,29 +692,29 @@ export function emitRenderCrate(
 		renderStructDefs(structs),
 		renderDispatchFn(structs),
 		'',
-		renderGrammarMeta(lang, meta),
-	].join('\n')
-	const listShapedFieldsByKind = new Map<string, Set<string>>()
+		renderGrammarMeta(lang, meta)
+	].join('\n');
+	const listShapedFieldsByKind = new Map<string, Set<string>>();
 	for (const s of structs) {
-		const listFields = new Set<string>()
-		for (const f of s.fields) if (f.shape === 'list') listFields.add(f.name)
-		if (listFields.size > 0) listShapedFieldsByKind.set(s.kind, listFields)
+		const listFields = new Set<string>();
+		for (const f of s.fields) if (f.shape === 'list') listFields.add(f.name);
+		if (listFields.size > 0) listShapedFieldsByKind.set(s.kind, listFields);
 	}
 	return {
 		hashRs,
 		hashTs,
 		templatesRs: {
 			path: `packages/${lang}/rust-render/src/templates.rs`,
-			contents: templatesRs + '\n',
+			contents: templatesRs + '\n'
 		},
 		libRs: {
 			path: `packages/${lang}/rust-render/src/lib.rs`,
-			contents: libRsContents(lang),
+			contents: libRsContents(lang)
 		},
 		cargoToml: {
 			path: `packages/${lang}/rust-render/Cargo.toml`,
-			contents: cargoTomlContents(lang),
+			contents: cargoTomlContents(lang)
 		},
-		listShapedFieldsByKind,
-	}
+		listShapedFieldsByKind
+	};
 }

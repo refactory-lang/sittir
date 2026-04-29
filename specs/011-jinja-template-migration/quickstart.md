@@ -58,12 +58,18 @@ All three must be on `origin/master`. Confirmed as of 2026-04-21.
 Create `packages/codegen/src/emitters/jinja-translator.ts` with the mapping rules from `contracts/translator-mapping.md`. Start with the simplest case (Rule 1: single-template branch):
 
 ```ts
-export function translateToJinja(node: AssembledNode, rules: Record<string, Rule>, wordMatcher: RegExp): string {
-  if (node.modelType === 'branch' || node.modelType === 'container') {
-    return translateSingleTemplate(node, rules, wordMatcher);
-  }
-  // ... other modelType cases added incrementally
-  throw new Error(`translateToJinja: unsupported modelType '${node.modelType}' for rule '${node.kind}'`);
+export function translateToJinja(
+	node: AssembledNode,
+	rules: Record<string, Rule>,
+	wordMatcher: RegExp
+): string {
+	if (node.modelType === 'branch' || node.modelType === 'container') {
+		return translateSingleTemplate(node, rules, wordMatcher);
+	}
+	// ... other modelType cases added incrementally
+	throw new Error(
+		`translateToJinja: unsupported modelType '${node.modelType}' for rule '${node.kind}'`
+	);
 }
 ```
 
@@ -135,6 +141,7 @@ pub struct FunctionItemContext<'a> {
 ## Smoke test checklist (per phase)
 
 Phase A:
+
 - [ ] `pnpm test` passes at pre-migration pass/fail baseline
 - [ ] `ls packages/rust/templates/ | wc -l` returns ≈160
 - [ ] `test -f packages/rust/templates.yaml && echo MISSING || echo OK` prints `OK`
@@ -142,6 +149,7 @@ Phase A:
 - [ ] `grep -r '\$[A-Z]' packages/rust/templates/` returns zero matches (all placeholders translated)
 
 Phase B:
+
 - [ ] `cargo build` succeeds across the sittir-render crate
 - [ ] `cargo test -p sittir-render` passes (parity corpus green)
 - [ ] Intentional template-variable typo → `cargo build` fails with clear file + variable error
@@ -168,6 +176,7 @@ Phase B:
 ## Handoff artifacts
 
 Phase A delivers:
+
 - `packages/codegen/src/emitters/jinja-translator.ts` + tests
 - `packages/codegen/src/emitters/templates.ts` rewritten for per-file emission
 - `packages/<grammar>/templates/*.jinja` (generated, committed)
@@ -175,6 +184,7 @@ Phase A delivers:
 - Deleted `packages/<grammar>/templates.yaml`
 
 Phase B delivers:
+
 - `crates/sittir-render/` crate
 - `packages/codegen/src/emitters/rust-source.ts` (new) — emits per-rule askama structs
 - Cross-render parity test green across 3 grammars

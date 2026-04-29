@@ -19,7 +19,7 @@ use std::collections::HashSet;
 /// alphabetically (after the required trio) per the determinism
 /// invariant, but `HashSet` membership is the gate.
 const ALLOWED_KEYS: &[&str] = &[
-    "$type", "$source", "$named", "$fields", "$children", "$text", "$span", "$nodeId",
+    "$type", "$source", "$named", "$fields", "$children", "$text", "$span", "$nodeId", "$format",
 ];
 
 /// Build a NodeData where every optional field is populated, so the
@@ -38,6 +38,7 @@ fn complex_node() -> NodeData {
             text: Some("foo".to_string()),
             span: Some(Span { start: 0, end: 3 }),
             node_id: Some(2),
+            format: None,
         })),
     );
     fields.insert(
@@ -51,6 +52,7 @@ fn complex_node() -> NodeData {
             text: Some("1".to_string()),
             span: Some(Span { start: 5, end: 6 }),
             node_id: Some(3),
+            format: None,
         }]),
     );
     fields.insert("op".to_string(), FieldValue::Text("+".to_string()));
@@ -68,10 +70,12 @@ fn complex_node() -> NodeData {
             text: None,
             span: Some(Span { start: 7, end: 9 }),
             node_id: Some(4),
+            format: None,
         }]),
         text: None,
         span: Some(Span { start: 0, end: 9 }),
         node_id: Some(1),
+        format: None,
     }
 }
 

@@ -24,18 +24,18 @@ Reference implementation of tree-sitter's DSL saved at `specs/005-five-phase-com
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
-| Principle | Status | Notes |
-|-----------|--------|-------|
-| I. Grammar Alignment | PASS | All terminology aligns with tree-sitter: kind, field, named, anonymous, supertype, children. Design doc uses these consistently. |
-| II. Fewer Abstractions | PASS | Consolidates ~36 files into ~8-10. Eliminates scattered helpers, intermediate model types, wrapper layers. Nine model types is the minimum needed (each has distinct emitter behavior). |
-| III. Generated vs Hand-Written | PASS | Compiler code is hand-written. Generated output (types.ts, factories.ts, etc.) unchanged in structure. Clear separation maintained. |
-| IV. Test-First | PASS | E2e validation tests are the correctness contract. Per-phase unit tests added. Golden file snapshots for investigation. |
-| V. Library-First | PASS | Codegen remains a CLI tool; generated packages remain libraries. No new runtime concerns. |
-| VI. Deterministic Output | PASS | All phases are pure functions with deterministic output. Module-level caches eliminated. No order-dependent iteration. |
-| VII. Grammar-Agnostic Pipeline | PASS with caveat | Design eliminates language-specific conditionals. Known existing violation: `emitters/types.ts:63-65` (integer_literal/float_literal/boolean_literal checks) must be removed in this rewrite. |
-| VIII. Non-lossy Transformations | PASS | Optimize preserves all named content. Form collapse preserves mergedRules. Design doc explicitly tracks what Optimize can/cannot change. |
+| Principle                       | Status           | Notes                                                                                                                                                                                         |
+| ------------------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| I. Grammar Alignment            | PASS             | All terminology aligns with tree-sitter: kind, field, named, anonymous, supertype, children. Design doc uses these consistently.                                                              |
+| II. Fewer Abstractions          | PASS             | Consolidates ~36 files into ~8-10. Eliminates scattered helpers, intermediate model types, wrapper layers. Nine model types is the minimum needed (each has distinct emitter behavior).       |
+| III. Generated vs Hand-Written  | PASS             | Compiler code is hand-written. Generated output (types.ts, factories.ts, etc.) unchanged in structure. Clear separation maintained.                                                           |
+| IV. Test-First                  | PASS             | E2e validation tests are the correctness contract. Per-phase unit tests added. Golden file snapshots for investigation.                                                                       |
+| V. Library-First                | PASS             | Codegen remains a CLI tool; generated packages remain libraries. No new runtime concerns.                                                                                                     |
+| VI. Deterministic Output        | PASS             | All phases are pure functions with deterministic output. Module-level caches eliminated. No order-dependent iteration.                                                                        |
+| VII. Grammar-Agnostic Pipeline  | PASS with caveat | Design eliminates language-specific conditionals. Known existing violation: `emitters/types.ts:63-65` (integer_literal/float_literal/boolean_literal checks) must be removed in this rewrite. |
+| VIII. Non-lossy Transformations | PASS             | Optimize preserves all named content. Form collapse preserves mergedRules. Design doc explicitly tracks what Optimize can/cannot change.                                                      |
 
 **Gate result: PASS** — no violations requiring justification.
 
@@ -94,26 +94,26 @@ packages/codegen/src/__tests__/
 
 ### Files Deleted (absorbed into phases)
 
-| Current file | Absorbed into |
-|---|---|
+| Current file          | Absorbed into                                                                        |
+| --------------------- | ------------------------------------------------------------------------------------ |
 | `enriched-grammar.ts` | `link.ts` (classification, field extraction), `assemble.ts` (field/child derivation) |
-| `node-model.ts` | `assemble.ts` (node creation, model type classification) |
-| `build-model.ts` | `evaluate.ts` (grammar building), `assemble.ts` (node assembly) |
-| `factoring.ts` | `optimize.ts` (choice fan-out, variant construction, prefix/suffix factoring) |
-| `hydration.ts` | `assemble.ts` (field/child extraction from rules) |
-| `naming.ts` | `assemble.ts` (nameNode, nameField) |
-| `optimization.ts` | `assemble.ts` (computeSignatures, collapseKinds) |
-| `classify.ts` | `assemble.ts` (classifyNode, simplifyRule) |
-| `grammar-reader.ts` | `evaluate.ts` (grammar loading) |
-| `grammar.ts` | `evaluate.ts` (grammar parsing) |
-| `overrides.ts` | `evaluate.ts` (grammar extension processing) |
-| `semantic-aliases.ts` | `link.ts` (absorbed into resolution) |
-| `token-attachment.ts` | `link.ts` or `assemble.ts` |
-| `token-names.ts` | `optimize.ts` (tokenToName) |
-| `grammar-model.ts` | Eliminated (model types on AssembledNode) |
-| `node-types.ts` | `link.ts` (validation only) |
-| `kind-projections.ts` | `assemble.ts` (buildProjections, projectKinds) |
-| `emitters/rules.ts` | `emitters/templates.ts` |
+| `node-model.ts`       | `assemble.ts` (node creation, model type classification)                             |
+| `build-model.ts`      | `evaluate.ts` (grammar building), `assemble.ts` (node assembly)                      |
+| `factoring.ts`        | `optimize.ts` (choice fan-out, variant construction, prefix/suffix factoring)        |
+| `hydration.ts`        | `assemble.ts` (field/child extraction from rules)                                    |
+| `naming.ts`           | `assemble.ts` (nameNode, nameField)                                                  |
+| `optimization.ts`     | `assemble.ts` (computeSignatures, collapseKinds)                                     |
+| `classify.ts`         | `assemble.ts` (classifyNode, simplifyRule)                                           |
+| `grammar-reader.ts`   | `evaluate.ts` (grammar loading)                                                      |
+| `grammar.ts`          | `evaluate.ts` (grammar parsing)                                                      |
+| `overrides.ts`        | `evaluate.ts` (grammar extension processing)                                         |
+| `semantic-aliases.ts` | `link.ts` (absorbed into resolution)                                                 |
+| `token-attachment.ts` | `link.ts` or `assemble.ts`                                                           |
+| `token-names.ts`      | `optimize.ts` (tokenToName)                                                          |
+| `grammar-model.ts`    | Eliminated (model types on AssembledNode)                                            |
+| `node-types.ts`       | `link.ts` (validation only)                                                          |
+| `kind-projections.ts` | `assemble.ts` (buildProjections, projectKinds)                                       |
+| `emitters/rules.ts`   | `emitters/templates.ts`                                                              |
 
 ## Complexity Tracking
 
@@ -124,6 +124,7 @@ packages/codegen/src/__tests__/
 **Approach**: Big bang rewrite. All current codegen source files are replaced in a single branch. No incremental migration, no parallel pipeline, no adapter shims.
 
 **Validation**:
+
 1. **Before starting**: Capture golden file snapshots of current output for all three grammars
 2. **During development**: Run e2e validation tests after each phase is completed
 3. **Before merge**: Full diff of golden snapshots for investigation; all e2e tests must pass

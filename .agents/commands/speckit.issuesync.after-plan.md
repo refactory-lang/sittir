@@ -2,9 +2,9 @@
 description: Sync linked issue status for after_plan hook.
 ---
 
-
 <!-- Extension: workflows -->
 <!-- Config: .specify/extensions/workflows/ -->
+
 Run:
 
 ```bash

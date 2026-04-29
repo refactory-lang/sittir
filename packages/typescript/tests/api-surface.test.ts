@@ -6,25 +6,25 @@
  * the rationale + invariants this gates.
  */
 
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from 'vitest';
 
 describe('@sittir/typescript — API surface snapshot (SC-008)', () => {
-    test('top-level exports', async () => {
-        const mod = (await import('@sittir/typescript')) as Record<string, unknown>
-        const surface: Record<string, string> = {}
-        for (const name of Object.keys(mod).sort()) {
-            const value = mod[name]
-            surface[name] =
-                value === null
-                    ? 'null'
-                    : typeof value === 'function'
-                      ? 'function'
-                      : typeof value === 'object'
-                        ? Array.isArray(value)
-                            ? 'array'
-                            : 'object'
-                        : typeof value
-        }
-        expect(surface).toMatchSnapshot()
-    })
-})
+	test('top-level exports', async () => {
+		const mod = (await import('@sittir/typescript')) as Record<string, unknown>;
+		const surface: Record<string, string> = {};
+		for (const name of Object.keys(mod).sort()) {
+			const value = mod[name];
+			surface[name] =
+				value === null
+					? 'null'
+					: typeof value === 'function'
+						? 'function'
+						: typeof value === 'object'
+							? Array.isArray(value)
+								? 'array'
+								: 'object'
+							: typeof value;
+		}
+		expect(surface).toMatchSnapshot();
+	});
+});

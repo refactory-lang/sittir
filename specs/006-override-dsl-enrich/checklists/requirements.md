@@ -50,6 +50,7 @@ All requirements met by branch `006-override-dsl-enrich` (commits 073b881..HEAD)
 - ✅ Workspace: 1107/1107 tests pass, type-check clean across all packages, lint 0 errors
 
 Deferred to follow-up specs:
+
 - Re-enable keyword-prefix promotion in enrich after rust/python regression root cause
 - Remove `promoteOptionalKeywordFields` from Link once enrich subsumes it
 - Major architectural cleanup: switch sittir's pipeline to consume override-compiled parse trees, deleting Link's `inferFieldNames`/`promotePolymorph`/`promoteOptionalKeywordFields` and wrap.ts/readNode promotion heuristics (the `node-types.json` from override-compiled python confirms field labels survive into the parse tree natively)

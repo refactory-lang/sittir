@@ -13,6 +13,7 @@
 - **Optional** — `cargo-criterion` for Rust-side benchmarks; `@napi-rs/cli` is a workspace devDependency (will be added in Phase 2).
 
 The MVP does NOT require:
+
 - `wasm-pack` / Emscripten (WASM path is deferred).
 - A published crates.io account (crate publication is deferred).
 
@@ -79,25 +80,27 @@ The first `cargo build` on a fresh checkout downloads `tree-sitter`, `ast-grep-c
 
 ## Regenerating the Rust render crates
 
-Per-grammar generation is triggered through the existing codegen CLI, now with an added `--rust-render` flag:
+Per-grammar generation is triggered through `--all`, which now emits both TS
+and native rust-render artifacts in a single pass:
 
 ```bash
 npx tsx packages/codegen/src/cli.ts \
   --grammar rust \
   --all \
-  --rust-render \
   --output packages/rust/src
 
 # Same for typescript, python
 ```
 
 This emits (per grammar):
+
 - The existing TS output (unchanged).
 - `packages/{lang}/rust-render/src/templates.rs` — `match kind { ... }` dispatch + embedded templates.
 - `packages/{lang}/rust-render/src/hash.rs` — `pub const TEMPLATE_BUNDLE_HASH`.
 - `packages/{lang}/src/hash.ts` — `export const TEMPLATE_BUNDLE_HASH` (matches Rust const byte-for-byte).
 
 After regeneration, rebuild the Rust workspace:
+
 ```bash
 cd rust && cargo build --workspace
 ```
@@ -109,8 +112,8 @@ cd rust && cargo build --workspace
 The shared parity fixtures are emitted by codegen from the existing round-trip validator's corpus:
 
 ```bash
-# Generate fixtures (part of the codegen run above; or run standalone)
-npx tsx packages/codegen/src/cli.ts --grammar rust --fixtures-only
+# Fixtures are emitted as part of the normal --all regen run:
+npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src
 
 # Rust-side parity run (byte-identical render + semantic round-trip)
 cd rust && cargo test -p sittir-parity-tests
@@ -127,17 +130,17 @@ A failure on the byte-identical partition means the Rust and TS render engines d
 
 ```ts
 // example-codemod.ts
-import { getActiveBackend, findMatches, wrap, readNode } from "@sittir/rust";
+import { getActiveBackend, findMatches, wrap, readNode } from '@sittir/rust';
 
-console.log("backend:", getActiveBackend());
+console.log('backend:', getActiveBackend());
 // → { name: 'native', hashMatch: true } when things are configured right
 
-const source = await fs.readFile("some-file.rs", "utf8");
-const matches = findMatches(source, "fn $NAME($$$PARAMS) { $$$BODY }");
+const source = await fs.readFile('some-file.rs', 'utf8');
+const matches = findMatches(source, 'fn $NAME($$$PARAMS) { $$$BODY }');
 for (const match of matches) {
-  const node = wrap(match);              // existing TS API
-  console.log(node.$fields.name.$text);
-  // ... codemod logic ...
+	const node = wrap(match); // existing TS API
+	console.log(node.$fields.name.$text);
+	// ... codemod logic ...
 }
 ```
 
@@ -183,16 +186,16 @@ New grammars inherit the Rust path automatically:
 
 ## Common operations cheat-sheet
 
-| Task | Command |
-|---|---|
-| Full rebuild (Rust + TS) | `pnpm -r run type-check && cd rust && cargo build --workspace` |
-| Regenerate all grammars (TS + Rust) | `pnpm -r exec npx tsx packages/codegen/src/cli.ts --grammar $G --all --rust-render` (loop over G) |
-| Run all tests | `pnpm test && cd rust && cargo test --workspace` |
-| Run only parity tests | `cd rust && cargo test -p sittir-parity-tests` |
-| Benchmark (micro) | `cd rust && cargo bench -p sittir-core` |
-| Benchmark (macro, wall-clock) | `./scripts/bench-codemod.sh native && ./scripts/bench-codemod.sh typescript` (script TBD in Phase 2) |
-| Force TS fallback | `SITTIR_BACKEND=typescript <command>` |
-| Diagnose backend | `SITTIR_BACKEND_DEBUG=1 <command>` |
+| Task                                | Command                                                                                              |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Full rebuild (Rust + TS)            | `pnpm -r run type-check && cd rust && cargo build --workspace`                                       |
+| Regenerate all grammars (TS + Rust) | `npx tsx packages/codegen/src/cli.ts --grammar $G --all --output packages/$G/src` (loop over G)      |
+| Run all tests                       | `pnpm test && cd rust && cargo test --workspace`                                                     |
+| Run only parity tests               | `cd rust && cargo test -p sittir-parity-tests`                                                       |
+| Benchmark (micro)                   | `cd rust && cargo bench -p sittir-core`                                                              |
+| Benchmark (macro, wall-clock)       | `./scripts/bench-codemod.sh native && ./scripts/bench-codemod.sh typescript` (script TBD in Phase 2) |
+| Force TS fallback                   | `SITTIR_BACKEND=typescript <command>`                                                                |
+| Diagnose backend                    | `SITTIR_BACKEND_DEBUG=1 <command>`                                                                   |
 
 ---
 
@@ -200,7 +203,7 @@ New grammars inherit the Rust path automatically:
 
 **Symptom**: `cargo build` fails with "file not found" in `templates.rs` on a fresh checkout.
 **Cause**: the Rust render crate is codegen-emitted. A fresh checkout has the stub crate but no generated contents.
-**Fix**: run the codegen step first (`npx tsx packages/codegen/src/cli.ts --grammar rust --all --rust-render`).
+**Fix**: run the codegen step first (`npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src`).
 
 **Symptom**: `getActiveBackend()` returns `typescript` on a supported platform.
 **Cause #1**: `@sittir/{lang}-native` not installed (check `node_modules/`).

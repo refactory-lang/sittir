@@ -25,66 +25,62 @@
 // candidates target the same kind).
 // ---------------------------------------------------------------
 export const suggestedTransforms = {
+	// [held] polymorph — 1 choice position(s), 2 arm(s) total
+	// note: choice(s) sit inside field() wrapper(s) — variant() will supersede: body
+	_closure_expression_expr: {
+		'0': variant('form0'),
+		'1': variant('form1')
+	},
 
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: body
-  _closure_expression_expr: {
-      "0": variant("form0"),
-      "1": variant("form1"),
-  },
+	// [held] polymorph — 1 choice position(s), 5 arm(s) total
+	_let_chain: {
+		'0': variant('form0'),
+		'1': variant('form1'),
+		'2': variant('form2'),
+		'3': variant('form3'),
+		'4': variant('form4')
+	},
 
-  // [held] polymorph — 1 choice position(s), 5 arm(s) total
-  _let_chain: {
-      "0": variant("form0"),
-      "1": variant("form1"),
-      "2": variant("form2"),
-      "3": variant("form3"),
-      "4": variant("form4"),
-  },
+	// _non_special_token: 1 inferred field(s)
+	// [held] _non_special_token field 'mutable_specifier' on $.mutable_specifier — 100% agreement, 9 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
+	// _pointer_type_mut: 1 inferred field(s)
+	// [held] _pointer_type_mut field 'mutable_specifier' on $.mutable_specifier — 100% agreement, 9 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
-  // _non_special_token: 1 inferred field(s)
-  // [held] _non_special_token field 'mutable_specifier' on $.mutable_specifier — 100% agreement, 9 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+	// _reference_expression_raw_mut: 1 inferred field(s)
+	_reference_expression_raw_mut: {
+		// [held] 100% agreement, 9 parents
+		1: field('mutable_specifier') // $.mutable_specifier
+	},
 
-  // _pointer_type_mut: 1 inferred field(s)
-  // [held] _pointer_type_mut field 'mutable_specifier' on $.mutable_specifier — 100% agreement, 9 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+	// _struct_item_brace: 1 inferred field(s)
+	// [held] _struct_item_brace field 'where_clause' on $.where_clause — 89% agreement, 9 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
-  // _reference_expression_raw_mut: 1 inferred field(s)
-  _reference_expression_raw_mut: {
-      // [held] 100% agreement, 9 parents
-      1: field("mutable_specifier"),  // $.mutable_specifier
-  },
+	// _struct_item_tuple: 1 inferred field(s)
+	// [held] _struct_item_tuple field 'where_clause' on $.where_clause — 89% agreement, 9 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
-  // _struct_item_brace: 1 inferred field(s)
-  // [held] _struct_item_brace field 'where_clause' on $.where_clause — 89% agreement, 9 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+	// reference_expression: 1 inferred field(s)
+	// [held] reference_expression field 'mutable_specifier' on $.mutable_specifier — 100% agreement, 9 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+	// [held] polymorph — 1 choice position(s), 2 arm(s) total
+	reference_expression: {
+		'1/0': variant('form0'),
+		'1/1': variant('form1')
+	},
 
-  // _struct_item_tuple: 1 inferred field(s)
-  // [held] _struct_item_tuple field 'where_clause' on $.where_clause — 89% agreement, 9 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+	// [held] polymorph — 1 choice position(s), 2 arm(s) total
+	return_expression: {
+		'0': variant('form0'),
+		'1': variant('form1')
+	},
 
+	// type_arguments: 1 inferred field(s)
+	// [held] type_arguments field 'bounds' on $.trait_bounds — 100% agreement, 5 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
-  // reference_expression: 1 inferred field(s)
-  // [held] reference_expression field 'mutable_specifier' on $.mutable_specifier — 100% agreement, 9 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  reference_expression: {
-      "1/0": variant("form0"),
-      "1/1": variant("form1"),
-  },
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  return_expression: {
-      "0": variant("form0"),
-      "1": variant("form1"),
-  },
-
-  // type_arguments: 1 inferred field(s)
-  // [held] type_arguments field 'bounds' on $.trait_bounds — 100% agreement, 5 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  yield_expression: {
-      "0": variant("form0"),
-      "1": variant("form1"),
-  },
-
+	// [held] polymorph — 1 choice position(s), 2 arm(s) total
+	yield_expression: {
+		'0': variant('form0'),
+		'1': variant('form1')
+	}
 };
 
 // ---------------------------------------------------------------
@@ -94,202 +90,753 @@ export const suggestedTransforms = {
 // callback.
 // ---------------------------------------------------------------
 export const suggestedRules = {
-  // --- Promoted supertypes (add matching names to grammar.supertypes) ---
-  // [applied] promoted supertype
-  _condition: $ => choice($.unary_expression, $.reference_expression, $.try_expression, $.binary_expression, $.assignment_expression, $.compound_assignment_expr, $.type_cast_expression, $.call_expression, $.return_expression, $.yield_expression, $.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.self, $.scoped_identifier, $.generic_function, $.await_expression, $.field_expression, $.array_expression, $.tuple_expression, $.macro_invocation, $.unit_expression, $.break_expression, $.continue_expression, $.index_expression, $.metavariable, $.closure_expression, $.parenthesized_expression, $.struct_expression, $.unsafe_block, $.async_block, $.gen_block, $.try_block, $.block, $.if_expression, $.match_expression, $.while_expression, $.loop_expression, $.for_expression, $.const_block, $.range_expression, $.let_condition, $._let_chain),
+	// --- Promoted supertypes (add matching names to grammar.supertypes) ---
+	// [applied] promoted supertype
+	_condition: ($) =>
+		choice(
+			$.unary_expression,
+			$.reference_expression,
+			$.try_expression,
+			$.binary_expression,
+			$.assignment_expression,
+			$.compound_assignment_expr,
+			$.type_cast_expression,
+			$.call_expression,
+			$.return_expression,
+			$.yield_expression,
+			$.string_literal,
+			$.raw_string_literal,
+			$.char_literal,
+			$.boolean_literal,
+			$.integer_literal,
+			$.float_literal,
+			$.identifier,
+			$.self,
+			$.scoped_identifier,
+			$.generic_function,
+			$.await_expression,
+			$.field_expression,
+			$.array_expression,
+			$.tuple_expression,
+			$.macro_invocation,
+			$.unit_expression,
+			$.break_expression,
+			$.continue_expression,
+			$.index_expression,
+			$.metavariable,
+			$.closure_expression,
+			$.parenthesized_expression,
+			$.struct_expression,
+			$.unsafe_block,
+			$.async_block,
+			$.gen_block,
+			$.try_block,
+			$.block,
+			$.if_expression,
+			$.match_expression,
+			$.while_expression,
+			$.loop_expression,
+			$.for_expression,
+			$.const_block,
+			$.range_expression,
+			$.let_condition,
+			$._let_chain
+		),
 
-  // [applied] promoted supertype
-  _declaration_statement: $ => choice($.const_item, $.macro_invocation, $.macro_definition, $.empty_statement, $.attribute_item, $.inner_attribute_item, $.mod_item, $.foreign_mod_item, $.struct_item, $.union_item, $.enum_item, $.type_item, $.function_item, $.function_signature_item, $.impl_item, $.trait_item, $.associated_type, $.let_declaration, $.use_declaration, $.extern_crate_declaration, $.static_item),
+	// [applied] promoted supertype
+	_declaration_statement: ($) =>
+		choice(
+			$.const_item,
+			$.macro_invocation,
+			$.macro_definition,
+			$.empty_statement,
+			$.attribute_item,
+			$.inner_attribute_item,
+			$.mod_item,
+			$.foreign_mod_item,
+			$.struct_item,
+			$.union_item,
+			$.enum_item,
+			$.type_item,
+			$.function_item,
+			$.function_signature_item,
+			$.impl_item,
+			$.trait_item,
+			$.associated_type,
+			$.let_declaration,
+			$.use_declaration,
+			$.extern_crate_declaration,
+			$.static_item
+		),
 
-  // [applied] promoted supertype
-  _delim_tokens: $ => choice($.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.mutable_specifier, $.self, $.super, $.crate, $.delim_token_tree),
+	// [applied] promoted supertype
+	_delim_tokens: ($) =>
+		choice(
+			$.string_literal,
+			$.raw_string_literal,
+			$.char_literal,
+			$.boolean_literal,
+			$.integer_literal,
+			$.float_literal,
+			$.identifier,
+			$.mutable_specifier,
+			$.self,
+			$.super,
+			$.crate,
+			$.delim_token_tree
+		),
 
-  // [applied] promoted supertype
-  _expression: $ => choice($.unary_expression, $.reference_expression, $.try_expression, $.binary_expression, $.assignment_expression, $.compound_assignment_expr, $.type_cast_expression, $.call_expression, $.return_expression, $.yield_expression, $.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.self, $.scoped_identifier, $.generic_function, $.await_expression, $.field_expression, $.array_expression, $.tuple_expression, $.macro_invocation, $.unit_expression, $.break_expression, $.continue_expression, $.index_expression, $.metavariable, $.closure_expression, $.parenthesized_expression, $.struct_expression, $.unsafe_block, $.async_block, $.gen_block, $.try_block, $.block, $.if_expression, $.match_expression, $.while_expression, $.loop_expression, $.for_expression, $.const_block, $.range_expression),
+	// [applied] promoted supertype
+	_expression: ($) =>
+		choice(
+			$.unary_expression,
+			$.reference_expression,
+			$.try_expression,
+			$.binary_expression,
+			$.assignment_expression,
+			$.compound_assignment_expr,
+			$.type_cast_expression,
+			$.call_expression,
+			$.return_expression,
+			$.yield_expression,
+			$.string_literal,
+			$.raw_string_literal,
+			$.char_literal,
+			$.boolean_literal,
+			$.integer_literal,
+			$.float_literal,
+			$.identifier,
+			$.self,
+			$.scoped_identifier,
+			$.generic_function,
+			$.await_expression,
+			$.field_expression,
+			$.array_expression,
+			$.tuple_expression,
+			$.macro_invocation,
+			$.unit_expression,
+			$.break_expression,
+			$.continue_expression,
+			$.index_expression,
+			$.metavariable,
+			$.closure_expression,
+			$.parenthesized_expression,
+			$.struct_expression,
+			$.unsafe_block,
+			$.async_block,
+			$.gen_block,
+			$.try_block,
+			$.block,
+			$.if_expression,
+			$.match_expression,
+			$.while_expression,
+			$.loop_expression,
+			$.for_expression,
+			$.const_block,
+			$.range_expression
+		),
 
-  // [applied] promoted supertype
-  _expression_ending_with_block: $ => choice($.unsafe_block, $.async_block, $.gen_block, $.try_block, $.block, $.if_expression, $.match_expression, $.while_expression, $.loop_expression, $.for_expression, $.const_block),
+	// [applied] promoted supertype
+	_expression_ending_with_block: ($) =>
+		choice(
+			$.unsafe_block,
+			$.async_block,
+			$.gen_block,
+			$.try_block,
+			$.block,
+			$.if_expression,
+			$.match_expression,
+			$.while_expression,
+			$.loop_expression,
+			$.for_expression,
+			$.const_block
+		),
 
-  // [applied] promoted supertype
-  _expression_except_range: $ => choice($.unary_expression, $.reference_expression, $.try_expression, $.binary_expression, $.assignment_expression, $.compound_assignment_expr, $.type_cast_expression, $.call_expression, $.return_expression, $.yield_expression, $.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.self, $.scoped_identifier, $.generic_function, $.await_expression, $.field_expression, $.array_expression, $.tuple_expression, $.macro_invocation, $.unit_expression, $.break_expression, $.continue_expression, $.index_expression, $.metavariable, $.closure_expression, $.parenthesized_expression, $.struct_expression, $.unsafe_block, $.async_block, $.gen_block, $.try_block, $.block, $.if_expression, $.match_expression, $.while_expression, $.loop_expression, $.for_expression, $.const_block),
+	// [applied] promoted supertype
+	_expression_except_range: ($) =>
+		choice(
+			$.unary_expression,
+			$.reference_expression,
+			$.try_expression,
+			$.binary_expression,
+			$.assignment_expression,
+			$.compound_assignment_expr,
+			$.type_cast_expression,
+			$.call_expression,
+			$.return_expression,
+			$.yield_expression,
+			$.string_literal,
+			$.raw_string_literal,
+			$.char_literal,
+			$.boolean_literal,
+			$.integer_literal,
+			$.float_literal,
+			$.identifier,
+			$.self,
+			$.scoped_identifier,
+			$.generic_function,
+			$.await_expression,
+			$.field_expression,
+			$.array_expression,
+			$.tuple_expression,
+			$.macro_invocation,
+			$.unit_expression,
+			$.break_expression,
+			$.continue_expression,
+			$.index_expression,
+			$.metavariable,
+			$.closure_expression,
+			$.parenthesized_expression,
+			$.struct_expression,
+			$.unsafe_block,
+			$.async_block,
+			$.gen_block,
+			$.try_block,
+			$.block,
+			$.if_expression,
+			$.match_expression,
+			$.while_expression,
+			$.loop_expression,
+			$.for_expression,
+			$.const_block
+		),
 
-  // [applied] promoted supertype
-  _literal: $ => choice($.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal),
+	// [applied] promoted supertype
+	_literal: ($) =>
+		choice(
+			$.string_literal,
+			$.raw_string_literal,
+			$.char_literal,
+			$.boolean_literal,
+			$.integer_literal,
+			$.float_literal
+		),
 
-  // [applied] promoted supertype
-  _literal_pattern: $ => choice($.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.negative_literal),
+	// [applied] promoted supertype
+	_literal_pattern: ($) =>
+		choice(
+			$.string_literal,
+			$.raw_string_literal,
+			$.char_literal,
+			$.boolean_literal,
+			$.integer_literal,
+			$.float_literal,
+			$.negative_literal
+		),
 
-  // [applied] promoted supertype
-  _non_delim_token: $ => choice($.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.mutable_specifier, $.self, $.super, $.crate),
+	// [applied] promoted supertype
+	_non_delim_token: ($) =>
+		choice(
+			$.string_literal,
+			$.raw_string_literal,
+			$.char_literal,
+			$.boolean_literal,
+			$.integer_literal,
+			$.float_literal,
+			$.identifier,
+			$.mutable_specifier,
+			$.self,
+			$.super,
+			$.crate
+		),
 
-  // [applied] promoted supertype
-  _path: $ => choice($.self, $.identifier, $.metavariable, $.super, $.crate, $.scoped_identifier),
+	// [applied] promoted supertype
+	_path: ($) =>
+		choice(
+			$.self,
+			$.identifier,
+			$.metavariable,
+			$.super,
+			$.crate,
+			$.scoped_identifier
+		),
 
-  // [applied] promoted supertype
-  _pattern: $ => choice($.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.negative_literal, $.identifier, $.scoped_identifier, $.generic_pattern, $.tuple_pattern, $.tuple_struct_pattern, $.struct_pattern, $.ref_pattern, $.slice_pattern, $.captured_pattern, $.reference_pattern, $.remaining_field_pattern, $.mut_pattern, $.range_pattern, $.or_pattern, $.const_block, $.macro_invocation, $._wildcard_pattern),
+	// [applied] promoted supertype
+	_pattern: ($) =>
+		choice(
+			$.string_literal,
+			$.raw_string_literal,
+			$.char_literal,
+			$.boolean_literal,
+			$.integer_literal,
+			$.float_literal,
+			$.negative_literal,
+			$.identifier,
+			$.scoped_identifier,
+			$.generic_pattern,
+			$.tuple_pattern,
+			$.tuple_struct_pattern,
+			$.struct_pattern,
+			$.ref_pattern,
+			$.slice_pattern,
+			$.captured_pattern,
+			$.reference_pattern,
+			$.remaining_field_pattern,
+			$.mut_pattern,
+			$.range_pattern,
+			$.or_pattern,
+			$.const_block,
+			$.macro_invocation,
+			$._wildcard_pattern
+		),
 
-  // [applied] promoted supertype
-  _statement: $ => choice($.expression_statement, $.const_item, $.macro_invocation, $.macro_definition, $.empty_statement, $.attribute_item, $.inner_attribute_item, $.mod_item, $.foreign_mod_item, $.struct_item, $.union_item, $.enum_item, $.type_item, $.function_item, $.function_signature_item, $.impl_item, $.trait_item, $.associated_type, $.let_declaration, $.use_declaration, $.extern_crate_declaration, $.static_item),
+	// [applied] promoted supertype
+	_statement: ($) =>
+		choice(
+			$.expression_statement,
+			$.const_item,
+			$.macro_invocation,
+			$.macro_definition,
+			$.empty_statement,
+			$.attribute_item,
+			$.inner_attribute_item,
+			$.mod_item,
+			$.foreign_mod_item,
+			$.struct_item,
+			$.union_item,
+			$.enum_item,
+			$.type_item,
+			$.function_item,
+			$.function_signature_item,
+			$.impl_item,
+			$.trait_item,
+			$.associated_type,
+			$.let_declaration,
+			$.use_declaration,
+			$.extern_crate_declaration,
+			$.static_item
+		),
 
-  // [applied] promoted supertype
-  _token_pattern: $ => choice($.token_tree_pattern, $.token_repetition_pattern, $.token_binding_pattern, $.metavariable, $.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.mutable_specifier, $.self, $.super, $.crate),
+	// [applied] promoted supertype
+	_token_pattern: ($) =>
+		choice(
+			$.token_tree_pattern,
+			$.token_repetition_pattern,
+			$.token_binding_pattern,
+			$.metavariable,
+			$.string_literal,
+			$.raw_string_literal,
+			$.char_literal,
+			$.boolean_literal,
+			$.integer_literal,
+			$.float_literal,
+			$.identifier,
+			$.mutable_specifier,
+			$.self,
+			$.super,
+			$.crate
+		),
 
-  // [applied] promoted supertype
-  _tokens: $ => choice($.token_tree, $.token_repetition, $.metavariable, $.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.mutable_specifier, $.self, $.super, $.crate),
+	// [applied] promoted supertype
+	_tokens: ($) =>
+		choice(
+			$.token_tree,
+			$.token_repetition,
+			$.metavariable,
+			$.string_literal,
+			$.raw_string_literal,
+			$.char_literal,
+			$.boolean_literal,
+			$.integer_literal,
+			$.float_literal,
+			$.identifier,
+			$.mutable_specifier,
+			$.self,
+			$.super,
+			$.crate
+		),
 
-  // [applied] promoted supertype
-  _type: $ => choice($.abstract_type, $.reference_type, $.metavariable, $.pointer_type, $.generic_type, $.scoped_type_identifier, $.tuple_type, $.unit_type, $.array_type, $.function_type, $.identifier, $.macro_invocation, $.never_type, $.dynamic_type, $.bounded_type, $.removed_trait_bound, $._primitive_type),
+	// [applied] promoted supertype
+	_type: ($) =>
+		choice(
+			$.abstract_type,
+			$.reference_type,
+			$.metavariable,
+			$.pointer_type,
+			$.generic_type,
+			$.scoped_type_identifier,
+			$.tuple_type,
+			$.unit_type,
+			$.array_type,
+			$.function_type,
+			$._type_identifier,
+			$.macro_invocation,
+			$.never_type,
+			$.dynamic_type,
+			$.bounded_type,
+			$.removed_trait_bound,
+			$._primitive_type
+		),
 
-  // [applied] promoted supertype
-  _use_clause: $ => choice($.self, $.identifier, $.metavariable, $.super, $.crate, $.scoped_identifier, $.use_as_clause, $.use_list, $.scoped_use_list, $.use_wildcard),
+	// [applied] promoted supertype
+	_use_clause: ($) =>
+		choice(
+			$.self,
+			$.identifier,
+			$.metavariable,
+			$.super,
+			$.crate,
+			$.scoped_identifier,
+			$.use_as_clause,
+			$.use_list,
+			$.scoped_use_list,
+			$.use_wildcard
+		),
 
-  // --- Repeated-shape candidates (reused across ≥2 parents) ---
-  // parents: function_item, function_signature_item
-  _shared_2: $ => choice($.identifier, $.metavariable),
+	// --- Repeated-shape candidates (reused across ≥2 parents) ---
+	// parents: function_item, function_signature_item
+	_shared_2: ($) => choice($.identifier, $.metavariable),
 
-  // parents: _function_type_trait_form, struct_pattern
-  _type_identifier: $ => choice($._type_identifier, $.scoped_type_identifier),
-
+	// parents: _function_type_trait_form, struct_pattern
+	_type_identifier: ($) => choice($._type_identifier, $.scoped_type_identifier)
 };
 
 // ---------------------------------------------------------------
 // Raw derivation data — typed arrays for tooling
 // ---------------------------------------------------------------
 export interface PromotedRule {
-  readonly kind: string;
-  readonly classification: 'enum' | 'supertype' | 'terminal' | 'polymorph';
-  readonly applied: boolean;
+	readonly kind: string;
+	readonly classification: 'enum' | 'supertype' | 'terminal' | 'polymorph';
+	readonly applied: boolean;
 }
 export const promotedRules: readonly PromotedRule[] = [
-  { kind: "_condition", classification: "supertype", applied: true },
-  { kind: "_declaration_statement", classification: "supertype", applied: true },
-  { kind: "_delim_tokens", classification: "supertype", applied: true },
-  { kind: "_expression", classification: "supertype", applied: true },
-  { kind: "_expression_ending_with_block", classification: "supertype", applied: true },
-  { kind: "_expression_except_range", classification: "supertype", applied: true },
-  { kind: "_literal", classification: "supertype", applied: true },
-  { kind: "_literal_pattern", classification: "supertype", applied: true },
-  { kind: "_non_delim_token", classification: "supertype", applied: true },
-  { kind: "_path", classification: "supertype", applied: true },
-  { kind: "_pattern", classification: "supertype", applied: true },
-  { kind: "_statement", classification: "supertype", applied: true },
-  { kind: "_token_pattern", classification: "supertype", applied: true },
-  { kind: "_tokens", classification: "supertype", applied: true },
-  { kind: "_type", classification: "supertype", applied: true },
-  { kind: "_use_clause", classification: "supertype", applied: true },
-  { kind: "_line_comment_regular_dslash", classification: "terminal", applied: true },
-  { kind: "char_literal", classification: "terminal", applied: true },
-  { kind: "escape_sequence", classification: "terminal", applied: true },
-  { kind: "integer_literal", classification: "terminal", applied: true },
-  { kind: "unit_expression", classification: "terminal", applied: true },
-  { kind: "unit_type", classification: "terminal", applied: true },
-  { kind: "_block_doc_comment_marker", classification: "polymorph", applied: false },
-  { kind: "_closure_expression_expr", classification: "polymorph", applied: false },
-  { kind: "_let_chain", classification: "polymorph", applied: false },
-  { kind: "_line_doc_comment_marker", classification: "polymorph", applied: false },
-  { kind: "array_expression", classification: "polymorph", applied: true },
-  { kind: "array_expression_list", classification: "polymorph", applied: true },
-  { kind: "array_expression_semi", classification: "polymorph", applied: true },
-  { kind: "closure_expression", classification: "polymorph", applied: true },
-  { kind: "closure_expression_block", classification: "polymorph", applied: true },
-  { kind: "closure_expression_expr", classification: "polymorph", applied: true },
-  { kind: "delim_token_tree", classification: "polymorph", applied: true },
-  { kind: "delim_token_tree_brace", classification: "polymorph", applied: true },
-  { kind: "delim_token_tree_bracket", classification: "polymorph", applied: true },
-  { kind: "delim_token_tree_paren", classification: "polymorph", applied: true },
-  { kind: "expression_statement", classification: "polymorph", applied: true },
-  { kind: "expression_statement_block_ending", classification: "polymorph", applied: true },
-  { kind: "expression_statement_with_semi", classification: "polymorph", applied: true },
-  { kind: "field_pattern", classification: "polymorph", applied: true },
-  { kind: "field_pattern_named", classification: "polymorph", applied: true },
-  { kind: "field_pattern_shorthand", classification: "polymorph", applied: true },
-  { kind: "foreign_mod_item", classification: "polymorph", applied: true },
-  { kind: "foreign_mod_item_body", classification: "polymorph", applied: true },
-  { kind: "foreign_mod_item_semi", classification: "polymorph", applied: true },
-  { kind: "impl_item", classification: "polymorph", applied: true },
-  { kind: "impl_item_body", classification: "polymorph", applied: true },
-  { kind: "impl_item_semi", classification: "polymorph", applied: true },
-  { kind: "line_comment", classification: "polymorph", applied: true },
-  { kind: "line_comment_content", classification: "polymorph", applied: true },
-  { kind: "line_comment_doc", classification: "polymorph", applied: true },
-  { kind: "line_comment_regular_dslash", classification: "polymorph", applied: true },
-  { kind: "macro_definition", classification: "polymorph", applied: true },
-  { kind: "macro_definition_brace", classification: "polymorph", applied: true },
-  { kind: "macro_definition_bracket", classification: "polymorph", applied: true },
-  { kind: "macro_definition_paren", classification: "polymorph", applied: true },
-  { kind: "match_arm", classification: "polymorph", applied: true },
-  { kind: "match_arm_block_ending", classification: "polymorph", applied: true },
-  { kind: "match_arm_with_comma", classification: "polymorph", applied: true },
-  { kind: "mod_item", classification: "polymorph", applied: true },
-  { kind: "mod_item_external", classification: "polymorph", applied: true },
-  { kind: "mod_item_inline", classification: "polymorph", applied: true },
-  { kind: "or_pattern", classification: "polymorph", applied: true },
-  { kind: "or_pattern_binary", classification: "polymorph", applied: true },
-  { kind: "or_pattern_prefix", classification: "polymorph", applied: true },
-  { kind: "pointer_type", classification: "polymorph", applied: true },
-  { kind: "pointer_type_const", classification: "polymorph", applied: true },
-  { kind: "pointer_type_mut", classification: "polymorph", applied: true },
-  { kind: "range_expression", classification: "polymorph", applied: true },
-  { kind: "range_expression_bare", classification: "polymorph", applied: true },
-  { kind: "range_expression_binary", classification: "polymorph", applied: true },
-  { kind: "range_expression_postfix", classification: "polymorph", applied: true },
-  { kind: "range_expression_prefix", classification: "polymorph", applied: true },
-  { kind: "range_pattern", classification: "polymorph", applied: false },
-  { kind: "range_pattern", classification: "polymorph", applied: true },
-  { kind: "range_pattern_left_bare", classification: "polymorph", applied: true },
-  { kind: "range_pattern_left_with_right", classification: "polymorph", applied: true },
-  { kind: "range_pattern_prefix", classification: "polymorph", applied: true },
-  { kind: "reference_expression", classification: "polymorph", applied: false },
-  { kind: "reference_expression_raw_const", classification: "polymorph", applied: true },
-  { kind: "reference_expression_raw_mut", classification: "polymorph", applied: true },
-  { kind: "return_expression", classification: "polymorph", applied: false },
-  { kind: "struct_item", classification: "polymorph", applied: true },
-  { kind: "struct_item_brace", classification: "polymorph", applied: true },
-  { kind: "struct_item_tuple", classification: "polymorph", applied: true },
-  { kind: "struct_item_unit", classification: "polymorph", applied: true },
-  { kind: "token_tree", classification: "polymorph", applied: true },
-  { kind: "token_tree_brace", classification: "polymorph", applied: true },
-  { kind: "token_tree_bracket", classification: "polymorph", applied: true },
-  { kind: "token_tree_paren", classification: "polymorph", applied: true },
-  { kind: "token_tree_pattern", classification: "polymorph", applied: true },
-  { kind: "token_tree_pattern_brace", classification: "polymorph", applied: true },
-  { kind: "token_tree_pattern_bracket", classification: "polymorph", applied: true },
-  { kind: "token_tree_pattern_paren", classification: "polymorph", applied: true },
-  { kind: "visibility_modifier", classification: "polymorph", applied: true },
-  { kind: "visibility_modifier_crate", classification: "polymorph", applied: true },
-  { kind: "visibility_modifier_in_path", classification: "polymorph", applied: true },
-  { kind: "visibility_modifier_pub", classification: "polymorph", applied: true },
-  { kind: "yield_expression", classification: "polymorph", applied: false },
+	{ kind: '_condition', classification: 'supertype', applied: true },
+	{
+		kind: '_declaration_statement',
+		classification: 'supertype',
+		applied: true
+	},
+	{ kind: '_delim_tokens', classification: 'supertype', applied: true },
+	{ kind: '_expression', classification: 'supertype', applied: true },
+	{
+		kind: '_expression_ending_with_block',
+		classification: 'supertype',
+		applied: true
+	},
+	{
+		kind: '_expression_except_range',
+		classification: 'supertype',
+		applied: true
+	},
+	{ kind: '_literal', classification: 'supertype', applied: true },
+	{ kind: '_literal_pattern', classification: 'supertype', applied: true },
+	{ kind: '_non_delim_token', classification: 'supertype', applied: true },
+	{ kind: '_path', classification: 'supertype', applied: true },
+	{ kind: '_pattern', classification: 'supertype', applied: true },
+	{ kind: '_statement', classification: 'supertype', applied: true },
+	{ kind: '_token_pattern', classification: 'supertype', applied: true },
+	{ kind: '_tokens', classification: 'supertype', applied: true },
+	{ kind: '_type', classification: 'supertype', applied: true },
+	{ kind: '_use_clause', classification: 'supertype', applied: true },
+	{
+		kind: '_line_comment_regular_dslash',
+		classification: 'terminal',
+		applied: true
+	},
+	{ kind: 'char_literal', classification: 'terminal', applied: true },
+	{ kind: 'escape_sequence', classification: 'terminal', applied: true },
+	{ kind: 'integer_literal', classification: 'terminal', applied: true },
+	{ kind: 'unit_expression', classification: 'terminal', applied: true },
+	{ kind: 'unit_type', classification: 'terminal', applied: true },
+	{
+		kind: '_block_doc_comment_marker',
+		classification: 'polymorph',
+		applied: false
+	},
+	{
+		kind: '_closure_expression_expr',
+		classification: 'polymorph',
+		applied: false
+	},
+	{ kind: '_let_chain', classification: 'polymorph', applied: false },
+	{
+		kind: '_line_doc_comment_marker',
+		classification: 'polymorph',
+		applied: false
+	},
+	{ kind: 'array_expression', classification: 'polymorph', applied: true },
+	{ kind: 'array_expression_list', classification: 'polymorph', applied: true },
+	{ kind: 'array_expression_semi', classification: 'polymorph', applied: true },
+	{ kind: 'closure_expression', classification: 'polymorph', applied: true },
+	{
+		kind: 'closure_expression_block',
+		classification: 'polymorph',
+		applied: true
+	},
+	{
+		kind: 'closure_expression_expr',
+		classification: 'polymorph',
+		applied: true
+	},
+	{ kind: 'delim_token_tree', classification: 'polymorph', applied: true },
+	{
+		kind: 'delim_token_tree_brace',
+		classification: 'polymorph',
+		applied: true
+	},
+	{
+		kind: 'delim_token_tree_bracket',
+		classification: 'polymorph',
+		applied: true
+	},
+	{
+		kind: 'delim_token_tree_paren',
+		classification: 'polymorph',
+		applied: true
+	},
+	{ kind: 'expression_statement', classification: 'polymorph', applied: true },
+	{
+		kind: 'expression_statement_block_ending',
+		classification: 'polymorph',
+		applied: true
+	},
+	{
+		kind: 'expression_statement_with_semi',
+		classification: 'polymorph',
+		applied: true
+	},
+	{ kind: 'field_pattern', classification: 'polymorph', applied: true },
+	{ kind: 'field_pattern_named', classification: 'polymorph', applied: true },
+	{
+		kind: 'field_pattern_shorthand',
+		classification: 'polymorph',
+		applied: true
+	},
+	{ kind: 'foreign_mod_item', classification: 'polymorph', applied: true },
+	{ kind: 'foreign_mod_item_body', classification: 'polymorph', applied: true },
+	{ kind: 'foreign_mod_item_semi', classification: 'polymorph', applied: true },
+	{ kind: 'impl_item', classification: 'polymorph', applied: true },
+	{ kind: 'impl_item_body', classification: 'polymorph', applied: true },
+	{ kind: 'impl_item_semi', classification: 'polymorph', applied: true },
+	{ kind: 'line_comment', classification: 'polymorph', applied: true },
+	{ kind: 'line_comment_content', classification: 'polymorph', applied: true },
+	{ kind: 'line_comment_doc', classification: 'polymorph', applied: true },
+	{
+		kind: 'line_comment_regular_dslash',
+		classification: 'polymorph',
+		applied: true
+	},
+	{ kind: 'macro_definition', classification: 'polymorph', applied: true },
+	{
+		kind: 'macro_definition_brace',
+		classification: 'polymorph',
+		applied: true
+	},
+	{
+		kind: 'macro_definition_bracket',
+		classification: 'polymorph',
+		applied: true
+	},
+	{
+		kind: 'macro_definition_paren',
+		classification: 'polymorph',
+		applied: true
+	},
+	{ kind: 'match_arm', classification: 'polymorph', applied: true },
+	{
+		kind: 'match_arm_block_ending',
+		classification: 'polymorph',
+		applied: true
+	},
+	{ kind: 'match_arm_with_comma', classification: 'polymorph', applied: true },
+	{ kind: 'mod_item', classification: 'polymorph', applied: true },
+	{ kind: 'mod_item_external', classification: 'polymorph', applied: true },
+	{ kind: 'mod_item_inline', classification: 'polymorph', applied: true },
+	{ kind: 'or_pattern', classification: 'polymorph', applied: true },
+	{ kind: 'or_pattern_binary', classification: 'polymorph', applied: true },
+	{ kind: 'or_pattern_prefix', classification: 'polymorph', applied: true },
+	{ kind: 'pointer_type', classification: 'polymorph', applied: true },
+	{ kind: 'pointer_type_const', classification: 'polymorph', applied: true },
+	{ kind: 'pointer_type_mut', classification: 'polymorph', applied: true },
+	{ kind: 'range_expression', classification: 'polymorph', applied: true },
+	{ kind: 'range_expression_bare', classification: 'polymorph', applied: true },
+	{
+		kind: 'range_expression_binary',
+		classification: 'polymorph',
+		applied: true
+	},
+	{
+		kind: 'range_expression_postfix',
+		classification: 'polymorph',
+		applied: true
+	},
+	{
+		kind: 'range_expression_prefix',
+		classification: 'polymorph',
+		applied: true
+	},
+	{ kind: 'range_pattern', classification: 'polymorph', applied: false },
+	{ kind: 'range_pattern', classification: 'polymorph', applied: true },
+	{
+		kind: 'range_pattern_left_bare',
+		classification: 'polymorph',
+		applied: true
+	},
+	{
+		kind: 'range_pattern_left_with_right',
+		classification: 'polymorph',
+		applied: true
+	},
+	{ kind: 'range_pattern_prefix', classification: 'polymorph', applied: true },
+	{ kind: 'reference_expression', classification: 'polymorph', applied: false },
+	{
+		kind: 'reference_expression_raw_const',
+		classification: 'polymorph',
+		applied: true
+	},
+	{
+		kind: 'reference_expression_raw_mut',
+		classification: 'polymorph',
+		applied: true
+	},
+	{ kind: 'return_expression', classification: 'polymorph', applied: false },
+	{ kind: 'struct_item', classification: 'polymorph', applied: true },
+	{ kind: 'struct_item_brace', classification: 'polymorph', applied: true },
+	{ kind: 'struct_item_tuple', classification: 'polymorph', applied: true },
+	{ kind: 'struct_item_unit', classification: 'polymorph', applied: true },
+	{ kind: 'token_tree', classification: 'polymorph', applied: true },
+	{ kind: 'token_tree_brace', classification: 'polymorph', applied: true },
+	{ kind: 'token_tree_bracket', classification: 'polymorph', applied: true },
+	{ kind: 'token_tree_paren', classification: 'polymorph', applied: true },
+	{ kind: 'token_tree_pattern', classification: 'polymorph', applied: true },
+	{
+		kind: 'token_tree_pattern_brace',
+		classification: 'polymorph',
+		applied: true
+	},
+	{
+		kind: 'token_tree_pattern_bracket',
+		classification: 'polymorph',
+		applied: true
+	},
+	{
+		kind: 'token_tree_pattern_paren',
+		classification: 'polymorph',
+		applied: true
+	},
+	{ kind: 'visibility_modifier', classification: 'polymorph', applied: true },
+	{
+		kind: 'visibility_modifier_crate',
+		classification: 'polymorph',
+		applied: true
+	},
+	{
+		kind: 'visibility_modifier_in_path',
+		classification: 'polymorph',
+		applied: true
+	},
+	{
+		kind: 'visibility_modifier_pub',
+		classification: 'polymorph',
+		applied: true
+	},
+	{ kind: 'yield_expression', classification: 'polymorph', applied: false }
 ];
 
 export interface InferredField {
-  readonly kind: string;
-  readonly fieldName: string;
-  readonly targetSymbol: string;
-  readonly confidence: 'high' | 'medium' | 'low';
-  readonly agreement: number;
-  readonly sampleSize: number;
-  readonly applied: boolean;
+	readonly kind: string;
+	readonly fieldName: string;
+	readonly targetSymbol: string;
+	readonly confidence: 'high' | 'medium' | 'low';
+	readonly agreement: number;
+	readonly sampleSize: number;
+	readonly applied: boolean;
 }
 export const inferredFields: readonly InferredField[] = [
-  { kind: "_non_special_token", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 9, applied: false },
-  { kind: "_pointer_type_mut", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 9, applied: false },
-  { kind: "_reference_expression_raw_mut", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 9, applied: false },
-  { kind: "reference_expression", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 9, applied: false },
-  { kind: "_struct_item_brace", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.889, sampleSize: 9, applied: false },
-  { kind: "_struct_item_tuple", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.889, sampleSize: 9, applied: false },
-  { kind: "type_arguments", fieldName: "bounds", targetSymbol: "trait_bounds", confidence: "high", agreement: 1.000, sampleSize: 5, applied: false },
+	{
+		kind: '_non_special_token',
+		fieldName: 'mutable_specifier',
+		targetSymbol: 'mutable_specifier',
+		confidence: 'high',
+		agreement: 1.0,
+		sampleSize: 9,
+		applied: false
+	},
+	{
+		kind: '_pointer_type_mut',
+		fieldName: 'mutable_specifier',
+		targetSymbol: 'mutable_specifier',
+		confidence: 'high',
+		agreement: 1.0,
+		sampleSize: 9,
+		applied: false
+	},
+	{
+		kind: '_reference_expression_raw_mut',
+		fieldName: 'mutable_specifier',
+		targetSymbol: 'mutable_specifier',
+		confidence: 'high',
+		agreement: 1.0,
+		sampleSize: 9,
+		applied: false
+	},
+	{
+		kind: 'reference_expression',
+		fieldName: 'mutable_specifier',
+		targetSymbol: 'mutable_specifier',
+		confidence: 'high',
+		agreement: 1.0,
+		sampleSize: 9,
+		applied: false
+	},
+	{
+		kind: '_struct_item_brace',
+		fieldName: 'where_clause',
+		targetSymbol: 'where_clause',
+		confidence: 'medium',
+		agreement: 0.889,
+		sampleSize: 9,
+		applied: false
+	},
+	{
+		kind: '_struct_item_tuple',
+		fieldName: 'where_clause',
+		targetSymbol: 'where_clause',
+		confidence: 'medium',
+		agreement: 0.889,
+		sampleSize: 9,
+		applied: false
+	},
+	{
+		kind: 'type_arguments',
+		fieldName: 'bounds',
+		targetSymbol: 'trait_bounds',
+		confidence: 'high',
+		agreement: 1.0,
+		sampleSize: 5,
+		applied: false
+	}
 ];
 
 export interface RepeatedShape {
-  readonly suggestedName: string;
-  readonly kinds: readonly string[];
-  readonly parents: readonly string[];
-  readonly shape: 'supertype' | 'group';
+	readonly suggestedName: string;
+	readonly kinds: readonly string[];
+	readonly parents: readonly string[];
+	readonly shape: 'supertype' | 'group';
 }
 export const repeatedShapes: readonly RepeatedShape[] = [
-  { suggestedName: "_shared_2", kinds: ["identifier","metavariable"], parents: ["function_item","function_signature_item"], shape: "supertype" },
-  { suggestedName: "_shared_2", kinds: ["_field_identifier","integer_literal"], parents: ["field_expression","field_initializer"], shape: "supertype" },
-  { suggestedName: "_type_identifier", kinds: ["_type_identifier","scoped_type_identifier"], parents: ["_function_type_trait_form","struct_pattern"], shape: "supertype" },
-  { suggestedName: "_shared_2", kinds: ["_literal_pattern","_path"], parents: ["_range_pattern_left_with_right","_range_pattern_prefix"], shape: "supertype" },
+	{
+		suggestedName: '_shared_2',
+		kinds: ['identifier', 'metavariable'],
+		parents: ['function_item', 'function_signature_item'],
+		shape: 'supertype'
+	},
+	{
+		suggestedName: '_shared_2',
+		kinds: ['_field_identifier', 'integer_literal'],
+		parents: ['field_expression', 'field_initializer'],
+		shape: 'supertype'
+	},
+	{
+		suggestedName: '_type_identifier',
+		kinds: ['_type_identifier', 'scoped_type_identifier'],
+		parents: ['_function_type_trait_form', 'struct_pattern'],
+		shape: 'supertype'
+	},
+	{
+		suggestedName: '_shared_2',
+		kinds: ['_literal_pattern', '_path'],
+		parents: ['_range_pattern_left_with_right', '_range_pattern_prefix'],
+		shape: 'supertype'
+	}
 ];

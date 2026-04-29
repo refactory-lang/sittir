@@ -12,23 +12,27 @@ Consumer-facing examples showing the new surface. Use these as acceptance-test s
 import type { FunctionItem, ConfigFor, NamespaceMap } from '@sittir/rust';
 
 // 1. Namespace sugar (preferred for specific code)
-function a(c: FunctionItem.Config): FunctionItem.Fluent { /* ... */ return null as any; }
+function a(c: FunctionItem.Config): FunctionItem.Fluent {
+	/* ... */ return null as any;
+}
 
 // 2. Generic accessor (preferred for kind-parametric code)
-function b<K extends keyof NamespaceMap>(c: ConfigFor<K>) { /* ... */ }
+function b<K extends keyof NamespaceMap>(c: ConfigFor<K>) {
+	/* ... */
+}
 
 // 3. Direct map access (preferred for programmatic type utilities)
 type X = NamespaceMap['function_item']['Config'];
 
 // Type-level proof: all three are the same type.
 type _Check =
-    FunctionItem.Config extends ConfigFor<'function_item'>
-        ? ConfigFor<'function_item'> extends NamespaceMap['function_item']['Config']
-            ? NamespaceMap['function_item']['Config'] extends FunctionItem.Config
-                ? true
-                : never
-            : never
-        : never;
+	FunctionItem.Config extends ConfigFor<'function_item'>
+		? ConfigFor<'function_item'> extends NamespaceMap['function_item']['Config']
+			? NamespaceMap['function_item']['Config'] extends FunctionItem.Config
+				? true
+				: never
+			: never
+		: never;
 // Expected: type _Check = true
 ```
 
@@ -48,43 +52,43 @@ declare const v: AnyNodeData | AnyTreeNode;
 
 // Kind only — narrows the $type discriminant (post-US7)
 if (is.functionItem(v)) {
-    v.$type; // narrowed to 'function_item'
-    // shape still ambiguous here — could be Tree or Node
+	v.$type; // narrowed to 'function_item'
+	// shape still ambiguous here — could be Tree or Node
 }
 
 // Kind + shape — resolves to concrete type via NamespaceMap
 if (is.functionItem(v) && isTree(v)) {
-    v.field('name');    // ✓ FunctionItem.Tree — typed field access (tree-sitter API keeps .type / .text())
-    v.range();          // ✓ tree-node method
+	v.field('name'); // ✓ FunctionItem.Tree — typed field access (tree-sitter API keeps .type / .text())
+	v.range(); // ✓ tree-node method
 }
 
 if (is.functionItem(v) && isNode(v)) {
-    v.$fields.name;     // ✓ FunctionItem.Node — typed data fields
-    v.$fields.body;     // ✓
+	v.$fields.name; // ✓ FunctionItem.Node — typed data fields
+	v.$fields.body; // ✓
 }
 
 // Generic inverse form
 const k = 'function_item' as const;
 if (is.kind(v, k) && isTree(v)) {
-    v.field('name');    // ✓ resolves FunctionItemTree via NamespaceMap[K]['Tree']
+	v.field('name'); // ✓ resolves FunctionItemTree via NamespaceMap[K]['Tree']
 }
 
 // Supertype narrowing
 if (is.expression(v) && isTree(v)) {
-    v.type;             // tree-sitter API — tree nodes keep `.type` (not `$type`)
-    v.range();          // ✓ tree method
+	v.type; // tree-sitter API — tree nodes keep `.type` (not `$type`)
+	v.range(); // ✓ tree method
 }
 
 // Shape only — kind unknown, fallback overload
 if (isTree(v)) {
-    v.range();          // ✓ AnyTreeNode
+	v.range(); // ✓ AnyTreeNode
 }
 
 // Assert form — throws TypeError on mismatch, narrows via `asserts v is T`
 function processDecl(v: AnyNodeData) {
-    assert.functionItem(v);
-    // Remainder of scope: v is narrowed to { $type: 'function_item' }
-    v.$fields.name;     // ✓ narrowed
+	assert.functionItem(v);
+	// Remainder of scope: v is narrowed to { $type: 'function_item' }
+	v.$fields.name; // ✓ narrowed
 }
 ```
 
@@ -100,22 +104,22 @@ Acceptance: each composition narrows as described, verified by a type-level `exp
 import { ir } from '@sittir/rust';
 
 const factoryOutput = ir.functionItem({
-    name: 'fibonacci',
-    body: ir.block({ statements: [] }),
+	name: 'fibonacci',
+	body: ir.block({ statements: [] })
 });
 
 // Same JS object — resolver is identity on NodeData
 const returnValue = ir.functionItem.from(factoryOutput);
-console.assert(returnValue === factoryOutput);  // ✓
+console.assert(returnValue === factoryOutput); // ✓
 
 // Loose bag — resolver translates, returns new fluent node
 const fromBag = ir.functionItem.from({
-    name: 'fibonacci',
-    body: { statements: [] },  // nested bag — resolver descends
+	name: 'fibonacci',
+	body: { statements: [] } // nested bag — resolver descends
 });
-console.assert(fromBag !== factoryOutput);      // ✓ different instance
-console.assert(fromBag.$fields.name !== undefined);  // ✓ resolved (post-US7)
-console.assert(fromBag.$source === 'factory');       // ✓ provenance tag
+console.assert(fromBag !== factoryOutput); // ✓ different instance
+console.assert(fromBag.$fields.name !== undefined); // ✓ resolved (post-US7)
+console.assert(fromBag.$source === 'factory'); // ✓ provenance tag
 ```
 
 Acceptance: `===` holds for the NodeData input case (SC-005c); bag input produces a freshly-constructed fluent node.
@@ -131,11 +135,11 @@ import { ir, expression, pattern } from '@sittir/rust';
 
 // ir.expression.* is attached to ir; `expression` is also exported
 // standalone for tree-shakeable access.
-const viaFlat    = ir.binaryExpression /* legacy-style camelCase */ ?? ir.binary;
+const viaFlat = ir.binaryExpression /* legacy-style camelCase */ ?? ir.binary;
 const viaGrouped = ir.expression.binary;
 // Both resolve to the same _attach bundle. The flat `ir.*` key is the
 // supertype-stripped short name (`binary` < `binary_expression`).
-console.assert(viaFlat === viaGrouped);  // ✓ SC-012
+console.assert(viaFlat === viaGrouped); // ✓ SC-012
 
 // The standalone group export is also identity-equal:
 console.assert(ir.expression === expression);
@@ -153,7 +157,11 @@ Acceptance: identical `_attach` bundle from both paths (SC-012) — verified by
 ```ts
 // consumer.ts
 import { ir } from '@sittir/rust';
-console.log(ir.functionItem({ name: 'hello', body: ir.block({ statements: [] }) }).render());
+console.log(
+	ir
+		.functionItem({ name: 'hello', body: ir.block({ statements: [] }) })
+		.render()
+);
 ```
 
 ```bash
@@ -263,14 +271,14 @@ Post-US7 the discriminant is `$type`, so the two are unambiguous:
 import { ir } from '@sittir/python';
 
 const stmt = ir.typeAliasStatement({
-    type: 'type',           // the `type` keyword field (bag still uses bare `type` key)
-    left: ir.typeIdentifier('Foo'),
-    right: ir.typeIdentifier('u64'),
+	type: 'type', // the `type` keyword field (bag still uses bare `type` key)
+	left: ir.typeIdentifier('Foo'),
+	right: ir.typeIdentifier('u64')
 });
 
-console.assert(stmt.$type === 'type_alias_statement');  // ✓ kind discriminant
-console.assert(stmt.$fields.type === 'type');           // ✓ keyword field
-console.assert(stmt.$source === 'factory');             // ✓ provenance
+console.assert(stmt.$type === 'type_alias_statement'); // ✓ kind discriminant
+console.assert(stmt.$fields.type === 'type'); // ✓ keyword field
+console.assert(stmt.$source === 'factory'); // ✓ provenance
 ```
 
 Acceptance: no cast workaround needed in generated `from.ts` — the
@@ -286,19 +294,19 @@ lets `.from()` distinguish `'ts'` vs `'factory'` at a glance.
 
 Old alias → new form (deprecated re-exports preserve backward compat throughout 008; removal is a follow-up):
 
-| Pre-008 | Post-008 |
-|---|---|
-| `FunctionItemConfig` | `FunctionItem.Config` |
-| `LooseFunctionItem` | `FunctionItem.Loose` |
-| `FunctionItemTree` | `FunctionItem.Tree` |
-| `ConfigMap['function_item']` | `NamespaceMap['function_item']['Config']` or `ConfigFor<'function_item'>` |
-| `LooseMap['function_item']` | `NamespaceMap['function_item']['Loose']` or `LooseFor<'function_item'>` |
-| `ReturnType<typeof functionItem>` | `FunctionItem.Fluent` or `FluentFor<'function_item'>` |
-| Manual `v.type === 'function_item'` check | `is.functionItem(v)` |
-| Manual cast after kind check | `is.functionItem(v) && isTree(v)` or `is.functionItem(v) && isNode(v)` |
-| Manual `throw new TypeError(...)` on kind mismatch | `assert.functionItem(v)` |
+| Pre-008                                                                 | Post-008                                                                   |
+| ----------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `FunctionItemConfig`                                                    | `FunctionItem.Config`                                                      |
+| `LooseFunctionItem`                                                     | `FunctionItem.Loose`                                                       |
+| `FunctionItemTree`                                                      | `FunctionItem.Tree`                                                        |
+| `ConfigMap['function_item']`                                            | `NamespaceMap['function_item']['Config']` or `ConfigFor<'function_item'>`  |
+| `LooseMap['function_item']`                                             | `NamespaceMap['function_item']['Loose']` or `LooseFor<'function_item'>`    |
+| `ReturnType<typeof functionItem>`                                       | `FunctionItem.Fluent` or `FluentFor<'function_item'>`                      |
+| Manual `v.type === 'function_item'` check                               | `is.functionItem(v)`                                                       |
+| Manual cast after kind check                                            | `is.functionItem(v) && isTree(v)` or `is.functionItem(v) && isNode(v)`     |
+| Manual `throw new TypeError(...)` on kind mismatch                      | `assert.functionItem(v)`                                                   |
 | `node.type` / `node.fields` / `node.text` / `node.children` (data read) | `node.$type` / `node.$fields` / `node.$text` / `node.$children` (post-US7) |
-| (no equivalent) | `node.$source: 'ts' \| 'factory'` for producer provenance |
+| (no equivalent)                                                         | `node.$source: 'ts' \| 'factory'` for producer provenance                  |
 
 `XConfig` / `LooseX` / `XTree` / `ConfigMap` / `LooseMap` aliases remain
 emitted as back-compat re-exports during the 008 window. Tree-node types

@@ -35,11 +35,11 @@ Run `.specify/scripts/bash/check-prerequisites.sh --json --paths-only` from repo
 1. **Script succeeds** (on a feature branch): Parse JSON for FEATURE_DIR. Set `FEATURE_BRANCH = true`. Proceed to next step.
 2. **Script fails** (not on a feature branch): You MUST prompt for available features (Scan `specs/NNN-*/` to get available features). Use the **AskUserQuestion tool** to let the user select. **Do NOT guess or auto-select a change. Always let the user choose.**
 
-Derive absolute paths: 
+Derive absolute paths:
 
 - SPEC = FEATURE_DIR/spec.md
 - PLAN = FEATURE_DIR/plan.md
-- TASKS = FEATURE_DIR/tasks.md. 
+- TASKS = FEATURE_DIR/tasks.md.
 
 Abort if any required file is missing (instruct the user to run missing prerequisite command).
 For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
@@ -165,18 +165,18 @@ Output a Markdown report (no file writes) with the following structure.
 
 ## Verification Report
 
-| ID | Category | Severity | Location(s) | Summary | Recommendation |
-|----|----------|----------|-------------|---------|----------------|
-| A1 | Task Completion | CRITICAL | tasks.md | 3 of 12 tasks incomplete | Complete tasks T05, T08, T11 |
-| B1 | File Existence | CRITICAL | src/auth.ts | Task-referenced file missing | Create file or update task reference |
-| C1 | Requirement Coverage | CRITICAL | spec.md:FR-003 | No implementation evidence | Implement FR-003 |
+| ID  | Category             | Severity | Location(s)    | Summary                      | Recommendation                       |
+| --- | -------------------- | -------- | -------------- | ---------------------------- | ------------------------------------ |
+| A1  | Task Completion      | CRITICAL | tasks.md       | 3 of 12 tasks incomplete     | Complete tasks T05, T08, T11         |
+| B1  | File Existence       | CRITICAL | src/auth.ts    | Task-referenced file missing | Create file or update task reference |
+| C1  | Requirement Coverage | CRITICAL | spec.md:FR-003 | No implementation evidence   | Implement FR-003                     |
 
 (Add one row per finding; generate stable IDs prefixed by check letter: A1, B1, C1... Reference specific files and line numbers in Location(s) where applicable.)
 
 **Task Summary Table:**
 
 | Task ID | Status | Referenced Files | Notes |
-|---------|--------|-----------------|-------|
+| ------- | ------ | ---------------- | ----- |
 
 **Constitution Alignment Issues:** (if any)
 

@@ -3,8 +3,9 @@
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Replace node-constructing factory shapes for keyword-presence positions with language-intent shapes:
-  - `optional(string)` → **boolean keyword** field (`mut?: boolean`).
-  - `repeat(choice-of-strings)` / `repeat1(…)` → **bitflag** field (`modifiers?: number`, sibling `FunctionMod` const in `consts.ts`).
+
+- `optional(string)` → **boolean keyword** field (`mut?: boolean`).
+- `repeat(choice-of-strings)` / `repeat1(…)` → **bitflag** field (`modifiers?: number`, sibling `FunctionMod` const in `consts.ts`).
 
 **Architecture:** Classification is a **derived** property of `AssembledField` computed from `values` + per-value multiplicity (ADR-0011 / ADR-0010 shared patterns). No new Rule variants, no new `AssembledField` fields — a shared helper in `emitters/shared.ts` returns `'boolean' | 'bitflag' | null` from the existing slot data. Emitters consume the classification; NodeData output shape is unchanged so readNode round-trips are byte-identical.
 
@@ -47,10 +48,12 @@ The bitflag detector reads the post-Link `AssembledField.values`, which already 
 - Optional: `packages/codegen/src/emitters/factories.ts` + `from.ts` + `types.ts` — skip emission for modifier-only container kinds (keep only SyntaxKind / KindMap entries for readNode dispatch).
 
 **Tests:**
+
 - Created: `packages/codegen/src/__tests__/keyword-presence.test.ts` — unit coverage for `keywordPresenceKind` classifier across the shape matrix.
 - Created: `packages/codegen/src/__tests__/bitflag-emit.test.ts` — snapshot: `ir.functionItem({ modifiers: FunctionMod.Async | FunctionMod.Unsafe })` renders `async unsafe fn …`.
 
 **Generated outputs** (regenerate + commit):
+
 - `packages/rust/src/{consts,types,factories,from}.ts`
 - `packages/typescript/src/{consts,types,factories,from}.ts`
 - `packages/python/src/{consts,types,factories,from}.ts`
@@ -61,6 +64,7 @@ The bitflag detector reads the post-Link `AssembledField.values`, which already 
 ## Task 1: Classifier helper in `shared.ts`
 
 **Files:**
+
 - Modify: `packages/codegen/src/emitters/shared.ts`.
 - Create: `packages/codegen/src/__tests__/keyword-presence.test.ts`.
 
@@ -96,39 +100,48 @@ The bitflag detector reads the post-Link `AssembledField.values`, which already 
  *   All other shapes → null.
  */
 export function keywordPresenceKind(
-    field: AssembledChild,
-    nodeMap: NodeMap,
-): 'boolean' | 'bitflag' | null { /* ... */ }
+	field: AssembledChild,
+	nodeMap: NodeMap
+): 'boolean' | 'bitflag' | null {
+	/* ... */
+}
 ```
 
 Companion accessors:
 
 ```ts
 /** The single literal for a boolean-keyword field. Undefined otherwise. */
-export function keywordPresenceValue(field: AssembledChild, nodeMap: NodeMap): string | undefined
+export function keywordPresenceValue(
+	field: AssembledChild,
+	nodeMap: NodeMap
+): string | undefined;
 
 /** The ordered-unique literal set for a bitflag field. Empty otherwise. */
-export function keywordPresenceValues(field: AssembledChild, nodeMap: NodeMap): readonly string[]
+export function keywordPresenceValues(
+	field: AssembledChild,
+	nodeMap: NodeMap
+): readonly string[];
 ```
 
 **Resolving each slot entry to "a single literal"** reuses the existing machinery:
-  - `TerminalValue` → its `value` directly.
-  - `NodeRef` → look up in `nodeMap.nodes`; if the resolved node is an `AssembledKeyword` / `AssembledToken` with a single-literal body, `resolveHiddenKeywordLiteral` already returns the literal. If it's an `AssembledEnum` with `members.length === 1` (single-value enum), its `members[0].value` counts.
+
+- `TerminalValue` → its `value` directly.
+- `NodeRef` → look up in `nodeMap.nodes`; if the resolved node is an `AssembledKeyword` / `AssembledToken` with a single-literal body, `resolveHiddenKeywordLiteral` already returns the literal. If it's an `AssembledEnum` with `members.length === 1` (single-value enum), its `members[0].value` counts.
 
 - [ ] **Step 1.2: Unit tests — per-shape matrix.**
 
-| Shape                                                | Expected     |
-|------------------------------------------------------|--------------|
-| `optional(STRING('mut'))`                            | `'boolean'`  |
-| `optional(SYMBOL(_kw_mut))` where `_kw_mut` = `'mut'`| `'boolean'`  |
-| `optional(enum-of-1('mut'))`                         | `'boolean'`  |
-| `repeat1(STRING('async'))` (degenerate one-literal)  | `'boolean'`  |
-| `repeat1(choice('a','b'))`                           | `'bitflag'`  |
-| `repeat(enum('a','b','c'))`                          | `'bitflag'`  |
-| `repeat1(SYMBOL(_kw_a) \| SYMBOL(_kw_b))`            | `'bitflag'`  |
-| `optional(enum-of-2('pub','priv'))`                  | `null`       |
-| `repeat(choice(STRING, SYMBOL($.kind)))`             | `null`       |
-| `optional($.kind)`                                   | `null`       |
+| Shape                                                 | Expected    |
+| ----------------------------------------------------- | ----------- |
+| `optional(STRING('mut'))`                             | `'boolean'` |
+| `optional(SYMBOL(_kw_mut))` where `_kw_mut` = `'mut'` | `'boolean'` |
+| `optional(enum-of-1('mut'))`                          | `'boolean'` |
+| `repeat1(STRING('async'))` (degenerate one-literal)   | `'boolean'` |
+| `repeat1(choice('a','b'))`                            | `'bitflag'` |
+| `repeat(enum('a','b','c'))`                           | `'bitflag'` |
+| `repeat1(SYMBOL(_kw_a) \| SYMBOL(_kw_b))`             | `'bitflag'` |
+| `optional(enum-of-2('pub','priv'))`                   | `null`      |
+| `repeat(choice(STRING, SYMBOL($.kind)))`              | `null`      |
+| `optional($.kind)`                                    | `null`      |
 
 - [ ] **Step 1.3: Commit.**
 
@@ -146,6 +159,7 @@ into their literal strings."
 ## Task 2: Consts emitter — bitflag const tables
 
 **Files:**
+
 - Modify: `packages/codegen/src/emitters/consts.ts`.
 
 **Steps:**
@@ -155,11 +169,11 @@ into their literal strings."
 ```ts
 // For each distinct bitflag field (dedup by constName):
 export const enum FunctionMod {
-    Async   = 1 << 0,
-    Unsafe  = 1 << 1,
-    Const   = 1 << 2,
-    Extern  = 1 << 3,
-    Default = 1 << 4,
+	Async = 1 << 0,
+	Unsafe = 1 << 1,
+	Const = 1 << 2,
+	Extern = 1 << 3,
+	Default = 1 << 4
 }
 ```
 
@@ -194,6 +208,7 @@ Snapshot a const table emission for a fabricated bitflag field.
 ## Task 3: Types emitter — boolean + bitflag field types
 
 **Files:**
+
 - Modify: `packages/codegen/src/emitters/types.ts` — inject classification check ahead of `fieldTypeComponents`.
 
 **Steps:**
@@ -202,10 +217,10 @@ Snapshot a const table emission for a fabricated bitflag field.
 
 ```ts
 function fieldTypeExpr(field, nodeMap, lookupUnion): string {
-    const kw = keywordPresenceKind(field, nodeMap);
-    if (kw === 'boolean') return 'boolean';
-    if (kw === 'bitflag') return constNameFor(field, nodeMap); // e.g. 'FunctionMod' — const enum
-    // ... existing fieldTypeComponents path for everything else
+	const kw = keywordPresenceKind(field, nodeMap);
+	if (kw === 'boolean') return 'boolean';
+	if (kw === 'bitflag') return constNameFor(field, nodeMap); // e.g. 'FunctionMod' — const enum
+	// ... existing fieldTypeComponents path for everything else
 }
 ```
 
@@ -229,6 +244,7 @@ Snapshot: `SelfParameter.$fields.mut: boolean`; `FunctionItem.$fields.functionMo
 ## Task 4: Factory emitter — boolean construct/omit, bitflag per-bit spread
 
 **Files:**
+
 - Modify: `packages/codegen/src/emitters/factories.ts`.
 
 **Steps:**
@@ -240,26 +256,32 @@ Extend the existing field-emission dispatch (after `isAutoStampField` check, bef
 ```ts
 const kw = keywordPresenceKind(f, nodeMap);
 if (kw === 'boolean') {
-    // fields.mutable_specifier = config.mut ? { $type: 'mutable_specifier', $text: 'mut', ... } : undefined
-    const fieldName = f.name;
-    const value = keywordPresenceValue(f, nodeMap)!;
-    const propertyName = f.propertyName; // camelCase
-    lines.push(`    ${fieldName}: config.${propertyName} === true ? { $type: '${fieldName}', $text: ${JSON.stringify(value)}, $named: true, $source: 'factory' as const } : undefined,`);
-    continue;
+	// fields.mutable_specifier = config.mut ? { $type: 'mutable_specifier', $text: 'mut', ... } : undefined
+	const fieldName = f.name;
+	const value = keywordPresenceValue(f, nodeMap)!;
+	const propertyName = f.propertyName; // camelCase
+	lines.push(
+		`    ${fieldName}: config.${propertyName} === true ? { $type: '${fieldName}', $text: ${JSON.stringify(value)}, $named: true, $source: 'factory' as const } : undefined,`
+	);
+	continue;
 }
 if (kw === 'bitflag') {
-    const constName = constNameFor(f, nodeMap);
-    const values = keywordPresenceValues(f, nodeMap);
-    const fieldName = f.name;
-    const propertyName = f.propertyName;
-    // emit: fields.function_modifiers = config.modifiers !== undefined ? (function_modifiers with spread kids) : undefined
-    lines.push(`    ${fieldName}: config.${propertyName} !== undefined ? ${fieldName}(`);
-    values.forEach((v, i) => {
-        const member = pascalCase(v);
-        lines.push(`      ...(config.${propertyName} & ${constName}.${member} ? [{ $type: '_kw_${v}', $text: ${JSON.stringify(v)}, $named: false, $source: 'factory' as const }] : []),`);
-    });
-    lines.push('    ) : undefined,');
-    continue;
+	const constName = constNameFor(f, nodeMap);
+	const values = keywordPresenceValues(f, nodeMap);
+	const fieldName = f.name;
+	const propertyName = f.propertyName;
+	// emit: fields.function_modifiers = config.modifiers !== undefined ? (function_modifiers with spread kids) : undefined
+	lines.push(
+		`    ${fieldName}: config.${propertyName} !== undefined ? ${fieldName}(`
+	);
+	values.forEach((v, i) => {
+		const member = pascalCase(v);
+		lines.push(
+			`      ...(config.${propertyName} & ${constName}.${member} ? [{ $type: '_kw_${v}', $text: ${JSON.stringify(v)}, $named: false, $source: 'factory' as const }] : []),`
+		);
+	});
+	lines.push('    ) : undefined,');
+	continue;
 }
 ```
 
@@ -278,6 +300,7 @@ Inner NodeData shape for each keyword: use the existing `_kw_<value>` hidden kin
 ## Task 5: From emitter — polymorphic resolvers
 
 **Files:**
+
 - Modify: `packages/codegen/src/emitters/from.ts`.
 
 **Steps:**
@@ -285,48 +308,55 @@ Inner NodeData shape for each keyword: use the existing `_kw_<value>` hidden kin
 - [ ] **Step 5.1: Emit `_resolveBooleanKeyword`** as a helper at module top:
 
 ```ts
-function _resolveBooleanKeyword(v: unknown, keyword: string, factory: () => unknown): unknown {
-    if (v === true) return factory();
-    if (v === false || v === undefined || v === null) return undefined;
-    if (typeof v === 'string' && v === keyword) return factory();
-    if (isNodeData(v)) return v;
-    return undefined;
+function _resolveBooleanKeyword(
+	v: unknown,
+	keyword: string,
+	factory: () => unknown
+): unknown {
+	if (v === true) return factory();
+	if (v === false || v === undefined || v === null) return undefined;
+	if (typeof v === 'string' && v === keyword) return factory();
+	if (isNodeData(v)) return v;
+	return undefined;
 }
 ```
 
 - [ ] **Step 5.2: Emit `_resolveBitflag`** similarly. Input may be an
-  aggregate `FunctionMod` (number from `const enum` OR), a single string
-  keyword, a `readonly string[]` keyword list, or a NodeData container
-  from readNode. Output is typed `number` at the helper surface — the
-  consuming factory slot is declared `FunctionMod`, so the generated
-  assignment site narrows automatically via the factory's parameter
-  signature.
+      aggregate `FunctionMod` (number from `const enum` OR), a single string
+      keyword, a `readonly string[]` keyword list, or a NodeData container
+      from readNode. Output is typed `number` at the helper surface — the
+      consuming factory slot is declared `FunctionMod`, so the generated
+      assignment site narrows automatically via the factory's parameter
+      signature.
 
 ```ts
-function _resolveBitflag(v: unknown, constMap: Record<string, number>): number | undefined {
-    if (v === undefined || v === null) return undefined;
-    if (typeof v === 'number') return v;
-    if (typeof v === 'string') return constMap[v] ?? 0;
-    if (Array.isArray(v)) {
-        let f = 0;
-        for (const item of v) {
-            if (typeof item === 'string') f |= constMap[item] ?? 0;
-            else if (typeof item === 'number') f |= item;
-        }
-        return f;
-    }
-    // NodeData with a container's children[] carrying keyword nodes:
-    // walk children, map each to its bit via constMap, OR them together.
-    if (isNodeData(v) && Array.isArray((v as any).$children)) {
-        let f = 0;
-        for (const child of (v as any).$children) {
-            if (child?.$text && typeof child.$text === 'string') {
-                f |= constMap[child.$text] ?? 0;
-            }
-        }
-        return f;
-    }
-    return 0;
+function _resolveBitflag(
+	v: unknown,
+	constMap: Record<string, number>
+): number | undefined {
+	if (v === undefined || v === null) return undefined;
+	if (typeof v === 'number') return v;
+	if (typeof v === 'string') return constMap[v] ?? 0;
+	if (Array.isArray(v)) {
+		let f = 0;
+		for (const item of v) {
+			if (typeof item === 'string') f |= constMap[item] ?? 0;
+			else if (typeof item === 'number') f |= item;
+		}
+		return f;
+	}
+	// NodeData with a container's children[] carrying keyword nodes:
+	// walk children, map each to its bit via constMap, OR them together.
+	if (isNodeData(v) && Array.isArray((v as any).$children)) {
+		let f = 0;
+		for (const child of (v as any).$children) {
+			if (child?.$text && typeof child.$text === 'string') {
+				f |= constMap[child.$text] ?? 0;
+			}
+		}
+		return f;
+	}
+	return 0;
 }
 ```
 
@@ -341,6 +371,7 @@ When the from-body emits a field that classifies as keyword-presence, route thro
 ## Task 6: Verify template render order
 
 **Files:**
+
 - Inspect only: `packages/codegen/src/emitters/templates.ts`, `packages/{rust,typescript,python}/templates.yaml`.
 
 **Steps:**
@@ -366,9 +397,10 @@ npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/pyt
 - [ ] **Step 7.2: Verify roundtrip baseline holds.**
 
 Expected (baseline at plan-write time):
-  - rust rt 123/0 + factory-rt 483/1; recursive 474/11
-  - typescript rt 81/27 + factory-rt 421/60; recursive 340/184
-  - python rt 98/16 + factory-rt 197/30; recursive 204/36
+
+- rust rt 123/0 + factory-rt 483/1; recursive 474/11
+- typescript rt 81/27 + factory-rt 421/60; recursive 340/184
+- python rt 98/16 + factory-rt 197/30; recursive 204/36
 
 Regression most likely cause: bitflag child order differs from the grammar's expected order. Fix the enum-declaration order (the detector reads it from the grammar's choice members, so this is the canonical source).
 
@@ -381,6 +413,7 @@ Regression most likely cause: bitflag child order differs from the grammar's exp
 ## Task 8: Cleanup — drop unused modifier-container factories
 
 **Files:**
+
 - Modify: `packages/codegen/src/emitters/factories.ts`, `types.ts`, `from.ts` — skip emission for kinds whose top-level rule is a bitflag body.
 
 **Steps:**
@@ -418,7 +451,8 @@ Confirm nothing else in the generated code references the dropped types (the par
 ## Handoff
 
 After all tasks complete:
-  - Update `CLAUDE.md` "Architecture" section — mention keyword-presence types alongside the auto-stamp + refine infrastructure.
-  - Update `MEMORY.md` with any surprise learnings (e.g., "bitflag child order follows enum-declaration; knob added for grammar X" — only if a grammar needs it).
+
+- Update `CLAUDE.md` "Architecture" section — mention keyword-presence types alongside the auto-stamp + refine infrastructure.
+- Update `MEMORY.md` with any surprise learnings (e.g., "bitflag child order follows enum-declaration; knob added for grammar X" — only if a grammar needs it).
 
 Plan complete — saved to `docs/superpowers/plans/2026-04-21-adr-0012-keyword-presence-types.md`.

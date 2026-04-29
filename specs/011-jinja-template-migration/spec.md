@@ -12,13 +12,13 @@ than as a standalone crate. The `.jinja` file surface produced by
 Phase 3 is the permanent template format and needs no rework for the
 future port.
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 — TypeScript codegen renders with Nunjucks from per-rule `.jinja` files (Priority: P1)
 
 A codegen maintainer replaces the existing YAML-backed render engine with one that loads per-rule `.jinja` files from a `templates/` directory and renders them using Nunjucks. Running the round-trip corpus produces byte-identical output to the pre-migration baseline for every node across Rust, TypeScript, and Python grammars. The one-line-per-rule YAML view is retired; template changes are now file-level diffs.
 
-**Why this priority**: This is the standalone, value-delivering MVP. It unblocks the Rust port (Phase B) by locking in the template *shape* Rust will consume, removes the hand-rolled regex substitutor as the rendering layer, and gives template authors IDE support (syntax highlighting, linting) — all without touching the Rust port itself. Phase A alone pays off the cleanup and removes a blocker.
+**Why this priority**: This is the standalone, value-delivering MVP. It unblocks the Rust port (Phase B) by locking in the template _shape_ Rust will consume, removes the hand-rolled regex substitutor as the rendering layer, and gives template authors IDE support (syntax highlighting, linting) — all without touching the Rust port itself. Phase A alone pays off the cleanup and removes a blocker.
 
 **Independent Test**: Run `pnpm test` and the per-grammar round-trip corpus after the cutover. Every rendered node must be byte-identical to the pre-migration snapshot. Template changes appear as individual `.jinja` file diffs in git.
 
@@ -72,7 +72,7 @@ A template author opens `packages/rust/templates/struct_item.jinja` in their IDE
 - How does system handle the one-time translator's output when a rule template contains constructs the Jinja subset doesn't cover? Translation fails loudly with the rule name and the unsupported construct — never produces a degraded template.
 - How does system handle whitespace-sensitive templates (python's indent-based blocks) where YAML's block-scalar preservation was doing load-bearing work? The Jinja whitespace-control syntax (`{%-` / `-%}`) must produce identical trimming; round-trip corpus validates this per-node.
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -117,14 +117,14 @@ A template author opens `packages/rust/templates/struct_item.jinja` in their IDE
 - **FR-022**: The round-trip corpus MUST pass byte-identical after Phase A; current ceilings (rust 123/0 + 483/1, typescript 81/27 + 421/60, python 98/16 + 197/30) MUST be preserved or improved.
 - **FR-023**: The cross-render parity test (Phase B) MUST pass on 100% of the corpus before Rust render is declared authoritative.
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **Template file (`.jinja`)** — One file per rule per grammar, stored under `packages/<grammar>/templates/<rule_kind>.jinja`. Single source of truth for rendering, consumed by both Nunjucks (TS) and askama (Rust). Contains only the authoring subset (interpolation, conditionals, loops, comments, standardized filters, whitespace control).
 - **`TemplateContext`** — The pre-processed render input produced by cleanup task 3's `prepare()` step. Same shape in TS (object) and Rust (struct): snake_case field slots, pre-joined `children`, `children_list` array, `variant`, `text`, `trailing_sep`, `leading_sep`.
 - **Translator** — One-shot tool that reads the existing `templates.yaml` and emits per-rule `.jinja` files. Retired once the migration completes; not part of the steady-state pipeline.
 - **Filter alias registry (Rust)** — Map of Nunjucks-native filter names to their askama implementations, registered on the Rust side so authored templates never reference askama-native names.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 
@@ -147,7 +147,7 @@ A template author opens `packages/rust/templates/struct_item.jinja` in their IDE
 
 **Assumptions**:
 
-- The Jinja subset (interpolation, if/elif/else/endif, for with loop.*, whitespace control, `{# #}` comments, the six standardized filters) is sufficient to express every current template. The translator's loud-failure requirement (FR-005) catches any violation.
+- The Jinja subset (interpolation, if/elif/else/endif, for with loop.\*, whitespace control, `{# #}` comments, the six standardized filters) is sufficient to express every current template. The translator's loud-failure requirement (FR-005) catches any violation.
 - Nunjucks and askama render this subset identically. Any semantic divergence on a filter or control construct is a bug in the aliasing layer, not in authored templates.
 - Template changes will be reviewed via per-file `.jinja` diffs. YAML-block-scalar-specific tooling (yaml-lint, yq, etc.) is no longer required for the render pipeline.
 - Phase B's cross-render parity test is authoritative for parity. If it passes, askama and Nunjucks agree on the subset.

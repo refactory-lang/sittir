@@ -3,9 +3,10 @@
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Ship three phases of factory-surface improvements:
-  - **Phase 1**: single-literal fields auto-stamped by factory, omitted from `Config`.
-  - **Phase 2**: new `refine()` DSL primitive for correlated choice selections — per-form factory namespace.
-  - **Phase 3**: path syntax migration (`*` → `_`, bare `name` → `(name)`, add `name:` field traversal) to support refine's path addressing.
+
+- **Phase 1**: single-literal fields auto-stamped by factory, omitted from `Config`.
+- **Phase 2**: new `refine()` DSL primitive for correlated choice selections — per-form factory namespace.
+- **Phase 3**: path syntax migration (`*` → `_`, bare `name` → `(name)`, add `name:` field traversal) to support refine's path addressing.
 
 **Architecture:** Phase 1 is pure emitter logic — detect `literalValues.length === 1`, omit from Config, stamp in factory output. Phase 2's refine narrows a choice to one literal, which phase 1 then auto-stamps. Phase 3's path parser rewrite is small but breaking (one override line + test updates). Bundle phases 2 & 3 in the same commits since refine depends on the new segments.
 
@@ -16,19 +17,23 @@
 ## File Structure
 
 Modified (phase 1):
+
 - `packages/codegen/src/emitters/types.ts` — skip auto-stamp-eligible fields in `Config` emission.
 - `packages/codegen/src/emitters/factories.ts` — stamp the constant into `$fields` output; remove from config-input destructure.
 
 Modified (phase 3):
+
 - `packages/codegen/src/dsl/transform/transform-path.ts` — `parsePath` accepts `_`, `(name)`, `name:`; rejects `*` and bare names with migration errors. `applyPath` handles `name:` field traversal.
 - `packages/codegen/src/dsl/__tests__/transform-path.test.ts` — coverage for new segments + migration errors.
 - `packages/rust/overrides.ts` — one line: `'2/_expression'` → `'2/(_expression)'`.
 
 Created (phase 2):
+
 - `packages/codegen/src/dsl/primitives/refine.ts` — new DSL primitive.
 - `packages/codegen/src/dsl/__tests__/refine.test.ts` — unit tests.
 
 Modified (phase 2):
+
 - `packages/codegen/src/dsl/index.ts` — export `refine`.
 - `packages/codegen/src/compiler/types.ts` — `LinkedGrammar` and/or `AssembledNode` gain a `refineForms?` field.
 - `packages/codegen/src/compiler/link.ts` (or `evaluate.ts` + `link.ts`) — read refine metadata, attach to per-kind model entries.
@@ -50,11 +55,12 @@ Modified (phase 2):
 ## Task 1: Phase 1 — detect single-literal fields, omit from Config, stamp in factory
 
 **Files:**
+
 - Modify: `packages/codegen/src/emitters/types.ts`
 - Modify: `packages/codegen/src/emitters/factories.ts`
 - Modify: any test file under `packages/*/tests/` or `packages/codegen/src/__tests__/` that supplies now-auto-stamped fields as factory input.
 
-**Detection predicate:** A field is auto-stamp-eligible iff its *effective* resolved type is a single string literal. Two sources:
+**Detection predicate:** A field is auto-stamp-eligible iff its _effective_ resolved type is a single string literal. Two sources:
 
 1. **Inline literal:** `field.literalValues?.length === 1`. Direct — the field's content is a bare STRING or `choice(literal)`.
 2. **Referenced constant kind:** `field.contentTypes.length === 1` AND the referenced kind is itself a single-literal constant (its rule body resolves to a bare string). Covers `_kw_*` hidden-rule pattern (both hand-authored and enrich-synthesized).
@@ -78,14 +84,15 @@ In `packages/codegen/src/compiler/link.ts`, after the pass that assembles each k
  * whose contentTypes reference these kinds as single-literal.
  */
 function markSingleLiteralKinds(linked: LinkedGrammar): void {
-    for (const [name, node] of linked.nodes) {
-        if (node.modelType !== 'terminal') continue
-        const literal = extractSingleLiteralValue(node.rule)
-        if (literal !== null) {
-            (node as Writable<AssembledTerminal>).isSingleLiteralKind = true
-            (node as Writable<AssembledTerminal>).literalValue = literal
-        }
-    }
+	for (const [name, node] of linked.nodes) {
+		if (node.modelType !== 'terminal') continue;
+		const literal = extractSingleLiteralValue(node.rule);
+		if (literal !== null) {
+			(node as Writable<AssembledTerminal>).isSingleLiteralKind = true(
+				node as Writable<AssembledTerminal>
+			).literalValue = literal;
+		}
+	}
 }
 ```
 
@@ -113,24 +120,24 @@ In `packages/codegen/src/emitters/factories.ts` (or a new `shared.ts` helper if 
  * the narrowed shape.
  */
 export function resolveEffectiveLiteral(
-    field: AssembledField,
-    kindMap: Map<string, AssembledNode>,
+	field: AssembledField,
+	kindMap: Map<string, AssembledNode>
 ): string | undefined {
-    if (field.literalValues?.length === 1) return field.literalValues[0]
-    if (field.contentTypes.length === 1) {
-        const ref = kindMap.get(field.contentTypes[0]!)
-        if (ref && 'isSingleLiteralKind' in ref && ref.isSingleLiteralKind) {
-            return (ref as { literalValue: string }).literalValue
-        }
-    }
-    return undefined
+	if (field.literalValues?.length === 1) return field.literalValues[0];
+	if (field.contentTypes.length === 1) {
+		const ref = kindMap.get(field.contentTypes[0]!);
+		if (ref && 'isSingleLiteralKind' in ref && ref.isSingleLiteralKind) {
+			return (ref as { literalValue: string }).literalValue;
+		}
+	}
+	return undefined;
 }
 
 export function isAutoStampField(
-    field: AssembledField,
-    kindMap: Map<string, AssembledNode>,
+	field: AssembledField,
+	kindMap: Map<string, AssembledNode>
 ): boolean {
-    return resolveEffectiveLiteral(field, kindMap) !== undefined
+	return resolveEffectiveLiteral(field, kindMap) !== undefined;
 }
 ```
 
@@ -167,6 +174,7 @@ Expected: exit 0 for all. Diff the generated `types.ts` and `factories.ts`; some
 Run: `pnpm test 2>&1 | tail -30`
 
 Likely outcomes:
+
 - Test files under `packages/<lang>/tests/nodes.test.ts` that supply the now-auto-stamped field as a config entry — these TypeScript-error out. Fix: remove the redundant entry from the test call.
 - Any round-trip test (readNode → NodeData → factory input → factory output → compare) where the test manually constructs a factory input from readNode output — might re-supply the now-auto-stamped field. Fix: drop the field from the manually-constructed input.
 
@@ -204,6 +212,7 @@ shape."
 ## Task 2: Phase 3 — path syntax migration (parser + one override + tests)
 
 **Files:**
+
 - Modify: `packages/codegen/src/dsl/transform/transform-path.ts`
 - Modify: `packages/codegen/src/dsl/__tests__/transform-path.test.ts`
 - Modify: `packages/rust/overrides.ts` (one line)
@@ -214,13 +223,13 @@ Atomic migration: parser additions, parser migration errors, Rust's one path upd
 
 Open `packages/codegen/src/dsl/transform/transform-path.ts` and locate `parsePath`. Note its current segment types (index, reverse-index, wildcard `*`, bare kind-name). The updated vocabulary:
 
-| Segment | Meaning |
-|---------|---------|
-| `N` | Non-negative integer (unchanged) |
-| `-N` | Negative integer (unchanged) |
-| `_` | Wildcard — any member at this level |
-| `(name)` | Kind match — descend if kind matches |
-| `name:` | Field traversal — descend through `field('name', ...)` content |
+| Segment  | Meaning                                                        |
+| -------- | -------------------------------------------------------------- |
+| `N`      | Non-negative integer (unchanged)                               |
+| `-N`     | Negative integer (unchanged)                                   |
+| `_`      | Wildcard — any member at this level                            |
+| `(name)` | Kind match — descend if kind matches                           |
+| `name:`  | Field traversal — descend through `field('name', ...)` content |
 
 - [ ] **Step 2: Add the new segments in parsePath; reject the migrated-away forms with clear errors**
 
@@ -295,6 +304,7 @@ Run: `npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages
 Expected: same counts.
 
 Regenerate python + typescript too:
+
 ```bash
 npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src
 npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src
@@ -325,6 +335,7 @@ to address fields by name instead of positional index."
 ## Task 3: Phase 2a — `refine()` DSL primitive (authoring-only metadata)
 
 **Files:**
+
 - Create: `packages/codegen/src/dsl/primitives/refine.ts`
 - Create: `packages/codegen/src/dsl/__tests__/refine.test.ts`
 - Modify: `packages/codegen/src/dsl/index.ts`
@@ -349,9 +360,9 @@ With:
 
 ```ts
 export interface RefineForm {
-    readonly name: string
-    /** Path → selection. Selection is branch index or literal string. */
-    readonly selections: Record<string, number | string>
+	readonly name: string;
+	/** Path → selection. Selection is branch index or literal string. */
+	readonly selections: Record<string, number | string>;
 }
 ```
 
@@ -360,10 +371,13 @@ Initialize in `wire(config)` and in `withWireContext()`.
 Add a wire-routing helper:
 
 ```ts
-export function wireRegisterRefineForms(kind: string, forms: RefineForm[]): boolean {
-    if (!currentContext) return false
-    currentContext.refineForms.set(kind, forms)
-    return true
+export function wireRegisterRefineForms(
+	kind: string,
+	forms: RefineForm[]
+): boolean {
+	if (!currentContext) return false;
+	currentContext.refineForms.set(kind, forms);
+	return true;
 }
 ```
 
@@ -379,10 +393,14 @@ Write `packages/codegen/src/dsl/primitives/refine.ts`:
  * tree is unchanged. See ADR-0010 for the full design.
  */
 
-import type { RuntimeRule } from '../runtime-shapes.ts'
-import { wireGetCurrentRuleKind, wireRegisterRefineForms, type RefineForm } from '../wire/wire.ts'
+import type { RuntimeRule } from '../runtime-shapes.ts';
+import {
+	wireGetCurrentRuleKind,
+	wireRegisterRefineForms,
+	type RefineForm
+} from '../wire/wire.ts';
 
-export type FormMap = Record<string, Record<string, number | string>>
+export type FormMap = Record<string, Record<string, number | string>>;
 
 /**
  * Declare per-form choice selections for the current rule. Each outer
@@ -400,23 +418,27 @@ export type FormMap = Record<string, Record<string, number | string>>
  *   name duplicates an earlier form on the same rule.
  */
 export function refine(original: RuntimeRule, forms: FormMap): RuntimeRule {
-    const kind = wireGetCurrentRuleKind()
-    if (!kind) {
-        throw new Error(
-            `refine(): no active wire context — refine() must run inside a rule callback under wire()`,
-        )
-    }
-    const formList: RefineForm[] = []
-    for (const [name, selections] of Object.entries(forms)) {
-        if (formList.some(f => f.name === name)) {
-            throw new Error(`refine(): duplicate form name '${name}' on rule '${kind}'`)
-        }
-        formList.push({ name, selections: { ...selections } })
-    }
-    if (!wireRegisterRefineForms(kind, formList)) {
-        throw new Error(`refine(): wire context rejected registration — unexpected`)
-    }
-    return original
+	const kind = wireGetCurrentRuleKind();
+	if (!kind) {
+		throw new Error(
+			`refine(): no active wire context — refine() must run inside a rule callback under wire()`
+		);
+	}
+	const formList: RefineForm[] = [];
+	for (const [name, selections] of Object.entries(forms)) {
+		if (formList.some((f) => f.name === name)) {
+			throw new Error(
+				`refine(): duplicate form name '${name}' on rule '${kind}'`
+			);
+		}
+		formList.push({ name, selections: { ...selections } });
+	}
+	if (!wireRegisterRefineForms(kind, formList)) {
+		throw new Error(
+			`refine(): wire context rejected registration — unexpected`
+		);
+	}
+	return original;
 }
 ```
 
@@ -427,7 +449,7 @@ Note: path + selection **validation** (path resolves to a choice, selection in r
 Add:
 
 ```ts
-export { refine } from './primitives/refine.ts'
+export { refine } from './primitives/refine.ts';
 ```
 
 - [ ] **Step 4: Unit tests**
@@ -435,54 +457,54 @@ export { refine } from './primitives/refine.ts'
 Write `packages/codegen/src/dsl/__tests__/refine.test.ts`:
 
 ```ts
-import { describe, it, expect, beforeAll, afterAll } from 'vitest'
-import { refine } from '../primitives/refine.ts'
-import { withWireContext } from '../wire/wire.ts'
-import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts'
-import type { Rule } from '../../compiler/rule.ts'
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { refine } from '../primitives/refine.ts';
+import { withWireContext } from '../wire/wire.ts';
+import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
+import type { Rule } from '../../compiler/rule.ts';
 
-beforeAll(() => installFakeDsl())
-afterAll(() => restoreFakeDsl())
+beforeAll(() => installFakeDsl());
+afterAll(() => restoreFakeDsl());
 
 describe('refine()', () => {
-    const rule = { type: 'seq', members: [] } as Rule
+	const rule = { type: 'seq', members: [] } as Rule;
 
-    it('registers form metadata on the active wire context', () => {
-        const { ctx, result } = withWireContext('interface_body', () => {
-            return refine(rule, {
-                curly: { 'opening:': '{', 'closing:': '}' },
-                flow:  { 'opening:': '{|', 'closing:': '|}' },
-            })
-        })
-        expect(result).toBe(rule)  // unchanged structurally
-        const forms = ctx.refineForms.get('interface_body')
-        expect(forms).toBeDefined()
-        expect(forms).toHaveLength(2)
-        expect(forms![0].name).toBe('curly')
-        expect(forms![0].selections['opening:']).toBe('{')
-        expect(forms![1].name).toBe('flow')
-    })
+	it('registers form metadata on the active wire context', () => {
+		const { ctx, result } = withWireContext('interface_body', () => {
+			return refine(rule, {
+				curly: { 'opening:': '{', 'closing:': '}' },
+				flow: { 'opening:': '{|', 'closing:': '|}' }
+			});
+		});
+		expect(result).toBe(rule); // unchanged structurally
+		const forms = ctx.refineForms.get('interface_body');
+		expect(forms).toBeDefined();
+		expect(forms).toHaveLength(2);
+		expect(forms![0].name).toBe('curly');
+		expect(forms![0].selections['opening:']).toBe('{');
+		expect(forms![1].name).toBe('flow');
+	});
 
-    it('throws without an active wire context', () => {
-        expect(() => {
-            refine(rule, { curly: { 'opening:': '{' } })
-        }).toThrow(/no active wire context/)
-    })
+	it('throws without an active wire context', () => {
+		expect(() => {
+			refine(rule, { curly: { 'opening:': '{' } });
+		}).toThrow(/no active wire context/);
+	});
 
-    it('throws on duplicate form names', () => {
-        expect(() => {
-            withWireContext('x', () => {
-                refine(rule, {
-                    curly: { 'opening:': '{' },
-                    // duplicate — same form name, different selection
-                })
-            })
-        }).not.toThrow()  // no duplicate at the JS-object level; keys are unique
-        // The duplicate-detection fires when a SEPARATE form entry
-        // shares a name, which JS object literals can't express. Skip
-        // this case; the guard exists for robustness.
-    })
-})
+	it('throws on duplicate form names', () => {
+		expect(() => {
+			withWireContext('x', () => {
+				refine(rule, {
+					curly: { 'opening:': '{' }
+					// duplicate — same form name, different selection
+				});
+			});
+		}).not.toThrow(); // no duplicate at the JS-object level; keys are unique
+		// The duplicate-detection fires when a SEPARATE form entry
+		// shares a name, which JS object literals can't express. Skip
+		// this case; the guard exists for robustness.
+	});
+});
 ```
 
 - [ ] **Step 5: Type-check + test**
@@ -511,6 +533,7 @@ yet."
 ## Task 4: Phase 2b — codegen for refine (link + emitters)
 
 **Files:**
+
 - Modify: `packages/codegen/src/compiler/evaluate.ts` — thread `refineForms` from wire context into `RawGrammar`.
 - Modify: `packages/codegen/src/compiler/types.ts` — `RawGrammar` gains `refineForms?: Map<string, RefineForm[]>`; `LinkedGrammar` or the per-kind model gains the same.
 - Modify: `packages/codegen/src/compiler/link.ts` — attach refine metadata to per-kind `AssembledNode` entries; validate paths resolve to choice nodes; validate selections.
@@ -524,9 +547,14 @@ This task is the biggest in the plan. Break into steps carefully.
 In `evaluate.ts::drainPolymorphMetadata`, add a sibling `drainRefineMetadata`:
 
 ```ts
-function drainRefineMetadata(opts: GrammarOptions): Map<string, RefineForm[]> | undefined {
-    const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__
-    return wireCtx && wireCtx.refineForms.size > 0 ? new Map(wireCtx.refineForms) : undefined
+function drainRefineMetadata(
+	opts: GrammarOptions
+): Map<string, RefineForm[]> | undefined {
+	const wireCtx = (opts as unknown as { __wireContext__?: WireContext })
+		.__wireContext__;
+	return wireCtx && wireCtx.refineForms.size > 0
+		? new Map(wireCtx.refineForms)
+		: undefined;
 }
 ```
 
@@ -569,18 +597,20 @@ In `emitters/types.ts`, when emitting a kind's namespace block, check `model.ref
 ```ts
 // For interface_body with forms [curly, flow]:
 export namespace InterfaceBody {
-    export namespace Curly {
-        export interface Config {
-            // opening omitted — literalValues narrowed to ['{'], phase-1 auto-stamp fires
-            // closing omitted — same
-            readonly members?: readonly Member[]
-        }
-    }
-    export namespace Flow {
-        export interface Config { /* analogous */ }
-    }
-    /** First-declared form is the default for bare-call sugar. */
-    export type Config = Curly.Config
+	export namespace Curly {
+		export interface Config {
+			// opening omitted — literalValues narrowed to ['{'], phase-1 auto-stamp fires
+			// closing omitted — same
+			readonly members?: readonly Member[];
+		}
+	}
+	export namespace Flow {
+		export interface Config {
+			/* analogous */
+		}
+	}
+	/** First-declared form is the default for bare-call sugar. */
+	export type Config = Curly.Config;
 }
 ```
 
@@ -589,10 +619,13 @@ Key trick: per-form Config generation narrows the auto-stamp-eligible fields. Th
 Write a small helper:
 
 ```ts
-function narrowFieldsForForm(fields: AssembledField[], form: RefineForm): AssembledField[] {
-    // For each form selection, find the field whose path matches,
-    // replace its literalValues with the singleton selected value.
-    // Fields unaffected by the form stay as-is.
+function narrowFieldsForForm(
+	fields: AssembledField[],
+	form: RefineForm
+): AssembledField[] {
+	// For each form selection, find the field whose path matches,
+	// replace its literalValues with the singleton selected value.
+	// Fields unaffected by the form stay as-is.
 }
 ```
 
@@ -651,6 +684,7 @@ Task 5 migrates typescript interface_body and object_type."
 ## Task 5: Phase 2c — migrate `interface_body` and `object_type` in typescript overrides
 
 **Files:**
+
 - Modify: `packages/typescript/overrides.ts`
 
 - [ ] **Step 1: Add refine declarations**
@@ -686,33 +720,37 @@ Inspect generated `factories.ts`: `interfaceBody.curly(...)`, `interfaceBody.flo
 Create or append to `packages/typescript/tests/refine.test.ts`:
 
 ```ts
-import { describe, it, expect, expectTypeOf } from 'vitest'
-import { ir } from '../src/index.ts'
+import { describe, it, expect, expectTypeOf } from 'vitest';
+import { ir } from '../src/index.ts';
 
 describe('interface_body refined forms', () => {
-    it('curly factory stamps { and }', () => {
-        const node = ir.interfaceBody.curly({ members: [] })
-        expect(node.$fields.opening).toBe('{')
-        expect(node.$fields.closing).toBe('}')
-    })
+	it('curly factory stamps { and }', () => {
+		const node = ir.interfaceBody.curly({ members: [] });
+		expect(node.$fields.opening).toBe('{');
+		expect(node.$fields.closing).toBe('}');
+	});
 
-    it('flow factory stamps {| and |}', () => {
-        const node = ir.interfaceBody.flow({ members: [] })
-        expect(node.$fields.opening).toBe('{|')
-        expect(node.$fields.closing).toBe('|}')
-    })
+	it('flow factory stamps {| and |}', () => {
+		const node = ir.interfaceBody.flow({ members: [] });
+		expect(node.$fields.opening).toBe('{|');
+		expect(node.$fields.closing).toBe('|}');
+	});
 
-    it('bare ir.interfaceBody defaults to curly (first-declared)', () => {
-        const node = ir.interfaceBody({ members: [] })
-        expect(node.$fields.opening).toBe('{')
-        expect(node.$fields.closing).toBe('}')
-    })
+	it('bare ir.interfaceBody defaults to curly (first-declared)', () => {
+		const node = ir.interfaceBody({ members: [] });
+		expect(node.$fields.opening).toBe('{');
+		expect(node.$fields.closing).toBe('}');
+	});
 
-    it('Config types omit the auto-stamped fields', () => {
-        expectTypeOf<Parameters<typeof ir.interfaceBody.curly>[0]>().not.toHaveProperty('opening')
-        expectTypeOf<Parameters<typeof ir.interfaceBody.curly>[0]>().not.toHaveProperty('closing')
-    })
-})
+	it('Config types omit the auto-stamped fields', () => {
+		expectTypeOf<
+			Parameters<typeof ir.interfaceBody.curly>[0]
+		>().not.toHaveProperty('opening');
+		expectTypeOf<
+			Parameters<typeof ir.interfaceBody.curly>[0]
+		>().not.toHaveProperty('closing');
+	});
+});
 ```
 
 Run: `pnpm test packages/typescript/tests/refine.test.ts 2>&1 | tail -15`
@@ -742,6 +780,7 @@ Added round-trip + type-level tests confirming the omission and default."
 ## Self-Review
 
 **Spec coverage (ADR-0010 decisions):**
+
 - Phase 1 auto-stamp — ✅ Task 1
 - Phase 2 refine() — ✅ Tasks 3-5
 - Phase 3 path syntax migration — ✅ Task 2

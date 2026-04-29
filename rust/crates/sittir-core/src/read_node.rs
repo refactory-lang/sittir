@@ -65,6 +65,7 @@ fn find_by_id<'a>(
     node: tree_sitter::Node<'a>,
     target: u64,
 ) -> Option<tree_sitter::Node<'a>> {
+
     if node.id() as u64 == target {
         return Some(node);
     }
@@ -85,6 +86,7 @@ fn read_ts_node(
     let assigned_id = node.id() as u64;
 
     let kind = node.kind().to_string();
+
     let named = node.is_named();
     let byte_range = node.byte_range();
     let span = Span {
@@ -126,6 +128,7 @@ fn read_ts_node(
         text,
         span: Some(span),
         node_id: Some(assigned_id),
+        format: None,
     }
 }
 
@@ -147,13 +150,13 @@ fn read_children(
 ) -> (Option<HashMap<String, FieldValue>>, Option<Vec<NodeData>>) {
     let mut fields_acc: HashMap<String, Vec<NodeData>> = HashMap::new();
     let mut children_acc: Vec<NodeData> = Vec::new();
-    let child_count = node.child_count();
+    let child_count = node.child_count() as u32;
     for i in 0..child_count {
         let child = match node.child(i) {
             Some(c) => c,
             None => continue,
         };
-        let field_name = node.field_name_for_child(i as u32);
+        let field_name = node.field_name_for_child(i);
         let data = read_ts_node(child, source);
         match field_name {
             Some(name) => fields_acc.entry(name.to_string()).or_default().push(data),

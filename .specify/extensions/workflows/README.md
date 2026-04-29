@@ -43,19 +43,19 @@ With vanilla spec-kit, you get structure for ~25% of your work (new features), b
 
 These extensions bring spec-kit's structured approach to all development activities:
 
-| Activity | Without Extensions | With Extensions |
-|----------|-------------------|-----------------|
-| **New Feature** | `/speckit.specify` workflow | Same |
-| **Project Baseline** | Ad-hoc | `/speckit.workflows.baseline` with comprehensive docs |
-| **Bug Fix** | Ad-hoc | `/speckit.workflows.bugfix` with regression tests |
-| **Minor Enhancement** | Ad-hoc | `/speckit.workflows.enhance` with streamlined planning |
-| **Modify Feature** | Ad-hoc | `/speckit.workflows.modify` with impact analysis |
-| **Refactor Code** | Ad-hoc | `/speckit.workflows.refactor` with metrics |
-| **Production Fire** | Panic | `/speckit.workflows.hotfix` with post-mortem |
-| **Remove Feature** | Hope | `/speckit.workflows.deprecate` with 3-phase sunset |
-| **Codebase Cleanup** | Manual | `/speckit.workflows.cleanup` with automation |
-| **Work Review** | Inconsistent | `/speckit.workflows.review` with structured feedback |
-| **GitHub Issues** | Manual | `/speckit.workflows.phasestoissues` with phase-level tracking |
+| Activity              | Without Extensions          | With Extensions                                               |
+| --------------------- | --------------------------- | ------------------------------------------------------------- |
+| **New Feature**       | `/speckit.specify` workflow | Same                                                          |
+| **Project Baseline**  | Ad-hoc                      | `/speckit.workflows.baseline` with comprehensive docs         |
+| **Bug Fix**           | Ad-hoc                      | `/speckit.workflows.bugfix` with regression tests             |
+| **Minor Enhancement** | Ad-hoc                      | `/speckit.workflows.enhance` with streamlined planning        |
+| **Modify Feature**    | Ad-hoc                      | `/speckit.workflows.modify` with impact analysis              |
+| **Refactor Code**     | Ad-hoc                      | `/speckit.workflows.refactor` with metrics                    |
+| **Production Fire**   | Panic                       | `/speckit.workflows.hotfix` with post-mortem                  |
+| **Remove Feature**    | Hope                        | `/speckit.workflows.deprecate` with 3-phase sunset            |
+| **Codebase Cleanup**  | Manual                      | `/speckit.workflows.cleanup` with automation                  |
+| **Work Review**       | Inconsistent                | `/speckit.workflows.review` with structured feedback          |
+| **GitHub Issues**     | Manual                      | `/speckit.workflows.phasestoissues` with phase-level tracking |
 
 ## Quick Start
 
@@ -68,6 +68,7 @@ These extensions bring spec-kit's structured approach to all development activit
 ### Installation
 
 **Step 1: Initialize spec-kit** (if not already done):
+
 ```bash
 specify init --here --integration claude
 ```
@@ -75,6 +76,7 @@ specify init --here --integration claude
 `--ai` remains accepted for compatibility on current releases, but newer spec-kit versions prefer `--integration`.
 
 **Step 2: Install extensions** (recommended):
+
 ```bash
 # Install the CLI tool
 pip install specify-extend
@@ -85,6 +87,7 @@ specify-extend --all
 ```
 
 `specify-extend --all` is the **recommended installation method** until spec-kit natively supports alternate feature branch patterns (bugfix/, hotfix/, etc.). It:
+
 1. Reconciles the requested AI agents via upstream `specify integration install`
 2. Downloads and installs the extension via `specify extension add`
 3. Patches spec-kit's `common.sh` to recognize extension branch patterns
@@ -96,6 +99,7 @@ specify-extend --agents claude,copilot --all
 ```
 
 **Alternative: Native spec-kit install** (advanced — does not patch branch patterns):
+
 ```bash
 # Install extension only (no branch pattern support)
 specify extension add workflows --from https://github.com/pradeepmouli/spec-kit-extensions/archive/refs/heads/main.zip
@@ -333,20 +337,20 @@ If you also install the optional `github-issues` companion, treat responsibiliti
 
 ## Workflow Cheat Sheet
 
-| Workflow | Command | Alias | Key Feature |
-|----------|---------|-------|-------------|
-| **Feature** | `/speckit.specify "..."` | — | Full spec + design |
-| **Baseline** | `/speckit.workflows.baseline` | `/speckit.baseline` | Context tracking |
-| **Bugfix** | `/speckit.workflows.bugfix "..."` | `/speckit.bugfix` | Regression test |
-| **Enhance** | `/speckit.workflows.enhance "..."` | `/speckit.enhance` | Single-doc workflow |
-| **Modify** | `/speckit.workflows.modify 014 "..."` | `/speckit.modify` | Impact analysis |
-| **Refactor** | `/speckit.workflows.refactor "..."` | `/speckit.refactor` | Baseline metrics |
-| **Hotfix** | `/speckit.workflows.hotfix "..."` | `/speckit.hotfix` | Post-mortem |
-| **Deprecate** | `/speckit.workflows.deprecate 014 "..."` | `/speckit.deprecate` | 3-phase sunset |
-| **Cleanup** | `/speckit.workflows.cleanup` | `/speckit.cleanup` | Automated validation |
-| **Review** | `/speckit.workflows.review` | `/speckit.review` | Structured feedback |
-| **Phases→Issues** | `/speckit.workflows.phasestoissues` | `/speckit.phasestoissues` | GitHub integration |
-| **Incorporate** | `/speckit.workflows.incorporate` | `/speckit.incorporate` | Doc integration |
+| Workflow          | Command                                  | Alias                     | Key Feature          |
+| ----------------- | ---------------------------------------- | ------------------------- | -------------------- |
+| **Feature**       | `/speckit.specify "..."`                 | —                         | Full spec + design   |
+| **Baseline**      | `/speckit.workflows.baseline`            | `/speckit.baseline`       | Context tracking     |
+| **Bugfix**        | `/speckit.workflows.bugfix "..."`        | `/speckit.bugfix`         | Regression test      |
+| **Enhance**       | `/speckit.workflows.enhance "..."`       | `/speckit.enhance`        | Single-doc workflow  |
+| **Modify**        | `/speckit.workflows.modify 014 "..."`    | `/speckit.modify`         | Impact analysis      |
+| **Refactor**      | `/speckit.workflows.refactor "..."`      | `/speckit.refactor`       | Baseline metrics     |
+| **Hotfix**        | `/speckit.workflows.hotfix "..."`        | `/speckit.hotfix`         | Post-mortem          |
+| **Deprecate**     | `/speckit.workflows.deprecate 014 "..."` | `/speckit.deprecate`      | 3-phase sunset       |
+| **Cleanup**       | `/speckit.workflows.cleanup`             | `/speckit.cleanup`        | Automated validation |
+| **Review**        | `/speckit.workflows.review`              | `/speckit.review`         | Structured feedback  |
+| **Phases→Issues** | `/speckit.workflows.phasestoissues`      | `/speckit.phasestoissues` | GitHub integration   |
+| **Incorporate**   | `/speckit.workflows.incorporate`         | `/speckit.incorporate`    | Doc integration      |
 
 ## Workflow Engine Assets
 
@@ -386,14 +390,14 @@ specify workflow run workflows/bugfix-lifecycle/workflow.yml --input request="lo
 
 Commands are registered by spec-kit's extension system and work with any supported agent:
 
-| Agent | Status |
-|-------|--------|
-| Claude Code | Supported |
-| GitHub Copilot | Supported |
-| Cursor | Supported |
-| Windsurf | Supported |
-| Gemini CLI | Supported |
-| Codex CLI | Supported |
+| Agent                  | Status    |
+| ---------------------- | --------- |
+| Claude Code            | Supported |
+| GitHub Copilot         | Supported |
+| Cursor                 | Supported |
+| Windsurf               | Supported |
+| Gemini CLI             | Supported |
+| Codex CLI              | Supported |
 | Amazon Q Developer CLI | Supported |
 
 ### Component Versions
@@ -406,6 +410,7 @@ Commands are registered by spec-kit's extension system and work with any support
 ### Do I need to use all 11 workflows?
 
 No! Use only what you need. Common combinations:
+
 - **Minimal**: Just `bugfix` (most teams need this)
 - **Standard**: `bugfix` + `enhance` + `modify` (covers most scenarios)
 - **Complete**: All 11 workflows (full lifecycle coverage)

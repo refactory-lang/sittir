@@ -4,7 +4,7 @@
  *
  * Asserts:
  *   - intentionally-modified hash causes `getActiveBackend()` to
- *     return `{ name: 'typescript', reason: ~/hash mismatch/i,
+ *     return `{ name: 'js', reason: ~/hash mismatch/i,
  *     hashMatch: false }`.
  *   - no exception propagates to the consumer; the fallback is
  *     silent by default (visible only via `getActiveBackend()` or
@@ -27,37 +27,45 @@
  * branch.
  */
 
-import { describe, it, expect, vi } from 'vitest'
-import { dirname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { describe, it, expect, vi } from 'vitest';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 // Resolve the absolute path to `dist/hash.js` inside the @sittir/rust
 // package. Vite's module graph keys mocks on resolved file paths when
 // the import was resolved relative to another module — `backend.js`
 // imports `./hash.js` from inside the same dist directory, so the
 // mock target must be the absolute path on disk.
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const HASH_MODULE = join(__dirname, '..', '..', 'packages', 'rust', 'dist', 'hash.js')
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const HASH_MODULE = join(
+	__dirname,
+	'..',
+	'..',
+	'packages',
+	'rust',
+	'dist',
+	'hash.js'
+);
 
 describe('US1 acceptance — hash-mismatch silent fallback (T052)', () => {
-    it('falls through to typescript with reason containing "hash mismatch"', async () => {
-        vi.resetModules()
-        vi.doMock(HASH_MODULE, () => ({
-            TEMPLATE_BUNDLE_HASH: 'deadbeef-tampered-hash-not-the-real-one',
-        }))
-        const { getActiveBackend } = await import('@sittir/rust')
-        const backend = getActiveBackend()
-        expect(backend.name).toBe('typescript')
-        if (backend.hashMatch !== undefined) {
-            expect(backend.hashMatch).toBe(false)
-            expect(backend.reason ?? '').toMatch(/hash.mismatch/i)
-        } else {
-            // Soft pass — native binary didn't load, so the hash
-            // compare branch was never reached. Still asserts a
-            // reason exists so we know fallback was deliberate.
-            expect(backend.reason).toBeDefined()
-        }
-        vi.doUnmock(HASH_MODULE)
-        vi.resetModules()
-    })
-})
+	it('falls through to js with reason containing "hash mismatch"', async () => {
+		vi.resetModules();
+		vi.doMock(HASH_MODULE, () => ({
+			TEMPLATE_BUNDLE_HASH: 'deadbeef-tampered-hash-not-the-real-one'
+		}));
+		const { getActiveBackend } = await import('@sittir/rust');
+		const backend = getActiveBackend();
+		expect(backend.name).toBe('js');
+		if (backend.hashMatch !== undefined) {
+			expect(backend.hashMatch).toBe(false);
+			expect(backend.reason ?? '').toMatch(/hash.mismatch/i);
+		} else {
+			// Soft pass — native binary didn't load, so the hash
+			// compare branch was never reached. Still asserts a
+			// reason exists so we know fallback was deliberate.
+			expect(backend.reason).toBeDefined();
+		}
+		vi.doUnmock(HASH_MODULE);
+		vi.resetModules();
+	});
+});

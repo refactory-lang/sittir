@@ -3,9 +3,9 @@ description: Generate a deeply-reasoned, implementation-ready task breakdown for
   current spec-kit feature using extended analysis.
 ---
 
-
 <!-- Extension: workflows -->
 <!-- Config: .specify/extensions/workflows/ -->
+
 ultrathink
 
 You are generating a comprehensive task breakdown for the current spec-kit feature by deeply analysing the specification and plan.
@@ -49,10 +49,11 @@ Overwrite `$TASKS` (tasks.md) with the full breakdown using this format:
 
 - [ ] T001: [Concrete, single-concern task — one commit]
 - [ ] T002: [Concrete, single-concern task — one commit]
-...
+      ...
 ```
 
 Rules:
+
 - Each task must be independently implementable (one logical change, one commit)
 - Group tasks in implementation order; add a blank line between phases if needed
 - Include setup, implementation, test, and documentation tasks

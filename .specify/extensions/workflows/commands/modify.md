@@ -21,6 +21,7 @@ User input:
 $ARGUMENTS
 
 The text the user typed after `/speckit.workflows.modify` (or `/speckit.modify`) in the triggering message can be:
+
 - `/speckit.workflows.modify <feature-number> "modification description"` - Direct with feature number
 - `/speckit.workflows.modify "modification description"` - Interactive (will prompt for feature selection)
 
@@ -36,16 +37,18 @@ Given that modification request, do this:
    a. Run `.specify/extensions/workflows/scripts/bash/create-modification.sh --list-features "<description>"` to get list of features
    b. Parse the JSON output which contains: `{"mode":"list","description":"...","features":[...]}`
    c. Present the features list to the user in a clear, numbered format:
-      ```
-      Which feature do you want to modify?
 
-      1. 001 - ability-for-new
-      2. 002 - ability-for-users
-      3. 014 - edit-profile-form
-      ...
+   ```
+   Which feature do you want to modify?
 
-      Type the feature number (e.g., 014) or respond with the line number (e.g., 3).
-      ```
+   1. 001 - ability-for-new
+   2. 002 - ability-for-users
+   3. 014 - edit-profile-form
+   ...
+
+   Type the feature number (e.g., 014) or respond with the line number (e.g., 3).
+   ```
+
    d. Wait for user response with their selection
    e. Extract the feature number from their response (handle both "014" and "3" formats)
    f. Continue to step 3 with the selected feature number
@@ -54,20 +57,20 @@ Given that modification request, do this:
    Run the script `.specify/extensions/workflows/scripts/bash/create-modification.sh --json <feature-number> "<description>"` from repo root and parse its JSON output for MOD_ID, BRANCH_NAME, MOD_SPEC_FILE, IMPACT_FILE, and FEATURE_NAME. All file paths must be absolute.
    **IMPORTANT** You must only ever run this script once per feature selection. The JSON is provided in the terminal as output - always refer to it to get the actual content you're looking for.
 
-5. Read the impact analysis from IMPACT_FILE to understand what files and contracts are affected.
+4. Read the impact analysis from IMPACT_FILE to understand what files and contracts are affected.
 
-6. Load the original feature spec from `specs/<FEATURE_NAME>/spec.md` to understand the baseline.
+5. Load the original feature spec from `specs/<FEATURE_NAME>/spec.md` to understand the baseline.
 
-7. Load `.specify/extensions/workflows/templates/modify/modification-template.md` to understand required sections.
+6. Load `.specify/extensions/workflows/templates/modify/modification-template.md` to understand required sections.
 
-8. Write the modification spec to MOD_SPEC_FILE using the template structure:
+7. Write the modification spec to MOD_SPEC_FILE using the template structure:
    - Fill "Why Modify?" with business justification from description
    - Fill "What's Changing?" sections (Added/Modified/Removed) based on description
    - Include impact analysis summary from IMPACT_FILE
    - Document backward compatibility considerations
    - Leave detailed implementation sections for planning phase
 
-9. Report completion with Next Steps:
+8. Report completion with Next Steps:
 
 ```
 Modification workflow initialized
@@ -95,5 +98,6 @@ Modification workflow initialized
 Note: The script creates and checks out the new branch, runs impact analysis, and prepares directory structure before writing.
 
 **Interactive Mode Usage Examples**:
+
 - User: `/speckit.workflows.modify "add avatar compression"` -> Shows feature list -> User selects -> Creates modification
 - User: `/speckit.workflows.modify 014 "add avatar compression"` -> Directly creates modification for feature 014

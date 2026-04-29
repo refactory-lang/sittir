@@ -8,7 +8,14 @@
  * Run with: pnpm --filter @sittir/types type-check
  */
 
-import type { NodeData, NodeConfig, TreeNode, NodeKind, FieldName, KindOf } from '../src/index.ts';
+import type {
+	NodeData,
+	NodeConfig,
+	TreeNode,
+	NodeKind,
+	FieldName,
+	KindOf
+} from '../src/index.ts';
 
 // ---------------------------------------------------------------------------
 // Use the Rust grammar type from the generated package
@@ -19,7 +26,7 @@ import type { RustGrammar } from '../../rust/src/grammar.ts';
 // Helper: assert types are equal
 // ---------------------------------------------------------------------------
 type Expect<T extends true> = T;
-type Equal<A, B> = [A] extends [B] ? [B] extends [A] ? true : false : false;
+type Equal<A, B> = [A] extends [B] ? ([B] extends [A] ? true : false) : false;
 type Extends<A, B> = A extends B ? true : false;
 
 // ---------------------------------------------------------------------------
@@ -32,7 +39,9 @@ type FnItem = NodeData<RustGrammar, 'function_item'>;
 type _1a = Expect<Equal<FnItem['type'], 'function_item'>>;
 
 // Should have 'fields' property
-type _1b = Expect<Extends<FnItem, { readonly type: 'function_item'; readonly fields: object }>>;
+type _1b = Expect<
+	Extends<FnItem, { readonly type: 'function_item'; readonly fields: object }>
+>;
 
 // Should have optional 'text'
 type _1c = Expect<Extends<FnItem, { readonly text?: string }>>;
@@ -80,10 +89,14 @@ type _4b = Expect<Extends<FnTree, { field(name: string): unknown }>>;
 type _4c = Expect<Extends<FnTree, { text(): string }>>;
 
 // Should have range() method
-type _4d = Expect<Extends<FnTree, { range(): { start: { index: number }; end: { index: number } } }>>;
+type _4d = Expect<
+	Extends<
+		FnTree,
+		{ range(): { start: { index: number }; end: { index: number } } }
+	>
+>;
 
 // field('name') should return a TreeNode for identifier | metavariable (or null)
-type FnNameField = ReturnType<FnTree['field']>;
 
 // ---------------------------------------------------------------------------
 // 5. NodeKind — valid kinds
@@ -113,15 +126,19 @@ type _6d = Expect<Equal<Extends<'nonexistent', FnFieldNames>, false>>;
 // 7. KindOf — extract type from a node
 // ---------------------------------------------------------------------------
 
-type _7a = Expect<Equal<KindOf<{ readonly type: 'function_item' }>, 'function_item'>>;
+type _7a = Expect<
+	Equal<KindOf<{ readonly type: 'function_item' }>, 'function_item'>
+>;
 type _7b = Expect<Equal<KindOf<FnTree>, 'function_item'>>;
 type _7c = Expect<Equal<KindOf<{ readonly type: 'identifier' }>, 'identifier'>>;
 
 // Union distribution
-type _7d = Expect<Equal<
-  KindOf<{ readonly type: 'identifier' } | { readonly type: 'metavariable' }>,
-  'identifier' | 'metavariable'
->>;
+type _7d = Expect<
+	Equal<
+		KindOf<{ readonly type: 'identifier' } | { readonly type: 'metavariable' }>,
+		'identifier' | 'metavariable'
+	>
+>;
 
 // ---------------------------------------------------------------------------
 // 8. Recursive field typing — function_item.name should be identifier-typed
@@ -151,7 +168,6 @@ type _9d = Expect<Extends<'right', keyof BinFields>>;
 // ---------------------------------------------------------------------------
 
 type BlockNode = NodeData<RustGrammar, 'block'>;
-type BlockFields = NodeConfig<RustGrammar, 'block'>;
 
 type _10a = Expect<Equal<BlockNode['type'], 'block'>>;
 
@@ -182,7 +198,9 @@ type _12b = Expect<Extends<FnItem, { readonly fields: object }>>;
 // ---------------------------------------------------------------------------
 
 // TreeNode.field() should accept valid field names
-type FnTreeFieldResult = ReturnType<TreeNode<RustGrammar, 'function_item'>['field']>;
+type FnTreeFieldResult = ReturnType<
+	TreeNode<RustGrammar, 'function_item'>['field']
+>;
 
 // field() returns TreeNode | null (for any valid field name)
 type _13a = Expect<Extends<null, FnTreeFieldResult>>;
@@ -213,17 +231,17 @@ type _15b = Expect<Extends<'value', LetKeys>>;
 // 16. Verify NodeData and TreeNode produce compatible 'type' discriminants
 // ---------------------------------------------------------------------------
 
-type _16a = Expect<Equal<
-  NodeData<RustGrammar, 'identifier'>['type'],
-  TreeNode<RustGrammar, 'identifier'>['type']
->>;
+type _16a = Expect<
+	Equal<
+		NodeData<RustGrammar, 'identifier'>['type'],
+		TreeNode<RustGrammar, 'identifier'>['type']
+	>
+>;
 
-type _16b = Expect<Equal<
-  NodeData<RustGrammar, 'function_item'>['type'],
-  'function_item'
->>;
+type _16b = Expect<
+	Equal<NodeData<RustGrammar, 'function_item'>['type'], 'function_item'>
+>;
 
-type _16c = Expect<Equal<
-  TreeNode<RustGrammar, 'function_item'>['type'],
-  'function_item'
->>;
+type _16c = Expect<
+	Equal<TreeNode<RustGrammar, 'function_item'>['type'], 'function_item'>
+>;

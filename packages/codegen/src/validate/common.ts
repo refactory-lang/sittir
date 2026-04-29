@@ -13,26 +13,33 @@
  * own file and imports whatever it needs from here.
  */
 
-import { readFileSync, readdirSync, existsSync } from 'node:fs'
-import type { Mode } from 'node:fs'
-import { join } from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { readNode as readNodeFn } from '@sittir/core'
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
+import {
+	readNode as readNodeFn,
+	dumpMetrics,
+	metricsEnabled
+} from '@sittir/core';
 import type * as TS from 'web-tree-sitter';
-import type { SgNode, Pos, Range } from '@ast-grep/wasm'
+import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 
-
-import type { AnyTreeNode } from '@sittir/types'
-import type { TreeHandle } from '@sittir/core'
-import { assertNever, type PolymorphVariantDescriptor, type PolymorphVariantMap } from '../polymorph-variant.ts'
+import type { AnyNodeData, AnyTreeNode, NodeId, NativeParseResult } from '@sittir/types';
+import type { TreeHandle } from '@sittir/core';
+import {
+	assertNever,
+	type PolymorphVariantDescriptor,
+	type PolymorphVariantMap
+} from '../polymorph-variant.ts';
 
 // ---------------------------------------------------------------------------
 // Corpus parser — tree-sitter test corpus format
 // ---------------------------------------------------------------------------
 
 export interface CorpusEntry {
-    name: string
-    source: string
+	name: string;
+	source: string;
 }
 
 export type TSNode = TS.Node;
@@ -43,48 +50,53 @@ export type TSTree = TS.Tree;
  * Format: `====` header, test name, `====`, source, `----`, expected tree.
  */
 export function parseCorpus(content: string): CorpusEntry[] {
-    const entries: CorpusEntry[] = []
-    const lines = content.split('\n')
-    let i = 0
+	const entries: CorpusEntry[] = [];
+	const lines = content.split('\n');
+	let i = 0;
 
-    while (i < lines.length) {
-        if (!lines[i]!.startsWith('====')) { i++; continue }
-        i++
+	while (i < lines.length) {
+		if (!lines[i]!.startsWith('====')) {
+			i++;
+			continue;
+		}
+		i++;
 
-        const name = lines[i]?.trim() ?? ''
-        i++
+		const name = lines[i]?.trim() ?? '';
+		i++;
 
-        while (i < lines.length && lines[i]!.startsWith('====')) i++
+		while (i < lines.length && lines[i]!.startsWith('====')) i++;
 
-        const sourceLines: string[] = []
-        while (i < lines.length && !lines[i]!.match(/^-{3,}$/)) {
-            sourceLines.push(lines[i]!)
-            i++
-        }
+		const sourceLines: string[] = [];
+		while (i < lines.length && !lines[i]!.match(/^-{3,}$/)) {
+			sourceLines.push(lines[i]!);
+			i++;
+		}
 
-        while (i < lines.length && !lines[i]!.startsWith('====')) i++
+		while (i < lines.length && !lines[i]!.startsWith('====')) i++;
 
-        const source = sourceLines.join('\n').trim()
-        if (source) entries.push({ name, source })
-    }
+		const source = sourceLines.join('\n').trim();
+		if (source) entries.push({ name, source });
+	}
 
-    return entries
+	return entries;
 }
 
 // ---------------------------------------------------------------------------
 // Fixtures directory + loader
 // ---------------------------------------------------------------------------
 
-const FIXTURES_DIR = fileURLToPath(new URL('../../fixtures', import.meta.url))
+const FIXTURES_DIR = fileURLToPath(new URL('../../fixtures', import.meta.url));
 
 export function loadCorpusEntries(grammar: string): CorpusEntry[] {
-    const entries: CorpusEntry[] = []
-    const files = readdirSync(FIXTURES_DIR).filter(f => f.startsWith(`${grammar}-`) && f.endsWith('.txt'))
-    for (const file of files) {
-        const content = readFileSync(join(FIXTURES_DIR, file), 'utf-8')
-        entries.push(...parseCorpus(content))
-    }
-    return entries
+	const entries: CorpusEntry[] = [];
+	const files = readdirSync(FIXTURES_DIR).filter(
+		(f) => f.startsWith(`${grammar}-`) && f.endsWith('.txt')
+	);
+	for (const file of files) {
+		const content = readFileSync(join(FIXTURES_DIR, file), 'utf-8');
+		entries.push(...parseCorpus(content));
+	}
+	return entries;
 }
 
 /**
@@ -92,70 +104,90 @@ export function loadCorpusEntries(grammar: string): CorpusEntry[] {
  * ambiguous default-export shape depending on bundler, so we try the
  * two common locations and throw if neither carries `Parser` + `Language`.
  */
-export async function loadWebTreeSitter(): Promise<{ Parser: typeof TS.Parser; Language: typeof TS.Language }> {
-    const mod = await import('web-tree-sitter');
-    const Parser = mod.Parser ?? (mod.default && 'Parser' in mod.default ? mod.default.Parser : undefined)
-    const Language = mod.Language ?? (mod.default && 'Language' in mod.default ? mod.default.Language : undefined)
-    if (!Parser || !Language) {
-        throw new Error("web-tree-sitter: could not locate `Parser` or `Language` export")
-    }
-    await Parser.init()
-    return { Parser, Language }
+export async function loadWebTreeSitter(): Promise<{
+	Parser: typeof TS.Parser;
+	Language: typeof TS.Language;
+}> {
+	const mod = await import('web-tree-sitter');
+	const Parser =
+		mod.Parser ??
+		(mod.default && 'Parser' in mod.default ? mod.default.Parser : undefined);
+	const Language =
+		mod.Language ??
+		(mod.default && 'Language' in mod.default
+			? mod.default.Language
+			: undefined);
+	if (!Parser || !Language) {
+		throw new Error(
+			'web-tree-sitter: could not locate `Parser` or `Language` export'
+		);
+	}
+	await Parser.init();
+	return { Parser, Language };
 }
 
-export function adaptNode(node: TS.Node) : AnyTreeNode {
-    return {
-        type: node.type,
-        id: () => node.id,
-        text: () => node.text,
-        isNamed: () => node.isNamed,
-        field: (name: string) => {
-            const child = node.childForFieldName(name)
-            return child ? adaptNode(child) : null
-        },
-        fieldChildren: (name: string) => {
-            const result: AnyTreeNode[] = []
-            for (let i = 0; i < node.childCount; i++) {
-                if (node.fieldNameForChild(i) === name) {
-                    const child = node.child(i)
-                    if (child) result.push(adaptNode(child))
-                }
-            }
-            return result
-        },
+export function adaptNode(node: TS.Node): AnyTreeNode {
+	return {
+		type: node.type,
+		id: () => node.id as NodeId,
+		text: () => node.text,
+		isNamed: () => node.isNamed,
+		field: (name: string) => {
+			const child = node.childForFieldName(name);
+			return child ? adaptNode(child) : null;
+		},
+		fieldChildren: (name: string) => {
+			const result: AnyTreeNode[] = [];
+			for (let i = 0; i < node.childCount; i++) {
+				if (node.fieldNameForChild(i) === name) {
+					const child = node.child(i);
+					if (child) result.push(adaptNode(child));
+				}
+			}
+			return result;
+		},
 
-        fieldNameForChild: (index: number) => node.fieldNameForChild(index),
-        children(): AnyTreeNode[] {
-            return node.children.map(adaptNode)
-        },
-        range: () => ({
-            start: { index: node.startIndex, line: node.startPosition.row, column: node.startPosition.column},
-            end: { index: node.endIndex, line: node.endPosition.row, column: node.endPosition.column },
-        } as unknown as Range),
-    }
+		fieldNameForChild: (index: number) => node.fieldNameForChild(index),
+		children(): AnyTreeNode[] {
+			return node.children.map(adaptNode);
+		},
+		range: () =>
+			({
+				start: {
+					index: node.startIndex,
+					line: node.startPosition.row,
+					column: node.startPosition.column
+				},
+				end: {
+					index: node.endIndex,
+					line: node.endPosition.row,
+					column: node.endPosition.column
+				}
+			}) as unknown as Range
+	};
 }
 
 export function treeHandle(tree: TS.Tree, source?: string): TreeHandle {
-    const nodeMap = new Map<number, TS.Node>()
-    function collect(node: TS.Node) {
-        nodeMap.set(node.id, node)
-        for (const child of node.children) collect(child)
-    }
-    collect(tree.rootNode)
+	const nodeMap = new Map<number, TS.Node>();
+	function collect(node: TS.Node) {
+		nodeMap.set(node.id, node);
+		for (const child of node.children) collect(child);
+	}
+	collect(tree.rootNode);
 
-    const handle: TreeHandle = {
-        rootNode: adaptNode(tree.rootNode),
-        nodeById: (id: number) => {
-            const node = nodeMap.get(id)
-            if (!node) throw new Error(`Node ${id} not found`)
-            return adaptNode(node)
-        },
-        source,
-        read(nodeId?: number) {
-            return readNodeFn(handle, nodeId)
-        },
-    }
-    return handle
+	// TS handles use nodeById/rootNode directly in readNode(). No `read`
+	// method is set here — native handles set `read` so readNode() dispatches
+	// through the napi engine without a JS-side tree walk.
+	const handle: TreeHandle = {
+		rootNode: adaptNode(tree.rootNode),
+		nodeById: (id: NodeId) => {
+			const node = nodeMap.get(id);
+			if (!node) throw new Error(`Node ${id} not found`);
+			return adaptNode(node);
+		},
+		source
+	};
+	return handle;
 }
 
 /**
@@ -167,42 +199,54 @@ export function treeHandle(tree: TS.Tree, source?: string): TreeHandle {
  * by the same engine that produced it — no cross-engine id leakage.
  */
 export interface NativeEngineLike {
-    parseAndRead(source: string): string
-    readNode(nodeId: number): string
+	parseAndRead(source: string): string;
+	readNode(nodeId: NodeId): string;
 }
-export function nativeTreeHandle(engine: NativeEngineLike, source: string): TreeHandle {
-    let rootData: AnyNodeDataLike | null = null
-    function ensureRoot(): AnyNodeDataLike {
-        if (rootData === null) {
-            rootData = JSON.parse(engine.parseAndRead(source)) as AnyNodeDataLike
-        }
-        return rootData
-    }
-    const handle: TreeHandle = {
-        // The native engine doesn't expose JS-side raw tree-sitter Node
-        // wrappers; reads always go through `read` below. The required
-        // rootNode / nodeById slots throw to surface accidental fallbacks.
-        get rootNode(): AnyTreeNode {
-            throw new Error('nativeTreeHandle: rootNode unavailable — native handle reads via tree.read()')
-        },
-        nodeById(_id: number): AnyTreeNode {
-            throw new Error('nativeTreeHandle: nodeById() unavailable — native handle reads via tree.read()')
-        },
-        source,
-        read(nodeId?: number) {
-            if (nodeId === undefined) {
-                return ensureRoot() as unknown as ReturnType<NonNullable<TreeHandle['read']>>
-            }
-            // Ensure the engine has parsed (populates its tree cache);
-            // readNode(id) returns "no tree cached" otherwise.
-            ensureRoot()
-            return JSON.parse(engine.readNode(nodeId)) as ReturnType<NonNullable<TreeHandle['read']>>
-        },
-    }
-    return handle
+export function nativeTreeHandle(
+	engine: NativeEngineLike,
+	source: string
+): TreeHandle {
+	// Parse eagerly: populates engine tree cache and captures format in one call.
+	// Behavioral note: prior to 017, nativeTreeHandle parsed lazily on first
+	// readNode() call. Parsing is now unconditional at construction time so
+	// the format record is always available before callers access tree.format.
+	const parseResult = JSON.parse(engine.parseAndRead(source)) as NativeParseResult;
+	if (parseResult.nodeData === undefined) {
+		const keys = Object.keys(parseResult as object).join(', ');
+		throw new Error(
+			'nativeTreeHandle: engine.parseAndRead() returned JSON without a "nodeData" key. ' +
+			'The engine binary is out of date — rebuild sittir-{lang}-napi against this version. ' +
+			`Received keys: ${keys}`
+		);
+	}
+	const rootData: AnyNodeData = parseResult.nodeData;
+	const handle: TreeHandle = {
+		// The native engine doesn't expose JS-side raw tree-sitter Node
+		// wrappers; reads always go through `read` below. The required
+		// rootNode / nodeById slots throw to surface accidental fallbacks.
+		get rootNode(): AnyTreeNode {
+			throw new Error(
+				'nativeTreeHandle: rootNode unavailable — native handle reads via tree.read()'
+			);
+		},
+		nodeById(_id: NodeId): AnyTreeNode {
+			throw new Error(
+				'nativeTreeHandle: nodeById() unavailable — native handle reads via tree.read()'
+			);
+		},
+		source,
+		read(nodeId?: NodeId) {
+			if (nodeId === undefined) {
+				return rootData as unknown as ReturnType<NonNullable<TreeHandle['read']>>;
+			}
+			return JSON.parse(engine.readNode(nodeId)) as ReturnType<
+				NonNullable<TreeHandle['read']>
+			>;
+		},
+		...(parseResult.format !== undefined && { format: parseResult.format }),
+	};
+	return handle;
 }
-
-interface AnyNodeDataLike { readonly $type: string }
 
 /**
  * Build the read-side TreeHandle for the corpus validators. Selects
@@ -221,61 +265,123 @@ interface AnyNodeDataLike { readonly $type: string }
  * invocations to amortize the (small) per-engine init. Each call
  * still parses fresh — the engine internally replaces its tree.
  */
-let _cachedNativeEngine: { grammar: string; engine: NativeEngineLike } | null = null
+let _cachedNativeEngine: { grammar: string; engine: NativeEngineLike } | null =
+	null;
 function loadNativeEngineForGrammar(grammar: string): NativeEngineLike | null {
-    if (_cachedNativeEngine && _cachedNativeEngine.grammar === grammar) {
-        return _cachedNativeEngine.engine
-    }
-    try {
-        // Match probe-kind's loader — try the published package, fall
-        // back to the workspace-local napi build directory.
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const { createRequire } = require('node:module') as typeof import('node:module')
-        const req = createRequire(import.meta.url)
-        const pkg = `@sittir/${grammar}-native`
-        const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '')
-        const localCratePath = `${repoRoot}/rust/crates/sittir-${grammar}-napi`
-        let mod: { SittirEngine: new () => NativeEngineLike }
-        try { mod = req(pkg) as typeof mod }
-        catch { mod = req(localCratePath) as typeof mod }
-        const engine = new mod.SittirEngine()
-        _cachedNativeEngine = { grammar, engine }
-        return engine
-    } catch {
-        return null
-    }
+	if (_cachedNativeEngine && _cachedNativeEngine.grammar === grammar) {
+		return _cachedNativeEngine.engine;
+	}
+	try {
+		// Match probe-kind's loader — try the published package, fall
+		// back to the workspace-local napi build directory.
+		const req = createRequire(import.meta.url);
+		const pkg = `@sittir/${grammar}-native`;
+		const repoRoot = fileURLToPath(
+			new URL('../../../..', import.meta.url)
+		).replace(/\/$/, '');
+		const localCratePath = `${repoRoot}/rust/crates/sittir-${grammar}-napi`;
+		let mod: { SittirEngine: new () => NativeEngineLike };
+		try {
+			mod = req(pkg) as typeof mod;
+		} catch {
+			mod = req(localCratePath) as typeof mod;
+		}
+		const engine = new mod.SittirEngine();
+		_cachedNativeEngine = { grammar, engine };
+		return engine;
+	} catch {
+		return null;
+	}
 }
 
-export function buildReadHandle(grammar: string, tree: TS.Tree, source: string): TreeHandle {
-    if (process.env.SITTIR_BACKEND === 'native') {
-        const engine = loadNativeEngineForGrammar(grammar)
-        if (engine) return nativeTreeHandle(engine, source)
-        // SITTIR_BACKEND=native explicitly requested but native unavailable —
-        // fall through to wasm so the validator surfaces the actual gap
-        // (e.g. corpus failure modes) rather than a load error.
-    }
-    return treeHandle(tree, source)
+export function buildReadHandle(
+	grammar: string,
+	tree: TS.Tree,
+	source: string,
+	backend?: 'native' | 'typescript'
+): TreeHandle {
+	const effectiveBackend = backend ?? process.env.SITTIR_BACKEND;
+	if (effectiveBackend === 'native') {
+		const engine = loadNativeEngineForGrammar(grammar);
+		if (!engine) {
+			throw new Error(
+				`SITTIR_BACKEND=native but no native engine is available for grammar '${grammar}'`
+			);
+		}
+		return nativeTreeHandle(engine, source);
+	}
+	return treeHandle(tree, source);
+}
+
+/**
+ * For a native TreeHandle (`handle.read` is present), walk the root
+ * NodeData tree to find the `$nodeId` of the first node whose `$type`
+ * equals `kind`. Native engine IDs and WASM/JS engine IDs occupy
+ * different address spaces (pointer-derived usize in Rust vs. WASM
+ * linear-memory offset in web-tree-sitter), so WASM node IDs must
+ * never be passed to a native handle's `readNode(id)`.
+ *
+ * Returns null when `handle` is a WASM handle (no `handle.read`) —
+ * callers fall back to the JS tree's `node.id` in that case.
+ */
+export function findNativeNodeId(
+	handle: TreeHandle,
+	kind: string
+): NodeId | null {
+	if (!handle.read) return null;
+	const root = handle.read();
+
+	function walk(d: AnyNodeData): NodeId | null {
+		if (d.$type === kind && d.$nodeId !== undefined) return d.$nodeId;
+		const fields = d.$fields;
+		if (fields) {
+			for (const v of Object.values(fields)) {
+				const candidates = Array.isArray(v) ? v : [v];
+				for (const c of candidates) {
+					const found = walk(c as AnyNodeData);
+					if (found !== null) return found;
+				}
+			}
+		}
+		const children = d.$children;
+		if (children) {
+			for (const c of children) {
+				const found = walk(c as AnyNodeData);
+				if (found !== null) return found;
+			}
+		}
+		return null;
+	}
+
+	return walk(root);
 }
 
 export function findFirst(node: TS.Node, kind: string): TS.Node | null {
-    if (node.type === kind) return node
-    for (const child of node.children) {
-        const found = findFirst(child, kind)
-        if (found) return found
-    }
-    return null
+	// Cluster H (016): match only named nodes — the kind set comes from
+	// `collectKinds` which is named-only, but tree-sitter exposes both
+	// named and anonymous nodes that can share a `type` string (ts has a
+	// named `string` kind for `'…'`/`"…"` literals AND an anonymous
+	// `string` keyword inside `predefined_type` choice). Without the
+	// named filter, `findFirst` resolves to the anonymous keyword node
+	// when scanning a class with `: string` annotations and the rt
+	// probe tries to round-trip the bare keyword.
+	if (node.type === kind && node.isNamed) return node;
+	for (const child of node.children) {
+		const found = findFirst(child, kind);
+		if (found) return found;
+	}
+	return null;
 }
 
 export function collectKinds(node: TS.Node): Set<string> {
+	const kinds = new Set<string>();
 
-    const kinds = new Set<string>()
-
-    function walk(n: TS.Node) {
-        if (n.isNamed) kinds.add(n.type)
-        for (const child of n.children) walk(child)
-    }
-    walk(node)
-    return kinds
+	function walk(n: TS.Node) {
+		if (n.isNamed) kinds.add(n.type);
+		for (const child of n.children) walk(child);
+	}
+	walk(node);
+	return kinds;
 }
 
 // ---------------------------------------------------------------------------
@@ -283,108 +389,131 @@ export function collectKinds(node: TS.Node): Set<string> {
 // ---------------------------------------------------------------------------
 
 export function buildKindToSupertypes(
-    rawEntries: { type: string; named: boolean; subtypes?: { type: string }[] }[],
+	rawEntries: { type: string; named: boolean; subtypes?: { type: string }[] }[]
 ): Map<string, string[]> {
-    const result = new Map<string, string[]>()
-    for (const entry of rawEntries) {
-        if (!entry.subtypes) continue
-        for (const sub of entry.subtypes) {
-            const existing = result.get(sub.type) ?? []
-            existing.push(entry.type)
-            result.set(sub.type, existing)
-        }
-    }
-    return result
+	const result = new Map<string, string[]>();
+	for (const entry of rawEntries) {
+		if (!entry.subtypes) continue;
+		for (const sub of entry.subtypes) {
+			const existing = result.get(sub.type) ?? [];
+			existing.push(entry.type);
+			result.set(sub.type, existing);
+		}
+	}
+	return result;
 }
 
-const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = {
-    rust: {
-        '_expression': r => `fn _f() { let _ = ${r}; }`,
-        '_type': r => `type _X = ${r};`,
-        '_pattern': r => `fn _f() { let ${r} = (); }`,
-        '_declaration_statement': r => r,
-        '_literal': r => `fn _f() { let _ = ${r}; }`,
-        '_literal_pattern': r => `fn _f() { let ${r} = (); }`,
-        // Kind-specific: `mut_pattern` only appears inside match arms and
-        // if-let conditions — NOT in plain `let` statements (tree-sitter-rust
-        // flattens `let mut x = ..` into `let_declaration` with
-        // `mutable_specifier` + `identifier` siblings, no `mut_pattern` node).
-        // Using match-arm wrapper forces the parser to produce a mut_pattern.
-        'mut_pattern': r => `fn _f(x: i32) { match x { ${r} => () } }`,
-        // `generic_type_with_turbofish` (ADR-0006 alias source): rendered
-        // form includes `::` (e.g. `Bar::<X>`), only valid inside a
-        // scoped_type_identifier like `Bar::<X>::Item`. Bare type position
-        // (`type _X = ${r};`) rejects it. Wrap as a scoped path element.
-        'generic_type_with_turbofish': r => `type _X = ${r}::Item;`,
-        // `scoped_type_identifier_in_expression_position` (ADR-0006):
-        // aliased to `scoped_type_identifier` only inside struct_expression's
-        // name field. Needs struct-literal context to round-trip.
-        'scoped_type_identifier_in_expression_position': r => `fn _f() { let _ = ${r} { val: 1 }; }`,
-        // `delim_token_tree` (ADR-0006): aliased to `token_tree` at
-        // attribute.arguments and macro_invocation positions. Both kinds
-        // use $TEXT rendering now via isVerbatimTokenStream detection
-        // (macro token content is author-declared-verbatim, mixes named
-        // and anon tokens).
-        'delim_token_tree': r => `fn _f() { mac! ${r} }`,
-        // visibility_modifier is a declaration-position prefix — has no
-        // supertype it fits under. Only fires when variant() adoption
-        // has been applied (see `wrapForReparse` — wrappers whose kind
-        // isn't in `deepReadKinds` are skipped so the wrapper doesn't
-        // expose the baseline `{% if variant %}` fall-through).
-        'visibility_modifier': r => `${r} fn _f() {}`,
-    },
-    typescript: {
-        // Tree-sitter-typescript exposes supertypes unprefixed (no leading
-        // `_`): `declaration`, `expression`, `statement`, `type`, `pattern`.
-        // The hidden-prefix form ('_expression' etc.) existed pre-regen
-        // due to an older convention and silently null-wrapped every
-        // TS kind — counted as auto-pass without reparse, masking real
-        // factory-rt failures.
-        'expression': r => `let _ = ${r};`,
-        'type': r => `type _X = ${r};`,
-        'pattern': r => `let ${r} = null;`,
-        'declaration': r => r,
-        'statement': r => r,
-        // Alias-target-specific wrappers: tree-sitter aliases are
-        // position-dependent. `interface_body` is `alias($.object_type,
-        // $.interface_body)` inside `interface_declaration.body`.
-        // Reparsing the rendered content inside the generic `type _X
-        // = ${r};` wrapper produces `object_type` (no alias), but the
-        // original was `interface_body`. Wrap in an interface
-        // declaration so the alias re-fires and reparse produces
-        // interface_body for AST-match parity.
-        'interface_body': r => `interface _I ${r}`,
-        // Kind-specific: `rest_pattern` (`...x`) appears in array
-        // destructuring, tuple types (TS), and parameter lists. The
-        // generic `pattern` wrapper `let ${r} = null;` produces a
-        // parse error — `let ...x = null` is invalid. Wrap in an
-        // array destructuring target so the rest-pattern surfaces.
-        'rest_pattern': r => `let [${r}] = [];`,
-    },
-    python: {
-        // tree-sitter-python supertypes are also unprefixed.
-        'expression': r => `_ = ${r}`,
-        'type': r => `_: ${r} = None`,
-        'pattern': r => `match _:\n  case ${r}: pass`,
-        'simple_statement': r => r,
-        'compound_statement': r => r,
-        // Kind-specific: `list_splat` (`*args`) only appears inside
-        // argument lists, list/tuple/set literals, and expression
-        // lists. Generic expression wrapper `_ = *()` is syntactically
-        // invalid. Argument-list context accepts it.
-        'list_splat': r => `_f(${r})`,
-        // Kind-specific: `list_splat_pattern` (`*rest`) appears inside
-        // assignment patterns (`a, *rest = xs`) and function parameter
-        // lists. Wrap in an assignment-target position.
-        'list_splat_pattern': r => `${r} = (1,)`,
-    },
-}
+const REPARSE_WRAPPERS: Record<
+	string,
+	Record<string, (r: string) => string>
+> = {
+	rust: {
+		_expression: (r) => `fn _f() { let _ = ${r}; }`,
+		_type: (r) => `type _X = ${r};`,
+		_pattern: (r) => `fn _f() { let ${r} = (); }`,
+		_declaration_statement: (r) => r,
+		_literal: (r) => `fn _f() { let _ = ${r}; }`,
+		_literal_pattern: (r) => `fn _f() { let ${r} = (); }`,
+		// Kind-specific: `mut_pattern` only appears inside match arms and
+		// if-let conditions — NOT in plain `let` statements (tree-sitter-rust
+		// flattens `let mut x = ..` into `let_declaration` with
+		// `mutable_specifier` + `identifier` siblings, no `mut_pattern` node).
+		// Using match-arm wrapper forces the parser to produce a mut_pattern.
+		mut_pattern: (r) => `fn _f(x: i32) { match x { ${r} => () } }`,
+		// `generic_type_with_turbofish` (ADR-0006 alias source): rendered
+		// form includes `::` (e.g. `Bar::<X>`), only valid inside a
+		// scoped_type_identifier like `Bar::<X>::Item`. Bare type position
+		// (`type _X = ${r};`) rejects it. Wrap as a scoped path element.
+		generic_type_with_turbofish: (r) => `type _X = ${r}::Item;`,
+		// `scoped_type_identifier_in_expression_position` (ADR-0006):
+		// aliased to `scoped_type_identifier` only inside struct_expression's
+		// name field. Needs struct-literal context to round-trip.
+		scoped_type_identifier_in_expression_position: (r) =>
+			`fn _f() { let _ = ${r} { val: 1 }; }`,
+		// `delim_token_tree` (ADR-0006): aliased to `token_tree` at
+		// attribute.arguments and macro_invocation positions. Both kinds
+		// use $TEXT rendering now via isVerbatimTokenStream detection
+		// (macro token content is author-declared-verbatim, mixes named
+		// and anon tokens).
+		delim_token_tree: (r) => `fn _f() { mac! ${r} }`,
+		// visibility_modifier is a declaration-position prefix — has no
+		// supertype it fits under. Only fires when variant() adoption
+		// has been applied (see `wrapForReparse` — wrappers whose kind
+		// isn't in `deepReadKinds` are skipped so the wrapper doesn't
+		// expose the baseline `{% if variant %}` fall-through).
+		visibility_modifier: (r) => `${r} fn _f() {}`
+	},
+	typescript: {
+		// Tree-sitter-typescript exposes supertypes unprefixed (no leading
+		// `_`): `declaration`, `expression`, `statement`, `type`, `pattern`.
+		// The hidden-prefix form ('_expression' etc.) existed pre-regen
+		// due to an older convention and silently null-wrapped every
+		// TS kind — counted as auto-pass without reparse, masking real
+		// factory-rt failures.
+		expression: (r) => `let _ = ${r};`,
+		type: (r) => `type _X = ${r};`,
+		pattern: (r) => `let ${r} = null;`,
+		declaration: (r) => r,
+		statement: (r) => r,
+		// Alias-target-specific wrappers: tree-sitter aliases are
+		// position-dependent. `interface_body` is `alias($.object_type,
+		// $.interface_body)` inside `interface_declaration.body`.
+		// Reparsing the rendered content inside the generic `type _X
+		// = ${r};` wrapper produces `object_type` (no alias), but the
+		// original was `interface_body`. Wrap in an interface
+		// declaration so the alias re-fires and reparse produces
+		// interface_body for AST-match parity.
+		interface_body: (r) => `interface _I ${r}`,
+		// Kind-specific: `rest_pattern` (`...x`) appears in array
+		// destructuring, tuple types (TS), and parameter lists. The
+		// generic `pattern` wrapper `let ${r} = null;` produces a
+		// parse error — `let ...x = null` is invalid. Wrap in an
+		// array destructuring target so the rest-pattern surfaces.
+		rest_pattern: (r) => `let [${r}] = [];`
+	},
+	python: {
+		// tree-sitter-python supertypes are also unprefixed.
+		expression: (r) => `_ = ${r}`,
+		type: (r) => `_: ${r} = None`,
+		pattern: (r) => `match _:\n  case ${r}: pass`,
+		simple_statement: (r) => r,
+		compound_statement: (r) => r,
+		// Kind-specific: `list_splat` (`*args`) only appears inside
+		// argument lists, list/tuple/set literals, and expression
+		// lists. Generic expression wrapper `_ = *()` is syntactically
+		// invalid. Argument-list context accepts it.
+		list_splat: (r) => `_f(${r})`,
+		// Kind-specific: `list_splat_pattern` (`*rest`) appears inside
+		// assignment patterns (`a, *rest = xs`) and function parameter
+		// lists. Wrap in an assignment-target position.
+		list_splat_pattern: (r) => `${r} = (1,)`,
+		// Kind-specific: `attribute` (`a.b`) and `subscript` (`a[b]`)
+		// — tree-sitter-python parses `*a.b` and `*a[b]` as an
+		// attribute / subscript whose object is a list_splat (the
+		// `Lists` corpus exercises this through `[*a.b]` / `[*a[b].c]`).
+		// The generic `expression` wrapper `_ = ${r}` rejects
+		// `_ = *a.b` standalone. List-literal context accepts both
+		// the splat-prefix form AND plain accesses (`[obj.attr]`,
+		// `[*a.b]`, `[obj[k]]`, `[*a[b]]`). (016 Cluster I.)
+		attribute: (r) => `[${r}]`,
+		subscript: (r) => `[${r}]`,
+		// Kind-specific: `parenthesized_expression` (`(expr)`) — the
+		// `Function definitions` corpus exercises `(*a)` from
+		// `j(((*a)))`. The generic `expression` wrapper `_ = (*a)`
+		// reparses as `tuple` (since bare `*a` is only valid inside
+		// a collection). Wrap as a single-arg call so the inner
+		// parens stay parenthesized_expression: `f((*a))` keeps the
+		// outer `(...)` as the argument list and the inner `(*a)`
+		// as a parenthesized_expression. (016 Cluster I.)
+		parenthesized_expression: (r) => `f(${r})`
+	}
+};
 
 export interface WrapForReparseResult {
-    /** The rendered fragment spliced into the supertype wrapper template. */
-    readonly text: string
-    /** Byte offset where the rendered fragment begins in `text`. */
-    readonly offset: number
+	/** The rendered fragment spliced into the supertype wrapper template. */
+	readonly text: string;
+	/** Byte offset where the rendered fragment begins in `text`. */
+	readonly offset: number;
 }
 
 /**
@@ -398,14 +527,14 @@ export interface WrapForReparseResult {
  *   `offset` (byte position of `rendered` inside `text`).
  */
 function applyWrapperTemplate(
-    rendered: string,
-    wrapper: (r: string) => string,
+	rendered: string,
+	wrapper: (r: string) => string
 ): WrapForReparseResult {
-    const text = wrapper(rendered)
-    const SENTINEL = '\u0001SITTIR_SENTINEL\u0001'
-    const sentinelText = wrapper(SENTINEL)
-    const offset = sentinelText.indexOf(SENTINEL)
-    return { text, offset: offset >= 0 ? offset : 0 }
+	const text = wrapper(rendered);
+	const SENTINEL = '\u0001SITTIR_SENTINEL\u0001';
+	const sentinelText = wrapper(SENTINEL);
+	const offset = sentinelText.indexOf(SENTINEL);
+	return { text, offset: offset >= 0 ? offset : 0 };
 }
 
 /**
@@ -434,33 +563,46 @@ function applyWrapperTemplate(
  * @returns A `WrapForReparseResult`, or `null` if no mapped ancestor exists.
  */
 function selectAndApplySupertypeWrapper(
-    kind: string,
-    wrappers: Record<string, (r: string) => string>,
-    kindToSupertypes: Map<string, string[]>,
-    rendered: string,
+	kind: string,
+	wrappers: Record<string, (r: string) => string>,
+	kindToSupertypes: Map<string, string[]>,
+	rendered: string
 ): WrapForReparseResult | null {
-    const WRAPPER_PRIORITY = ['expression', 'type', 'declaration', 'statement', 'pattern',
-        '_expression', '_type', '_declaration_statement', '_literal', '_literal_pattern',
-        '_pattern', '_simple_statement', '_compound_statement']
-    const reachable = new Set<string>()
-    const visited = new Set<string>([kind])
-    const queue = [...(kindToSupertypes.get(kind) ?? [])]
-    while (queue.length > 0) {
-        const st = queue.shift()!
-        if (visited.has(st)) continue
-        visited.add(st)
-        if (wrappers[st]) reachable.add(st)
-        for (const parent of kindToSupertypes.get(st) ?? []) {
-            if (!visited.has(parent)) queue.push(parent)
-        }
-    }
-    if (reachable.size === 0) return null
-    for (const name of WRAPPER_PRIORITY) {
-        if (reachable.has(name)) return applyWrapperTemplate(rendered, wrappers[name]!)
-    }
-    // Reachable but not in priority list — take the first one.
-    const first = [...reachable][0]!
-    return applyWrapperTemplate(rendered, wrappers[first]!)
+	const WRAPPER_PRIORITY = [
+		'expression',
+		'type',
+		'declaration',
+		'statement',
+		'pattern',
+		'_expression',
+		'_type',
+		'_declaration_statement',
+		'_literal',
+		'_literal_pattern',
+		'_pattern',
+		'_simple_statement',
+		'_compound_statement'
+	];
+	const reachable = new Set<string>();
+	const visited = new Set<string>([kind]);
+	const queue = [...(kindToSupertypes.get(kind) ?? [])];
+	while (queue.length > 0) {
+		const st = queue.shift()!;
+		if (visited.has(st)) continue;
+		visited.add(st);
+		if (wrappers[st]) reachable.add(st);
+		for (const parent of kindToSupertypes.get(st) ?? []) {
+			if (!visited.has(parent)) queue.push(parent);
+		}
+	}
+	if (reachable.size === 0) return null;
+	for (const name of WRAPPER_PRIORITY) {
+		if (reachable.has(name))
+			return applyWrapperTemplate(rendered, wrappers[name]!);
+	}
+	// Reachable but not in priority list — take the first one.
+	const first = [...reachable][0]!;
+	return applyWrapperTemplate(rendered, wrappers[first]!);
 }
 
 /**
@@ -470,45 +612,68 @@ function selectAndApplySupertypeWrapper(
  * fall-through (a parent-template shape that only works under variant()
  * adoption) doesn't expose the kind to reparse where it'd render empty.
  */
-export const VARIANT_ADOPTION_GATED_WRAPPERS: Record<string, readonly string[]> = {
-    rust: ['visibility_modifier'],
-}
+export const VARIANT_ADOPTION_GATED_WRAPPERS: Record<
+	string,
+	readonly string[]
+> = {
+	rust: ['visibility_modifier']
+};
 
 export function wrapForReparse(
-    rendered: string,
-    kind: string,
-    grammar: string,
-    kindToSupertypes: Map<string, string[]>,
-    opts?: { adoptedVariantKinds?: ReadonlySet<string>; targetKind?: string },
+	rendered: string,
+	kind: string,
+	grammar: string,
+	kindToSupertypes: Map<string, string[]>,
+	opts?: { adoptedVariantKinds?: ReadonlySet<string>; targetKind?: string }
 ): WrapForReparseResult | null {
-    const wrappers = REPARSE_WRAPPERS[grammar]
-    if (!wrappers) return null
-    // Alias-target wrapper preference: when `kind` (renderedKind, the
-    // alias source after drillAs) differs from `targetKind` (the
-    // tree-sitter-emitted alias target), a wrapper keyed on the alias
-    // target — if one exists — reproduces the original parse position
-    // so reparse emits the same aliased kind. That keeps AST-match
-    // parity for kinds whose alias target doesn't survive a generic
-    // supertype wrapper (ts `interface_body` → `object_type` when
-    // reparsed in a `type _X = …;` context).
-    if (opts?.targetKind && opts.targetKind !== kind) {
-        const targetWrapper = wrappers[opts.targetKind]
-        if (targetWrapper) return applyWrapperTemplate(rendered, targetWrapper)
-    }
-    // Kind-specific wrapper beats supertype wrapper — some kinds only
-    // appear in contexts their supertype's generic wrapper doesn't
-    // produce (e.g. rust `mut_pattern` surfaces in match/if-let but
-    // NOT in plain `let` statements, which flatten it away).
-    const direct = wrappers[kind]
-    if (direct) {
-        const gated = VARIANT_ADOPTION_GATED_WRAPPERS[grammar]?.includes(kind) ?? false
-        const adopted = opts?.adoptedVariantKinds?.has(kind) ?? false
-        if (gated && !adopted) {
-            return selectAndApplySupertypeWrapper(kind, wrappers, kindToSupertypes, rendered)
-        }
-        return applyWrapperTemplate(rendered, direct)
-    }
-    return selectAndApplySupertypeWrapper(kind, wrappers, kindToSupertypes, rendered)
+	const wrappers = REPARSE_WRAPPERS[grammar];
+	if (!wrappers) return null;
+	// Canonical-hidden architecture (Option Y): the validator may pass
+	// a canonical hidden kind (`_x`) where REPARSE_WRAPPERS and
+	// `kindToSupertypes` are keyed on the visible alias-target name
+	// (`x`) — tree-sitter parser only sees visible names. Pre-strip
+	// for both lookups, but preserve the original `kind` for kind-
+	// specific lookups (e.g. `_expression` is itself a wrapper key).
+	const visibleKind =
+		kind.startsWith('_') && !wrappers[kind] ? kind.replace(/^_+/, '') : kind;
+	// Alias-target wrapper preference: when `kind` (renderedKind, the
+	// alias source after drillAs) differs from `targetKind` (the
+	// tree-sitter-emitted alias target), a wrapper keyed on the alias
+	// target — if one exists — reproduces the original parse position
+	// so reparse emits the same aliased kind. That keeps AST-match
+	// parity for kinds whose alias target doesn't survive a generic
+	// supertype wrapper (ts `interface_body` → `object_type` when
+	// reparsed in a `type _X = …;` context).
+	if (opts?.targetKind && opts.targetKind !== kind) {
+		const targetWrapper = wrappers[opts.targetKind];
+		if (targetWrapper) return applyWrapperTemplate(rendered, targetWrapper);
+	}
+	// Kind-specific wrapper beats supertype wrapper — some kinds only
+	// appear in contexts their supertype's generic wrapper doesn't
+	// produce (e.g. rust `mut_pattern` surfaces in match/if-let but
+	// NOT in plain `let` statements, which flatten it away).
+	const direct = wrappers[kind] ?? wrappers[visibleKind];
+	if (direct) {
+		const gateKey = wrappers[kind] ? kind : visibleKind;
+		const gated =
+			VARIANT_ADOPTION_GATED_WRAPPERS[grammar]?.includes(gateKey) ?? false;
+		const adopted = opts?.adoptedVariantKinds?.has(gateKey) ?? false;
+		if (gated && !adopted) {
+			return selectAndApplySupertypeWrapper(
+				visibleKind,
+				wrappers,
+				kindToSupertypes,
+				rendered
+			);
+		}
+		return applyWrapperTemplate(rendered, direct);
+	}
+	return selectAndApplySupertypeWrapper(
+		visibleKind,
+		wrappers,
+		kindToSupertypes,
+		rendered
+	);
 }
 
 // ---------------------------------------------------------------------------
@@ -516,17 +681,17 @@ export function wrapForReparse(
 // ---------------------------------------------------------------------------
 
 export const WASM_PATHS: Record<string, string> = {
-    rust: 'tree-sitter-rust/tree-sitter-rust.wasm',
-    typescript: 'tree-sitter-typescript/tree-sitter-typescript.wasm',
-    python: 'tree-sitter-python/tree-sitter-python.wasm',
-}
+	rust: 'tree-sitter-rust/tree-sitter-rust.wasm',
+	typescript: 'tree-sitter-typescript/tree-sitter-typescript.wasm',
+	python: 'tree-sitter-python/tree-sitter-python.wasm'
+};
 
 /** Relative path from codegen/src/validators to language package wrap.ts */
 export const WRAP_MODULE_PATHS: Record<string, string> = {
-    rust: '../../../rust/src/wrap.ts',
-    typescript: '../../../typescript/src/wrap.ts',
-    python: '../../../python/src/wrap.ts',
-}
+	rust: '../../../rust/src/wrap.ts',
+	typescript: '../../../typescript/src/wrap.ts',
+	python: '../../../python/src/wrap.ts'
+};
 
 /**
  * Dynamic import of a grammar's `readTreeNode` entry point. Used by
@@ -534,16 +699,20 @@ export const WRAP_MODULE_PATHS: Record<string, string> = {
  * wrap layer's drillAs() rewrites `$type` at alias-declared field
  * sites so validator render dispatches through the source template.
  */
-export async function loadReadTreeNode(grammar: string): Promise<((handle: TreeHandle, nodeId?: number) => unknown) | null> {
-    const p = WRAP_MODULE_PATHS[grammar]
-    if (!p) return null
-    try {
-        const mod = await import(new URL(p, import.meta.url).pathname)
-        return mod.readTreeNode ?? null
-    } catch (e) {
-        console.error(`[validators] failed to load wrap module for ${grammar}: ${(e as Error).message}`)
-        return null
-    }
+export async function loadReadTreeNode(
+	grammar: string
+): Promise<((handle: TreeHandle, nodeId?: number) => unknown) | null> {
+	const p = WRAP_MODULE_PATHS[grammar];
+	if (!p) return null;
+	try {
+		const mod = await import(new URL(p, import.meta.url).pathname);
+		return mod.readTreeNode ?? null;
+	} catch (e) {
+		console.error(
+			`[validators] failed to load wrap module for ${grammar}: ${(e as Error).message}`
+		);
+		return null;
+	}
 }
 
 /**
@@ -557,33 +726,41 @@ export async function loadReadTreeNode(grammar: string): Promise<((handle: TreeH
  * and get skipped. Leaves short-circuit when accessing a getter that
  * doesn't return a wrapped-shape value.
  */
-export function walkWrappedTree(root: unknown, visit: (w: WrappedNodeData) => void): void {
-    const seen = new Set<number>()
-    const recurse = (w: unknown): void => {
-        if (!isWrappedNodeData(w)) return
-        const id = w.$nodeId
-        if (id != null) {
-            if (seen.has(id)) return
-            seen.add(id)
-        }
-        visit(w)
-        for (const k of Object.keys(w)) {
-            if (k.startsWith('$')) continue
-            const v = (w as unknown as Record<string, unknown>)[k]
-            if (isWrappedNodeData(v)) recurse(v)
-            else if (Array.isArray(v)) for (const x of v) if (isWrappedNodeData(x)) recurse(x)
-        }
-    }
-    recurse(root)
+export function walkWrappedTree(
+	root: unknown,
+	visit: (w: WrappedNodeData) => void
+): void {
+	const seen = new Set<number>();
+	const recurse = (w: unknown): void => {
+		if (!isWrappedNodeData(w)) return;
+		const id = w.$nodeId;
+		if (id != null) {
+			if (seen.has(id)) return;
+			seen.add(id);
+		}
+		visit(w);
+		for (const k of Object.keys(w)) {
+			if (k.startsWith('$')) continue;
+			const v = (w as unknown as Record<string, unknown>)[k];
+			if (isWrappedNodeData(v)) recurse(v);
+			else if (Array.isArray(v))
+				for (const x of v) if (isWrappedNodeData(x)) recurse(x);
+		}
+	};
+	recurse(root);
 }
 
 export interface WrappedNodeData {
-    readonly $type: string
-    readonly $nodeId?: number
-    readonly [k: string]: unknown
+	readonly $type: string;
+	readonly $nodeId?: NodeId;
+	readonly [k: string]: unknown;
 }
 function isWrappedNodeData(v: unknown): v is WrappedNodeData {
-    return !!v && typeof v === 'object' && typeof (v as { $type?: unknown }).$type === 'string'
+	return (
+		!!v &&
+		typeof v === 'object' &&
+		typeof (v as { $type?: unknown }).$type === 'string'
+	);
 }
 
 /**
@@ -595,25 +772,31 @@ function isWrappedNodeData(v: unknown): v is WrappedNodeData {
  * all field labels from transform()/enrich() patches natively.
  */
 export async function loadLanguageForGrammar(grammar: string): Promise<{
-    Parser: typeof TS.Parser
-    Language: typeof TS.Language
-    lang: TS.Language
-    isOverride: boolean
+	Parser: typeof TS.Parser;
+	Language: typeof TS.Language;
+	lang: TS.Language;
+	isOverride: boolean;
 }> {
-    const { Parser, Language } = await loadWebTreeSitter()
+	const { Parser, Language } = await loadWebTreeSitter();
 
-    const thisDir = fileURLToPath(new URL('.', import.meta.url))
-    const overrideWasm = join(
-        thisDir, '..', '..', '..', grammar, '.sittir', 'parser.wasm'
-    )
-    if (existsSync(overrideWasm)) {
-        const lang = await Language.load(overrideWasm)
-        return { Parser, Language, lang, isOverride: true }
-    }
+	const thisDir = fileURLToPath(new URL('.', import.meta.url));
+	const overrideWasm = join(
+		thisDir,
+		'..',
+		'..',
+		'..',
+		grammar,
+		'.sittir',
+		'parser.wasm'
+	);
+	if (existsSync(overrideWasm)) {
+		const lang = await Language.load(overrideWasm);
+		return { Parser, Language, lang, isOverride: true };
+	}
 
-    const baseWasm = fileURLToPath(import.meta.resolve(WASM_PATHS[grammar]!))
-    const lang = await Language.load(baseWasm)
-    return { Parser, Language, lang, isOverride: false }
+	const baseWasm = fileURLToPath(import.meta.resolve(WASM_PATHS[grammar]!));
+	const lang = await Language.load(baseWasm);
+	return { Parser, Language, lang, isOverride: false };
 }
 
 // ---------------------------------------------------------------------------
@@ -639,53 +822,53 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
 // older camelFields behavior so other validators can adopt this helper
 // without the recursion cost.
 export interface NodeToConfigOpts {
-    readonly tree?: TreeHandle
-    readonly factoryMap?: Record<string, (...args: unknown[]) => unknown>
-    /** Per-kind factory signature hint (from the generated `_factoryShapes`
-     * map). `'config'` expects a Config object; `'children'` is rest-
-     * params `(...children)`; `'text'` expects a bare string. Without
-     * this, recursion defaults to `'config'` which breaks children-shape
-     * factories (e.g. python `argument_list`) because they'd interpret
-     * the whole Config object as the single rest-param item. */
-    readonly factoryShapes?: Record<string, 'config' | 'children' | 'text'>
-    /** Per-field alias-source map (from the generated `_fieldAliasMap`).
-     * Key format: `"parentKind.fieldName"`; value: the source kind the
-     * factory expects. When a child arrives at an alias-declared slot,
-     * its tree-sitter-emitted $type is the alias target; `resolveChild`
-     * consults this map to dispatch the matching source-kind factory
-     * instead. Without it, ADR-0006-aware fields silently dispatch the
-     * wrong factory (e.g. `block` factory on a `_match_block` body). */
-    readonly fieldAliasMap?: Record<string, Record<string, string>>
-    /** Per-kind list of declared factory Config field names (from the
-     * generated `_factoryFields`). Drives orphan-child promotion: when
-     * a read node has $children but the expected field is missing from
-     * $fields (tree-sitter elided the label — python `list_splat` at
-     * expression-statement position is the canonical case), route
-     * children into the declared fields by position. */
-    readonly factoryFields?: Record<string, readonly string[]>
-    /** Per-polymorph variant descriptor (from `_polymorphVariants`).
-     *  `nodeToConfig` uses this to stamp `$variant` on the returned
-     *  config when the parent kind is a polymorph. The dispatcher's
-     *  `switch (config.$variant)` requires the tag — this is the
-     *  single plumb-in for readNode-derived data that doesn't carry
-     *  it natively. */
-    readonly polymorphVariants?: PolymorphVariantMap
-    /** Internal — current parent kind during field recursion. Used with
-     * `fieldAliasMap` to form `${parentKind}.${fieldName}` lookups. */
-    readonly _parentKind?: string
-    /** Internal — current field name during field recursion. */
-    readonly _fieldName?: string
-    /** Internal recursion guard — set by the helper, not the caller. */
-    readonly _depth?: number
+	readonly tree?: TreeHandle;
+	readonly factoryMap?: Record<string, (...args: unknown[]) => unknown>;
+	/** Per-kind factory signature hint (from the generated `_factoryShapes`
+	 * map). `'config'` expects a Config object; `'children'` is rest-
+	 * params `(...children)`; `'text'` expects a bare string. Without
+	 * this, recursion defaults to `'config'` which breaks children-shape
+	 * factories (e.g. python `argument_list`) because they'd interpret
+	 * the whole Config object as the single rest-param item. */
+	readonly factoryShapes?: Record<string, 'config' | 'children' | 'text'>;
+	/** Per-field alias-source map (from the generated `_fieldAliasMap`).
+	 * Key format: `"parentKind.fieldName"`; value: the source kind the
+	 * factory expects. When a child arrives at an alias-declared slot,
+	 * its tree-sitter-emitted $type is the alias target; `resolveChild`
+	 * consults this map to dispatch the matching source-kind factory
+	 * instead. Without it, ADR-0006-aware fields silently dispatch the
+	 * wrong factory (e.g. `block` factory on a `_match_block` body). */
+	readonly fieldAliasMap?: Record<string, Record<string, string>>;
+	/** Per-kind list of declared factory Config field names (from the
+	 * generated `_factoryFields`). Drives orphan-child promotion: when
+	 * a read node has $children but the expected field is missing from
+	 * $fields (tree-sitter elided the label — python `list_splat` at
+	 * expression-statement position is the canonical case), route
+	 * children into the declared fields by position. */
+	readonly factoryFields?: Record<string, readonly string[]>;
+	/** Per-polymorph variant descriptor (from `_polymorphVariants`).
+	 *  `nodeToConfig` uses this to stamp `$variant` on the returned
+	 *  config when the parent kind is a polymorph. The dispatcher's
+	 *  `switch (config.$variant)` requires the tag — this is the
+	 *  single plumb-in for readNode-derived data that doesn't carry
+	 *  it natively. */
+	readonly polymorphVariants?: PolymorphVariantMap;
+	/** Internal — current parent kind during field recursion. Used with
+	 * `fieldAliasMap` to form `${parentKind}.${fieldName}` lookups. */
+	readonly _parentKind?: string;
+	/** Internal — current field name during field recursion. */
+	readonly _fieldName?: string;
+	/** Internal recursion guard — set by the helper, not the caller. */
+	readonly _depth?: number;
 }
 
 interface ReadNodeLike {
-    readonly $type?: string
-    readonly $text?: string
-    readonly $nodeId?: number
-    readonly $fields?: Readonly<Record<string, unknown>>
-    readonly $children?: readonly unknown[]
-    readonly $named?: boolean
+	readonly $type?: string;
+	readonly $text?: string;
+	readonly $nodeId?: NodeId;
+	readonly $fields?: Readonly<Record<string, unknown>>;
+	readonly $children?: readonly unknown[];
+	readonly $named?: boolean;
 }
 
 /**
@@ -704,7 +887,7 @@ interface ReadNodeLike {
  * @returns `true` if the child is an anonymous token and should be returned as-is.
  */
 function isAnonTokenPassthrough(c: ReadNodeLike): boolean {
-    return c.$named === false
+	return c.$named === false;
 }
 
 /**
@@ -722,11 +905,11 @@ function isAnonTokenPassthrough(c: ReadNodeLike): boolean {
  * @returns `true` if recursion should be halted (cap exceeded or context absent).
  */
 function shouldHaltRecursion(
-    depth: number,
-    tree: NodeToConfigOpts['tree'],
-    factoryMap: NodeToConfigOpts['factoryMap'],
+	depth: number,
+	tree: NodeToConfigOpts['tree'],
+	factoryMap: NodeToConfigOpts['factoryMap']
 ): boolean {
-    return depth > 64 || !tree || !factoryMap
+	return depth > 64 || !tree || !factoryMap;
 }
 
 /**
@@ -749,17 +932,17 @@ function shouldHaltRecursion(
  * @returns The source kind to dispatch, or `rawKind` when no alias applies.
  */
 function resolveAliasedKind(
-    rawKind: string,
-    parentKind: string | undefined,
-    fieldName: string | undefined,
-    fieldAliasMap: NodeToConfigOpts['fieldAliasMap'],
+	rawKind: string,
+	parentKind: string | undefined,
+	fieldName: string | undefined,
+	fieldAliasMap: NodeToConfigOpts['fieldAliasMap']
 ): string {
-    if (fieldAliasMap && parentKind && fieldName) {
-        const key = `${parentKind}.${fieldName}`
-        const targetMap = fieldAliasMap[key]
-        if (targetMap && targetMap[rawKind]) return targetMap[rawKind]!
-    }
-    return rawKind
+	if (fieldAliasMap && parentKind && fieldName) {
+		const key = `${parentKind}.${fieldName}`;
+		const targetMap = fieldAliasMap[key];
+		if (targetMap && targetMap[rawKind]) return targetMap[rawKind]!;
+	}
+	return rawKind;
 }
 
 /**
@@ -768,47 +951,59 @@ function resolveAliasedKind(
  * passed-in shallow NodeData when `tree` isn't available OR the child
  * lacks a $nodeId (factory-built children don't carry one).
  */
-function resolveChild(
-    child: unknown,
-    opts: NodeToConfigOpts,
-): unknown {
-    if (child == null) return child
-    if (typeof child === 'string' || typeof child === 'number') return child
-    if (typeof child !== 'object') return child
-    const c = child as ReadNodeLike
-    if (isAnonTokenPassthrough(c)) return child
-    const { tree, factoryMap, factoryShapes, fieldAliasMap, _depth = 0, _parentKind, _fieldName } = opts
-    if (shouldHaltRecursion(_depth, tree, factoryMap)) return child
-    // Drill into the child to materialize its own $fields/$children.
-    let drilled: ReadNodeLike = c
-    if (c.$nodeId != null && tree) {
-        try {
-            // Per-handle dispatch: native handles read via napi (tree.read);
-            // wasm handles fall through to the JS walker. Validators stay
-            // backend-agnostic.
-            drilled = (tree.read ? tree.read(c.$nodeId) : readNodeFn(tree, c.$nodeId)) as ReadNodeLike
-        } catch {
-            // Tree handle lacked the node (factory-built subtree?) — fall
-            // back to the shallow entry we already have.
-        }
-    }
-    const rawKind = drilled.$type ?? c.$type
-    if (!rawKind) return drilled
-    const kind = resolveAliasedKind(rawKind, _parentKind, _fieldName, fieldAliasMap)
-    const factory = factoryMap![kind]
-    if (!factory) return drilled  // hidden / unfactoryable kind — pass through
-    const shape = factoryShapes?.[kind] ?? 'config'
-    // 'text' shape: leaf factory takes a bare string.
-    if (shape === 'text') {
-        return factory(drilled.$text ?? '')
-    }
-    const childConfig = nodeToConfig(drilled, { ...opts, _depth: _depth + 1 })
-    // 'children' shape: rest-params signature — spread `children`.
-    if (shape === 'children') {
-        const kids = (childConfig.children ?? []) as unknown[]
-        return factory(...kids)
-    }
-    return factory(childConfig)
+function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
+	if (child == null) return child;
+	if (typeof child === 'string' || typeof child === 'number') return child;
+	if (typeof child !== 'object') return child;
+	const c = child as ReadNodeLike;
+	if (isAnonTokenPassthrough(c)) return child;
+	const {
+		tree,
+		factoryMap,
+		factoryShapes,
+		fieldAliasMap,
+		_depth = 0,
+		_parentKind,
+		_fieldName
+	} = opts;
+	if (shouldHaltRecursion(_depth, tree, factoryMap)) return child;
+	// Drill into the child to materialize its own $fields/$children.
+	let drilled: ReadNodeLike = c;
+	if (c.$nodeId != null && tree) {
+		try {
+			// Per-handle dispatch: native handles read via napi (tree.read);
+			// wasm handles fall through to the JS walker. Validators stay
+			// backend-agnostic.
+			drilled = (
+				tree.read ? tree.read(c.$nodeId) : readNodeFn(tree, c.$nodeId)
+			) as ReadNodeLike;
+		} catch {
+			// Tree handle lacked the node (factory-built subtree?) — fall
+			// back to the shallow entry we already have.
+		}
+	}
+	const rawKind = drilled.$type ?? c.$type;
+	if (!rawKind) return drilled;
+	const kind = resolveAliasedKind(
+		rawKind,
+		_parentKind,
+		_fieldName,
+		fieldAliasMap
+	);
+	const factory = factoryMap![kind];
+	if (!factory) return drilled; // hidden / unfactoryable kind — pass through
+	const shape = factoryShapes?.[kind] ?? 'config';
+	// 'text' shape: leaf factory takes a bare string.
+	if (shape === 'text') {
+		return factory(drilled.$text ?? '');
+	}
+	const childConfig = nodeToConfig(drilled, { ...opts, _depth: _depth + 1 });
+	// 'children' shape: rest-params signature — spread `children`.
+	if (shape === 'children') {
+		const kids = (childConfig.children ?? []) as unknown[];
+		return factory(...kids);
+	}
+	return factory(childConfig);
 }
 
 /**
@@ -825,7 +1020,7 @@ function resolveChild(
  * @returns `true` if the key matches `[a-zA-Z_]\w*` and should be included.
  */
 function isIdentifierShapedFieldKey(key: string): boolean {
-    return /^[a-zA-Z_][\w]*$/.test(key)
+	return /^[a-zA-Z_][\w]*$/.test(key);
 }
 
 /**
@@ -847,17 +1042,17 @@ function isIdentifierShapedFieldKey(key: string): boolean {
  * @returns `true` if the orphan-promotion path should be taken.
  */
 function shouldPromoteOrphanChildren(
-    declaredFields: readonly string[] | undefined,
-    populatedOut: Record<string, unknown>,
-    namedChildren: readonly unknown[],
+	declaredFields: readonly string[] | undefined,
+	populatedOut: Record<string, unknown>,
+	namedChildren: readonly unknown[]
 ): boolean {
-    if (!declaredFields || namedChildren.length === 0) return false
-    if (namedChildren.length > declaredFields.length) return false
-    const noFieldMatched = declaredFields.every(name => {
-        const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase())
-        return populatedOut[camel] === undefined
-    })
-    return noFieldMatched
+	if (!declaredFields || namedChildren.length === 0) return false;
+	if (namedChildren.length > declaredFields.length) return false;
+	const noFieldMatched = declaredFields.every((name) => {
+		const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
+		return populatedOut[camel] === undefined;
+	});
+	return noFieldMatched;
 }
 
 /**
@@ -873,60 +1068,81 @@ function shouldPromoteOrphanChildren(
  * @param out - The config object to write `children` into.
  */
 function assignChildrenToConfig(
-    children: readonly unknown[],
-    childOpts: NodeToConfigOpts,
-    out: Record<string, unknown>,
+	children: readonly unknown[],
+	childOpts: NodeToConfigOpts,
+	out: Record<string, unknown>
 ): void {
-    out.children = children.map(c => resolveChild(c, childOpts))
+	out.children = children.map((c) => resolveChild(c, childOpts));
 }
 
 export function nodeToConfig(
-    data: ReadNodeLike,
-    opts: NodeToConfigOpts = {},
+	data: ReadNodeLike,
+	opts: NodeToConfigOpts = {}
 ): Record<string, unknown> {
-    const out: Record<string, unknown> = {}
-    const parentKind = data.$type
-    if (data.$fields) {
-        for (const [k, v] of Object.entries(data.$fields)) {
-            if (v === undefined) continue
-            if (!isIdentifierShapedFieldKey(k)) continue
-            const camelKey = k.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase())
-            const childOpts: NodeToConfigOpts = { ...opts, _parentKind: parentKind, _fieldName: k }
-            out[camelKey] = Array.isArray(v)
-                ? v.map(item => resolveChild(item, childOpts))
-                : resolveChild(v, childOpts)
-        }
-    }
-    if (data.$children) {
-        const declaredFields = parentKind ? opts.factoryFields?.[parentKind] : undefined
-        const namedChildren = data.$children.filter(c =>
-            c != null && typeof c === 'object' && (c as { $named?: boolean }).$named !== false,
-        )
-        const childOpts: NodeToConfigOpts = { ...opts, _parentKind: undefined, _fieldName: undefined }
-        if (shouldPromoteOrphanChildren(declaredFields, out, namedChildren)) {
-            // Assign by position: first N named children → first N declared fields.
-            namedChildren.forEach((child, i) => {
-                const name = declaredFields![i]!
-                const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase())
-                const resolveOpts: NodeToConfigOpts = { ...opts, _parentKind: parentKind, _fieldName: name }
-                out[camel] = resolveChild(child, resolveOpts)
-            })
-        } else {
-            assignChildrenToConfig(data.$children, childOpts, out)
-        }
-    }
-    // Polymorph $variant stamping — the dispatcher's `switch
-    // (config.$variant)` requires the tag. Derive it from either the
-    // first child's kind (source='override') or from the property-
-    // presence on the derived config (source='promoted').
-    if (parentKind && opts.polymorphVariants) {
-        const desc = opts.polymorphVariants[parentKind]
-        if (desc && !('$variant' in out)) {
-            const v = inferPolymorphVariant(desc, data, out, parentKind)
-            if (v !== undefined) out.$variant = v
-        }
-    }
-    return out
+	const out: Record<string, unknown> = {};
+	const parentKind = data.$type;
+	if (data.$fields) {
+		for (const [k, v] of Object.entries(data.$fields)) {
+			if (v === undefined) continue;
+			if (!isIdentifierShapedFieldKey(k)) continue;
+			const camelKey = k.replace(/_([a-z])/g, (_m, c: string) =>
+				c.toUpperCase()
+			);
+			const childOpts: NodeToConfigOpts = {
+				...opts,
+				_parentKind: parentKind,
+				_fieldName: k
+			};
+			out[camelKey] = Array.isArray(v)
+				? v.map((item) => resolveChild(item, childOpts))
+				: resolveChild(v, childOpts);
+		}
+	}
+	if (data.$children) {
+		const declaredFields = parentKind
+			? opts.factoryFields?.[parentKind]
+			: undefined;
+		const namedChildren = data.$children.filter(
+			(c) =>
+				c != null &&
+				typeof c === 'object' &&
+				(c as { $named?: boolean }).$named !== false
+		);
+		const childOpts: NodeToConfigOpts = {
+			...opts,
+			_parentKind: undefined,
+			_fieldName: undefined
+		};
+		if (shouldPromoteOrphanChildren(declaredFields, out, namedChildren)) {
+			// Assign by position: first N named children → first N declared fields.
+			namedChildren.forEach((child, i) => {
+				const name = declaredFields![i]!;
+				const camel = name.replace(/_([a-z])/g, (_m, c: string) =>
+					c.toUpperCase()
+				);
+				const resolveOpts: NodeToConfigOpts = {
+					...opts,
+					_parentKind: parentKind,
+					_fieldName: name
+				};
+				out[camel] = resolveChild(child, resolveOpts);
+			});
+		} else {
+			assignChildrenToConfig(data.$children, childOpts, out);
+		}
+	}
+	// Polymorph $variant stamping — the dispatcher's `switch
+	// (config.$variant)` requires the tag. Derive it from either the
+	// first child's kind (source='override') or from the property-
+	// presence on the derived config (source='promoted').
+	if (parentKind && opts.polymorphVariants) {
+		const desc = opts.polymorphVariants[parentKind];
+		if (desc && !('$variant' in out)) {
+			const v = inferPolymorphVariant(desc, data, out, parentKind);
+			if (v !== undefined) out.$variant = v;
+		}
+	}
+	return out;
 }
 
 /**
@@ -942,16 +1158,19 @@ export function nodeToConfig(
  * @returns The resolved variant name, or `undefined` if no form matched.
  */
 function inferPolymorphVariant(
-    desc: PolymorphVariantDescriptor,
-    data: ReadNodeLike,
-    derivedConfig: Record<string, unknown>,
-    parentKind: string,
+	desc: PolymorphVariantDescriptor,
+	data: ReadNodeLike,
+	derivedConfig: Record<string, unknown>,
+	parentKind: string
 ): string | undefined {
-    switch (desc.source) {
-        case 'override': return inferFromChildKind(desc.childKind, data, parentKind)
-        case 'promoted': return inferFromFieldPresence(desc.fields, derivedConfig, parentKind)
-        default: return assertNever(desc)
-    }
+	switch (desc.source) {
+		case 'override':
+			return inferFromChildKind(desc.childKind, data, parentKind);
+		case 'promoted':
+			return inferFromFieldPresence(desc.fields, derivedConfig, parentKind);
+		default:
+			return assertNever(desc);
+	}
 }
 
 /**
@@ -960,20 +1179,23 @@ function inferPolymorphVariant(
  * distinct child node kind (source='override').
  */
 function inferFromChildKind(
-    childKind: Readonly<Record<string, string>>,
-    data: ReadNodeLike,
-    parentKind: string,
+	childKind: Readonly<Record<string, string>>,
+	data: ReadNodeLike,
+	parentKind: string
 ): string | undefined {
-    const firstChild = data.$children?.find(c =>
-        c != null && typeof c === 'object' && (c as { $named?: boolean }).$named !== false,
-    ) as { $type?: string } | undefined
-    const kind = firstChild?.$type
-    if (kind && kind in childKind) return childKind[kind]
-    console.warn(
-        `[nodeToConfig] polymorph '${parentKind}' (source=override): no variant matched first child kind '${kind ?? '<none>'}'. ` +
-        `Known: [${Object.keys(childKind).join(', ')}]`,
-    )
-    return undefined
+	const firstChild = data.$children?.find(
+		(c) =>
+			c != null &&
+			typeof c === 'object' &&
+			(c as { $named?: boolean }).$named !== false
+	) as { $type?: string } | undefined;
+	const kind = firstChild?.$type;
+	if (kind && kind in childKind) return childKind[kind];
+	console.warn(
+		`[nodeToConfig] polymorph '${parentKind}' (source=override): no variant matched first child kind '${kind ?? '<none>'}'. ` +
+			`Known: [${Object.keys(childKind).join(', ')}]`
+	);
+	return undefined;
 }
 
 /**
@@ -983,18 +1205,44 @@ function inferFromChildKind(
  * lands last by sort order and matches vacuously as a fallback.
  */
 function inferFromFieldPresence(
-    fieldsByForm: Readonly<Record<string, readonly string[]>>,
-    derivedConfig: Record<string, unknown>,
-    parentKind: string,
+	fieldsByForm: Readonly<Record<string, readonly string[]>>,
+	derivedConfig: Record<string, unknown>,
+	parentKind: string
 ): string | undefined {
-    const entries = Object.entries(fieldsByForm)
-        .sort(([, a], [, b]) => b.length - a.length)
-    for (const [formName, fields] of entries) {
-        if (fields.every(f => f in derivedConfig)) return formName
-    }
-    console.warn(
-        `[nodeToConfig] polymorph '${parentKind}' (source=promoted): no variant matched derived-config keys [${Object.keys(derivedConfig).join(', ')}]. ` +
-        `Forms: ${entries.map(([n, f]) => `${n}=[${f.join(',')}]`).join('; ')}`,
-    )
-    return undefined
+	const entries = Object.entries(fieldsByForm).sort(
+		([, a], [, b]) => b.length - a.length
+	);
+	for (const [formName, fields] of entries) {
+		if (fields.every((f) => f in derivedConfig)) return formName;
+	}
+	console.warn(
+		`[nodeToConfig] polymorph '${parentKind}' (source=promoted): no variant matched derived-config keys [${Object.keys(derivedConfig).join(', ')}]. ` +
+			`Forms: ${entries.map(([n, f]) => `${n}=[${f.join(',')}]`).join('; ')}`
+	);
+	return undefined;
+}
+
+// ---------------------------------------------------------------------------
+// Metrics emission helper — spec 054 FR-003
+// ---------------------------------------------------------------------------
+
+/**
+ * Single shared call site for `dumpMetrics` so all four corpus validators
+ * funnel through one definition (DRY: one source, one derivation). The
+ * metrics accumulator is process-wide; each invocation writes the
+ * cumulative state, so when vitest runs all four validators against all
+ * three grammars in one process the final write contains every per-kind
+ * entry observed in that run.
+ *
+ * Backend selection mirrors `buildReadHandle`: `SITTIR_BACKEND=native`
+ * → `'native'`; anything else → `'ts'`. No-op when `SITTIR_METRICS=1`
+ * is unset (the underlying `dumpMetrics` short-circuits).
+ *
+ * @see packages/core/src/metrics.ts for the accumulator + writer.
+ */
+export function emitValidatorMetrics(): void {
+	if (!metricsEnabled) return;
+	const backend: 'ts' | 'native' =
+		process.env.SITTIR_BACKEND === 'native' ? 'native' : 'ts';
+	dumpMetrics(backend);
 }

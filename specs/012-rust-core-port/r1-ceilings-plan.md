@@ -22,18 +22,18 @@ This is one workstream (cleanup of generated-output correctness across the three
 
 Files this plan touches. No new files expected — the emitters / walkers already exist; we fix them in place.
 
-| File | Role | Expected change class |
-|---|---|---|
-| `packages/codegen/src/__tests__/corpus-validation.test.ts` | Pinning test (FLOORS + LEGACY_BASELINE) | Raise FLOOR per grammar after each landed cluster |
-| `packages/codegen/src/validate/factory-roundtrip.ts` | Validates factory build → render → reparse | Rarely modified; read to understand failure signal |
-| `packages/codegen/src/validate/from.ts` | Validates `.from()` resolution | Rarely modified |
-| `packages/codegen/src/validate/roundtrip.ts` | Validates full parse → readNode → render → reparse | Rarely modified |
-| `packages/codegen/src/emitters/factories.ts` | Factory emission | Frequently — most clusters fix here |
-| `packages/codegen/src/emitters/suggested.ts` | Overrides-suggested emission | Occasionally |
-| `packages/codegen/src/compiler/template-walker.ts` | Template-string walker | Occasionally — polymorph / variant clusters |
-| `packages/codegen/src/dsl/enrich.ts` | Enrich pass (spec 006) | Occasionally |
-| `packages/codegen/src/polymorph-variant.ts` | Polymorph classification | For polymorph-null-form cluster |
-| `packages/{rust,typescript,python}/overrides.ts` | Hand-authored per-grammar overrides | When a cluster is genuinely grammar-specific |
+| File                                                       | Role                                               | Expected change class                              |
+| ---------------------------------------------------------- | -------------------------------------------------- | -------------------------------------------------- |
+| `packages/codegen/src/__tests__/corpus-validation.test.ts` | Pinning test (FLOORS + LEGACY_BASELINE)            | Raise FLOOR per grammar after each landed cluster  |
+| `packages/codegen/src/validate/factory-roundtrip.ts`       | Validates factory build → render → reparse         | Rarely modified; read to understand failure signal |
+| `packages/codegen/src/validate/from.ts`                    | Validates `.from()` resolution                     | Rarely modified                                    |
+| `packages/codegen/src/validate/roundtrip.ts`               | Validates full parse → readNode → render → reparse | Rarely modified                                    |
+| `packages/codegen/src/emitters/factories.ts`               | Factory emission                                   | Frequently — most clusters fix here                |
+| `packages/codegen/src/emitters/suggested.ts`               | Overrides-suggested emission                       | Occasionally                                       |
+| `packages/codegen/src/compiler/template-walker.ts`         | Template-string walker                             | Occasionally — polymorph / variant clusters        |
+| `packages/codegen/src/dsl/enrich.ts`                       | Enrich pass (spec 006)                             | Occasionally                                       |
+| `packages/codegen/src/polymorph-variant.ts`                | Polymorph classification                           | For polymorph-null-form cluster                    |
+| `packages/{rust,typescript,python}/overrides.ts`           | Hand-authored per-grammar overrides                | When a cluster is genuinely grammar-specific       |
 
 ---
 
@@ -41,40 +41,41 @@ Files this plan touches. No new files expected — the emitters / walkers alread
 
 Direct-validator numbers (measured via `npx tsx /tmp/check-actual.mts`; the FLOORS in the pinning test are stale — they reflect a smaller-corpus era and are no longer binding).
 
-| Grammar | Gate | Current actual | Legacy baseline | Gap | Load-bearing for FR-014? |
-|---|---|---:|---:|---:|---|
-| **Python** | factoryPass (non-recursive) | 197 / 889 | 92 / 99 | Exceeds legacy | No — factory not in FR-014 scope |
-| Python | factoryPass (recursive, `SITTIR_VALIDATE_RECURSIVE=1`) | 123 / 889 | — | — | No — parallel track |
-| Python | fromPass | 116 / 119 | 92 / 99 | Exceeds legacy | **Yes** — 3 failures remain |
-| Python | rtPass (full round-trip) | **96 / 115** | — | **9 short of `rtTotal − 10` target (105)** | **Yes** — 19 failures |
-| **Rust** | factoryPass (non-recursive) | 459 / 1026 | 112 / 135 | Exceeds legacy | No |
-| Rust | factoryPass (recursive) | 432 / 1026 | — | — | No — parallel track |
-| Rust | fromPass | 165 / 176 | 133 / 135 | Exceeds legacy | **Yes** — 11 failures |
-| Rust | rtPass (full round-trip) | **118 / 136** | — | **8 short of target (126)** | **Yes** — 18 failures |
-| **TypeScript** | factoryPass (non-recursive) | 419 / 952 | 119 / 123 | Exceeds legacy | No |
-| TypeScript | factoryPass (recursive) | 330 / 952 | — | — | No — parallel track |
-| TypeScript | fromPass | 144 / 152 | 118 / 123 | Exceeds legacy | **Yes** — 8 failures |
-| TypeScript | rtPass (full round-trip) | **63 / 112** | — | **39 short of target (102). Biggest lever.** | **Yes** — 49 failures |
+| Grammar        | Gate                                                   | Current actual | Legacy baseline |                                          Gap | Load-bearing for FR-014?         |
+| -------------- | ------------------------------------------------------ | -------------: | --------------: | -------------------------------------------: | -------------------------------- |
+| **Python**     | factoryPass (non-recursive)                            |      197 / 889 |         92 / 99 |                               Exceeds legacy | No — factory not in FR-014 scope |
+| Python         | factoryPass (recursive, `SITTIR_VALIDATE_RECURSIVE=1`) |      123 / 889 |               — |                                            — | No — parallel track              |
+| Python         | fromPass                                               |      116 / 119 |         92 / 99 |                               Exceeds legacy | **Yes** — 3 failures remain      |
+| Python         | rtPass (full round-trip)                               |   **96 / 115** |               — |   **9 short of `rtTotal − 10` target (105)** | **Yes** — 19 failures            |
+| **Rust**       | factoryPass (non-recursive)                            |     459 / 1026 |       112 / 135 |                               Exceeds legacy | No                               |
+| Rust           | factoryPass (recursive)                                |     432 / 1026 |               — |                                            — | No — parallel track              |
+| Rust           | fromPass                                               |      165 / 176 |       133 / 135 |                               Exceeds legacy | **Yes** — 11 failures            |
+| Rust           | rtPass (full round-trip)                               |  **118 / 136** |               — |                  **8 short of target (126)** | **Yes** — 18 failures            |
+| **TypeScript** | factoryPass (non-recursive)                            |      419 / 952 |       119 / 123 |                               Exceeds legacy | No                               |
+| TypeScript     | factoryPass (recursive)                                |      330 / 952 |               — |                                            — | No — parallel track              |
+| TypeScript     | fromPass                                               |      144 / 152 |       118 / 123 |                               Exceeds legacy | **Yes** — 8 failures             |
+| TypeScript     | rtPass (full round-trip)                               |   **63 / 112** |               — | **39 short of target (102). Biggest lever.** | **Yes** — 49 failures            |
 
 ## Working session inventory (2026-04-24 — R1 ceilings worktree)
 
 Refreshed after six source-of-truth fixes landed on branch
 `012-r1-ceilings`. Measured via `npx tsx packages/codegen/src/scripts/counts.ts`
-+ per-grammar `rt-breakdown.ts` for fail/skip detail.
 
-| Grammar | rtPass | Fail | Skip | Total | Strict gate (≥total−10) | Relaxed gate (fail≤10) |
-|---|---:|---:|---:|---:|:---|:---|
-| rust | **121** | 2 | 13 | 136 | ❌ Unreachable (max=123) | ✅ Pass |
-| python | **105** | 9 | 1 | 115 | ✅ Pass | ✅ Pass |
-| typescript | **96** | 12 | 4 | 112 | ❌ −6 short | ❌ −2 short |
+- per-grammar `rt-breakdown.ts` for fail/skip detail.
+
+| Grammar    |  rtPass | Fail | Skip | Total | Strict gate (≥total−10)  | Relaxed gate (fail≤10) |
+| ---------- | ------: | ---: | ---: | ----: | :----------------------- | :--------------------- |
+| rust       | **121** |    2 |   13 |   136 | ❌ Unreachable (max=123) | ✅ Pass                |
+| python     | **105** |    9 |    1 |   115 | ✅ Pass                  | ✅ Pass                |
+| typescript |  **96** |   12 |    4 |   112 | ❌ −6 short              | ❌ −2 short            |
 
 ### Delta from 2026-04-24 baseline
 
-| Grammar | Start → End | Δ | Commits |
-|---|:---|---:|---:|
-| rust | 114 → 121 | **+7** | 3 (C1 clause whitespace, externals, readNode helper) |
-| python | 96 → 105 | **+9** | 2 (list_splat/pattern wrappers, external-boundaries $TEXT) |
-| typescript | 93 → 96 | **+3** | 1 (unnamed-alias literal preservation) |
+| Grammar    | Start → End |      Δ |                                                    Commits |
+| ---------- | :---------- | -----: | ---------------------------------------------------------: |
+| rust       | 114 → 121   | **+7** |       3 (C1 clause whitespace, externals, readNode helper) |
+| python     | 96 → 105    | **+9** | 2 (list_splat/pattern wrappers, external-boundaries $TEXT) |
+| typescript | 93 → 96     | **+3** |                     1 (unnamed-alias literal preservation) |
 
 **Total closed: +19 rtPass across three grammars** out of the 30
 failures called out at session start. Rust 5 + python 9 + typescript 3
@@ -130,7 +131,7 @@ Total: 3 more real failures to close for cross-grammar gate.
    added `hasExternalBoundaries` fallback that fires when first and
    last non-ignorable members are external. Python's `string` kind
    (f-string, t-string, template-string) has `seq(external_start,
-   REPEAT(content), external_end)` and now takes the $TEXT path
+REPEAT(content), external_end)` and now takes the $TEXT path
    instead of breaking slot-by-slot render.
 
 ### Deferred — alias-source child-slot drillAs
@@ -154,6 +155,7 @@ patterns`.
 ### Deferred — comparison_operator / list_splat / f-string shapes
 
 Three smaller clusters that each need structural engine work:
+
 - python `comparison_operator` inherited-field-name walker gap
   (tree-sitter inherits `comparators` onto bare `primary_expression`
   children inside the repeat — walker emits `$$$CHILDREN` which can't
@@ -169,22 +171,23 @@ Three smaller clusters that each need structural engine work:
 
 Measured via `npx tsx packages/codegen/src/scripts/counts.ts` (new in 013). All three grammars regenerated on branch `012-rust-core-port` with 013 enrich + variant() adoption + 012-rust-impl merge applied.
 
-| Grammar | Gate | Current | 2026-04-22 | Δ | Target | Gap | Status |
-|---|---|---:|---:|---:|---:|---:|---|
-| **Python** | fromPass | **107 / 114** | 116 / 119 | pass −9, total −5 | ≥104 | **+3 over** | ✅ |
-| Python | rtPass | **96 / 115** | 96 / 115 | unchanged | ≥105 | **−9** | ❌ |
-| Python | rtAstMatchPass | 92 / 115 | — | — | — | — | reference |
-| Python | factoryPass | 193 / 860 | 197 / 889 | pass −4, total −29 | N/A | — | out of scope |
-| **Rust** | fromPass | **130 / 148** | 165 / 176 | pass −35, total −28 | ≥138 | **−8** | ❌ |
-| Rust | rtPass | **114 / 136** | 118 / 136 | pass −4 | ≥126 | **−12** | ❌ |
-| Rust | rtAstMatchPass | 113 / 136 | — | — | — | — | reference |
-| Rust | factoryPass | 417 / 959 | 459 / 1026 | pass −42, total −67 | N/A | — | out of scope |
-| **TypeScript** | fromPass | **127 / 137** | 144 / 152 | pass −17, total −15 | ≥127 | **+0 (at)** | ✅ borderline |
-| TypeScript | rtPass | **93 / 112** | 63 / 112 | **pass +30** | ≥102 | **−9** | ❌ |
-| TypeScript | rtAstMatchPass | 83 / 112 | — | — | — | — | reference |
-| TypeScript | factoryPass | 384 / 915 | 419 / 952 | pass −35, total −37 | N/A | — | out of scope |
+| Grammar        | Gate           |       Current | 2026-04-22 |                   Δ | Target |         Gap | Status        |
+| -------------- | -------------- | ------------: | ---------: | ------------------: | -----: | ----------: | ------------- |
+| **Python**     | fromPass       | **107 / 114** |  116 / 119 |   pass −9, total −5 |   ≥104 | **+3 over** | ✅            |
+| Python         | rtPass         |  **96 / 115** |   96 / 115 |           unchanged |   ≥105 |      **−9** | ❌            |
+| Python         | rtAstMatchPass |      92 / 115 |          — |                   — |      — |           — | reference     |
+| Python         | factoryPass    |     193 / 860 |  197 / 889 |  pass −4, total −29 |    N/A |           — | out of scope  |
+| **Rust**       | fromPass       | **130 / 148** |  165 / 176 | pass −35, total −28 |   ≥138 |      **−8** | ❌            |
+| Rust           | rtPass         | **114 / 136** |  118 / 136 |             pass −4 |   ≥126 |     **−12** | ❌            |
+| Rust           | rtAstMatchPass |     113 / 136 |          — |                   — |      — |           — | reference     |
+| Rust           | factoryPass    |     417 / 959 | 459 / 1026 | pass −42, total −67 |    N/A |           — | out of scope  |
+| **TypeScript** | fromPass       | **127 / 137** |  144 / 152 | pass −17, total −15 |   ≥127 | **+0 (at)** | ✅ borderline |
+| TypeScript     | rtPass         |  **93 / 112** |   63 / 112 |        **pass +30** |   ≥102 |      **−9** | ❌            |
+| TypeScript     | rtAstMatchPass |      83 / 112 |          — |                   — |      — |           — | reference     |
+| TypeScript     | factoryPass    |     384 / 915 |  419 / 952 | pass −35, total −37 |    N/A |           — | out of scope  |
 
 **Summary of outstanding R1 debt** (rtPass + fromPass):
+
 - **rtPass: 30 total failures** (python 9 + rust 12 + typescript 9). **Down from 86 at 2026-04-22 baseline (−56).** Primary R1 target.
 - **fromPass: 8 total failures** (all rust). Down from 22 at 2026-04-22 baseline (−14). Python over target; typescript at target. Rust remains 8 short.
 - **Combined gates to close: 38 failures.**
@@ -201,11 +204,11 @@ Three substantive shifts from the 013 work on this branch:
 
 **fromPass gate is effectively met on all three grammars** — direct validator breakdown:
 
-| Grammar | pass | skip | fail | total | Real failures |
-|---|---:|---:|---:|---:|---|
-| python | 107 | 4 | 3 | 114 | 3 genuine |
-| rust | 130 | 17 | 1 | 148 | **1 genuine** |
-| typescript | 127 | 6 | 4 | 137 | 4 genuine |
+| Grammar    | pass | skip | fail | total | Real failures |
+| ---------- | ---: | ---: | ---: | ----: | ------------- |
+| python     |  107 |    4 |    3 |   114 | 3 genuine     |
+| rust       |  130 |   17 |    1 |   148 | **1 genuine** |
+| typescript |  127 |    6 |    4 |   137 | 4 genuine     |
 
 The `fromPass ≥ fromTotal − 10` formula counts skips against the gate, but skips are factories that throw when the validator can't construct children — an accepted-by-design behavior (factories need strongly-typed children, not the raw validator-synth shape). **The "8 short" on rust is 17 skips — 1 real failure.** Retargeting R1 as `pass + skip ≥ total − 10` (or `fail ≤ 10`) would pass fromPass on all three grammars today.
 
@@ -233,6 +236,7 @@ Each cluster below is a root-cause class; fixing one cluster typically closes 5�
 **Root cause (what this cluster fixes)**: Templates for the three exception kinds use `{% if variant == "formN" %}` chains. `$variant` is only populated by factory construction, not by `readNode` or `readTreeNode`. Validators use the readNode path, so templates fall through to empty output → re-parse fails. ~30 of 49 typescript rtPass failures originate here (all `call_expression` + `export_statement` cases). Rust `visibility_modifier` contributes fewer rtPass hits but is the cleanest probe target.
 
 **Important state-of-the-world facts**:
+
 - **`variant()` has zero live grammar adopters today.** DSL-level unit tests exist (`polymorph-metadata.test.ts`, `transform-hoist.test.ts`, `wire.test.ts`), but no `packages/{lang}/overrides.ts` actually calls `variant()`. Spec 007 landed the primitive; grammar adoption was deferred.
 - **The three kinds were explicitly "held"** (see `packages/typescript/overrides.ts:247-271` — prior decision to skip variant() for `call_expression` / `export_statement` / `parenthesized_expression` due to grammar-level conflicts that splitting would expose. "Out of scope for variant() adoption" at the time.).
 - **Re-opening those holds is the spirit of this cluster**: either accept manual `conflicts:` authoring per-kind, or mechanize it.
@@ -240,6 +244,7 @@ Each cluster below is a root-cause class; fixing one cluster typically closes 5�
 **Status update (2026-04-24)**:
 
 Most of this cluster is **now done** as part of 013. `variant()` has live grammar adopters in all three packages:
+
 - rust: `visibility_modifier`, `range_pattern_left`, 3 delimiter-variant kinds
 - python: `match_block`, `dict_pattern`, `with_clause`
 - typescript: `_export_statement_default` (three-level cascade), `class_body`, `_for_header`, `public_field_definition` (via tree-sitter `inline:` rather than conflicts), `update_expression`
@@ -250,7 +255,7 @@ Phases D, A, B were effectively completed (walker emits ambient tokens around `{
 
 **Execution sequence (revised 2026-04-22 post-probe: Phase A/D swap — D is a prerequisite, not a follow-up)**:
 
-The original ordering (A → B → C → D) made Phase D a *follow-up* after the variant() grammar changes landed. Phase A, executed 2026-04-22 against `rust/visibility_modifier`, proved Phase D must land **first**: the grammar-level mechanism works end-to-end (tree-sitter generate clean, readNode surfaces variant child kinds, per-variant `.jinja` files emit) but the parent template is produced as `{{ children | join(" ") }}` stripped of its ambient anonymous tokens (`pub`, `(`, `)`), so rendering is lossy (`"pub(crate)" → "crate"`, `"pub" → ""`). rtPass did not move. See **Phase A probe results** below for the raw findings that drove this reordering.
+The original ordering (A → B → C → D) made Phase D a _follow-up_ after the variant() grammar changes landed. Phase A, executed 2026-04-22 against `rust/visibility_modifier`, proved Phase D must land **first**: the grammar-level mechanism works end-to-end (tree-sitter generate clean, readNode surfaces variant child kinds, per-variant `.jinja` files emit) but the parent template is produced as `{{ children | join(" ") }}` stripped of its ambient anonymous tokens (`pub`, `(`, `)`), so rendering is lossy (`"pub(crate)" → "crate"`, `"pub" → ""`). rtPass did not move. See **Phase A probe results** below for the raw findings that drove this reordering.
 
 - [ ] **CV Phase D (new first step) — Template-emitter refactor**. Update `AssembledPolymorph.renderTemplate()` at `packages/codegen/src/compiler/node-map.ts:1391-1402` so that when forms are lifted to variant() child kinds, the parent template preserves ambient anonymous tokens around the `{{ children }}` slot (`pub ( {{ children }} )` for visibility_modifier, not the flat `{{ children | join(" ") }}` it emits today) and each variant child gets its own dedicated template. Land **without** grammar adopters: the per-grammar no-variant-adoption codebase should still pass all validators unchanged. Add a unit test that freezes the emitter's expected output for a synthetic "parent-with-structural-delimiters + variant children" shape so future refactors don't regress it.
 - [ ] **CV Phase A (re-run) — Probe now that D has landed**. Re-apply `variant()` adoption on `rust/visibility_modifier` (the same change the 2026-04-22 probe made; see below for exact paths/keys). **Expected outcome**: clean compile AND rtPass for pub(crate)/pub(super)/pub(in path) cases closes. If rtPass still doesn't move despite correct-looking templates, escalate — D missed a case.
@@ -262,6 +267,7 @@ The original ordering (A → B → C → D) made Phase D a *follow-up* after the
 The probe applied `variant('pub_self' | 'pub_super' | 'pub_crate' | 'pub_in_path')` patches to `rust/visibility_modifier` via the **declarative `transforms:` config** (wire-time pre-registration required — `variant()` inside a rule-body `transform()` call does NOT trigger it; the initial in-`rules:` attempt failed with `Undefined symbol _visibility_modifier_pub_self`).
 
 Exact change (for Phase A-rerun):
+
 ```ts
 // packages/rust/overrides.ts
 import { ..., variant, ... } from '../codegen/src/dsl/index.ts'
@@ -273,11 +279,13 @@ visibility_modifier: {
     '1/1/0/1/3': variant('pub_in_path'),
 },
 ```
+
 Path `1/1/0/1/N` walks `choice(bareCrate, seq(pub, optional(seq('(', choice[N], ')'))))`. The authored rule body in `rules:` (field-wrapping `pub` / `in` via `_kw_pub` / `_kw_in`) remains unchanged — wire composes them: authored fn runs first, then variant() patches apply.
 
 Probe results: ✅ `tree-sitter generate` clean (no conflicts, only pre-existing warnings) ✅ node-types.json emits 4 variant child kinds with correct field routing ✅ re-compiled parser.wasm surfaces the aliases (`pub(crate)` parses as `visibility_modifier → "pub" "(" visibility_modifier_pub_crate ")"`) ✅ per-variant `.jinja` templates emit ✅ fromPass +4 pass / +4 total (165/176 → 169/180 — new kinds pass-by-construction) ✅ pinning test suite unchanged ❌ rtPass +0: parent template is `{{ children | join(" ") }}` stripped of `pub`/`(`/`)` → `"pub" → ""`, `"pub(crate)" → "crate"` lossy renders.
 
 **Risk surface post-reordering**:
+
 1. **Phase D scope** — the emitter refactor must cover both "parent-with-delimiters" (visibility_modifier shape) and "parent-with-no-delimiters" (typescript call_expression / export_statement shapes where the variant arms differ at the top-level seq, not inside a sub-grouping). A narrow fix that only handles visibility_modifier's shape won't close the typescript cluster. Validate D's scope against at least one ts kind before declaring D complete.
 2. **Pipeline correctness** — variant() has unit-test coverage but now partial end-to-end coverage (Phase A probe confirmed grammar-level correctness for one kind). Latent bugs for more complex shapes may still surface in Phase C.
 
@@ -288,54 +296,63 @@ Probe results: ✅ `tree-sitter generate` clean (no conflicts, only pre-existing
 ### Older cluster inventory (pre-CV; retained for reference)
 
 ### C1 — Polymorph "null forms" crashing render (~30 failures)
+
 Root cause: walker over-expands choice-of-symbol, producing "null" polymorph forms (`mod_item_external` etc.) where `modelType=none` and the render pipeline crashes instead of dispatching.
 Owner files: `packages/codegen/src/polymorph-variant.ts`, `packages/codegen/src/compiler/template-walker.ts`.
 Affects: `rust/rtPass`, some `typescript/rtPass`.
 Signal: failures with "null template" or render throwing on undefined branch.
 
 ### C2 — Python soft-keyword overreach (~15 failures)
+
 Root cause: Python `match`, `print`, and other soft keywords are rejected as identifiers by the factory validator.
 Owner files: `packages/codegen/src/emitters/factories.ts` (keyword detection), `packages/python/overrides.ts`.
 Affects: `python/factoryPass`, `python/factoryAstMatchPass`, downstream `python/fromPass`.
 Signal: test output naming the Python identifier that failed construction.
 
 ### C3 — TS primary_type nonsense variants (~18 redundant forms)
+
 Root cause: 20 polymorph forms declared; 18 are structurally identical (`$$$CHILDREN` only). Walker emits redundant forms because polymorph detection uses choice-of-symbol instead of render-relevance.
 Owner files: `packages/codegen/src/polymorph-variant.ts`, `packages/codegen/src/compiler/template-walker.ts`.
 Affects: `typescript/rtPass` (cluster C3 is a major contributor to the 57 rtPass failures).
 Signal: test output showing 18+ nearly-identical failure signatures in the `primary_type` family.
 
 ### C4 — Choice branches with differentiating literals (3 kinds, multi-failure)
+
 Root cause: `function_type`, `impl_item`, `macro_definition` fail because the walker drops literals from non-primary branches. Needs polymorph split via `variant()` but is blocked by the field-wrapped-choice limitation (MEMORY.md `project_variant_field_wrapped_choice`).
 Owner files: `packages/codegen/src/polymorph-variant.ts`, `packages/codegen/src/dsl/enrich.ts`.
 Affects: `rust/factoryAstMatchPass`, `rust/rtPass`, cross-grammar if pattern repeats.
 Signal: test failures on these specific three kinds with literal-drop diagnostics.
 
 ### C5 — Factory anon-token clause gap (3 impl_item failures)
+
 Root cause: walker emits `!`/`?` clauses; factory config has no slot for anon tokens → round-trip fails. MEMORY.md flags this as a residual 6-of-32 item; defer unless user needs factory `!` support.
 Owner files: `packages/codegen/src/emitters/factories.ts`.
 Affects: `rust/factoryAstMatchPass` (small).
 Signal: `impl_item` factory-ast failures.
 
 ### C6 — Python comments-as-extras (2 failures)
+
 Root cause: Python's comment handling treats comments as "extras" in the tree, which the round-trip renderer doesn't preserve.
 Owner files: Reparse wrapping in `packages/codegen/src/validate/common.ts` and/or render pipeline.
 Affects: `python/rtPass`.
 Signal: `python/rtPass` failures on source with inline comments.
 
 ### C7 — list_splat grammar field-drop (1 failure)
+
 Root cause: single Python kind (`list_splat`) loses a field during factory-ast roundtrip.
 Owner files: Likely a targeted override in `packages/python/overrides.ts`.
 Affects: `python/factoryAstMatchPass` (1).
 Signal: `list_splat` in test output.
 
 ### C8 — Python override-parser drift (MEMORY thread)
+
 Root cause: spec 007 override-compiled parser produces different tree structure than the base parser; generated routing was built against the base parser. T023 of spec 007 was to switch `node-types.json` source to the override version — **status: unclear**; verify before starting Python factoryPass gap work.
 Owner files: `packages/codegen/src/validate/node-types-loader.ts`, `packages/python/.sittir/` build artifacts.
 Affects: `python/factoryPass` (this is the biggest single contributor to the +53 gap).
 Signal: Systematic factory failures that trace to tree-structure mismatch rather than per-kind bugs.
 
 ### C9 — Residual aliased-kind / alias-collapse bugs (several failures)
+
 Root cause: codegen emits interfaces/factories for kinds that tree-sitter aliases away (not in node-types.json). MEMORY.md `project_alias_collapse_dead_kinds` catalogues the rust grammar cases.
 Owner files: `packages/codegen/src/compiler/*` (alias resolution).
 Affects: Mixed; mostly `rust/factoryPass` and `rust/rtPass`.
@@ -356,6 +373,7 @@ Re-ordered after the mid-execution discovery that the three FR-011 exception kin
 7. **Residual long-tail rtPass failures** — whatever remains after CV + C1 land (likely ≤20 across grammars).
 
 **Deferred / out of R1 scope**:
+
 - **C8 (Python override-parser drift)** — was the original top priority under the stale FLOOR reading (+53 gap on python/factoryPass). Actual python/factoryPass is 197/889 today, well past legacy. Deprioritized. IF spec 007 T023 is still outstanding it's worth finishing, but not gating.
 - **C2 (Python soft keywords)** — was flagged for factoryPass; not in R1 scope.
 - **C5 (Factory anon-token clause gap)** — factoryPass only; not in R1 scope.
@@ -382,6 +400,7 @@ For each of the three grammars, every one of the following must hold for R1 to b
 3. **No `expect.fail`, `it.skip`, or `it.todo` is added to any validator test to satisfy this gate.** All fixes are genuine source-of-truth fixes in emitters/walkers/overrides.
 
 **Explicitly OUT of R1 scope**:
+
 - `factoryPass` and `factoryAstMatchPass` (non-recursive OR recursive). These are not mentioned in FR-014; they gate factory-construction correctness, which spec 012 MVP exercises only shallowly (T050 acceptance test does leaf-level factory edits, not deep tree construction). The ~1985 recursive-factory failures are tracked as an ongoing cleanup parallel to spec 012 MVP implementation — some of that debt will close incidentally when rtPass clusters are fixed (C1 polymorph null forms, C4 choice-with-literals affect both paths).
 - Stale FLOOR numbers in `corpus-validation.test.ts`. These were set in a smaller-corpus era; they can be raised to current actuals in a single-line clerical PR after R1 lands. Not gating.
 
@@ -418,6 +437,7 @@ If the fix requires a grammar-specific override, edit `packages/{grammar}/overri
 - [ ] **Step 4: Regenerate affected grammars**
 
 For each grammar whose generated output changes:
+
 ```
 npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src
 npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src

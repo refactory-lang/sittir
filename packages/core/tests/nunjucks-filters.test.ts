@@ -14,12 +14,16 @@ import { createNunjucksEnvironment } from '../src/templates/nunjucks-env.ts';
 // Filters are exercised through a real `createNunjucksEnvironment()`
 // invocation so that `registerSittirFilters` wiring is covered too.
 
-function withEnv<T>(template: string, fn: (render: (ctx: unknown) => string) => T): T {
+function withEnv<T>(
+	template: string,
+	fn: (render: (ctx: unknown) => string) => T
+): T {
 	const tmp = mkdtempSync(join(tmpdir(), 'sittir-nunjucks-filters-'));
 	try {
 		writeFileSync(join(tmp, 't.jinja'), template);
 		const env = createNunjucksEnvironment(tmp);
-		const render = (ctx: unknown) => env.render('t.jinja', ctx as Record<string, unknown>);
+		const render = (ctx: unknown) =>
+			env.render('t.jinja', ctx as Record<string, unknown>);
 		return fn(render);
 	} finally {
 		rmSync(tmp, { recursive: true, force: true });
@@ -66,8 +70,9 @@ describe('join filter override', () => {
 			// but preserves the original message text — match on it so the
 			// assertion locks the filter's guard rail regardless of the
 			// outer wrapping.
-			expect(() => render({ x: { foo: 'bar' } }))
-				.toThrow(/TypeError: join: unsupported value type object/);
+			expect(() => render({ x: { foo: 'bar' } })).toThrow(
+				/TypeError: join: unsupported value type object/
+			);
 		});
 	});
 
@@ -97,7 +102,10 @@ describe('joinWithTrailing', () => {
 
 	it('does not prepend leading even when _leading_anon is present', () => {
 		withEnv('{{ xs | joinWithTrailing(",") }}', (render) => {
-			const xs = ['a', 'b'] as string[] & { _leading_anon?: string; _trailing_anon?: string };
+			const xs = ['a', 'b'] as string[] & {
+				_leading_anon?: string;
+				_trailing_anon?: string;
+			};
 			xs._leading_anon = ',';
 			xs._trailing_anon = ',';
 			expect(render({ xs })).toBe('a,b,');
@@ -131,7 +139,10 @@ describe('joinWithLeading', () => {
 
 	it('ignores a trailing flank', () => {
 		withEnv('{{ xs | joinWithLeading("|") }}', (render) => {
-			const xs = ['a', 'b'] as string[] & { _leading_anon?: string; _trailing_anon?: string };
+			const xs = ['a', 'b'] as string[] & {
+				_leading_anon?: string;
+				_trailing_anon?: string;
+			};
 			xs._trailing_anon = '|';
 			expect(render({ xs })).toBe('a|b');
 		});
@@ -141,7 +152,10 @@ describe('joinWithLeading', () => {
 describe('joinWithFlanks', () => {
 	it('applies both leading and trailing flanks when they match', () => {
 		withEnv('{{ xs | joinWithFlanks(",") }}', (render) => {
-			const xs = ['a', 'b', 'c'] as string[] & { _leading_anon?: string; _trailing_anon?: string };
+			const xs = ['a', 'b', 'c'] as string[] & {
+				_leading_anon?: string;
+				_trailing_anon?: string;
+			};
 			xs._leading_anon = ',';
 			xs._trailing_anon = ',';
 			expect(render({ xs })).toBe(',a,b,c,');
@@ -150,7 +164,10 @@ describe('joinWithFlanks', () => {
 
 	it('applies only the side that matches sep', () => {
 		withEnv('{{ xs | joinWithFlanks(",") }}', (render) => {
-			const xs = ['a', 'b'] as string[] & { _leading_anon?: string; _trailing_anon?: string };
+			const xs = ['a', 'b'] as string[] & {
+				_leading_anon?: string;
+				_trailing_anon?: string;
+			};
 			xs._leading_anon = '(';
 			xs._trailing_anon = ',';
 			expect(render({ xs })).toBe('a,b,');

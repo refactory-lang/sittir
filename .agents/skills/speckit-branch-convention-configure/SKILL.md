@@ -28,13 +28,13 @@ You **MUST** consider the user input before proceeding (if not empty). The user 
 
 1. **Determine convention type**: Based on user input or interactive selection:
 
-   | Preset | Branch Pattern | Folder Pattern | Example Branch | Example Folder |
-   |--------|---------------|----------------|----------------|----------------|
-   | `default` | `{seq}-{kebab}` | `{seq}-{kebab}` | `003-user-auth` | `003-user-auth` |
-   | `gitflow` | `{type}/{seq}-{kebab}` | `{seq}-{kebab}` | `feat/003-user-auth` | `003-user-auth` |
-   | `ticket` | `{ticket}-{kebab}` | `{ticket}-{kebab}` | `PROJ-142-user-auth` | `PROJ-142-user-auth` |
-   | `date` | `{date}-{kebab}` | `{date}-{kebab}` | `20260408-user-auth` | `20260408-user-auth` |
-   | `custom` | User-defined pattern | User-defined pattern | — | — |
+   | Preset    | Branch Pattern         | Folder Pattern       | Example Branch       | Example Folder       |
+   | --------- | ---------------------- | -------------------- | -------------------- | -------------------- |
+   | `default` | `{seq}-{kebab}`        | `{seq}-{kebab}`      | `003-user-auth`      | `003-user-auth`      |
+   | `gitflow` | `{type}/{seq}-{kebab}` | `{seq}-{kebab}`      | `feat/003-user-auth` | `003-user-auth`      |
+   | `ticket`  | `{ticket}-{kebab}`     | `{ticket}-{kebab}`   | `PROJ-142-user-auth` | `PROJ-142-user-auth` |
+   | `date`    | `{date}-{kebab}`       | `{date}-{kebab}`     | `20260408-user-auth` | `20260408-user-auth` |
+   | `custom`  | User-defined pattern   | User-defined pattern | —                    | —                    |
 
 2. **Collect configuration**: Build the convention config with these fields:
 
@@ -61,14 +61,14 @@ You **MUST** consider the user input before proceeding (if not empty). The user 
 
 3. **Available tokens**: Document these template tokens for patterns:
 
-   | Token | Description | Example |
-   |-------|-------------|---------|
-   | `{seq}` | Zero-padded sequence number | `003` |
-   | `{kebab}` | Kebab-case feature summary (2-4 words) | `user-auth-flow` |
-   | `{ticket}` | Ticket/issue ID (e.g., JIRA, Linear) | `PROJ-142` |
-   | `{date}` | Date in configured format | `20260408` |
-   | `{type}` | Branch type prefix from type_prefix map | `feat` |
-   | `{summary}` | Raw feature summary (spaces allowed) | `user auth flow` |
+   | Token       | Description                             | Example          |
+   | ----------- | --------------------------------------- | ---------------- |
+   | `{seq}`     | Zero-padded sequence number             | `003`            |
+   | `{kebab}`   | Kebab-case feature summary (2-4 words)  | `user-auth-flow` |
+   | `{ticket}`  | Ticket/issue ID (e.g., JIRA, Linear)    | `PROJ-142`       |
+   | `{date}`    | Date in configured format               | `20260408`       |
+   | `{type}`    | Branch type prefix from type_prefix map | `feat`           |
+   | `{summary}` | Raw feature summary (spaces allowed)    | `user auth flow` |
 
 4. **Write configuration**: Save the convention to `.specify/branch-convention.yml`
 

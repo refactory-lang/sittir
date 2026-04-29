@@ -84,6 +84,7 @@ Change tracking organized by:
 **Note:** The script only accepts the `--json` flag and does not take description arguments.
 
 The workflow will:
+
 1. Detect if specs exist and determine baseline commit
 2. Create `specs/history/` directory
 3. Generate both template files
@@ -150,4 +151,4 @@ None - this is a documentation workflow that establishes context rather than imp
 
 ---
 
-*Part of spec-kit-extensions workflow system*
+_Part of spec-kit-extensions workflow system_

@@ -18,14 +18,14 @@ pnpm test total  4.067s (wall), 17.79s user, 524% cpu
 
 Pre-migration per-commit reports (from session logs):
 
-| Commit   | Tests    | Duration |
-|----------|----------|----------|
-| `60afe46`| 1354 p   | 4.80s    |
-| `7db681d`| 1354 p   | 3.14s    |
-| `a047294`| 1358 p   | 3.29s    |
-| `5888bdd`| 1402 p   | 3.28s    |
-| `49326cb`| 1415 p   | ~3.4s    |
-| **this**.| **1417 p**| **3.46s**|
+| Commit    | Tests      | Duration  |
+| --------- | ---------- | --------- |
+| `60afe46` | 1354 p     | 4.80s     |
+| `7db681d` | 1354 p     | 3.14s     |
+| `a047294` | 1358 p     | 3.29s     |
+| `5888bdd` | 1402 p     | 3.28s     |
+| `49326cb` | 1415 p     | ~3.4s     |
+| **this**. | **1417 p** | **3.46s** |
 
 **SC-007 assessment**: target is ≤10% regression on `pnpm test`
 wall-clock. Observed: ~0–3% variance across commits. No measurable

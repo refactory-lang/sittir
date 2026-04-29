@@ -62,19 +62,20 @@ specify extension add --from https://github.com/bgervin/spec-kit-sync/archive/re
 
 ## Commands
 
-| Command | What it does |
-|---------|--------------|
-| `speckit.sync.analyze` | Detect drift between specs and code |
-| `speckit.sync.propose` | AI suggests fixes (update spec or fix code) |
-| `speckit.sync.apply` | Apply approved changes |
-| `speckit.sync.conflicts` | Find inter-spec contradictions |
-| `speckit.sync.backfill` | Generate spec from unspecced code |
+| Command                  | What it does                                |
+| ------------------------ | ------------------------------------------- |
+| `speckit.sync.analyze`   | Detect drift between specs and code         |
+| `speckit.sync.propose`   | AI suggests fixes (update spec or fix code) |
+| `speckit.sync.apply`     | Apply approved changes                      |
+| `speckit.sync.conflicts` | Find inter-spec contradictions              |
+| `speckit.sync.backfill`  | Generate spec from unspecced code           |
 
 ## How It Works
 
 ### 1. Analyze
 
 Scans specs and code to find:
+
 - **Drifted requirements**: Spec says X, code does Y
 - **Unspecced features**: Code exists, no spec covers it
 - **Conflicts**: Two specs (or spec vs design doc) contradict
@@ -88,12 +89,12 @@ Scans specs and code to find:
 
 AI analyzes each drift and suggests a resolution:
 
-| Strategy | When | Action |
-|----------|------|--------|
-| **Backfill** | Code is right | Update spec to match code |
-| **Align** | Spec is right | Task to fix code |
-| **Supersede** | Newer doc wins | Mark old spec superseded |
-| **Human** | Can't tell | Surface for review |
+| Strategy      | When           | Action                    |
+| ------------- | -------------- | ------------------------- |
+| **Backfill**  | Code is right  | Update spec to match code |
+| **Align**     | Spec is right  | Task to fix code          |
+| **Supersede** | Newer doc wins | Mark old spec superseded  |
+| **Human**     | Can't tell     | Surface for review        |
 
 ```
 /speckit.sync.propose --interactive    # Review one-by-one
@@ -119,6 +120,7 @@ Generate complete specs from existing code:
 ```
 
 Creates:
+
 - `spec.md` — Requirements extracted from code
 - `plan.md` — Architecture documentation
 - `quickstart.md` — User guide (if CLI command)
@@ -132,7 +134,7 @@ Keep specs synced during autonomous coding:
 # sync-config.yml
 ralph:
   post_iteration_check: true
-  on_drift: pause  # backfill | warn | pause
+  on_drift: pause # backfill | warn | pause
 ```
 
 The loop pauses when drift is detected, preventing compound errors.
@@ -142,12 +144,14 @@ The loop pauses when drift is detected, preventing compound errors.
 This extension was built to fix [fina](https://github.com/bgervin/fina), a personal finance CLI that drifted during development:
 
 **Before:**
+
 - 12 specs, ~70% coverage
 - 3 features with no specs (reconciliation, hints, type-aware extraction)
 - spec-008 contradicted by later design doc
 - AI agents confused by stale specs
 
 **After:**
+
 ```
 /speckit.sync.analyze
 /speckit.sync.backfill reconciliation --create

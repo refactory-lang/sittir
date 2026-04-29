@@ -2,9 +2,9 @@
 description: Sync linked issue status for before_specify hook.
 ---
 
-
 <!-- Extension: workflows -->
 <!-- Config: .specify/extensions/workflows/ -->
+
 Run:
 
 ```bash

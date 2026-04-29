@@ -18,7 +18,7 @@ describe('createRenderer(templatesDir)', () => {
 			const { render } = createRenderer(tmp);
 			const node: AnyNodeData = {
 				$type: 'greet',
-				$fields: { name: { $type: 'id', $text: 'world' } },
+				$fields: { name: { $type: 'id', $text: 'world' } }
 			};
 			expect(render(node)).toBe('world!');
 		} finally {

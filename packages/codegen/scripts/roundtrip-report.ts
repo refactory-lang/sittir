@@ -20,13 +20,17 @@ async function main() {
 			byKind.get(kind)!.push(e);
 		}
 
-		const sorted = [...byKind.entries()].sort((a, b) => b[1].length - a[1].length);
+		const sorted = [...byKind.entries()].sort(
+			(a, b) => b[1].length - a[1].length
+		);
 		for (const [kind, errs] of sorted) {
 			console.log(`  ${kind}: ${errs.length} failures`);
 			console.log(`    sample: ${errs[0]!.message.slice(0, 100)}`);
 		}
 		console.log(`  ---`);
-		console.log(`  ${r.pass}/${r.total} pass, ${r.fail} fail, ${r.skip} skip, ${byKind.size} kinds affected`);
+		console.log(
+			`  ${r.pass}/${r.total} pass, ${r.fail} fail, ${r.skip} skip, ${byKind.size} kinds affected`
+		);
 	}
 }
 

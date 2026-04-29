@@ -13,12 +13,12 @@
 
 ```ts
 export interface NodeNs<T extends { readonly type: string }> {
-    readonly Node: T;
-    readonly Config: ConfigOf<T>;
-    readonly Fluent: FluentNodeOf<T>;
-    readonly Loose: FromInputOf<T, LeafScalarMap, LeafStringMap>;
-    readonly Tree: TreeNodeOf<T>;
-    readonly Kind: T extends { readonly type: infer K } ? K : never;
+	readonly Node: T;
+	readonly Config: ConfigOf<T>;
+	readonly Fluent: FluentNodeOf<T>;
+	readonly Loose: FromInputOf<T, LeafScalarMap, LeafStringMap>;
+	readonly Tree: TreeNodeOf<T>;
+	readonly Kind: T extends { readonly type: infer K } ? K : never;
 }
 ```
 
@@ -64,10 +64,10 @@ export interface IdentifierNs extends NodeNs<Identifier> {}
 
 ```ts
 export interface NamespaceMap {
-    readonly 'function_item': FunctionItemNs;
-    readonly 'block': BlockNs;
-    readonly 'identifier': IdentifierNs;
-    // ... one per kind
+	readonly function_item: FunctionItemNs;
+	readonly block: BlockNs;
+	readonly identifier: IdentifierNs;
+	// ... one per kind
 }
 ```
 
@@ -128,21 +128,24 @@ export namespace FunctionItem {
 
 ```ts
 export type IsGuards = {
-    // Per-kind entries — camelCase keys
-    [K in keyof NamespaceMap as CamelCase<K & string>]:
-        <T extends { readonly type: string }>(v: T)
-            => v is T & { readonly type: NamespaceMap[K]['Kind'] & string };
+	// Per-kind entries — camelCase keys
+	[K in keyof NamespaceMap as CamelCase<K & string>]: <
+		T extends { readonly type: string }
+	>(
+		v: T
+	) => v is T & { readonly type: NamespaceMap[K]['Kind'] & string };
 } & {
-    // Generic inverse
-    kind<K extends keyof NamespaceMap>(
-        v: { readonly type: string }, kind: K,
-    ): v is { readonly type: NamespaceMap[K]['Kind'] & string };
+	// Generic inverse
+	kind<K extends keyof NamespaceMap>(
+		v: { readonly type: string },
+		kind: K
+	): v is { readonly type: NamespaceMap[K]['Kind'] & string };
 
-    // Supertype entries (one per supertype declared in the grammar)
-    expression: (v: { readonly type: string }) => v is Expression;
-    pattern:    (v: { readonly type: string }) => v is Pattern;
-    type:       (v: { readonly type: string }) => v is _Type;
-    statement:  (v: { readonly type: string }) => v is Statement;
+	// Supertype entries (one per supertype declared in the grammar)
+	expression: (v: { readonly type: string }) => v is Expression;
+	pattern: (v: { readonly type: string }) => v is Pattern;
+	type: (v: { readonly type: string }) => v is _Type;
+	statement: (v: { readonly type: string }) => v is Statement;
 };
 ```
 
@@ -150,15 +153,22 @@ export type IsGuards = {
 
 ```ts
 export const is = {
-    ...Object.fromEntries(
-        Object.keys(_kindMap).map(k => [
-            k.replace(/_([a-z])/g, (_, c) => c.toUpperCase()),
-            (v: { type: string }) => v.type === k,
-        ]),
-    ),
-    kind: (v: { type: string }, k: string) => v.type === k,
-    expression: ((ks) => (v: { type: string }) => ks.has(v.type))(new Set([/* concrete kinds */])),
-    // ... one per supertype
+	...Object.fromEntries(
+		Object.keys(_kindMap).map((k) => [
+			k.replace(/_([a-z])/g, (_, c) => c.toUpperCase()),
+			(v: { type: string }) => v.type === k
+		])
+	),
+	kind: (v: { type: string }, k: string) => v.type === k,
+	expression: (
+		(ks) => (v: { type: string }) =>
+			ks.has(v.type)
+	)(
+		new Set([
+			/* concrete kinds */
+		])
+	)
+	// ... one per supertype
 } as unknown as IsGuards;
 ```
 
@@ -179,21 +189,23 @@ export const is = {
 **Shape:**
 
 ```ts
-export function isTree<T extends { readonly type: K }, K extends keyof NamespaceMap & string>(
-    v: T,
-): v is T & NamespaceMap[K]['Tree'];
+export function isTree<
+	T extends { readonly type: K },
+	K extends keyof NamespaceMap & string
+>(v: T): v is T & NamespaceMap[K]['Tree'];
 export function isTree(v: { readonly type: string }): v is AnyTreeNode;
 export function isTree(v: { readonly type: string }): boolean {
-    return typeof (v as { range?: unknown }).range === 'function';
+	return typeof (v as { range?: unknown }).range === 'function';
 }
 
-export function isNode<T extends { readonly type: K }, K extends keyof NamespaceMap & string>(
-    v: T,
-): v is T & NamespaceMap[K]['Node'];
+export function isNode<
+	T extends { readonly type: K },
+	K extends keyof NamespaceMap & string
+>(v: T): v is T & NamespaceMap[K]['Node'];
 export function isNode(v: { readonly type: string }): v is AnyNodeData;
 export function isNode(v: { readonly type: string }): boolean {
-    const o = v as { fields?: unknown; text?: unknown };
-    return typeof o.fields === 'object' || typeof o.text === 'string';
+	const o = v as { fields?: unknown; text?: unknown };
+	return typeof o.fields === 'object' || typeof o.text === 'string';
 }
 ```
 
@@ -231,16 +243,16 @@ export type AssertGuards = {
 
 ```ts
 export const assert = Object.fromEntries(
-    Object.entries(is).map(([k, guard]) => [
-        k,
-        (v: { type: string }, ...rest: unknown[]) => {
-            if (!(guard as (v: unknown, ...rest: unknown[]) => boolean)(v, ...rest)) {
-                throw new TypeError(
-                    `assert.${k}: expected type '${k}', got '${(v as { type: string }).type}'`,
-                );
-            }
-        },
-    ]),
+	Object.entries(is).map(([k, guard]) => [
+		k,
+		(v: { type: string }, ...rest: unknown[]) => {
+			if (!(guard as (v: unknown, ...rest: unknown[]) => boolean)(v, ...rest)) {
+				throw new TypeError(
+					`assert.${k}: expected type '${k}', got '${(v as { type: string }).type}'`
+				);
+			}
+		}
+	])
 ) as unknown as AssertGuards;
 ```
 
@@ -264,7 +276,10 @@ export const assert = Object.fromEntries(
 ```ts
 // Kind-parameterized: narrows through NamespaceMap
 export function isNodeData<K extends keyof NamespaceMap>(
-    v: NamespaceMap[K]['Node'] | NamespaceMap[K]['Loose'] | NamespaceMap[K]['Tree']
+	v:
+		| NamespaceMap[K]['Node']
+		| NamespaceMap[K]['Loose']
+		| NamespaceMap[K]['Tree']
 ): v is NamespaceMap[K]['Node'];
 
 // Generic fallback
@@ -272,11 +287,13 @@ export function isNodeData(v: unknown): v is AnyNodeData;
 
 // Runtime (unchanged from pre-008):
 export function isNodeData(v: unknown): v is AnyNodeData {
-    if (v === null || typeof v !== 'object') return false;
-    const o = v as Record<string, unknown>;
-    if (typeof o['type'] !== 'string') return false;
-    return (o['fields'] !== null && typeof o['fields'] === 'object')
-        || typeof o['text'] === 'string';
+	if (v === null || typeof v !== 'object') return false;
+	const o = v as Record<string, unknown>;
+	if (typeof o['type'] !== 'string') return false;
+	return (
+		(o['fields'] !== null && typeof o['fields'] === 'object') ||
+		typeof o['text'] === 'string'
+	);
 }
 ```
 
@@ -300,16 +317,19 @@ export function isNodeData(v: unknown): v is AnyNodeData {
 
 ```ts
 export function functionItemFrom(
-    input: T.FunctionItem | T.FunctionItem.Loose,
+	input: T.FunctionItem | T.FunctionItem.Loose
 ): T.FunctionItem.Fluent {
-    if (isNodeData(input)) return input as T.FunctionItem.Fluent;
+	if (isNodeData(input)) return input as T.FunctionItem.Fluent;
 
-    return F.functionItem({
-        visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
-        name:               _resolveOne<T.Identifier | T.Metavariable>(input.name, _K11, _K0),
-        body:               _resolveOneBranch<T.Block>(input.body, "block"),
-        // ... every field single-access from input.camelCase
-    });
+	return F.functionItem({
+		visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(
+			input.visibilityModifier,
+			'visibility_modifier'
+		),
+		name: _resolveOne<T.Identifier | T.Metavariable>(input.name, _K11, _K0),
+		body: _resolveOneBranch<T.Block>(input.body, 'block')
+		// ... every field single-access from input.camelCase
+	});
 }
 ```
 
@@ -344,23 +364,25 @@ input → isNodeData? ─ yes → return input (identity)
 ```ts
 // Flat namespace (existing, preserved)
 export const ir = {
-    functionItem: Object.assign(F.functionItem, { from: FR.functionItemFrom }),
-    binaryExpression: Object.assign(F.binaryExpression, { from: FR.binaryExpressionFrom }),
-    // ...
+	functionItem: Object.assign(F.functionItem, { from: FR.functionItemFrom }),
+	binaryExpression: Object.assign(F.binaryExpression, {
+		from: FR.binaryExpressionFrom
+	})
+	// ...
 } as const;
 
 // Supertype-grouped sub-namespaces (new)
 export const expr = {
-    binary: Object.assign(F.binaryExpression, { from: FR.binaryExpressionFrom }),
-    call:   Object.assign(F.callExpression,   { from: FR.callExpressionFrom }),
-    if_:    Object.assign(F.ifExpression,     { from: FR.ifExpressionFrom }),
-    // ...
+	binary: Object.assign(F.binaryExpression, { from: FR.binaryExpressionFrom }),
+	call: Object.assign(F.callExpression, { from: FR.callExpressionFrom }),
+	if_: Object.assign(F.ifExpression, { from: FR.ifExpressionFrom })
+	// ...
 } as const;
 
 export const decl = {
-    function_: Object.assign(F.functionItem, { from: FR.functionItemFrom }),
-    struct_:   Object.assign(F.structItem,   { from: FR.structItemFrom }),
-    // ...
+	function_: Object.assign(F.functionItem, { from: FR.functionItemFrom }),
+	struct_: Object.assign(F.structItem, { from: FR.structItemFrom })
+	// ...
 } as const;
 ```
 

@@ -6,15 +6,15 @@ input node.
 
 ## Shape
 
-| Field | TS Type | Rust Type | Semantics |
-|-------|---------|-----------|-----------|
-| `<field_name>` | `string \| undefined \| readonly string[] \| boolean` | `Option<&str>` / `&[String]` / `bool` | Pre-rendered field slot (raw snake_case name). Boolean for keyword-presence fields; string for single-valued; `string[]` for multi-valued pre-split. `undefined` / `None` when field is absent. |
-| `children` | `string` | `&str` | Pre-joined, pre-filtered unconsumed named children with joinBy + leading/trailing separators applied. |
-| `children_list` | `readonly string[]` | `&[String]` | Individual pre-rendered children in source order, for `{% for %}` loops. Excludes children already consumed by clauses or fields. |
-| `variant` | `string` (empty when absent) | `&str` | Node's `$variant` value. Empty string when absent — never null/undefined; keep templates from needing `{% if variant is defined %}`. |
-| `text` | `string` (empty when absent) | `&str` | Node's `$text`. |
-| `trailing_sep` | `boolean` | `bool` | `flankSep` trailing match result from `prepare()`. |
-| `leading_sep` | `boolean` | `bool` | `flankSep` leading match result from `prepare()`. |
+| Field           | TS Type                                               | Rust Type                             | Semantics                                                                                                                                                                                       |
+| --------------- | ----------------------------------------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `<field_name>`  | `string \| undefined \| readonly string[] \| boolean` | `Option<&str>` / `&[String]` / `bool` | Pre-rendered field slot (raw snake_case name). Boolean for keyword-presence fields; string for single-valued; `string[]` for multi-valued pre-split. `undefined` / `None` when field is absent. |
+| `children`      | `string`                                              | `&str`                                | Pre-joined, pre-filtered unconsumed named children with joinBy + leading/trailing separators applied.                                                                                           |
+| `children_list` | `readonly string[]`                                   | `&[String]`                           | Individual pre-rendered children in source order, for `{% for %}` loops. Excludes children already consumed by clauses or fields.                                                               |
+| `variant`       | `string` (empty when absent)                          | `&str`                                | Node's `$variant` value. Empty string when absent — never null/undefined; keep templates from needing `{% if variant is defined %}`.                                                            |
+| `text`          | `string` (empty when absent)                          | `&str`                                | Node's `$text`.                                                                                                                                                                                 |
+| `trailing_sep`  | `boolean`                                             | `bool`                                | `flankSep` trailing match result from `prepare()`.                                                                                                                                              |
+| `leading_sep`   | `boolean`                                             | `bool`                                | `flankSep` leading match result from `prepare()`.                                                                                                                                               |
 
 ## Derivation
 
@@ -37,11 +37,13 @@ handle, or the consumed-index set.
 ## Template responsibility boundary
 
 Templates MUST NOT:
+
 - Recurse into sub-renders themselves (the engine does this implicitly via recursive `render()` on child nodes before `prepare()` populates `children` / `children_list`).
 - Compute field values from raw node structure.
 - Reach into sibling children (only `children` + `children_list` + declared field slots are visible).
 
 Templates MAY:
+
 - Conditionally include content based on any context variable (empty-string sentinel values make `{% if variant %}` work correctly).
 - Iterate `children_list` for custom separator / prefix / suffix logic.
 - Apply authoring-subset filters (`join`, `length`, `default`, `trim`, `upper`, `lower`).

@@ -1,55 +1,55 @@
 {
-  "name": "@sittir/rust",
-  "version": "0.1.0",
-  "description": "Typed Rust IR builder — 134 node kinds from tree-sitter-rust grammar",
-  "license": "MIT",
-  "homepage": "https://github.com/refactory-lang/sittir#readme",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/refactory-lang/sittir.git",
-    "directory": "packages/rust"
-  },
-  "keywords": [
-    "rust",
-    "tree-sitter",
-    "ir",
-    "codegen",
-    "ast"
-  ],
-  "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    }
-  },
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist",
-    "templates/*.jinja"
-  ],
-  "scripts": {
-    "generate": "rm -f src/factories.ts src/from.ts src/ir.ts src/utils.ts src/types.ts src/consts.ts src/index.ts templates.yaml tests/nodes.test.ts && node --experimental-strip-types ../codegen/src/cli.ts --grammar rust --all --output src/",
-    "regenerate": "pnpm generate && pnpm build && pnpm test",
-    "build": "tsgo -p tsconfig.build.json",
-    "clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
-    "dev": "tsgo -p tsconfig.build.json --watch",
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "type-check": "tsgo --noEmit"
-  },
-  "dependencies": {
-    "@sittir/core": "workspace:*",
-    "@sittir/types": "workspace:*"
-  },
-  "optionalDependencies": {
-    "@sittir/rust-native": "workspace:*"
-  },
-  "//peer": "spec 012 T036: @sittir/rust-native is now a workspace optionalDependency so pnpm symlinks it from rust/crates/sittir-rust-napi when present. optional=true keeps installs healthy on platforms without a built .node artifact.",
-  "devDependencies": {
-    "@types/node": "^25.6.0",
-    "tree-sitter-rust": "^0.24.0",
-    "type-fest": "^5.6.0"
-  }
+	"name": "@sittir/rust",
+	"version": "0.1.0",
+	"description": "Typed Rust IR builder — 134 node kinds from tree-sitter-rust grammar",
+	"keywords": [
+		"ast",
+		"codegen",
+		"ir",
+		"rust",
+		"tree-sitter"
+	],
+	"homepage": "https://github.com/refactory-lang/sittir#readme",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/refactory-lang/sittir.git",
+		"directory": "packages/rust"
+	},
+	"files": [
+		"dist",
+		"templates/*.jinja"
+	],
+	"type": "module",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		}
+	},
+	"scripts": {
+		"generate": "rm -f src/factories.ts src/from.ts src/ir.ts src/utils.ts src/types.ts src/consts.ts src/index.ts templates.yaml tests/nodes.test.ts && node --experimental-strip-types ../codegen/src/cli.ts --grammar rust --all --output src/",
+		"regenerate": "pnpm generate && pnpm build && pnpm test",
+		"build": "tsgo -p tsconfig.build.json",
+		"clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
+		"dev": "tsgo -p tsconfig.build.json --watch",
+		"test": "vitest run",
+		"test:coverage": "vitest run --coverage",
+		"type-check": "tsgo --noEmit"
+	},
+	"dependencies": {
+		"@sittir/core": "workspace:*",
+		"@sittir/types": "workspace:*"
+	},
+	"devDependencies": {
+		"@types/node": "^25.6.0",
+		"tree-sitter-rust": "^0.24.0",
+		"type-fest": "^5.6.0"
+	},
+	"optionalDependencies": {
+		"@sittir/rust-native": "workspace:*"
+	},
+	"//peer": "spec 012 T036: @sittir/rust-native is now a workspace optionalDependency so pnpm symlinks it from rust/crates/sittir-rust-napi when present. optional=true keeps installs healthy on platforms without a built .node artifact."
 }

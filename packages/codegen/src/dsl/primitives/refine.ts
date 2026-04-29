@@ -39,12 +39,15 @@
  * @see packages/codegen/src/dsl/wire/wire.ts — WireContext.refineForms
  */
 
-import type { RuntimeRule } from '../runtime-shapes.ts'
-import { wireGetCurrentRuleKind, wireRegisterRefineForms } from '../wire/wire.ts'
-import type { RefineForm } from '../wire/wire.ts'
+import type { RuntimeRule } from '../runtime-shapes.ts';
+import {
+	wireGetCurrentRuleKind,
+	wireRegisterRefineForms
+} from '../wire/wire.ts';
+import type { RefineForm } from '../wire/wire.ts';
 
 /** `{ formName → { path → branchIndex | literal } }`. */
-export type FormMap = Record<string, Record<string, number | string>>
+export type FormMap = Record<string, Record<string, number | string>>;
 
 /**
  * Declare per-form choice selections for the current rule.
@@ -59,21 +62,25 @@ export type FormMap = Record<string, Record<string, number | string>>
  * @throws {Error} If a form name is duplicated within the same call.
  */
 export function refine(original: RuntimeRule, forms: FormMap): RuntimeRule {
-    const kind = wireGetCurrentRuleKind()
-    if (!kind) {
-        throw new Error(
-            'refine(): no active wire context — refine() must run inside a rule callback under wire()',
-        )
-    }
-    const formList: RefineForm[] = []
-    for (const [name, selections] of Object.entries(forms)) {
-        if (formList.some(f => f.name === name)) {
-            throw new Error(`refine(): duplicate form name '${name}' on rule '${kind}'`)
-        }
-        formList.push({ name, selections: { ...selections } })
-    }
-    if (!wireRegisterRefineForms(kind, formList)) {
-        throw new Error('refine(): wire context rejected registration — unexpected')
-    }
-    return original
+	const kind = wireGetCurrentRuleKind();
+	if (!kind) {
+		throw new Error(
+			'refine(): no active wire context — refine() must run inside a rule callback under wire()'
+		);
+	}
+	const formList: RefineForm[] = [];
+	for (const [name, selections] of Object.entries(forms)) {
+		if (formList.some((f) => f.name === name)) {
+			throw new Error(
+				`refine(): duplicate form name '${name}' on rule '${kind}'`
+			);
+		}
+		formList.push({ name, selections: { ...selections } });
+	}
+	if (!wireRegisterRefineForms(kind, formList)) {
+		throw new Error(
+			'refine(): wire context rejected registration — unexpected'
+		);
+	}
+	return original;
 }

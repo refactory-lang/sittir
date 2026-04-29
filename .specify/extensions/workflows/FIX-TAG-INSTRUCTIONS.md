@@ -5,6 +5,7 @@
 The `cli-v1.5.2` tag was created at commit `259a288ce5cac4bf4f19aa758129c56af50be656`, but this commit had the versions updated in `pyproject.toml` and `specify_extend.py` WITHOUT updating the CHANGELOG.md file.
 
 When the GitHub Actions release workflow ran, it failed at the "Validate versions are in sync" step because:
+
 - Tag version: 1.5.2
 - pyproject.toml version: 1.5.2 ✓
 - specify_extend.py version: 1.5.2 ✓
@@ -15,11 +16,13 @@ Reference: https://github.com/pradeepmouli/spec-kit-extensions/actions/runs/2050
 ## Solution
 
 The CHANGELOG.md has since been updated in commit `3eea581ddf9131d50842d3c485980cb29dff0445` (which is now on the `main` branch). This commit has all three files in sync:
+
 - pyproject.toml version: 1.5.2 ✓
 - specify_extend.py version: 1.5.2 ✓
 - CHANGELOG.md version: 1.5.2 ✓
 
 To fix the issue, we need to:
+
 1. Delete the existing `cli-v1.5.2` tag (both locally and remotely)
 2. Create a new `cli-v1.5.2` tag at commit `3eea581` (which has the correct CHANGELOG)
 3. Push the new tag to trigger the release workflow
@@ -33,6 +36,7 @@ Run the provided script:
 ```
 
 This script will:
+
 1. Verify that commit `3eea581` has all versions in sync
 2. Delete the old tag locally and remotely
 3. Create a new annotated tag at commit `3eea581`
@@ -85,6 +89,7 @@ After pushing the new tag, verify:
 The root cause was that the version bump process (in `bump-version.sh` or manual process) didn't follow the correct order:
 
 **Wrong order (what happened):**
+
 1. Update pyproject.toml and specify_extend.py
 2. Commit version changes
 3. Create and push tag ← Tag created before CHANGELOG update
@@ -92,6 +97,7 @@ The root cause was that the version bump process (in `bump-version.sh` or manual
 5. Commit CHANGELOG
 
 **Correct order (as documented in `.github/agents/bump-version.agent.md`):**
+
 1. Update CHANGELOG.md first
 2. Update pyproject.toml and specify_extend.py
 3. Commit ALL changes together (CHANGELOG + version files)

@@ -14,6 +14,7 @@ evaluate(entryPath: string) → RawGrammar
 **Output**: `RawGrammar`
 
 **Invariants**:
+
 - Single entry point — if overrides exist, the entry is overrides.ts which imports grammar.js as base
 - Tree-sitter's `grammar(base, { rules })` handles the merge natively — each rule fn receives `($, original)`
 - No custom two-pass system — tree-sitter's `grammar()` provides the base rule as the second argument
@@ -35,6 +36,7 @@ link(raw: RawGrammar) → LinkedGrammar
 **Output**: `LinkedGrammar`
 
 **Invariants**:
+
 - No `symbol`, `alias`, `token`, or `repeat1` in output rules
 - All hidden rules classified: supertype / enum / group / inlined
 - All `field` nodes annotated with `source` and `nameFrom`
@@ -54,6 +56,7 @@ optimize(linked: LinkedGrammar) → OptimizedGrammar
 **Output**: `OptimizedGrammar`
 
 **Invariants**:
+
 - Structural grouping (seq, choice, optional, repeat) may be restructured
 - Named content NEVER modified: string values, pattern values, field metadata, clause/enum/supertype/group content, whitespace directives
 - Choice branches wrapped in `variant` nodes
@@ -71,6 +74,7 @@ assemble(optimized: OptimizedGrammar) → NodeMap
 **Output**: `NodeMap`
 
 **Invariants**:
+
 - First and only phase that creates nodes
 - Every rule classified into exactly one of 9 model types
 - All metadata derived from rule tree context:
@@ -100,6 +104,7 @@ emitSuggestedOverrides(linked: LinkedGrammar) → string
 **Output**: Source strings
 
 **Invariants**:
+
 - All emitters consume NodeMap exclusively — no access to grammar rules or intermediate representations
 - `from` derives from factory signatures, not the node model
 - `ir` derives from factory exports, not the node model

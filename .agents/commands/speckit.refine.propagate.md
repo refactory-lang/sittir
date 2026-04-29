@@ -2,9 +2,9 @@
 description: Propagate spec changes downstream to plan.md and tasks.md
 ---
 
-
 <!-- Extension: refine -->
 <!-- Config: .specify/extensions/refine/ -->
+
 # Propagate Spec Changes
 
 After refining a specification with `/speckit.refine.update`, use this command to cascade changes downstream to plan.md and tasks.md without regenerating them from scratch.

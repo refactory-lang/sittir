@@ -12,13 +12,12 @@
 //! # Scope caveat (T033)
 //!
 //! `find_and_read(source, pattern)` is currently stubbed because
-//! `ast-grep-core` is deferred (see `sittir-core/Cargo.toml` comments:
-//! every `ast-grep-core` release ≥0.40 pulls `tree-sitter = ^0.26.3`
-//! which conflicts with the three grammar crates we ship). The stub
-//! returns `Error("find_and_read not yet implemented — ast-grep-core integration pending")`
-//! so consumers that accidentally reach the native backend before
-//! Phase 3 search support lands fall back cleanly (FR-020 / backend
-//! selection shim emits the TS fallback path).
+//! `ast-grep-core` integration is deferred to Phase 3 (T022+). The dep
+//! version conflict that previously blocked it is resolved (see
+//! `Cargo.toml` root for rationale). The stub returns
+//! `Error("find_and_read not yet implemented — ast-grep-core integration pending")`
+//! so consumers fall back cleanly to the TS engine before Phase 3
+//! search support lands (FR-020 / backend selection shim).
 //!
 //! Everything else on the contract surface is fully wired:
 //!
@@ -36,8 +35,17 @@ use napi::bindgen_prelude::*;
 use napi_derive::napi;
 use sittir_core::prepare::{build_template_context, RenderDispatch};
 use sittir_core::splice::apply_edits as splice_apply_edits;
-use sittir_core::types::{Edit, NodeData};
+use sittir_core::types::{Edit, FormatRecord, NodeData};
 use sittir_rust_render::{render_dispatch, RustGrammarMeta, TEMPLATE_BUNDLE_HASH};
+
+/// Result wrapper for parse_and_read: NodeData + optional FormatRecord.
+#[derive(serde::Serialize)]
+struct ParseResult<'a> {
+    #[serde(rename = "nodeData")]
+    node_data: &'a NodeData,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    format: Option<FormatRecord>,
+}
 
 /// napi-bound stateful facade per contracts/napi-api.md.
 ///
@@ -84,10 +92,9 @@ impl SittirEngine {
     /// Parse `source`, run an ast-grep pattern match, return the matched
     /// `NodeData`s as a JSON array string.
     ///
-    /// **Deferred (T033):** ast-grep-core integration is blocked on a
-    /// version conflict with our pinned tree-sitter crate (see module
-    /// docs). This stub returns an error so callers fall through the
-    /// backend-selection shim to the TS engine.
+    /// **Deferred (T033):** ast-grep-core integration is Phase 3 work
+    /// (see module docs). This stub returns an error so callers fall
+    /// through the backend-selection shim to the TS engine.
     #[napi]
     pub fn find_and_read(&mut self, _source: String, _pattern: String) -> Result<String> {
         Err(Error::from_reason(
@@ -117,7 +124,10 @@ impl SittirEngine {
         let tree = self
             .parser
             .parse(&source, None)
-            .ok_or_else(|| Error::from_reason("parse failed"))?;
+            .ok_or_else(|| {
+                let snippet: String = source.chars().take(80).collect();
+                Error::from_reason(format!("parse failed (source: {snippet:?})"))
+            })?;
         self.source = Some(source.clone());
         self.tree = Some(tree.clone());
         let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
@@ -128,8 +138,14 @@ impl SittirEngine {
             )
         }));
         match result {
-            Ok(data) => serde_json::to_string(&data)
-                .map_err(|e| Error::from_reason(format!("serialize NodeData failed: {e}"))),
+            Ok(data) => {
+                let format = sittir_core::format::extract_format(
+                    self.source.as_ref().unwrap(),
+                    self.tree.as_ref().unwrap(),
+                );
+                serde_json::to_string(&ParseResult { node_data: &data, format })
+                    .map_err(|e| Error::from_reason(format!("serialize ParseResult failed: {e}")))
+            }
             Err(panic_payload) => Err(Error::from_reason(panic_msg(panic_payload, "parse_and_read panicked"))),
         }
     }
@@ -165,16 +181,31 @@ impl SittirEngine {
 
     /// Render a NodeData (passed as JSON string; TS does `JSON.stringify`)
     /// to source. Stateless — does not touch `self.tree` / `self.source`.
+    ///
+    /// Format asymmetry (Phase 1): if the node carries `$format` in its JSON
+    /// it is applied post-canonicalization. There is no tree-level format
+    /// fallback here — factory-constructed nodes without `$format` always
+    /// render canonically. The JS path fills the gap by passing `ctx.format`
+    /// from renderer options; aligning the Rust path with a separate
+    /// `format_json` parameter is Phase 2 work (FR-023).
     #[napi]
     pub fn render(&self, node_json: String) -> Result<String> {
         let node: NodeData = serde_json::from_str(&node_json)
-            .map_err(|e| Error::from_reason(format!("parse NodeData JSON failed: {e}")))?;
+            .map_err(|e| {
+                let snippet: String = node_json.chars().take(80).collect();
+                Error::from_reason(format!("parse NodeData JSON failed: {e} (json: {snippet:?})"))
+            })?;
+        let format = node.format.clone();
         let meta = RustGrammarMeta;
         let dispatch: RenderDispatch = render_dispatch;
         let ctx = build_template_context(&node, &meta, dispatch)
             .map_err(|e| Error::from_reason(format!("build template context failed: {e}")))?;
-        dispatch(&node.type_, &ctx)
-            .map_err(|e| Error::from_reason(format!("render_dispatch failed: {e}")))
+        let canonical = dispatch(&node.type_, &ctx)
+            .map_err(|e| Error::from_reason(format!("render_dispatch failed: {e}")))?;
+        Ok(match format {
+            Some(fmt) => sittir_core::format::apply_format(&canonical, &fmt),
+            None => canonical,
+        })
     }
 
     /// Apply a batch of edits to `source`. Delegates to

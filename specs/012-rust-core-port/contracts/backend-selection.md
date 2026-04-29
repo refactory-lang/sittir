@@ -3,7 +3,7 @@
 **Artifact**: `packages/{lang}/src/backend.ts` (new; one per grammar package)
 **Governed by**: Spec FR-009, FR-017, FR-020, FR-021
 
-The JS-side runtime-selection shim. Picks between the native backend (`@sittir/{lang}-native`) and the TypeScript fallback (existing Nunjucks engine). Exposes inspection API and optional diagnostic.
+The JS-side runtime-selection shim. Picks between the native backend (`@sittir/{lang}-native`) and the JS fallback (existing Nunjucks engine). Exposes inspection API and optional diagnostic.
 
 ---
 
@@ -13,15 +13,15 @@ Runs **once per module load** (effectively once per Node process under normal ES
 
 ```text
 1. Attempt to require('@sittir/{lang}-native')
-   - On ImportError / platform-not-supported → set status = { name: 'typescript', reason: 'native binary not available for this platform' }
-   - On other load error → set status = { name: 'typescript', reason: 'native load failed: <error message>' }
+   - On ImportError / platform-not-supported → set status = { name: 'js', reason: 'native binary not available for this platform' }
+   - On other load error → set status = { name: 'js', reason: 'native load failed: <error message>' }
 
 2. If loaded:
    a. Call engine.templateBundleHash (string)
    b. Import TEMPLATE_BUNDLE_HASH from packages/{lang}/src/hash.ts
    c. Compare (case-insensitive hex compare)
       - Match → status = { name: 'native', hashMatch: true }
-      - Mismatch → status = { name: 'typescript', reason: 'template-bundle hash mismatch', hashMatch: false }
+      - Mismatch → status = { name: 'js', reason: 'template-bundle hash mismatch', hashMatch: false }
 
 3. If SITTIR_BACKEND_DEBUG env var is set to a non-empty string:
    - Write one line to stderr: `sittir/{lang}: backend = <name>[, reason = <reason>]`
@@ -31,7 +31,7 @@ Runs **once per module load** (effectively once per Node process under normal ES
 
 ### Error recovery
 
-- Any exception during the above (e.g. `engine.templateBundleHash` throws) → status becomes `typescript` with `reason: 'native-engine error at init: <message>'`. Never crashes the consumer import.
+- Any exception during the above (e.g. `engine.templateBundleHash` throws) → status becomes `js` with `reason: 'native-engine error at init: <message>'`. Never crashes the consumer import.
 
 ---
 
@@ -39,23 +39,24 @@ Runs **once per module load** (effectively once per Node process under normal ES
 
 ```ts
 // packages/{lang}/src/backend.ts
-export type BackendName = "native" | "typescript";
+export type BackendName = 'native' | 'js';
 
 export interface BackendStatus {
-  name: BackendName;
-  /** Populated on fallback. Absent when name === 'native'. */
-  reason?: string;
-  /** Hash-comparison outcome when native was considered. Absent when native didn't load at all. */
-  hashMatch?: boolean;
+	name: BackendName;
+	/** Populated on fallback. Absent when name === 'native'. */
+	reason?: string;
+	/** Hash-comparison outcome when native was considered. Absent when native didn't load at all. */
+	hashMatch?: boolean;
 }
 
 export function getActiveBackend(): BackendStatus;
 ```
 
 Exported from `packages/{lang}/src/index.ts`:
+
 ```ts
-export { getActiveBackend } from "./backend.ts";
-export type { BackendName, BackendStatus } from "./backend.ts";
+export { getActiveBackend } from './backend.ts';
+export type { BackendName, BackendStatus } from './backend.ts';
 ```
 
 ---
@@ -73,10 +74,13 @@ export type { BackendName, BackendStatus } from "./backend.ts";
 
 - **Unset / empty**: no diagnostic output. Default.
 - **Any non-empty value** (`"1"`, `"true"`, `"yes"`, etc.): writes exactly one line to `process.stderr` at first backend selection, formatted as:
+
   ```
   sittir/{lang}: backend = <name>
   ```
+
   or, on fallback:
+
   ```
   sittir/{lang}: backend = typescript, reason = <reason>
   ```
@@ -85,7 +89,7 @@ export type { BackendName, BackendStatus } from "./backend.ts";
 
 ### Environment variable: `SITTIR_BACKEND` (consumer-forced selection — non-normative)
 
-Not required by the spec but documented here as a planned debug aid. When set to `"typescript"`, skip the native load attempt entirely; when set to `"native"`, fail loudly on any native-load failure instead of falling back. Useful for CI and benchmark diffing.
+Not required by the spec but documented here as a planned debug aid. When set to `"js"`, skip the native load attempt entirely; when set to `"native"`, fail loudly on any native-load failure instead of falling back. Useful for CI and benchmark diffing.
 
 ---
 
@@ -93,7 +97,7 @@ Not required by the spec but documented here as a planned debug aid. When set to
 
 1. The module-load-time selection is **never retried**. A failed native load does not self-heal later in the same process.
 2. `getActiveBackend()` is **pure** in the observational sense — it performs no I/O, never writes to stderr. Side effects (diagnostic line) happen only at module load.
-3. The TS fallback path **never** calls `@sittir/{lang}-native`. Once the singleton says `name: "typescript"`, all render/read/splice goes through the existing TS Nunjucks engine.
+3. The JS fallback path **never** calls `@sittir/{lang}-native`. Once the singleton says `name: "js"`, all render/read/splice goes through the existing JS Nunjucks engine.
 4. A freshly-installed package with mismatched native + TS template versions **MUST** fall through silently per FR-009 + FR-020 — not throw, not log to stderr unless `SITTIR_BACKEND_DEBUG` is set.
 
 ---
@@ -102,11 +106,11 @@ Not required by the spec but documented here as a planned debug aid. When set to
 
 ```ts
 // Consumer inspecting the selection
-import { getActiveBackend } from "@sittir/rust";
+import { getActiveBackend } from '@sittir/rust';
 
 const status = getActiveBackend();
-if (status.name === "typescript") {
-  console.warn("[perf] running on TS backend:", status.reason ?? "default");
+if (status.name === 'typescript') {
+	console.warn('[perf] running on TS backend:', status.reason ?? 'default');
 }
 ```
 

@@ -16,10 +16,7 @@
  * ```
  */
 
-import type {
-	CamelCase,
-	SimplifyDeep,
-} from 'type-fest';
+import type { CamelCase } from 'type-fest';
 
 // ---------------------------------------------------------------------------
 // Runtime types — re-exported from core-types (zero runtime in this package)
@@ -27,6 +24,9 @@ import type {
 
 export type {
 	AnyNodeData,
+	NativeNodeData,
+	NativeFieldValue,
+	NodeId,
 	NodeFieldValue,
 	NodeChildValue,
 	AnyTreeNode,
@@ -37,9 +37,16 @@ export type {
 	ByteRange,
 	Position,
 	CSTNode,
+	FormatBoundary,
+	FormatSlot,
+	FormatLiteral,
+	FormatTrivia,
+	FormatRecord,
+	KindFormatRecord,
+	NativeParseResult,
 	RenderContext,
 	ReplaceTarget,
-	Renderable,
+	Renderable
 } from './core-types.ts';
 
 // ---------------------------------------------------------------------------
@@ -165,7 +172,9 @@ export type GrammarSlotInfo = {
 };
 
 /** Extract the kind strings from a slot's type references. */
-export type SlotKinds<Info> = Info extends { types: infer Types extends readonly GrammarTypeRef[] }
+export type SlotKinds<Info> = Info extends {
+	types: infer Types extends readonly GrammarTypeRef[];
+}
 	? Extract<Types[number]['type'], string>
 	: never;
 
@@ -174,10 +183,10 @@ export type SlotKinds<Info> = Info extends { types: infer Types extends readonly
 // ---------------------------------------------------------------------------
 
 /** Check if string literal T is already in the Visited tuple. */
-export type Contains<Visited extends string[], T extends string> = Visited extends [
-	infer Head extends string,
-	...infer Rest extends string[],
-]
+export type Contains<
+	Visited extends string[],
+	T extends string
+> = Visited extends [infer Head extends string, ...infer Rest extends string[]]
 	? Head extends T
 		? true
 		: Contains<Rest, T>
@@ -192,22 +201,25 @@ type MaxDepth = 3;
  * Supertypes are expanded into unions of their concrete kinds.
  * Leaf kinds (no fields, no subtypes) produce NodeData with just type + text.
  */
-export type ExpandOneKind<G, K extends string, Visited extends string[]> = K extends NodeKind<G>
-	? G[K] extends { fields: object }
-		? Visited['length'] extends MaxDepth
-			? Readonly<{ type: K; fields: Readonly<Record<string, unknown>> }>
-			: Contains<Visited, K> extends true
+export type ExpandOneKind<G, K extends string, Visited extends string[]> =
+	K extends NodeKind<G>
+		? G[K] extends { fields: object }
+			? Visited['length'] extends MaxDepth
 				? Readonly<{ type: K; fields: Readonly<Record<string, unknown>> }>
-				: ExpandNode<G, K, Visited>
-		: G[K] extends { subtypes: readonly NodeBasicInfo[] }
-			? ExpandOneKind<G, ResolveType<G, K>, Visited>
-			: Readonly<{ type: K; text: string }>
-	: Readonly<{ type: K; text: string }>;
+				: Contains<Visited, K> extends true
+					? Readonly<{ type: K; fields: Readonly<Record<string, unknown>> }>
+					: ExpandNode<G, K, Visited>
+			: G[K] extends { subtypes: readonly NodeBasicInfo[] }
+				? ExpandOneKind<G, ResolveType<G, K>, Visited>
+				: Readonly<{ type: K; text: string }>
+		: Readonly<{ type: K; text: string }>;
 
 /**
  * Expand a grammar slot into NodeData, stopping at cycles.
  */
-export type ExpandSlot<G, Info, Visited extends string[]> = Info extends { multiple: true }
+export type ExpandSlot<G, Info, Visited extends string[]> = Info extends {
+	multiple: true;
+}
 	? ExpandOneKind<G, SlotKinds<Info>, Visited>[]
 	: ExpandOneKind<G, SlotKinds<Info>, Visited>;
 
@@ -216,7 +228,9 @@ export type ExpandSlot<G, Info, Visited extends string[]> = Info extends { multi
 // ---------------------------------------------------------------------------
 
 /** Extract the fields map for a node kind. */
-export type FieldMap<G, K extends NodeKind<G>> = G[K] extends { fields: infer Fields }
+export type FieldMap<G, K extends NodeKind<G>> = G[K] extends {
+	fields: infer Fields;
+}
 	? Fields
 	: never;
 
@@ -224,14 +238,17 @@ export type FieldMap<G, K extends NodeKind<G>> = G[K] extends { fields: infer Fi
 export type FieldName<G, K extends NodeKind<G>> = keyof FieldMap<G, K> & string;
 
 /** Slot info for a specific field of a node kind. */
-export type FieldInfo<G, K extends NodeKind<G>, F extends FieldName<G, K>> = Extract<
-	FieldMap<G, K>[F],
-	GrammarSlotInfo
->;
+export type FieldInfo<
+	G,
+	K extends NodeKind<G>,
+	F extends FieldName<G, K>
+> = Extract<FieldMap<G, K>[F], GrammarSlotInfo>;
 
 /** Required field names for a node kind. */
 export type RequiredFieldName<G, K extends NodeKind<G>> = {
-	[F in FieldName<G, K>]: FieldInfo<G, K, F>['required'] extends true ? F : never;
+	[F in FieldName<G, K>]: FieldInfo<G, K, F>['required'] extends true
+		? F
+		: never;
 }[FieldName<G, K>];
 
 /** Optional field names for a node kind. */
@@ -241,12 +258,16 @@ export type OptionalFieldName<G, K extends NodeKind<G>> = Exclude<
 >;
 
 /** Extract the kind strings from a field's slot types. */
-export type FieldKinds<G, K extends NodeKind<G>, F extends FieldName<G, K>> = SlotKinds<
-	FieldInfo<G, K, F>
->;
+export type FieldKinds<
+	G,
+	K extends NodeKind<G>,
+	F extends FieldName<G, K>
+> = SlotKinds<FieldInfo<G, K, F>>;
 
 /** Extract the children slot info for a node kind. */
-type ChildrenInfo<G, K extends NodeKind<G>> = G[K] extends { children: infer Children }
+type ChildrenInfo<G, K extends NodeKind<G>> = G[K] extends {
+	children: infer Children;
+}
 	? Extract<Children, GrammarSlotInfo>
 	: never;
 
@@ -255,19 +276,23 @@ type ChildrenInfo<G, K extends NodeKind<G>> = G[K] extends { children: infer Chi
 // ---------------------------------------------------------------------------
 
 /** Derived fields for a node kind, with cycle-aware recursive expansion. */
-type DerivedFields<
-	G,
-	K extends NodeKind<G>,
-	Visited extends string[],
-> = {
-	readonly [F in RequiredFieldName<G, K>]: ExpandSlot<G, FieldInfo<G, K, F>, Visited>;
+type DerivedFields<G, K extends NodeKind<G>, Visited extends string[]> = {
+	readonly [F in RequiredFieldName<G, K>]: ExpandSlot<
+		G,
+		FieldInfo<G, K, F>,
+		Visited
+	>;
 } & {
-	readonly [F in OptionalFieldName<G, K>]?: ExpandSlot<G, FieldInfo<G, K, F>, Visited>;
+	readonly [F in OptionalFieldName<G, K>]?: ExpandSlot<
+		G,
+		FieldInfo<G, K, F>,
+		Visited
+	>;
 };
 
 /** Derived children slot for a node kind (positioned as `$children` sibling). */
 type DerivedChildren<G, K extends NodeKind<G>, Visited extends string[]> = [
-	ChildrenInfo<G, K>,
+	ChildrenInfo<G, K>
 ] extends [never]
 	? {}
 	: ChildrenInfo<G, K>['required'] extends true
@@ -278,7 +303,7 @@ type DerivedChildren<G, K extends NodeKind<G>, Visited extends string[]> = [
 type DerivedFieldsShape<
 	G,
 	K extends NodeKind<G>,
-	Visited extends string[] = [],
+	Visited extends string[] = []
 > = DerivedFields<G, K, [...Visited, K]>;
 
 /**
@@ -314,18 +339,18 @@ type ExpandNode<G, K extends NodeKind<G>, Visited extends string[]> = Readonly<{
  * // { readonly $type: 'identifier', readonly $text: string }
  * ```
  */
-export type NodeData<
-	G,
-	K extends NodeKind<G>,
-> = G[K] extends { fields: object }
-	? Simplify<Readonly<{
-		$type: K;
-		$fields: DerivedFieldsShape<G, K>;
-	}> & DerivedChildren<G, K, []>>
+export type NodeData<G, K extends NodeKind<G>> = G[K] extends { fields: object }
+	? Simplify<
+			Readonly<{
+				$type: K;
+				$fields: DerivedFieldsShape<G, K>;
+			}> &
+				DerivedChildren<G, K, []>
+		>
 	: Readonly<{
-		$type: K;
-		$text: string;
-	}>;
+			$type: K;
+			$text: string;
+		}>;
 
 // ---------------------------------------------------------------------------
 // NodeConfig<G, K> — the full input shape for factories (fields + children)
@@ -336,8 +361,8 @@ export type NodeData<
  * Used as the factory input and the base for FromInput widening.
  * Only meaningful for branch nodes.
  */
-export type NodeConfig<G, K extends NodeKind<G>> = NodeData<G, K> extends { $fields: infer F } ? F : never;
-
+export type NodeConfig<G, K extends NodeKind<G>> =
+	NodeData<G, K> extends { $fields: infer F } ? F : never;
 
 // ---------------------------------------------------------------------------
 // TreeNode<G, K> — a parsed tree node with navigation accessors
@@ -355,7 +380,9 @@ export type NodeConfig<G, K extends NodeKind<G>> = NodeData<G, K> extends { $fie
  */
 export type TreeNode<G, K extends NodeKind<G>> = {
 	readonly type: K;
-	field<F extends FieldName<G, K>>(name: F): TreeNode<G, FieldKinds<G, K, F> & NodeKind<G>> | null;
+	field<F extends FieldName<G, K>>(
+		name: F
+	): TreeNode<G, FieldKinds<G, K, F> & NodeKind<G>> | null;
 	text(): string;
 	children(): TreeNode<G, NodeKind<G>>[];
 	range(): ByteRange;
@@ -369,7 +396,9 @@ import type { ByteRange } from './core-types.ts';
 // ---------------------------------------------------------------------------
 
 /** Extract the kind string(s) from a node type's `$type` property. */
-export type KindOf<T> = T extends { readonly $type: infer K extends string } ? K : never;
+export type KindOf<T> = T extends { readonly $type: infer K extends string }
+	? K
+	: never;
 
 // ---------------------------------------------------------------------------
 // FluentNode<G, K> — generic fluent builder type for factory outputs
@@ -378,7 +407,9 @@ export type KindOf<T> = T extends { readonly $type: infer K extends string } ? K
 import type { Edit, ReplaceTarget } from './core-types.ts';
 
 /** Rename 'type' → 'typeField' to avoid collision with the `type` discriminant. */
-export type SetterKey<K extends string> = K extends 'type' ? 'typeField' : CamelCase<K>;
+export type SetterKey<K extends string> = K extends 'type'
+	? 'typeField'
+	: CamelCase<K>;
 
 /** Common render/edit methods attached to every fluent node. */
 export type NodeMethods<K extends string> = {
@@ -402,13 +433,15 @@ export type NodeMethods<K extends string> = {
 export type FluentSetters<
 	Fields,
 	Excluded extends string = never,
-	Self = unknown,
+	Self = unknown
 > = {
-	[P in keyof Omit<Fields, Excluded> & string as SetterKey<P>]:
-		NonNullable<Omit<Fields, Excluded>[P]> extends readonly (infer E)[]
-			? (...value: E[] | [E[]]) => Self
-			: (value?: NonNullable<Omit<Fields, Excluded>[P]>) =>
-				Omit<Fields, Excluded>[P] | Self;
+	[P in keyof Omit<Fields, Excluded> & string as SetterKey<P>]: NonNullable<
+		Omit<Fields, Excluded>[P]
+	> extends readonly (infer E)[]
+		? (...value: E[] | [E[]]) => Self
+		: (
+				value?: NonNullable<Omit<Fields, Excluded>[P]>
+			) => Omit<Fields, Excluded>[P] | Self;
 };
 
 /**
@@ -422,11 +455,15 @@ export type FluentSetters<
  * entry so callers like `_factoryMap[kind](config)` get a typed
  * result without per-entry casts.
  */
-export type FluentNode<K extends string, C = unknown> =
-	& { readonly $type: K; readonly $source: 'factory'; readonly $named: true }
-	& (C extends { children: infer Ch } ? { readonly $children: NonNullable<Ch> } : {})
-	& FluentSetters<C, 'children'>
-	& NodeMethods<K>;
+export type FluentNode<K extends string, C = unknown> = {
+	readonly $type: K;
+	readonly $source: 'factory';
+	readonly $named: true;
+} & (C extends { children: infer Ch }
+	? { readonly $children: NonNullable<Ch> }
+	: {}) &
+	FluentSetters<C, 'children'> &
+	NodeMethods<K>;
 
 // ---------------------------------------------------------------------------
 // RuntimeNodeOf<T> — concrete interface to runtime node transformation
@@ -453,22 +490,29 @@ export type FluentNode<K extends string, C = unknown> =
  * //     render(): string, toEdit(...): Edit, replace(target): Edit }
  * ```
  */
-export type RuntimeNodeOf<T> = T extends { readonly $type: infer K extends string }
-? Simplify<{
-	readonly $type: T['$type'];
-	readonly $source: 'factory';
-	readonly $named: true;
-} & (FieldsOf<T> extends Record<string, never> ? {} : { readonly $fields: FieldsOf<T> })
-  & RuntimeChildSlots<T>
-  & NodeMethods<T['$type']>> : never;
+export type RuntimeNodeOf<T> = T extends {
+	readonly $type: infer _K extends string;
+}
+	? Simplify<
+			{
+				readonly $type: T['$type'];
+				readonly $source: 'factory';
+				readonly $named: true;
+			} & (FieldsOf<T> extends Record<string, never>
+				? {}
+				: { readonly $fields: FieldsOf<T> }) &
+				RuntimeChildSlots<T> &
+				NodeMethods<T['$type']>
+		>
+	: never;
 
 /**
  * FluentNodeOf<T> — RuntimeNodeOf + fluent setters (camelCase setter names
  * derived from snake_case field names via SetterKey/CamelCase).
  */
 export type FluentNodeOf<T> = T extends { readonly $type: string }
-? RuntimeNodeOf<T> & FluentSetters<FieldsOf<T>, never, RuntimeNodeOf<T>> : never;
-
+	? RuntimeNodeOf<T> & FluentSetters<FieldsOf<T>, never, RuntimeNodeOf<T>>
+	: never;
 
 // ---------------------------------------------------------------------------
 // Concrete interface transformations
@@ -505,13 +549,15 @@ type RuntimeChildSlots<T> = T extends { readonly $children: infer C }
  * getter matching the interface's children slot shape.
  */
 export type WrappedNode<T> = Simplify<
-	T
-	& { readonly [K in keyof FieldsOf<T> as SetterKey<K & string>]: FieldsOf<T>[K] }
-	& (T extends { readonly $children: infer C }
-		? NonNullable<C> extends readonly [infer Only]
-			? { readonly child: Only }
-			: { readonly children: NonNullable<C> }
-		: {})
+	T & {
+		readonly [K in keyof FieldsOf<T> as SetterKey<K & string>]: FieldsOf<T>[K];
+	} & (T extends {
+			readonly $children: infer C;
+		}
+			? NonNullable<C> extends readonly [infer Only]
+				? { readonly child: Only }
+				: { readonly children: NonNullable<C> }
+			: {})
 >;
 
 /**
@@ -548,77 +594,91 @@ export type ChildOf<T> = T extends { readonly $children: infer C }
  * Fields branded `AutoStamp<T>` are excluded — the factory stamps those
  * automatically and callers should not (and cannot) supply them.
  */
-export type ConfigOf<T> = T extends unknown ? Simplify<
-	{ [K in keyof FieldsOf<T> as IsAutoStamp<FieldsOf<T>[K]> extends true ? never : CamelCase<K & string>]:
-		IsBooleanKeywordSlot<FieldsOf<T>[K]> extends true
-			? boolean | undefined
-			: IsBitflagSlot<FieldsOf<T>[K]> extends true
-				? BitflagSlotEnum<FieldsOf<T>[K]> | undefined
-				: FieldsOf<T>[K] }
-	// Child surface: polymorph variants with a single-child tuple hoist
-	// the inner child's Config up when the inner has meaningful Config
-	// content (fields or further hoists). Two corner cases:
-	//
-	// - Inner's Config is empty (e.g. `$children: [Crate]` where
-	//   `Crate` is `Terminal<...>`): fall back to exposing
-	//   `children?: readonly [InnerType]` so the caller has a slot to
-	//   supply the content. Otherwise the form is un-constructible
-	//   for any variant whose content isn't pre-stamped.
-	//
-	// - Inner carries its OWN `$variant` (inner is itself a UForm or
-	//   polymorph union): `Omit<ConfigOf<C>, '$variant'>` first —
-	//   the outer form's `$variant` is authoritative, and intersecting
-	//   both collapses to `never` when they don't match. This keeps
-	//   a single discriminator at the outer level while preserving
-	//   the inner's fields / children.
-	//
-	// - Inner is a polymorph supertype UNION (e.g.
-	//   `$children: readonly [VisibilityModifier]` where
-	//   `VisibilityModifier = UFormCrate | UFormPub`): drilling into
-	//   each arm's `$children[0]` distributes ConfigOf and exposes the
-	//   inner-inner contents (`Crate | Self | Super |
-	//   VisibilityModifierPubInPath`) instead of stopping at the
-	//   polymorph boundary. `IsSingleType<C>` gates the hoist to
-	//   single concrete kinds only — polymorph unions fall through to
-	//   `Partial<ChildSlotsOf<T>>`, surfacing the union as a
-	//   `children: readonly [VisibilityModifier]` passthrough.
-	//
-	// Everything else (non-polymorph or multi-child) exposes
-	// `Partial<{ children }>` directly.
-	& (T extends { readonly $variant: string; readonly $children: readonly [infer C] }
-		? IsSingleType<C> extends true
-			? (keyof ConfigOf<C> extends never
-				? Partial<ChildSlotsOf<T>>
-				: Omit<ConfigOf<C>, '$variant'>)
-			: Partial<ChildSlotsOf<T>>
-		: Partial<ChildSlotsOf<T>>)
-	// $variant discriminator: carried verbatim on the Config surface
-	// whenever the interface declares one (independent of whether the
-	// child-hoist fires). Forms without their own $children still need
-	// the tag so the dispatcher's switch narrows correctly.
-	& (T extends { readonly $variant: infer V extends string }
-		? { readonly $variant: V }
-		: {})
-> : never;
+export type ConfigOf<T> = T extends unknown
+	? Simplify<
+			{
+				[K in keyof FieldsOf<T> as IsAutoStamp<FieldsOf<T>[K]> extends true
+					? never
+					: CamelCase<K & string>]: IsBooleanKeywordSlot<
+					FieldsOf<T>[K]
+				> extends true
+					? boolean | undefined
+					: IsBitflagSlot<FieldsOf<T>[K]> extends true
+						? BitflagSlotEnum<FieldsOf<T>[K]> | undefined
+						: FieldsOf<T>[K];
+			} &
+				// Child surface: polymorph variants with a single-child tuple hoist
+				// the inner child's Config up when the inner has meaningful Config
+				// content (fields or further hoists). Two corner cases:
+				//
+				// - Inner's Config is empty (e.g. `$children: [Crate]` where
+				//   `Crate` is `Terminal<...>`): fall back to exposing
+				//   `children?: readonly [InnerType]` so the caller has a slot to
+				//   supply the content. Otherwise the form is un-constructible
+				//   for any variant whose content isn't pre-stamped.
+				//
+				// - Inner carries its OWN `$variant` (inner is itself a UForm or
+				//   polymorph union): `Omit<ConfigOf<C>, '$variant'>` first —
+				//   the outer form's `$variant` is authoritative, and intersecting
+				//   both collapses to `never` when they don't match. This keeps
+				//   a single discriminator at the outer level while preserving
+				//   the inner's fields / children.
+				//
+				// - Inner is a polymorph supertype UNION (e.g.
+				//   `$children: readonly [VisibilityModifier]` where
+				//   `VisibilityModifier = UFormCrate | UFormPub`): drilling into
+				//   each arm's `$children[0]` distributes ConfigOf and exposes the
+				//   inner-inner contents (`Crate | Self | Super |
+				//   VisibilityModifierPubInPath`) instead of stopping at the
+				//   polymorph boundary. `IsSingleType<C>` gates the hoist to
+				//   single concrete kinds only — polymorph unions fall through to
+				//   `Partial<ChildSlotsOf<T>>`, surfacing the union as a
+				//   `children: readonly [VisibilityModifier]` passthrough.
+				//
+				// Everything else (non-polymorph or multi-child) exposes
+				// `Partial<{ children }>` directly.
+				(T extends {
+					readonly $variant: string;
+					readonly $children: readonly [infer C];
+				}
+					? IsSingleType<C> extends true
+						? keyof ConfigOf<C> extends never
+							? Partial<ChildSlotsOf<T>>
+							: Omit<ConfigOf<C>, '$variant'>
+						: Partial<ChildSlotsOf<T>>
+					: Partial<ChildSlotsOf<T>>) &
+				// $variant discriminator: carried verbatim on the Config surface
+				// whenever the interface declares one (independent of whether the
+				// child-hoist fires). Forms without their own $children still need
+				// the tag so the dispatcher's switch narrows correctly.
+				(T extends { readonly $variant: infer V extends string }
+					? { readonly $variant: V }
+					: {})
+		>
+	: never;
 
 /** @internal — detect BooleanKeyword brand at the slot level, including
  * through array wrappers (degenerate `repeat(single-literal)` slots are
  * still boolean at the Config surface). */
 type IsBooleanKeywordSlot<T> =
-	IsBooleanKeyword<T> extends true ? true
-	: T extends readonly (infer E)[] ? IsBooleanKeyword<E>
-	: false;
+	IsBooleanKeyword<T> extends true
+		? true
+		: T extends readonly (infer E)[]
+			? IsBooleanKeyword<E>
+			: false;
 
 /** @internal — detect Bitflag brand through slot array wrappers. */
 type IsBitflagSlot<T> =
-	IsBitflag<T> extends true ? true
-	: T extends readonly (infer E)[] ? IsBitflag<E>
-	: false;
+	IsBitflag<T> extends true
+		? true
+		: T extends readonly (infer E)[]
+			? IsBitflag<E>
+			: false;
 
 /** @internal — extract the const-enum type out of a Bitflag brand, including
  * through an array wrapper. */
-type BitflagSlotEnum<T> =
-	T extends readonly (infer E)[] ? BitflagEnum<E>
+type BitflagSlotEnum<T> = T extends readonly (infer E)[]
+	? BitflagEnum<E>
 	: BitflagEnum<T>;
 
 /**
@@ -637,29 +697,37 @@ export interface AnyTreeNodeOf {
 
 export type TreeNodeOf<T> = T extends { readonly $type: infer K extends string }
 	? {
-		readonly type: K;
-		field<F extends keyof FieldsOf<T> & string>(name: F): TreeNodeOf<
-			FieldsOf<T>[F] extends readonly (infer E)[] ? E : NonNullable<FieldsOf<T>[F]>
-		> | null;
-		text(): string;
-		children(): AnyTreeNodeOf[];
-		range(): ByteRange;
-		isNamed(): boolean;
-	}
+			readonly type: K;
+			field<F extends keyof FieldsOf<T> & string>(
+				name: F
+			): TreeNodeOf<
+				FieldsOf<T>[F] extends readonly (infer E)[]
+					? E
+					: NonNullable<FieldsOf<T>[F]>
+			> | null;
+			text(): string;
+			children(): AnyTreeNodeOf[];
+			range(): ByteRange;
+			isNamed(): boolean;
+		}
 	: never;
 
 /** @internal — non-auto-stamp required keys of T. */
 type RequiredNonAutoStampKeys<T> = {
 	[K in keyof T]-?: K extends RequiredKeys<T>
-		? IsAutoStamp<T[K]> extends true ? never : K
-		: never
+		? IsAutoStamp<T[K]> extends true
+			? never
+			: K
+		: never;
 }[keyof T];
 
 /** @internal — non-auto-stamp optional keys of T. */
 type OptionalNonAutoStampKeys<T> = {
 	[K in keyof T]-?: K extends RequiredKeys<T>
 		? never
-		: IsAutoStamp<T[K]> extends true ? never : K
+		: IsAutoStamp<T[K]> extends true
+			? never
+			: K;
 }[keyof T];
 
 /**
@@ -690,45 +758,97 @@ type OptionalNonAutoStampKeys<T> = {
  *   as a literal-tuple membership check that TS resolves
  *   non-recursively.
  */
-export type FromInputOf<T, Scalars = {}, Strings = {}, Depth extends number[] = [], NsMap = {}, Visited extends string[] = []> = Simplify<
-	Depth['length'] extends MaxDepth ? T
-	: T extends { readonly $type: infer K extends string }
-		? Contains<Visited, K> extends true ? T
-		: FromInputBody<T, Scalars, Strings, Depth, NsMap, [K, ...Visited]>
-	: FromInputBody<T, Scalars, Strings, Depth, NsMap, Visited>
+export type FromInputOf<
+	T,
+	Scalars = {},
+	Strings = {},
+	Depth extends number[] = [],
+	NsMap = {},
+	Visited extends string[] = []
+> = Simplify<
+	Depth['length'] extends MaxDepth
+		? T
+		: T extends { readonly $type: infer K extends string }
+			? Contains<Visited, K> extends true
+				? T
+				: FromInputBody<T, Scalars, Strings, Depth, NsMap, [K, ...Visited]>
+			: FromInputBody<T, Scalars, Strings, Depth, NsMap, Visited>
 >;
 
 /** @internal — body of `FromInputOf`, factored out so the cycle-check
  *  conditional in the parent type stays scannable. The discriminant
  *  branch happens in `FromInputOf` itself; here we just emit the
  *  field/children projections with the (possibly extended) `Visited`. */
-type FromInputBody<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends string[]> =
-	(T extends { readonly $type: infer K } ? { readonly $type?: K } : {})
-	& {
-		readonly [K in keyof FieldsOf<T> as K extends RequiredNonAutoStampKeys<FieldsOf<T>> ? CamelCase<K> : never]:
-			WidenSlotValue<FieldsOf<T>[K], Scalars, Strings, [...Depth, 0], NsMap, Visited>;
-	} & {
-		readonly [K in keyof FieldsOf<T> as K extends OptionalNonAutoStampKeys<FieldsOf<T>> ? CamelCase<K> : never]?:
-			WidenSlotValue<FieldsOf<T>[K], Scalars, Strings, [...Depth, 0], NsMap, Visited>;
-	} & (T extends { readonly $children: infer C }
-		? { readonly children?: WidenChildSlot<C, Scalars, Strings, [...Depth, 0], NsMap, Visited> }
+type FromInputBody<
+	T,
+	Scalars,
+	Strings,
+	Depth extends number[],
+	NsMap,
+	Visited extends string[]
+> = (T extends { readonly $type: infer K } ? { readonly $type?: K } : {}) & {
+	readonly [K in keyof FieldsOf<T> as K extends RequiredNonAutoStampKeys<
+		FieldsOf<T>
+	>
+		? CamelCase<K>
+		: never]: WidenSlotValue<
+		FieldsOf<T>[K],
+		Scalars,
+		Strings,
+		[...Depth, 0],
+		NsMap,
+		Visited
+	>;
+} & {
+	readonly [K in keyof FieldsOf<T> as K extends OptionalNonAutoStampKeys<
+		FieldsOf<T>
+	>
+		? CamelCase<K>
+		: never]?: WidenSlotValue<
+		FieldsOf<T>[K],
+		Scalars,
+		Strings,
+		[...Depth, 0],
+		NsMap,
+		Visited
+	>;
+} & (T extends { readonly $children: infer C }
+		? {
+				readonly children?: WidenChildSlot<
+					C,
+					Scalars,
+					Strings,
+					[...Depth, 0],
+					NsMap,
+					Visited
+				>;
+			}
 		: {});
 
 /** @internal — slot-level widen that projects boolean-keyword / bitflag
  * brands to their Config surface BEFORE delegating to WidenValue for
  * the recursive structural case. Threads `Visited` so the structural
  * branch can detect $type cycles. */
-type WidenSlotValue<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends string[] = []> =
+type WidenSlotValue<
+	T,
+	Scalars,
+	Strings,
+	Depth extends number[],
+	NsMap,
+	Visited extends string[] = []
+> =
 	IsBooleanKeywordSlot<T> extends true
 		? boolean | T | (T extends readonly (infer E)[] ? E : T) extends infer U
 			? U | (U extends { readonly $text: infer V } ? V : never)
 			: never
-	: IsBitflagSlot<T> extends true
-		? BitflagSlotEnum<T> | readonly string[] | string | T
-	: WidenValue<T, Scalars, Strings, Depth, NsMap, Visited>;
+		: IsBitflagSlot<T> extends true
+			? BitflagSlotEnum<T> | readonly string[] | string | T
+			: WidenValue<T, Scalars, Strings, Depth, NsMap, Visited>;
 
 /** Keys of T that are required (not optional). */
-type RequiredKeys<T> = { [K in keyof T]-?: {} extends Pick<T, K> ? never : K }[keyof T];
+type RequiredKeys<T> = {
+	[K in keyof T]-?: {} extends Pick<T, K> ? never : K;
+}[keyof T];
 
 /**
  * IsUnion<T> — distributive self-reference trick. For each arm of T, check
@@ -740,23 +860,30 @@ type RequiredKeys<T> = { [K in keyof T]-?: {} extends Pick<T, K> ? never : K }[k
  * B to stay as the whole union while T distributes.
  */
 type IsUnion<T, B = T> = T extends unknown
-	? [B] extends [T] ? false : true
+	? [B] extends [T]
+		? false
+		: true
 	: never;
 
 /** True when T is a single concrete node type (literal `$type`), false when a union. */
 type IsSingleType<T> = [T] extends [{ readonly $type: string }]
-	? IsUnion<T> extends true ? false : true
+	? IsUnion<T> extends true
+		? false
+		: true
 	: false;
 
 /**
  * UnionToIntersection<U> — standard trick: distribute U over a contravariant
  * position, then infer the intersection. Used by `IsHomogeneous`.
  */
-type UnionToIntersection<U> =
-	(U extends unknown ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
+type UnionToIntersection<U> = (
+	U extends unknown ? (k: U) => void : never
+) extends (k: infer I) => void
+	? I
+	: never;
 
 /** Mutual-extends structural equality (set-theoretic ==). */
-type Equals<A, B> = [A] extends [B] ? [B] extends [A] ? true : false : false;
+type Equals<A, B> = [A] extends [B] ? ([B] extends [A] ? true : false) : false;
 
 /**
  * UnionOfArmsLoose<T, NsMap> — distribute T per arm, look up `NsMap[K]['Loose']`
@@ -764,9 +891,13 @@ type Equals<A, B> = [A] extends [B] ? [B] extends [A] ? true : false : false;
  * distribution is intentional here: we want the OUTPUT to be the full union
  * of per-arm Loose projections, which is exactly what distributivity gives us.
  */
-type UnionOfArmsLoose<T, NsMap> = T extends { readonly $type: infer K extends string }
+type UnionOfArmsLoose<T, NsMap> = T extends {
+	readonly $type: infer K extends string;
+}
 	? K extends keyof NsMap
-		? NsMap[K] extends { Loose: infer L } ? L : never
+		? NsMap[K] extends { Loose: infer L }
+			? L
+			: never
 		: never
 	: never;
 
@@ -781,12 +912,16 @@ type UnionOfArmsLoose<T, NsMap> = T extends { readonly $type: infer K extends st
  * Requires `NsMap` to be supplied — falls back to `false` (= heterogeneous,
  * use tagged form) when NsMap is the empty default.
  */
-type IsHomogeneous<T, NsMap> =
-	[NsMap] extends [never] ? false
-	: keyof NsMap extends never ? false
-	: [T] extends [{ readonly $type: string }]
-		? Equals<UnionOfArmsLoose<T, NsMap>, UnionToIntersection<UnionOfArmsLoose<T, NsMap>>>
-		: false;
+type IsHomogeneous<T, NsMap> = [NsMap] extends [never]
+	? false
+	: keyof NsMap extends never
+		? false
+		: [T] extends [{ readonly $type: string }]
+			? Equals<
+					UnionOfArmsLoose<T, NsMap>,
+					UnionToIntersection<UnionOfArmsLoose<T, NsMap>>
+				>
+			: false;
 
 /**
  * TagEachArm<T, ...> — distributive per-arm form for heterogeneous unions.
@@ -799,13 +934,22 @@ type IsHomogeneous<T, NsMap> =
  * that helper — inline `… extends never ? … : …` collapses under union
  * distribution.
  */
-type TagEachArm<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends string[] = []> = T extends infer U
+type TagEachArm<
+	T,
+	Scalars,
+	Strings,
+	Depth extends number[],
+	NsMap,
+	Visited extends string[] = []
+> = T extends infer U
 	? U extends { readonly $type: infer K extends string }
 		? Contains<Visited, K> extends true
 			? U
-			: ({ kind: K } & ([LooseProjection<U, NsMap>] extends [never]
-				? FromInputOf<U, Scalars, Strings, [...Depth, 0], NsMap, Visited>
-				: LooseProjection<U, NsMap>)) | U
+			:
+					| ({ kind: K } & ([LooseProjection<U, NsMap>] extends [never]
+							? FromInputOf<U, Scalars, Strings, [...Depth, 0], NsMap, Visited>
+							: LooseProjection<U, NsMap>))
+					| U
 		: never
 	: never;
 
@@ -824,7 +968,13 @@ type TagEachArm<T, Scalars, Strings, Depth extends number[], NsMap, Visited exte
  * wanted — it intentionally walks each member.
  */
 
-type LooseProjection<T, NsMap> = T extends { readonly $type: infer K extends keyof NsMap } ? NsMap[K] extends { Loose: infer L } ? L : never : never;
+type LooseProjection<T, NsMap> = T extends {
+	readonly $type: infer K extends keyof NsMap;
+}
+	? NsMap[K] extends { Loose: infer L }
+		? L
+		: never
+	: never;
 
 /**
  * @internal — "if NsMap has a Loose projection for T, use `T | L`; else
@@ -836,58 +986,93 @@ type LooseProjection<T, NsMap> = T extends { readonly $type: infer K extends key
  * `LooseProjection<T>`, silently dropping the `T` passthrough (and thus
  * the "caller already has a NodeData" escape hatch).
  */
-type LooseOrFromInput<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends string[] = []> =
-	T extends { readonly $type: infer K extends string }
-		? Contains<Visited, K> extends true
-			? T
-			: [LooseProjection<T, NsMap>] extends [never]
-				? FromInputOf<T, Scalars, Strings, [...Depth, 0], NsMap, Visited> | T
-				: LooseProjection<T, NsMap> | T
+type LooseOrFromInput<
+	T,
+	Scalars,
+	Strings,
+	Depth extends number[],
+	NsMap,
+	Visited extends string[] = []
+> = T extends { readonly $type: infer K extends string }
+	? Contains<Visited, K> extends true
+		? T
 		: [LooseProjection<T, NsMap>] extends [never]
 			? FromInputOf<T, Scalars, Strings, [...Depth, 0], NsMap, Visited> | T
-			: LooseProjection<T, NsMap> | T;
+			: LooseProjection<T, NsMap> | T
+	: [LooseProjection<T, NsMap>] extends [never]
+		? FromInputOf<T, Scalars, Strings, [...Depth, 0], NsMap, Visited> | T
+		: LooseProjection<T, NsMap> | T;
 
-type WidenValue<T, Scalars = {}, Strings = {}, Depth extends number[] = [], NsMap = {}, Visited extends string[] = []> =
-	Depth['length'] extends MaxDepth ? T
-	// ADR-0012 — keyword-presence brands project to their Config surface
-	// first (boolean / const-enum), with the underlying NodeData / string
-	// passthrough still accepted for readNode round-trips and string
-	// shorthands. Order matters: brand checks must precede the generic
-	// node-projection branch, otherwise the structural match below
-	// swallows them.
-	: IsBooleanKeyword<T> extends true
+type WidenValue<
+	T,
+	Scalars = {},
+	Strings = {},
+	Depth extends number[] = [],
+	NsMap = {},
+	Visited extends string[] = []
+> = Depth['length'] extends MaxDepth
+	? T
+	: // ADR-0012 — keyword-presence brands project to their Config surface
+		// first (boolean / const-enum), with the underlying NodeData / string
+		// passthrough still accepted for readNode round-trips and string
+		// shorthands. Order matters: brand checks must precede the generic
+		// node-projection branch, otherwise the structural match below
+		// swallows them.
+		IsBooleanKeyword<T> extends true
 		? boolean | T | (T extends { readonly $text: infer V } ? V : never)
-	: IsBitflag<T> extends true
-		? BitflagEnum<T> | readonly string[] | string | T
-	: T extends readonly (infer E)[]
-		? [readonly []] extends [T]
-			? (WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>)[] | WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
-			: NonEmptyArray<WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>> | WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
-	: T extends { readonly $type: infer K extends string; readonly $text: string }
-		// Leaf — distributes per leaf-kind arm to pick up each one's narrowed
-		// string / scalar. A union of leaves becomes a union of widenings.
-		? T | (K extends keyof Strings ? Strings[K] : string) | (K extends keyof Scalars ? Scalars[K] : never)
-	: [T] extends [{ readonly $type: string }]
-		// Branch(es) — decide single/homogeneous/heterogeneous ONCE for the
-		// whole union, then emit accordingly.
-		? IsSingleType<T> extends true
-			? LooseOrFromInput<T, Scalars, Strings, Depth, NsMap, Visited>
-		: IsHomogeneous<T, NsMap> extends true
-			// Multi-branch, but every arm's Loose projection is identical
-			// (via NsMap lookups). Runtime resolver picks any arm by
-			// field-presence — no `kind` tag needed at the type level.
-			? LooseOrFromInput<T, Scalars, Strings, Depth, NsMap, Visited>
-			// Heterogeneous multi-branch → tag each arm for discrimination.
-			: TagEachArm<T, Scalars, Strings, Depth, NsMap, Visited>
-	: T;
+		: IsBitflag<T> extends true
+			? BitflagEnum<T> | readonly string[] | string | T
+			: T extends readonly (infer E)[]
+				? [readonly []] extends [T]
+					?
+							| WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>[]
+							| WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
+					:
+							| NonEmptyArray<
+									WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
+							  >
+							| WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
+				: T extends {
+							readonly $type: infer K extends string;
+							readonly $text: string;
+					  }
+					?
+							// Leaf — distributes per leaf-kind arm to pick up each one's narrowed
+							// string / scalar. A union of leaves becomes a union of widenings.
+							| T
+							| (K extends keyof Strings ? Strings[K] : string)
+							| (K extends keyof Scalars ? Scalars[K] : never)
+					: [T] extends [{ readonly $type: string }]
+						? // Branch(es) — decide single/homogeneous/heterogeneous ONCE for the
+							// whole union, then emit accordingly.
+							IsSingleType<T> extends true
+							? LooseOrFromInput<T, Scalars, Strings, Depth, NsMap, Visited>
+							: IsHomogeneous<T, NsMap> extends true
+								? // Multi-branch, but every arm's Loose projection is identical
+									// (via NsMap lookups). Runtime resolver picks any arm by
+									// field-presence — no `kind` tag needed at the type level.
+									LooseOrFromInput<T, Scalars, Strings, Depth, NsMap, Visited>
+								: // Heterogeneous multi-branch → tag each arm for discrimination.
+									TagEachArm<T, Scalars, Strings, Depth, NsMap, Visited>
+						: T;
 
 /** Widen a child slot type for FromInput (applies WidenValue to arrays and single values). */
-type WidenChildSlot<T, Scalars = {}, Strings = {}, Depth extends number[] = [], NsMap = {}, Visited extends string[] = []> =
-	T extends readonly (infer E)[]
-		? [readonly []] extends [T]
-			? WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>[] | WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
-			: NonEmptyArray<WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>> | WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
-		: WidenValue<T, Scalars, Strings, Depth, NsMap, Visited>;
+type WidenChildSlot<
+	T,
+	Scalars = {},
+	Strings = {},
+	Depth extends number[] = [],
+	NsMap = {},
+	Visited extends string[] = []
+> = T extends readonly (infer E)[]
+	? [readonly []] extends [T]
+		?
+				| WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>[]
+				| WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
+		:
+				| NonEmptyArray<WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>>
+				| WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
+	: WidenValue<T, Scalars, Strings, Depth, NsMap, Visited>;
 
 // ---------------------------------------------------------------------------
 // NodeNs<T> — single computed base per-kind namespace
@@ -913,7 +1098,12 @@ type WidenChildSlot<T, Scalars = {}, Strings = {}, Depth extends number[] = [], 
  * @param Scalars - Leaf-kind → scalar projection (e.g. `{ integer_literal: number }`).
  * @param Strings - Leaf-kind → narrowed string projection (e.g. `{ boolean_literal: 'true' | 'false' }`).
  */
-export interface NodeNs<T extends { readonly $type: string }, Scalars = {}, Strings = {}, NsMap = {}> {
+export interface NodeNs<
+	T extends { readonly $type: string },
+	Scalars = {},
+	Strings = {},
+	NsMap = {}
+> {
 	readonly Node: T;
 	readonly Config: ConfigOf<T>;
 	readonly Fluent: FluentNodeOf<T>;

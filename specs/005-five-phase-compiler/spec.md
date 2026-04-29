@@ -19,7 +19,7 @@ Resolved during intent clarification:
 - **Suggested overrides** — a grammar extension file (`overrides.suggested.ts`) in the same format as manual overrides. Generated each run, skipping entries already present in `overrides.ts`. Inert until the developer promotes entries. Per-entry metadata (derivation source, confidence) in comments.
 - **Baseline validation** — golden file snapshots of current output for investigation (diffing); existing e2e validation tests as the correctness contract.
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Run codegen for any supported grammar (Priority: P1)
 
@@ -135,7 +135,7 @@ A developer setting up a new grammar receives a generated `overrides.suggested.t
 - How does the pipeline handle a grammar with zero visible named rules (all hidden)?
 - What happens when `overrides.suggested.ts` suggests an entry that conflicts with an existing manual override?
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -182,7 +182,7 @@ A developer setting up a new grammar receives a generated `overrides.suggested.t
 - Existing `overrides.json` files will need manual conversion to `overrides.ts` grammar extensions. No migration tooling is in scope.
 - The CLI interface and generated package structure remain unchanged.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

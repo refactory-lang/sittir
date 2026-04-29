@@ -31,7 +31,7 @@ describe('createNunjucksEnvironment — T024', () => {
 		try {
 			writeFileSync(
 				join(tmp, 'strip.jinja'),
-				'a {%- if flag -%} B {%- endif -%} c',
+				'a {%- if flag -%} B {%- endif -%} c'
 			);
 			const env = createNunjucksEnvironment(tmp);
 			// `{%-` strips leading whitespace, `-%}` strips trailing.
@@ -50,7 +50,9 @@ describe('createNunjucksEnvironment — T024', () => {
 			writeFileSync(join(tmp, 'code.jinja'), '{{ expr }}');
 			const env = createNunjucksEnvironment(tmp);
 			// Source-code output: `<` must stay literal, not become `&lt;`.
-			expect(env.render('code.jinja', { expr: 'a < b && c > d' })).toBe('a < b && c > d');
+			expect(env.render('code.jinja', { expr: 'a < b && c > d' })).toBe(
+				'a < b && c > d'
+			);
 		} finally {
 			rmSync(tmp, { recursive: true, force: true });
 		}
@@ -71,11 +73,15 @@ describe('createNunjucksEnvironment — T024', () => {
 		try {
 			writeFileSync(
 				join(tmp, 'poly.jinja'),
-				'{%- if variant == "alpha" -%}A:{{ name }}{%- elif variant == "beta" -%}B:{{ name }}{%- endif -%}',
+				'{%- if variant == "alpha" -%}A:{{ name }}{%- elif variant == "beta" -%}B:{{ name }}{%- endif -%}'
 			);
 			const env = createNunjucksEnvironment(tmp);
-			expect(env.render('poly.jinja', { variant: 'alpha', name: 'x' })).toBe('A:x');
-			expect(env.render('poly.jinja', { variant: 'beta', name: 'y' })).toBe('B:y');
+			expect(env.render('poly.jinja', { variant: 'alpha', name: 'x' })).toBe(
+				'A:x'
+			);
+			expect(env.render('poly.jinja', { variant: 'beta', name: 'y' })).toBe(
+				'B:y'
+			);
 		} finally {
 			rmSync(tmp, { recursive: true, force: true });
 		}

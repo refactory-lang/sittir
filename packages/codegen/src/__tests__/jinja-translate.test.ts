@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
 	translateToJinja,
 	filterForFlanks,
-	type JinjaTranslateMeta,
+	type JinjaTranslateMeta
 } from '../compiler/node-map.ts';
 
 // Unit coverage for the final `$VAR → {{ var }}` translation stage that
@@ -39,12 +39,16 @@ describe('translateToJinja — simple placeholders', () => {
 
 describe('translateToJinja — $$$ repeat placeholders', () => {
 	it('falls back to single-space default sep when no meta', () => {
-		expect(translateToJinja('$$$CHILDREN', {})).toBe('{{ children | join(" ") }}');
+		expect(translateToJinja('$$$CHILDREN', {})).toBe(
+			'{{ children | join(" ") }}'
+		);
 	});
 
 	it('uses meta.joinBy as the rule-level default sep', () => {
 		const meta: JinjaTranslateMeta = { joinBy: ', ' };
-		expect(translateToJinja('$$$CHILDREN', meta)).toBe('{{ children | join(", ") }}');
+		expect(translateToJinja('$$$CHILDREN', meta)).toBe(
+			'{{ children | join(", ") }}'
+		);
 	});
 
 	it('$$$NAME uses meta.joinByField[name] when set', () => {
@@ -59,20 +63,27 @@ describe('translateToJinja — $$$ repeat placeholders', () => {
 
 	it('$$$CHILDREN picks joinWithTrailing when meta.joinByTrailing', () => {
 		const meta: JinjaTranslateMeta = { joinBy: ',', joinByTrailing: true };
-		expect(translateToJinja('$$$CHILDREN', meta))
-			.toBe('{{ children | joinWithTrailing(",") }}');
+		expect(translateToJinja('$$$CHILDREN', meta)).toBe(
+			'{{ children | joinWithTrailing(",") }}'
+		);
 	});
 
 	it('$$$CHILDREN picks joinWithLeading when meta.joinByLeading', () => {
 		const meta: JinjaTranslateMeta = { joinBy: '|', joinByLeading: true };
-		expect(translateToJinja('$$$CHILDREN', meta))
-			.toBe('{{ children | joinWithLeading("|") }}');
+		expect(translateToJinja('$$$CHILDREN', meta)).toBe(
+			'{{ children | joinWithLeading("|") }}'
+		);
 	});
 
 	it('$$$CHILDREN picks joinWithFlanks when both leading + trailing', () => {
-		const meta: JinjaTranslateMeta = { joinBy: ',', joinByLeading: true, joinByTrailing: true };
-		expect(translateToJinja('$$$CHILDREN', meta))
-			.toBe('{{ children | joinWithFlanks(",") }}');
+		const meta: JinjaTranslateMeta = {
+			joinBy: ',',
+			joinByLeading: true,
+			joinByTrailing: true
+		};
+		expect(translateToJinja('$$$CHILDREN', meta)).toBe(
+			'{{ children | joinWithFlanks(",") }}'
+		);
 	});
 
 	it('flank flags on a named $$$FIELD do NOT switch the filter — only children carries flanks', () => {
@@ -85,8 +96,9 @@ describe('translateToJinja — $$$ repeat placeholders', () => {
 
 describe('translateToJinja — brace collision escape', () => {
 	it('inserts a space between literal { and following {{ … }}', () => {
-		expect(translateToJinja('{$$$CHILDREN}', {}))
-			.toBe('{ {{ children | join(" ") }} }');
+		expect(translateToJinja('{$$$CHILDREN}', {})).toBe(
+			'{ {{ children | join(" ") }} }'
+		);
 	});
 
 	it('handles stacked {{ … }} inside braces', () => {
@@ -101,8 +113,9 @@ describe('translateToJinja — brace collision escape', () => {
 describe('filterForFlanks', () => {
 	it('non-children keys always map to "join"', () => {
 		expect(filterForFlanks('name', {})).toBe('join');
-		expect(filterForFlanks('name', { joinByLeading: true, joinByTrailing: true }))
-			.toBe('join');
+		expect(
+			filterForFlanks('name', { joinByLeading: true, joinByTrailing: true })
+		).toBe('join');
 	});
 
 	it('children + no flank flags → "join"', () => {
@@ -110,15 +123,20 @@ describe('filterForFlanks', () => {
 	});
 
 	it('children + trailing → "joinWithTrailing"', () => {
-		expect(filterForFlanks('children', { joinByTrailing: true })).toBe('joinWithTrailing');
+		expect(filterForFlanks('children', { joinByTrailing: true })).toBe(
+			'joinWithTrailing'
+		);
 	});
 
 	it('children + leading → "joinWithLeading"', () => {
-		expect(filterForFlanks('children', { joinByLeading: true })).toBe('joinWithLeading');
+		expect(filterForFlanks('children', { joinByLeading: true })).toBe(
+			'joinWithLeading'
+		);
 	});
 
 	it('children + both → "joinWithFlanks"', () => {
-		expect(filterForFlanks('children', { joinByLeading: true, joinByTrailing: true }))
-			.toBe('joinWithFlanks');
+		expect(
+			filterForFlanks('children', { joinByLeading: true, joinByTrailing: true })
+		).toBe('joinWithFlanks');
 	});
 });

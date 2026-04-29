@@ -94,6 +94,7 @@ export namespace fn {
 ### Type Resolution
 
 The codegen resolves field types from the grammar's `namedTypes`:
+
 - **Single leaf kind** → `Builder<Identifier> | string` (accepts strings in `.from()`)
 - **Single branch kind** → `Builder<Parameters>`
 - **Supertype** → `Builder<Expression>` (expanded union alias)
@@ -121,22 +122,30 @@ This produces a package with the same builder pattern as `@sittir/rust` and `@si
 Stable authoring surface for `packages/<grammar>/overrides.ts` files.
 Tree-sitter baseline DSL (`grammar`, `seq`, `choice`, `optional`,
 `repeat`, `repeat1`, `field`, `token`, `prec`, `alias`, `blank`) is
-injected as globals at evaluate time — *don't* import those. The
+injected as globals at evaluate time — _don't_ import those. The
 sittir-specific extensions below ARE imported explicitly:
 
 ```ts
-import { transform, role, enrich, field, alias, insert, replace } from '@sittir/codegen/dsl'
+import {
+	transform,
+	role,
+	enrich,
+	field,
+	alias,
+	insert,
+	replace
+} from '@sittir/codegen/dsl';
 ```
 
-| Function | Signature | Purpose |
-|---|---|---|
+| Function        | Signature                                            | Purpose                                                                                                                                                                                                                                                                                                                                                                        |
+| --------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **`transform`** | `transform(original, patches: Record<string, Rule>)` | Patch an existing rule by position or path. Numeric keys (`{0: ..., 2: ...}`) apply by flat seq position with recursive descent through choice/wrappers. Path keys (`{'0/0': ..., '0/*\/1': ...}`) reach into nested structures and support `*` wildcards. Precedence wrappers are transparent — the same path works whether sittir strips `prec` or tree-sitter preserves it. |
-| **`role`** | `role(symbol, name)` | Mark an external token symbol with a structural-whitespace role (`indent`/`dedent`/`newline`). Returns the symbol unchanged. Records the binding on a per-grammar accumulator that Link reads. Tree-sitter compat: outside any sittir scope, the side-effect is dropped silently. |
-| **`enrich`** | `enrich(base): base` | Run mechanical enrichment passes on a tree-sitter grammar result before extension. Currently: unambiguous kind-to-name field wrapping. Sittir-only — passes through tree-sitter-shaped input as a no-op. |
-| **`field`** | `field(name)` / `field(name, content)` | Two-arg form delegates to runtime native `field()`. One-arg form returns a placeholder that `transform()` patches swap out using the original member at the target position. |
-| **`alias`** | `alias(rule)` / `alias(rule, value)` | Two-arg form delegates to runtime native `alias()`. One-arg form is shorthand for `alias($.name, $.name)` — aliasing a symbol to itself with `named: true`. |
-| **`insert`** | `insert(rule, position, wrapper)` | Wrap a single seq member at `position` using the wrapper function. Marks the result as `source: 'override'`. |
-| **`replace`** | `replace(rule, position, replacement)` | Replace a seq member by position. Pass `null` to remove. |
+| **`role`**      | `role(symbol, name)`                                 | Mark an external token symbol with a structural-whitespace role (`indent`/`dedent`/`newline`). Returns the symbol unchanged. Records the binding on a per-grammar accumulator that Link reads. Tree-sitter compat: outside any sittir scope, the side-effect is dropped silently.                                                                                              |
+| **`enrich`**    | `enrich(base): base`                                 | Run mechanical enrichment passes on a tree-sitter grammar result before extension. Currently: unambiguous kind-to-name field wrapping. Sittir-only — passes through tree-sitter-shaped input as a no-op.                                                                                                                                                                       |
+| **`field`**     | `field(name)` / `field(name, content)`               | Two-arg form delegates to runtime native `field()`. One-arg form returns a placeholder that `transform()` patches swap out using the original member at the target position.                                                                                                                                                                                                   |
+| **`alias`**     | `alias(rule)` / `alias(rule, value)`                 | Two-arg form delegates to runtime native `alias()`. One-arg form is shorthand for `alias($.name, $.name)` — aliasing a symbol to itself with `named: true`.                                                                                                                                                                                                                    |
+| **`insert`**    | `insert(rule, position, wrapper)`                    | Wrap a single seq member at `position` using the wrapper function. Marks the result as `source: 'override'`.                                                                                                                                                                                                                                                                   |
+| **`replace`**   | `replace(rule, position, replacement)`               | Replace a seq member by position. Pass `null` to remove.                                                                                                                                                                                                                                                                                                                       |
 
 ### Transform examples
 

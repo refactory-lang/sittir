@@ -35,6 +35,7 @@ Eliminate unnecessary types and indirection. Every type in
 `@sittir/types` MUST justify its existence by solving a problem that
 cannot be solved by an existing type. When in doubt, remove the
 abstraction. Concrete examples of violations:
+
 - A separate `LeafBuilder` class when `Builder` can handle terminals
 - A `LeafOptions` discriminant when the builder type itself
   provides discrimination
@@ -128,6 +129,7 @@ that drifts silently from the canonical one and masks upstream API
 changes.
 
 **Applies to**:
+
 - Tree-sitter types (`TS.Node`, `TS.Tree`, `TS.Parser`, `TS.Language`
   from `web-tree-sitter`) — never redeclare as `TSNode`, `TSTree`, etc.
 - Ast-grep types (`SgNode`, `Range`, `Pos` from `@ast-grep/wasm`) —
@@ -202,6 +204,7 @@ Governance-relevant constraints only (full tooling inventory lives in
 ## Governance
 
 This constitution supersedes ad-hoc practices. Amendments require:
+
 1. A rationale explaining why the change is needed
 2. Impact assessment on existing generated code
 3. Version bump following semver (MAJOR for principle

@@ -33,6 +33,7 @@ Use these commands to find the best existing codemod before creating a new one.
 ## Selection Checklist
 
 Before applying a package, verify:
+
 - package name and scope match target migration,
 - latest version is acceptable,
 - category/language/framework align with your codebase,
@@ -41,6 +42,7 @@ Before applying a package, verify:
 ## Handoff to Execution
 
 After selecting a candidate package:
+
 - run from registry:
   - `codemod run <package-name> --target <repo-path> --dry-run`
 - or use implicit package invocation:

@@ -16,7 +16,7 @@
 - Q: Parity fixture generation procedure → A: Auto-extracted from the existing round-trip validator corpus on every codegen run. Render-parity partition is filtered to render-path NodeData; round-trip partition uses the full parse→read→splice→re-parse sequence. No hand-authored fixtures in MVP; coverage scales with the validator corpus.
 - Q: Fallback diagnostic surface — shape → A: Exported `getActiveBackend()` JS function for programmatic inspection (returns `{ name, reason?, hashMatch? }`), plus `SITTIR_BACKEND_DEBUG=1` environment variable which, when set, writes a one-line stderr diagnostic at first-load time. Default behavior remains fully silent.
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 — Codemod author runs a large codemod in Node without behavior change (Priority: P1, in MVP)
 
@@ -72,7 +72,7 @@ A developer building a language server, a VS Code web extension, or an edge-runt
 - **Render-path parity regression introduced by a template edit**: the shared-fixture render-parity suite catches divergence between TypeScript and Rust output on any affected fixture, failing CI before the change lands.
 - **Splice-path tokenizer/extras-placement drift**: the full round-trip suite catches AST-visible regressions (re-parse to a different tree) but tolerates whitespace-only drift that re-parses identically — by design (Q2 Approach C).
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -100,7 +100,7 @@ A developer building a language server, a VS Code web extension, or an edge-runt
 - **FR-020 (template-bundle hash for version skew detection)**: TS codegen MUST compute a SHA-256 content hash over the per-grammar `.jinja` file set (deterministic file order; newline normalization) and MUST (a) bake that hash into the emitted Rust source as a `const` (e.g. `pub const TEMPLATE_BUNDLE_HASH: &str = "..."`) and (b) export the same hash from the corresponding `@sittir/{lang}` TypeScript package as a module constant. The napi binding MUST expose the Rust-side hash; at load time the JS runtime-selection layer MUST compare the two hashes. On mismatch the native backend MUST be refused and the package MUST fall through to the TypeScript engine (per FR-009). On match the native backend proceeds normally.
 - **FR-021 (backend-selection diagnostic surface)**: Each `@sittir/{lang}` package MUST export a `getActiveBackend()` function from its top-level entry point. The function MUST return an object describing the currently active backend, minimally: `{ name: "native" | "typescript", reason?: string, hashMatch?: boolean }` where `reason` is populated on fallback (e.g. `"native binary not available for this platform"`, `"template-bundle hash mismatch"`) and `hashMatch` reflects the FR-020 comparison outcome. Additionally, when the environment variable `SITTIR_BACKEND_DEBUG` is set to `"1"` (or any truthy non-empty string), the package MUST write a single-line human-readable diagnostic to stderr at first backend-selection time, stating which backend was selected and (on fallback) the reason. Under default configuration (env var unset) the package MUST be silent — no stdout or stderr output related to backend selection.
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **NodeData (consumer-facing)** — The enriched shape TypeScript consumers see. Carries node kind, optional field map (raw names), optional ordered children, optional literal text for leaves, optional byte span, optional node identifier, optional provenance (`ts` | `sg` | `factory`), optional variant label, optional `$named` flag, and bound fluent getter/setter methods. Wire form uses `$`-prefixed field names. **Produced by: TS enrichment over Rust primitive output** (per FR-005a).
 - **NodeData (primitive — Rust wire shape)** — The exact shape Rust emits across the boundary per match. **Eight** `$`-prefixed top-level fields: `$type` (string, required), `$fields` (raw-named field map, optional), `$children` (ordered array, optional), `$text` (string, optional — leaves only), `$span` (byte range, optional), `$nodeId` (u32, optional), `$source` (`"ts"` from readNode), `$named` (boolean). Optionals elide on the wire. No derived fields (`$variant`, promoted keywords, inferred supertype membership, `$raw`). JavaScript upgrades this to the consumer-facing shape via the existing TS enrichment pipeline.
@@ -148,7 +148,7 @@ Surfaced during the clarification pass but not load-bearing on the MVP scope dec
 3. ~~**Engine-version / template-bundle compatibility check at load time.**~~ **Resolved 2026-04-22** — see Clarifications and FR-020: SHA-256 content hash of `.jinja` bundle, baked-in + exported, compared at napi load.
 4. ~~**Parity fixture generation procedure.**~~ **Resolved 2026-04-22** — see Clarifications and FR-012: auto-extracted from the round-trip validator corpus on every codegen run.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes (MVP)
 

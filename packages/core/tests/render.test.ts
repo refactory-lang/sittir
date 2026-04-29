@@ -13,15 +13,15 @@ const config: RulesConfig = {
 			template: 'fn $NAME($$$PARAMETERS) $RETURN_TYPE_CLAUSE$BODY_CLAUSE',
 			return_type_clause: '-> $RETURN_TYPE ',
 			body_clause: '$BODY',
-			joinBy: ', ',
+			joinBy: ', '
 		},
 		block: {
 			template: '{ $$$CHILDREN }',
-			joinBy: ' ',
+			joinBy: ' '
 		},
 		parameter: '$NAME: $TYPE',
-		binary_expression: '$LEFT $OPERATOR $RIGHT',
-	},
+		binary_expression: '$LEFT $OPERATOR $RIGHT'
+	}
 };
 
 const { render } = createRenderer(config);
@@ -36,8 +36,8 @@ describe('render', () => {
 		const node: AnyNodeData = {
 			$type: 'function_item',
 			$fields: {
-				name: { $type: 'identifier', $text: 'main' },
-			},
+				name: { $type: 'identifier', $text: 'main' }
+			}
 		};
 		// Absent clauses resolve to empty, template is literal
 		expect(render(node)).toContain('fn main()');
@@ -49,8 +49,8 @@ describe('render', () => {
 			$fields: {
 				name: { $type: 'identifier', $text: 'add' },
 				return_type: { $type: 'primitive_type', $text: 'i32' },
-				body: { $type: 'block', $fields: {} },
-			},
+				body: { $type: 'block', $fields: {} }
+			}
 		};
 		expect(render(node)).toContain('fn add()');
 		expect(render(node)).toContain('-> i32');
@@ -61,8 +61,8 @@ describe('render', () => {
 			$type: 'function_item',
 			$fields: {
 				name: { $type: 'identifier', $text: 'noop' },
-				body: { $type: 'block', $fields: {} },
-			},
+				body: { $type: 'block', $fields: {} }
+			}
 		};
 		const result = render(node);
 		expect(result).toContain('fn noop()');
@@ -75,11 +75,23 @@ describe('render', () => {
 			$fields: {
 				name: { $type: 'identifier', $text: 'add' },
 				parameters: [
-					{ $type: 'parameter', $fields: { name: { $type: 'identifier', $text: 'a' }, type: { $type: 'primitive_type', $text: 'i32' } } },
-					{ $type: 'parameter', $fields: { name: { $type: 'identifier', $text: 'b' }, type: { $type: 'primitive_type', $text: 'i32' } } },
+					{
+						$type: 'parameter',
+						$fields: {
+							name: { $type: 'identifier', $text: 'a' },
+							type: { $type: 'primitive_type', $text: 'i32' }
+						}
+					},
+					{
+						$type: 'parameter',
+						$fields: {
+							name: { $type: 'identifier', $text: 'b' },
+							type: { $type: 'primitive_type', $text: 'i32' }
+						}
+					}
 				],
-				body: { $type: 'block', $fields: {} },
-			},
+				body: { $type: 'block', $fields: {} }
+			}
 		};
 		expect(render(node)).toContain('fn add(a: i32, b: i32)');
 	});
@@ -98,11 +110,9 @@ describe('render', () => {
 				body: {
 					$type: 'block',
 					$fields: {},
-					$children: [
-						{ $type: 'integer_literal', $text: '42' },
-					],
-				},
-			},
+					$children: [{ $type: 'integer_literal', $text: '42' }]
+				}
+			}
 		};
 		expect(render(node)).toContain('fn main()');
 		expect(render(node)).toContain('-> i32');
@@ -115,8 +125,8 @@ describe('render', () => {
 			$fields: {
 				left: { $type: 'identifier', $text: 'a' },
 				operator: '+',
-				right: { $type: 'identifier', $text: 'b' },
-			},
+				right: { $type: 'identifier', $text: 'b' }
+			}
 		};
 		expect(render(node)).toBe('a + b');
 	});
@@ -127,8 +137,8 @@ describe('render', () => {
 			$fields: {},
 			$children: [
 				{ $type: 'identifier', $text: 'x' },
-				{ $type: 'identifier', $text: 'y' },
-			],
+				{ $type: 'identifier', $text: 'y' }
+			]
 		};
 		expect(render(node)).toBe('{ x y }');
 	});
@@ -154,7 +164,11 @@ describe('render', () => {
 		// field so callers can pinpoint the source.
 		const node: AnyNodeData = {
 			$type: 'binary_expression',
-			$fields: { left: [], operator: { $type: 'op', $text: '+' }, right: { $type: 'literal', $text: '2' } },
+			$fields: {
+				left: [],
+				operator: { $type: 'op', $text: '+' },
+				right: { $type: 'literal', $text: '2' }
+			}
 		};
 		expect(() => render(node)).toThrow(/empty array/);
 		expect(() => render(node)).toThrow(/binary_expression/);
@@ -173,8 +187,8 @@ describe('render — $TEXT slot', () => {
 		expandoChar: null,
 		metadata: { grammarSha: 'test' },
 		rules: {
-			raw_string_literal: '$TEXT',
-		},
+			raw_string_literal: '$TEXT'
+		}
 	};
 	const { render: renderText } = createRenderer(textConfig);
 
@@ -186,8 +200,8 @@ describe('render — $TEXT slot', () => {
 			$type: 'raw_string_literal',
 			$text: 'r#"abc"#',
 			$fields: {
-				string_content: { $type: 'string_content', $text: 'abc' },
-			},
+				string_content: { $type: 'string_content', $text: 'abc' }
+			}
 		};
 		expect(renderText(node)).toBe('r#"abc"#');
 	});
@@ -200,8 +214,8 @@ describe('render — $TEXT slot', () => {
 		const node: AnyNodeData = {
 			$type: 'raw_string_literal',
 			$fields: {
-				string_content: { $type: 'string_content', $text: 'abc' },
-			},
+				string_content: { $type: 'string_content', $text: 'abc' }
+			}
 		};
 		expect(renderText(node)).toBe('abc');
 	});

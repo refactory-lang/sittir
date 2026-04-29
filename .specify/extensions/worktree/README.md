@@ -16,11 +16,11 @@ Spec Kit creates a new branch for each feature, but developers can only work on 
 
 The Worktree Isolation extension adds three commands for managing parallel feature workspaces:
 
-| Command | Purpose | Modifies Files? |
-|---------|---------|-----------------|
+| Command                    | Purpose                                                             | Modifies Files?                                      |
+| -------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------- |
 | `/speckit.worktree.create` | Spawn an isolated git worktree for a new or existing feature branch | Yes — creates worktree directory, updates .gitignore |
-| `/speckit.worktree.list` | Show all active worktrees with feature status and task progress | No — read-only |
-| `/speckit.worktree.clean` | Remove stale or merged worktrees and reclaim disk space | Yes — removes worktree directories |
+| `/speckit.worktree.list`   | Show all active worktrees with feature status and task progress     | No — read-only                                       |
+| `/speckit.worktree.clean`  | Remove stale or merged worktrees and reclaim disk space             | Yes — removes worktree directories                   |
 
 ## Installation
 

@@ -5,6 +5,7 @@
 {
   "factoryShapes": {
     "module": "children",
+    "_simple_statements": "children",
     "import_statement": "config",
     "import_prefix": "text",
     "relative_import": "config",
@@ -14,6 +15,7 @@
     "print_statement": "config",
     "chevron": "config",
     "assert_statement": "children",
+    "expression_statement_tuple": "children",
     "expression_statement": "config",
     "named_expression": "config",
     "return_statement": "children",
@@ -34,6 +36,8 @@
     "except_clause": "config",
     "finally_clause": "config",
     "with_statement": "config",
+    "with_clause_bare": "children",
+    "with_clause_paren": "children",
     "with_clause": "config",
     "with_item": "config",
     "function_definition": "config",
@@ -51,10 +55,12 @@
     "argument_list": "children",
     "decorated_definition": "config",
     "decorator": "config",
+    "_suite": "children",
     "block": "children",
-    "expression_list": "config",
+    "expression_list": "children",
     "dotted_name": "children",
     "case_pattern": "children",
+    "_as_pattern": "children",
     "union_pattern": "children",
     "dict_pattern": "children",
     "keyword_pattern": "config",
@@ -77,7 +83,7 @@
     "lambda_within_for_in_clause": "config",
     "assignment": "config",
     "augmented_assignment": "config",
-    "pattern_list": "config",
+    "pattern_list": "children",
     "yield": "children",
     "attribute": "config",
     "subscript": "config",
@@ -100,11 +106,12 @@
     "dictionary_comprehension": "config",
     "set_comprehension": "config",
     "generator_expression": "config",
+    "_comprehension_clauses": "children",
     "parenthesized_expression": "children",
     "for_in_clause": "config",
     "if_clause": "config",
     "conditional_expression": "config",
-    "concatenated_string": "config",
+    "concatenated_string": "children",
     "string": "text",
     "string_content": "children",
     "interpolation": "config",
@@ -120,7 +127,18 @@
     "await": "config",
     "comment": "text",
     "line_continuation": "text",
+    "_as_pattern_target": "children",
+    "_format_expression": "children",
+    "_kw_async_marker": "text",
+    "_assignment_eq": "config",
+    "_assignment_type": "config",
+    "_assignment_typed": "config",
+    "_with_clause_paren": "children",
+    "_match_block_block": "config",
+    "_simple_pattern_negative": "text",
+    "_newline": "text",
     "string_start": "text",
+    "_string_content": "text",
     "escape_interpolation": "text",
     "string_end": "text",
     "]": "text",
@@ -165,6 +183,9 @@
   "fieldAliasMap": {
     "match_statement.body": {
       "block": "_match_block"
+    },
+    "as_pattern.alias": {
+      "as_pattern_target": "_as_pattern_target"
     }
   },
   "factoryFields": {
@@ -177,10 +198,6 @@
     ],
     "future_import_statement": [
       "name"
-    ],
-    "import_from_statement": [
-      "module_name",
-      "wildcard_import"
     ],
     "aliased_import": [
       "name",
@@ -210,7 +227,7 @@
       "body"
     ],
     "for_statement": [
-      "async",
+      "async_marker",
       "left",
       "right",
       "body",
@@ -231,7 +248,7 @@
       "block"
     ],
     "with_statement": [
-      "async",
+      "async_marker",
       "with_clause",
       "body"
     ],
@@ -239,7 +256,7 @@
       "value"
     ],
     "function_definition": [
-      "async",
+      "async_marker",
       "name",
       "type_parameters",
       "parameters",
@@ -371,7 +388,7 @@
       "value"
     ],
     "for_in_clause": [
-      "async",
+      "async_marker",
       "left",
       "right"
     ],
@@ -395,6 +412,19 @@
     ],
     "await": [
       "primary_expression"
+    ],
+    "_assignment_eq": [
+      "right"
+    ],
+    "_assignment_type": [
+      "type"
+    ],
+    "_assignment_typed": [
+      "type",
+      "right"
+    ],
+    "_match_block_block": [
+      "alternative"
     ]
   },
   "polymorphVariants": {

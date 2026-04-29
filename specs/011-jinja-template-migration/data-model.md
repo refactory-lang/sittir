@@ -19,33 +19,37 @@ Lives in `packages/core/src/render.ts` (post-ADR-0013 Task 3 already declares `P
 
 ```ts
 export interface TemplateContext {
-  /**
-   * Pre-rendered named field slots keyed by raw (snake_case) field name.
-   * `undefined` when the field is absent on the node; optional fields may
-   * legitimately carry `undefined`.
-   *
-   * Field names come from the tree-sitter grammar verbatim. No camelCase
-   * translation — templates see the raw names.
-   */
-  readonly [fieldName: string]: string | undefined | readonly string[] | boolean;
+	/**
+	 * Pre-rendered named field slots keyed by raw (snake_case) field name.
+	 * `undefined` when the field is absent on the node; optional fields may
+	 * legitimately carry `undefined`.
+	 *
+	 * Field names come from the tree-sitter grammar verbatim. No camelCase
+	 * translation — templates see the raw names.
+	 */
+	readonly [fieldName: string]:
+		| string
+		| undefined
+		| readonly string[]
+		| boolean;
 
-  /** Pre-joined unconsumed named children (with joinBy / flankSep applied). */
-  readonly children: string;
+	/** Pre-joined unconsumed named children (with joinBy / flankSep applied). */
+	readonly children: string;
 
-  /** Individual pre-rendered children, in source order. Used by `{% for %}`. */
-  readonly children_list: readonly string[];
+	/** Individual pre-rendered children, in source order. Used by `{% for %}`. */
+	readonly children_list: readonly string[];
 
-  /** Node's $variant field, or empty string. */
-  readonly variant: string;
+	/** Node's $variant field, or empty string. */
+	readonly variant: string;
 
-  /** Node's $text field, or empty string. */
-  readonly text: string;
+	/** Node's $text field, or empty string. */
+	readonly text: string;
 
-  /** Whether a trailing separator was present adjacent to the named children. */
-  readonly trailing_sep: boolean;
+	/** Whether a trailing separator was present adjacent to the named children. */
+	readonly trailing_sep: boolean;
 
-  /** Whether a leading separator was present adjacent to the named children. */
-  readonly leading_sep: boolean;
+	/** Whether a leading separator was present adjacent to the named children. */
+	readonly leading_sep: boolean;
 }
 ```
 
@@ -120,7 +124,8 @@ This satisfies Constitution Principle III (Generated vs Hand-Written).
 ### File contents
 
 Content constraints (from research §3):
-- Authoring subset only (interpolation, if/elif/else/endif, for with loop.*, whitespace control, comments, 6 standardized filters).
+
+- Authoring subset only (interpolation, if/elif/else/endif, for with loop.\*, whitespace control, comments, 6 standardized filters).
 - References only the variables defined in `TemplateContext`.
 - No template inheritance, no macros, no `{% match %}`, no raw Rust/JS.
 
@@ -143,7 +148,11 @@ Lives in `packages/codegen/src/emitters/jinja-translator.ts`. Not part of the ru
  * Fails loudly (throws with rule name + unsupported construct) when the
  * rule uses a shape that cannot be represented in the Jinja subset.
  */
-export function translateToJinja(node: AssembledNode, rules: Record<string, Rule>, wordMatcher: RegExp): string;
+export function translateToJinja(
+	node: AssembledNode,
+	rules: Record<string, Rule>,
+	wordMatcher: RegExp
+): string;
 ```
 
 ### Mapping rules (pure functions over `AssembledNode`)
@@ -151,14 +160,14 @@ export function translateToJinja(node: AssembledNode, rules: Record<string, Rule
 See `contracts/translator-mapping.md` for the full mapping table. Rules are
 implemented as a dispatch over `node.modelType`:
 
-| modelType | Handler |
-|-----------|---------|
-| `branch` | Field + clause + children-slot substitution → single Jinja body |
-| `container` | Mirrors `branch`, plus repeat-aware `{% for %}` / pre-joined children handling |
-| `polymorph` | If variant-branching (5 rules): emit `{% if variant == "<form>" %}` chain. Otherwise: emit the single-template form directly (collapsed identical variants). |
-| `leaf` | `{{ text }}` |
-| `keyword`, `token` | No template (renderer returns literal). Translator emits no file. |
-| `enum`, `supertype`, `multi`, `group` | No template at the top level (resolved via child render). Translator emits no file unless a form needs one. |
+| modelType                             | Handler                                                                                                                                                      |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `branch`                              | Field + clause + children-slot substitution → single Jinja body                                                                                              |
+| `container`                           | Mirrors `branch`, plus repeat-aware `{% for %}` / pre-joined children handling                                                                               |
+| `polymorph`                           | If variant-branching (5 rules): emit `{% if variant == "<form>" %}` chain. Otherwise: emit the single-template form directly (collapsed identical variants). |
+| `leaf`                                | `{{ text }}`                                                                                                                                                 |
+| `keyword`, `token`                    | No template (renderer returns literal). Translator emits no file.                                                                                            |
+| `enum`, `supertype`, `multi`, `group` | No template at the top level (resolved via child render). Translator emits no file unless a form needs one.                                                  |
 
 ### Failure modes (MUST throw, not degrade)
 
@@ -182,9 +191,9 @@ Must hold before and after every codegen regeneration:
 
 ## 5. Relationships to existing entities
 
-| Existing | New | Relationship |
-|----------|-----|--------------|
-| `NodeMap.nodes` | `.jinja` file set | 1:(0 or 1) — every non-hidden, non-token-shaped `AssembledNode` gets one `.jinja` file. |
-| `PreparedRender` (from ADR-0013 Task 3) | `TemplateContext` | Same bag, new formal contract. Phase A refactors the already-finished substitution loop into a `TemplateContext` → Nunjucks → string flow. |
-| `RulesConfig` (from `@sittir/core`) | Retired for rendering | `RulesConfig.rules` no longer authoritative for templates. Retained for now as a lookup map for other metadata (joinBy, clauses); eventually replaced by per-rule metadata embedded in `.jinja` files via comments or sidecar, but out of scope for this feature. |
-| `AssembledNode.renderTemplate` | `translateToJinja(node)` | Retired. Moved from class method to external translator function — the class-method form coupled template emission to the class hierarchy in a way the new per-rule file model doesn't need. |
+| Existing                                | New                      | Relationship                                                                                                                                                                                                                                                      |
+| --------------------------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NodeMap.nodes`                         | `.jinja` file set        | 1:(0 or 1) — every non-hidden, non-token-shaped `AssembledNode` gets one `.jinja` file.                                                                                                                                                                           |
+| `PreparedRender` (from ADR-0013 Task 3) | `TemplateContext`        | Same bag, new formal contract. Phase A refactors the already-finished substitution loop into a `TemplateContext` → Nunjucks → string flow.                                                                                                                        |
+| `RulesConfig` (from `@sittir/core`)     | Retired for rendering    | `RulesConfig.rules` no longer authoritative for templates. Retained for now as a lookup map for other metadata (joinBy, clauses); eventually replaced by per-rule metadata embedded in `.jinja` files via comments or sidecar, but out of scope for this feature. |
+| `AssembledNode.renderTemplate`          | `translateToJinja(node)` | Retired. Moved from class method to external translator function — the class-method form coupled template emission to the class hierarchy in a way the new per-rule file model doesn't need.                                                                      |

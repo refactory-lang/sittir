@@ -1,6 +1,6 @@
 {
-  "integration": "speckit",
-  "version": "0.7.5.dev0",
-  "installed_at": "2026-04-22T02:35:01.264246+00:00",
-  "files": {}
+	"integration": "speckit",
+	"version": "0.8.2.dev0",
+	"installed_at": "2026-04-27T16:47:02.663187+00:00",
+	"files": {}
 }

@@ -1,5 +1,5 @@
 // @generated from packages/rust/node-model.json5 and packages/rust/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar rust --all --rust-render
+// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src
 //
 // Per-kind askama template structs + render_dispatch + GrammarMeta impl
 // for the rust grammar. Every struct in this file is backed by a
@@ -78,7 +78,7 @@ pub struct ClosureExpressionBlockTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_closure_expression_expr.jinja", escape = "none")]
-pub struct ClosureExpressionExprTemplate {
+pub struct _ClosureExpressionExprTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -91,7 +91,7 @@ pub struct ClosureExpressionExprTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_delim_token_tree_brace.jinja", escape = "none")]
-pub struct DelimTokenTreeBraceTemplate {
+pub struct _DelimTokenTreeBraceTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -102,7 +102,7 @@ pub struct DelimTokenTreeBraceTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_delim_token_tree_bracket.jinja", escape = "none")]
-pub struct DelimTokenTreeBracketTemplate {
+pub struct _DelimTokenTreeBracketTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -113,7 +113,7 @@ pub struct DelimTokenTreeBracketTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_delim_token_tree_paren.jinja", escape = "none")]
-pub struct DelimTokenTreeParenTemplate {
+pub struct _DelimTokenTreeParenTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -124,7 +124,7 @@ pub struct DelimTokenTreeParenTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_expression_statement_block_ending.jinja", escape = "none")]
-pub struct ExpressionStatementBlockEndingTemplate {
+pub struct _ExpressionStatementBlockEndingTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -135,7 +135,7 @@ pub struct ExpressionStatementBlockEndingTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_expression_statement_with_semi.jinja", escape = "none")]
-pub struct ExpressionStatementWithSemiTemplate {
+pub struct _ExpressionStatementWithSemiTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -172,7 +172,7 @@ pub struct FieldPatternNamedTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_field_pattern_shorthand.jinja", escape = "none")]
-pub struct FieldPatternShorthandTemplate {
+pub struct _FieldPatternShorthandTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -185,7 +185,7 @@ pub struct FieldPatternShorthandTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_foreign_mod_item_body.jinja", escape = "none")]
-pub struct ForeignModItemBodyTemplate {
+pub struct _ForeignModItemBodyTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -222,7 +222,7 @@ pub struct FunctionTypeTraitFormTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_impl_item_body.jinja", escape = "none")]
-pub struct ImplItemBodyTemplate {
+pub struct _ImplItemBodyTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -263,7 +263,7 @@ pub struct LineCommentDocTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_macro_definition_brace.jinja", escape = "none")]
-pub struct MacroDefinitionBraceTemplate {
+pub struct _MacroDefinitionBraceTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -274,7 +274,7 @@ pub struct MacroDefinitionBraceTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_macro_definition_bracket.jinja", escape = "none")]
-pub struct MacroDefinitionBracketTemplate {
+pub struct _MacroDefinitionBracketTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -285,7 +285,7 @@ pub struct MacroDefinitionBracketTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_macro_definition_paren.jinja", escape = "none")]
-pub struct MacroDefinitionParenTemplate {
+pub struct _MacroDefinitionParenTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -296,7 +296,7 @@ pub struct MacroDefinitionParenTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_match_arm_block_ending.jinja", escape = "none")]
-pub struct MatchArmBlockEndingTemplate {
+pub struct _MatchArmBlockEndingTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -322,7 +322,7 @@ pub struct MatchArmWithCommaTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_mod_item_inline.jinja", escape = "none")]
-pub struct ModItemInlineTemplate {
+pub struct _ModItemInlineTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -363,7 +363,7 @@ pub struct OrPatternPrefixTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_pointer_type_mut.jinja", escape = "none")]
-pub struct PointerTypeMutTemplate {
+pub struct _PointerTypeMutTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -374,7 +374,7 @@ pub struct PointerTypeMutTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_range_expression_bare.jinja", escape = "none")]
-pub struct RangeExpressionBareTemplate {
+pub struct _RangeExpressionBareTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -433,6 +433,19 @@ pub struct RangeExpressionPrefixTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_range_pattern_left_with_right.jinja", escape = "none")]
+pub struct RangePatternLeftWithRightTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub right: String,
+    pub right_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_range_pattern_prefix.jinja", escape = "none")]
 pub struct RangePatternPrefixTemplate {
     pub children: Vec<String>,
@@ -459,6 +472,17 @@ pub struct ReferenceExpressionRawMutTemplate {
 #[derive(::askama::Template)]
 #[template(path = "_reserved_identifier.jinja", escape = "none")]
 pub struct ReservedIdentifierTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_shorthand_field_identifier.jinja", escape = "none")]
+pub struct ShorthandFieldIdentifierTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -506,7 +530,7 @@ pub struct StructItemTupleTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_token_tree_brace.jinja", escape = "none")]
-pub struct TokenTreeBraceTemplate {
+pub struct _TokenTreeBraceTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -517,7 +541,7 @@ pub struct TokenTreeBraceTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_token_tree_bracket.jinja", escape = "none")]
-pub struct TokenTreeBracketTemplate {
+pub struct _TokenTreeBracketTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -528,7 +552,7 @@ pub struct TokenTreeBracketTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_token_tree_paren.jinja", escape = "none")]
-pub struct TokenTreeParenTemplate {
+pub struct _TokenTreeParenTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -539,7 +563,7 @@ pub struct TokenTreeParenTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_token_tree_pattern_brace.jinja", escape = "none")]
-pub struct TokenTreePatternBraceTemplate {
+pub struct _TokenTreePatternBraceTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -550,7 +574,7 @@ pub struct TokenTreePatternBraceTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_token_tree_pattern_bracket.jinja", escape = "none")]
-pub struct TokenTreePatternBracketTemplate {
+pub struct _TokenTreePatternBracketTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -561,7 +585,7 @@ pub struct TokenTreePatternBracketTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_token_tree_pattern_paren.jinja", escape = "none")]
-pub struct TokenTreePatternParenTemplate {
+pub struct _TokenTreePatternParenTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -583,7 +607,7 @@ pub struct TypeIdentifierTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_visibility_modifier_crate.jinja", escape = "none")]
-pub struct VisibilityModifierCrateTemplate {
+pub struct _VisibilityModifierCrateTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -593,8 +617,8 @@ pub struct VisibilityModifierCrateTemplate {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_visibility_modifier_pub_in_path.jinja", escape = "none")]
-pub struct VisibilityModifierPubInPathTemplate {
+#[template(path = "_visibility_modifier_in_path.jinja", escape = "none")]
+pub struct VisibilityModifierInPathTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -715,8 +739,8 @@ pub struct AsyncBlockTemplate {
     pub leading_sep: bool,
     pub block: String,
     pub block_list: Vec<String>,
-    pub r#move: String,
-    pub r#move_list: Vec<String>,
+    pub move_marker: String,
+    pub move_marker_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -851,8 +875,6 @@ pub struct BreakExpressionTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub expression: String,
-    pub expression_list: Vec<String>,
     pub label: String,
     pub label_list: Vec<String>,
 }
@@ -883,8 +905,19 @@ pub struct CapturedPatternTemplate {
     pub leading_sep: bool,
     pub identifier: String,
     pub identifier_list: Vec<String>,
-    pub pattern: String,
-    pub pattern_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "closure_expression_expr.jinja", escape = "none")]
+pub struct ClosureExpressionExprTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub body: String,
+    pub body_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -896,14 +929,14 @@ pub struct ClosureExpressionTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub r#async: String,
-    pub r#async_list: Vec<String>,
-    pub r#move: String,
-    pub r#move_list: Vec<String>,
+    pub async_marker: String,
+    pub async_marker_list: Vec<String>,
+    pub move_marker: String,
+    pub move_marker_list: Vec<String>,
     pub parameters: String,
     pub parameters_list: Vec<String>,
-    pub r#static: String,
-    pub r#static_list: Vec<String>,
+    pub static_marker: String,
+    pub static_marker_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1019,6 +1052,39 @@ pub struct DeclarationListTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "delim_token_tree_brace.jinja", escape = "none")]
+pub struct DelimTokenTreeBraceTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "delim_token_tree_bracket.jinja", escape = "none")]
+pub struct DelimTokenTreeBracketTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "delim_token_tree_paren.jinja", escape = "none")]
+pub struct DelimTokenTreeParenTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "delim_token_tree.jinja", escape = "none")]
 pub struct DelimTokenTreeTemplate {
     pub children: Vec<String>,
@@ -1102,6 +1168,28 @@ pub struct EnumVariantTemplate {
     pub value_list: Vec<String>,
     pub visibility_modifier: String,
     pub visibility_modifier_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "expression_statement_block_ending.jinja", escape = "none")]
+pub struct ExpressionStatementBlockEndingTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "expression_statement_with_semi.jinja", escape = "none")]
+pub struct ExpressionStatementWithSemiTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
 }
 
 #[derive(::askama::Template)]
@@ -1217,6 +1305,19 @@ pub struct FieldInitializerTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "field_pattern_shorthand.jinja", escape = "none")]
+pub struct FieldPatternShorthandTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub name: String,
+    pub name_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "field_pattern.jinja", escape = "none")]
 pub struct FieldPatternTemplate {
     pub children: Vec<String>,
@@ -1227,8 +1328,8 @@ pub struct FieldPatternTemplate {
     pub leading_sep: bool,
     pub mutable_specifier: String,
     pub mutable_specifier_list: Vec<String>,
-    pub r#ref: String,
-    pub r#ref_list: Vec<String>,
+    pub ref_marker: String,
+    pub ref_marker_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1262,6 +1363,19 @@ pub struct ForLifetimesTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "foreign_mod_item_body.jinja", escape = "none")]
+pub struct ForeignModItemBodyTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub body: String,
+    pub body_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "foreign_mod_item.jinja", escape = "none")]
 pub struct ForeignModItemTemplate {
     pub children: Vec<String>,
@@ -1272,6 +1386,8 @@ pub struct ForeignModItemTemplate {
     pub leading_sep: bool,
     pub extern_modifier: String,
     pub extern_modifier_list: Vec<String>,
+    pub visibility_modifier: String,
+    pub visibility_modifier_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1310,14 +1426,8 @@ pub struct FunctionModifiersTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub r#async: String,
-    pub r#async_list: Vec<String>,
-    pub r#const: String,
-    pub r#const_list: Vec<String>,
-    pub default: String,
-    pub default_list: Vec<String>,
-    pub r#unsafe: String,
-    pub r#unsafe_list: Vec<String>,
+    pub modifier: String,
+    pub modifier_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1373,8 +1483,8 @@ pub struct GenBlockTemplate {
     pub leading_sep: bool,
     pub block: String,
     pub block_list: Vec<String>,
-    pub r#move: String,
-    pub r#move_list: Vec<String>,
+    pub move_marker: String,
+    pub move_marker_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1470,6 +1580,19 @@ pub struct IfExpressionTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "impl_item_body.jinja", escape = "none")]
+pub struct ImplItemBodyTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub body: String,
+    pub body_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "impl_item.jinja", escape = "none")]
 pub struct ImplItemTemplate {
     pub children: Vec<String>,
@@ -1478,16 +1601,16 @@ pub struct ImplItemTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub bang: String,
-    pub bang_list: Vec<String>,
+    pub negative: String,
+    pub negative_list: Vec<String>,
     pub r#trait: String,
     pub r#trait_list: Vec<String>,
     pub r#type: String,
     pub r#type_list: Vec<String>,
     pub type_parameters: String,
     pub type_parameters_list: Vec<String>,
-    pub r#unsafe: String,
-    pub r#unsafe_list: Vec<String>,
+    pub unsafe_marker: String,
+    pub unsafe_marker_list: Vec<String>,
     pub where_clause: String,
     pub where_clause_list: Vec<String>,
 }
@@ -1639,6 +1762,39 @@ pub struct LoopExpressionTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "macro_definition_brace.jinja", escape = "none")]
+pub struct MacroDefinitionBraceTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "macro_definition_bracket.jinja", escape = "none")]
+pub struct MacroDefinitionBracketTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "macro_definition_paren.jinja", escape = "none")]
+pub struct MacroDefinitionParenTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "macro_definition.jinja", escape = "none")]
 pub struct MacroDefinitionTemplate {
     pub children: Vec<String>,
@@ -1679,6 +1835,19 @@ pub struct MacroRuleTemplate {
     pub left_list: Vec<String>,
     pub right: String,
     pub right_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "match_arm_block_ending.jinja", escape = "none")]
+pub struct MatchArmBlockEndingTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub value: String,
+    pub value_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1734,6 +1903,19 @@ pub struct MatchPatternTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "mod_item_inline.jinja", escape = "none")]
+pub struct ModItemInlineTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub body: String,
+    pub body_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "mod_item.jinja", escape = "none")]
 pub struct ModItemTemplate {
     pub children: Vec<String>,
@@ -1759,8 +1941,6 @@ pub struct MutPatternTemplate {
     pub leading_sep: bool,
     pub mutable_specifier: String,
     pub mutable_specifier_list: Vec<String>,
-    pub pattern: String,
-    pub pattern_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1840,6 +2020,17 @@ pub struct ParenthesizedExpressionTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "pointer_type_mut.jinja", escape = "none")]
+pub struct PointerTypeMutTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "pointer_type.jinja", escape = "none")]
 pub struct PointerTypeTemplate {
     pub children: Vec<String>,
@@ -1868,6 +2059,19 @@ pub struct QualifiedTypeTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "range_expression_bare.jinja", escape = "none")]
+pub struct RangeExpressionBareTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub operator: String,
+    pub operator_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "range_expression.jinja", escape = "none")]
 pub struct RangeExpressionTemplate {
     pub children: Vec<String>,
@@ -1887,6 +2091,8 @@ pub struct RangePatternTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
+    pub left: String,
+    pub left_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2049,10 +2255,10 @@ pub struct SelfParameterTemplate {
     pub leading_sep: bool,
     pub lifetime: String,
     pub lifetime_list: Vec<String>,
-    pub lifetime_name: String,
-    pub lifetime_name_list: Vec<String>,
     pub mutable_specifier: String,
     pub mutable_specifier_list: Vec<String>,
+    pub reference: String,
+    pub reference_list: Vec<String>,
     pub self_: String,
     pub self__list: Vec<String>,
 }
@@ -2111,6 +2317,8 @@ pub struct StaticItemTemplate {
     pub mutable_specifier_list: Vec<String>,
     pub name: String,
     pub name_list: Vec<String>,
+    pub ref_marker: String,
+    pub ref_marker_list: Vec<String>,
     pub r#type: String,
     pub r#type_list: Vec<String>,
     pub value: String,
@@ -2213,6 +2421,72 @@ pub struct TokenRepetitionTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "token_tree_brace.jinja", escape = "none")]
+pub struct TokenTreeBraceTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "token_tree_bracket.jinja", escape = "none")]
+pub struct TokenTreeBracketTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "token_tree_paren.jinja", escape = "none")]
+pub struct TokenTreeParenTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "token_tree_pattern_brace.jinja", escape = "none")]
+pub struct TokenTreePatternBraceTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "token_tree_pattern_bracket.jinja", escape = "none")]
+pub struct TokenTreePatternBracketTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "token_tree_pattern_paren.jinja", escape = "none")]
+pub struct TokenTreePatternParenTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "token_tree_pattern.jinja", escape = "none")]
 pub struct TokenTreePatternTemplate {
     pub children: Vec<String>,
@@ -2262,8 +2536,8 @@ pub struct TraitItemTemplate {
     pub name_list: Vec<String>,
     pub type_parameters: String,
     pub type_parameters_list: Vec<String>,
-    pub r#unsafe: String,
-    pub r#unsafe_list: Vec<String>,
+    pub unsafe_marker: String,
+    pub unsafe_marker_list: Vec<String>,
     pub visibility_modifier: String,
     pub visibility_modifier_list: Vec<String>,
     pub where_clause: String,
@@ -2570,6 +2844,17 @@ pub struct VariadicParameterTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "visibility_modifier_crate.jinja", escape = "none")]
+pub struct VisibilityModifierCrateTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "visibility_modifier.jinja", escape = "none")]
 pub struct VisibilityModifierTemplate {
     pub children: Vec<String>,
@@ -2699,7 +2984,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_closure_expression_expr" => {
-            let t = ClosureExpressionExprTemplate {
+            let t = _ClosureExpressionExprTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -2712,7 +2997,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_delim_token_tree_brace" => {
-            let t = DelimTokenTreeBraceTemplate {
+            let t = _DelimTokenTreeBraceTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -2723,7 +3008,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_delim_token_tree_bracket" => {
-            let t = DelimTokenTreeBracketTemplate {
+            let t = _DelimTokenTreeBracketTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -2734,7 +3019,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_delim_token_tree_paren" => {
-            let t = DelimTokenTreeParenTemplate {
+            let t = _DelimTokenTreeParenTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -2745,7 +3030,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_expression_statement_block_ending" => {
-            let t = ExpressionStatementBlockEndingTemplate {
+            let t = _ExpressionStatementBlockEndingTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -2756,7 +3041,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_expression_statement_with_semi" => {
-            let t = ExpressionStatementWithSemiTemplate {
+            let t = _ExpressionStatementWithSemiTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -2793,7 +3078,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_field_pattern_shorthand" => {
-            let t = FieldPatternShorthandTemplate {
+            let t = _FieldPatternShorthandTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -2806,7 +3091,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_foreign_mod_item_body" => {
-            let t = ForeignModItemBodyTemplate {
+            let t = _ForeignModItemBodyTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -2843,7 +3128,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_impl_item_body" => {
-            let t = ImplItemBodyTemplate {
+            let t = _ImplItemBodyTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -2884,7 +3169,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_macro_definition_brace" => {
-            let t = MacroDefinitionBraceTemplate {
+            let t = _MacroDefinitionBraceTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -2895,7 +3180,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_macro_definition_bracket" => {
-            let t = MacroDefinitionBracketTemplate {
+            let t = _MacroDefinitionBracketTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -2906,7 +3191,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_macro_definition_paren" => {
-            let t = MacroDefinitionParenTemplate {
+            let t = _MacroDefinitionParenTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -2917,7 +3202,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_match_arm_block_ending" => {
-            let t = MatchArmBlockEndingTemplate {
+            let t = _MatchArmBlockEndingTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -2943,7 +3228,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_mod_item_inline" => {
-            let t = ModItemInlineTemplate {
+            let t = _ModItemInlineTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -2984,7 +3269,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_pointer_type_mut" => {
-            let t = PointerTypeMutTemplate {
+            let t = _PointerTypeMutTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -2995,7 +3280,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_range_expression_bare" => {
-            let t = RangeExpressionBareTemplate {
+            let t = _RangeExpressionBareTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3054,6 +3339,19 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "_range_pattern_left_with_right" => {
+            let t = RangePatternLeftWithRightTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                right: ctx.fields.get("right").cloned().unwrap_or_default(),
+                right_list: ctx.fields_list.get("right").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
         "_range_pattern_prefix" => {
             let t = RangePatternPrefixTemplate {
                 children: ctx.children_list.clone(),
@@ -3080,6 +3378,17 @@ pub fn render_dispatch(
         }
         "_reserved_identifier" => {
             let t = ReservedIdentifierTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "_shorthand_field_identifier" => {
+            let t = ShorthandFieldIdentifierTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3127,7 +3436,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_token_tree_brace" => {
-            let t = TokenTreeBraceTemplate {
+            let t = _TokenTreeBraceTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3138,7 +3447,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_token_tree_bracket" => {
-            let t = TokenTreeBracketTemplate {
+            let t = _TokenTreeBracketTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3149,7 +3458,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_token_tree_paren" => {
-            let t = TokenTreeParenTemplate {
+            let t = _TokenTreeParenTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3160,7 +3469,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_token_tree_pattern_brace" => {
-            let t = TokenTreePatternBraceTemplate {
+            let t = _TokenTreePatternBraceTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3171,7 +3480,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_token_tree_pattern_bracket" => {
-            let t = TokenTreePatternBracketTemplate {
+            let t = _TokenTreePatternBracketTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3182,7 +3491,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_token_tree_pattern_paren" => {
-            let t = TokenTreePatternParenTemplate {
+            let t = _TokenTreePatternParenTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3204,7 +3513,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_visibility_modifier_crate" => {
-            let t = VisibilityModifierCrateTemplate {
+            let t = _VisibilityModifierCrateTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3214,8 +3523,8 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
-        "_visibility_modifier_pub_in_path" => {
-            let t = VisibilityModifierPubInPathTemplate {
+        "_visibility_modifier_in_path" => {
+            let t = VisibilityModifierInPathTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3336,8 +3645,8 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 block: ctx.fields.get("block").cloned().unwrap_or_default(),
                 block_list: ctx.fields_list.get("block").cloned().unwrap_or_default(),
-                r#move: ctx.fields.get("move").cloned().unwrap_or_default(),
-                r#move_list: ctx.fields_list.get("move").cloned().unwrap_or_default(),
+                move_marker: ctx.fields.get("move_marker").cloned().unwrap_or_default(),
+                move_marker_list: ctx.fields_list.get("move_marker").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -3472,8 +3781,6 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                expression: ctx.fields.get("expression").cloned().unwrap_or_default(),
-                expression_list: ctx.fields_list.get("expression").cloned().unwrap_or_default(),
                 label: ctx.fields.get("label").cloned().unwrap_or_default(),
                 label_list: ctx.fields_list.get("label").cloned().unwrap_or_default(),
             };
@@ -3504,8 +3811,19 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 identifier: ctx.fields.get("identifier").cloned().unwrap_or_default(),
                 identifier_list: ctx.fields_list.get("identifier").cloned().unwrap_or_default(),
-                pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
-                pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
+        "closure_expression_expr" => {
+            let t = ClosureExpressionExprTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                body: ctx.fields.get("body").cloned().unwrap_or_default(),
+                body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -3517,14 +3835,14 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                r#async: ctx.fields.get("async").cloned().unwrap_or_default(),
-                r#async_list: ctx.fields_list.get("async").cloned().unwrap_or_default(),
-                r#move: ctx.fields.get("move").cloned().unwrap_or_default(),
-                r#move_list: ctx.fields_list.get("move").cloned().unwrap_or_default(),
+                async_marker: ctx.fields.get("async_marker").cloned().unwrap_or_default(),
+                async_marker_list: ctx.fields_list.get("async_marker").cloned().unwrap_or_default(),
+                move_marker: ctx.fields.get("move_marker").cloned().unwrap_or_default(),
+                move_marker_list: ctx.fields_list.get("move_marker").cloned().unwrap_or_default(),
                 parameters: ctx.fields.get("parameters").cloned().unwrap_or_default(),
                 parameters_list: ctx.fields_list.get("parameters").cloned().unwrap_or_default(),
-                r#static: ctx.fields.get("static").cloned().unwrap_or_default(),
-                r#static_list: ctx.fields_list.get("static").cloned().unwrap_or_default(),
+                static_marker: ctx.fields.get("static_marker").cloned().unwrap_or_default(),
+                static_marker_list: ctx.fields_list.get("static_marker").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -3640,6 +3958,39 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "delim_token_tree_brace" => {
+            let t = DelimTokenTreeBraceTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "delim_token_tree_bracket" => {
+            let t = DelimTokenTreeBracketTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "delim_token_tree_paren" => {
+            let t = DelimTokenTreeParenTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
         "delim_token_tree" => {
             let t = DelimTokenTreeTemplate {
                 children: ctx.children_list.clone(),
@@ -3723,6 +4074,28 @@ pub fn render_dispatch(
                 value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
                 visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
+        "expression_statement_block_ending" => {
+            let t = ExpressionStatementBlockEndingTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "expression_statement_with_semi" => {
+            let t = ExpressionStatementWithSemiTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
             };
             t.render_with_values(&_values)
         }
@@ -3838,6 +4211,19 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "field_pattern_shorthand" => {
+            let t = FieldPatternShorthandTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
         "field_pattern" => {
             let t = FieldPatternTemplate {
                 children: ctx.children_list.clone(),
@@ -3848,8 +4234,8 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 mutable_specifier: ctx.fields.get("mutable_specifier").cloned().unwrap_or_default(),
                 mutable_specifier_list: ctx.fields_list.get("mutable_specifier").cloned().unwrap_or_default(),
-                r#ref: ctx.fields.get("ref").cloned().unwrap_or_default(),
-                r#ref_list: ctx.fields_list.get("ref").cloned().unwrap_or_default(),
+                ref_marker: ctx.fields.get("ref_marker").cloned().unwrap_or_default(),
+                ref_marker_list: ctx.fields_list.get("ref_marker").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -3883,6 +4269,19 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "foreign_mod_item_body" => {
+            let t = ForeignModItemBodyTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                body: ctx.fields.get("body").cloned().unwrap_or_default(),
+                body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
         "foreign_mod_item" => {
             let t = ForeignModItemTemplate {
                 children: ctx.children_list.clone(),
@@ -3893,6 +4292,8 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 extern_modifier: ctx.fields.get("extern_modifier").cloned().unwrap_or_default(),
                 extern_modifier_list: ctx.fields_list.get("extern_modifier").cloned().unwrap_or_default(),
+                visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
+                visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -3931,14 +4332,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                r#async: ctx.fields.get("async").cloned().unwrap_or_default(),
-                r#async_list: ctx.fields_list.get("async").cloned().unwrap_or_default(),
-                r#const: ctx.fields.get("const").cloned().unwrap_or_default(),
-                r#const_list: ctx.fields_list.get("const").cloned().unwrap_or_default(),
-                default: ctx.fields.get("default").cloned().unwrap_or_default(),
-                default_list: ctx.fields_list.get("default").cloned().unwrap_or_default(),
-                r#unsafe: ctx.fields.get("unsafe").cloned().unwrap_or_default(),
-                r#unsafe_list: ctx.fields_list.get("unsafe").cloned().unwrap_or_default(),
+                modifier: ctx.fields.get("modifier").cloned().unwrap_or_default(),
+                modifier_list: ctx.fields_list.get("modifier").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -3994,8 +4389,8 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 block: ctx.fields.get("block").cloned().unwrap_or_default(),
                 block_list: ctx.fields_list.get("block").cloned().unwrap_or_default(),
-                r#move: ctx.fields.get("move").cloned().unwrap_or_default(),
-                r#move_list: ctx.fields_list.get("move").cloned().unwrap_or_default(),
+                move_marker: ctx.fields.get("move_marker").cloned().unwrap_or_default(),
+                move_marker_list: ctx.fields_list.get("move_marker").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -4091,6 +4486,19 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "impl_item_body" => {
+            let t = ImplItemBodyTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                body: ctx.fields.get("body").cloned().unwrap_or_default(),
+                body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
         "impl_item" => {
             let t = ImplItemTemplate {
                 children: ctx.children_list.clone(),
@@ -4099,16 +4507,16 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                bang: ctx.fields.get("bang").cloned().unwrap_or_default(),
-                bang_list: ctx.fields_list.get("bang").cloned().unwrap_or_default(),
+                negative: ctx.fields.get("negative").cloned().unwrap_or_default(),
+                negative_list: ctx.fields_list.get("negative").cloned().unwrap_or_default(),
                 r#trait: ctx.fields.get("trait").cloned().unwrap_or_default(),
                 r#trait_list: ctx.fields_list.get("trait").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
                 r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
                 type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
-                r#unsafe: ctx.fields.get("unsafe").cloned().unwrap_or_default(),
-                r#unsafe_list: ctx.fields_list.get("unsafe").cloned().unwrap_or_default(),
+                unsafe_marker: ctx.fields.get("unsafe_marker").cloned().unwrap_or_default(),
+                unsafe_marker_list: ctx.fields_list.get("unsafe_marker").cloned().unwrap_or_default(),
                 where_clause: ctx.fields.get("where_clause").cloned().unwrap_or_default(),
                 where_clause_list: ctx.fields_list.get("where_clause").cloned().unwrap_or_default(),
             };
@@ -4260,6 +4668,39 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "macro_definition_brace" => {
+            let t = MacroDefinitionBraceTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "macro_definition_bracket" => {
+            let t = MacroDefinitionBracketTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "macro_definition_paren" => {
+            let t = MacroDefinitionParenTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
         "macro_definition" => {
             let t = MacroDefinitionTemplate {
                 children: ctx.children_list.clone(),
@@ -4300,6 +4741,19 @@ pub fn render_dispatch(
                 left_list: ctx.fields_list.get("left").cloned().unwrap_or_default(),
                 right: ctx.fields.get("right").cloned().unwrap_or_default(),
                 right_list: ctx.fields_list.get("right").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
+        "match_arm_block_ending" => {
+            let t = MatchArmBlockEndingTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                value: ctx.fields.get("value").cloned().unwrap_or_default(),
+                value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -4355,6 +4809,19 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "mod_item_inline" => {
+            let t = ModItemInlineTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                body: ctx.fields.get("body").cloned().unwrap_or_default(),
+                body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
         "mod_item" => {
             let t = ModItemTemplate {
                 children: ctx.children_list.clone(),
@@ -4380,8 +4847,6 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 mutable_specifier: ctx.fields.get("mutable_specifier").cloned().unwrap_or_default(),
                 mutable_specifier_list: ctx.fields_list.get("mutable_specifier").cloned().unwrap_or_default(),
-                pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
-                pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -4461,6 +4926,17 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "pointer_type_mut" => {
+            let t = PointerTypeMutTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
         "pointer_type" => {
             let t = PointerTypeTemplate {
                 children: ctx.children_list.clone(),
@@ -4489,6 +4965,19 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "range_expression_bare" => {
+            let t = RangeExpressionBareTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                operator: ctx.fields.get("operator").cloned().unwrap_or_default(),
+                operator_list: ctx.fields_list.get("operator").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
         "range_expression" => {
             let t = RangeExpressionTemplate {
                 children: ctx.children_list.clone(),
@@ -4508,6 +4997,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
+                left: ctx.fields.get("left").cloned().unwrap_or_default(),
+                left_list: ctx.fields_list.get("left").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -4670,10 +5161,10 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 lifetime: ctx.fields.get("lifetime").cloned().unwrap_or_default(),
                 lifetime_list: ctx.fields_list.get("lifetime").cloned().unwrap_or_default(),
-                lifetime_name: ctx.fields.get("lifetime_name").cloned().unwrap_or_default(),
-                lifetime_name_list: ctx.fields_list.get("lifetime_name").cloned().unwrap_or_default(),
                 mutable_specifier: ctx.fields.get("mutable_specifier").cloned().unwrap_or_default(),
                 mutable_specifier_list: ctx.fields_list.get("mutable_specifier").cloned().unwrap_or_default(),
+                reference: ctx.fields.get("reference").cloned().unwrap_or_default(),
+                reference_list: ctx.fields_list.get("reference").cloned().unwrap_or_default(),
                 self_: ctx.fields.get("self").cloned().unwrap_or_default(),
                 self__list: ctx.fields_list.get("self").cloned().unwrap_or_default(),
             };
@@ -4732,6 +5223,8 @@ pub fn render_dispatch(
                 mutable_specifier_list: ctx.fields_list.get("mutable_specifier").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
                 name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
+                ref_marker: ctx.fields.get("ref_marker").cloned().unwrap_or_default(),
+                ref_marker_list: ctx.fields_list.get("ref_marker").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
                 r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
@@ -4834,6 +5327,72 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "token_tree_brace" => {
+            let t = TokenTreeBraceTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "token_tree_bracket" => {
+            let t = TokenTreeBracketTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "token_tree_paren" => {
+            let t = TokenTreeParenTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "token_tree_pattern_brace" => {
+            let t = TokenTreePatternBraceTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "token_tree_pattern_bracket" => {
+            let t = TokenTreePatternBracketTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "token_tree_pattern_paren" => {
+            let t = TokenTreePatternParenTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
         "token_tree_pattern" => {
             let t = TokenTreePatternTemplate {
                 children: ctx.children_list.clone(),
@@ -4883,8 +5442,8 @@ pub fn render_dispatch(
                 name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
                 type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
-                r#unsafe: ctx.fields.get("unsafe").cloned().unwrap_or_default(),
-                r#unsafe_list: ctx.fields_list.get("unsafe").cloned().unwrap_or_default(),
+                unsafe_marker: ctx.fields.get("unsafe_marker").cloned().unwrap_or_default(),
+                unsafe_marker_list: ctx.fields_list.get("unsafe_marker").cloned().unwrap_or_default(),
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
                 visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
                 where_clause: ctx.fields.get("where_clause").cloned().unwrap_or_default(),
@@ -5191,6 +5750,17 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "visibility_modifier_crate" => {
+            let t = VisibilityModifierCrateTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
         "visibility_modifier" => {
             let t = VisibilityModifierTemplate {
                 children: ctx.children_list.clone(),
@@ -5356,9 +5926,9 @@ impl ::sittir_core::prepare::GrammarMeta for RustGrammarMeta {
             ("range_pattern", "range_pattern__form_left_bare") => Some("left_bare"),
             ("range_pattern", "range_pattern__form_left_with_right") => Some("left_with_right"),
             ("range_pattern", "range_pattern__form_prefix") => Some("prefix"),
-            ("range_pattern", "range_pattern_left_bare") => Some("prefix"),
-            ("range_pattern", "range_pattern_left_with_right") => Some("prefix"),
-            ("range_pattern", "range_pattern_prefix") => Some("prefix"),
+            ("range_pattern", "range_pattern_left_bare") => Some("left_with_right"),
+            ("range_pattern", "range_pattern_left_with_right") => Some("left_with_right"),
+            ("range_pattern", "range_pattern_prefix") => Some("left_with_right"),
             ("struct_item", "struct_item__form_brace") => Some("brace"),
             ("struct_item", "struct_item__form_tuple") => Some("tuple"),
             ("struct_item", "struct_item__form_unit") => Some("unit"),
@@ -5378,15 +5948,17 @@ impl ::sittir_core::prepare::GrammarMeta for RustGrammarMeta {
             ("token_tree_pattern", "token_tree_pattern_bracket") => Some("paren"),
             ("token_tree_pattern", "token_tree_pattern_paren") => Some("paren"),
             ("visibility_modifier", "visibility_modifier__form_crate") => Some("crate"),
+            ("visibility_modifier", "visibility_modifier__form_in_path") => Some("in_path"),
             ("visibility_modifier", "visibility_modifier__form_pub") => Some("pub"),
-            ("visibility_modifier", "visibility_modifier_crate") => Some("crate"),
-            ("visibility_modifier", "visibility_modifier_pub") => Some("crate"),
+            ("visibility_modifier", "visibility_modifier_crate") => Some("in_path"),
+            ("visibility_modifier", "visibility_modifier_in_path") => Some("in_path"),
+            ("visibility_modifier", "visibility_modifier_pub") => Some("in_path"),
             _ => None,
         }
     }
     fn is_list_container(&self, kind: &str) -> bool {
         matches!(kind,
-            "_delim_token_tree_brace" | "_delim_token_tree_bracket" | "_delim_token_tree_paren" | "_expression_statement_block_ending" | "_expression_statement_with_semi" | "_field_identifier" | "_function_type_fn_form" | "_let_chain" | "_macro_definition_brace" | "_macro_definition_bracket" | "_macro_definition_paren" | "_pointer_type_mut" | "_reference_expression_raw_mut" | "_reserved_identifier" | "_string_content" | "_token_tree_brace" | "_token_tree_bracket" | "_token_tree_paren" | "_token_tree_pattern_brace" | "_token_tree_pattern_bracket" | "_token_tree_pattern_paren" | "_type_identifier" | "_visibility_modifier_crate" | "arguments" | "await_expression" | "base_field_initializer" | "bracketed_type" | "closure_parameters" | "comment" | "declaration_list" | "else_clause" | "enum_variant_list" | "field_declaration_list" | "field_initializer_list" | "for_lifetimes" | "match_block" | "parameters" | "parenthesized_expression" | "ref_pattern" | "removed_trait_bound" | "return_expression" | "slice_pattern" | "string_literal" | "token_repetition" | "token_repetition_pattern" | "trait_bounds" | "tuple_pattern" | "tuple_type" | "type_arguments" | "type_parameters" | "use_bounds" | "use_list" | "where_clause" | "yield_expression"
+            "_delim_token_tree_brace" | "_delim_token_tree_bracket" | "_delim_token_tree_paren" | "_expression_statement_block_ending" | "_expression_statement_with_semi" | "_field_identifier" | "_function_type_fn_form" | "_let_chain" | "_macro_definition_brace" | "_macro_definition_bracket" | "_macro_definition_paren" | "_pointer_type_mut" | "_reference_expression_raw_mut" | "_reserved_identifier" | "_shorthand_field_identifier" | "_string_content" | "_token_tree_brace" | "_token_tree_bracket" | "_token_tree_paren" | "_token_tree_pattern_brace" | "_token_tree_pattern_bracket" | "_token_tree_pattern_paren" | "_type_identifier" | "_visibility_modifier_crate" | "arguments" | "await_expression" | "base_field_initializer" | "bracketed_type" | "closure_parameters" | "comment" | "declaration_list" | "delim_token_tree_brace" | "delim_token_tree_bracket" | "delim_token_tree_paren" | "else_clause" | "enum_variant_list" | "expression_statement_block_ending" | "expression_statement_with_semi" | "field_declaration_list" | "field_initializer_list" | "for_lifetimes" | "macro_definition_brace" | "macro_definition_bracket" | "macro_definition_paren" | "match_block" | "parameters" | "parenthesized_expression" | "pointer_type_mut" | "ref_pattern" | "removed_trait_bound" | "return_expression" | "slice_pattern" | "string_literal" | "token_repetition" | "token_repetition_pattern" | "token_tree_brace" | "token_tree_bracket" | "token_tree_paren" | "token_tree_pattern_brace" | "token_tree_pattern_bracket" | "token_tree_pattern_paren" | "trait_bounds" | "tuple_pattern" | "tuple_type" | "type_arguments" | "type_parameters" | "use_bounds" | "use_list" | "visibility_modifier_crate" | "where_clause" | "yield_expression"
         )
     }
 }

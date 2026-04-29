@@ -1,0 +1,181 @@
+{
+	"backend": "js",
+	"commit": "ee4e753",
+	"grammars": {
+		"python": {
+			"parityFixtures": {
+				"failingByKind": {},
+				"formatDeferredByKind": {},
+				"pass": 568,
+				"total": 568
+			},
+			"validators": {
+				"coverage": {
+					"failingKinds": ["comparison_operator", "dict_pattern", "format_expression"],
+					"formatDeferredKinds": [],
+					"pass": 106,
+					"total": 109
+				},
+				"factoryRoundtrip": {
+					"astMatchPass": 172,
+					"failingKinds": [
+						"as_pattern",
+						"boolean_operator",
+						"comparison_operator",
+						"list_splat",
+						"set",
+						"tuple",
+						"tuple_pattern",
+						"type"
+					],
+					"formatDeferredKinds": [],
+					"pass": 179,
+					"total": 905
+				},
+				"from": {
+					"failingKinds": ["expression_statement", "list_splat"],
+					"formatDeferredKinds": [],
+					"pass": 113,
+					"total": 117
+				},
+				"roundtrip": {
+					"astMatchPass": 104,
+					"failingKinds": [
+						"as_pattern",
+						"comparison_operator",
+						"list_splat",
+						"tuple",
+						"tuple_pattern"
+					],
+					"formatDeferredKinds": [],
+					"pass": 107,
+					"total": 115
+				}
+			}
+		},
+		"rust": {
+			"parityFixtures": {
+				"failingByKind": {},
+				"formatDeferredByKind": {},
+				"pass": 1235,
+				"total": 1235
+			},
+			"validators": {
+				"coverage": {
+					"failingKinds": ["generic_type", "match_arm", "ordered_field_declaration_list"],
+					"formatDeferredKinds": [],
+					"pass": 177,
+					"total": 180
+				},
+				"factoryRoundtrip": {
+					"astMatchPass": 474,
+					"failingKinds": [
+						"array_expression",
+						"closure_expression",
+						"delim_token_tree",
+						"generic_type_with_turbofish",
+						"impl_item",
+						"macro_definition",
+						"match_arm",
+						"mod_item",
+						"or_pattern",
+						"pointer_type",
+						"range_pattern",
+						"struct_item",
+						"token_tree",
+						"tuple_expression"
+					],
+					"formatDeferredKinds": [],
+					"pass": 490,
+					"total": 1216
+				},
+				"from": {
+					"failingKinds": ["attribute"],
+					"formatDeferredKinds": [],
+					"pass": 149,
+					"total": 167
+				},
+				"roundtrip": {
+					"astMatchPass": 121,
+					"failingKinds": ["raw_string_literal"],
+					"formatDeferredKinds": [],
+					"pass": 121,
+					"total": 136
+				}
+			}
+		},
+		"typescript": {
+			"parityFixtures": {
+				"failingByKind": {},
+				"formatDeferredByKind": {},
+				"pass": 1130,
+				"total": 1130
+			},
+			"validators": {
+				"coverage": {
+					"failingKinds": [
+						"call_expression",
+						"instantiation_expression",
+						"interface_body",
+						"optional_parameter",
+						"required_parameter"
+					],
+					"formatDeferredKinds": [],
+					"pass": 177,
+					"total": 182
+				},
+				"factoryRoundtrip": {
+					"astMatchPass": 443,
+					"failingKinds": [
+						"ambient_declaration",
+						"array",
+						"arrow_function",
+						"assignment_expression",
+						"call_expression",
+						"export_statement",
+						"function_declaration",
+						"import_statement",
+						"instantiation_expression",
+						"member_expression",
+						"module",
+						"object_type",
+						"parenthesized_expression",
+						"string"
+					],
+					"formatDeferredKinds": [],
+					"pass": 452,
+					"total": 1113
+				},
+				"from": {
+					"failingKinds": [],
+					"formatDeferredKinds": [],
+					"pass": 138,
+					"total": 148
+				},
+				"roundtrip": {
+					"astMatchPass": 90,
+					"failingKinds": [
+						"_interface_body",
+						"ambient_declaration",
+						"array",
+						"assignment_expression",
+						"call_expression",
+						"import_statement",
+						"instantiation_expression",
+						"member_expression",
+						"object_type",
+						"parenthesized_expression"
+					],
+					"formatDeferredKinds": [],
+					"pass": 95,
+					"total": 112
+				}
+			}
+		}
+	},
+	"totals": {
+		"fail": 2196,
+		"pass": 5237,
+		"total": 7433
+	}
+}

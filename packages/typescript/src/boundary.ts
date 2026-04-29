@@ -8,21 +8,29 @@
  *
  * Native path: lazily constructs a module-scoped `SittirEngine` from
  * the loaded `@sittir/typescript-native` module carried on the backend
- * status. Falls back to the TS engine on any runtime error.
+ * status. Native runtime failures now surface with grammar-specific
+ * context instead of silently falling back.
  *
  * TS path: reuses the package-level renderer (bound to
  * `packages/typescript/templates/`) and `@sittir/core` primitives
  * (`readNode`, `bindRange`).
  */
 
-import { createRenderer, readNode as coreReadNode } from '@sittir/core';
+import {
+	assertNativeNodeData,
+	createRenderer,
+	readNode as coreReadNode,
+	recordFfi,
+	metricsEnabled
+} from '@sittir/core';
 import type { TreeHandle } from '@sittir/core';
-import type { AnyNodeData, ByteRange, Edit } from '@sittir/types';
+import type { AnyNodeData, ByteRange, Edit, NodeId } from '@sittir/types';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getActiveBackend, type NativeEngine } from './backend.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+const GRAMMAR = 'typescript';
 
 /**
  * Package-level Nunjucks renderer. Lazily built on first render call
@@ -37,6 +45,14 @@ function getTsRenderer(): ReturnType<typeof createRenderer> {
 	return tsRenderer;
 }
 
+function formatNativeError(operation: string, error: unknown): Error {
+	const message = error instanceof Error ? error.message : String(error);
+	return new Error(
+		`@sittir/${GRAMMAR} native ${operation} failed: ${message}`,
+		{ cause: error }
+	);
+}
+
 /**
  * Module-scoped native engine. Constructed from the loaded native
  * module on first use; kept for the process lifetime. A single engine
@@ -46,15 +62,12 @@ function getTsRenderer(): ReturnType<typeof createRenderer> {
 let nativeEngine: NativeEngine | null = null;
 function getNativeEngine(): NativeEngine | null {
 	const status = getActiveBackend();
-	if (status.name !== 'native' || !status.native) return null;
+	if (status.name !== 'native') return null;
 	if (nativeEngine === null) {
 		try {
 			nativeEngine = new status.native.SittirEngine();
-		} catch {
-			// Construction failure is rare (set_language ABI mismatch, mostly);
-			// fall back silently to TS — the debug log line at selection
-			// already surfaced the issue if the consumer cared.
-			nativeEngine = null;
+		} catch (error) {
+			throw formatNativeError('engine initialization', error);
 		}
 	}
 	return nativeEngine;
@@ -69,13 +82,21 @@ function getNativeEngine(): NativeEngine | null {
 export function render(node: AnyNodeData): string {
 	const engine = getNativeEngine();
 	if (engine !== null) {
-		try {
-			return engine.render(JSON.stringify(node));
-		} catch {
-			// Runtime render failures on native are rare (template defects
-			// fail `cargo build` per FR-008). If one slips through, fall
-			// back to TS for this call — the next call retries native.
+		assertNativeNodeData(node);
+		const json = JSON.stringify(node);
+		if (metricsEnabled) {
+			const t0 = performance.now();
+			const result = engine.render(json);
+			recordFfi(
+				GRAMMAR,
+				node.$type,
+				json.length,
+				performance.now() - t0,
+				result.length
+			);
+			return result;
 		}
+		return engine.render(json);
 	}
 	return getTsRenderer().render(node);
 }
@@ -88,21 +109,33 @@ export function render(node: AnyNodeData): string {
  * reports — keeping the factory-method `node.toEdit(...)` consistent
  * with `node.render()`.
  */
-export function toEdit(node: AnyNodeData, startOrRange: number | ByteRange, end?: number): Edit {
+export function toEdit(
+	node: AnyNodeData,
+	startOrRange: number | ByteRange,
+	end?: number
+): Edit {
 	const insertedText = render(node);
 	if (typeof startOrRange === 'number') {
 		if (typeof end !== 'number') {
 			throw new Error('endPos is required when startPos is a number');
 		}
 		if (startOrRange < 0 || end < 0) {
-			throw new Error(`Edit positions must be non-negative (got start=${startOrRange}, end=${end})`);
+			throw new Error(
+				`Edit positions must be non-negative (got start=${startOrRange}, end=${end})`
+			);
 		}
 		if (startOrRange > end) {
-			throw new Error(`Edit startPos (${startOrRange}) must not exceed endPos (${end})`);
+			throw new Error(
+				`Edit startPos (${startOrRange}) must not exceed endPos (${end})`
+			);
 		}
 		return { startPos: startOrRange, endPos: end, insertedText };
 	}
-	return { startPos: startOrRange.start.index, endPos: startOrRange.end.index, insertedText };
+	return {
+		startPos: startOrRange.start.index,
+		endPos: startOrRange.end.index,
+		insertedText
+	};
 }
 
 /**
@@ -117,9 +150,12 @@ export function applyEdits(source: string, edits: readonly Edit[]): string {
 	const engine = getNativeEngine();
 	if (engine !== null) {
 		try {
-			return engine.applyEdits(source, edits.map((e) => ({ ...e })));
-		} catch {
-			// Fall through to TS splice on any native failure.
+			return engine.applyEdits(
+				source,
+				edits.map((e) => ({ ...e }))
+			);
+		} catch (error) {
+			throw formatNativeError('applyEdits', error);
 		}
 	}
 	return applyEditsTs(source, edits);
@@ -131,10 +167,14 @@ function applyEditsTs(source: string, edits: readonly Edit[]): string {
 	let out = source;
 	for (const e of sorted) {
 		if (e.startPos > e.endPos) {
-			throw new Error(`invalid edit range: startPos=${e.startPos} > endPos=${e.endPos}`);
+			throw new Error(
+				`invalid edit range: startPos=${e.startPos} > endPos=${e.endPos}`
+			);
 		}
 		if (e.endPos > out.length) {
-			throw new Error(`edit endPos=${e.endPos} exceeds source length=${out.length}`);
+			throw new Error(
+				`edit endPos=${e.endPos} exceeds source length=${out.length}`
+			);
 		}
 		out = out.slice(0, e.startPos) + e.insertedText + out.slice(e.endPos);
 	}
@@ -153,7 +193,7 @@ function applyEditsTs(source: string, edits: readonly Edit[]): string {
  * through the TS path (correct: that's the only path that can read
  * a tree the engine doesn't own).
  */
-export function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {
+export function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {
 	// A TreeHandle from ast-grep / tree-sitter isn't directly addressable
 	// from the native engine's internal state — there's no cross-boundary
 	// identity. So native dispatch for this entry point is only meaningful
@@ -179,10 +219,10 @@ export function findMatches(_source: string, _pattern: string): never {
 	const engine = getNativeEngine();
 	if (engine !== null) {
 		throw new Error(
-			'findMatches not yet routable through native backend — ast-grep-core integration pending (T033 deferral)',
+			'findMatches not yet routable through native backend — ast-grep-core integration pending (T033 deferral)'
 		);
 	}
 	throw new Error(
-		'findMatches not yet implemented in the TS backend of @sittir/typescript — use ast-grep directly and feed TreeHandle to readNode()',
+		'findMatches not yet implemented in the TS backend of @sittir/typescript — use ast-grep directly and feed TreeHandle to readNode()'
 	);
 }

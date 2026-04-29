@@ -62,14 +62,14 @@ by the round-trip corpus per-node.
 
 ### Filters (standardized on Nunjucks names)
 
-| Filter | Nunjucks | askama | Purpose |
-|--------|----------|--------|---------|
-| `join(sep)` | native | native | Join an array with a separator |
-| `length` | native | native | Collection size |
-| `default(v)` | native | native | Fallback when value is falsy |
-| `trim` | native | native | Strip leading/trailing whitespace |
-| `upper` | native | alias to `uppercase` | Uppercase |
-| `lower` | native | alias to `lowercase` | Lowercase |
+| Filter       | Nunjucks | askama               | Purpose                           |
+| ------------ | -------- | -------------------- | --------------------------------- |
+| `join(sep)`  | native   | native               | Join an array with a separator    |
+| `length`     | native   | native               | Collection size                   |
+| `default(v)` | native   | native               | Fallback when value is falsy      |
+| `trim`       | native   | native               | Strip leading/trailing whitespace |
+| `upper`      | native   | alias to `uppercase` | Uppercase                         |
+| `lower`      | native   | alias to `lowercase` | Lowercase                         |
 
 **Alias registration**: The askama side of Phase B registers filter
 aliases in `crates/sittir-render/src/filters.rs`. Templates always use
@@ -78,17 +78,17 @@ build time.
 
 ## Forbidden constructs
 
-| Construct | Why forbidden |
-|-----------|---------------|
-| `{% extends %}`, `{% block %}` | Not needed; adds complexity; per-rule file model is flatter. |
-| `{% macro %}` | Semantics differ between Nunjucks and askama. |
-| `{% match %}` | askama-only — breaks portability. |
-| `{% set %}` | Cross-scope variable mutation complicates rendering contract. |
-| `{% include %}` | Breaks one-file-per-rule invariant (forces ad-hoc shared fragments). |
-| Raw Rust / JavaScript expressions | Non-portable. |
+| Construct                                  | Why forbidden                                                                 |
+| ------------------------------------------ | ----------------------------------------------------------------------------- |
+| `{% extends %}`, `{% block %}`             | Not needed; adds complexity; per-rule file model is flatter.                  |
+| `{% macro %}`                              | Semantics differ between Nunjucks and askama.                                 |
+| `{% match %}`                              | askama-only — breaks portability.                                             |
+| `{% set %}`                                | Cross-scope variable mutation complicates rendering contract.                 |
+| `{% include %}`                            | Breaks one-file-per-rule invariant (forces ad-hoc shared fragments).          |
+| Raw Rust / JavaScript expressions          | Non-portable.                                                                 |
 | Custom filters beyond the standardized set | Drift risk; every new filter must be added to both Nunjucks and askama sides. |
-| Method calls (`x.method()`) | Nunjucks and askama differ. |
-| Property access on non-context objects | Only `TemplateContext` fields are addressable. |
+| Method calls (`x.method()`)                | Nunjucks and askama differ.                                                   |
+| Property access on non-context objects     | Only `TemplateContext` fields are addressable.                                |
 
 ## Enforcement
 

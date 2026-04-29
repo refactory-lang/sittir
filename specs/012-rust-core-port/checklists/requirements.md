@@ -7,9 +7,9 @@
 
 ## Content Quality
 
-- [x] No implementation details (languages, frameworks, APIs)  *(see notes)*
+- [x] No implementation details (languages, frameworks, APIs) _(see notes)_
 - [x] Focused on user value and business needs
-- [x] Written for non-technical stakeholders  *(see notes)*
+- [x] Written for non-technical stakeholders _(see notes)_
 - [x] All mandatory sections completed
 
 ## Requirement Completeness
@@ -17,10 +17,10 @@
 - [x] No [NEEDS CLARIFICATION] markers remain
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
-- [x] Success criteria are technology-agnostic (no implementation details)  *(see notes)*
+- [x] Success criteria are technology-agnostic (no implementation details) _(see notes)_
 - [x] All acceptance scenarios are defined
 - [x] Edge cases are identified
-- [x] Scope is clearly bounded  *(MVP boundary now explicit via FR-018 and Deferred/Future Work section)*
+- [x] Scope is clearly bounded _(MVP boundary now explicit via FR-018 and Deferred/Future Work section)_
 - [x] Dependencies and assumptions identified
 
 ## Feature Readiness
@@ -28,7 +28,7 @@
 - [x] All functional requirements have clear acceptance criteria
 - [x] User scenarios cover primary flows
 - [x] Feature meets measurable outcomes defined in Success Criteria
-- [x] No implementation details leak into specification  *(see notes)*
+- [x] No implementation details leak into specification _(see notes)_
 
 ## Clarification decisions absorbed (from `/speckit-superb-clarify`)
 
@@ -39,7 +39,7 @@
 
 ## Notes
 
-**On implementation-detail leak**: This feature is an engine port; the named artifacts (`sittir-core`, `.jinja` templates, napi-rs, tree-sitter, NodeData, TemplateContext) are intrinsic to *what* the feature is, not *how* it happens to be built. The spec names them as contract surfaces (what consumers see, what must round-trip parity-correctly, what must not appear as bespoke layers). Accepted as necessary specificity for a port spec; the subset that's genuinely implementation-leaky (specific crate names like askama) has been relaxed to "a compile-time Jinja template engine" where possible.
+**On implementation-detail leak**: This feature is an engine port; the named artifacts (`sittir-core`, `.jinja` templates, napi-rs, tree-sitter, NodeData, TemplateContext) are intrinsic to _what_ the feature is, not _how_ it happens to be built. The spec names them as contract surfaces (what consumers see, what must round-trip parity-correctly, what must not appear as bespoke layers). Accepted as necessary specificity for a port spec; the subset that's genuinely implementation-leaky (specific crate names like askama) has been relaxed to "a compile-time Jinja template engine" where possible.
 
 **On non-technical stakeholder readability**: User stories are framed around roles (codemod author, Rust consumer, browser/edge developer) and concrete outcomes. US2 and US3 retain their role framing but now carry explicit "Status: deferred" markers so the MVP boundary reads unambiguously.
 

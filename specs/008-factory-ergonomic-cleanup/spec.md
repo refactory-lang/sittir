@@ -3,9 +3,9 @@
 **Feature Branch**: `008-factory-ergonomic-cleanup`
 **Created**: 2026-04-17
 **Status**: Draft
-**Input**: User description: "Factory & Ergonomic Surface cleanup: NamespaceMap type restructure, is/isTree/isNode/assert type guards, codegen-time fixes (remove _attach, inline _union_ aliases, import _NodeData, remove double casts), from.ts cleanup (concrete types, namespace imports), ir.ts namespace imports and grouped sub-namespaces, dead code removal"
+**Input**: User description: "Factory & Ergonomic Surface cleanup: NamespaceMap type restructure, is/isTree/isNode/assert type guards, codegen-time fixes (remove _attach, inline \_union_ aliases, import \_NodeData, remove double casts), from.ts cleanup (concrete types, namespace imports), ir.ts namespace imports and grouped sub-namespaces, dead code removal"
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Unified type-family access via NamespaceMap (Priority: P1)
 
@@ -60,16 +60,19 @@ After this change, `.from()` reclaims its actual semantic: **resolve a loose bag
 
 ```ts
 export function functionItemFrom(
-    input: T.FunctionItem | T.FunctionItem.Loose,
+	input: T.FunctionItem | T.FunctionItem.Loose
 ): T.FunctionItem.Fluent {
-    if (isNodeData(input)) return input as T.FunctionItem.Fluent;
+	if (isNodeData(input)) return input as T.FunctionItem.Fluent;
 
-    return functionItem({
-        visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
-        name:               _resolveOne<T.Identifier | T.Metavariable>(input.name, _K11, _K0),
-        body:               _resolveOneBranch<T.Block>(input.body, "block"),
-        // ...
-    });
+	return functionItem({
+		visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(
+			input.visibilityModifier,
+			'visibility_modifier'
+		),
+		name: _resolveOne<T.Identifier | T.Metavariable>(input.name, _K11, _K0),
+		body: _resolveOneBranch<T.Block>(input.body, 'block')
+		// ...
+	});
 }
 ```
 
@@ -163,14 +166,15 @@ This story is behaviour-preserving — no consumer-visible change. The value is:
 Adding `$`-prefixed NodeData discriminants eliminates the entire category of field-name collisions (Python's `type_alias_statement` has a field literally named `type` which shadows the NodeData discriminant — the US3 cast workarounds exist solely because of this). A provenance tag `$source: 'ts' | 'sg' | 'factory'` replaces the structural `'render' in input` / `isNodeData` probing with a clean discriminator.
 
 After this change, `AnyNodeData`'s shape becomes:
+
 ```ts
 interface AnyNodeData {
-    readonly $type: string;
-    readonly $source?: 'ts' | 'sg' | 'factory';
-    readonly $fields?: Record<string, NodeFieldValue>;
-    readonly $children?: readonly NodeChildValue[];
-    readonly $text?: string;
-    readonly $named?: boolean;
+	readonly $type: string;
+	readonly $source?: 'ts' | 'sg' | 'factory';
+	readonly $fields?: Record<string, NodeFieldValue>;
+	readonly $children?: readonly NodeChildValue[];
+	readonly $text?: string;
+	readonly $named?: boolean;
 }
 ```
 
@@ -204,7 +208,7 @@ Grammar field names can freely collide with `type`, `fields`, `children`, `text`
 - **Bare `readNode()` NodeData passed into `.from()`**: The quick-return returns the input as `T.<Kind>.Fluent`, but a plain `readNode` output lacks the fluent method surface (methods attach at `wrap()` / factory construction). Calling `.render()` on such a return would fail. In practice consumers use the generated `readTreeNode()` entry (which wraps) rather than `readNode()` directly, and calling `.from()` on a raw `readNode` result is not a supported path. Documented in the ir.ts preamble so the asymmetry is explicit.
 - **Fluent mutation of parse-tree TreeNode**: Out of scope for this spec. A TreeNode from the parse tree doesn't flow through `.from()` — it flows through `readNode` → `wrap` or through factory reconstruction. A future spec may add a fluent setter surface for TreeNodes directly; it must not conflict with the `.from()` semantics defined here.
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -286,7 +290,7 @@ Grammar field names can freely collide with `type`, `fields`, `children`, `text`
 - **Grouped IR sub-namespace**: A supertype-scoped object (e.g. `ir.expr`, `ir.decl`) alongside the flat `ir.*` object. Keys are derived from kind names with supertype suffix stripped and reserved-word `_` suffix applied where needed.
 - **`isNodeData` predicate (from `@sittir/core`)**: A single shared runtime guard that returns true when its input has the structural shape of a `NodeData` (a `type` string plus `fields` and/or `children` / `text` as appropriate). Used at the `.from()` entry point to distinguish a resolved node (quick-return identity) from a camelCase loose bag (resolve and construct). Grammar-agnostic.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 
@@ -298,7 +302,7 @@ Grammar field names can freely collide with `type`, `fields`, `children`, `text`
 - **SC-005a**: After User Story 3 lands, two structural patterns return zero matches across every generated `from.ts`:
   - `sg --pattern '$OBJ.fields?.[$KEY]' --lang typescript packages/*/src/from.ts` — the snake-keyed optional-chain index is gone.
   - `sg --pattern '(input as $TYPE).$PROP' --lang typescript packages/*/src/from.ts` — the cast-then-access pattern is gone.
-  The `.fields[...]` code path has been eliminated from `from.ts`.
+    The `.fields[...]` code path has been eliminated from `from.ts`.
 - **SC-005b**: After User Story 3 lands, every generated `.from()` resolver begins with the NodeData quick-return preamble, verified by `sg --pattern 'if (isNodeData(input)) return input as $$$' --lang typescript packages/*/src/from.ts`. The match count equals the number of non-leaf `.from()` resolvers in each grammar (~150 for rust, ~160 for typescript, ~100 for python).
 - **SC-005c**: A NodeData input produced by `ir.functionItem({...})` and fed back into `functionItemFrom(...)` is the same JavaScript object as the return (`===`). The quick-return is identity, not a rebuild.
 - **SC-006**: A consumer can narrow an `AnyNodeData` value to `FunctionItem.Tree` via one guard composition (`is.functionItem(v) && isTree(v)`) with no manual cast. Verifiable by a type-level check in a consumer test.
@@ -320,6 +324,7 @@ Grammar field names can freely collide with `type`, `fields`, `children`, `text`
 **Does NOT belong in core**: per-grammar type guards, kind-parameterized narrowing helpers, anything that depends on `NamespaceMap` or other grammar-specific type projections. These belong in the generated `utils.ts` per grammar (already emitted by `@sittir/codegen/src/emitters/client-utils.ts`).
 
 **`isNodeData` placement**: stays in the generated `utils.ts` per grammar. The existing implementation there already has:
+
 - A kind-parameterized overload that narrows to `RuntimeNodeOf<KindMap[K]>` vs `LooseMap[K]` vs `TreeNodeOf<KindMap[K]>`.
 - A general overload `isNodeData(v: unknown): v is AnyNodeData`.
 

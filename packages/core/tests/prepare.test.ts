@@ -12,7 +12,13 @@ function makeCtx(config: RulesConfig) {
 
 describe('prepare() — ADR-0013 Task 3', () => {
 	it('short-circuits to text on leaf nodes with only $text', () => {
-		const ctx = makeCtx({ language: 'test', extensions: [], expandoChar: null, metadata: {}, rules: {} });
+		const ctx = makeCtx({
+			language: 'test',
+			extensions: [],
+			expandoChar: null,
+			metadata: {},
+			rules: {}
+		});
 		const node: AnyNodeData = { $type: 'identifier', $text: 'main' };
 		const prepared = prepare(node, ctx as any);
 		expect(prepared.text).toBe('main');
@@ -26,12 +32,12 @@ describe('prepare() — ADR-0013 Task 3', () => {
 			extensions: [],
 			expandoChar: null,
 			metadata: {},
-			rules: { greet: '$NAME!' },
+			rules: { greet: '$NAME!' }
 		};
 		const ctx = makeCtx(config);
 		const node: AnyNodeData = {
 			$type: 'greet',
-			$fields: { name: { $type: 'id', $text: 'world' } },
+			$fields: { name: { $type: 'id', $text: 'world' } }
 		};
 		const prepared = prepare(node, ctx as any);
 		expect(prepared.template).toBe('$NAME!');
@@ -54,9 +60,9 @@ describe('prepare() — ADR-0013 Task 3', () => {
 				wrapper: {
 					template: '$ALPHA_CLAUSE[$$$CHILDREN]',
 					alpha_clause: '<$ALPHA>',
-					joinBy: ',',
-				},
-			},
+					joinBy: ','
+				}
+			}
 		};
 		const ctx = makeCtx(config);
 		const node: AnyNodeData = {
@@ -64,14 +70,18 @@ describe('prepare() — ADR-0013 Task 3', () => {
 			$children: [
 				{ $type: 'alpha', $text: 'A', $named: true },
 				{ $type: 'beta', $text: 'B', $named: true },
-				{ $type: 'gamma', $text: 'C', $named: true },
-			],
+				{ $type: 'gamma', $text: 'C', $named: true }
+			]
 		};
 		const prepared = prepare(node, ctx as any);
 		// Both clause + $$$CHILDREN resolve in prepare; alpha is consumed
 		// by the clause and thus not re-emitted in $$$CHILDREN.
-		const clauseSub = prepared.substitutions!.find(s => s.value.startsWith('<'));
-		const childrenSub = prepared.substitutions!.find(s => !s.value.startsWith('<'));
+		const clauseSub = prepared.substitutions!.find((s) =>
+			s.value.startsWith('<')
+		);
+		const childrenSub = prepared.substitutions!.find(
+			(s) => !s.value.startsWith('<')
+		);
 		expect(clauseSub?.value).toBe('<A>');
 		expect(childrenSub?.value).toBe('B,C');
 	});
@@ -84,12 +94,12 @@ describe('prepare() — ADR-0013 Task 3', () => {
 			extensions: [],
 			expandoChar: null,
 			metadata: {},
-			rules: { outer: '[$INNER]' },
+			rules: { outer: '[$INNER]' }
 		};
 		const ctx = makeCtx(config);
 		const node: AnyNodeData = {
 			$type: 'outer',
-			$children: [{ $type: 'leaf', $text: 'x', $named: true }],
+			$children: [{ $type: 'leaf', $text: 'x', $named: true }]
 		};
 		const prepared = prepare(node, ctx as any);
 		expect(prepared.substitutions).toHaveLength(1);

@@ -18,7 +18,7 @@ const emptyConfig: RulesConfig = {
 	extensions: [],
 	expandoChar: null,
 	metadata: {},
-	rules: {},
+	rules: {}
 };
 
 describe('createRendererFromConfig({ templatesDir }) — T025', () => {
@@ -26,10 +26,12 @@ describe('createRendererFromConfig({ templatesDir }) — T025', () => {
 		const tmp = mkdtempSync(join(tmpdir(), 'sittir-nunjucks-render-'));
 		try {
 			writeFileSync(join(tmp, 'greet.jinja'), '{{ name }}!');
-			const { render } = createRendererFromConfig(emptyConfig, { templatesDir: tmp });
+			const { render } = createRendererFromConfig(emptyConfig, {
+				templatesDir: tmp
+			});
 			const node: AnyNodeData = {
 				$type: 'greet',
-				$fields: { name: { $type: 'id', $text: 'world' } },
+				$fields: { name: { $type: 'id', $text: 'world' } }
 			};
 			expect(render(node)).toBe('world!');
 		} finally {
@@ -42,7 +44,9 @@ describe('createRendererFromConfig({ templatesDir }) — T025', () => {
 		try {
 			writeFileSync(join(tmp, 'pair.jinja'), '[{{ first }},{{ second }}]');
 			writeFileSync(join(tmp, 'wrap.jinja'), '({{ inner }})');
-			const { render } = createRendererFromConfig(emptyConfig, { templatesDir: tmp });
+			const { render } = createRendererFromConfig(emptyConfig, {
+				templatesDir: tmp
+			});
 			const node: AnyNodeData = {
 				$type: 'wrap',
 				$fields: {
@@ -50,10 +54,10 @@ describe('createRendererFromConfig({ templatesDir }) — T025', () => {
 						$type: 'pair',
 						$fields: {
 							first: { $type: 'id', $text: 'a' },
-							second: { $type: 'id', $text: 'b' },
-						},
-					},
-				},
+							second: { $type: 'id', $text: 'b' }
+						}
+					}
+				}
 			};
 			expect(render(node)).toBe('([a,b])');
 		} finally {
@@ -66,18 +70,20 @@ describe('createRendererFromConfig({ templatesDir }) — T025', () => {
 		try {
 			writeFileSync(
 				join(tmp, 'poly.jinja'),
-				'{%- if variant == "alpha" -%}A:{{ name }}{%- elif variant == "beta" -%}B:{{ name }}{%- endif -%}',
+				'{%- if variant == "alpha" -%}A:{{ name }}{%- elif variant == "beta" -%}B:{{ name }}{%- endif -%}'
 			);
-			const { render } = createRendererFromConfig(emptyConfig, { templatesDir: tmp });
+			const { render } = createRendererFromConfig(emptyConfig, {
+				templatesDir: tmp
+			});
 			const nodeA: AnyNodeData = {
 				$type: 'poly',
 				$variant: 'alpha',
-				$fields: { name: { $type: 'id', $text: 'x' } },
+				$fields: { name: { $type: 'id', $text: 'x' } }
 			};
 			const nodeB: AnyNodeData = {
 				$type: 'poly',
 				$variant: 'beta',
-				$fields: { name: { $type: 'id', $text: 'y' } },
+				$fields: { name: { $type: 'id', $text: 'y' } }
 			};
 			expect(render(nodeA)).toBe('A:x');
 			expect(render(nodeB)).toBe('B:y');
@@ -94,11 +100,13 @@ describe('Token-shaped-kind fallback — T027a / FR-017', () => {
 			// No .jinja file for `mod_item_external` — fallback should
 			// emit $text verbatim. Mirrors rust's mod_item_external /
 			// never_type / typescript's empty_statement cases.
-			const { render } = createRendererFromConfig(emptyConfig, { templatesDir: tmp });
+			const { render } = createRendererFromConfig(emptyConfig, {
+				templatesDir: tmp
+			});
 			const node: AnyNodeData = {
 				$type: 'mod_item_external',
 				$text: 'mod foo;',
-				$named: true,
+				$named: true
 			};
 			expect(render(node)).toBe('mod foo;');
 		} finally {
@@ -109,10 +117,12 @@ describe('Token-shaped-kind fallback — T027a / FR-017', () => {
 	it('throws when no .jinja file exists AND the node has named fields or children', () => {
 		const tmp = mkdtempSync(join(tmpdir(), 'sittir-nunjucks-render-'));
 		try {
-			const { render } = createRendererFromConfig(emptyConfig, { templatesDir: tmp });
+			const { render } = createRendererFromConfig(emptyConfig, {
+				templatesDir: tmp
+			});
 			const node: AnyNodeData = {
 				$type: 'unknown_rule',
-				$fields: { name: { $type: 'id', $text: 'foo', $named: true } },
+				$fields: { name: { $type: 'id', $text: 'foo', $named: true } }
 			};
 			expect(() => render(node)).toThrow(/unknown_rule/);
 		} finally {
@@ -131,13 +141,15 @@ describe('$TEXT fallback + anon-filter shape — post-011 coverage', () => {
 		try {
 			writeFileSync(join(tmp, 'raw.jinja'), '{{ text }}');
 			writeFileSync(join(tmp, 'id.jinja'), '{{ text }}');
-			const { render } = createRendererFromConfig(emptyConfig, { templatesDir: tmp });
+			const { render } = createRendererFromConfig(emptyConfig, {
+				templatesDir: tmp
+			});
 			const node: AnyNodeData = {
 				$type: 'raw',
 				$fields: {
 					a: { $type: 'id', $text: 'hello' },
-					b: { $type: 'id', $text: 'world' },
-				},
+					b: { $type: 'id', $text: 'world' }
+				}
 			};
 			// Factory-synthesized text concatenates rendered field values
 			// in iteration order.
@@ -160,14 +172,16 @@ describe('$TEXT fallback + anon-filter shape — post-011 coverage', () => {
 		try {
 			writeFileSync(join(tmp, 'raw.jinja'), '{{ text }}');
 			writeFileSync(join(tmp, 'id.jinja'), '{{ text }}');
-			const { render } = createRendererFromConfig(emptyConfig, { templatesDir: tmp });
+			const { render } = createRendererFromConfig(emptyConfig, {
+				templatesDir: tmp
+			});
 			const node: AnyNodeData = {
 				$type: 'raw',
 				$text: 'r"actual"',
 				$fields: {
 					a: { $type: 'id', $text: 'hello' },
-					b: { $type: 'id', $text: 'world' },
-				},
+					b: { $type: 'id', $text: 'world' }
+				}
 			};
 			// $text wins — synthesis (which would give "helloworld")
 			// doesn't fire because the real span is present.
@@ -186,16 +200,18 @@ describe('$TEXT fallback + anon-filter shape — post-011 coverage', () => {
 		try {
 			writeFileSync(join(tmp, 'list.jinja'), '[{{ items | join(",") }}]');
 			writeFileSync(join(tmp, 'id.jinja'), '{{ text }}');
-			const { render } = createRendererFromConfig(emptyConfig, { templatesDir: tmp });
+			const { render } = createRendererFromConfig(emptyConfig, {
+				templatesDir: tmp
+			});
 			const node: AnyNodeData = {
 				$type: 'list',
 				$fields: {
 					items: [
 						{ $type: 'id', $text: 'a', $named: true },
 						{ $type: 'anon', $text: ',', $named: false },
-						{ $type: 'id', $text: 'b', $named: true },
-					],
-				},
+						{ $type: 'id', $text: 'b', $named: true }
+					]
+				}
 			};
 			expect(render(node)).toBe('[a,b]');
 		} finally {
@@ -212,12 +228,14 @@ describe('$TEXT fallback + anon-filter shape — post-011 coverage', () => {
 		try {
 			writeFileSync(join(tmp, 'wrap.jinja'), '{{ modifier }} fn');
 			writeFileSync(join(tmp, 'anon.jinja'), '{{ text }}');
-			const { render } = createRendererFromConfig(emptyConfig, { templatesDir: tmp });
+			const { render } = createRendererFromConfig(emptyConfig, {
+				templatesDir: tmp
+			});
 			const node: AnyNodeData = {
 				$type: 'wrap',
 				$fields: {
-					modifier: { $type: 'anon', $text: 'async', $named: false },
-				},
+					modifier: { $type: 'anon', $text: 'async', $named: false }
+				}
 			};
 			expect(render(node)).toBe('async fn');
 		} finally {
@@ -232,10 +250,12 @@ describe('Error wrapping — T028 / FR-018', () => {
 		try {
 			// Template with a Jinja syntax error
 			writeFileSync(join(tmp, 'broken.jinja'), '{% if %}bogus');
-			const { render } = createRendererFromConfig(emptyConfig, { templatesDir: tmp });
+			const { render } = createRendererFromConfig(emptyConfig, {
+				templatesDir: tmp
+			});
 			const node: AnyNodeData = {
 				$type: 'broken',
-				$fields: {},
+				$fields: {}
 			};
 			expect(() => render(node)).toThrow(/broken.jinja/);
 		} finally {
@@ -252,7 +272,9 @@ describe('Error wrapping — T028 / FR-018', () => {
 		const tmp = mkdtempSync(join(tmpdir(), 'sittir-nunjucks-render-'));
 		try {
 			writeFileSync(join(tmp, 'maybe.jinja'), '[{{ maybe_present }}]');
-			const { render } = createRendererFromConfig(emptyConfig, { templatesDir: tmp });
+			const { render } = createRendererFromConfig(emptyConfig, {
+				templatesDir: tmp
+			});
 			const node: AnyNodeData = { $type: 'maybe', $fields: {} };
 			expect(render(node)).toBe('[]');
 		} finally {
@@ -271,9 +293,11 @@ describe('Error wrapping — T028 / FR-018', () => {
 		try {
 			writeFileSync(
 				join(tmp, 'uses_undef.jinja'),
-				'{{ something | no_such_filter }}',
+				'{{ something | no_such_filter }}'
 			);
-			const { render } = createRendererFromConfig(emptyConfig, { templatesDir: tmp });
+			const { render } = createRendererFromConfig(emptyConfig, {
+				templatesDir: tmp
+			});
 			const node: AnyNodeData = { $type: 'uses_undef', $fields: {} };
 			expect(() => render(node)).toThrow(/uses_undef\.jinja/);
 		} finally {

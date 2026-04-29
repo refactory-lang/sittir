@@ -29,10 +29,11 @@
  *   `joinBy` / `joinByTrailing` / `joinByLeading` metadata.
  */
 
-import type {
-    Rule, ChoiceRule,
-} from './rule.ts'
-import { isSyntheticFieldWrapper, unwrapStructuralPassthroughs } from './node-map.ts'
+import type { Rule, ChoiceRule } from './rule.ts';
+import {
+	isSyntheticFieldWrapper,
+	unwrapStructuralPassthroughs
+} from './node-map.ts';
 
 /**
  * Extract anonymous-string literals flanking the main content of a field
@@ -45,24 +46,31 @@ import { isSyntheticFieldWrapper, unwrapStructuralPassthroughs } from './node-ma
  * Only single anonymous strings at the start/end of a `seq` are lifted;
  * complex flanking content stays inside the field's value at runtime.
  */
-function extractFlankingLiterals(content: Rule): { leading: string; trailing: string } {
-    if (content.type !== 'seq' || content.members.length < 2) {
-        return { leading: '', trailing: '' }
-    }
-    let leading = ''
-    let trailing = ''
-    const first = content.members[0]
-    const last = content.members[content.members.length - 1]
-    // A leading literal is only valid if there's at least one non-literal
-    // member after it; same logic for trailing. We don't lift a literal
-    // out of a single-member seq.
-    if (first?.type === 'string' && content.members.length >= 2) {
-        leading = first.value
-    }
-    if (last?.type === 'string' && content.members.length >= 2 && last !== first) {
-        trailing = last.value
-    }
-    return { leading, trailing }
+function extractFlankingLiterals(content: Rule): {
+	leading: string;
+	trailing: string;
+} {
+	if (content.type !== 'seq' || content.members.length < 2) {
+		return { leading: '', trailing: '' };
+	}
+	let leading = '';
+	let trailing = '';
+	const first = content.members[0];
+	const last = content.members[content.members.length - 1];
+	// A leading literal is only valid if there's at least one non-literal
+	// member after it; same logic for trailing. We don't lift a literal
+	// out of a single-member seq.
+	if (first?.type === 'string' && content.members.length >= 2) {
+		leading = first.value;
+	}
+	if (
+		last?.type === 'string' &&
+		content.members.length >= 2 &&
+		last !== first
+	) {
+		trailing = last.value;
+	}
+	return { leading, trailing };
 }
 
 /**
@@ -75,18 +83,18 @@ function extractFlankingLiterals(content: Rule): { leading: string; trailing: st
  * Returns `null` when the content does not wrap a repeat at all.
  */
 function wrappedRepeatSeparator(content: Rule): string | null {
-    switch (content.type) {
-        case 'repeat':
-        case 'repeat1':
-            return content.separator ?? '\n'
-        case 'optional':
-        case 'group':
-        case 'variant':
-        case 'clause':
-            return wrappedRepeatSeparator(content.content)
-        default:
-            return null
-    }
+	switch (content.type) {
+		case 'repeat':
+		case 'repeat1':
+			return content.separator ?? '\n';
+		case 'optional':
+		case 'group':
+		case 'variant':
+		case 'clause':
+			return wrappedRepeatSeparator(content.content);
+		default:
+			return null;
+	}
 }
 
 /**
@@ -114,44 +122,47 @@ function wrappedRepeatSeparator(content: Rule): string | null {
  * rest.
  */
 function fieldContentIsMultiSibling(content: Rule): boolean {
-    // Unwrap structural passthroughs that don't themselves contribute
-    // sibling positions.
-    const core = unwrapStructuralPassthroughs(content)
-    if (core.type === 'choice') {
-        return core.members.some(m => fieldContentIsMultiSibling(m))
-    }
-    if (core.type !== 'seq') return false
-    // Count NAMED structural members — anything tree-sitter would emit
-    // as a content child. String literals and pattern terminals are
-    // flanking punctuation (`label + ':'`), not independent sibling
-    // values — they belong inside the field as `extractFlankingLiterals`
-    // handles separately. Only count members that produce a
-    // distinct child reference at runtime.
-    let count = 0
-    for (const m of core.members) {
-        let unwrapped: Rule = m
-        while (
-            unwrapped.type === 'optional' || unwrapped.type === 'variant'
-            || unwrapped.type === 'clause' || unwrapped.type === 'group'
-            || unwrapped.type === 'token' || unwrapped.type === 'terminal'
-        ) {
-            unwrapped = (unwrapped as { content: Rule }).content
-        }
-        switch (unwrapped.type) {
-            case 'symbol':
-            case 'supertype':
-            case 'alias':
-            case 'field':
-            case 'repeat':
-            case 'repeat1':
-                count++
-                if (count >= 2) return true
-                break
-            default:
-                break
-        }
-    }
-    return false
+	// Unwrap structural passthroughs that don't themselves contribute
+	// sibling positions.
+	const core = unwrapStructuralPassthroughs(content);
+	if (core.type === 'choice') {
+		return core.members.some((m) => fieldContentIsMultiSibling(m));
+	}
+	if (core.type !== 'seq') return false;
+	// Count NAMED structural members — anything tree-sitter would emit
+	// as a content child. String literals and pattern terminals are
+	// flanking punctuation (`label + ':'`), not independent sibling
+	// values — they belong inside the field as `extractFlankingLiterals`
+	// handles separately. Only count members that produce a
+	// distinct child reference at runtime.
+	let count = 0;
+	for (const m of core.members) {
+		let unwrapped: Rule = m;
+		while (
+			unwrapped.type === 'optional' ||
+			unwrapped.type === 'variant' ||
+			unwrapped.type === 'clause' ||
+			unwrapped.type === 'group' ||
+			unwrapped.type === 'token' ||
+			unwrapped.type === 'terminal'
+		) {
+			unwrapped = (unwrapped as { content: Rule }).content;
+		}
+		switch (unwrapped.type) {
+			case 'symbol':
+			case 'supertype':
+			case 'alias':
+			case 'field':
+			case 'repeat':
+			case 'repeat1':
+				count++;
+				if (count >= 2) return true;
+				break;
+			default:
+				break;
+		}
+	}
+	return false;
 }
 // ---------------------------------------------------------------------------
 // Template walker — shared by AssembledBranch/Container/Group.renderTemplate
@@ -164,36 +175,47 @@ function fieldContentIsMultiSibling(content: Rule): boolean {
 // python's `return_type_clause: -> $RETURN_TYPE`.
 
 interface WalkResult {
-    template: string
-    clauses: Record<string, string>
-    /**
-     * Per-field-name separator captured from `field('x', repeat(y, separator=','))`
-     * patterns. The template emitter merges these into the rule entry as
-     * `joinByField: { x: ',' }` so the renderer can pick the right join
-     * for each `$$$X` slot when a single rule has multiple multi-valued
-     * fields with different separators (e.g. rust's tuple_expression has
-     * `attributes` joined by newline and `rest` joined by comma).
-     */
-    joinByField: Record<string, string>
+	template: string;
+	clauses: Record<string, string>;
+	/**
+	 * Per-field-name separator captured from `field('x', repeat(y, separator=','))`
+	 * patterns. The template emitter merges these into the rule entry as
+	 * `joinByField: { x: ',' }` so the renderer can pick the right join
+	 * for each `$$$X` slot when a single rule has multiple multi-valued
+	 * fields with different separators (e.g. rust's tuple_expression has
+	 * `attributes` joined by newline and `rest` joined by comma).
+	 */
+	joinByField: Record<string, string>;
 }
 
 export function renderRuleTemplate(
-    rule: Rule,
-    inRepeat = false,
-    rules?: Record<string, Rule>,
-    wordMatcher?: RegExp,
+	rule: Rule,
+	inRepeat = false,
+	rules?: Record<string, Rule>,
+	wordMatcher?: RegExp,
+	optionalFields?: ReadonlySet<string>
 ): WalkResult {
-    const clauses: Record<string, string> = {}
-    const joinByField: Record<string, string> = {}
-    // Pre-compute field names that appear in any `repeat` subtree so
-    // the walker can emit `$$$NAME` even for the *first* occurrence of a
-    // repeated field — the commaSep1 pattern `seq(field(X), repeat(seq(',',
-    // field(X))))` has X at non-repeat position first, then at repeat
-    // position, but both should render as the same multi-valued slot.
-    const repeatedFields = new Set<string>()
-    collectRepeatedFields(rule, false, repeatedFields, rules, new Set())
-    const parts = walkRuleForTemplate(rule, new Set(), inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
-    return { template: parts.join(''), clauses, joinByField }
+	const clauses: Record<string, string> = {};
+	const joinByField: Record<string, string> = {};
+	// Pre-compute field names that appear in any `repeat` subtree so
+	// the walker can emit `$$$NAME` even for the *first* occurrence of a
+	// repeated field — the commaSep1 pattern `seq(field(X), repeat(seq(',',
+	// field(X))))` has X at non-repeat position first, then at repeat
+	// position, but both should render as the same multi-valued slot.
+	const repeatedFields = new Set<string>();
+	collectRepeatedFields(rule, false, repeatedFields, rules, new Set());
+	const parts = walkRuleForTemplate(
+		rule,
+		new Set(),
+		inRepeat,
+		clauses,
+		rules,
+		repeatedFields,
+		joinByField,
+		wordMatcher,
+		optionalFields
+	);
+	return { template: parts.join(''), clauses, joinByField };
 }
 
 /**
@@ -206,718 +228,998 @@ export function renderRuleTemplate(
  * follow them too.
  */
 function containsRepeat(
-    rule: Rule,
-    rules: Record<string, Rule> | undefined,
-    visiting: Set<string>,
+	rule: Rule,
+	rules: Record<string, Rule> | undefined,
+	visiting: Set<string>
 ): boolean {
-    switch (rule.type) {
-        case 'repeat':
-        case 'repeat1':
-            return true
-        case 'seq':
-        case 'choice':
-            return rule.members.some(m => containsRepeat(m, rules, visiting))
-        case 'optional':
-        case 'variant':
-        case 'clause':
-        case 'group':
-        case 'token':
-        case 'alias':
-        case 'terminal':
-            return containsRepeat((rule as { content: Rule }).content, rules, visiting)
-        case 'symbol': {
-            const name = (rule as { name: string }).name
-            if (!name.startsWith('_') || !rules || visiting.has(name)) return false
-            const target = rules[name]
-            if (!target) return false
-            visiting.add(name)
-            const r = containsRepeat(target, rules, visiting)
-            visiting.delete(name)
-            return r
-        }
-        case 'polymorph':
-            return rule.forms.some(f => containsRepeat(f.content, rules, visiting))
-        default:
-            return false
-    }
+	switch (rule.type) {
+		case 'repeat':
+		case 'repeat1':
+			return true;
+		case 'seq':
+		case 'choice':
+			return rule.members.some((m) => containsRepeat(m, rules, visiting));
+		case 'optional':
+		case 'variant':
+		case 'clause':
+		case 'group':
+		case 'token':
+		case 'alias':
+		case 'terminal':
+			return containsRepeat(
+				(rule as { content: Rule }).content,
+				rules,
+				visiting
+			);
+		case 'symbol': {
+			const name = (rule as { name: string }).name;
+			if (!name.startsWith('_') || !rules || visiting.has(name)) return false;
+			const target = rules[name];
+			if (!target) return false;
+			visiting.add(name);
+			const r = containsRepeat(target, rules, visiting);
+			visiting.delete(name);
+			return r;
+		}
+		case 'polymorph':
+			return rule.forms.some((f) => containsRepeat(f.content, rules, visiting));
+		default:
+			return false;
+	}
 }
 
 function collectRepeatedFields(
-    rule: Rule,
-    inRepeat: boolean,
-    out: Set<string>,
-    rules: Record<string, Rule> | undefined,
-    visiting: Set<string>,
+	rule: Rule,
+	inRepeat: boolean,
+	out: Set<string>,
+	rules: Record<string, Rule> | undefined,
+	visiting: Set<string>
 ): void {
-    switch (rule.type) {
-        case 'seq':
-        case 'choice':
-            for (const m of rule.members) collectRepeatedFields(m, inRepeat, out, rules, visiting)
-            return
-        case 'repeat':
-        case 'repeat1':
-            collectRepeatedFields(rule.content, true, out, rules, visiting)
-            return
-        case 'optional':
-        case 'variant':
-        case 'clause':
-        case 'group':
-        case 'token':
-        case 'alias':
-        case 'terminal':
-            collectRepeatedFields((rule as { content: Rule }).content, inRepeat, out, rules, visiting)
-            return
-        case 'field':
-            // A field is repeated if it sits inside a repeat (its content
-            // will be emitted multiple times at runtime) OR if its content
-            // is itself a repeat — e.g. rust's `field('elements',
-            // choice(semi, repeat(_expression, sep=',')))`. The latter
-            // shape produces a multi-valued field whose values live under
-            // the same fieldNameForChild across siblings; without the
-            // `$$$` marker the template emits only the first occurrence.
-            if (inRepeat || containsRepeat(rule.content, rules, new Set())) out.add(rule.name)
-            collectRepeatedFields(rule.content, inRepeat, out, rules, visiting)
-            return
-        case 'symbol': {
-            // Follow hidden symbols once — their content will be inlined
-            // during template emission, so any repeated fields inside
-            // must be counted at the caller site as well.
-            const name = (rule as { name: string }).name
-            if (!name.startsWith('_') || !rules || visiting.has(name)) return
-            const target = rules[name]
-            if (!target) return
-            visiting.add(name)
-            collectRepeatedFields(target, inRepeat, out, rules, visiting)
-            visiting.delete(name)
-            return
-        }
-        case 'polymorph':
-            for (const form of rule.forms) {
-                collectRepeatedFields(form.content, inRepeat, out, rules, visiting)
-            }
-            return
-        default:
-            return
-    }
+	switch (rule.type) {
+		case 'seq':
+		case 'choice':
+			for (const m of rule.members)
+				collectRepeatedFields(m, inRepeat, out, rules, visiting);
+			return;
+		case 'repeat':
+		case 'repeat1':
+			collectRepeatedFields(rule.content, true, out, rules, visiting);
+			return;
+		case 'optional':
+		case 'variant':
+		case 'clause':
+		case 'group':
+		case 'token':
+		case 'alias':
+		case 'terminal':
+			collectRepeatedFields(
+				(rule as { content: Rule }).content,
+				inRepeat,
+				out,
+				rules,
+				visiting
+			);
+			return;
+		case 'field':
+			// A field is repeated if it sits inside a repeat (its content
+			// will be emitted multiple times at runtime) OR if its content
+			// is itself a repeat — e.g. rust's `field('elements',
+			// choice(semi, repeat(_expression, sep=',')))`. The latter
+			// shape produces a multi-valued field whose values live under
+			// the same fieldNameForChild across siblings; without the
+			// `$$$` marker the template emits only the first occurrence.
+			if (inRepeat || containsRepeat(rule.content, rules, new Set()))
+				out.add(rule.name);
+			collectRepeatedFields(rule.content, inRepeat, out, rules, visiting);
+			return;
+		case 'symbol': {
+			// Follow hidden symbols once — their content will be inlined
+			// during template emission, so any repeated fields inside
+			// must be counted at the caller site as well.
+			const name = (rule as { name: string }).name;
+			if (!name.startsWith('_') || !rules || visiting.has(name)) return;
+			const target = rules[name];
+			if (!target) return;
+			visiting.add(name);
+			collectRepeatedFields(target, inRepeat, out, rules, visiting);
+			visiting.delete(name);
+			return;
+		}
+		case 'polymorph':
+			for (const form of rule.forms) {
+				collectRepeatedFields(form.content, inRepeat, out, rules, visiting);
+			}
+			return;
+		default:
+			return;
+	}
 }
 
 function walkRuleForTemplate(
-    rule: Rule,
-    seen: Set<string>,
-    inRepeat: boolean,
-    clauses: Record<string, string>,
-    rules?: Record<string, Rule>,
-    repeatedFields?: ReadonlySet<string>,
-    joinByField?: Record<string, string>,
-    wordMatcher?: RegExp,
+	rule: Rule,
+	seen: Set<string>,
+	inRepeat: boolean,
+	_clauses: Record<string, string>,
+	rules?: Record<string, Rule>,
+	repeatedFields?: ReadonlySet<string>,
+	joinByField?: Record<string, string>,
+	wordMatcher?: RegExp,
+	_optionalFields?: ReadonlySet<string>
 ): string[] {
-    switch (rule.type) {
-        case 'seq': {
-            // Sibling-repeated-field detection. When `inferFields` has
-            // wrapped two (or more) symbol references in the same seq
-            // with the SAME field name (rust or_pattern: two _pattern
-            // refs both tagged `field('pattern', ...)`), `seen.add`
-            // would dedup the second slot and drop it. Instead, detect
-            // the duplication, augment `repeatedFields` so the field
-            // emits as `$$$NAME`, and capture the literal between the
-            // first and second occurrence as the joinBy separator.
-            const unwrapField = (r: Rule): string | null => {
-                if (r.type === 'field') return r.name
-                if (r.type === 'optional' || r.type === 'variant' || r.type === 'clause' || r.type === 'group') return unwrapField(r.content)
-                return null
-            }
-            const unwrapChildTarget = (r: Rule): string | null => {
-                if (r.type === 'symbol') return r.name
-                if (r.type === 'supertype') return r.name
-                if (r.type === 'optional' || r.type === 'variant' || r.type === 'clause' || r.type === 'group') return unwrapChildTarget(r.content)
-                return null
-            }
-            // Recognize the "element + separator" sub-patterns used by
-            // rust-style trailing-comma lists:
-            //   seq(field('X'), SEP)                    — one element w/ trailing sep
-            //   repeat(seq(field('X'), SEP))            — zero-or-more same
-            //   repeat1(seq(field('X'), SEP))           — one-or-more same
-            // Returns the field name and the literal separator string when
-            // the member matches. The SEP string gets hoisted as `joinByField[X]`
-            // via the existing sibling-multi logic, and the inner literal is
-            // suppressed from the template so render emits via joinByTrailing
-            // without duplication.
-            const elementWithSep = (r: Rule): { name: string; sep: string } | null => {
-                let inner = r
-                if (inner.type === 'repeat' || inner.type === 'repeat1') inner = inner.content
-                if (inner.type !== 'seq' || inner.members.length !== 2) return null
-                const fname = unwrapField(inner.members[0]!)
-                const sepMember = inner.members[1]!
-                if (!fname || sepMember.type !== 'string') return null
-                return { name: fname, sep: sepMember.value }
-            }
-            const fieldCounts = new Map<string, number>()
-            const fieldSeps = new Map<string, string>()
-            const childTargetCounts = new Map<string, number>()
-            for (const m of rule.members) {
-                const fn = unwrapField(m)
-                if (fn) {
-                    fieldCounts.set(fn, (fieldCounts.get(fn) ?? 0) + 1)
-                    continue
-                }
-                const elemSep = elementWithSep(m)
-                if (elemSep) {
-                    fieldCounts.set(elemSep.name, (fieldCounts.get(elemSep.name) ?? 0) + 1)
-                    if (!fieldSeps.has(elemSep.name)) fieldSeps.set(elemSep.name, elemSep.sep)
-                    continue
-                }
-                const tgt = unwrapChildTarget(m)
-                if (tgt) childTargetCounts.set(tgt, (childTargetCounts.get(tgt) ?? 0) + 1)
-            }
-            // Sibling-duplicate symbol references with the SAME target
-            // (e.g. rust or_pattern: two `_pattern` refs separated by
-            // `|`) share the single `children` slot. Capture the literal
-            // between them as the children-slot joinBy so the renderer
-            // uses it instead of emitting a trailing separator.
-            const hasChildDup = [...childTargetCounts.values()].some(c => c > 1)
-            if (hasChildDup && joinByField && !('children' in joinByField)) {
-                let seenFirst = false
-                for (const m of rule.members) {
-                    const tgt = unwrapChildTarget(m)
-                    if (tgt && (childTargetCounts.get(tgt) ?? 0) > 1) {
-                        if (!seenFirst) { seenFirst = true; continue }
-                        break
-                    }
-                    if (seenFirst && m.type === 'string') { joinByField['children'] = m.value; break }
-                }
-            }
-            let augmentedRepeatedFields = repeatedFields
-            for (const [fname, cnt] of fieldCounts) {
-                if (cnt <= 1) continue
-                if (!augmentedRepeatedFields) augmentedRepeatedFields = new Set<string>()
-                const set = augmentedRepeatedFields as Set<string>
-                if (!set.has(fname)) set.add(fname)
-                if (joinByField && !(fname in joinByField)) {
-                    // Prefer the separator captured from an
-                    // `elementWithSep` sub-pattern (e.g. the `,` inside
-                    // `seq(field('X'), ',')`). Falls back to finding the
-                    // first non-field string between occurrences.
-                    const capturedSep = fieldSeps.get(fname)
-                    if (capturedSep != null) {
-                        joinByField[fname] = capturedSep
-                    } else {
-                        let seenFirst = false
-                        for (const m of rule.members) {
-                            const mField = unwrapField(m)
-                            const isThisField = mField === fname
-                            if (isThisField && !seenFirst) { seenFirst = true; continue }
-                            if (seenFirst && m.type === 'string') { joinByField[fname] = m.value; break }
-                            if (isThisField && seenFirst) break
-                        }
-                    }
-                }
-            }
-            // Skip separator strings that match a sibling-multi field's
-            // captured joinBy — those belong INSIDE the `$$$NAME` slot
-            // rendering, not as standalone template text.
-            const skipSeps = new Set<string>()
-            if (joinByField) {
-                for (const [fname, cnt] of fieldCounts) {
-                    if (cnt > 1 && joinByField[fname]) skipSeps.add(joinByField[fname])
-                }
-                if (hasChildDup && joinByField['children']) skipSeps.add(joinByField['children'])
-            }
-            // For members matching the `seq(field('X'), SEP)` sub-pattern
-            // where X was counted as sibling-multi above, substitute the
-            // sub-seq with just the field. The SEP is now captured as
-            // joinByField[X] so render emits it via $$$X's join-logic;
-            // walking the full sub-seq would re-emit the SEP as a literal.
-            const substituteMember = (m: Rule): Rule => {
-                const es = elementWithSep(m)
-                if (!es) return m
-                const cnt = fieldCounts.get(es.name) ?? 0
-                if (cnt <= 1) return m
-                // Peel repeat wrapper if present, then extract the field.
-                let inner = m
-                if (inner.type === 'repeat' || inner.type === 'repeat1') inner = inner.content
-                if (inner.type === 'seq' && inner.members.length === 2) return inner.members[0]!
-                return m
-            }
-            const out: string[] = []
-            for (const m of rule.members) {
-                if (m.type === 'string' && skipSeps.has(m.value)) continue
-                const substituted = substituteMember(m)
-                const parts = walkRuleForTemplate(substituted, seen, inRepeat, clauses, rules, augmentedRepeatedFields, joinByField, wordMatcher)
-                // Drop a leading literal from `parts` that duplicates the
-                // trailing literal already in `out`. This collapses cases
-                // like rust line_comment where an outer `'//'` token is
-                // followed by a choice whose primary branch emits another
-                // `'//'` (from a pattern lookahead disambiguator), producing
-                // `////` in the template. Only applied to non-placeholder
-                // literals — `$NAME`/`$$$CHILDREN` slots are distinct.
-                while (parts.length > 0 && out.length > 0) {
-                    const head = parts[0]!
-                    const tail = out[out.length - 1]!
-                    if (!head.startsWith('$') && head === tail) {
-                        parts.shift()
-                        continue
-                    }
-                    break
-                }
-                if (out.length > 0 && parts.length > 0) {
-                    // When the adjacent placeholder is a clause whose body is
-                    // a bare non-word-punctuation literal (e.g. `bang_clause: "!"`
-                    // emitted by the optional-punct walker), use the underlying
-                    // literal for spacing rather than the placeholder's own
-                    // identifier characters. Prevents `$BANG_CLAUSE $TRAIT` from
-                    // inserting a spurious space between `!` and the trait name
-                    // in `impl !Foo for Bar`.
-                    const effectiveLastChar = (s: string): string => {
-                        const m = s.match(/^\$([A-Z_][A-Z0-9_]*)_CLAUSE$/)
-                        if (m) {
-                            const body = clauses[`${m[1]!.toLowerCase()}_clause`]
-                            if (body && /^[^\w\s]+$/.test(body)) return body.slice(-1)
-                        }
-                        return s.slice(-1)
-                    }
-                    const effectiveFirstChar = (s: string): string => {
-                        const m = s.match(/^\$([A-Z_][A-Z0-9_]*)_CLAUSE$/)
-                        if (m) {
-                            const body = clauses[`${m[1]!.toLowerCase()}_clause`]
-                            if (body && /^[^\w\s]+$/.test(body)) return body.charAt(0)
-                        }
-                        return s.charAt(0)
-                    }
-                    const lastChar = effectiveLastChar(out[out.length - 1]!)
-                    const firstChar = effectiveFirstChar(parts[0]!)
-                    if (needsSpace(lastChar, firstChar, wordMatcher)) out.push(' ')
-                }
-                out.push(...parts)
-            }
-            return out
-        }
+	const clauses = _clauses;
+	const optionalFields = _optionalFields;
+	switch (rule.type) {
+		case 'seq': {
+			// Sibling-repeated-field detection. When `inferFields` has
+			// wrapped two (or more) symbol references in the same seq
+			// with the SAME field name (rust or_pattern: two _pattern
+			// refs both tagged `field('pattern', ...)`), `seen.add`
+			// would dedup the second slot and drop it. Instead, detect
+			// the duplication, augment `repeatedFields` so the field
+			// emits as `$$$NAME`, and capture the literal between the
+			// first and second occurrence as the joinBy separator.
+			const unwrapField = (r: Rule): string | null => {
+				if (r.type === 'field') return r.name;
+				if (
+					r.type === 'optional' ||
+					r.type === 'variant' ||
+					r.type === 'clause' ||
+					r.type === 'group'
+				)
+					return unwrapField(r.content);
+				return null;
+			};
+			const unwrapChildTarget = (r: Rule): string | null => {
+				if (r.type === 'symbol') return r.name;
+				if (r.type === 'supertype') return r.name;
+				if (
+					r.type === 'optional' ||
+					r.type === 'variant' ||
+					r.type === 'clause' ||
+					r.type === 'group'
+				)
+					return unwrapChildTarget(r.content);
+				return null;
+			};
+			// Recognize the "element + separator" sub-patterns used by
+			// rust-style trailing-comma lists:
+			//   seq(field('X'), SEP)                    — one element w/ trailing sep
+			//   repeat(seq(field('X'), SEP))            — zero-or-more same
+			//   repeat1(seq(field('X'), SEP))           — one-or-more same
+			// Returns the field name and the literal separator string when
+			// the member matches. The SEP string gets hoisted as `joinByField[X]`
+			// via the existing sibling-multi logic, and the inner literal is
+			// suppressed from the template so render emits via joinByTrailing
+			// without duplication.
+			const elementWithSep = (
+				r: Rule
+			): { name: string; sep: string } | null => {
+				let inner = r;
+				if (inner.type === 'repeat' || inner.type === 'repeat1')
+					inner = inner.content;
+				if (inner.type !== 'seq' || inner.members.length !== 2) return null;
+				const fname = unwrapField(inner.members[0]!);
+				const sepMember = inner.members[1]!;
+				if (!fname || sepMember.type !== 'string') return null;
+				return { name: fname, sep: sepMember.value };
+			};
+			const fieldCounts = new Map<string, number>();
+			const fieldSeps = new Map<string, string>();
+			const childTargetCounts = new Map<string, number>();
+			for (const m of rule.members) {
+				const fn = unwrapField(m);
+				if (fn) {
+					fieldCounts.set(fn, (fieldCounts.get(fn) ?? 0) + 1);
+					continue;
+				}
+				const elemSep = elementWithSep(m);
+				if (elemSep) {
+					fieldCounts.set(
+						elemSep.name,
+						(fieldCounts.get(elemSep.name) ?? 0) + 1
+					);
+					if (!fieldSeps.has(elemSep.name))
+						fieldSeps.set(elemSep.name, elemSep.sep);
+					continue;
+				}
+				const tgt = unwrapChildTarget(m);
+				if (tgt)
+					childTargetCounts.set(tgt, (childTargetCounts.get(tgt) ?? 0) + 1);
+			}
+			// Sibling-duplicate symbol references with the SAME target
+			// (e.g. rust or_pattern: two `_pattern` refs separated by
+			// `|`) share the single `children` slot. Capture the literal
+			// between them as the children-slot joinBy so the renderer
+			// uses it instead of emitting a trailing separator.
+			const hasChildDup = [...childTargetCounts.values()].some((c) => c > 1);
+			if (hasChildDup && joinByField && !('children' in joinByField)) {
+				let seenFirst = false;
+				for (const m of rule.members) {
+					const tgt = unwrapChildTarget(m);
+					if (tgt && (childTargetCounts.get(tgt) ?? 0) > 1) {
+						if (!seenFirst) {
+							seenFirst = true;
+							continue;
+						}
+						break;
+					}
+					if (seenFirst && m.type === 'string') {
+						joinByField['children'] = m.value;
+						break;
+					}
+				}
+			}
+			// Cluster H (016): string-template detection. When the seq is
+			// wrapped in matching string-quote delimiters (`` ` ``, `"`,
+			// `'`) and the body is a separator-less repeat over visible
+			// children (e.g. `seq("`", repeat(choice(string_fragment,
+			// template_type)), "`")`), the children represent
+			// concatenated text fragments — joining with the default
+			// `' '` separator inserts a stray space between adjacent
+			// substitutions (`${B}${C}` → `${B} ${C}`). Pin the children
+			// join to `""` so the template re-renders byte-exactly.
+			// Restricted to genuine string-quote delimiters so block-
+			// shaped seq's (`{`, `}`, `[`, `]`, `(`, `)`) keep the
+			// statement-separating space.
+			if (
+				joinByField &&
+				!('children' in joinByField) &&
+				rule.members.length >= 3
+			) {
+				const first = rule.members[0]!;
+				const last = rule.members[rule.members.length - 1]!;
+				if (
+					first.type === 'string' &&
+					last.type === 'string' &&
+					first.value === last.value &&
+					/^[`"']$/.test(first.value)
+				) {
+					joinByField['children'] = '';
+				}
+			}
+			let augmentedRepeatedFields = repeatedFields;
+			for (const [fname, cnt] of fieldCounts) {
+				if (cnt <= 1) continue;
+				if (!augmentedRepeatedFields)
+					augmentedRepeatedFields = new Set<string>();
+				const set = augmentedRepeatedFields as Set<string>;
+				if (!set.has(fname)) set.add(fname);
+				if (joinByField && !(fname in joinByField)) {
+					// Prefer the separator captured from an
+					// `elementWithSep` sub-pattern (e.g. the `,` inside
+					// `seq(field('X'), ',')`). Falls back to finding the
+					// first non-field string between occurrences.
+					const capturedSep = fieldSeps.get(fname);
+					if (capturedSep != null) {
+						joinByField[fname] = capturedSep;
+					} else {
+						let seenFirst = false;
+						for (const m of rule.members) {
+							const mField = unwrapField(m);
+							const isThisField = mField === fname;
+							if (isThisField && !seenFirst) {
+								seenFirst = true;
+								continue;
+							}
+							if (seenFirst && m.type === 'string') {
+								joinByField[fname] = m.value;
+								break;
+							}
+							if (isThisField && seenFirst) break;
+						}
+					}
+				}
+			}
+			// Skip separator strings that match a sibling-multi field's
+			// captured joinBy — those belong INSIDE the `$$$NAME` slot
+			// rendering, not as standalone template text.
+			const skipSeps = new Set<string>();
+			if (joinByField) {
+				for (const [fname, cnt] of fieldCounts) {
+					if (cnt > 1 && joinByField[fname]) skipSeps.add(joinByField[fname]);
+				}
+				if (hasChildDup && joinByField['children'])
+					skipSeps.add(joinByField['children']);
+			}
+			// For members matching the `seq(field('X'), SEP)` sub-pattern
+			// where X was counted as sibling-multi above, substitute the
+			// sub-seq with just the field. The SEP is now captured as
+			// joinByField[X] so render emits it via $$$X's join-logic;
+			// walking the full sub-seq would re-emit the SEP as a literal.
+			const substituteMember = (m: Rule): Rule => {
+				const es = elementWithSep(m);
+				if (!es) return m;
+				const cnt = fieldCounts.get(es.name) ?? 0;
+				if (cnt <= 1) return m;
+				// Peel repeat wrapper if present, then extract the field.
+				let inner = m;
+				if (inner.type === 'repeat' || inner.type === 'repeat1')
+					inner = inner.content;
+				if (inner.type === 'seq' && inner.members.length === 2)
+					return inner.members[0]!;
+				return m;
+			};
+			const out: string[] = [];
+			for (const m of rule.members) {
+				if (m.type === 'string' && skipSeps.has(m.value)) continue;
+				const substituted = substituteMember(m);
+				const parts = walkRuleForTemplate(
+					substituted,
+					seen,
+					inRepeat,
+					clauses,
+					rules,
+					augmentedRepeatedFields,
+					joinByField,
+					wordMatcher,
+					optionalFields
+				);
+				// Drop a leading literal from `parts` that duplicates the
+				// trailing literal already in `out`. This collapses cases
+				// like rust line_comment where an outer `'//'` token is
+				// followed by a choice whose primary branch emits another
+				// `'//'` (from a pattern lookahead disambiguator), producing
+				// `////` in the template. Only applied to non-placeholder
+				// literals — `$NAME`/`$$$CHILDREN` slots are distinct.
+				while (parts.length > 0 && out.length > 0) {
+					const head = parts[0]!;
+					const tail = out[out.length - 1]!;
+					if (!head.startsWith('$') && head === tail) {
+						parts.shift();
+						continue;
+					}
+					break;
+				}
+				if (out.length > 0 && parts.length > 0) {
+					// When the adjacent placeholder is a clause whose body is
+					// a bare non-word-punctuation literal, use the underlying
+					// literal for spacing rather than the placeholder's own
+					// identifier characters.
+					//
+					// Cluster F step 3 (016): the walker now emits
+					// Jinja-inline conditionals (`{% if x | isPresent %}…{% endif %}`)
+					// directly for synthesized optional emissions, so a
+					// part can begin/end with `{%`. For spacing decisions
+					// we look INTO the conditional body's edge text — the
+					// body governs the rendered output when the conditional
+					// fires, and `needsSpace` operates on rendered chars.
+					const lastChar = effectiveSpacingChar(out[out.length - 1]!, 'last');
+					const firstChar = effectiveSpacingChar(parts[0]!, 'first');
+					if (needsSpace(lastChar, firstChar, wordMatcher)) {
+						// For Jinja-inline optional fragments, route the
+						// leading separator INSIDE the conditional body so
+						// the separator disappears alongside an absent
+						// value. Required emissions and anonymous tokens
+						// keep the unconditional push.
+						const moved = absorbLeadingSeparatorIntoJinjaConditional(
+							parts,
+							' '
+						);
+						if (!moved) {
+							// Cluster H (016): conversely, when the tail
+							// of out is a Jinja conditional, route the
+							// separator INSIDE that conditional's body
+							// (so it vanishes alongside an absent optional)
+							// — but ONLY when the part before the
+							// conditional doesn't itself need a separator
+							// against the upcoming required content.
+							// Otherwise dropping the unconditional space
+							// yields collisions like `letx` (rust
+							// let_declaration: `let` + optional mutable +
+							// required pattern). Safe absorption case:
+							// member_expression `.` + optional optional_chain
+							// + required property, since `.` and identifier
+							// already concatenate cleanly.
+							const tailIsConditional =
+								out.length > 0 &&
+								JINJA_CONDITIONAL_FULL.test(out[out.length - 1]!);
+							let absorbed = false;
+							if (tailIsConditional && out.length >= 2) {
+								const beforeLast = effectiveSpacingChar(
+									out[out.length - 2]!,
+									'last'
+								);
+								if (!needsSpace(beforeLast, firstChar, wordMatcher)) {
+									absorbed = absorbTrailingSeparatorIntoJinjaConditional(
+										out,
+										' '
+									);
+								}
+							}
+							if (!absorbed) out.push(' ');
+						}
+					}
+				}
+				out.push(...parts);
+			}
+			absorbHeadLeadingSeparatorIntoConditionals(out);
+			return out;
+		}
 
-        case 'choice': {
-            // Walk every non-empty branch with a FRESH seen so each
-            // branch's parts are independent of declaration order.
-            //
-            // Homogeneity rule: branches may differ in their
-            // $-placeholders (those are just "slot that may or may
-            // not be populated by this arm") but must agree on their
-            // LITERALS — any non-placeholder text. When literals
-            // diverge, the walker can't compose a single template:
-            // which arm's literals are authoritative? Authors must
-            // declare intent via `variant()` adoption so each arm
-            // becomes its own kind with its own template.
-            //
-            // Homogeneous examples (merge all $-placeholders into
-            // primary):
-            //   - choice(sym1, sym2, sym3) → each branch emits
-            //     $$$CHILDREN; single template.
-            //   - choice(field('async', …), field('const', …)) →
-            //     both emit field placeholders only; combine into
-            //     `$ASYNC$CONST` so either arm renders correctly
-            //     (absent field → empty string).
-            //
-            // Heterogeneous examples (throw — author must variant()):
-            //   - choice(seq(expr, ';'), expr) → branch 0 has
-            //     literal ';', branch 1 doesn't. Single template
-            //     can't both include and exclude ';'.
-            //   - choice(seq('"', …, '"'), seq("'", …, "'")) →
-            //     different delimiters.
-            //   - choice(seq('if', cond), seq('while', body)) →
-            //     different keywords AND different fields.
-            const branchResults: { parts: string[]; index: number }[] = []
-            for (let i = 0; i < rule.members.length; i++) {
-                const branchSeen = new Set(seen)
-                const parts = walkRuleForTemplate(rule.members[i]!, branchSeen, inRepeat, {}, rules, repeatedFields, {}, wordMatcher)
-                if (parts.length === 0) continue
-                branchResults.push({ parts, index: i })
-            }
-            if (branchResults.length === 0) return []
-            // Compute each branch's "literal signature" — parts with
-            // $-placeholders removed, concatenated and whitespace-
-            // normalised. Branches with identical signatures can be
-            // merged (different $ coverage is fine).
-            const literalSig = (parts: string[]): string =>
-                parts.filter(p => !p.startsWith('$')).join('').replace(/\s+/g, ' ').trim()
-            const firstSig = literalSig(branchResults[0]!.parts)
-            const allSameLiterals = branchResults.every(b => literalSig(b.parts) === firstSig)
-            if (!allSameLiterals) {
-                // Heterogeneous literals: walker can't produce a single
-                // lossless template. Ideal fix is `variant('name')`
-                // adoption on each arm in overrides.ts (each becomes
-                // its own kind with its own template). Until then,
-                // fall back to the old first-non-empty-branch heuristic
-                // and surface a diagnostic via SITTIR_DEBUG so authors
-                // can see which kinds need adoption.
-                if (process.env.SITTIR_DEBUG === '1') {
-                    const branchSummaries = branchResults.map(b =>
-                        `  [${b.index}] ${JSON.stringify(b.parts.join(''))}`,
-                    ).join('\n')
-                    console.error(
-                        `[sittir] walker: heterogeneous choice branches — picking first, ` +
-                        `dropping literals from others. Consider \`variant('name')\` ` +
-                        `adoption per arm. Branches:\n${branchSummaries}`,
-                    )
-                }
-                // Fall through to the primary-branch pick below.
-            }
-            // Homogeneous literals. Replay the first non-empty branch
-            // against the OUTER seen (consumption / clauses / joinByField
-            // reach the caller). Append $-placeholders from other
-            // branches that the primary didn't already produce.
-            const primaryIdx = branchResults[0]!.index
-            const out = [...walkRuleForTemplate(rule.members[primaryIdx]!, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)]
-            for (let k = 1; k < branchResults.length; k++) {
-                const parts = walkRuleForTemplate(rule.members[branchResults[k]!.index]!, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
-                for (const p of parts) {
-                    if (p.startsWith('$') && !out.includes(p)) out.push(p)
-                }
-            }
-            return out
-        }
+		case 'choice': {
+			// Walk every non-empty branch with a FRESH seen so each
+			// branch's parts are independent of declaration order.
+			//
+			// Homogeneity rule: branches may differ in their
+			// $-placeholders (those are just "slot that may or may
+			// not be populated by this arm") but must agree on their
+			// LITERALS — any non-placeholder text. When literals
+			// diverge, the walker can't compose a single template:
+			// which arm's literals are authoritative? Authors must
+			// declare intent via `variant()` adoption so each arm
+			// becomes its own kind with its own template.
+			//
+			// Homogeneous examples (merge all $-placeholders into
+			// primary):
+			//   - choice(sym1, sym2, sym3) → each branch emits
+			//     $$$CHILDREN; single template.
+			//   - choice(field('async', …), field('const', …)) →
+			//     both emit field placeholders only; combine into
+			//     `$ASYNC$CONST` so either arm renders correctly
+			//     (absent field → empty string).
+			//
+			// Heterogeneous examples (throw — author must variant()):
+			//   - choice(seq(expr, ';'), expr) → branch 0 has
+			//     literal ';', branch 1 doesn't. Single template
+			//     can't both include and exclude ';'.
+			//   - choice(seq('"', …, '"'), seq("'", …, "'")) →
+			//     different delimiters.
+			//   - choice(seq('if', cond), seq('while', body)) →
+			//     different keywords AND different fields.
+			const branchResults: { parts: string[]; index: number }[] = [];
+			for (let i = 0; i < rule.members.length; i++) {
+				const branchSeen = new Set(seen);
+				const parts = walkRuleForTemplate(
+					rule.members[i]!,
+					branchSeen,
+					inRepeat,
+					{},
+					rules,
+					repeatedFields,
+					{},
+					wordMatcher,
+					optionalFields
+				);
+				if (parts.length === 0) continue;
+				branchResults.push({ parts, index: i });
+			}
+			if (branchResults.length === 0) return [];
+			// Compute each branch's "literal signature" — parts with
+			// $-placeholders removed, concatenated and whitespace-
+			// normalised. Branches with identical signatures can be
+			// merged (different $ coverage is fine).
+			const literalSig = (parts: string[]): string =>
+				parts
+					.filter((p) => !p.startsWith('$'))
+					.join('')
+					.replace(/\s+/g, ' ')
+					.trim();
+			const firstSig = literalSig(branchResults[0]!.parts);
+			const allSameLiterals = branchResults.every(
+				(b) => literalSig(b.parts) === firstSig
+			);
+			if (!allSameLiterals) {
+				// Heterogeneous literals: walker can't produce a single
+				// lossless template. Ideal fix is `variant('name')`
+				// adoption on each arm in overrides.ts (each becomes
+				// its own kind with its own template). Until then,
+				// fall back to the old first-non-empty-branch heuristic
+				// and surface a diagnostic via SITTIR_DEBUG so authors
+				// can see which kinds need adoption.
+				if (process.env.SITTIR_DEBUG === '1') {
+					const branchSummaries = branchResults
+						.map((b) => `  [${b.index}] ${JSON.stringify(b.parts.join(''))}`)
+						.join('\n');
+					console.error(
+						`[sittir] walker: heterogeneous choice branches — picking first, ` +
+							`dropping literals from others. Consider \`variant('name')\` ` +
+							`adoption per arm. Branches:\n${branchSummaries}`
+					);
+				}
+				// Fall through to the primary-branch pick below.
+			}
+			// Homogeneous literals. Replay the first non-empty branch
+			// against the OUTER seen (consumption / clauses / joinByField
+			// reach the caller). Append $-placeholders from other
+			// branches that the primary didn't already produce.
+			const primaryIdx = branchResults[0]!.index;
+			const out = [
+				...walkRuleForTemplate(
+					rule.members[primaryIdx]!,
+					seen,
+					inRepeat,
+					clauses,
+					rules,
+					repeatedFields,
+					joinByField,
+					wordMatcher,
+					optionalFields
+				)
+			];
+			// Cluster H (016): placeholders coming from non-primary
+			// branches in a heterogeneous-literal choice are conditional
+			// on those branches firing at parse time. Wrap each `$NAME`
+			// placeholder in a Jinja `{% if name | isPresent %}…{% endif %}`
+			// so it emits only when the field is actually populated.
+			// Without the wrap, the placeholder renders empty but the
+			// surrounding spaces remain (member_expression's
+			// `{{ object }}.{{ optional_chain }} {{ property }}` →
+			// `super. decorate` when optional_chain is absent).
+			const placeholderField = (p: string): string | null => {
+				const m = p.match(/^\$([A-Z][A-Z0-9_]*)$/);
+				return m ? m[1]!.toLowerCase() : null;
+			};
+			for (let k = 1; k < branchResults.length; k++) {
+				const parts = walkRuleForTemplate(
+					rule.members[branchResults[k]!.index]!,
+					seen,
+					inRepeat,
+					clauses,
+					rules,
+					repeatedFields,
+					joinByField,
+					wordMatcher,
+					optionalFields
+				);
+				for (const p of parts) {
+					if (!p.startsWith('$') || out.includes(p)) continue;
+					const fname = placeholderField(p);
+					if (
+						fname &&
+						!['newline', 'indent', 'dedent', 'children', 'text'].includes(fname)
+					) {
+						out.push(emitJinjaConditional(fname, p));
+					} else {
+						out.push(p);
+					}
+				}
+			}
+			return out;
+		}
 
-        case 'optional': {
-            // Optional of a single keyword-shape literal (`async`,
-            // `move`, `pub`, `static`, `unsafe`, …) — emit a clause
-            // whose body is a `$KW` placeholder. The renderer's
-            // children-by-kind-name fallback fires only when
-            // readNode captured an anonymous child with that text,
-            // so the token round-trips: absent on parse → absent on
-            // render, present on parse → present on render.
-            //
-            // Non-word punctuation (`,`, `;`, `::`, …) is a bigger
-            // problem — the existing seq walker already emits those
-            // literals unconditionally via other paths, so intercepting
-            // them here double-emits or eats children out from under
-            // sibling slots. Left for a follow-up that reworks the
-            // seq/optional interaction.
-            //
-            // The word matcher is the grammar's own `word` rule.
-            // Grammars without a word rule fall back to `/^\w+$/`.
-            const kwString = extractSingleKeywordString(rule.content)
-            if (kwString !== null) {
-                const matches = wordMatcher
-                    ? wordMatcher.test(kwString)
-                    : /^\w+$/.test(kwString)
-                if (matches) {
-                    const clauseKey = `${kwString}_clause`
-                    if (!(clauseKey in clauses)) {
-                        clauses[clauseKey] = `$${kwString.toUpperCase()}`
-                    }
-                    return [`$${kwString.toUpperCase()}_CLAUSE`]
-                }
-                // Non-word punctuation that carries semantic meaning in a
-                // specific grammar position (e.g. rust `impl_item` trait
-                // negation `!`, `?` modifiers). Emit a bare-literal clause
-                // — renderClause's no-placeholder branch fires the clause
-                // only when readNode captured the anon token. The clause
-                // body is the literal itself so the renderer emits the
-                // exact text; the slot name derives from tokenToName so
-                // it's a legal template identifier.
-                //
-                // Gated to a safe allowlist — list-separator punctuation
-                // (`,`, `;`, `:`) is handled by the seq walker's
-                // joinByTrailing / skipSeps logic and would double-emit
-                // if intercepted here. Trailing-separator `optional(',')`
-                // inside list-shaped seqs is filtered earlier at the seq
-                // level, so this path only fires for standalone optionals
-                // that don't collide with separator detection.
-                const CLAUSE_PUNCT_NAMES: Record<string, string> = {
-                    '!': 'bang',
-                    '?': 'question',
-                }
-                const punctName = CLAUSE_PUNCT_NAMES[kwString]
-                if (punctName) {
-                    const clauseKey = `${punctName}_clause`
-                    if (!(clauseKey in clauses)) {
-                        clauses[clauseKey] = kwString
-                    }
-                    return [`$${punctName.toUpperCase()}_CLAUSE`]
-                }
-            }
-            // `optional(',')` and friends — pure punctuation in an optional
-            // wrapper is context-dependent and including it unconditionally
-            // produces invalid output (python: `match X,:`). Skip the
-            // whole optional when its content has no field/symbol ref.
-            if (containsOnlyPunctuation(rule.content)) return []
-            // Lift `optional(...)` contents that match one of these
-            // shapes into per-field clauses. The flanking literals move
-            // into the clause body so they render only when the field
-            // is populated:
-            //   * `optional(choice(seq(literal, field), field, ...))`
-            //     rust `attribute` — `=value` vs bare `#[name]`.
-            //   * `optional(seq(literal, field))` — e.g. javascript
-            //     `_initializer` inlined into `variable_declarator`:
-            //     `seq('=', field('value', ...))`. Without lifting, the
-            //     `=` renders unconditionally and `var x: T;` becomes
-            //     `var x: T=;`.
-            //   * `optional(field)` — handled by the walker's default
-            //     recursion already (field branch emits `$NAME`).
-            const toLift: Rule = rule.content.type === 'choice'
-                ? rule.content
-                : { type: 'choice', members: [rule.content] } as Rule
-            const lifted = liftChoiceBranchesToClauses(toLift as ChoiceRule, clauses, seen)
-            if (lifted !== null) {
-                // Mark the lifted fields as seen so sibling members
-                // inside the enclosing seq don't re-emit the same slot
-                // via the default walker path.
-                for (const p of lifted) {
-                    const m = p.match(/^\$([A-Za-z_][\w]*)_CLAUSE$/)
-                    if (m) seen.add(m[1]!.toLowerCase())
-                }
-                return lifted
-            }
-            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
-        }
+		case 'optional': {
+			// Cluster F step 3 (016): emit Jinja inline directly for
+			// every synthesized optional case. No `clauses` map writes,
+			// no `$NAME_CLAUSE` placeholder indirection — the walker
+			// produces the final `{% if X | isPresent %}body{% endif %}`
+			// wrapper here so downstream `inlineJinjaClauses` only
+			// touches real grammar-clause emissions.
+			//
+			// Optional of a single keyword-shape literal (`async`,
+			// `move`, `pub`, `static`, `unsafe`, …): the renderer's
+			// children-by-kind-name fallback fires when readNode
+			// captured an anonymous child with that text, so the
+			// keyword name (lowercased) is the conditional predicate.
+			//
+			// The word matcher is the grammar's own `word` rule.
+			// Grammars without a word rule fall back to `/^\w+$/`.
+			const kwString = extractSingleKeywordString(rule.content);
+			if (kwString !== null) {
+				const matches = wordMatcher
+					? wordMatcher.test(kwString)
+					: /^\w+$/.test(kwString);
+				if (matches) {
+					return [emitJinjaConditional(kwString, `$${kwString.toUpperCase()}`)];
+				}
+				// Non-word punctuation in a standalone optional (e.g.
+				// rust `impl_item` trait negation `!`, `?` modifiers).
+				// The renderer can't predicate a Jinja conditional on
+				// the literal text — `node.$fields` IS keyed by the
+				// literal text, but Jinja identifiers can't include
+				// `!`/`?`/etc. Emit nothing here so the existing
+				// `$$$CHILDREN` slot (or the parent's text-shape
+				// fallback) round-trips the token. Matches the prior
+				// synthesized-`<punctName>_clause` runtime behaviour
+				// where the conditional always evaluated false because
+				// the predicate name was unbound. Standalone optional-
+				// punct round-trip is a known gap (see specs/016
+				// walker plan).
+				return [];
+			}
+			// `optional(',')` and friends — pure punctuation in an optional
+			// wrapper is context-dependent and including it unconditionally
+			// produces invalid output (python: `match X,:`). Skip the
+			// whole optional when its content has no field/symbol ref.
+			if (containsOnlyPunctuation(rule.content)) return [];
+			// Lift `optional(...)` contents that match one of these
+			// shapes into per-field Jinja conditionals. The flanking
+			// literals move INSIDE the conditional body so they render
+			// only when the field is populated:
+			//   * `optional(choice(seq(literal, field), field, ...))`
+			//     rust `attribute` — `=value` vs bare `#[name]`.
+			//   * `optional(seq(literal, field))` — e.g. javascript
+			//     `_initializer` inlined into `variable_declarator`:
+			//     `seq('=', field('value', ...))`.
+			//   * `optional(field)` — emit `{% if name | isPresent %}$NAME{% endif %}`.
+			const toLift: Rule =
+				rule.content.type === 'choice'
+					? rule.content
+					: ({ type: 'choice', members: [rule.content] } as Rule);
+			const lifted = liftChoiceBranchesToInlineJinja(
+				toLift as ChoiceRule,
+				seen
+			);
+			if (lifted !== null) {
+				// Mark the lifted fields as seen so sibling members
+				// inside the enclosing seq don't re-emit the same slot
+				// via the default walker path.
+				for (const fname of lifted.fieldsConsumed) seen.add(fname);
+				return lifted.parts;
+			}
+			return walkRuleForTemplate(
+				rule.content,
+				seen,
+				inRepeat,
+				clauses,
+				rules,
+				repeatedFields,
+				joinByField,
+				wordMatcher,
+				optionalFields
+			);
+		}
 
-        case 'repeat':
-        case 'repeat1': {
-            // Propagate the repeat's separator as a per-slot joinBy when
-            // the content is a field. commaSep1 lifts `seq(X, repeat(seq(',',
-            // X)))` → `repeat1(X, separator=',')`. The field inside gets
-            // emitted as a multi-value slot via `inRepeat=true`, but
-            // without a per-slot joinBy capture it renders joined by the
-            // default `' '`.
-            if (rule.separator && joinByField) {
-                // Inline unwrap — the seq-case helper is scoped there.
-                const peel = (r: Rule): string | null => {
-                    if (r.type === 'field') return r.name
-                    if (r.type === 'optional' || r.type === 'variant' || r.type === 'clause' || r.type === 'group') return peel(r.content)
-                    return null
-                }
-                const fname = peel(rule.content)
-                if (fname && !(fname in joinByField)) joinByField[fname] = rule.separator
-            }
-            return walkRuleForTemplate(rule.content, seen, true, clauses, rules, repeatedFields, joinByField, wordMatcher)
-        }
+		case 'repeat':
+		case 'repeat1': {
+			// Propagate the repeat's separator as a per-slot joinBy when
+			// the content is a field. commaSep1 lifts `seq(X, repeat(seq(',',
+			// X)))` → `repeat1(X, separator=',')`. The field inside gets
+			// emitted as a multi-value slot via `inRepeat=true`, but
+			// without a per-slot joinBy capture it renders joined by the
+			// default `' '`.
+			if (rule.separator && joinByField) {
+				// Inline unwrap — the seq-case helper is scoped there.
+				const peel = (r: Rule): string | null => {
+					if (r.type === 'field') return r.name;
+					if (
+						r.type === 'optional' ||
+						r.type === 'variant' ||
+						r.type === 'clause' ||
+						r.type === 'group'
+					)
+						return peel(r.content);
+					return null;
+				};
+				const fname = peel(rule.content);
+				if (fname && !(fname in joinByField))
+					joinByField[fname] = rule.separator;
+			}
+			return walkRuleForTemplate(
+				rule.content,
+				seen,
+				true,
+				clauses,
+				rules,
+				repeatedFields,
+				joinByField,
+				wordMatcher,
+				optionalFields
+			);
+		}
 
-        case 'field': {
-            if (seen.has(rule.name)) return []
-            // Synthetic outer-field wrapper detection. Autogen overrides
-            // sometimes wrap a complex seq (containing inner fields, a
-            // choice with variants, literal tokens) in an outer
-            // `field('name', seq(...))`. Tree-sitter doesn't produce a
-            // single node value for such wrappers at parse time — the
-            // inner fields are the real runtime data. When we detect this
-            // shape, walk INTO the content and let the inner fields /
-            // literals surface as their own template slots. Skipping the
-            // outer slot avoids emitting a `$NAME` placeholder that the
-            // renderer can't resolve to anything meaningful.
-            if (isSyntheticFieldWrapper(rule.content)) {
-                // Don't add rule.name to `seen` — we're not emitting
-                // that slot, so inner fields may legitimately reuse the
-                // same name (rare but possible).
-                return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
-            }
-            seen.add(rule.name)
-            const varName = rule.name.toUpperCase()
-            // A field is multi-valued in four situations:
-            //   1. it's nested inside a repeat (`inRepeat`)
-            //   2. another occurrence of the same field name appears inside a
-            //      repeat — the commaSep1 pattern `field(X) ... repeat(field(X))`
-            //      where the first slot is non-repeat (caught by repeatedFields)
-            //   3. its OWN content is a repeat — the override pattern
-            //      `field('rest', repeat(expr, separator=','))` where the field
-            //      sits at non-repeat position but wraps a repeat directly
-            //   4. its content is a seq with multiple structural members (or
-            //      choice containing such a seq). Tree-sitter inherits the
-            //      field name to every child in the seq, producing one array
-            //      of children under the same field name at parse time.
-            //      Example: typescript `ambient_declaration` has
-            //      `field('declaration', choice(symbol, seq('global', sym),
-            //      seq('module', property_identifier, ':', type)))` — the
-            //      third branch emits 4 children all under field=declaration.
-            const wrappedSep = wrappedRepeatSeparator(rule.content)
-            const multi = inRepeat
-                || (repeatedFields?.has(rule.name) ?? false)
-                || wrappedSep !== null
-                || fieldContentIsMultiSibling(rule.content)
-            // Capture per-slot joinBy when the wrapped repeat carries a
-            // separator. A single rule with multiple multi-valued fields
-            // can then have distinct separators (rust tuple_expression's
-            // attributes joins with `\n`, rest with `,`).
-            if (joinByField && wrappedSep) joinByField[rule.name] = wrappedSep
-            const slot = multi ? `$$$${varName}` : `$${varName}`
-            // Extract anonymous-string literals flanking the field's main
-            // content. The override pattern `field('first', seq(_expression,
-            // ','))` from rust's tuple_expression bundles the trailing comma
-            // INSIDE the field; without this extraction the comma is lost
-            // and the rendered output joins `$FIRST $$$REST` with no
-            // separator. By emitting `$FIRST,` instead, the comma stays.
-            // Optional wrapping flanks: `field('label', optional(seq(label,
-            // ':')))` from rust's loop_expression. The trailing `:` must
-            // only render when the label slot is populated — otherwise an
-            // unlabelled `loop { }` becomes `: loop { }`. Lifting into a
-            // clause makes the whole group conditional.
-            if (rule.content.type === 'optional') {
-                const inner = rule.content.content
-                const optFlank = extractFlankingLiterals(inner)
-                if (optFlank.leading || optFlank.trailing) {
-                    const clauseTmpl = optFlank.leading + slot + optFlank.trailing
-                    clauses[`${rule.name}_clause`] = clauseTmpl
-                    const placeholder = `$${varName}_CLAUSE`
-                    return rule.blockBearer
-                        ? ['\n  ', placeholder, '\n']
-                        : [placeholder]
-                }
-            }
-            const flank = extractFlankingLiterals(rule.content)
-            // Block-bearer fields render as an indented block (python
-            // `class X:\n  body`). Link annotates the field when its
-            // content resolves to a subtree containing an `indent` node.
-            // Trailing newline restores the outer column so whatever
-            // follows the block (e.g. `else_clause`) lands flush-left.
-            const wrapped: string[] = []
-            if (flank.leading) wrapped.push(flank.leading)
-            wrapped.push(slot)
-            if (flank.trailing) wrapped.push(flank.trailing)
+		case 'field': {
+			if (seen.has(rule.name)) return [];
+			// Synthetic outer-field wrapper detection. Autogen overrides
+			// sometimes wrap a complex seq (containing inner fields, a
+			// choice with variants, literal tokens) in an outer
+			// `field('name', seq(...))`. Tree-sitter doesn't produce a
+			// single node value for such wrappers at parse time — the
+			// inner fields are the real runtime data. When we detect this
+			// shape, walk INTO the content and let the inner fields /
+			// literals surface as their own template slots. Skipping the
+			// outer slot avoids emitting a `$NAME` placeholder that the
+			// renderer can't resolve to anything meaningful.
+			if (isSyntheticFieldWrapper(rule.content)) {
+				// Don't add rule.name to `seen` — we're not emitting
+				// that slot, so inner fields may legitimately reuse the
+				// same name (rare but possible).
+				return walkRuleForTemplate(
+					rule.content,
+					seen,
+					inRepeat,
+					clauses,
+					rules,
+					repeatedFields,
+					joinByField,
+					wordMatcher,
+					optionalFields
+				);
+			}
+			seen.add(rule.name);
+			const varName = rule.name.toUpperCase();
+			// A field is multi-valued in four situations:
+			//   1. it's nested inside a repeat (`inRepeat`)
+			//   2. another occurrence of the same field name appears inside a
+			//      repeat — the commaSep1 pattern `field(X) ... repeat(field(X))`
+			//      where the first slot is non-repeat (caught by repeatedFields)
+			//   3. its OWN content is a repeat — the override pattern
+			//      `field('rest', repeat(expr, separator=','))` where the field
+			//      sits at non-repeat position but wraps a repeat directly
+			//   4. its content is a seq with multiple structural members (or
+			//      choice containing such a seq). Tree-sitter inherits the
+			//      field name to every child in the seq, producing one array
+			//      of children under the same field name at parse time.
+			//      Example: typescript `ambient_declaration` has
+			//      `field('declaration', choice(symbol, seq('global', sym),
+			//      seq('module', property_identifier, ':', type)))` — the
+			//      third branch emits 4 children all under field=declaration.
+			const wrappedSep = wrappedRepeatSeparator(rule.content);
+			const multi =
+				inRepeat ||
+				(repeatedFields?.has(rule.name) ?? false) ||
+				wrappedSep !== null ||
+				fieldContentIsMultiSibling(rule.content);
+			// Capture per-slot joinBy when the wrapped repeat carries a
+			// separator. A single rule with multiple multi-valued fields
+			// can then have distinct separators (rust tuple_expression's
+			// attributes joins with `\n`, rest with `,`).
+			if (joinByField && wrappedSep) joinByField[rule.name] = wrappedSep;
+			const slot = multi ? `$$$${varName}` : `$${varName}`;
+			// Extract anonymous-string literals flanking the field's main
+			// content. The override pattern `field('first', seq(_expression,
+			// ','))` from rust's tuple_expression bundles the trailing comma
+			// INSIDE the field; without this extraction the comma is lost
+			// and the rendered output joins `$FIRST $$$REST` with no
+			// separator. By emitting `$FIRST,` instead, the comma stays.
+			// Optional wrapping flanks: `field('label', optional(seq(label,
+			// ':')))` from rust's loop_expression. The trailing `:` must
+			// only render when the label slot is populated — otherwise an
+			// unlabelled `loop { }` becomes `: loop { }`. Lifting into a
+			// clause makes the whole group conditional.
+			if (rule.content.type === 'optional') {
+				const inner = rule.content.content;
+				const optFlank = extractFlankingLiterals(inner);
+				if (optFlank.leading || optFlank.trailing) {
+					// Cluster F step 3 (016): emit Jinja inline directly
+					// — no synthesized `<field>_clause` companion. The
+					// flanking literals belong INSIDE the conditional so
+					// they only render when the field is populated.
+					const body = `${optFlank.leading}${slot}${optFlank.trailing}`;
+					const conditional = emitJinjaConditional(rule.name, body);
+					return rule.blockBearer ? ['\n  ', conditional, '\n'] : [conditional];
+				}
+			}
+			const flank = extractFlankingLiterals(rule.content);
+			// Block-bearer fields render as an indented block (python
+			// `class X:\n  body`). Link annotates the field when its
+			// content resolves to a subtree containing an `indent` node.
+			// Trailing newline restores the outer column so whatever
+			// follows the block (e.g. `else_clause`) lands flush-left.
+			const wrapped: string[] = [];
+			if (flank.leading) wrapped.push(flank.leading);
+			wrapped.push(slot);
+			if (flank.trailing) wrapped.push(flank.trailing);
 
-            // Override-wrapper fields (generated via `field('x')` one-arg
-            // placeholder) wrap the original member. If that original is a
-            // choice whose branches have their own inner fields, tree-sitter
-            // at parse time assigns the MOST SPECIFIC field (inner wins).
-            // Python's `import_from_statement` is the canonical case:
-            // `field('wildcard_import', choice(wildcard_import, _import_list,
-            // ...))` where `_import_list` expands to a commaSep1 of
-            // `field('name', ...)`. At runtime `from a import b` surfaces
-            // `name: b` (inner); `from a import b, c` surfaces `name: b`
-            // AND `wildcard_import: [',', 'c']` (the trailing comma-list
-            // attaches to the outer wrapper, the leading name to the inner
-            // field); `from a import *` surfaces only `wildcard_import: *`.
-            // Both slots must appear in the template so EITHER parse shape
-            // renders correctly. Inner placeholders come FIRST so the
-            // rendered order matches source order (inner-field position is
-            // always before the outer wrapper's trailing content). The
-            // render engine's resolveSlot returns `''` for absent slots,
-            // so the inactive one silently disappears at render time.
-            if (rule.source === 'override' && rule.content.type === 'choice') {
-                const innerSeen = new Set(seen)
-                const innerParts = walkRuleForTemplate(
-                    rule.content, innerSeen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher,
-                )
-                const innerPlaceholders: string[] = []
-                for (const p of innerParts) {
-                    if (p.startsWith('$') && !wrapped.includes(p)) {
-                        innerPlaceholders.push(p)
-                        // Also mark the inner field name as seen on the
-                        // outer scope so a sibling seq member doesn't emit
-                        // the placeholder a second time.
-                        const innerName = p.replace(/^\$+/, '').toLowerCase()
-                        seen.add(innerName)
-                    }
-                }
-                // Prepend inner placeholders — they surface the leading
-                // portion of the source (e.g. the first `name` before any
-                // wildcard_import separator list).
-                if (innerPlaceholders.length > 0) {
-                    wrapped.splice(0, 0, ...innerPlaceholders)
-                }
-            }
+			// Override-wrapper fields (generated via `field('x')` one-arg
+			// placeholder) wrap the original member. If that original is a
+			// choice whose branches have their own inner fields, tree-sitter
+			// at parse time assigns the MOST SPECIFIC field (inner wins).
+			// Python's `import_from_statement` is the canonical case:
+			// `field('wildcard_import', choice(wildcard_import, _import_list,
+			// ...))` where `_import_list` expands to a commaSep1 of
+			// `field('name', ...)`. At runtime `from a import b` surfaces
+			// `name: b` (inner); `from a import b, c` surfaces `name: b`
+			// AND `wildcard_import: [',', 'c']` (the trailing comma-list
+			// attaches to the outer wrapper, the leading name to the inner
+			// field); `from a import *` surfaces only `wildcard_import: *`.
+			// Both slots must appear in the template so EITHER parse shape
+			// renders correctly. Inner placeholders come FIRST so the
+			// rendered order matches source order (inner-field position is
+			// always before the outer wrapper's trailing content). The
+			// render engine's resolveSlot returns `''` for absent slots,
+			// so the inactive one silently disappears at render time.
+			if (rule.source === 'override' && rule.content.type === 'choice') {
+				const innerSeen = new Set(seen);
+				const innerParts = walkRuleForTemplate(
+					rule.content,
+					innerSeen,
+					inRepeat,
+					clauses,
+					rules,
+					repeatedFields,
+					joinByField,
+					wordMatcher,
+					optionalFields
+				);
+				const innerPlaceholders: string[] = [];
+				for (const p of innerParts) {
+					if (p.startsWith('$') && !wrapped.includes(p)) {
+						innerPlaceholders.push(p);
+						// Also mark the inner field name as seen on the
+						// outer scope so a sibling seq member doesn't emit
+						// the placeholder a second time.
+						const innerName = p.replace(/^\$+/, '').toLowerCase();
+						seen.add(innerName);
+					}
+				}
+				// Prepend inner placeholders — they surface the leading
+				// portion of the source (e.g. the first `name` before any
+				// wildcard_import separator list).
+				if (innerPlaceholders.length > 0) {
+					wrapped.splice(0, 0, ...innerPlaceholders);
+				}
+			}
 
-            return rule.blockBearer ? ['\n  ', ...wrapped, '\n'] : wrapped
-        }
+			return rule.blockBearer ? ['\n  ', ...wrapped, '\n'] : wrapped;
+		}
 
-        case 'symbol': {
-            // Hidden helper rules (e.g. python's `_import_list`) are
-            // inlined by tree-sitter at parse time — their fields get
-            // promoted onto the parent node. To render correctly we
-            // mirror that by walking into the referenced rule's body
-            // right here, so the hidden helper's fields appear as real
-            // slots in the caller's template. Guards against recursion
-            // via the rule-name seen-set key.
-            const symName = (rule as { name: string }).name
-            if (symName.startsWith('_') && rules) {
-                const target = rules[symName]
-                if (target && !seen.has(`@${symName}`)) {
-                    seen.add(`@${symName}`)
-                    const parts = walkRuleForTemplate(target, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
-                    if (parts.length > 0) return parts
-                }
-            }
-            // Visible symbols (and hidden ones we can't expand) render
-            // as unconsumed named children.
-            if (seen.has('children')) return []
-            seen.add('children')
-            return ['$$$CHILDREN']
-        }
+		case 'symbol': {
+			// Hidden helper rules (e.g. python's `_import_list`) are
+			// inlined by tree-sitter at parse time — their fields get
+			// promoted onto the parent node. To render correctly we
+			// mirror that by walking into the referenced rule's body
+			// right here, so the hidden helper's fields appear as real
+			// slots in the caller's template. Guards against recursion
+			// via the rule-name seen-set key.
+			const symName = (rule as { name: string }).name;
+			if (symName.startsWith('_') && rules) {
+				const target = rules[symName];
+				if (target && !seen.has(`@${symName}`)) {
+					seen.add(`@${symName}`);
+					const parts = walkRuleForTemplate(
+						target,
+						seen,
+						inRepeat,
+						clauses,
+						rules,
+						repeatedFields,
+						joinByField,
+						wordMatcher,
+						optionalFields
+					);
+					if (parts.length > 0) return parts;
+				}
+			}
+			// Visible symbols (and hidden ones we can't expand) render
+			// as unconsumed named children.
+			if (seen.has('children')) return [];
+			seen.add('children');
+			return ['$$$CHILDREN'];
+		}
 
-        case 'string':
-            if (inRepeat) return [] // joinBy handles separators
-            return [rule.value]
+		case 'string':
+			if (inRepeat) return []; // joinBy handles separators
+			return [rule.value];
 
-        case 'pattern': {
-            // Extract a representative literal from the regex — delimiter
-            // tokens like `[bc]?"` (rust string_literal prefix) need their
-            // literal tail in the template so round-trip reparse works.
-            const lit = representativeLiteral(rule.value)
-            return lit ? [lit] : []
-        }
+		case 'pattern': {
+			// Extract a representative literal from the regex — delimiter
+			// tokens like `[bc]?"` (rust string_literal prefix) need their
+			// literal tail in the template so round-trip reparse works.
+			const lit = representativeLiteral(rule.value);
+			return lit ? [lit] : [];
+		}
 
-        case 'enum':
-            return rule.members.length > 0 ? [rule.members[0]!.value] : []
+		case 'enum':
+			return rule.members.length > 0 ? [rule.members[0]!.value] : [];
 
-        case 'variant':
-            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
+		case 'variant':
+			return walkRuleForTemplate(
+				rule.content,
+				seen,
+				inRepeat,
+				clauses,
+				rules,
+				repeatedFields,
+				joinByField,
+				wordMatcher,
+				optionalFields
+			);
 
-        case 'clause': {
-            // Emit a separate sub-template and reference it from the main
-            // template as `$NAME_CLAUSE`. Fresh seen set for clause body
-            // so fields don't collide with main-template tracking.
-            if (seen.has(rule.name)) return []
-            seen.add(rule.name)
-            const clauseSeen = new Set<string>()
-            const clauseParts = walkRuleForTemplate(rule.content, clauseSeen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
-            const clauseTemplate = clauseParts.join('')
-            // Clause key mirrors the emitted var (`$NAME_CLAUSE` →
-            // `name_clause`) so the renderer's clauseKey lookup matches.
-            if (clauseTemplate) clauses[`${rule.name}_clause`] = clauseTemplate
-            return [`$${rule.name.toUpperCase()}_CLAUSE`]
-        }
+		case 'clause': {
+			// Cluster F step 3 (016): emit Jinja-inline directly using
+			// the clause's name as the conditional predicate and its
+			// content's walked output as the body. The `clause(name, ...)`
+			// node was minted by Link's `detectClause` from a flanking-
+			// literal-around-a-field pattern, so `name` IS the field
+			// name to gate on — no synthesized companion variable, no
+			// intermediate `clauses` map entry, output goes straight
+			// into the template body.
+			if (seen.has(rule.name)) return [];
+			seen.add(rule.name);
+			// Fresh seen set for the body walk so the inner field is
+			// free to emit (the outer `seen.add(rule.name)` above is
+			// tracking the clause name, not the inner field's slot
+			// emission state). Pass `undefined` for optionalFields so
+			// fields walked inside this conditional don't get re-
+			// promoted into their own per-field conditionals — the
+			// enclosing conditional already provides the gate, and
+			// the inner field shares its name with the clause in the
+			// canonical `clause('alternative', seq('else', field(
+			// 'alternative', ...)))` shape, which would collide.
+			const bodySeen = new Set<string>();
+			const bodyParts = walkRuleForTemplate(
+				rule.content,
+				bodySeen,
+				inRepeat,
+				clauses,
+				rules,
+				repeatedFields,
+				joinByField,
+				wordMatcher,
+				undefined
+			);
+			const body = bodyParts.join('');
+			if (!body) return [];
+			return [emitJinjaConditional(rule.name, body)];
+		}
 
-        case 'group':
-            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
+		case 'group':
+			return walkRuleForTemplate(
+				rule.content,
+				seen,
+				inRepeat,
+				clauses,
+				rules,
+				repeatedFields,
+				joinByField,
+				wordMatcher,
+				optionalFields
+			);
 
-        case 'supertype':
-            if (seen.has('children')) return []
-            seen.add('children')
-            return ['$$$CHILDREN']
+		case 'supertype':
+			if (seen.has('children')) return [];
+			seen.add('children');
+			return ['$$$CHILDREN'];
 
-        case 'alias':
-            // Named aliases (`alias($._hidden, $.visible)`) create a
-            // visible parse-tree kind at parse time — surface them as
-            // named children like symbol/supertype so variant()-adopted
-            // inner choices (e.g. `visibility_modifier`'s
-            // `pub_self/pub_super/pub_crate/pub_in_path`) render via
-            // `$$$CHILDREN`. Unnamed aliases (`alias($.x, 'display')`)
-            // just relabel existing content — walk into it.
-            if (rule.named) {
-                if (seen.has('children')) return []
-                seen.add('children')
-                return ['$$$CHILDREN']
-            }
-            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
+		case 'alias':
+			// Named aliases (`alias($._hidden, $.visible)`) create a
+			// visible parse-tree kind at parse time — surface them as
+			// named children like symbol/supertype so variant()-adopted
+			// inner choices (e.g. `visibility_modifier`'s
+			// `pub_self/pub_super/pub_crate/pub_in_path`) render via
+			// `$$$CHILDREN`. Unnamed aliases (`alias($.x, 'display')`)
+			// just relabel existing content — walk into it.
+			if (rule.named) {
+				if (seen.has('children')) return [];
+				seen.add('children');
+				return ['$$$CHILDREN'];
+			}
+			return walkRuleForTemplate(
+				rule.content,
+				seen,
+				inRepeat,
+				clauses,
+				rules,
+				repeatedFields,
+				joinByField,
+				wordMatcher,
+				optionalFields
+			);
 
-        case 'indent':
-            return ['\n  ']
-        case 'dedent':
-            return ['\n']
-        case 'newline':
-            return ['\n']
+		case 'indent':
+			return ['\n  '];
+		case 'dedent':
+			return ['\n'];
+		case 'newline':
+			return ['\n'];
 
-        case 'terminal':
-            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
+		case 'terminal':
+			return walkRuleForTemplate(
+				rule.content,
+				seen,
+				inRepeat,
+				clauses,
+				rules,
+				repeatedFields,
+				joinByField,
+				wordMatcher,
+				optionalFields
+			);
 
-        case 'polymorph':
-            // Polymorphs are dispatched by AssembledPolymorph.renderTemplate
-            // which walks each form separately. Reaching this case means a
-            // PolymorphRule appears nested inside another rule's body, which
-            // the classifier is supposed to prevent — treat as a bug rather
-            // than silently emitting nothing.
-            throw new Error(
-                `walkRuleForTemplate: nested PolymorphRule should have been promoted by Link. ` +
-                `forms=${rule.forms.map(f => f.name).join(',')}`,
-            )
+		case 'polymorph':
+			// Polymorphs are dispatched by AssembledPolymorph.renderTemplate
+			// which walks each form separately. Reaching this case means a
+			// PolymorphRule appears nested inside another rule's body, which
+			// the classifier is supposed to prevent — treat as a bug rather
+			// than silently emitting nothing.
+			throw new Error(
+				`walkRuleForTemplate: nested PolymorphRule should have been promoted by Link. ` +
+					`forms=${rule.forms.map((f) => f.name).join(',')}`
+			);
 
-        default:
-            return []
-    }
+		default:
+			return [];
+	}
 }
 
 /**
@@ -926,106 +1228,105 @@ function walkRuleForTemplate(
  * case to detect `optional('async')`-style keyword annotations.
  */
 function extractSingleKeywordString(rule: Rule): string | null {
-    switch (rule.type) {
-        case 'string':
-            return rule.value
-        case 'token':
-        case 'terminal':
-        case 'group':
-        case 'variant':
-        case 'clause':
-            return extractSingleKeywordString((rule as { content: Rule }).content)
-        default:
-            return null
-    }
+	switch (rule.type) {
+		case 'string':
+			return rule.value;
+		case 'token':
+		case 'terminal':
+		case 'group':
+		case 'variant':
+		case 'clause':
+			return extractSingleKeywordString((rule as { content: Rule }).content);
+		default:
+			return null;
+	}
 }
 
 /**
- * Lift each branch of `optional(choice(...))` into a clause keyed by
- * its field name, so flanking literals render only when the field is
- * present. Canonical case: rust `attribute = seq(_path, optional(
- * choice(seq('=', field('value')), field('arguments'))))` — default
- * walker emits `=$VALUE$ARGUMENTS`, which produces `#[name=]` for a
- * bare attribute. With the lift, each branch becomes its own clause
- * (`value_clause: "=$VALUE"`, `arguments_clause: "$ARGUMENTS"`) and
- * the template reads `$$$CHILDREN$VALUE_CLAUSE$ARGUMENTS_CLAUSE` —
- * each flank renders iff the slot is populated.
+ * Lift each branch of `optional(choice(...))` into an inline Jinja
+ * conditional keyed by the branch's field name, so flanking literals
+ * render only when the field is present.
+ *
+ * Canonical case: rust `attribute = seq(_path, optional(choice(
+ * seq('=', field('value')), field('arguments'))))`. With the lift,
+ * each branch becomes its own conditional:
+ *   `{% if value | isPresent %}=$VALUE{% endif %}{% if arguments | isPresent %}$ARGUMENTS{% endif %}`.
  *
  * Returns null if any branch doesn't match the single-field shape
  * (string/pattern/symbol literals, punctuation-only branches, or
  * branches with multiple named fields). Falls back to default walk.
+ *
+ * Cluster F step 3 (016) replaces the older `liftChoiceBranchesToClauses`
+ * — emits Jinja inline so no synthesized `<field>_clause` companion
+ * variable enters the template. The body's `$NAME` placeholder gets
+ * translated to `{{ name }}` by the downstream `translateToJinja`
+ * pass.
  */
-function liftChoiceBranchesToClauses(
-    choice: ChoiceRule,
-    clauses: Record<string, string>,
-    seen?: Set<string>,
-): string[] | null {
-    const placeholders: string[] = []
-    // Each branch: unwrap variant/clause/group/terminal layers, then
-    // try to match one of:
-    //   - field(name, ...) directly                       → `$NAME`
-    //   - seq(literal*, field, literal*)                  → `<lit>$NAME<lit>`
-    for (const member of choice.members) {
-        const stripped = stripWrappers(member)
-        const extracted = extractClauseBranch(stripped)
-        if (extracted === null) return null
-        const { fieldName, leading, trailing } = extracted
-        // Don't re-lift a field that's already emitted earlier in the
-        // rule (e.g. rust `tuple_expression`'s trailing
-        // `optional(field('elements', ...))` after the same field
-        // appeared inside a repeat earlier — the multi-valued slot
-        // already captures those values; a clause would double-count).
-        if (seen?.has(fieldName)) return null
-        const clauseKey = `${fieldName}_clause`
-        const placeholder = `$${fieldName.toUpperCase()}_CLAUSE`
-        if (!(clauseKey in clauses)) {
-            clauses[clauseKey] = `${leading}$${fieldName.toUpperCase()}${trailing}`
-        }
-        placeholders.push(placeholder)
-    }
-    return placeholders
+function liftChoiceBranchesToInlineJinja(
+	choice: ChoiceRule,
+	seen?: Set<string>
+): { parts: string[]; fieldsConsumed: string[] } | null {
+	const parts: string[] = [];
+	const fieldsConsumed: string[] = [];
+	for (const member of choice.members) {
+		const stripped = stripWrappers(member);
+		const extracted = extractClauseBranch(stripped);
+		if (extracted === null) return null;
+		const { fieldName, leading, trailing } = extracted;
+		// Don't re-lift a field that's already emitted earlier in the
+		// rule (e.g. rust `tuple_expression`'s trailing
+		// `optional(field('elements', ...))` after the same field
+		// appeared inside a repeat earlier — the multi-valued slot
+		// already captures those values; a conditional would
+		// double-count).
+		if (seen?.has(fieldName)) return null;
+		const body = `${leading}$${fieldName.toUpperCase()}${trailing}`;
+		parts.push(emitJinjaConditional(fieldName, body));
+		fieldsConsumed.push(fieldName);
+	}
+	return { parts, fieldsConsumed };
 }
 
 function stripWrappers(rule: Rule): Rule {
-    switch (rule.type) {
-        case 'variant':
-        case 'clause':
-        case 'group':
-        case 'terminal':
-        case 'token':
-            return stripWrappers(rule.content)
-        default:
-            return rule
-    }
+	switch (rule.type) {
+		case 'variant':
+		case 'clause':
+		case 'group':
+		case 'terminal':
+		case 'token':
+			return stripWrappers(rule.content);
+		default:
+			return rule;
+	}
 }
 
 function extractClauseBranch(
-    rule: Rule,
+	rule: Rule
 ): { fieldName: string; leading: string; trailing: string } | null {
-    if (rule.type === 'field') {
-        return { fieldName: rule.name, leading: '', trailing: '' }
-    }
-    if (rule.type !== 'seq') return null
-    // Walk the seq collecting at most one field plus flanking literals.
-    let leading = ''
-    let trailing = ''
-    let fieldName: string | null = null
-    for (const m of rule.members) {
-        const stripped = stripWrappers(m)
-        if (stripped.type === 'field') {
-            if (fieldName !== null) return null // multi-field branch — too complex
-            fieldName = stripped.name
-            continue
-        }
-        if (stripped.type === 'string') {
-            if (fieldName === null) leading += stripped.value
-            else trailing += stripped.value
-            continue
-        }
-        return null // other shapes bail out
-    }
-    if (fieldName === null) return null
-    return { fieldName, leading, trailing }
+	if (rule.type === 'field') {
+		return { fieldName: rule.name, leading: '', trailing: '' };
+	}
+	if (rule.type !== 'seq') return null;
+	// Walk the seq collecting at most one field plus flanking literals.
+	let leading = '';
+	let trailing = '';
+	let fieldName: string | null = null;
+	for (const m of rule.members) {
+		const stripped = stripWrappers(m);
+		if (stripped.type === 'field') {
+			if (fieldName !== null) return null; // multi-field branch — too complex
+			fieldName = stripped.name;
+			continue;
+		}
+		if (stripped.type === 'string') {
+			if (fieldName === null) leading += stripped.value;
+			else trailing += stripped.value;
+			continue;
+		}
+		return null; // other shapes bail out
+	}
+	if (fieldName === null) return null;
+	return { fieldName, leading, trailing };
 }
 
 /**
@@ -1034,31 +1335,31 @@ function extractClauseBranch(
  * `optional(...)` skip heuristic in the template walker.
  */
 function containsOnlyPunctuation(rule: Rule): boolean {
-    switch (rule.type) {
-        case 'string':
-        case 'pattern':
-        case 'indent':
-        case 'dedent':
-        case 'newline':
-            return true
-        case 'field':
-        case 'symbol':
-        case 'supertype':
-        case 'enum':
-            return false
-        case 'seq':
-        case 'choice':
-            return rule.members.every(containsOnlyPunctuation)
-        case 'optional':
-        case 'repeat':
-        case 'repeat1':
-        case 'variant':
-        case 'clause':
-        case 'group':
-            return containsOnlyPunctuation(rule.content)
-        default:
-            return false
-    }
+	switch (rule.type) {
+		case 'string':
+		case 'pattern':
+		case 'indent':
+		case 'dedent':
+		case 'newline':
+			return true;
+		case 'field':
+		case 'symbol':
+		case 'supertype':
+		case 'enum':
+			return false;
+		case 'seq':
+		case 'choice':
+			return rule.members.every(containsOnlyPunctuation);
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'variant':
+		case 'clause':
+		case 'group':
+			return containsOnlyPunctuation(rule.content);
+		default:
+			return false;
+	}
 }
 
 /**
@@ -1073,13 +1374,13 @@ function containsOnlyPunctuation(rule: Rule): boolean {
  *   `0[xX]`    → `0`    (literal head, class tail)
  */
 function representativeLiteral(regex: string): string {
-    let s = regex
-    s = s.replace(/\\(.)/g, (_, c) => (/[dwWsSbBnrtfv0]/.test(c) ? '' : c))
-    s = s.replace(/\[[^\]]*\][*+?]?/g, '')
-    s = s.replace(/\([^)]*\)[*+?]?/g, '')
-    s = s.replace(/\{\d+(,\d*)?\}/g, '')
-    s = s.replace(/[.*+?|^$]/g, '')
-    return s
+	let s = regex;
+	s = s.replace(/\\(.)/g, (_, c) => (/[dwWsSbBnrtfv0]/.test(c) ? '' : c));
+	s = s.replace(/\[[^\]]*\][*+?]?/g, '');
+	s = s.replace(/\([^)]*\)[*+?]?/g, '');
+	s = s.replace(/\{\d+(,\d*)?\}/g, '');
+	s = s.replace(/[.*+?|^$]/g, '');
+	return s;
 }
 
 /**
@@ -1089,27 +1390,27 @@ function representativeLiteral(regex: string): string {
  * with the right glue.
  */
 export function findRepeatSeparator(rule: Rule): string | undefined {
-    switch (rule.type) {
-        case 'repeat':
-        case 'repeat1':
-            if (rule.separator) return rule.separator
-            return findRepeatSeparator(rule.content)
-        case 'seq':
-        case 'choice':
-            for (const m of rule.members) {
-                const sep = findRepeatSeparator(m)
-                if (sep) return sep
-            }
-            return undefined
-        case 'optional':
-        case 'variant':
-        case 'clause':
-        case 'group':
-        case 'field':
-            return findRepeatSeparator(rule.content)
-        default:
-            return undefined
-    }
+	switch (rule.type) {
+		case 'repeat':
+		case 'repeat1':
+			if (rule.separator) return rule.separator;
+			return findRepeatSeparator(rule.content);
+		case 'seq':
+		case 'choice':
+			for (const m of rule.members) {
+				const sep = findRepeatSeparator(m);
+				if (sep) return sep;
+			}
+			return undefined;
+		case 'optional':
+		case 'variant':
+		case 'clause':
+		case 'group':
+		case 'field':
+			return findRepeatSeparator(rule.content);
+		default:
+			return undefined;
+	}
 }
 
 /**
@@ -1127,27 +1428,227 @@ export function findRepeatSeparator(rule: Rule): string | undefined {
  * Walks the same transparent-wrapper set as `findRepeatSeparator`
  * (seq / choice / optional / variant / clause / group / field).
  */
-export function findRepeatFlag(rule: Rule, flag: 'trailing' | 'leading'): boolean {
-    switch (rule.type) {
-        case 'repeat':
-        case 'repeat1':
-            if (rule[flag]) return true
-            return findRepeatFlag(rule.content, flag)
-        case 'seq':
-        case 'choice':
-            return rule.members.some(m => findRepeatFlag(m, flag))
-        case 'optional':
-        case 'variant':
-        case 'clause':
-        case 'group':
-        case 'field':
-            return findRepeatFlag(rule.content, flag)
-        default:
-            return false
-    }
+export function findRepeatFlag(
+	rule: Rule,
+	flag: 'trailing' | 'leading'
+): boolean {
+	switch (rule.type) {
+		case 'repeat':
+		case 'repeat1':
+			if (rule[flag]) return true;
+			return findRepeatFlag(rule.content, flag);
+		case 'seq':
+		case 'choice':
+			return rule.members.some((m) => findRepeatFlag(m, flag));
+		case 'optional':
+		case 'variant':
+		case 'clause':
+		case 'group':
+		case 'field':
+			return findRepeatFlag(rule.content, flag);
+		default:
+			return false;
+	}
 }
 
-const TEMPLATE_WORD = /\w/
+/**
+ * Collect the names of named fields whose content contains a `repeat` /
+ * `repeat1` with the given flag (`trailing` or `leading`). Returns a
+ * `Set<string>` of field names — empty when no such field is found.
+ *
+ * Used by the template emitter to build a per-field trailing-separator
+ * set so `filterForFlanks` can restrict `joinWithTrailing` to the
+ * specific fields whose repeats carry the flag, rather than applying it
+ * globally whenever the whole rule has any trailing repeat.
+ */
+export function findFieldsWithRepeatFlag(
+	rule: Rule,
+	flag: 'trailing' | 'leading'
+): Set<string> {
+	const out = new Set<string>();
+	collectFieldsWithRepeatFlag(rule, flag, out);
+	return out;
+}
+
+function collectFieldsWithRepeatFlag(
+	rule: Rule,
+	flag: 'trailing' | 'leading',
+	acc: Set<string>
+): void {
+	switch (rule.type) {
+		case 'field':
+			if (findRepeatFlag(rule.content, flag)) acc.add(rule.name);
+			return;
+		case 'seq':
+		case 'choice':
+			for (const m of rule.members) collectFieldsWithRepeatFlag(m, flag, acc);
+			return;
+		case 'repeat':
+		case 'repeat1':
+		case 'optional':
+		case 'variant':
+		case 'clause':
+		case 'group':
+			collectFieldsWithRepeatFlag(rule.content, flag, acc);
+			return;
+		default:
+			return;
+	}
+}
+
+/**
+ * Cluster F step 3 (016): for a Jinja-inline optional emission whose
+ * head fragment opens with `{% if X | isPresent %}`, route the leading
+ * `separator` INSIDE the conditional body so it disappears alongside
+ * an absent value.
+ *
+ * Detection is purely textual on the part fragment — the walker now
+ * emits Jinja inline directly for every synthesized optional case
+ * (clause-rule, optional-keyword, optional-with-flanking-field, field-
+ * with-optional-flanking-content), so a single regex covers them all.
+ *
+ * Returns `true` when the absorption succeeded (caller skips the
+ * unconditional `out.push(separator)`); `false` when the head fragment
+ * isn't a Jinja-inline conditional.
+ */
+function absorbLeadingSeparatorIntoJinjaConditional(
+	parts: string[],
+	separator: string
+): boolean {
+	if (parts.length === 0) return false;
+	const head = parts[0]!;
+	const m = head.match(/^(\{%-? if [^%]+-?%\})/);
+	if (!m) return false;
+	parts[0] = `${m[1]}${separator}${head.slice(m[1]!.length)}`;
+	return true;
+}
+
+/**
+ * Inverse of {@link absorbLeadingSeparatorIntoJinjaConditional}: when the
+ * out-array's tail is a complete Jinja conditional, route the trailing
+ * `separator` INSIDE that conditional's body (just before the `{% endif %}`
+ * tag) so the separator emits only when the conditional fires. Used by
+ * the seq case so an optional placeholder followed by a required one
+ * ({{X}} {{Y}}) doesn't leave a stray space when X is absent.
+ *
+ * Returns `true` when the absorption succeeded (caller skips the
+ * unconditional `out.push(separator)`); `false` when the tail isn't a
+ * Jinja-inline conditional.
+ */
+function absorbTrailingSeparatorIntoJinjaConditional(
+	out: string[],
+	separator: string
+): boolean {
+	if (out.length === 0) return false;
+	const tail = out[out.length - 1]!;
+	const m = tail.match(/^(\{%-? if [^%]+-?%\})(.*)(\{%-? endif -?%\})$/);
+	if (!m) return false;
+	out[out.length - 1] = `${m[1]}${m[2]}${separator}${m[3]}`;
+	return true;
+}
+
+const JINJA_CONDITIONAL_FULL = /^(\{%-? if [^%]+-?%\})(.*)(\{%-? endif -?%\})$/;
+const JINJA_IF_HEAD = /^\{%-? if [^%]+-?%\}/;
+
+/**
+ * Cluster F step 3.5 (016): leading-space-at-template-head fix.
+ *
+ * When a seq's emission starts with a run of consecutive Jinja
+ * conditionals followed by an unconditional separator and required
+ * content, ALL the conditionals being absent leaves the separator
+ * stranded at offset 0 (the canonical ` fn ...` symptom). Fixed by:
+ *
+ *   1. Stripping any leading-edge separator step 3 placed inside each
+ *      conditional in the head run (those leading-edge separators are
+ *      only correct between two conditionals where one of them is
+ *      preceded by required content).
+ *   2. Adding the unconditional separator as a TRAILING-edge separator
+ *      inside each conditional (so it disappears alongside an absent
+ *      conditional, and chains correctly when consecutive conditionals
+ *      fire).
+ *   3. Removing the now-redundant unconditional separator that sat
+ *      between the run and the required content.
+ *
+ * Trailing-on-each works for every combination of present/absent in
+ * the run — see template-walker-frozen freeze tests for proofs across
+ * single-conditional (`type_item`, `while_expression`) and multi-
+ * conditional (`function_item`, `closure_expression`, `trait_item`)
+ * heads.
+ */
+function absorbHeadLeadingSeparatorIntoConditionals(out: string[]): void {
+	let runEnd = 0;
+	while (runEnd < out.length && JINJA_IF_HEAD.test(out[runEnd]!)) runEnd++;
+	if (runEnd === 0) return;
+	if (runEnd >= out.length) return;
+	const sepIdx = runEnd;
+	const sep = out[sepIdx]!;
+	if (sep !== ' ') return;
+	if (sepIdx + 1 >= out.length) return;
+	const tail = out[sepIdx + 1]!;
+	if (tail.length === 0) return;
+	if (JINJA_IF_HEAD.test(tail)) return;
+
+	for (let i = 0; i < runEnd; i++) {
+		const cond = out[i]!;
+		const m = cond.match(JINJA_CONDITIONAL_FULL);
+		if (!m) continue;
+		const ifTag = m[1]!;
+		let body = m[2]!;
+		const endTag = m[3]!;
+		if (body.startsWith(sep)) body = body.slice(sep.length);
+		if (!body.endsWith(sep)) body = `${body}${sep}`;
+		out[i] = `${ifTag}${body}${endTag}`;
+	}
+	out.splice(sepIdx, 1);
+}
+
+/**
+ * Compute the effective edge character of a template fragment for
+ * `needsSpace` — operate on the RENDERED text the fragment will
+ * produce, ignoring Jinja control syntax.
+ *
+ *   - For a Jinja-inline conditional `{% if X | isPresent %}<body>{% endif %}`,
+ *     return the matching edge char of `<body>`. The conditional
+ *     itself emits no characters; the body governs spacing when the
+ *     conditional fires.
+ *   - For a placeholder reference `$NAME` / `$NAME_CLAUSE` /
+ *     `$$$NAME`, treat the placeholder as identifier-like (a real
+ *     value will substitute at render time).
+ *   - For literal text, take the literal edge char.
+ */
+function effectiveSpacingChar(s: string, edge: 'first' | 'last'): string {
+	// Jinja-inline conditional — peel the wrapper and inspect the body.
+	// For spacing purposes:
+	//  * If the body is pure non-word punctuation (`:`, `=`, `!`, etc.),
+	//    use that punct as the edge char so adjacent literal punctuation
+	//    won't double up.
+	//  * Otherwise (body contains placeholders or a mix), treat the
+	//    fragment as word-like-on-this-side. The conditional WILL emit a
+	//    placeholder that typically resolves to word content at render
+	//    time, so the boundary should behave as if the prev/next was
+	//    identifier-like — matching the legacy synthesized-clause path
+	//    where `$NAME_CLAUSE` was always word-like.
+	const cond = s.match(/^(\{%-? if [^%]+-?%\})(.*)(\{%-? endif -?%\})$/);
+	if (cond) {
+		const body = cond[2]!;
+		if (body.length > 0) {
+			if (/^[^\w\s$]+$/.test(body)) return effectiveSpacingChar(body, edge);
+			return 'a';
+		}
+	}
+	return edge === 'first' ? (s[0] ?? '') : (s[s.length - 1] ?? '');
+}
+
+/**
+ * Emit the canonical Jinja inline conditional `{% if NAME | isPresent %}body{% endif %}`.
+ * Used by clause-rule walking and any other walker site that produces a
+ * gated emission tied to a field/keyword/clause name.
+ */
+function emitJinjaConditional(name: string, body: string): string {
+	return `{% if ${name} | isPresent %}${body}{% endif %}`;
+}
+
+const TEMPLATE_WORD = /\w/;
 
 /**
  * Should we insert a space separator between two adjacent template
@@ -1168,13 +1669,13 @@ const TEMPLATE_WORD = /\w/
  * pattern).
  */
 function needsSpace(prev: string, next: string, wordMatcher?: RegExp): boolean {
-    if (!prev || !next) return false
-    const lastChar = prev[prev.length - 1]!
-    const firstChar = next[0] === '$' ? 'a' : next[0]!
-    if (wordMatcher) {
-        return wordMatcher.test(lastChar + firstChar)
-    }
-    const prevIsWordLike = TEMPLATE_WORD.test(prev)
-    const nextIsWordLike = TEMPLATE_WORD.test(next) || next === '$'
-    return prevIsWordLike && nextIsWordLike
+	if (!prev || !next) return false;
+	const lastChar = prev[prev.length - 1]!;
+	const firstChar = next[0] === '$' ? 'a' : next[0]!;
+	if (wordMatcher) {
+		return wordMatcher.test(lastChar + firstChar);
+	}
+	const prevIsWordLike = TEMPLATE_WORD.test(prev);
+	const nextIsWordLike = TEMPLATE_WORD.test(next) || next === '$';
+	return prevIsWordLike && nextIsWordLike;
 }

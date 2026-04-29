@@ -23,7 +23,9 @@ import type { BoundRenderer } from './render.ts';
  */
 export function createRenderer(templatesDir: string): BoundRenderer;
 export function createRenderer(config: RulesConfig): BoundRenderer;
-export function createRenderer(pathOrConfig: string | RulesConfig): BoundRenderer {
+export function createRenderer(
+	pathOrConfig: string | RulesConfig
+): BoundRenderer {
 	if (typeof pathOrConfig !== 'string') {
 		return createRendererFromConfig(pathOrConfig);
 	}
@@ -38,7 +40,7 @@ export function createRenderer(pathOrConfig: string | RulesConfig): BoundRendere
 		extensions: [],
 		expandoChar: null,
 		metadata: { grammarSha: '' },
-		rules: {},
+		rules: {}
 	};
 	return createRendererFromConfig(emptyConfig, { templatesDir: pathOrConfig });
 }

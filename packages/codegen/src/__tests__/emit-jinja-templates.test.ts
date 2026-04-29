@@ -1,10 +1,21 @@
 import { describe, it, expect } from 'vitest';
-import { mkdtempSync, readdirSync, readFileSync, writeFileSync, rmSync, mkdirSync } from 'node:fs';
+import {
+	mkdtempSync,
+	readdirSync,
+	readFileSync,
+	writeFileSync,
+	rmSync
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { emitJinjaTemplates, writeJinjaTemplates } from '../emitters/templates.ts';
 import {
-	AssembledBranch, AssembledLeaf, AssembledKeyword,
+	emitJinjaTemplates,
+	writeJinjaTemplates
+} from '../emitters/templates.ts';
+import {
+	AssembledBranch,
+	AssembledLeaf,
+	AssembledKeyword
 } from '../compiler/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { SeqRule } from '../compiler/rule.ts';
@@ -12,12 +23,21 @@ import type { SeqRule } from '../compiler/rule.ts';
 function makeMinimalNodeMap(): NodeMap {
 	const nameRule: SeqRule = {
 		type: 'seq',
-		members: [{ type: 'field', name: 'name', content: { type: 'symbol', name: '_identifier' } }],
+		members: [
+			{
+				type: 'field',
+				name: 'name',
+				content: { type: 'symbol', name: '_identifier' }
+			}
+		]
 	};
 	const nodes = new Map<string, any>([
 		['function_item', new AssembledBranch('function_item', nameRule, nameRule)],
-		['identifier', new AssembledLeaf('identifier', { type: 'pattern', value: '[a-z]+' })],
-		['kw_fn', new AssembledKeyword('kw_fn', { type: 'string', value: 'fn' })],
+		[
+			'identifier',
+			new AssembledLeaf('identifier', { type: 'pattern', value: '[a-z]+' })
+		],
+		['kw_fn', new AssembledKeyword('kw_fn', { type: 'string', value: 'fn' })]
 	]);
 	return {
 		grammar: 'test',
@@ -25,7 +45,7 @@ function makeMinimalNodeMap(): NodeMap {
 		rules: {},
 		nodes,
 		externals: new Set(),
-		word: undefined,
+		word: undefined
 	} as unknown as NodeMap;
 }
 
@@ -62,13 +82,15 @@ describe('writeJinjaTemplates — T022 stale-file cleanup', () => {
 			const emitted = {
 				bodies: new Map([
 					['function_item', '{# @generated #}\n{{ name }}'],
-					['block', '{# @generated #}\n{ {{ children }} }'],
-				]),
+					['block', '{# @generated #}\n{ {{ children }} }']
+				])
 			};
 			writeJinjaTemplates(emitted, tmp);
-			const files = readdirSync(tmp).filter(f => f.endsWith('.jinja'));
+			const files = readdirSync(tmp).filter((f) => f.endsWith('.jinja'));
 			expect(files.sort()).toEqual(['block.jinja', 'function_item.jinja']);
-			expect(readFileSync(join(tmp, 'function_item.jinja'), 'utf-8')).toContain('{{ name }}');
+			expect(readFileSync(join(tmp, 'function_item.jinja'), 'utf-8')).toContain(
+				'{{ name }}'
+			);
 		} finally {
 			rmSync(tmp, { recursive: true, force: true });
 		}
@@ -82,13 +104,15 @@ describe('writeJinjaTemplates — T022 stale-file cleanup', () => {
 			writeFileSync(join(tmp, 'function_item.jinja'), '{# old #}\nold');
 			// Write with only function_item in emission
 			const emitted = {
-				bodies: new Map([['function_item', '{# new #}\n{{ name }}']]),
+				bodies: new Map([['function_item', '{# new #}\n{{ name }}']])
 			};
 			writeJinjaTemplates(emitted, tmp);
-			const files = readdirSync(tmp).filter(f => f.endsWith('.jinja'));
+			const files = readdirSync(tmp).filter((f) => f.endsWith('.jinja'));
 			expect(files).toEqual(['function_item.jinja']);
 			// The surviving file has the new content
-			expect(readFileSync(join(tmp, 'function_item.jinja'), 'utf-8')).toContain('new');
+			expect(readFileSync(join(tmp, 'function_item.jinja'), 'utf-8')).toContain(
+				'new'
+			);
 		} finally {
 			rmSync(tmp, { recursive: true, force: true });
 		}
@@ -101,7 +125,7 @@ describe('writeJinjaTemplates — T022 stale-file cleanup', () => {
 			writeFileSync(join(tmp, 'README.md'), '# docs');
 			writeFileSync(join(tmp, 'old_rule.jinja'), 'bogus');
 			const emitted = {
-				bodies: new Map([['kept_rule', '{# new #}\nkept']]),
+				bodies: new Map([['kept_rule', '{# new #}\nkept']])
 			};
 			writeJinjaTemplates(emitted, tmp);
 			const files = readdirSync(tmp).sort();

@@ -26,21 +26,21 @@
  * round-trip, from(), render) will be working on a corrupted view.
  */
 
-import { readFileSync, readdirSync } from 'node:fs'
-import { join } from 'node:path'
-import { readNode } from '@sittir/core'
-import type { AnyNodeData } from '@sittir/types'
-import { loadRawEntries } from './node-types-loader.ts'
+import { readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { readNode } from '@sittir/core';
+import type { AnyNodeData, NodeId } from '@sittir/types';
+import { loadRawEntries } from './node-types-loader.ts';
 import {
-    loadLanguageForGrammar,
-    treeHandle,
-    buildReadHandle,
-    findFirst,
-    collectKinds,
-    type TSNode,
-    type TSTree,
-} from './common.ts'
-
+	loadLanguageForGrammar,
+	buildReadHandle,
+	findFirst,
+	findNativeNodeId,
+	collectKinds,
+	emitValidatorMetrics,
+	type TSNode,
+	type TSTree
+} from './common.ts';
 
 // Tree-sitter adapter + tree walkers imported from validate/common.ts.
 // See that file for the canonical TSNode/TSTree shapes (backed by web-tree-sitter's
@@ -50,37 +50,49 @@ import {
 // Corpus parser — shared shape
 // ---------------------------------------------------------------------------
 
-interface CorpusEntry { name: string; source: string }
-
-function parseCorpus(content: string): CorpusEntry[] {
-    const entries: CorpusEntry[] = []
-    const lines = content.split('\n')
-    let i = 0
-    while (i < lines.length) {
-        if (!lines[i]!.startsWith('====')) { i++; continue }
-        i++
-        const name = lines[i]?.trim() ?? ''
-        i++
-        while (i < lines.length && lines[i]!.startsWith('====')) i++
-        const sourceLines: string[] = []
-        while (i < lines.length && !lines[i]!.match(/^-{3,}$/)) { sourceLines.push(lines[i]!); i++ }
-        while (i < lines.length && !lines[i]!.startsWith('====')) i++
-        const source = sourceLines.join('\n').trim()
-        if (source) entries.push({ name, source })
-    }
-    return entries
+interface CorpusEntry {
+	name: string;
+	source: string;
 }
 
+function parseCorpus(content: string): CorpusEntry[] {
+	const entries: CorpusEntry[] = [];
+	const lines = content.split('\n');
+	let i = 0;
+	while (i < lines.length) {
+		if (!lines[i]!.startsWith('====')) {
+			i++;
+			continue;
+		}
+		i++;
+		const name = lines[i]?.trim() ?? '';
+		i++;
+		while (i < lines.length && lines[i]!.startsWith('====')) i++;
+		const sourceLines: string[] = [];
+		while (i < lines.length && !lines[i]!.match(/^-{3,}$/)) {
+			sourceLines.push(lines[i]!);
+			i++;
+		}
+		while (i < lines.length && !lines[i]!.startsWith('====')) i++;
+		const source = sourceLines.join('\n').trim();
+		if (source) entries.push({ name, source });
+	}
+	return entries;
+}
 
-const FIXTURES_DIR = new URL('../../fixtures', import.meta.url).pathname
+const FIXTURES_DIR = new URL('../../fixtures', import.meta.url).pathname;
 
 function loadCorpusEntries(grammar: string): CorpusEntry[] {
-    const entries: CorpusEntry[] = []
-    const files = readdirSync(FIXTURES_DIR).filter(f => f.startsWith(`${grammar}-`) && f.endsWith('.txt'))
-    for (const file of files) {
-        entries.push(...parseCorpus(readFileSync(join(FIXTURES_DIR, file), 'utf-8')))
-    }
-    return entries
+	const entries: CorpusEntry[] = [];
+	const files = readdirSync(FIXTURES_DIR).filter(
+		(f) => f.startsWith(`${grammar}-`) && f.endsWith('.txt')
+	);
+	for (const file of files) {
+		entries.push(
+			...parseCorpus(readFileSync(join(FIXTURES_DIR, file), 'utf-8'))
+		);
+	}
+	return entries;
 }
 
 // ---------------------------------------------------------------------------
@@ -92,15 +104,19 @@ function loadCorpusEntries(grammar: string): CorpusEntry[] {
  * truth for "what fields should readNode surface for this kind".
  */
 function buildKindFieldMap(
-    rawEntries: { type: string; named: boolean; fields?: Record<string, unknown> }[],
+	rawEntries: {
+		type: string;
+		named: boolean;
+		fields?: Record<string, unknown>;
+	}[]
 ): Map<string, Set<string>> {
-    const result = new Map<string, Set<string>>()
-    for (const entry of rawEntries) {
-        if (!entry.named) continue
-        const fields = entry.fields ?? {}
-        result.set(entry.type, new Set(Object.keys(fields)))
-    }
-    return result
+	const result = new Map<string, Set<string>>();
+	for (const entry of rawEntries) {
+		if (!entry.named) continue;
+		const fields = entry.fields ?? {};
+		result.set(entry.type, new Set(Object.keys(fields)));
+	}
+	return result;
 }
 
 // ---------------------------------------------------------------------------
@@ -108,9 +124,9 @@ function buildKindFieldMap(
 // ---------------------------------------------------------------------------
 
 interface NodeIssue {
-    kind: string
-    instance: string // corpus entry name
-    message: string
+	kind: string;
+	instance: string; // corpus entry name
+	message: string;
 }
 
 /**
@@ -126,12 +142,12 @@ interface NodeIssue {
  * @returns A set of field name strings present on this specific parse instance.
  */
 function collectLiveFieldNames(node: TSNode): Set<string> {
-    const liveFieldNames = new Set<string>()
-    for (let i = 0; i < node.childCount; i++) {
-        const fname = node.fieldNameForChild(i)
-        if (fname) liveFieldNames.add(fname)
-    }
-    return liveFieldNames
+	const liveFieldNames = new Set<string>();
+	for (let i = 0; i < node.childCount; i++) {
+		const fname = node.fieldNameForChild(i);
+		if (fname) liveFieldNames.add(fname);
+	}
+	return liveFieldNames;
 }
 
 /**
@@ -147,14 +163,14 @@ function collectLiveFieldNames(node: TSNode): Set<string> {
  * @returns The count of named children with no field assignment.
  */
 function countUnfieldedNamedChildren(node: TSNode): number {
-    let count = 0
-    for (let i = 0; i < node.childCount; i++) {
-        const c = node.child(i)
-        if (!c || !c.isNamed) continue
-        if (node.fieldNameForChild(i)) continue
-        count++
-    }
-    return count
+	let count = 0;
+	for (let i = 0; i < node.childCount; i++) {
+		const c = node.child(i);
+		if (!c || !c.isNamed) continue;
+		if (node.fieldNameForChild(i)) continue;
+		count++;
+	}
+	return count;
 }
 
 /**
@@ -172,58 +188,62 @@ function countUnfieldedNamedChildren(node: TSNode): number {
  * @returns The total count of children routed into override fields.
  */
 function countPromotedOverrideChildren(
-    data: AnyNodeData,
-    liveFieldNames: Set<string>,
-    overrideFields: Set<string>,
+	data: AnyNodeData,
+	liveFieldNames: Set<string>,
+	overrideFields: Set<string>
 ): number {
-    let count = 0
-    for (const [fname, value] of Object.entries(data.$fields ?? {})) {
-        if (liveFieldNames.has(fname)) continue // tree-sitter field, not override
-        if (!overrideFields.has(fname)) continue // neither override nor live
-        if (Array.isArray(value)) count += value.length
-        else if (value && typeof value === 'object') count += 1
-    }
-    return count
+	let count = 0;
+	for (const [fname, value] of Object.entries(data.$fields ?? {})) {
+		if (liveFieldNames.has(fname)) continue; // tree-sitter field, not override
+		if (!overrideFields.has(fname)) continue; // neither override nor live
+		if (Array.isArray(value)) count += value.length;
+		else if (value && typeof value === 'object') count += 1;
+	}
+	return count;
 }
 
 function checkNodeData(
-    kind: string,
-    node: TSNode,
-    data: AnyNodeData,
-    expectedFields: Set<string>,
-    overrideFields: Set<string>,
+	kind: string,
+	node: TSNode,
+	data: AnyNodeData,
+	expectedFields: Set<string>,
+	overrideFields: Set<string>
 ): string | null {
-    // 1. $type must match
-    if (data.$type !== kind) {
-        return `$type mismatch: expected '${kind}', got '${data.$type}'`
-    }
+	// 1. $type must match
+	if (data.$type !== kind) {
+		return `$type mismatch: expected '${kind}', got '${data.$type}'`;
+	}
 
-    const liveFieldNames = collectLiveFieldNames(node)
-    const dataFields = new Set(Object.keys(data.$fields ?? {}))
+	const liveFieldNames = collectLiveFieldNames(node);
+	const dataFields = new Set(Object.keys(data.$fields ?? {}));
 
-    for (const fname of liveFieldNames) {
-        if (!dataFields.has(fname)) {
-            return `missing field '${fname}' — tree-sitter surfaced it, readNode did not`
-        }
-    }
+	for (const fname of liveFieldNames) {
+		if (!dataFields.has(fname)) {
+			return `missing field '${fname}' — tree-sitter surfaced it, readNode did not`;
+		}
+	}
 
-    const dataChildrenCount = (data.$children ?? []).filter(
-        (c: any) => c?.$named !== false,
-    ).length
+	const dataChildrenCount = (data.$children ?? []).filter(
+		(c: any) => c?.$named !== false
+	).length;
 
-    const expectedNamedUnfielded = countUnfieldedNamedChildren(node)
-    const promotedChildCount = countPromotedOverrideChildren(data, liveFieldNames, overrideFields)
+	const expectedNamedUnfielded = countUnfieldedNamedChildren(node);
+	const promotedChildCount = countPromotedOverrideChildren(
+		data,
+		liveFieldNames,
+		overrideFields
+	);
 
-    if (dataChildrenCount + promotedChildCount < expectedNamedUnfielded) {
-        return (
-            `lost ${expectedNamedUnfielded - dataChildrenCount - promotedChildCount} named children ` +
-            `(${expectedNamedUnfielded} unfielded in parse, ` +
-            `${dataChildrenCount} in data.children, ` +
-            `${promotedChildCount} promoted via overrides)`
-        )
-    }
+	if (dataChildrenCount + promotedChildCount < expectedNamedUnfielded) {
+		return (
+			`lost ${expectedNamedUnfielded - dataChildrenCount - promotedChildCount} named children ` +
+			`(${expectedNamedUnfielded} unfielded in parse, ` +
+			`${dataChildrenCount} in data.children, ` +
+			`${promotedChildCount} promoted via overrides)`
+		);
+	}
 
-    return null
+	return null;
 }
 
 // ---------------------------------------------------------------------------
@@ -231,83 +251,99 @@ function checkNodeData(
 // ---------------------------------------------------------------------------
 
 export interface ReadNodeRoundTripResult {
-    grammar: string
-    total: number
-    pass: number
-    fail: number
-    skip: number
-    issues: NodeIssue[]
+	grammar: string;
+	total: number;
+	pass: number;
+	fail: number;
+	skip: number;
+	issues: NodeIssue[];
 }
 
 export async function validateReadNodeRoundTrip(
-    grammar: string,
+	grammar: string
 ): Promise<ReadNodeRoundTripResult> {
-    const { Parser, lang } = await loadLanguageForGrammar(grammar)
-    const parser = new Parser()
-    parser.setLanguage(lang)
+	const { Parser, lang } = await loadLanguageForGrammar(grammar);
+	const parser = new Parser();
+	parser.setLanguage(lang);
 
-    const rawEntries = loadRawEntries(grammar)
-    const kindFields = buildKindFieldMap(rawEntries)
+	const rawEntries = loadRawEntries(grammar);
+	const kindFields = buildKindFieldMap(rawEntries);
 
-    const entries = loadCorpusEntries(grammar)
-    const issues: NodeIssue[] = []
-    const testedKinds = new Set<string>()
-    let total = 0
-    let pass = 0
-    let skip = 0
+	const entries = loadCorpusEntries(grammar);
+	const issues: NodeIssue[] = [];
+	const testedKinds = new Set<string>();
+	let total = 0;
+	let pass = 0;
+	let skip = 0;
 
-    for (const entry of entries) {
-        const tree = parser.parse(entry.source) as TSTree
-        if (tree.rootNode.hasError) continue
+	for (const entry of entries) {
+		const tree = parser.parse(entry.source) as TSTree;
+		if (tree.rootNode.hasError) continue;
 
-        const kinds = collectKinds(tree.rootNode)
-        for (const kind of kinds) {
-            if (testedKinds.has(kind)) continue
-            testedKinds.add(kind)
-            total++
+		const kinds = collectKinds(tree.rootNode);
+		for (const kind of kinds) {
+			if (testedKinds.has(kind)) continue;
+			testedKinds.add(kind);
+			total++;
 
-            const node = findFirst(tree.rootNode, kind)
-            if (!node) {
-                skip++
-                continue
-            }
+			const node = findFirst(tree.rootNode, kind);
+			if (!node) {
+				skip++;
+				continue;
+			}
 
-            const handle = buildReadHandle(grammar, tree, entry.source)
-            let data: AnyNodeData
-            try {
-                data = readNode(handle, node.id)
-            } catch (e) {
-                issues.push({ kind, instance: entry.name, message: `readNode threw: ${(e as Error).message.slice(0, 80)}` })
-                continue
-            }
+			const handle = buildReadHandle(grammar, tree, entry.source);
+			// Native engine Rust-heap IDs differ from WASM linear-memory IDs.
+			// Skip alias-target kinds the native engine emits under a different
+			// rule name rather than falling back to a mismatched WASM ID.
+			const nativeId = findNativeNodeId(handle, kind);
+			if (nativeId === null && handle.read) {
+				skip++;
+				continue;
+			}
+			const nodeId = nativeId ?? (node.id as NodeId);
+			let data: AnyNodeData;
+			try {
+				data = readNode(handle, nodeId);
+			} catch (e) {
+				issues.push({
+					kind,
+					instance: entry.name,
+					message: `readNode threw: ${(e as Error).message.slice(0, 80)}`
+				});
+				continue;
+			}
 
-            const expected = kindFields.get(kind) ?? new Set()
-            const error = checkNodeData(kind, node, data, expected, new Set())
-            if (error) {
-                issues.push({ kind, instance: entry.name, message: error })
-            } else {
-                pass++
-            }
-        }
-    }
+			const expected = kindFields.get(kind) ?? new Set();
+			const error = checkNodeData(kind, node, data, expected, new Set());
+			if (error) {
+				issues.push({ kind, instance: entry.name, message: error });
+			} else {
+				pass++;
+			}
+		}
+	}
 
-    return { grammar, total, pass, fail: total - pass - skip, skip, issues }
+	emitValidatorMetrics();
+	return { grammar, total, pass, fail: total - pass - skip, skip, issues };
 }
 
-export function formatReadNodeRoundTripReport(result: ReadNodeRoundTripResult): string {
-    const lines: string[] = []
-    const icon = result.issues.length === 0 ? 'v' : 'x'
-    lines.push(
-        `  ${icon} ${result.pass}/${result.total} readNode round-trip` +
-        ` (${result.skip} skipped, ${result.issues.length} issues)`,
-    )
-    if (result.issues.length > 0) {
-        for (const issue of result.issues.slice(0, 30)) {
-            lines.push(`    x ${issue.kind} [${issue.instance}]: ${issue.message}`)
-        }
-        if (result.issues.length > 30) {
-            lines.push(`    … and ${result.issues.length - 30} more`)
-        }
-    }
-    return lines.join('\n')
+export function formatReadNodeRoundTripReport(
+	result: ReadNodeRoundTripResult
+): string {
+	const lines: string[] = [];
+	const icon = result.issues.length === 0 ? 'v' : 'x';
+	lines.push(
+		`  ${icon} ${result.pass}/${result.total} readNode round-trip` +
+			` (${result.skip} skipped, ${result.issues.length} issues)`
+	);
+	if (result.issues.length > 0) {
+		for (const issue of result.issues.slice(0, 30)) {
+			lines.push(`    x ${issue.kind} [${issue.instance}]: ${issue.message}`);
+		}
+		if (result.issues.length > 30) {
+			lines.push(`    … and ${result.issues.length - 30} more`);
+		}
+	}
+	return lines.join('\n');
 }

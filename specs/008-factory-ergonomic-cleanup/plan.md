@@ -26,11 +26,12 @@ All changes are in `@sittir/codegen` emitters + one new module in `@sittir/types
 **Project Type**: Compiler (code generator for tree-sitter grammars)
 **Performance Goals**: Codegen generates all three grammars in < 10s (current baseline). Generated packages tree-shake cleanly.
 **Constraints**:
+
 - No new third-party runtime dependencies in generated packages (Zero-runtime-deps constitution principle)
 - All generated files must carry the existing `// Auto-generated` header
 - `tsc --noEmit` must pass on all three grammar packages after every user story lands
 - Corpus-validation ceilings must not regress (see spec.md SC-008)
-**Scale/Scope**:
+  **Scale/Scope**:
 - 3 grammar packages (rust ~160 kinds, typescript ~180 kinds, python ~150 kinds)
 - 5 emitters touched: `types.ts`, `factories.ts`, `from.ts`, `wrap.ts`, `ir.ts`
 - 1 new emitter: `is.ts`
@@ -41,16 +42,16 @@ All changes are in `@sittir/codegen` emitters + one new module in `@sittir/types
 
 **GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.**
 
-| Principle | Status | Notes |
-|-----------|--------|-------|
-| I. Grammar Alignment | ✅ PASS | No new terminology. `is.functionItem` / `isTree` / `isNode` / `assert` mirror established conventions (Babel's `t.is*` / `t.assert*`); `NamespaceMap` reuses existing `Kind` / `Node` / `Config` / `Tree` / `Loose` / `Fluent` vocabulary. |
-| II. Fewer Abstractions | ✅ PASS | Net reduction: removes `KindMap`, `ConfigMap`, `LooseMap`, `XConfig`, `LooseX`, `XTree` — five parallel alias families collapsed into one `NamespaceMap`. New abstractions justified: `NodeNs<T>` is the single computed base (replaces 4 per-kind top-level types); type guards add capability that consumers currently implement by hand. |
-| III. Generated vs Hand-Written | ✅ PASS | Changes are in emitter source + generated output. Only 2 hand-written additions: `NodeNs<T>` in `@sittir/types`, `isNodeData` in `@sittir/core`. Neither is inside a generated file. |
-| IV. Test-First | ✅ PASS | Each user story has independent test coverage: type-level assertions for NamespaceMap convergence (SC-010), guard composition tests (SC-006/007), quick-return identity tests (SC-005c), ceiling preservation (SC-008). |
-| V. Library-First | ✅ PASS | No new CLI, no new formatting, no new linting. Type guards are library API surface; `isNodeData` is a core predicate. |
-| VI. Deterministic Output | ✅ PASS | Emitter changes preserve deterministic iteration (Map/Set enumeration order is already stable in the existing code). `NamespaceMap` entries iterate in kind-declaration order; `is` namespace camelCase keys derive deterministically from kind names. |
-| VII. Grammar-Agnostic Pipeline | ✅ PASS | `NodeNs<T>` is generic over any `{readonly type: string}`; `isNodeData`, `isTree`, `isNode` use shape predicates (no kind-specific branches); `_toBag` (if introduced) iterates generic field entries with deterministic snake→camel rewrite. No `if (language === ...)` or `if (kind === ...)` introduced. |
-| VIII. Non-lossy Transformations | ✅ PASS | Every rename maps to the same underlying type (e.g. `FunctionItem.Config` ↔ `FunctionItemConfig` — same computed type). Deprecated re-exports preserve backward compat. `.from()` quick-return on NodeData is *literally* identity — no transformation on that path. Bag-branch resolution logic is unchanged from today, only the access mechanism (single vs dual). |
+| Principle                       | Status  | Notes                                                                                                                                                                                                                                                                                                                                                                 |
+| ------------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| I. Grammar Alignment            | ✅ PASS | No new terminology. `is.functionItem` / `isTree` / `isNode` / `assert` mirror established conventions (Babel's `t.is*` / `t.assert*`); `NamespaceMap` reuses existing `Kind` / `Node` / `Config` / `Tree` / `Loose` / `Fluent` vocabulary.                                                                                                                            |
+| II. Fewer Abstractions          | ✅ PASS | Net reduction: removes `KindMap`, `ConfigMap`, `LooseMap`, `XConfig`, `LooseX`, `XTree` — five parallel alias families collapsed into one `NamespaceMap`. New abstractions justified: `NodeNs<T>` is the single computed base (replaces 4 per-kind top-level types); type guards add capability that consumers currently implement by hand.                           |
+| III. Generated vs Hand-Written  | ✅ PASS | Changes are in emitter source + generated output. Only 2 hand-written additions: `NodeNs<T>` in `@sittir/types`, `isNodeData` in `@sittir/core`. Neither is inside a generated file.                                                                                                                                                                                  |
+| IV. Test-First                  | ✅ PASS | Each user story has independent test coverage: type-level assertions for NamespaceMap convergence (SC-010), guard composition tests (SC-006/007), quick-return identity tests (SC-005c), ceiling preservation (SC-008).                                                                                                                                               |
+| V. Library-First                | ✅ PASS | No new CLI, no new formatting, no new linting. Type guards are library API surface; `isNodeData` is a core predicate.                                                                                                                                                                                                                                                 |
+| VI. Deterministic Output        | ✅ PASS | Emitter changes preserve deterministic iteration (Map/Set enumeration order is already stable in the existing code). `NamespaceMap` entries iterate in kind-declaration order; `is` namespace camelCase keys derive deterministically from kind names.                                                                                                                |
+| VII. Grammar-Agnostic Pipeline  | ✅ PASS | `NodeNs<T>` is generic over any `{readonly type: string}`; `isNodeData`, `isTree`, `isNode` use shape predicates (no kind-specific branches); `_toBag` (if introduced) iterates generic field entries with deterministic snake→camel rewrite. No `if (language === ...)` or `if (kind === ...)` introduced.                                                           |
+| VIII. Non-lossy Transformations | ✅ PASS | Every rename maps to the same underlying type (e.g. `FunctionItem.Config` ↔ `FunctionItemConfig` — same computed type). Deprecated re-exports preserve backward compat. `.from()` quick-return on NodeData is _literally_ identity — no transformation on that path. Bag-branch resolution logic is unchanged from today, only the access mechanism (single vs dual). |
 
 **Gate status: PASS. Proceeding to Phase 0.**
 

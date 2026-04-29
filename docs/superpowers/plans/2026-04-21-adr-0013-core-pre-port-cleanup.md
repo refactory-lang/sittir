@@ -15,6 +15,7 @@ Scope note: Tasks 4 and 5 from ADR-0013 are nice-to-haves and are NOT in this pl
 ## Task 1: Split template loading from render engine
 
 **Files:**
+
 - Create: `packages/core/src/loader.ts`
 - Modify: `packages/core/src/render.ts` (remove I/O)
 - Modify: `packages/core/src/index.ts` (re-export from loader)
@@ -31,21 +32,23 @@ one entry point.
 import * as fs from 'node:fs';
 import { parse as parseYaml } from 'yaml';
 import type { RulesConfig } from './types.ts';
-import {
-    createRendererFromConfig,
-    type BoundRenderer,
-} from './render.ts';
+import { createRendererFromConfig, type BoundRenderer } from './render.ts';
 
 export function loadTemplates(yamlPath: string): RulesConfig {
-    const content = fs.readFileSync(yamlPath, 'utf-8');
-    return parseYaml(content) as RulesConfig;
+	const content = fs.readFileSync(yamlPath, 'utf-8');
+	return parseYaml(content) as RulesConfig;
 }
 
 export function createRenderer(yamlPath: string): BoundRenderer;
 export function createRenderer(config: RulesConfig): BoundRenderer;
-export function createRenderer(pathOrConfig: string | RulesConfig): BoundRenderer {
-    const config = typeof pathOrConfig === 'string' ? loadTemplates(pathOrConfig) : pathOrConfig;
-    return createRendererFromConfig(config);
+export function createRenderer(
+	pathOrConfig: string | RulesConfig
+): BoundRenderer {
+	const config =
+		typeof pathOrConfig === 'string'
+			? loadTemplates(pathOrConfig)
+			: pathOrConfig;
+	return createRendererFromConfig(config);
 }
 ```
 
@@ -57,6 +60,7 @@ and export it + the `BoundRenderer` type. `render.ts` now has zero
 `node:*` imports.
 
 Delete:
+
 - `import * as fs from 'node:fs';`
 - `import { parse as parseYaml } from 'yaml';`
 - The `loadTemplates` function.
@@ -66,8 +70,8 @@ Export the config-form:
 
 ```ts
 export function createRendererFromConfig(config: RulesConfig): BoundRenderer {
-    const ctx = buildRenderContext(config);
-    // ... existing body, just without the path-or-config conditional
+	const ctx = buildRenderContext(config);
+	// ... existing body, just without the path-or-config conditional
 }
 ```
 
@@ -102,6 +106,7 @@ move to loader.ts. Consumers continue importing from @sittir/core unchanged."
 ## Task 2: Collapse identical variant blocks; align `$variant` names
 
 **Files:**
+
 - Modify: codegen template emitter (identify the walker that emits
   `variants:` blocks — likely in `packages/codegen/src/emitters/` or
   `packages/codegen/src/compiler/`)
@@ -115,6 +120,7 @@ move to loader.ts. Consumers continue importing from @sittir/core unchanged."
 - [ ] **Step 2.1: Locate the template emitter that writes `variants:`**
 
 Run:
+
 ```bash
 grep -rn "variants:" packages/codegen/src/ | head -20
 ```
@@ -132,16 +138,16 @@ structure — apply the concept):
 ```ts
 // Before emitting `variants: { form1: T1, form2: T2, ... }`:
 const entries = Object.values(variants).map(normalizeTrailingNewline);
-const allEqual = entries.every(e => e === entries[0]);
+const allEqual = entries.every((e) => e === entries[0]);
 if (allEqual) {
-    // Emit as a single template string
-    return entries[0];
+	// Emit as a single template string
+	return entries[0];
 }
 // Otherwise emit variants: block as before
 return { variants };
 
 function normalizeTrailingNewline(s: string): string {
-    return s.endsWith('\n') ? s.slice(0, -1) : s;
+	return s.endsWith('\n') ? s.slice(0, -1) : s;
 }
 ```
 
@@ -170,11 +176,13 @@ npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/pyt
 - [ ] **Step 2.5: Verify only three rules retain `variants:` blocks**
 
 Run:
+
 ```bash
 grep -B 1 "^    variants:" packages/rust/templates.yaml packages/typescript/templates.yaml packages/python/templates.yaml
 ```
 
 Expected output: exactly three matches:
+
 - `rust/visibility_modifier`
 - `typescript/export_statement`
 - `typescript/call_expression`
@@ -197,29 +205,36 @@ import { createRenderer } from '../src/loader.ts';
 // Pull in the three-grammar templates to check $variant-keyed rules.
 
 describe('variant dispatch uses primary $variant key', () => {
-    // Minimal inline test: a rule with variants, a factory-produced
-    // node stamping $variant, render must match the variant-keyed
-    // template exactly, not fall through to pickTemplate.
-    it('matches template by $variant key', () => {
-        const config: RulesConfig = {
-            rules: {
-                widget: {
-                    variants: {
-                        alpha: 'A:$NAME',
-                        beta:  'B:$NAME',
-                    },
-                },
-            },
-        };
-        const { render } = createRenderer(config);
-        const node = {
-            $type: 'widget',
-            $source: 'factory' as const,
-            $variant: 'beta',
-            $fields: { name: { $type: 'id', $source: 'factory' as const, $text: 'x', $named: true } },
-        };
-        expect(render(node as any)).toBe('B:x');
-    });
+	// Minimal inline test: a rule with variants, a factory-produced
+	// node stamping $variant, render must match the variant-keyed
+	// template exactly, not fall through to pickTemplate.
+	it('matches template by $variant key', () => {
+		const config: RulesConfig = {
+			rules: {
+				widget: {
+					variants: {
+						alpha: 'A:$NAME',
+						beta: 'B:$NAME'
+					}
+				}
+			}
+		};
+		const { render } = createRenderer(config);
+		const node = {
+			$type: 'widget',
+			$source: 'factory' as const,
+			$variant: 'beta',
+			$fields: {
+				name: {
+					$type: 'id',
+					$source: 'factory' as const,
+					$text: 'x',
+					$named: true
+				}
+			}
+		};
+		expect(render(node as any)).toBe('B:x');
+	});
 });
 ```
 
@@ -254,6 +269,7 @@ typescript/export_statement, typescript/call_expression."
 ## Task 3: Pre-partition consumed vs. unconsumed children
 
 **Files:**
+
 - Modify: `packages/core/src/render.ts` (extract `prepare()`)
 - Add (optional): `packages/core/src/prepare.ts` if the logic is
   large enough to split
@@ -281,21 +297,28 @@ import { describe, it, expect } from 'vitest';
 import { prepare } from '../src/render.ts';
 
 describe('prepare()', () => {
-    it('materializes a PreparedRender bag', () => {
-        const config = {
-            rules: {
-                greet: '$NAME!',
-            },
-        };
-        const node = {
-            $type: 'greet',
-            $source: 'factory' as const,
-            $fields: { name: { $type: 'id', $source: 'factory' as const, $text: 'world', $named: true } },
-        };
-        const prepared = prepare(node as any, config);
-        expect(prepared.fields.name).toBe('world');
-        expect(prepared.children).toEqual([]);
-    });
+	it('materializes a PreparedRender bag', () => {
+		const config = {
+			rules: {
+				greet: '$NAME!'
+			}
+		};
+		const node = {
+			$type: 'greet',
+			$source: 'factory' as const,
+			$fields: {
+				name: {
+					$type: 'id',
+					$source: 'factory' as const,
+					$text: 'world',
+					$named: true
+				}
+			}
+		};
+		const prepared = prepare(node as any, config);
+		expect(prepared.fields.name).toBe('world');
+		expect(prepared.children).toEqual([]);
+	});
 });
 ```
 
@@ -315,6 +338,7 @@ becomes: call `prepare(node, rule, ctx)`, then substitute `$VAR` in the
 template text against the bag.
 
 The tricky parts:
+
 - `$$$CHILDREN` needs to know which children were consumed by clauses.
 - Clauses can recursively reference other clauses (nested clause refs).
 - Field-to-child promotion depends on whether template contains
@@ -328,21 +352,25 @@ Keep the body of `render()` in `render.ts`, just restructured:
 
 ```ts
 export interface PreparedRender {
-    readonly fields: Record<string, string>;
-    readonly children: readonly string[];
-    readonly variant: string;
-    readonly text: string;
-    readonly trailingSep: boolean;
-    readonly leadingSep: boolean;
+	readonly fields: Record<string, string>;
+	readonly children: readonly string[];
+	readonly variant: string;
+	readonly text: string;
+	readonly trailingSep: boolean;
+	readonly leadingSep: boolean;
 }
 
-export function prepare(node: AnyNodeData, rule: TemplateRule, ctx: InternalRenderContext): PreparedRender {
-    // ... walk rule's template (and variants/clauses), collect consumed
-    // indices, resolve each slot to its string form, return the bag.
+export function prepare(
+	node: AnyNodeData,
+	rule: TemplateRule,
+	ctx: InternalRenderContext
+): PreparedRender {
+	// ... walk rule's template (and variants/clauses), collect consumed
+	// indices, resolve each slot to its string form, return the bag.
 }
 
 function render(node: AnyNodeData, ctx: InternalRenderContext): string {
-    // ... existing, but calls prepare() internally and substitutes against it.
+	// ... existing, but calls prepare() internally and substitutes against it.
 }
 ```
 
@@ -360,22 +388,22 @@ In `prepare.test.ts`, add:
 
 ```ts
 it('clause consumes a child that $$$CHILDREN would emit', () => {
-    // Template: $CLAUSE_FOO $$$CHILDREN
-    // Node has a child matching clause-kind + additional named children.
-    // Expect: clause child is in fields[...] output; $$$CHILDREN emits
-    // only the remainder.
+	// Template: $CLAUSE_FOO $$$CHILDREN
+	// Node has a child matching clause-kind + additional named children.
+	// Expect: clause child is in fields[...] output; $$$CHILDREN emits
+	// only the remainder.
 });
 
 it('flankSep detects adjacent anon separator after consumption', () => {
-    // Template: $$$CHILDREN with joinByTrailing: true
-    // Node children: [a, b, c, ',']
-    // Expect: trailingSep=true in the bag.
+	// Template: $$$CHILDREN with joinByTrailing: true
+	// Node children: [a, b, c, ',']
+	// Expect: trailingSep=true in the bag.
 });
 
 it('field-to-child promotion only when no $$$CHILDREN + single named child', () => {
-    // Template: $FOO
-    // Node children: [singleChild], no $fields.foo
-    // Expect: prepared.fields.foo === render(singleChild)
+	// Template: $FOO
+	// Node children: [singleChild], no $fields.foo
+	// Expect: prepared.fields.foo === render(singleChild)
 });
 ```
 

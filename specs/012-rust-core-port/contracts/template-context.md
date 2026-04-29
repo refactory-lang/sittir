@@ -8,26 +8,26 @@
 
 ```ts
 interface TemplateContext {
-  /** Pre-rendered string value for each field, keyed by raw (snake_case) field name. */
-  fields: Record<string, string>;
+	/** Pre-rendered string value for each field, keyed by raw (snake_case) field name. */
+	fields: Record<string, string>;
 
-  /** Pre-rendered children, joined with per-node separator. Convenience for `{{ children }}`. */
-  children: string;
+	/** Pre-rendered children, joined with per-node separator. Convenience for `{{ children }}`. */
+	children: string;
 
-  /** Per-child rendered strings. Used for `{% for c in children_list %}` loops. */
-  children_list: string[];
+	/** Per-child rendered strings. Used for `{% for c in children_list %}` loops. */
+	children_list: string[];
 
-  /** Variant label (empty string if not a variant-branching kind). */
-  variant: string;
+	/** Variant label (empty string if not a variant-branching kind). */
+	variant: string;
 
-  /** Leaf text (empty string for branch nodes). */
-  text: string;
+	/** Leaf text (empty string for branch nodes). */
+	text: string;
 
-  /** Trailing separator flag for list positions — per spec 011 joinBy semantics. */
-  trailing_sep: boolean;
+	/** Trailing separator flag for list positions — per spec 011 joinBy semantics. */
+	trailing_sep: boolean;
 
-  /** Leading separator flag. */
-  leading_sep: boolean;
+	/** Leading separator flag. */
+	leading_sep: boolean;
 }
 ```
 
@@ -76,15 +76,15 @@ Askama compiles each `.jinja` file into a typed `Display` impl at `cargo build` 
 
 Both engines expose the same named filters. Aliases are defined where the engines' built-ins differ.
 
-| Filter | Purpose | askama (Rust) | Nunjucks (TS) |
-|---|---|---|---|
-| `upper` | Uppercase | custom filter function (alias for askama's `uppercase`) in `sittir_core::filters::upper` | built-in |
-| `lower` | Lowercase | custom filter function (alias for askama's `lowercase`) in `sittir_core::filters::lower` | built-in |
-| `join(sep)` | Join list with separator | built-in | built-in |
-| `length` | List/string length | built-in (`length`) | built-in |
-| `default(v)` | Default value when falsy | built-in | built-in |
-| `trim` | Whitespace strip | built-in | built-in |
-| `joinby(sep, ...)` | Spec-011 separator semantics (leading/trailing/position-aware) | custom filter — hand-written in `sittir-core::filters` | custom filter — existing in `@sittir/core` |
+| Filter             | Purpose                                                        | askama (Rust)                                                                            | Nunjucks (TS)                              |
+| ------------------ | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------ |
+| `upper`            | Uppercase                                                      | custom filter function (alias for askama's `uppercase`) in `sittir_core::filters::upper` | built-in                                   |
+| `lower`            | Lowercase                                                      | custom filter function (alias for askama's `lowercase`) in `sittir_core::filters::lower` | built-in                                   |
+| `join(sep)`        | Join list with separator                                       | built-in                                                                                 | built-in                                   |
+| `length`           | List/string length                                             | built-in (`length`)                                                                      | built-in                                   |
+| `default(v)`       | Default value when falsy                                       | built-in                                                                                 | built-in                                   |
+| `trim`             | Whitespace strip                                               | built-in                                                                                 | built-in                                   |
+| `joinby(sep, ...)` | Spec-011 separator semantics (leading/trailing/position-aware) | custom filter — hand-written in `sittir-core::filters`                                   | custom filter — existing in `@sittir/core` |
 
 The `joinby` filter is load-bearing for sittir's rendering of list positions and must be behaviorally identical between engines. Its Rust implementation is a port of the TS implementation's logic (not the template engine's built-in), tested against fixture inputs in the shared parity suite.
 

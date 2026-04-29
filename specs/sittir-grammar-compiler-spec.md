@@ -32,7 +32,7 @@ When a gap is found — something the pipeline needs to know but doesn't — the
 
 **1. Grammar-level structure on the contract** (`RawGrammar`, `LinkedGrammar`, `OptimizedGrammar`)
 
-Use when: the information describes a relationship *across* rules, not within a single rule. Supertypes are the canonical example — they describe which kinds belong to a group. This is not expressible within a single rule's tree.
+Use when: the information describes a relationship _across_ rules, not within a single rule. Supertypes are the canonical example — they describe which kinds belong to a group. This is not expressible within a single rule's tree.
 
 Test: does the information require looking at multiple rules to compute? If yes, it belongs on the grammar contract, not on individual rules.
 
@@ -40,9 +40,9 @@ Examples: `supertypes`, `externalRoles`, `conflicts`, `references`.
 
 **2. New Rule type in the shared IR** (`type Rule = ...`)
 
-Use when: the information describes a *structural pattern* within a rule that later phases need to recognize and handle distinctly. It names something — a position, a branch, a grouping — that has specific meaning for emitters.
+Use when: the information describes a _structural pattern_ within a rule that later phases need to recognize and handle distinctly. It names something — a position, a branch, a grouping — that has specific meaning for emitters.
 
-Test: does the information affect how a subtree is *traversed or emitted*? If yes, it's a Rule type. If it's just metadata about an existing subtree, it's not.
+Test: does the information affect how a subtree is _traversed or emitted_? If yes, it's a Rule type. If it's just metadata about an existing subtree, it's not.
 
 Examples: `clause` (optional group of tokens+fields), `variant` (named choice branch), `enum` (closed string set), `group` (inlined hidden seq).
 
@@ -50,7 +50,7 @@ Adding a new Rule type is a high-cost decision — every phase that pattern-matc
 
 **3. Metadata on an existing Rule type** (e.g. `source` on `field`, `separator` on `repeat`)
 
-Use when: the information qualifies an existing pattern without changing what it *is*. It's provenance, or a parameter that affects rendering, or a flag that guides a later phase's decision.
+Use when: the information qualifies an existing pattern without changing what it _is_. It's provenance, or a parameter that affects rendering, or a flag that guides a later phase's decision.
 
 Test: does the information change which Rule type this is? If no, it's metadata on the existing type.
 
@@ -86,7 +86,7 @@ Implication: `readNode`/`wrap` logic is a projection of the override patches ont
 
 ### Derivability
 
-Metadata that *can* be derived from the rule tree at Assemble time *must* be derived, not carried forward on Rule nodes through earlier phases. This keeps Rules clean and phases independent.
+Metadata that _can_ be derived from the rule tree at Assemble time _must_ be derived, not carried forward on Rule nodes through earlier phases. This keeps Rules clean and phases independent.
 
 `required`, `multiple`, `contentTypes`, `detectToken`, `modelType` — all derived from tree context at Assemble, not stored on Rule nodes during Link or Optimize.
 
@@ -100,44 +100,53 @@ One type throughout the pipeline. Defined once, never extended.
 
 ```ts
 type Rule =
-    // Structural grouping — Optimize restructures these
-    | { type: 'seq'; members: Rule[] }
-    | { type: 'optional'; content: Rule }
-    | { type: 'choice'; members: Rule[] }
-    | { type: 'repeat'; content: Rule; separator?: string; trailing?: boolean }
-    | { type: 'repeat1'; content: Rule; separator?: string }
+	// Structural grouping — Optimize restructures these
+	| { type: 'seq'; members: Rule[] }
+	| { type: 'optional'; content: Rule }
+	| { type: 'choice'; members: Rule[] }
+	| { type: 'repeat'; content: Rule; separator?: string; trailing?: boolean }
+	| { type: 'repeat1'; content: Rule; separator?: string }
 
-    // Named patterns — clean wrappers, no derived metadata
-    | { type: 'field'; name: string; content: Rule;
-        source?: 'grammar' | 'override' | 'inlined' | 'inferred';
-        nameFrom?: 'grammar' | 'kind' | 'override' | 'usage' }
-    | { type: 'variant'; name: string; content: Rule }
-    | { type: 'clause'; name: string; content: Rule }
-    | { type: 'enum'; values: string[]; source?: 'grammar' | 'promoted' }
-    | { type: 'supertype'; name: string; subtypes: string[]; source?: 'grammar' | 'promoted' }
-    | { type: 'group'; name: string; content: Rule }
+	// Named patterns — clean wrappers, no derived metadata
+	| {
+			type: 'field';
+			name: string;
+			content: Rule;
+			source?: 'grammar' | 'override' | 'inlined' | 'inferred';
+			nameFrom?: 'grammar' | 'kind' | 'override' | 'usage';
+	  }
+	| { type: 'variant'; name: string; content: Rule }
+	| { type: 'clause'; name: string; content: Rule }
+	| { type: 'enum'; values: string[]; source?: 'grammar' | 'promoted' }
+	| {
+			type: 'supertype';
+			name: string;
+			subtypes: string[];
+			source?: 'grammar' | 'promoted';
+	  }
+	| { type: 'group'; name: string; content: Rule }
 
-    // Terminals
-    | { type: 'string'; value: string }
-    | { type: 'pattern'; value: string }
+	// Terminals
+	| { type: 'string'; value: string }
+	| { type: 'pattern'; value: string }
 
-    // Structural whitespace
-    | { type: 'indent' }
-    | { type: 'dedent' }
-    | { type: 'newline' }
+	// Structural whitespace
+	| { type: 'indent' }
+	| { type: 'dedent' }
+	| { type: 'newline' }
 
-    // References — Link resolves these; absent after Link
-    | { type: 'symbol'; name: string; hidden?: boolean; supertype?: boolean }
-    | { type: 'alias'; content: Rule; named: boolean; value: string }
-    | { type: 'token'; content: Rule; immediate: boolean }
+	// References — Link resolves these; absent after Link
+	| { type: 'symbol'; name: string; hidden?: boolean; supertype?: boolean }
+	| { type: 'alias'; content: Rule; named: boolean; value: string }
+	| { type: 'token'; content: Rule; immediate: boolean };
 
 interface SymbolRef {
-    from: string;
-    to: string;
-    fieldName?: string;
-    optional?: boolean;
-    repeated?: boolean;
-    position?: number;          // Link adds: index within parent's SEQ
+	from: string;
+	to: string;
+	fieldName?: string;
+	optional?: boolean;
+	repeated?: boolean;
+	position?: number; // Link adds: index within parent's SEQ
 }
 ```
 
@@ -145,68 +154,68 @@ interface SymbolRef {
 
 Each names a structural pattern. No derived metadata — `required`, `multiple`, `contentTypes`, `detectToken` are all derivable from tree context at Assemble time.
 
-| Rule type | Names a... | Provenance |
-|---|---|---|
-| `field` | position in a seq | `source`: grammar field() / override promotion / inlined from hidden rule / inferred from cross-parent usage. `nameFrom`: grammar field name / kind name / override name / majority usage across parents. |
-| `variant` | branch in a choice | Added by Optimize when naming CHOICE branches. |
-| `clause` | optional group (tokens+fields together) | Detected by Link from `optional(seq(STRING, FIELD, ...))`. |
-| `enum` | closed set of string values | `source`: grammar choice-of-strings / promoted from hidden rule. |
-| `supertype` | closed set of kind names (union type) | `source`: grammar supertypes list / promoted from hidden choice-of-symbols. |
-| `group` | inlined hidden seq with fields | Preserves provenance when `_call_signature` is inlined — fields came from this group. |
-| `terminal` | composed text-only terminal (seq/choice of strings+patterns) | Added by Link's `promoteTerminals` pass when a rule has no fields and no symbol refs — classified as leaf at Assemble time. |
-| `polymorph` | choice-of-variants with heterogeneous field sets | Added by Optimize's `promotePolymorph` pass when a branch's CHOICE has members with incompatible field shapes — classified as polymorph at Assemble time, synthesizing one AssembledGroup per form. |
+| Rule type   | Names a...                                                   | Provenance                                                                                                                                                                                                |
+| ----------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `field`     | position in a seq                                            | `source`: grammar field() / override promotion / inlined from hidden rule / inferred from cross-parent usage. `nameFrom`: grammar field name / kind name / override name / majority usage across parents. |
+| `variant`   | branch in a choice                                           | Added by Optimize when naming CHOICE branches.                                                                                                                                                            |
+| `clause`    | optional group (tokens+fields together)                      | Detected by Link from `optional(seq(STRING, FIELD, ...))`.                                                                                                                                                |
+| `enum`      | closed set of string values                                  | `source`: grammar choice-of-strings / promoted from hidden rule.                                                                                                                                          |
+| `supertype` | closed set of kind names (union type)                        | `source`: grammar supertypes list / promoted from hidden choice-of-symbols.                                                                                                                               |
+| `group`     | inlined hidden seq with fields                               | Preserves provenance when `_call_signature` is inlined — fields came from this group.                                                                                                                     |
+| `terminal`  | composed text-only terminal (seq/choice of strings+patterns) | Added by Link's `promoteTerminals` pass when a rule has no fields and no symbol refs — classified as leaf at Assemble time.                                                                               |
+| `polymorph` | choice-of-variants with heterogeneous field sets             | Added by Optimize's `promotePolymorph` pass when a branch's CHOICE has members with incompatible field shapes — classified as polymorph at Assemble time, synthesizing one AssembledGroup per form.       |
 
 ### Hidden rule resolution (Link)
 
 Hidden rules (`_`-prefixed) resolve based on their content:
 
-| Content pattern | Resolves to | Example |
-|---|---|---|
-| Choice of symbols, in `grammar.supertypes` | `supertype` (source: 'grammar') | `_expression: choice($.binary_expression, ...)` |
-| Choice of symbols, NOT in supertypes, 5+ parent refs | `supertype` (source: 'promoted') | `_declaration: choice($.function_item, ...)` — usage frequency determines promotion confidence |
-| Choice of symbols, NOT in supertypes, 1 parent ref | Inline content directly | Single-use structural helper |
-| Choice of strings | `enum` (source: 'promoted') | `_visibility: choice('pub', 'crate')` |
-| Seq with fields | `group` (inlined, fields promoted) | `_call_signature: seq(field('params'), ...)` |
-| Other | Inline content directly | No named wrapper |
+| Content pattern                                      | Resolves to                        | Example                                                                                        |
+| ---------------------------------------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Choice of symbols, in `grammar.supertypes`           | `supertype` (source: 'grammar')    | `_expression: choice($.binary_expression, ...)`                                                |
+| Choice of symbols, NOT in supertypes, 5+ parent refs | `supertype` (source: 'promoted')   | `_declaration: choice($.function_item, ...)` — usage frequency determines promotion confidence |
+| Choice of symbols, NOT in supertypes, 1 parent ref   | Inline content directly            | Single-use structural helper                                                                   |
+| Choice of strings                                    | `enum` (source: 'promoted')        | `_visibility: choice('pub', 'crate')`                                                          |
+| Seq with fields                                      | `group` (inlined, fields promoted) | `_call_signature: seq(field('params'), ...)`                                                   |
+| Other                                                | Inline content directly            | No named wrapper                                                                               |
 
 ### Rule variant presence by phase
 
-| Variant | After Evaluate | After Link | After Optimize |
-|---|---|---|---|
-| `seq` | ✓ | ✓ | ✓ |
-| `optional` | ✓ | ✓ | ✓ |
-| `choice` | ✓ | ✓ | ✓ |
-| `repeat` | ✓ | ✓ | ✓ |
-| `repeat1` | ✓ | gone (→ repeat) | |
-| `field` | ✓ (bare) | ✓ (enriched with source/nameFrom) | ✓ |
-| `variant` | | | ✓ |
-| `clause` | | ✓ | ✓ |
-| `enum` | ✓ (from choice-of-strings) | ✓ (+ promoted) | ✓ |
-| `supertype` | ✓ (from grammar.supertypes) | ✓ (+ promoted) | ✓ |
-| `group` | | ✓ | ✓ |
-| `terminal` | | ✓ (from `promoteTerminals`) | ✓ |
-| `polymorph` | | | ✓ (from `promotePolymorph`) |
-| `string` | ✓ | ✓ | ✓ |
-| `pattern` | ✓ | ✓ | ✓ |
-| `indent` | | ✓ | ✓ |
-| `dedent` | | ✓ | ✓ |
-| `newline` | | ✓ | ✓ |
-| `symbol` | ✓ | gone | |
-| `alias` | ✓ | gone | |
-| `token` | ✓ | gone | |
+| Variant     | After Evaluate              | After Link                        | After Optimize              |
+| ----------- | --------------------------- | --------------------------------- | --------------------------- |
+| `seq`       | ✓                           | ✓                                 | ✓                           |
+| `optional`  | ✓                           | ✓                                 | ✓                           |
+| `choice`    | ✓                           | ✓                                 | ✓                           |
+| `repeat`    | ✓                           | ✓                                 | ✓                           |
+| `repeat1`   | ✓                           | gone (→ repeat)                   |                             |
+| `field`     | ✓ (bare)                    | ✓ (enriched with source/nameFrom) | ✓                           |
+| `variant`   |                             |                                   | ✓                           |
+| `clause`    |                             | ✓                                 | ✓                           |
+| `enum`      | ✓ (from choice-of-strings)  | ✓ (+ promoted)                    | ✓                           |
+| `supertype` | ✓ (from grammar.supertypes) | ✓ (+ promoted)                    | ✓                           |
+| `group`     |                             | ✓                                 | ✓                           |
+| `terminal`  |                             | ✓ (from `promoteTerminals`)       | ✓                           |
+| `polymorph` |                             |                                   | ✓ (from `promotePolymorph`) |
+| `string`    | ✓                           | ✓                                 | ✓                           |
+| `pattern`   | ✓                           | ✓                                 | ✓                           |
+| `indent`    |                             | ✓                                 | ✓                           |
+| `dedent`    |                             | ✓                                 | ✓                           |
+| `newline`   |                             | ✓                                 | ✓                           |
+| `symbol`    | ✓                           | gone                              |                             |
+| `alias`     | ✓                           | gone                              |                             |
+| `token`     | ✓                           | gone                              |                             |
 
 ### What Optimize can and cannot change
 
-| Can change (structural grouping) | Cannot change (named content) |
-|---|---|
-| Add/remove/restructure `seq` | `string` values |
-| Add/remove/restructure `choice` | `pattern` values |
-| Add/remove `optional` wrappers | `field` name, source, nameFrom |
-| Add/remove `repeat` wrappers | `clause` name, content |
-| Wrap `choice` members in `variant` | `enum` values, source |
-| | `supertype` name, subtypes, source |
-| | `group` name, content |
-| | `indent` / `dedent` / `newline` |
+| Can change (structural grouping)   | Cannot change (named content)      |
+| ---------------------------------- | ---------------------------------- |
+| Add/remove/restructure `seq`       | `string` values                    |
+| Add/remove/restructure `choice`    | `pattern` values                   |
+| Add/remove `optional` wrappers     | `field` name, source, nameFrom     |
+| Add/remove `repeat` wrappers       | `clause` name, content             |
+| Wrap `choice` members in `variant` | `enum` values, source              |
+|                                    | `supertype` name, subtypes, source |
+|                                    | `group` name, content              |
+|                                    | `indent` / `dedent` / `newline`    |
 
 ---
 
@@ -218,15 +227,15 @@ No nodes until Assemble. All three pre-Assemble phases produce `Record<string, R
 
 ```ts
 interface RawGrammar {
-    name: string;
-    rules: Record<string, Rule>;
-    extras: string[];
-    externals: string[];
-    supertypes: string[];
-    inline: string[];
-    conflicts: string[][];
-    word: string | null;
-    references: SymbolRef[];
+	name: string;
+	rules: Record<string, Rule>;
+	extras: string[];
+	externals: string[];
+	supertypes: string[];
+	inline: string[];
+	conflicts: string[][];
+	word: string | null;
+	references: SymbolRef[];
 }
 ```
 
@@ -238,23 +247,23 @@ No `node-types.json` as primary input. Content types, required, multiple — all
 
 ```ts
 interface LinkedGrammar {
-    name: string;
-    rules: Record<string, Rule>;
-    supertypes: Set<string>;
-    externalRoles: Map<string, ExternalRole>;
-    word: string | null;
-    references: SymbolRef[];         // enriched: position added by tree walk
-    suggestedOverrides?: SuggestedOverride[];  // from diagnostic derivations
+	name: string;
+	rules: Record<string, Rule>;
+	supertypes: Set<string>;
+	externalRoles: Map<string, ExternalRole>;
+	word: string | null;
+	references: SymbolRef[]; // enriched: position added by tree walk
+	suggestedOverrides?: SuggestedOverride[]; // from diagnostic derivations
 }
 
 type ExternalRole = { role: 'indent' | 'dedent' | 'newline' };
 
 interface SuggestedOverride {
-    kind: string;                    // target rule
-    path: (string | number)[];       // position within rule (name or index)
-    rule: Rule;                      // suggested Rule insertion
-    derivation: string;              // which derivation produced this
-    confidence: 'high' | 'medium' | 'low';
+	kind: string; // target rule
+	path: (string | number)[]; // position within rule (name or index)
+	rule: Rule; // suggested Rule insertion
+	derivation: string; // which derivation produced this
+	confidence: 'high' | 'medium' | 'low';
 }
 ```
 
@@ -266,10 +275,10 @@ Absent: `symbol`, `alias`, `token`, `repeat1`.
 
 ```ts
 interface OptimizedGrammar {
-    name: string;
-    rules: Record<string, Rule>;
-    supertypes: Set<string>;
-    word: string | null;
+	name: string;
+	rules: Record<string, Rule>;
+	supertypes: Set<string>;
+	word: string | null;
 }
 ```
 
@@ -281,108 +290,108 @@ First time nodes appear. Metadata (required, multiple, contentTypes, detectToken
 
 ```ts
 interface NodeMap {
-    name: string;
-    nodes: Map<string, AssembledNode>;
-    signatures: SignaturePool;
-    projections: ProjectionContext;
+	name: string;
+	nodes: Map<string, AssembledNode>;
+	signatures: SignaturePool;
+	projections: ProjectionContext;
 }
 
 // Discriminated union — model type determines shape
 type AssembledNode =
-    | AssembledBranch
-    | AssembledContainer
-    | AssembledPolymorph
-    | AssembledLeaf
-    | AssembledKeyword
-    | AssembledToken
-    | AssembledEnum
-    | AssembledSupertype
-    | AssembledGroup;
+	| AssembledBranch
+	| AssembledContainer
+	| AssembledPolymorph
+	| AssembledLeaf
+	| AssembledKeyword
+	| AssembledToken
+	| AssembledEnum
+	| AssembledSupertype
+	| AssembledGroup;
 
 interface AssembledNodeBase {
-    kind: string;
-    typeName: string;
-    factoryName?: string;    // absent for supertype, group
-    irKey?: string;          // absent for supertype, group
+	kind: string;
+	typeName: string;
+	factoryName?: string; // absent for supertype, group
+	irKey?: string; // absent for supertype, group
 }
 
 // seq with fields (visible)
 interface AssembledBranch extends AssembledNodeBase {
-    modelType: 'branch';
-    fields: AssembledField[];
-    children?: AssembledChild[];
+	modelType: 'branch';
+	fields: AssembledField[];
+	children?: AssembledChild[];
 }
 
 // repeat (visible)
 interface AssembledContainer extends AssembledNodeBase {
-    modelType: 'container';
-    children: AssembledChild[];
-    separator?: string;
+	modelType: 'container';
+	children: AssembledChild[];
+	separator?: string;
 }
 
 // choice of structures (visible) — one kind, multiple structural forms
 interface AssembledPolymorph extends AssembledNodeBase {
-    modelType: 'polymorph';
-    forms: AssembledForm[];
+	modelType: 'polymorph';
+	forms: AssembledForm[];
 }
 
 // pattern (visible)
 interface AssembledLeaf extends AssembledNodeBase {
-    modelType: 'leaf';
-    pattern?: string;
+	modelType: 'leaf';
+	pattern?: string;
 }
 
 // single string, alphanumeric (visible)
 interface AssembledKeyword extends AssembledNodeBase {
-    modelType: 'keyword';
-    text: string;
+	modelType: 'keyword';
+	text: string;
 }
 
 // non-alphanumeric terminal (visible)
 interface AssembledToken extends AssembledNodeBase {
-    modelType: 'token';
+	modelType: 'token';
 }
 
 // choice of strings (hidden or visible) — no factory
 interface AssembledEnum extends AssembledNodeBase {
-    modelType: 'enum';
-    values: string[];
+	modelType: 'enum';
+	values: string[];
 }
 
 // hidden choice of symbols — no factory, no AST node
 interface AssembledSupertype extends AssembledNodeBase {
-    modelType: 'supertype';
-    subtypes: string[];
+	modelType: 'supertype';
+	subtypes: string[];
 }
 
 // hidden seq with fields — fields promoted to parent, no factory, no AST node
 interface AssembledGroup extends AssembledNodeBase {
-    modelType: 'group';
-    fields: AssembledField[];
+	modelType: 'group';
+	fields: AssembledField[];
 }
 
 // --- Shared sub-structures ---
 
 interface AssembledField {
-    name: string;
-    propertyName: string;
-    paramName: string;
-    required: boolean;           // derived: is this field inside an optional?
-    multiple: boolean;           // derived: is this field inside a repeat?
-    contentTypes: string[];      // derived: walk field content, collect kind names
-    source: 'grammar' | 'override' | 'inlined' | 'inferred';
-    projection: KindProjection;
+	name: string;
+	propertyName: string;
+	paramName: string;
+	required: boolean; // derived: is this field inside an optional?
+	multiple: boolean; // derived: is this field inside a repeat?
+	contentTypes: string[]; // derived: walk field content, collect kind names
+	source: 'grammar' | 'override' | 'inlined' | 'inferred';
+	projection: KindProjection;
 }
 
 // One structural form of a polymorph
 interface AssembledForm {
-    name: string;
-    typeName: string;
-    factoryName: string;
-    detectToken?: string;        // derived: unique string literal among sibling forms
-    fields: AssembledField[];    // derived: per-form narrowed fields
-    children?: AssembledChild[];
-    mergedRules?: Rule[];        // from collapse (non-lossy) — only for template generation
+	name: string;
+	typeName: string;
+	factoryName: string;
+	detectToken?: string; // derived: unique string literal among sibling forms
+	fields: AssembledField[]; // derived: per-form narrowed fields
+	children?: AssembledChild[];
+	mergedRules?: Rule[]; // from collapse (non-lossy) — only for template generation
 }
 ```
 
@@ -412,22 +421,22 @@ Reference implementation saved at: `specs/005-five-phase-compiler/reference/tree
 
 ### Operations
 
-| Function | In → Out | Stateless? |
-|---|---|---|
-| `evaluate(entryPath)` | path to grammar.js or overrides.ts → `RawGrammar` | Yes (I/O) |
-| `seq(...members)` | `Input[]` → `Rule{seq}` | Yes |
-| `choice(...members)` | `Input[]` → `Rule{choice\|optional\|enum}` | Yes |
-| `optional(content)` | `Input` → `Rule{optional}` | Yes |
-| `repeat(content)` | `Input` → `Rule{repeat}` (detects separator) | Yes |
-| `repeat1(content)` | `Input` → `Rule{repeat1}` (detects separator) | Yes |
-| `field(name, content)` | name + `Input` → `Rule{field}` | Yes |
-| `token(content)` | `Input` → `Rule{token}` | Yes |
-| `prec(n, content)` | `Input` → `Rule` (strips PREC) | Yes |
-| `normalize(input)` | `Input` → `Rule` | Yes |
-| `createProxy(currentRule, refs)` | → `$` Proxy | Stateful (accumulates refs) |
-| `transform(original, patches)` | base Rule + position map → modified Rule (walks object tree, applies patches) | Yes |
-| `insert(original, position, wrapper)` | base Rule + position + wrapper → modified Rule (sugar over transform) | Yes |
-| `replace(original, position, replacement)` | base Rule + position + replacement → modified Rule (substitute/suppress) | Yes |
+| Function                                   | In → Out                                                                      | Stateless?                  |
+| ------------------------------------------ | ----------------------------------------------------------------------------- | --------------------------- |
+| `evaluate(entryPath)`                      | path to grammar.js or overrides.ts → `RawGrammar`                             | Yes (I/O)                   |
+| `seq(...members)`                          | `Input[]` → `Rule{seq}`                                                       | Yes                         |
+| `choice(...members)`                       | `Input[]` → `Rule{choice\|optional\|enum}`                                    | Yes                         |
+| `optional(content)`                        | `Input` → `Rule{optional}`                                                    | Yes                         |
+| `repeat(content)`                          | `Input` → `Rule{repeat}` (detects separator)                                  | Yes                         |
+| `repeat1(content)`                         | `Input` → `Rule{repeat1}` (detects separator)                                 | Yes                         |
+| `field(name, content)`                     | name + `Input` → `Rule{field}`                                                | Yes                         |
+| `token(content)`                           | `Input` → `Rule{token}`                                                       | Yes                         |
+| `prec(n, content)`                         | `Input` → `Rule` (strips PREC)                                                | Yes                         |
+| `normalize(input)`                         | `Input` → `Rule`                                                              | Yes                         |
+| `createProxy(currentRule, refs)`           | → `$` Proxy                                                                   | Stateful (accumulates refs) |
+| `transform(original, patches)`             | base Rule + position map → modified Rule (walks object tree, applies patches) | Yes                         |
+| `insert(original, position, wrapper)`      | base Rule + position + wrapper → modified Rule (sugar over transform)         | Yes                         |
+| `replace(original, position, replacement)` | base Rule + position + replacement → modified Rule (substitute/suppress)      | Yes                         |
 
 ### Override DSL primitives
 
@@ -435,21 +444,22 @@ Overrides are grammar extensions that use tree-sitter's native `($, original)` p
 
 ```ts
 // overrides.ts
-const base = require('tree-sitter-rust/grammar')
+const base = require('tree-sitter-rust/grammar');
 
 module.exports = grammar(base, {
-  name: 'rust',
-  rules: {
-    // ($, original) — original is the base grammar's function_item rule
-    function_item: ($, original) => transform(original, {
-      2: field('body'),                    // insert: wrap position 2 in a field
-      'parameters': field('params'),       // insert: address by existing field name
-    }),
+	name: 'rust',
+	rules: {
+		// ($, original) — original is the base grammar's function_item rule
+		function_item: ($, original) =>
+			transform(original, {
+				2: field('body'), // insert: wrap position 2 in a field
+				parameters: field('params') // insert: address by existing field name
+			}),
 
-    _newline: ($) => role('newline'),      // external role mapping
-    _indent: ($) => role('indent'),
-  }
-})
+		_newline: ($) => role('newline'), // external role mapping
+		_indent: ($) => role('indent')
+	}
+});
 ```
 
 **How it works**: `grammar(base, { rules })` calls each rule function with `ruleFn.call(ruleBuilder, ruleBuilder, baseGrammar.rules[ruleName])`. The second argument is the base rule — a plain object tree of `{ type: 'SEQ', members: [...] }`. Our `transform()` walks this object tree and applies patches at the specified positions.
@@ -466,17 +476,20 @@ The `$` proxy knows which rule is currently being evaluated. When `field('body',
 let currentRule = '';
 const references: SymbolRef[] = [];
 
-const $ = new Proxy({}, {
-    get: (_, name: string) => {
-        const ref: SymbolRef = { from: currentRule, to: name };
-        references.push(ref);
-        return { type: 'symbol', name, hidden: name.startsWith('_'), ref };
-    }
-});
+const $ = new Proxy(
+	{},
+	{
+		get: (_, name: string) => {
+			const ref: SymbolRef = { from: currentRule, to: name };
+			references.push(ref);
+			return { type: 'symbol', name, hidden: name.startsWith('_'), ref };
+		}
+	}
+);
 
 for (const [name, ruleFn] of Object.entries(def.rules)) {
-    currentRule = name;
-    rules[name] = ruleFn($);
+	currentRule = name;
+	rules[name] = ruleFn($);
 }
 ```
 
@@ -484,59 +497,61 @@ DSL functions enrich the ref in-place:
 
 ```ts
 function field(name: string, content: Input): Rule {
-    const resolved = normalize(content);
-    if (resolved.ref) resolved.ref.fieldName = name;
-    return { type: 'field', name, content: resolved };
+	const resolved = normalize(content);
+	if (resolved.ref) resolved.ref.fieldName = name;
+	return { type: 'field', name, content: resolved };
 }
 
 function optional(content: Input): Rule {
-    const resolved = normalize(content);
-    if (resolved.ref) resolved.ref.optional = true;
-    return { type: 'optional', content: resolved };
+	const resolved = normalize(content);
+	if (resolved.ref) resolved.ref.optional = true;
+	return { type: 'optional', content: resolved };
 }
 
 function repeat(content: Input): Rule {
-    const resolved = normalize(content);
-    if (resolved.ref) resolved.ref.repeated = true;
-    // separator detection...
-    return { type: 'repeat', content: resolved, separator };
+	const resolved = normalize(content);
+	if (resolved.ref) resolved.ref.repeated = true;
+	// separator detection...
+	return { type: 'repeat', content: resolved, separator };
 }
 ```
 
 ### What's capturable at eval time vs link time
 
-| Info | Eval time | Link time |
-|---|---|---|
-| A references B | ✓ (proxy) | |
-| A.fieldName = B | ✓ (field() sees it) | |
-| B is optional in A | ✓ (optional() sees it) | |
-| B is repeated in A | ✓ (repeat() sees it) | |
-| B is at position N in A's SEQ | | ✓ (walk the rule tree) |
-| B's complete parent set | | ✓ (all rules evaluated) |
+| Info                          | Eval time              | Link time               |
+| ----------------------------- | ---------------------- | ----------------------- |
+| A references B                | ✓ (proxy)              |                         |
+| A.fieldName = B               | ✓ (field() sees it)    |                         |
+| B is optional in A            | ✓ (optional() sees it) |                         |
+| B is repeated in A            | ✓ (repeat() sees it)   |                         |
+| B is at position N in A's SEQ |                        | ✓ (walk the rule tree)  |
+| B's complete parent set       |                        | ✓ (all rules evaluated) |
 
 Position within SEQ can't be captured at eval time without significant complexity — `seq()` receives already-constructed children and doesn't know which `$.foo` reference is at position 0 vs position 3. Threading position counters through every DSL function makes them stateful. The linker walks the assembled tree to assign positions.
 
 ### Pattern detection
 
 `choice()` detects:
+
 - All strings, no BLANK → `enum` (source: 'grammar')
 - Contains BLANK → `optional(choice(nonBlank...))`
 - Single remaining → unwrap
 
 `repeat()` detects:
+
 - `seq(STRING, x)` → `{ separator: STRING.value }`
 - `seq(x, STRING)` → `{ separator: STRING.value, trailing: true }`
 
 ### Eliminated
 
-| Old function | Old location | Why gone |
-|---|---|---|
-| `unwrapPrec()` | factoring.ts, emitters/rules.ts | PREC stripped by `prec()` |
-| `detectRecursiveSeparator()` | emitters/rules.ts | Separator captured by `repeat()` |
-| `findRecursiveSeps()` | emitters/rules.ts | Helper for above |
-| `extractSeparators()` | enriched-grammar.ts | Separator captured by `repeat()` |
-| `buildJoinBy()` | emitters/rules.ts | Separator on Rule directly |
-| `hasBlankChoice()` | enriched-grammar.ts | BLANK absorbed by `choice()` |
+| Old function                 | Old location                    | Why gone                         |
+| ---------------------------- | ------------------------------- | -------------------------------- |
+| `unwrapPrec()`               | factoring.ts, emitters/rules.ts | PREC stripped by `prec()`        |
+| `detectRecursiveSeparator()` | emitters/rules.ts               | Separator captured by `repeat()` |
+| `findRecursiveSeps()`        | emitters/rules.ts               | Helper for above                 |
+| `extractSeparators()`        | enriched-grammar.ts             | Separator captured by `repeat()` |
+| `buildJoinBy()`              | emitters/rules.ts               | Separator on Rule directly       |
+| `hasBlankChoice()`           | enriched-grammar.ts             | BLANK absorbed by `choice()`     |
 
 ---
 
@@ -559,31 +574,31 @@ Link converts tree-sitter external tokens for structural whitespace (`_indent`, 
 
 ### Reference resolution (removes symbol, alias, token, repeat1)
 
-| Function | In → Out | Stateless? |
-|---|---|---|
-| `link(raw)` | `RawGrammar` → `LinkedGrammar` | Yes |
-| `resolveRule(rule, ctx)` | `Rule` → `Rule` (resolve all references) | Yes |
-| `inlineHiddenRule(sym, rules)` | `Rule{symbol}` → content (if has relevant fields) | Yes |
-| `resolveHiddenChoice(sym, rules)` | `Rule{symbol}` → `Rule{supertype\|enum}` (if hidden choice) | Yes |
-| `resolveHiddenSeq(sym, rules)` | `Rule{symbol}` → `Rule{group}` (if hidden seq with fields) | Yes |
-| `resolveExternal(sym, roles)` | `Rule{symbol}` → `Rule{indent\|dedent\|newline}` | Yes |
-| `resolveAlias(alias)` | `Rule{alias}` → `Rule{field}` or transparent | Yes |
-| `flattenToken(token)` | `Rule{token}` → `Rule{seq(string,...)}` | Yes |
-| `normalizeRepeat1(rule)` | `Rule{repeat1}` → `Rule{repeat}` | Yes |
-| `normalizeRepeatPattern(rule)` | `seq(X, repeat(X))` → `repeat(X)` | Yes |
+| Function                          | In → Out                                                    | Stateless? |
+| --------------------------------- | ----------------------------------------------------------- | ---------- |
+| `link(raw)`                       | `RawGrammar` → `LinkedGrammar`                              | Yes        |
+| `resolveRule(rule, ctx)`          | `Rule` → `Rule` (resolve all references)                    | Yes        |
+| `inlineHiddenRule(sym, rules)`    | `Rule{symbol}` → content (if has relevant fields)           | Yes        |
+| `resolveHiddenChoice(sym, rules)` | `Rule{symbol}` → `Rule{supertype\|enum}` (if hidden choice) | Yes        |
+| `resolveHiddenSeq(sym, rules)`    | `Rule{symbol}` → `Rule{group}` (if hidden seq with fields)  | Yes        |
+| `resolveExternal(sym, roles)`     | `Rule{symbol}` → `Rule{indent\|dedent\|newline}`            | Yes        |
+| `resolveAlias(alias)`             | `Rule{alias}` → `Rule{field}` or transparent                | Yes        |
+| `flattenToken(token)`             | `Rule{token}` → `Rule{seq(string,...)}`                     | Yes        |
+| `normalizeRepeat1(rule)`          | `Rule{repeat1}` → `Rule{repeat}`                            | Yes        |
+| `normalizeRepeatPattern(rule)`    | `seq(X, repeat(X))` → `repeat(X)`                           | Yes        |
 
 ### Clause detection
 
-| Function | In → Out | Stateless? |
-|---|---|---|
-| `detectClause(optionalRule)` | `Rule{optional}` → `Rule{clause}` or unchanged | Yes |
-| `detectIndentField(field, rules, roles)` | field content + roles → boolean | Yes |
+| Function                                 | In → Out                                       | Stateless? |
+| ---------------------------------------- | ---------------------------------------------- | ---------- |
+| `detectClause(optionalRule)`             | `Rule{optional}` → `Rule{clause}` or unchanged | Yes        |
+| `detectIndentField(field, rules, roles)` | field content + roles → boolean                | Yes        |
 
 ### Field annotation (provenance only — no derived metadata)
 
-| Function | In → Out | Stateless? |
-|---|---|---|
-| `assignPositions(rule)` | SEQ walk → fields with position context | Yes |
+| Function                | In → Out                                | Stateless? |
+| ----------------------- | --------------------------------------- | ---------- |
+| `assignPositions(rule)` | SEQ walk → fields with position context | Yes        |
 
 Note: `promoteFields()` is eliminated from Link. Override-driven field promotion now happens in Evaluate's second pass via `transform`/`insert`.
 
@@ -591,57 +606,57 @@ Note: `promoteFields()` is eliminated from Link. Override-driven field promotion
 
 After all rules are linked, Link walks each rule tree to assign `position` to SymbolRefs. The complete enriched graph enables several derivations:
 
-| Function | In → Out | Stateless? |
-|---|---|---|
-| `enrichPositions(rules, refs)` | rules + SymbolRef[] → SymbolRef[] with `position` set | Yes |
-| `computeParentSets(refs)` | SymbolRef[] → `Map<string, SymbolRef[]>` (symbol → all parents) | Yes |
+| Function                       | In → Out                                                        | Stateless? |
+| ------------------------------ | --------------------------------------------------------------- | ---------- |
+| `enrichPositions(rules, refs)` | rules + SymbolRef[] → SymbolRef[] with `position` set           | Yes        |
+| `computeParentSets(refs)`      | SymbolRef[] → `Map<string, SymbolRef[]>` (symbol → all parents) | Yes        |
 
 **Link-time derivations from the enriched graph:**
 
-| Derivation | How | Uses |
-|---|---|---|
-| Inline confidence | Hidden rule referenced from 1 parent → always inline. From N parents with same field names → shared group, inline all. | `from`, `fieldName` |
-| Field name inference | Symbol `block` is `field('body')` in 5/6 parents → auto-promote unnamed case to `field('body', source: 'inferred', nameFrom: 'usage')`. High agreement = auto-apply, low agreement = flag for review. | `to`, `fieldName` (cross-parent) |
-| Supertype candidate | Hidden choice of symbols referenced from 5+ parents as field content → promote to `supertype` (source: 'promoted'). 1 parent → inline. 10+ parents → almost certainly should be in grammar.supertypes. | `to`, `from`, `fieldName` (count) |
-| Synthetic supertype | Same set of concrete kinds appears as field content alternatives in 3+ parents → de-facto supertype even if no hidden rule groups them. Candidate for a synthetic supertype rule. | `to`, `fieldName`, field content overlap |
-| Override inference | Symbol always at same position with same role across all parents → override auto-derivable. Flag for confirmation. | `from`, `to`, `position`, `fieldName` |
-| Dead rule detection | Symbol in `grammar.rules` but zero incoming refs → unreachable, skip. | `to` (absence) |
-| Naming consistency | If `_expression` appears as `field('left')` in one parent and `field('value')` in another → naming is parent-specific. Always `field('condition')` → name is inherent. | `to`, `fieldName` |
-| Global optionality | Symbol is `optional: true` in ALL parents → inherently optional. | `to`, `optional` |
-| Separator consistency | Symbol always inside `repeat` with same separator → separator is inherent to the content. | `to`, `repeated`, `separator` |
-| Override candidate quality | Position has same kind in all parents → high-confidence override. Varies → needs manual review. | `to`, `from`, `position` |
-| Cycle detection | Self-referential rules (A → A). Flagged for awareness. | `from`, `to` |
+| Derivation                 | How                                                                                                                                                                                                    | Uses                                     |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------- |
+| Inline confidence          | Hidden rule referenced from 1 parent → always inline. From N parents with same field names → shared group, inline all.                                                                                 | `from`, `fieldName`                      |
+| Field name inference       | Symbol `block` is `field('body')` in 5/6 parents → auto-promote unnamed case to `field('body', source: 'inferred', nameFrom: 'usage')`. High agreement = auto-apply, low agreement = flag for review.  | `to`, `fieldName` (cross-parent)         |
+| Supertype candidate        | Hidden choice of symbols referenced from 5+ parents as field content → promote to `supertype` (source: 'promoted'). 1 parent → inline. 10+ parents → almost certainly should be in grammar.supertypes. | `to`, `from`, `fieldName` (count)        |
+| Synthetic supertype        | Same set of concrete kinds appears as field content alternatives in 3+ parents → de-facto supertype even if no hidden rule groups them. Candidate for a synthetic supertype rule.                      | `to`, `fieldName`, field content overlap |
+| Override inference         | Symbol always at same position with same role across all parents → override auto-derivable. Flag for confirmation.                                                                                     | `from`, `to`, `position`, `fieldName`    |
+| Dead rule detection        | Symbol in `grammar.rules` but zero incoming refs → unreachable, skip.                                                                                                                                  | `to` (absence)                           |
+| Naming consistency         | If `_expression` appears as `field('left')` in one parent and `field('value')` in another → naming is parent-specific. Always `field('condition')` → name is inherent.                                 | `to`, `fieldName`                        |
+| Global optionality         | Symbol is `optional: true` in ALL parents → inherently optional.                                                                                                                                       | `to`, `optional`                         |
+| Separator consistency      | Symbol always inside `repeat` with same separator → separator is inherent to the content.                                                                                                              | `to`, `repeated`, `separator`            |
+| Override candidate quality | Position has same kind in all parents → high-confidence override. Varies → needs manual review.                                                                                                        | `to`, `from`, `position`                 |
+| Cycle detection            | Self-referential rules (A → A). Flagged for awareness.                                                                                                                                                 | `from`, `to`                             |
 
 ### Diagnostics
 
-| Function | In → Out | Stateless? |
-|---|---|---|
-| `detectCandidates(rules, grammar)` | rules + grammar → console | Side-effecting |
-| `detectKeywordAlternatives(rule, rules)` | Rule → string[][] | Yes |
-| `validateAgainstNodeTypes(linked, nodeTypes)` | LinkedGrammar + entries → warnings[] | Yes |
+| Function                                      | In → Out                             | Stateless?     |
+| --------------------------------------------- | ------------------------------------ | -------------- |
+| `detectCandidates(rules, grammar)`            | rules + grammar → console            | Side-effecting |
+| `detectKeywordAlternatives(rule, rules)`      | Rule → string[][]                    | Yes            |
+| `validateAgainstNodeTypes(linked, nodeTypes)` | LinkedGrammar + entries → warnings[] | Yes            |
 
 ### Current code → Link
 
-| Current function | Current location | New function |
-|---|---|---|
-| `applyOverrides()` + helpers | enriched-grammar.ts | Moved to Evaluate: `applyOverrides()` via grammar extension |
-| `containsFields()` | factoring.ts | Internal to `inlineHiddenRule()` |
-| `tryClause()` | emitters/rules.ts | `detectClause()` |
-| `ruleReferencesExternal()` | emitters/rules.ts | `detectIndentField()` |
-| `classifyRules()` | enriched-grammar.ts | `resolveRule()` (hidden rules → supertype/enum/group) |
-| `hasFields()`, `hasChildren()` | enriched-grammar.ts | Internal to hidden rule classification |
-| `extractSubtypes()` | enriched-grammar.ts | Internal to `resolveHiddenChoice()` |
-| `collectConcreteTypes()` | enriched-grammar.ts | Internal to `resolveHiddenChoice()` |
-| `assignFieldPositions()` | enriched-grammar.ts | `assignPositions()` |
-| `initializeModels()` | node-model.ts | Eliminated (no nodes in Link) |
-| `reconcile()` | node-model.ts | Eliminated (no nodes in Link) |
-| `refineAllModelTypes()` | node-model.ts | Eliminated (no nodes in Link) |
-| `mergeOverrides()` | overrides.ts | Moved to Evaluate: grammar extension mechanism |
-| `loadOverridesWithExternals()` | overrides.ts | Moved to Evaluate: grammar extension mechanism |
-| `inferTokenAliases()`, `applyTokenAliases()` | semantic-aliases.ts | Absorbed into `link()` |
-| `createHiddenModels()` | build-model.ts | Absorbed into `resolveRule()` |
-| `enrichBranch()`, `enrichContainer()`, etc. | node-model.ts | Eliminated (Assemble derives from tree) |
-| All field/child extraction helpers | enriched-grammar.ts | Eliminated from Link (Assemble derives from tree) |
+| Current function                             | Current location    | New function                                                |
+| -------------------------------------------- | ------------------- | ----------------------------------------------------------- |
+| `applyOverrides()` + helpers                 | enriched-grammar.ts | Moved to Evaluate: `applyOverrides()` via grammar extension |
+| `containsFields()`                           | factoring.ts        | Internal to `inlineHiddenRule()`                            |
+| `tryClause()`                                | emitters/rules.ts   | `detectClause()`                                            |
+| `ruleReferencesExternal()`                   | emitters/rules.ts   | `detectIndentField()`                                       |
+| `classifyRules()`                            | enriched-grammar.ts | `resolveRule()` (hidden rules → supertype/enum/group)       |
+| `hasFields()`, `hasChildren()`               | enriched-grammar.ts | Internal to hidden rule classification                      |
+| `extractSubtypes()`                          | enriched-grammar.ts | Internal to `resolveHiddenChoice()`                         |
+| `collectConcreteTypes()`                     | enriched-grammar.ts | Internal to `resolveHiddenChoice()`                         |
+| `assignFieldPositions()`                     | enriched-grammar.ts | `assignPositions()`                                         |
+| `initializeModels()`                         | node-model.ts       | Eliminated (no nodes in Link)                               |
+| `reconcile()`                                | node-model.ts       | Eliminated (no nodes in Link)                               |
+| `refineAllModelTypes()`                      | node-model.ts       | Eliminated (no nodes in Link)                               |
+| `mergeOverrides()`                           | overrides.ts        | Moved to Evaluate: grammar extension mechanism              |
+| `loadOverridesWithExternals()`               | overrides.ts        | Moved to Evaluate: grammar extension mechanism              |
+| `inferTokenAliases()`, `applyTokenAliases()` | semantic-aliases.ts | Absorbed into `link()`                                      |
+| `createHiddenModels()`                       | build-model.ts      | Absorbed into `resolveRule()`                               |
+| `enrichBranch()`, `enrichContainer()`, etc.  | node-model.ts       | Eliminated (Assemble derives from tree)                     |
+| All field/child extraction helpers           | enriched-grammar.ts | Eliminated from Link (Assemble derives from tree)           |
 
 ---
 
@@ -656,53 +671,53 @@ Optimize also runs **polymorph promotion** (`promotePolymorph`): after variants 
 
 ### CHOICE handling
 
-| Function | In → Out | Stateless? |
-|---|---|---|
-| `optimize(linked)` | `LinkedGrammar` → `OptimizedGrammar` | Yes |
-| `fanOutChoices(rule)` | `Rule` → `Rule[]` (one per CHOICE path) | Yes |
-| `fanOutChoice(members)` | `Rule[]` → `Rule[]` | Yes |
-| `factorSeqChoice(branches)` | `Rule[]` → `Rule[]` (prefix/suffix extraction) | Yes |
-| `findCommonPrefix(seqs)` | `Rule[][]` → number | Yes |
-| `findCommonSuffix(seqs, prefixLen)` | `Rule[][]` × number → number | Yes |
-| `flattenToSeq(rule)` | `Rule` → `Rule[]` | Yes |
-| `rulesEqual(a, b)` | Rule × Rule → boolean | Yes |
+| Function                            | In → Out                                       | Stateless? |
+| ----------------------------------- | ---------------------------------------------- | ---------- |
+| `optimize(linked)`                  | `LinkedGrammar` → `OptimizedGrammar`           | Yes        |
+| `fanOutChoices(rule)`               | `Rule` → `Rule[]` (one per CHOICE path)        | Yes        |
+| `fanOutChoice(members)`             | `Rule[]` → `Rule[]`                            | Yes        |
+| `factorSeqChoice(branches)`         | `Rule[]` → `Rule[]` (prefix/suffix extraction) | Yes        |
+| `findCommonPrefix(seqs)`            | `Rule[][]` → number                            | Yes        |
+| `findCommonSuffix(seqs, prefixLen)` | `Rule[][]` × number → number                   | Yes        |
+| `flattenToSeq(rule)`                | `Rule` → `Rule[]`                              | Yes        |
+| `rulesEqual(a, b)`                  | Rule × Rule → boolean                          | Yes        |
 
 ### Variant construction (Rule level)
 
 Note: `variant` remains a Rule type — it wraps individual choice branches at the rule level. At the model level, a visible choice containing `variant` rules becomes a `polymorph` with `forms`. The Rule-level `variant` is the mechanism; the model-level `form` is the result.
 
-| Function | In → Out | Stateless? |
-|---|---|---|
-| `wrapVariants(choice, resolvedRules)` | choice + rules → `Rule{choice}` with `variant`-wrapped members | Yes |
-| `deduplicateVariants(variants)` | `Rule{variant}[]` → `Rule{variant}[]` (remove identical variants — non-lossy) | Yes |
-| `nameVariant(variant, i, all)` | variant Rule + index + set → string (name for the Rule-level variant; becomes form name at Assemble) | Yes |
-| `tokenToName(token)` | `; → semi`, `{ → brace` | Yes |
+| Function                              | In → Out                                                                                             | Stateless? |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------- |
+| `wrapVariants(choice, resolvedRules)` | choice + rules → `Rule{choice}` with `variant`-wrapped members                                       | Yes        |
+| `deduplicateVariants(variants)`       | `Rule{variant}[]` → `Rule{variant}[]` (remove identical variants — non-lossy)                        | Yes        |
+| `nameVariant(variant, i, all)`        | variant Rule + index + set → string (name for the Rule-level variant; becomes form name at Assemble) | Yes        |
+| `tokenToName(token)`                  | `; → semi`, `{ → brace`                                                                              | Yes        |
 
 ### Spacing
 
-| Function | In → Out | Stateless? |
-|---|---|---|
-| `needsSpace(prev, next)` | string × string → boolean | Yes |
-| `buildWordBoundary(grammar)` | grammar → { endRe, startRe } | Yes |
+| Function                     | In → Out                     | Stateless? |
+| ---------------------------- | ---------------------------- | ---------- |
+| `needsSpace(prev, next)`     | string × string → boolean    | Yes        |
+| `buildWordBoundary(grammar)` | grammar → { endRe, startRe } | Yes        |
 
 ### Current code → Optimize
 
-| Current function | Current location | New function |
-|---|---|---|
-| `resolveChoices()` | factoring.ts | `fanOutChoices()` |
-| `resolveChoice()` | factoring.ts | `fanOutChoice()` |
-| `factorSeqChoice()` | factoring.ts | `factorSeqChoice()` |
-| `structurallyEqual()` | factoring.ts | `rulesEqual()` |
-| `commonPrefixLength()`, `commonSuffixLength()` | factoring.ts | `findCommonPrefix()`, `findCommonSuffix()` |
-| `normalizeToSeq()` | factoring.ts | `flattenToSeq()` |
-| `deduplicateVariants()` | factoring.ts | `deduplicateVariants()` |
-| `collapseSameFieldSetVariants()` | factoring.ts | Moves to Assemble: `collapseForms()` |
-| `nameVariant()`, `tokenToName()` | factoring.ts | `nameForm()`, `tokenToName()` |
-| `buildVariantMetadata()` | factoring.ts | `wrapVariants()` (variant is a Rule node now, not side-channel metadata) |
-| `extractContentKinds()` | factoring.ts | Eliminated (Assemble derives contentTypes from tree) |
-| `computeAllVariants()` | build-model.ts | `optimize()` |
-| `needsSpace()` | emitters/rules.ts | `needsSpace()` |
-| `buildWordBoundary()` | emitters/rules.ts | `buildWordBoundary()` |
+| Current function                               | Current location  | New function                                                             |
+| ---------------------------------------------- | ----------------- | ------------------------------------------------------------------------ |
+| `resolveChoices()`                             | factoring.ts      | `fanOutChoices()`                                                        |
+| `resolveChoice()`                              | factoring.ts      | `fanOutChoice()`                                                         |
+| `factorSeqChoice()`                            | factoring.ts      | `factorSeqChoice()`                                                      |
+| `structurallyEqual()`                          | factoring.ts      | `rulesEqual()`                                                           |
+| `commonPrefixLength()`, `commonSuffixLength()` | factoring.ts      | `findCommonPrefix()`, `findCommonSuffix()`                               |
+| `normalizeToSeq()`                             | factoring.ts      | `flattenToSeq()`                                                         |
+| `deduplicateVariants()`                        | factoring.ts      | `deduplicateVariants()`                                                  |
+| `collapseSameFieldSetVariants()`               | factoring.ts      | Moves to Assemble: `collapseForms()`                                     |
+| `nameVariant()`, `tokenToName()`               | factoring.ts      | `nameForm()`, `tokenToName()`                                            |
+| `buildVariantMetadata()`                       | factoring.ts      | `wrapVariants()` (variant is a Rule node now, not side-channel metadata) |
+| `extractContentKinds()`                        | factoring.ts      | Eliminated (Assemble derives contentTypes from tree)                     |
+| `computeAllVariants()`                         | build-model.ts    | `optimize()`                                                             |
+| `needsSpace()`                                 | emitters/rules.ts | `needsSpace()`                                                           |
+| `buildWordBoundary()`                          | emitters/rules.ts | `buildWordBoundary()`                                                    |
 
 ---
 
@@ -719,15 +734,15 @@ First time nodes appear. All metadata (required, multiple, contentTypes, detectT
 
 ### Derivation from tree context
 
-| Metadata | How derived |
-|---|---|
-| `required` | Walk up from field — is it inside an `optional`? |
-| `multiple` | Walk up from field — is it inside a `repeat`? |
-| `contentTypes` | Walk field's content — collect names from `field`, `enum`, `supertype`, `string` |
-| `detectToken` | Among sibling `variant` Rule nodes in a choice, find a `string` unique to this branch |
-| `separator` | From `repeat.separator` (captured at Evaluate) |
-| `modelType` | Structural simplification + visibility check (see below) |
-| `mergedRules` | Assemble collapses same-field-set polymorph forms without detect tokens: preserves all rules for template generation, unions content types per field |
+| Metadata       | How derived                                                                                                                                          |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `required`     | Walk up from field — is it inside an `optional`?                                                                                                     |
+| `multiple`     | Walk up from field — is it inside a `repeat`?                                                                                                        |
+| `contentTypes` | Walk field's content — collect names from `field`, `enum`, `supertype`, `string`                                                                     |
+| `detectToken`  | Among sibling `variant` Rule nodes in a choice, find a `string` unique to this branch                                                                |
+| `separator`    | From `repeat.separator` (captured at Evaluate)                                                                                                       |
+| `modelType`    | Structural simplification + visibility check (see below)                                                                                             |
+| `mergedRules`  | Assemble collapses same-field-set polymorph forms without detect tokens: preserves all rules for template generation, unions content types per field |
 
 ### Model type classification
 
@@ -743,46 +758,46 @@ This is a transient computation — the simplified form exists only inside `clas
 
 **Step 2: Classify by shape × visibility.** The simplified top-level Rule shape and the rule's visibility (hidden = `_`-prefixed, visible = named) determine the model type:
 
-| Simplified shape | Hidden (`_`-prefixed) | Visible (named) |
-|---|---|---|
-| `seq` (containing `field` nodes) | `group` — fields promoted to parent, no AST node | `branch` |
-| `repeat` | inlined into parent | `container` |
-| `choice` (of structures/symbols) | `supertype` — type-level union, no AST node | `polymorph` — one kind, multiple structural forms |
-| `choice` (of strings) | `enum` | `enum` |
-| `pattern` | inlined | `leaf` |
-| single `string` (alphanumeric) | inlined | `keyword` |
-| non-alphanumeric terminal | inlined | `token` |
+| Simplified shape                 | Hidden (`_`-prefixed)                            | Visible (named)                                   |
+| -------------------------------- | ------------------------------------------------ | ------------------------------------------------- |
+| `seq` (containing `field` nodes) | `group` — fields promoted to parent, no AST node | `branch`                                          |
+| `repeat`                         | inlined into parent                              | `container`                                       |
+| `choice` (of structures/symbols) | `supertype` — type-level union, no AST node      | `polymorph` — one kind, multiple structural forms |
+| `choice` (of strings)            | `enum`                                           | `enum`                                            |
+| `pattern`                        | inlined                                          | `leaf`                                            |
+| single `string` (alphanumeric)   | inlined                                          | `keyword`                                         |
+| non-alphanumeric terminal        | inlined                                          | `token`                                           |
 
 This is exhaustive. Every simplified rule falls into exactly one cell.
 
 ### Model types in NodeMap
 
-| Model type | What it represents | Emits |
-|---|---|---|
-| `branch` | Visible seq with fields. Named AST node with field-based structure. | type, factory, template, from, ir |
-| `container` | Visible repeat. Named AST node wrapping repeated children. | type, factory, template, from, ir |
+| Model type  | What it represents                                                                                                                    | Emits                                                              |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `branch`    | Visible seq with fields. Named AST node with field-based structure.                                                                   | type, factory, template, from, ir                                  |
+| `container` | Visible repeat. Named AST node wrapping repeated children.                                                                            | type, factory, template, from, ir                                  |
 | `polymorph` | Visible choice of structures. One AST node kind with multiple distinct structural forms. Each form may be a seq, repeat, or terminal. | type (per form), factory (per form), template (per form), from, ir |
-| `leaf` | Visible pattern. Terminal node with text captured by tree-sitter. | type, factory, ir |
-| `keyword` | Visible single string (alphanumeric). Fixed literal token. | type, factory, ir |
-| `enum` | Choice of strings (hidden or visible). Closed set of literal values. | type (union of literals), factory, ir |
-| `token` | Non-alphanumeric terminal. Operator/punctuation. | type (minimal) |
-| `supertype` | Hidden choice of symbols. Type-level union of concrete kinds. No AST node. | type (union of interfaces) |
-| `group` | Hidden seq with fields. Fields promoted to parent. No AST node. | provenance only |
+| `leaf`      | Visible pattern. Terminal node with text captured by tree-sitter.                                                                     | type, factory, ir                                                  |
+| `keyword`   | Visible single string (alphanumeric). Fixed literal token.                                                                            | type, factory, ir                                                  |
+| `enum`      | Choice of strings (hidden or visible). Closed set of literal values.                                                                  | type (union of literals), factory, ir                              |
+| `token`     | Non-alphanumeric terminal. Operator/punctuation.                                                                                      | type (minimal)                                                     |
+| `supertype` | Hidden choice of symbols. Type-level union of concrete kinds. No AST node.                                                            | type (union of interfaces)                                         |
+| `group`     | Hidden seq with fields. Fields promoted to parent. No AST node.                                                                       | provenance only                                                    |
 
 ### Model types without factories
 
-| Model type | Why no factory |
-|---|---|
-| `supertype` | No AST node — type-level union only. Types emitter produces union type. |
-| `group` | No AST node — fields promoted to parent during Link. Stays in NodeMap to preserve provenance. |
-| `token` | Non-alphanumeric terminal — no user-facing construction. Types emitter produces minimal type. |
+| Model type  | Why no factory                                                                                |
+| ----------- | --------------------------------------------------------------------------------------------- |
+| `supertype` | No AST node — type-level union only. Types emitter produces union type.                       |
+| `group`     | No AST node — fields promoted to parent during Link. Stays in NodeMap to preserve provenance. |
+| `token`     | Non-alphanumeric terminal — no user-facing construction. Types emitter produces minimal type. |
 
 ### Not a model type
 
-| | What happens |
-|---|---|
-| `hidden` | Not a model type. All hidden rules resolved during Link into `supertype`, `enum`, `group`, or inlined directly. If a hidden rule survives to Assemble, Link has a bug. |
-| inlined content | Hidden repeat, pattern, string, terminal — absorbed into parent's rule tree during Link. No separate identity. |
+|                 | What happens                                                                                                                                                           |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `hidden`        | Not a model type. All hidden rules resolved during Link into `supertype`, `enum`, `group`, or inlined directly. If a hidden rule survives to Assemble, Link has a bug. |
+| inlined content | Hidden repeat, pattern, string, terminal — absorbed into parent's rule tree during Link. No separate identity.                                                         |
 
 ### Why `polymorph` is not `branch`
 
@@ -793,48 +808,48 @@ A branch is a sequence with fields — one structural form. A polymorph is a cho
 
 By making polymorph a separate model type, emitters that handle branches never see variant logic, and emitters that handle polymorphs are purpose-built for multi-form nodes.
 
-**Supertype vs. polymorph:** A supertype is a hidden union — many *kinds*, one type constraint, no AST node. A polymorph is a visible union — one *kind*, many structural forms, produces an AST node. The supertype exists only in the type system. The polymorph exists in the syntax tree.
+**Supertype vs. polymorph:** A supertype is a hidden union — many _kinds_, one type constraint, no AST node. A polymorph is a visible union — one _kind_, many structural forms, produces an AST node. The supertype exists only in the type system. The polymorph exists in the syntax tree.
 
 ### Functions
 
-| Function | In → Out | Stateless? |
-|---|---|---|
-| `assemble(optimized)` | `OptimizedGrammar` → `NodeMap` | Yes |
-| `classifyNode(kind, rule)` | kind + Rule → modelType (structural simplification + visibility) | Yes |
-| `simplifyRule(rule)` | Rule → Rule (strip anon tokens, collapse trivial seq/choice) — transient, not stored | Yes |
-| `extractFields(rule)` | Rule → `AssembledField[]` (walk, derive required/multiple/contentTypes) | Yes |
-| `extractChildren(rule)` | Rule → `AssembledChild[]` (walk tree, skip string/pattern/enum — collect remaining fields as child structure) | Yes |
-| `extractForms(rule)` | Rule → `AssembledForm[]` (for polymorphs: each choice branch as a distinct structural form) | Yes |
-| `collapseForms(forms)` | `AssembledForm[]` → `AssembledForm[]` (same-field-set forms without detect tokens → merge, union contentTypes, preserve mergedRules) | Yes |
-| `deriveRequired(field, rule)` | field + ancestor context → boolean | Yes |
-| `deriveMultiple(field, rule)` | field + ancestor context → boolean | Yes |
-| `deriveContentTypes(field)` | field content → string[] | Yes |
-| `deriveDetectToken(form, siblings)` | form + sibling forms → string | Yes |
-| `nameNode(kind)` | kind → { typeName, factoryName, irKey } | Yes |
-| `nameField(field)` | field name → { propertyName, paramName } | Yes |
-| `computeSignatures(nodes)` | nodes → SignaturePool | Yes |
-| `collapseKinds(nodes, sigs)` | nodes + signatures → collapsed Map | Yes |
-| `buildProjections(nodes)` | nodes → ProjectionContext | Yes |
-| `projectKinds(kinds, ctx)` | kinds + ctx → KindProjection | Yes |
+| Function                            | In → Out                                                                                                                             | Stateless? |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ---------- |
+| `assemble(optimized)`               | `OptimizedGrammar` → `NodeMap`                                                                                                       | Yes        |
+| `classifyNode(kind, rule)`          | kind + Rule → modelType (structural simplification + visibility)                                                                     | Yes        |
+| `simplifyRule(rule)`                | Rule → Rule (strip anon tokens, collapse trivial seq/choice) — transient, not stored                                                 | Yes        |
+| `extractFields(rule)`               | Rule → `AssembledField[]` (walk, derive required/multiple/contentTypes)                                                              | Yes        |
+| `extractChildren(rule)`             | Rule → `AssembledChild[]` (walk tree, skip string/pattern/enum — collect remaining fields as child structure)                        | Yes        |
+| `extractForms(rule)`                | Rule → `AssembledForm[]` (for polymorphs: each choice branch as a distinct structural form)                                          | Yes        |
+| `collapseForms(forms)`              | `AssembledForm[]` → `AssembledForm[]` (same-field-set forms without detect tokens → merge, union contentTypes, preserve mergedRules) | Yes        |
+| `deriveRequired(field, rule)`       | field + ancestor context → boolean                                                                                                   | Yes        |
+| `deriveMultiple(field, rule)`       | field + ancestor context → boolean                                                                                                   | Yes        |
+| `deriveContentTypes(field)`         | field content → string[]                                                                                                             | Yes        |
+| `deriveDetectToken(form, siblings)` | form + sibling forms → string                                                                                                        | Yes        |
+| `nameNode(kind)`                    | kind → { typeName, factoryName, irKey }                                                                                              | Yes        |
+| `nameField(field)`                  | field name → { propertyName, paramName }                                                                                             | Yes        |
+| `computeSignatures(nodes)`          | nodes → SignaturePool                                                                                                                | Yes        |
+| `collapseKinds(nodes, sigs)`        | nodes + signatures → collapsed Map                                                                                                   | Yes        |
+| `buildProjections(nodes)`           | nodes → ProjectionContext                                                                                                            | Yes        |
+| `projectKinds(kinds, ctx)`          | kinds + ctx → KindProjection                                                                                                         | Yes        |
 
 ### Current code → Assemble
 
-| Current function | Current location | New function |
-|---|---|---|
-| `applyNaming()`, `nameModel()`, `nameField()` | naming.ts | `nameNode()`, `nameField()` |
-| `computeSignatures()` | optimization.ts | `computeSignatures()` |
-| `collapseKinds()` | optimization.ts | `collapseKinds()` |
-| `identifyEnumPatterns()` | optimization.ts | `classifyNode()` (enum from Rule) |
-| `hydrate()`, `hydrateField()`, `hydrateChild()` | hydration.ts | `extractFields()`, `extractChildren()` |
-| `buildProjectionContext()`, `projectKinds()` | kind-projections.ts | `buildProjections()`, `projectKinds()` |
-| `initializeModels()` | node-model.ts | `assemble()` (builds nodes from rules) |
-| `reconcile()` | node-model.ts | `assemble()` (merges rule structure into nodes) |
-| `extractFields()`, `extractChildren()` | enriched-grammar.ts | `extractFields()`, `extractChildren()` (derive from tree) |
-| `simplifyRule()` | classify.ts | `simplifyRule()` (transient, inside `classifyNode()`) |
-| `classifyRule()` | classify.ts | Absorbed into `classifyNode()` |
-| `collapseSameFieldSetVariants()` | factoring.ts | `collapseForms()` (same-field-set forms → merge, union contentTypes, preserve mergedRules) |
-| `collectChildSlots()`, `collapseSlots()`, `nameChildSlots()` | enriched-grammar.ts | Absorbed into `extractChildren()` |
-| `refineAllModelTypes()` | node-model.ts | `classifyNode()` (structural simplification + visibility) |
+| Current function                                             | Current location    | New function                                                                               |
+| ------------------------------------------------------------ | ------------------- | ------------------------------------------------------------------------------------------ |
+| `applyNaming()`, `nameModel()`, `nameField()`                | naming.ts           | `nameNode()`, `nameField()`                                                                |
+| `computeSignatures()`                                        | optimization.ts     | `computeSignatures()`                                                                      |
+| `collapseKinds()`                                            | optimization.ts     | `collapseKinds()`                                                                          |
+| `identifyEnumPatterns()`                                     | optimization.ts     | `classifyNode()` (enum from Rule)                                                          |
+| `hydrate()`, `hydrateField()`, `hydrateChild()`              | hydration.ts        | `extractFields()`, `extractChildren()`                                                     |
+| `buildProjectionContext()`, `projectKinds()`                 | kind-projections.ts | `buildProjections()`, `projectKinds()`                                                     |
+| `initializeModels()`                                         | node-model.ts       | `assemble()` (builds nodes from rules)                                                     |
+| `reconcile()`                                                | node-model.ts       | `assemble()` (merges rule structure into nodes)                                            |
+| `extractFields()`, `extractChildren()`                       | enriched-grammar.ts | `extractFields()`, `extractChildren()` (derive from tree)                                  |
+| `simplifyRule()`                                             | classify.ts         | `simplifyRule()` (transient, inside `classifyNode()`)                                      |
+| `classifyRule()`                                             | classify.ts         | Absorbed into `classifyNode()`                                                             |
+| `collapseSameFieldSetVariants()`                             | factoring.ts        | `collapseForms()` (same-field-set forms → merge, union contentTypes, preserve mergedRules) |
+| `collectChildSlots()`, `collapseSlots()`, `nameChildSlots()` | enriched-grammar.ts | Absorbed into `extractChildren()`                                                          |
+| `refineAllModelTypes()`                                      | node-model.ts       | `classifyNode()` (structural simplification + visibility)                                  |
 
 ---
 
@@ -864,79 +879,79 @@ NodeMap ──→ emitters/types.ts      → types.ts       (interfaces, unions,
 
 ### emitters/templates.ts
 
-| Function | In → Out |
-|---|---|
-| `emitTemplatesYaml(nodeMap)` | NodeMap → YAML string |
-| `emitTemplate(node)` | AssembledBranch \| AssembledContainer → TemplateRule |
-| `emitPolymorphTemplates(node)` | AssembledPolymorph → TemplateRule per form |
+| Function                       | In → Out                                             |
+| ------------------------------ | ---------------------------------------------------- |
+| `emitTemplatesYaml(nodeMap)`   | NodeMap → YAML string                                |
+| `emitTemplate(node)`           | AssembledBranch \| AssembledContainer → TemplateRule |
+| `emitPolymorphTemplates(node)` | AssembledPolymorph → TemplateRule per form           |
 
 ### emitters/types.ts
 
-| Function | In → Out |
-|---|---|
-| `emitTypes(nodeMap)` | NodeMap → TypeScript string |
-| `emitInterface(node)` | AssembledBranch \| AssembledContainer → interface lines |
-| `emitFormInterface(node, form)` | polymorph + form → interface lines |
-| `emitConfigType(node)` | AssembledNode → config type lines |
+| Function                        | In → Out                                                |
+| ------------------------------- | ------------------------------------------------------- |
+| `emitTypes(nodeMap)`            | NodeMap → TypeScript string                             |
+| `emitInterface(node)`           | AssembledBranch \| AssembledContainer → interface lines |
+| `emitFormInterface(node, form)` | polymorph + form → interface lines                      |
+| `emitConfigType(node)`          | AssembledNode → config type lines                       |
 
 ### emitters/factories.ts
 
-| Function | In → Out |
-|---|---|
-| `emitFactories(nodeMap)` | NodeMap → TypeScript string |
-| `emitFactory(node)` | AssembledBranch \| AssembledContainer → factory string |
-| `emitFormFactory(node, form)` | polymorph + form → form factory string |
+| Function                      | In → Out                                               |
+| ----------------------------- | ------------------------------------------------------ |
+| `emitFactories(nodeMap)`      | NodeMap → TypeScript string                            |
+| `emitFactory(node)`           | AssembledBranch \| AssembledContainer → factory string |
+| `emitFormFactory(node, form)` | polymorph + form → form factory string                 |
 
 ### emitters/from.ts
 
 Derives from factory signature.
 
-| Function | In → Out |
-|---|---|
-| `emitFrom(nodeMap)` | NodeMap → TypeScript string |
-| `emitFromFunction(node)` | AssembledNode → from function string |
-| `emitFormFrom(node, form)` | polymorph + form → form from string |
-| `resolveFieldStrategy(field)` | AssembledField → resolver strategy |
-| `emitResolver(strategy)` | strategy → resolver function string |
+| Function                      | In → Out                             |
+| ----------------------------- | ------------------------------------ |
+| `emitFrom(nodeMap)`           | NodeMap → TypeScript string          |
+| `emitFromFunction(node)`      | AssembledNode → from function string |
+| `emitFormFrom(node, form)`    | polymorph + form → form from string  |
+| `resolveFieldStrategy(field)` | AssembledField → resolver strategy   |
+| `emitResolver(strategy)`      | strategy → resolver function string  |
 
 ### emitters/ir.ts
 
 Derives from factory exports.
 
-| Function | In → Out |
-|---|---|
+| Function          | In → Out                    |
+| ----------------- | --------------------------- |
 | `emitIr(nodeMap)` | NodeMap → TypeScript string |
 
 ### Current code → Emit
 
-| Current function | Current location | New function |
-|---|---|---|
-| `emitTemplatesYaml()` | emitters/rules.ts | `emitTemplatesYaml()` in templates.ts |
-| `ruleToTemplate()` | emitters/rules.ts | Absorbed into `emitTemplate()` |
-| `emitFromModelVariants()` | emitters/rules.ts | `emitPolymorphTemplates()` |
-| `emitTypes()` | emitters/types.ts | `emitTypes()` |
-| `emitConcreteInterface()` | emitters/types.ts | `emitInterface()` |
-| `emitVariantInterface()` | emitters/types.ts | `emitFormInterface()` |
-| `emitFactories()` | emitters/factories.ts | `emitFactories()` |
-| `emitFactory()` | emitters/factories.ts | `emitFactory()` |
-| `emitVariantFactory()` | emitters/factories.ts | `emitFormFactory()` |
-| `emitFrom()` | emitters/from.ts | `emitFrom()` |
-| `emitFromFunction()` | emitters/from.ts | `emitFromFunction()` |
-| `emitVariantFromFunction()` | emitters/from.ts | `emitFormFrom()` |
+| Current function            | Current location      | New function                          |
+| --------------------------- | --------------------- | ------------------------------------- |
+| `emitTemplatesYaml()`       | emitters/rules.ts     | `emitTemplatesYaml()` in templates.ts |
+| `ruleToTemplate()`          | emitters/rules.ts     | Absorbed into `emitTemplate()`        |
+| `emitFromModelVariants()`   | emitters/rules.ts     | `emitPolymorphTemplates()`            |
+| `emitTypes()`               | emitters/types.ts     | `emitTypes()`                         |
+| `emitConcreteInterface()`   | emitters/types.ts     | `emitInterface()`                     |
+| `emitVariantInterface()`    | emitters/types.ts     | `emitFormInterface()`                 |
+| `emitFactories()`           | emitters/factories.ts | `emitFactories()`                     |
+| `emitFactory()`             | emitters/factories.ts | `emitFactory()`                       |
+| `emitVariantFactory()`      | emitters/factories.ts | `emitFormFactory()`                   |
+| `emitFrom()`                | emitters/from.ts      | `emitFrom()`                          |
+| `emitFromFunction()`        | emitters/from.ts      | `emitFromFunction()`                  |
+| `emitVariantFromFunction()` | emitters/from.ts      | `emitFormFrom()`                      |
 
 ### Eliminated from Emit
 
-| Old function | Where it went |
-|---|---|
-| `tryClause()` | Link: `detectClause()` |
-| `topLevelChoice()` | Assemble: `classifyNode()` produces `polymorph` model type |
-| `ruleReferencesExternal()` | Link: `detectIndentField()` |
-| `needsSpace()`, `buildWordBoundary()` | Optimize |
-| `variantFieldSetsFromModel()` | Assemble: `extractForms()` |
-| `computeVariantFieldSets()` | Eliminated — variant Rule nodes from Optimize, forms extracted in Assemble |
-| `walkWithInlining()` | Link: hidden rules already inlined |
-| `buildJoinBy()`, `detectRecursiveSeparator()` | Evaluate: separator on Rule |
-| `appendMissingFields()` | Eliminated — Assemble provides complete field set per form |
+| Old function                                  | Where it went                                                              |
+| --------------------------------------------- | -------------------------------------------------------------------------- |
+| `tryClause()`                                 | Link: `detectClause()`                                                     |
+| `topLevelChoice()`                            | Assemble: `classifyNode()` produces `polymorph` model type                 |
+| `ruleReferencesExternal()`                    | Link: `detectIndentField()`                                                |
+| `needsSpace()`, `buildWordBoundary()`         | Optimize                                                                   |
+| `variantFieldSetsFromModel()`                 | Assemble: `extractForms()`                                                 |
+| `computeVariantFieldSets()`                   | Eliminated — variant Rule nodes from Optimize, forms extracted in Assemble |
+| `walkWithInlining()`                          | Link: hidden rules already inlined                                         |
+| `buildJoinBy()`, `detectRecursiveSeparator()` | Evaluate: separator on Rule                                                |
+| `appendMissingFields()`                       | Eliminated — Assemble provides complete field set per form                 |
 
 ---
 
@@ -944,10 +959,10 @@ Derives from factory exports.
 
 All five phases become pure functions:
 
-| Current state | Migration |
-|---|---|
-| `grammarJsonCache`, `explicitPaths` | `evaluate()` takes single entry path (grammar.js or overrides.ts) |
-| `nodeTypesCache`, `explicitNodeTypePaths` | `validateAgainstNodeTypes()` takes path |
-| `overridePaths` | Eliminated — overrides.ts imports grammar.js directly via tree-sitter's `grammar(base)` |
-| `_wordEndRe`, `_wordStartRe`, `_externalRoles` | Eliminated — spacing config from Optimize, externals resolved in Link |
-| Model mutation everywhere | Each phase returns new data |
+| Current state                                  | Migration                                                                               |
+| ---------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `grammarJsonCache`, `explicitPaths`            | `evaluate()` takes single entry path (grammar.js or overrides.ts)                       |
+| `nodeTypesCache`, `explicitNodeTypePaths`      | `validateAgainstNodeTypes()` takes path                                                 |
+| `overridePaths`                                | Eliminated — overrides.ts imports grammar.js directly via tree-sitter's `grammar(base)` |
+| `_wordEndRe`, `_wordStartRe`, `_externalRoles` | Eliminated — spacing config from Optimize, externals resolved in Link                   |
+| Model mutation everywhere                      | Each phase returns new data                                                             |

@@ -1,5 +1,5 @@
 // @generated from packages/typescript/node-model.json5 and packages/typescript/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar typescript --all --rust-render
+// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src
 //
 // Per-kind askama template structs + render_dispatch + GrammarMeta impl
 // for the typescript grammar. Every struct in this file is backed by a
@@ -31,7 +31,7 @@ pub mod filters {
 
 #[derive(::askama::Template)]
 #[template(path = "_arrow_function__call_signature.jinja", escape = "none")]
-pub struct ArrowFunctionUCallSignatureTemplate {
+pub struct _ArrowFunctionUCallSignatureTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -48,7 +48,7 @@ pub struct ArrowFunctionUCallSignatureTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_arrow_function_parameter.jinja", escape = "none")]
-pub struct ArrowFunctionParameterTemplate {
+pub struct _ArrowFunctionParameterTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -145,7 +145,7 @@ pub struct ClassBodyMethodTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_class_heritage_extends_clause.jinja", escape = "none")]
-pub struct ClassHeritageExtendsClauseTemplate {
+pub struct _ClassHeritageExtendsClauseTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -156,7 +156,7 @@ pub struct ClassHeritageExtendsClauseTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_class_heritage_implements_clause.jinja", escape = "none")]
-pub struct ClassHeritageImplementsClauseTemplate {
+pub struct _ClassHeritageImplementsClauseTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -189,6 +189,21 @@ pub struct ExportStatementDefaultDeclArmDefaultKwTemplate {
     pub leading_sep: bool,
     pub declaration: String,
     pub declaration_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_export_statement_default_decl_arm.jinja", escape = "none")]
+pub struct ExportStatementDefaultDeclArmTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub declaration: String,
+    pub declaration_list: Vec<String>,
+    pub decorator: String,
+    pub decorator_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -231,8 +246,19 @@ pub struct ExportStatementDefaultFromArmStarFromTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_export_statement_default_from_arm.jinja", escape = "none")]
+pub struct ExportStatementDefaultFromArmTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_export_statement_equals_export.jinja", escape = "none")]
-pub struct ExportStatementEqualsExportTemplate {
+pub struct _ExportStatementEqualsExportTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -243,7 +269,7 @@ pub struct ExportStatementEqualsExportTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_export_statement_namespace_export.jinja", escape = "none")]
-pub struct ExportStatementNamespaceExportTemplate {
+pub struct _ExportStatementNamespaceExportTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -254,7 +280,7 @@ pub struct ExportStatementNamespaceExportTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_export_statement_type_export.jinja", escape = "none")]
-pub struct ExportStatementTypeExportTemplate {
+pub struct _ExportStatementTypeExportTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -312,7 +338,7 @@ pub struct ForHeaderVarKindTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_import_clause_default_import.jinja", escape = "none")]
-pub struct ImportClauseDefaultImportTemplate {
+pub struct _ImportClauseDefaultImportTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -323,7 +349,7 @@ pub struct ImportClauseDefaultImportTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_import_clause_named_imports.jinja", escape = "none")]
-pub struct ImportClauseNamedImportsTemplate {
+pub struct _ImportClauseNamedImportsTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -334,7 +360,7 @@ pub struct ImportClauseNamedImportsTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_import_clause_namespace_import.jinja", escape = "none")]
-pub struct ImportClauseNamespaceImportTemplate {
+pub struct _ImportClauseNamespaceImportTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -360,7 +386,7 @@ pub struct ImportSpecifierAsTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_import_specifier_name.jinja", escape = "none")]
-pub struct ImportSpecifierNameTemplate {
+pub struct _ImportSpecifierNameTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -388,7 +414,7 @@ pub struct IndexSignatureColonTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_index_signature_mapped_type_clause.jinja", escape = "none")]
-pub struct IndexSignatureMappedTypeClauseTemplate {
+pub struct _IndexSignatureMappedTypeClauseTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -408,6 +434,17 @@ pub struct InitializerTemplate {
     pub leading_sep: bool,
     pub value: String,
     pub value_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_interface_body.jinja", escape = "none")]
+pub struct InterfaceBodyTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
 }
 
 #[derive(::askama::Template)]
@@ -438,7 +475,7 @@ pub struct _NumberTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_parenthesized_expression_sequence.jinja", escape = "none")]
-pub struct ParenthesizedExpressionSequenceTemplate {
+pub struct _ParenthesizedExpressionSequenceTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -461,6 +498,17 @@ pub struct ParenthesizedExpressionTypedTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_property_identifier.jinja", escape = "none")]
+pub struct PropertyIdentifierTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_public_field_definition_abstract_first.jinja", escape = "none")]
 pub struct PublicFieldDefinitionAbstractFirstTemplate {
     pub children: Vec<String>,
@@ -469,10 +517,10 @@ pub struct PublicFieldDefinitionAbstractFirstTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub r#abstract: String,
-    pub r#abstract_list: Vec<String>,
-    pub readonly: String,
-    pub readonly_list: Vec<String>,
+    pub abstract_marker: String,
+    pub abstract_marker_list: Vec<String>,
+    pub readonly_marker: String,
+    pub readonly_marker_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -484,8 +532,8 @@ pub struct PublicFieldDefinitionAccessFirstTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub declare: String,
-    pub declare_list: Vec<String>,
+    pub declare_marker: String,
+    pub declare_marker_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -497,8 +545,8 @@ pub struct PublicFieldDefinitionAccessorOptTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub accessor: String,
-    pub accessor_list: Vec<String>,
+    pub accessor_marker: String,
+    pub accessor_marker_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -513,6 +561,21 @@ pub struct PublicFieldDefinitionDeclareFirstTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_public_field_definition_readonly_first.jinja", escape = "none")]
+pub struct PublicFieldDefinitionReadonlyFirstTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub abstract_marker: String,
+    pub abstract_marker_list: Vec<String>,
+    pub readonly_marker: String,
+    pub readonly_marker_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_public_field_definition_static_mods.jinja", escape = "none")]
 pub struct PublicFieldDefinitionStaticModsTemplate {
     pub children: Vec<String>,
@@ -521,15 +584,37 @@ pub struct PublicFieldDefinitionStaticModsTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub readonly: String,
-    pub readonly_list: Vec<String>,
-    pub r#static: String,
-    pub r#static_list: Vec<String>,
+    pub readonly_marker: String,
+    pub readonly_marker_list: Vec<String>,
+    pub static_marker: String,
+    pub static_marker_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_statement_identifier.jinja", escape = "none")]
+pub struct StatementIdentifierTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_string_double.jinja", escape = "none")]
-pub struct StringDoubleTemplate {
+pub struct _StringDoubleTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_string_fragment.jinja", escape = "none")]
+pub struct StringFragmentTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -540,7 +625,7 @@ pub struct StringDoubleTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_string_single.jinja", escape = "none")]
-pub struct StringSingleTemplate {
+pub struct _StringSingleTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -712,14 +797,16 @@ pub struct AbstractMethodSignatureTemplate {
     pub leading_sep: bool,
     pub accessibility_modifier: String,
     pub accessibility_modifier_list: Vec<String>,
+    pub accessor_kind: String,
+    pub accessor_kind_list: Vec<String>,
     pub name: String,
     pub name_list: Vec<String>,
+    pub optional_marker: String,
+    pub optional_marker_list: Vec<String>,
     pub override_modifier: String,
     pub override_modifier_list: Vec<String>,
     pub parameters: String,
     pub parameters_list: Vec<String>,
-    pub question: String,
-    pub question_list: Vec<String>,
     pub return_type: String,
     pub return_type_list: Vec<String>,
     pub type_parameters: String,
@@ -799,6 +886,36 @@ pub struct ArrayTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "arrow_function__call_signature.jinja", escape = "none")]
+pub struct ArrowFunctionUCallSignatureTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub parameters: String,
+    pub parameters_list: Vec<String>,
+    pub return_type: String,
+    pub return_type_list: Vec<String>,
+    pub type_parameters: String,
+    pub type_parameters_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "arrow_function_parameter.jinja", escape = "none")]
+pub struct ArrowFunctionParameterTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub parameter: String,
+    pub parameter_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "arrow_function.jinja", escape = "none")]
 pub struct ArrowFunctionTemplate {
     pub children: Vec<String>,
@@ -807,8 +924,8 @@ pub struct ArrowFunctionTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub r#async: String,
-    pub r#async_list: Vec<String>,
+    pub async_marker: String,
+    pub async_marker_list: Vec<String>,
     pub body: String,
     pub body_list: Vec<String>,
 }
@@ -865,8 +982,8 @@ pub struct AssignmentExpressionTemplate {
     pub left_list: Vec<String>,
     pub right: String,
     pub right_list: Vec<String>,
-    pub using: String,
-    pub using_list: Vec<String>,
+    pub using_marker: String,
+    pub using_marker_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1026,6 +1143,28 @@ pub struct ClassDeclarationTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "class_heritage_extends_clause.jinja", escape = "none")]
+pub struct ClassHeritageExtendsClauseTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "class_heritage_implements_clause.jinja", escape = "none")]
+pub struct ClassHeritageImplementsClauseTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "class_heritage.jinja", escape = "none")]
 pub struct ClassHeritageTemplate {
     pub children: Vec<String>,
@@ -1124,8 +1263,8 @@ pub struct ConstructSignatureTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub r#abstract: String,
-    pub r#abstract_list: Vec<String>,
+    pub abstract_marker: String,
+    pub abstract_marker_list: Vec<String>,
     pub parameters: String,
     pub parameters_list: Vec<String>,
     pub r#type: String,
@@ -1143,8 +1282,8 @@ pub struct ConstructorTypeTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub r#abstract: String,
-    pub r#abstract_list: Vec<String>,
+    pub abstract_marker: String,
+    pub abstract_marker_list: Vec<String>,
     pub parameters: String,
     pub parameters_list: Vec<String>,
     pub r#type: String,
@@ -1302,8 +1441,8 @@ pub struct EnumBodyTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub opening: String,
-    pub opening_list: Vec<String>,
+    pub name: String,
+    pub name_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1317,8 +1456,8 @@ pub struct EnumDeclarationTemplate {
     pub leading_sep: bool,
     pub body: String,
     pub body_list: Vec<String>,
-    pub r#const: String,
-    pub r#const_list: Vec<String>,
+    pub const_marker: String,
+    pub const_marker_list: Vec<String>,
     pub name: String,
     pub name_list: Vec<String>,
 }
@@ -1345,8 +1484,45 @@ pub struct ExportSpecifierTemplate {
     pub leading_sep: bool,
     pub alias: String,
     pub alias_list: Vec<String>,
+    pub export_kind: String,
+    pub export_kind_list: Vec<String>,
     pub name: String,
     pub name_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "export_statement_equals_export.jinja", escape = "none")]
+pub struct ExportStatementEqualsExportTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "export_statement_namespace_export.jinja", escape = "none")]
+pub struct ExportStatementNamespaceExportTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "export_statement_type_export.jinja", escape = "none")]
+pub struct ExportStatementTypeExportTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub source: String,
+    pub source_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1414,8 +1590,8 @@ pub struct FieldDefinitionTemplate {
     pub decorator_list: Vec<String>,
     pub property: String,
     pub property_list: Vec<String>,
-    pub r#static: String,
-    pub r#static_list: Vec<String>,
+    pub static_marker: String,
+    pub static_marker_list: Vec<String>,
     pub value: String,
     pub value_list: Vec<String>,
 }
@@ -1455,8 +1631,8 @@ pub struct ForInStatementTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub r#await: String,
-    pub r#await_list: Vec<String>,
+    pub await_marker: String,
+    pub await_marker_list: Vec<String>,
     pub body: String,
     pub body_list: Vec<String>,
     pub operator: String,
@@ -1504,8 +1680,8 @@ pub struct FunctionDeclarationTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub r#async: String,
-    pub r#async_list: Vec<String>,
+    pub async_marker: String,
+    pub async_marker_list: Vec<String>,
     pub body: String,
     pub body_list: Vec<String>,
     pub name: String,
@@ -1527,8 +1703,8 @@ pub struct FunctionExpressionTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub r#async: String,
-    pub r#async_list: Vec<String>,
+    pub async_marker: String,
+    pub async_marker_list: Vec<String>,
     pub body: String,
     pub body_list: Vec<String>,
     pub name: String,
@@ -1550,8 +1726,8 @@ pub struct FunctionSignatureTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub r#async: String,
-    pub r#async_list: Vec<String>,
+    pub async_marker: String,
+    pub async_marker_list: Vec<String>,
     pub name: String,
     pub name_list: Vec<String>,
     pub parameters: String,
@@ -1590,8 +1766,8 @@ pub struct GeneratorFunctionDeclarationTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub r#async: String,
-    pub r#async_list: Vec<String>,
+    pub async_marker: String,
+    pub async_marker_list: Vec<String>,
     pub body: String,
     pub body_list: Vec<String>,
     pub name: String,
@@ -1613,8 +1789,8 @@ pub struct GeneratorFunctionTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub r#async: String,
-    pub r#async_list: Vec<String>,
+    pub async_marker: String,
+    pub async_marker_list: Vec<String>,
     pub body: String,
     pub body_list: Vec<String>,
     pub name: String,
@@ -1701,6 +1877,39 @@ pub struct ImportAttributeTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "import_clause_default_import.jinja", escape = "none")]
+pub struct ImportClauseDefaultImportTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "import_clause_named_imports.jinja", escape = "none")]
+pub struct ImportClauseNamedImportsTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "import_clause_namespace_import.jinja", escape = "none")]
+pub struct ImportClauseNamespaceImportTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "import_clause.jinja", escape = "none")]
 pub struct ImportClauseTemplate {
     pub children: Vec<String>,
@@ -1727,6 +1936,19 @@ pub struct ImportRequireClauseTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "import_specifier_name.jinja", escape = "none")]
+pub struct ImportSpecifierNameTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub name: String,
+    pub name_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "import_specifier.jinja", escape = "none")]
 pub struct ImportSpecifierTemplate {
     pub children: Vec<String>,
@@ -1735,6 +1957,8 @@ pub struct ImportSpecifierTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
+    pub import_kind: String,
+    pub import_kind_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1746,8 +1970,6 @@ pub struct ImportStatementTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub from_clause: String,
-    pub from_clause_list: Vec<String>,
     pub import_attribute: String,
     pub import_attribute_list: Vec<String>,
     pub import_clause: String,
@@ -1756,6 +1978,17 @@ pub struct ImportStatementTemplate {
     pub semicolon_list: Vec<String>,
     pub source: String,
     pub source_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "index_signature_mapped_type_clause.jinja", escape = "none")]
+pub struct IndexSignatureMappedTypeClauseTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
 }
 
 #[derive(::askama::Template)]
@@ -1795,8 +2028,8 @@ pub struct InferTypeTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub constraint: String,
-    pub constraint_list: Vec<String>,
+    pub r#type: String,
+    pub r#type_list: Vec<String>,
     pub type_identifier: String,
     pub type_identifier_list: Vec<String>,
 }
@@ -2063,22 +2296,26 @@ pub struct MethodDefinitionTemplate {
     pub leading_sep: bool,
     pub accessibility_modifier: String,
     pub accessibility_modifier_list: Vec<String>,
-    pub r#async: String,
-    pub r#async_list: Vec<String>,
+    pub accessor_kind: String,
+    pub accessor_kind_list: Vec<String>,
+    pub async_marker: String,
+    pub async_marker_list: Vec<String>,
     pub body: String,
     pub body_list: Vec<String>,
     pub name: String,
     pub name_list: Vec<String>,
+    pub optional_marker: String,
+    pub optional_marker_list: Vec<String>,
     pub override_modifier: String,
     pub override_modifier_list: Vec<String>,
     pub parameters: String,
     pub parameters_list: Vec<String>,
-    pub question: String,
-    pub question_list: Vec<String>,
-    pub readonly: String,
-    pub readonly_list: Vec<String>,
+    pub readonly_marker: String,
+    pub readonly_marker_list: Vec<String>,
     pub return_type: String,
     pub return_type_list: Vec<String>,
+    pub static_marker: String,
+    pub static_marker_list: Vec<String>,
     pub type_parameters: String,
     pub type_parameters_list: Vec<String>,
 }
@@ -2094,20 +2331,24 @@ pub struct MethodSignatureTemplate {
     pub leading_sep: bool,
     pub accessibility_modifier: String,
     pub accessibility_modifier_list: Vec<String>,
-    pub r#async: String,
-    pub r#async_list: Vec<String>,
+    pub accessor_kind: String,
+    pub accessor_kind_list: Vec<String>,
+    pub async_marker: String,
+    pub async_marker_list: Vec<String>,
     pub name: String,
     pub name_list: Vec<String>,
+    pub optional_marker: String,
+    pub optional_marker_list: Vec<String>,
     pub override_modifier: String,
     pub override_modifier_list: Vec<String>,
     pub parameters: String,
     pub parameters_list: Vec<String>,
-    pub question: String,
-    pub question_list: Vec<String>,
-    pub readonly: String,
-    pub readonly_list: Vec<String>,
+    pub readonly_marker: String,
+    pub readonly_marker_list: Vec<String>,
     pub return_type: String,
     pub return_type_list: Vec<String>,
+    pub static_marker: String,
+    pub static_marker_list: Vec<String>,
     pub type_parameters: String,
     pub type_parameters_list: Vec<String>,
 }
@@ -2315,8 +2556,8 @@ pub struct OptionalParameterTemplate {
     pub decorator_list: Vec<String>,
     pub pattern: String,
     pub pattern_list: Vec<String>,
-    pub readonly: String,
-    pub readonly_list: Vec<String>,
+    pub readonly_marker: String,
+    pub readonly_marker_list: Vec<String>,
     pub r#type: String,
     pub r#type_list: Vec<String>,
     pub value: String,
@@ -2382,6 +2623,17 @@ pub struct PairTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "parenthesized_expression_sequence.jinja", escape = "none")]
+pub struct ParenthesizedExpressionSequenceTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "parenthesized_expression.jinja", escape = "none")]
 pub struct ParenthesizedExpressionTemplate {
     pub children: Vec<String>,
@@ -2433,12 +2685,14 @@ pub struct PropertySignatureTemplate {
     pub accessibility_modifier_list: Vec<String>,
     pub name: String,
     pub name_list: Vec<String>,
+    pub optional_marker: String,
+    pub optional_marker_list: Vec<String>,
     pub override_modifier: String,
     pub override_modifier_list: Vec<String>,
-    pub question: String,
-    pub question_list: Vec<String>,
-    pub readonly: String,
-    pub readonly_list: Vec<String>,
+    pub readonly_marker: String,
+    pub readonly_marker_list: Vec<String>,
+    pub static_marker: String,
+    pub static_marker_list: Vec<String>,
     pub r#type: String,
     pub r#type_list: Vec<String>,
 }
@@ -2456,6 +2710,8 @@ pub struct PublicFieldDefinitionTemplate {
     pub decorator_list: Vec<String>,
     pub name: String,
     pub name_list: Vec<String>,
+    pub optionality_marker: String,
+    pub optionality_marker_list: Vec<String>,
     pub r#type: String,
     pub r#type_list: Vec<String>,
     pub value: String,
@@ -2503,8 +2759,8 @@ pub struct RequiredParameterTemplate {
     pub decorator_list: Vec<String>,
     pub pattern: String,
     pub pattern_list: Vec<String>,
-    pub readonly: String,
-    pub readonly_list: Vec<String>,
+    pub readonly_marker: String,
+    pub readonly_marker_list: Vec<String>,
     pub r#type: String,
     pub r#type_list: Vec<String>,
     pub value: String,
@@ -2600,6 +2856,28 @@ pub struct StatementBlockTemplate {
     pub automatic_semicolon_list: Vec<String>,
     pub statements: String,
     pub statements_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "string_double.jinja", escape = "none")]
+pub struct StringDoubleTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "string_single.jinja", escape = "none")]
+pub struct StringSingleTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
 }
 
 #[derive(::askama::Template)]
@@ -2868,8 +3146,8 @@ pub struct TypeParameterTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub r#const: String,
-    pub r#const_list: Vec<String>,
+    pub const_marker: String,
+    pub const_marker_list: Vec<String>,
     pub constraint: String,
     pub constraint_list: Vec<String>,
     pub name: String,
@@ -3062,7 +3340,7 @@ pub fn render_dispatch(
     let _values = ctx.as_values();
     match kind {
         "_arrow_function__call_signature" => {
-            let t = ArrowFunctionUCallSignatureTemplate {
+            let t = _ArrowFunctionUCallSignatureTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3079,7 +3357,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_arrow_function_parameter" => {
-            let t = ArrowFunctionParameterTemplate {
+            let t = _ArrowFunctionParameterTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3176,7 +3454,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_class_heritage_extends_clause" => {
-            let t = ClassHeritageExtendsClauseTemplate {
+            let t = _ClassHeritageExtendsClauseTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3187,7 +3465,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_class_heritage_implements_clause" => {
-            let t = ClassHeritageImplementsClauseTemplate {
+            let t = _ClassHeritageImplementsClauseTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3220,6 +3498,21 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 declaration: ctx.fields.get("declaration").cloned().unwrap_or_default(),
                 declaration_list: ctx.fields_list.get("declaration").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
+        "_export_statement_default_decl_arm" => {
+            let t = ExportStatementDefaultDeclArmTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                declaration: ctx.fields.get("declaration").cloned().unwrap_or_default(),
+                declaration_list: ctx.fields_list.get("declaration").cloned().unwrap_or_default(),
+                decorator: ctx.fields.get("decorator").cloned().unwrap_or_default(),
+                decorator_list: ctx.fields_list.get("decorator").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -3262,8 +3555,19 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "_export_statement_default_from_arm" => {
+            let t = ExportStatementDefaultFromArmTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
         "_export_statement_equals_export" => {
-            let t = ExportStatementEqualsExportTemplate {
+            let t = _ExportStatementEqualsExportTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3274,7 +3578,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_export_statement_namespace_export" => {
-            let t = ExportStatementNamespaceExportTemplate {
+            let t = _ExportStatementNamespaceExportTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3285,7 +3589,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_export_statement_type_export" => {
-            let t = ExportStatementTypeExportTemplate {
+            let t = _ExportStatementTypeExportTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3343,7 +3647,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_import_clause_default_import" => {
-            let t = ImportClauseDefaultImportTemplate {
+            let t = _ImportClauseDefaultImportTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3354,7 +3658,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_import_clause_named_imports" => {
-            let t = ImportClauseNamedImportsTemplate {
+            let t = _ImportClauseNamedImportsTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3365,7 +3669,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_import_clause_namespace_import" => {
-            let t = ImportClauseNamespaceImportTemplate {
+            let t = _ImportClauseNamespaceImportTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3391,7 +3695,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_import_specifier_name" => {
-            let t = ImportSpecifierNameTemplate {
+            let t = _ImportSpecifierNameTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3419,7 +3723,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_index_signature_mapped_type_clause" => {
-            let t = IndexSignatureMappedTypeClauseTemplate {
+            let t = _IndexSignatureMappedTypeClauseTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3439,6 +3743,17 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
                 value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
+        "_interface_body" => {
+            let t = InterfaceBodyTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
             };
             t.render_with_values(&_values)
         }
@@ -3469,7 +3784,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_parenthesized_expression_sequence" => {
-            let t = ParenthesizedExpressionSequenceTemplate {
+            let t = _ParenthesizedExpressionSequenceTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3492,6 +3807,17 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "_property_identifier" => {
+            let t = PropertyIdentifierTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
         "_public_field_definition_abstract_first" => {
             let t = PublicFieldDefinitionAbstractFirstTemplate {
                 children: ctx.children_list.clone(),
@@ -3500,10 +3826,10 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                r#abstract: ctx.fields.get("abstract").cloned().unwrap_or_default(),
-                r#abstract_list: ctx.fields_list.get("abstract").cloned().unwrap_or_default(),
-                readonly: ctx.fields.get("readonly").cloned().unwrap_or_default(),
-                readonly_list: ctx.fields_list.get("readonly").cloned().unwrap_or_default(),
+                abstract_marker: ctx.fields.get("abstract_marker").cloned().unwrap_or_default(),
+                abstract_marker_list: ctx.fields_list.get("abstract_marker").cloned().unwrap_or_default(),
+                readonly_marker: ctx.fields.get("readonly_marker").cloned().unwrap_or_default(),
+                readonly_marker_list: ctx.fields_list.get("readonly_marker").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -3515,8 +3841,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                declare: ctx.fields.get("declare").cloned().unwrap_or_default(),
-                declare_list: ctx.fields_list.get("declare").cloned().unwrap_or_default(),
+                declare_marker: ctx.fields.get("declare_marker").cloned().unwrap_or_default(),
+                declare_marker_list: ctx.fields_list.get("declare_marker").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -3528,8 +3854,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                accessor: ctx.fields.get("accessor").cloned().unwrap_or_default(),
-                accessor_list: ctx.fields_list.get("accessor").cloned().unwrap_or_default(),
+                accessor_marker: ctx.fields.get("accessor_marker").cloned().unwrap_or_default(),
+                accessor_marker_list: ctx.fields_list.get("accessor_marker").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -3544,6 +3870,21 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "_public_field_definition_readonly_first" => {
+            let t = PublicFieldDefinitionReadonlyFirstTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                abstract_marker: ctx.fields.get("abstract_marker").cloned().unwrap_or_default(),
+                abstract_marker_list: ctx.fields_list.get("abstract_marker").cloned().unwrap_or_default(),
+                readonly_marker: ctx.fields.get("readonly_marker").cloned().unwrap_or_default(),
+                readonly_marker_list: ctx.fields_list.get("readonly_marker").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
         "_public_field_definition_static_mods" => {
             let t = PublicFieldDefinitionStaticModsTemplate {
                 children: ctx.children_list.clone(),
@@ -3552,15 +3893,37 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                readonly: ctx.fields.get("readonly").cloned().unwrap_or_default(),
-                readonly_list: ctx.fields_list.get("readonly").cloned().unwrap_or_default(),
-                r#static: ctx.fields.get("static").cloned().unwrap_or_default(),
-                r#static_list: ctx.fields_list.get("static").cloned().unwrap_or_default(),
+                readonly_marker: ctx.fields.get("readonly_marker").cloned().unwrap_or_default(),
+                readonly_marker_list: ctx.fields_list.get("readonly_marker").cloned().unwrap_or_default(),
+                static_marker: ctx.fields.get("static_marker").cloned().unwrap_or_default(),
+                static_marker_list: ctx.fields_list.get("static_marker").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
+        "_statement_identifier" => {
+            let t = StatementIdentifierTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
             };
             t.render_with_values(&_values)
         }
         "_string_double" => {
-            let t = StringDoubleTemplate {
+            let t = _StringDoubleTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "_string_fragment" => {
+            let t = StringFragmentTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3571,7 +3934,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_string_single" => {
-            let t = StringSingleTemplate {
+            let t = _StringSingleTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3743,14 +4106,16 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 accessibility_modifier: ctx.fields.get("accessibility_modifier").cloned().unwrap_or_default(),
                 accessibility_modifier_list: ctx.fields_list.get("accessibility_modifier").cloned().unwrap_or_default(),
+                accessor_kind: ctx.fields.get("accessor_kind").cloned().unwrap_or_default(),
+                accessor_kind_list: ctx.fields_list.get("accessor_kind").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
                 name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
+                optional_marker: ctx.fields.get("optional_marker").cloned().unwrap_or_default(),
+                optional_marker_list: ctx.fields_list.get("optional_marker").cloned().unwrap_or_default(),
                 override_modifier: ctx.fields.get("override_modifier").cloned().unwrap_or_default(),
                 override_modifier_list: ctx.fields_list.get("override_modifier").cloned().unwrap_or_default(),
                 parameters: ctx.fields.get("parameters").cloned().unwrap_or_default(),
                 parameters_list: ctx.fields_list.get("parameters").cloned().unwrap_or_default(),
-                question: ctx.fields.get("question").cloned().unwrap_or_default(),
-                question_list: ctx.fields_list.get("question").cloned().unwrap_or_default(),
                 return_type: ctx.fields.get("return_type").cloned().unwrap_or_default(),
                 return_type_list: ctx.fields_list.get("return_type").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
@@ -3830,6 +4195,36 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "arrow_function__call_signature" => {
+            let t = ArrowFunctionUCallSignatureTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                parameters: ctx.fields.get("parameters").cloned().unwrap_or_default(),
+                parameters_list: ctx.fields_list.get("parameters").cloned().unwrap_or_default(),
+                return_type: ctx.fields.get("return_type").cloned().unwrap_or_default(),
+                return_type_list: ctx.fields_list.get("return_type").cloned().unwrap_or_default(),
+                type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
+                type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
+        "arrow_function_parameter" => {
+            let t = ArrowFunctionParameterTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                parameter: ctx.fields.get("parameter").cloned().unwrap_or_default(),
+                parameter_list: ctx.fields_list.get("parameter").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
         "arrow_function" => {
             let t = ArrowFunctionTemplate {
                 children: ctx.children_list.clone(),
@@ -3838,8 +4233,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                r#async: ctx.fields.get("async").cloned().unwrap_or_default(),
-                r#async_list: ctx.fields_list.get("async").cloned().unwrap_or_default(),
+                async_marker: ctx.fields.get("async_marker").cloned().unwrap_or_default(),
+                async_marker_list: ctx.fields_list.get("async_marker").cloned().unwrap_or_default(),
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
                 body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
             };
@@ -3896,8 +4291,8 @@ pub fn render_dispatch(
                 left_list: ctx.fields_list.get("left").cloned().unwrap_or_default(),
                 right: ctx.fields.get("right").cloned().unwrap_or_default(),
                 right_list: ctx.fields_list.get("right").cloned().unwrap_or_default(),
-                using: ctx.fields.get("using").cloned().unwrap_or_default(),
-                using_list: ctx.fields_list.get("using").cloned().unwrap_or_default(),
+                using_marker: ctx.fields.get("using_marker").cloned().unwrap_or_default(),
+                using_marker_list: ctx.fields_list.get("using_marker").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -4057,6 +4452,28 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "class_heritage_extends_clause" => {
+            let t = ClassHeritageExtendsClauseTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "class_heritage_implements_clause" => {
+            let t = ClassHeritageImplementsClauseTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
         "class_heritage" => {
             let t = ClassHeritageTemplate {
                 children: ctx.children_list.clone(),
@@ -4155,8 +4572,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                r#abstract: ctx.fields.get("abstract").cloned().unwrap_or_default(),
-                r#abstract_list: ctx.fields_list.get("abstract").cloned().unwrap_or_default(),
+                abstract_marker: ctx.fields.get("abstract_marker").cloned().unwrap_or_default(),
+                abstract_marker_list: ctx.fields_list.get("abstract_marker").cloned().unwrap_or_default(),
                 parameters: ctx.fields.get("parameters").cloned().unwrap_or_default(),
                 parameters_list: ctx.fields_list.get("parameters").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
@@ -4174,8 +4591,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                r#abstract: ctx.fields.get("abstract").cloned().unwrap_or_default(),
-                r#abstract_list: ctx.fields_list.get("abstract").cloned().unwrap_or_default(),
+                abstract_marker: ctx.fields.get("abstract_marker").cloned().unwrap_or_default(),
+                abstract_marker_list: ctx.fields_list.get("abstract_marker").cloned().unwrap_or_default(),
                 parameters: ctx.fields.get("parameters").cloned().unwrap_or_default(),
                 parameters_list: ctx.fields_list.get("parameters").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
@@ -4333,8 +4750,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                opening: ctx.fields.get("opening").cloned().unwrap_or_default(),
-                opening_list: ctx.fields_list.get("opening").cloned().unwrap_or_default(),
+                name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -4348,8 +4765,8 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
                 body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
-                r#const: ctx.fields.get("const").cloned().unwrap_or_default(),
-                r#const_list: ctx.fields_list.get("const").cloned().unwrap_or_default(),
+                const_marker: ctx.fields.get("const_marker").cloned().unwrap_or_default(),
+                const_marker_list: ctx.fields_list.get("const_marker").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
                 name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
             };
@@ -4376,8 +4793,45 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 alias: ctx.fields.get("alias").cloned().unwrap_or_default(),
                 alias_list: ctx.fields_list.get("alias").cloned().unwrap_or_default(),
+                export_kind: ctx.fields.get("export_kind").cloned().unwrap_or_default(),
+                export_kind_list: ctx.fields_list.get("export_kind").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
                 name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
+        "export_statement_equals_export" => {
+            let t = ExportStatementEqualsExportTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "export_statement_namespace_export" => {
+            let t = ExportStatementNamespaceExportTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "export_statement_type_export" => {
+            let t = ExportStatementTypeExportTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                source: ctx.fields.get("source").cloned().unwrap_or_default(),
+                source_list: ctx.fields_list.get("source").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -4445,8 +4899,8 @@ pub fn render_dispatch(
                 decorator_list: ctx.fields_list.get("decorator").cloned().unwrap_or_default(),
                 property: ctx.fields.get("property").cloned().unwrap_or_default(),
                 property_list: ctx.fields_list.get("property").cloned().unwrap_or_default(),
-                r#static: ctx.fields.get("static").cloned().unwrap_or_default(),
-                r#static_list: ctx.fields_list.get("static").cloned().unwrap_or_default(),
+                static_marker: ctx.fields.get("static_marker").cloned().unwrap_or_default(),
+                static_marker_list: ctx.fields_list.get("static_marker").cloned().unwrap_or_default(),
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
                 value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
@@ -4486,8 +4940,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                r#await: ctx.fields.get("await").cloned().unwrap_or_default(),
-                r#await_list: ctx.fields_list.get("await").cloned().unwrap_or_default(),
+                await_marker: ctx.fields.get("await_marker").cloned().unwrap_or_default(),
+                await_marker_list: ctx.fields_list.get("await_marker").cloned().unwrap_or_default(),
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
                 body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
                 operator: ctx.fields.get("operator").cloned().unwrap_or_default(),
@@ -4535,8 +4989,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                r#async: ctx.fields.get("async").cloned().unwrap_or_default(),
-                r#async_list: ctx.fields_list.get("async").cloned().unwrap_or_default(),
+                async_marker: ctx.fields.get("async_marker").cloned().unwrap_or_default(),
+                async_marker_list: ctx.fields_list.get("async_marker").cloned().unwrap_or_default(),
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
                 body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
@@ -4558,8 +5012,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                r#async: ctx.fields.get("async").cloned().unwrap_or_default(),
-                r#async_list: ctx.fields_list.get("async").cloned().unwrap_or_default(),
+                async_marker: ctx.fields.get("async_marker").cloned().unwrap_or_default(),
+                async_marker_list: ctx.fields_list.get("async_marker").cloned().unwrap_or_default(),
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
                 body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
@@ -4581,8 +5035,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                r#async: ctx.fields.get("async").cloned().unwrap_or_default(),
-                r#async_list: ctx.fields_list.get("async").cloned().unwrap_or_default(),
+                async_marker: ctx.fields.get("async_marker").cloned().unwrap_or_default(),
+                async_marker_list: ctx.fields_list.get("async_marker").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
                 name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 parameters: ctx.fields.get("parameters").cloned().unwrap_or_default(),
@@ -4621,8 +5075,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                r#async: ctx.fields.get("async").cloned().unwrap_or_default(),
-                r#async_list: ctx.fields_list.get("async").cloned().unwrap_or_default(),
+                async_marker: ctx.fields.get("async_marker").cloned().unwrap_or_default(),
+                async_marker_list: ctx.fields_list.get("async_marker").cloned().unwrap_or_default(),
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
                 body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
@@ -4644,8 +5098,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                r#async: ctx.fields.get("async").cloned().unwrap_or_default(),
-                r#async_list: ctx.fields_list.get("async").cloned().unwrap_or_default(),
+                async_marker: ctx.fields.get("async_marker").cloned().unwrap_or_default(),
+                async_marker_list: ctx.fields_list.get("async_marker").cloned().unwrap_or_default(),
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
                 body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
@@ -4732,6 +5186,39 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "import_clause_default_import" => {
+            let t = ImportClauseDefaultImportTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "import_clause_named_imports" => {
+            let t = ImportClauseNamedImportsTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "import_clause_namespace_import" => {
+            let t = ImportClauseNamespaceImportTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
         "import_clause" => {
             let t = ImportClauseTemplate {
                 children: ctx.children_list.clone(),
@@ -4758,6 +5245,19 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "import_specifier_name" => {
+            let t = ImportSpecifierNameTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
         "import_specifier" => {
             let t = ImportSpecifierTemplate {
                 children: ctx.children_list.clone(),
@@ -4766,6 +5266,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
+                import_kind: ctx.fields.get("import_kind").cloned().unwrap_or_default(),
+                import_kind_list: ctx.fields_list.get("import_kind").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -4777,8 +5279,6 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                from_clause: ctx.fields.get("from_clause").cloned().unwrap_or_default(),
-                from_clause_list: ctx.fields_list.get("from_clause").cloned().unwrap_or_default(),
                 import_attribute: ctx.fields.get("import_attribute").cloned().unwrap_or_default(),
                 import_attribute_list: ctx.fields_list.get("import_attribute").cloned().unwrap_or_default(),
                 import_clause: ctx.fields.get("import_clause").cloned().unwrap_or_default(),
@@ -4787,6 +5287,17 @@ pub fn render_dispatch(
                 semicolon_list: ctx.fields_list.get("semicolon").cloned().unwrap_or_default(),
                 source: ctx.fields.get("source").cloned().unwrap_or_default(),
                 source_list: ctx.fields_list.get("source").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
+        "index_signature_mapped_type_clause" => {
+            let t = IndexSignatureMappedTypeClauseTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
             };
             t.render_with_values(&_values)
         }
@@ -4826,8 +5337,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                constraint: ctx.fields.get("constraint").cloned().unwrap_or_default(),
-                constraint_list: ctx.fields_list.get("constraint").cloned().unwrap_or_default(),
+                r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
+                r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
                 type_identifier: ctx.fields.get("type_identifier").cloned().unwrap_or_default(),
                 type_identifier_list: ctx.fields_list.get("type_identifier").cloned().unwrap_or_default(),
             };
@@ -5094,22 +5605,26 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 accessibility_modifier: ctx.fields.get("accessibility_modifier").cloned().unwrap_or_default(),
                 accessibility_modifier_list: ctx.fields_list.get("accessibility_modifier").cloned().unwrap_or_default(),
-                r#async: ctx.fields.get("async").cloned().unwrap_or_default(),
-                r#async_list: ctx.fields_list.get("async").cloned().unwrap_or_default(),
+                accessor_kind: ctx.fields.get("accessor_kind").cloned().unwrap_or_default(),
+                accessor_kind_list: ctx.fields_list.get("accessor_kind").cloned().unwrap_or_default(),
+                async_marker: ctx.fields.get("async_marker").cloned().unwrap_or_default(),
+                async_marker_list: ctx.fields_list.get("async_marker").cloned().unwrap_or_default(),
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
                 body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
                 name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
+                optional_marker: ctx.fields.get("optional_marker").cloned().unwrap_or_default(),
+                optional_marker_list: ctx.fields_list.get("optional_marker").cloned().unwrap_or_default(),
                 override_modifier: ctx.fields.get("override_modifier").cloned().unwrap_or_default(),
                 override_modifier_list: ctx.fields_list.get("override_modifier").cloned().unwrap_or_default(),
                 parameters: ctx.fields.get("parameters").cloned().unwrap_or_default(),
                 parameters_list: ctx.fields_list.get("parameters").cloned().unwrap_or_default(),
-                question: ctx.fields.get("question").cloned().unwrap_or_default(),
-                question_list: ctx.fields_list.get("question").cloned().unwrap_or_default(),
-                readonly: ctx.fields.get("readonly").cloned().unwrap_or_default(),
-                readonly_list: ctx.fields_list.get("readonly").cloned().unwrap_or_default(),
+                readonly_marker: ctx.fields.get("readonly_marker").cloned().unwrap_or_default(),
+                readonly_marker_list: ctx.fields_list.get("readonly_marker").cloned().unwrap_or_default(),
                 return_type: ctx.fields.get("return_type").cloned().unwrap_or_default(),
                 return_type_list: ctx.fields_list.get("return_type").cloned().unwrap_or_default(),
+                static_marker: ctx.fields.get("static_marker").cloned().unwrap_or_default(),
+                static_marker_list: ctx.fields_list.get("static_marker").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
                 type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
             };
@@ -5125,20 +5640,24 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 accessibility_modifier: ctx.fields.get("accessibility_modifier").cloned().unwrap_or_default(),
                 accessibility_modifier_list: ctx.fields_list.get("accessibility_modifier").cloned().unwrap_or_default(),
-                r#async: ctx.fields.get("async").cloned().unwrap_or_default(),
-                r#async_list: ctx.fields_list.get("async").cloned().unwrap_or_default(),
+                accessor_kind: ctx.fields.get("accessor_kind").cloned().unwrap_or_default(),
+                accessor_kind_list: ctx.fields_list.get("accessor_kind").cloned().unwrap_or_default(),
+                async_marker: ctx.fields.get("async_marker").cloned().unwrap_or_default(),
+                async_marker_list: ctx.fields_list.get("async_marker").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
                 name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
+                optional_marker: ctx.fields.get("optional_marker").cloned().unwrap_or_default(),
+                optional_marker_list: ctx.fields_list.get("optional_marker").cloned().unwrap_or_default(),
                 override_modifier: ctx.fields.get("override_modifier").cloned().unwrap_or_default(),
                 override_modifier_list: ctx.fields_list.get("override_modifier").cloned().unwrap_or_default(),
                 parameters: ctx.fields.get("parameters").cloned().unwrap_or_default(),
                 parameters_list: ctx.fields_list.get("parameters").cloned().unwrap_or_default(),
-                question: ctx.fields.get("question").cloned().unwrap_or_default(),
-                question_list: ctx.fields_list.get("question").cloned().unwrap_or_default(),
-                readonly: ctx.fields.get("readonly").cloned().unwrap_or_default(),
-                readonly_list: ctx.fields_list.get("readonly").cloned().unwrap_or_default(),
+                readonly_marker: ctx.fields.get("readonly_marker").cloned().unwrap_or_default(),
+                readonly_marker_list: ctx.fields_list.get("readonly_marker").cloned().unwrap_or_default(),
                 return_type: ctx.fields.get("return_type").cloned().unwrap_or_default(),
                 return_type_list: ctx.fields_list.get("return_type").cloned().unwrap_or_default(),
+                static_marker: ctx.fields.get("static_marker").cloned().unwrap_or_default(),
+                static_marker_list: ctx.fields_list.get("static_marker").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
                 type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
             };
@@ -5346,8 +5865,8 @@ pub fn render_dispatch(
                 decorator_list: ctx.fields_list.get("decorator").cloned().unwrap_or_default(),
                 pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
                 pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
-                readonly: ctx.fields.get("readonly").cloned().unwrap_or_default(),
-                readonly_list: ctx.fields_list.get("readonly").cloned().unwrap_or_default(),
+                readonly_marker: ctx.fields.get("readonly_marker").cloned().unwrap_or_default(),
+                readonly_marker_list: ctx.fields_list.get("readonly_marker").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
                 r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
@@ -5413,6 +5932,17 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "parenthesized_expression_sequence" => {
+            let t = ParenthesizedExpressionSequenceTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
         "parenthesized_expression" => {
             let t = ParenthesizedExpressionTemplate {
                 children: ctx.children_list.clone(),
@@ -5464,12 +5994,14 @@ pub fn render_dispatch(
                 accessibility_modifier_list: ctx.fields_list.get("accessibility_modifier").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
                 name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
+                optional_marker: ctx.fields.get("optional_marker").cloned().unwrap_or_default(),
+                optional_marker_list: ctx.fields_list.get("optional_marker").cloned().unwrap_or_default(),
                 override_modifier: ctx.fields.get("override_modifier").cloned().unwrap_or_default(),
                 override_modifier_list: ctx.fields_list.get("override_modifier").cloned().unwrap_or_default(),
-                question: ctx.fields.get("question").cloned().unwrap_or_default(),
-                question_list: ctx.fields_list.get("question").cloned().unwrap_or_default(),
-                readonly: ctx.fields.get("readonly").cloned().unwrap_or_default(),
-                readonly_list: ctx.fields_list.get("readonly").cloned().unwrap_or_default(),
+                readonly_marker: ctx.fields.get("readonly_marker").cloned().unwrap_or_default(),
+                readonly_marker_list: ctx.fields_list.get("readonly_marker").cloned().unwrap_or_default(),
+                static_marker: ctx.fields.get("static_marker").cloned().unwrap_or_default(),
+                static_marker_list: ctx.fields_list.get("static_marker").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
                 r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
             };
@@ -5487,6 +6019,8 @@ pub fn render_dispatch(
                 decorator_list: ctx.fields_list.get("decorator").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
                 name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
+                optionality_marker: ctx.fields.get("optionality_marker").cloned().unwrap_or_default(),
+                optionality_marker_list: ctx.fields_list.get("optionality_marker").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
                 r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
@@ -5534,8 +6068,8 @@ pub fn render_dispatch(
                 decorator_list: ctx.fields_list.get("decorator").cloned().unwrap_or_default(),
                 pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
                 pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
-                readonly: ctx.fields.get("readonly").cloned().unwrap_or_default(),
-                readonly_list: ctx.fields_list.get("readonly").cloned().unwrap_or_default(),
+                readonly_marker: ctx.fields.get("readonly_marker").cloned().unwrap_or_default(),
+                readonly_marker_list: ctx.fields_list.get("readonly_marker").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
                 r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
@@ -5631,6 +6165,28 @@ pub fn render_dispatch(
                 automatic_semicolon_list: ctx.fields_list.get("automatic_semicolon").cloned().unwrap_or_default(),
                 statements: ctx.fields.get("statements").cloned().unwrap_or_default(),
                 statements_list: ctx.fields_list.get("statements").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
+        "string_double" => {
+            let t = StringDoubleTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "string_single" => {
+            let t = StringSingleTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
             };
             t.render_with_values(&_values)
         }
@@ -5899,8 +6455,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                r#const: ctx.fields.get("const").cloned().unwrap_or_default(),
-                r#const_list: ctx.fields_list.get("const").cloned().unwrap_or_default(),
+                const_marker: ctx.fields.get("const_marker").cloned().unwrap_or_default(),
+                const_marker_list: ctx.fields_list.get("const_marker").cloned().unwrap_or_default(),
                 constraint: ctx.fields.get("constraint").cloned().unwrap_or_default(),
                 constraint_list: ctx.fields_list.get("constraint").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
@@ -6156,7 +6712,7 @@ impl ::sittir_core::prepare::GrammarMeta for TypescriptGrammarMeta {
     }
     fn is_list_container(&self, kind: &str) -> bool {
         matches!(kind,
-            "_class_body_member" | "_class_body_method_sig" | "_class_heritage_extends_clause" | "_class_heritage_implements_clause" | "_export_statement_equals_export" | "_export_statement_namespace_export" | "_import_clause_default_import" | "_import_clause_named_imports" | "_import_clause_namespace_import" | "_index_signature_mapped_type_clause" | "_lhs_expression" | "_parenthesized_expression_sequence" | "_public_field_definition_declare_first" | "_string_double" | "_string_single" | "_type_identifier" | "arguments" | "array" | "array_pattern" | "asserts" | "class_body" | "decorator" | "decorator_parenthesized_expression" | "export_clause" | "formal_parameters" | "implements_clause" | "jsx_attribute" | "jsx_expression" | "jsx_namespace_name" | "literal_type" | "named_imports" | "namespace_export" | "object" | "object_pattern" | "rest_pattern" | "sequence_expression" | "switch_body" | "template_literal_type" | "template_string" | "template_substitution" | "template_type" | "tuple_type" | "type_arguments" | "type_parameters" | "type_query"
+            "_class_body_member" | "_class_body_method_sig" | "_class_heritage_extends_clause" | "_class_heritage_implements_clause" | "_export_statement_default_from_arm" | "_export_statement_equals_export" | "_export_statement_namespace_export" | "_import_clause_default_import" | "_import_clause_named_imports" | "_import_clause_namespace_import" | "_index_signature_mapped_type_clause" | "_interface_body" | "_lhs_expression" | "_parenthesized_expression_sequence" | "_property_identifier" | "_public_field_definition_declare_first" | "_statement_identifier" | "_string_double" | "_string_fragment" | "_string_single" | "_type_identifier" | "arguments" | "array" | "array_pattern" | "asserts" | "class_body" | "class_heritage_extends_clause" | "class_heritage_implements_clause" | "decorator" | "decorator_parenthesized_expression" | "export_clause" | "export_statement_equals_export" | "export_statement_namespace_export" | "formal_parameters" | "implements_clause" | "import_clause_default_import" | "import_clause_named_imports" | "import_clause_namespace_import" | "index_signature_mapped_type_clause" | "jsx_attribute" | "jsx_expression" | "jsx_namespace_name" | "literal_type" | "named_imports" | "namespace_export" | "object" | "object_pattern" | "parenthesized_expression_sequence" | "rest_pattern" | "sequence_expression" | "string_double" | "string_single" | "switch_body" | "template_literal_type" | "template_string" | "template_substitution" | "template_type" | "tuple_type" | "type_arguments" | "type_parameters" | "type_query"
         )
     }
 }

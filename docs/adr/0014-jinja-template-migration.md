@@ -142,6 +142,7 @@ standardized set of six filters (`join`, `length`, `default`, `trim`,
 ## Implementation tracking
 
 Phase 3 (US1 MVP) — complete:
+
 - T001–T012: setup + TemplateContext contract + translator skeleton
   (commits `10427ae`, `d501e02`)
 - T013–T020 + T020a: translator mapping rules (commit `5a88766`)

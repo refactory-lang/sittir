@@ -82,6 +82,7 @@ pub struct Span {
 ```
 
 **Invariants**:
+
 - `$type` MUST be present.
 - `$source` is always `"ts"` from `readNode` output; factory path produces `"factory"`; ast-grep path produces `"sg"`.
 - `$named` is always present (absent = unknown, which the Rust side never is; tree-sitter always knows).
@@ -95,9 +96,9 @@ pub struct Span {
 ```ts
 // packages/{lang}/src/types.ts (existing; unchanged in shape)
 interface NodeData extends PrimitiveNodeData {
-  $variant?: string;                    // added by _wrapTable dispatch
-  // + fluent getter/setter methods bound by factories
-  // + kind-narrowed field typings
+	$variant?: string; // added by _wrapTable dispatch
+	// + fluent getter/setter methods bound by factories
+	// + kind-narrowed field typings
 }
 ```
 
@@ -167,17 +168,18 @@ impl TemplateContext {
 ```ts
 // packages/core/src/render.ts (existing)
 interface TemplateContext {
-  fields: Record<string, string>;
-  children: string;
-  children_list: string[];
-  variant: string;
-  text: string;
-  trailing_sep: boolean;
-  leading_sep: boolean;
+	fields: Record<string, string>;
+	children: string;
+	children_list: string[];
+	variant: string;
+	text: string;
+	trailing_sep: boolean;
+	leading_sep: boolean;
 }
 ```
 
 **Invariants**:
+
 - `fields` keys are raw (snake_case) field names — NOT camelCase. Templates reference `{{ visibility_modifier }}`, not `{{ visibilityModifier }}`.
 - `children` is always the pre-rendered string even when `children_list` is also populated (templates pick whichever is convenient).
 - `variant` is `""` (empty string), not `null` or absent — keeps templates simple: `{% if variant == "…" %}`.
@@ -208,13 +210,14 @@ pub struct Edit {
 
 ```ts
 interface EditSpec {
-  startPos: number;
-  endPos: number;
-  insertedText: string;
+	startPos: number;
+	endPos: number;
+	insertedText: string;
 }
 ```
 
 **Notes**:
+
 - `#[napi(object)]` auto-generates the N-API boundary mapping with camelCase field renaming (TS side sees `startPos`/`endPos`/`insertedText`).
 - `start_pos` / `end_pos` are byte offsets into the source string (UTF-8 byte positions). Consistent with ast-grep and tree-sitter conventions.
 - Overlapping edits are not supported — `apply_edits` sorts by `start_pos` descending and applies in that order. Overlap detection is a consumer responsibility (existing TS sittir behavior).
@@ -279,6 +282,7 @@ impl SittirEngine {
 ```
 
 **Lifecycle**:
+
 1. `new()` — construct engine, set parser language, initialize `next_node_id = 0`. No source loaded yet.
 2. `find_and_read(source, pattern)` — stores `source` + new parse tree in self, **resets `next_node_id` to 0**, walks matches assigning monotonically increasing `$nodeId` as each node is visited, returns matches as JSON string. Subsequent `read_node(id)` calls drill into the same tree.
 3. `read_node(id)` — drill-in. Uses the stored tree + source. Returns primitive NodeData JSON. **Valid only for `id` values assigned during the most recent `find_and_read` call** — the counter reset in step 2 invalidates older IDs. A stale ID throws `Error("node id N not found in current tree")`.
@@ -295,14 +299,14 @@ impl SittirEngine {
 ```ts
 // packages/{lang}/src/backend.ts (new)
 
-export type BackendName = "native" | "typescript";
+export type BackendName = 'native' | 'typescript';
 
 export interface BackendStatus {
-  name: BackendName;
-  /** Populated on fallback; reason native was unavailable. */
-  reason?: string;
-  /** Outcome of FR-020 hash comparison when native was considered. */
-  hashMatch?: boolean;
+	name: BackendName;
+	/** Populated on fallback; reason native was unavailable. */
+	reason?: string;
+	/** Outcome of FR-020 hash comparison when native was considered. */
+	hashMatch?: boolean;
 }
 
 export function getActiveBackend(): BackendStatus;
@@ -311,6 +315,7 @@ export function getActiveBackend(): BackendStatus;
 ```
 
 **Invariants**:
+
 - `getActiveBackend()` is pure and idempotent — once the backend is selected at module load, the status is fixed for the lifetime of the process.
 - `reason` is absent when `name === "native"` and the native backend loaded cleanly.
 - Environment variable `SITTIR_BACKEND_DEBUG=1` (or any non-empty value) triggers a single-line stderr diagnostic at first selection — NOT on every subsequent call.
@@ -327,37 +332,39 @@ Per FR-012, fixtures are auto-extracted from the existing round-trip validator o
 ```ts
 // Written by codegen as packages/{lang}/rust-render/test-fixtures.json
 interface RenderFixture {
-  kind: "render";
-  grammar: "rust" | "typescript" | "python";
-  input: NodeData;              // primitive NodeData input
-  expectedOutput: string;       // TS engine's render output (the reference)
+	kind: 'render';
+	grammar: 'rust' | 'typescript' | 'python';
+	input: NodeData; // primitive NodeData input
+	expectedOutput: string; // TS engine's render output (the reference)
 }
 
 interface RoundTripFixture {
-  kind: "roundtrip";
-  grammar: "rust" | "typescript" | "python";
-  sourceIn: string;             // original source
-  pattern: string;              // ast-grep pattern matched
-  edits: EditSpec[];            // edits applied
-  expectedSourceOut: string;    // TS engine's final source (for byte-diff)
-  /**
-   * Serialized expected AST — tree-sitter s-expression form, produced by
-   * `Tree::root_node().to_sexp()` on the Rust side or the equivalent
-   * `Tree.rootNode.toString()` on the TS side. Stable, deterministic, shared
-   * between engines. Used by the semantic-parity bar (FR-002b / SC-001b):
-   * outputs from both engines must re-parse to strings that compare equal.
-   */
-  expectedReparseTree: string;
+	kind: 'roundtrip';
+	grammar: 'rust' | 'typescript' | 'python';
+	sourceIn: string; // original source
+	pattern: string; // ast-grep pattern matched
+	edits: EditSpec[]; // edits applied
+	expectedSourceOut: string; // TS engine's final source (for byte-diff)
+	/**
+	 * Serialized expected AST — tree-sitter s-expression form, produced by
+	 * `Tree::root_node().to_sexp()` on the Rust side or the equivalent
+	 * `Tree.rootNode.toString()` on the TS side. Stable, deterministic, shared
+	 * between engines. Used by the semantic-parity bar (FR-002b / SC-001b):
+	 * outputs from both engines must re-parse to strings that compare equal.
+	 */
+	expectedReparseTree: string;
 }
 
 type Fixture = RenderFixture | RoundTripFixture;
 ```
 
 **Consumption**:
+
 - Rust side (`rust/tests/parity.rs`): loads the JSON, runs the Rust engine over `input` (render) or `sourceIn` + `pattern` + `edits` (round-trip), compares against expected per the appropriate parity bar.
 - TS side (`packages/{lang}/tests/parity.test.ts`): same inputs, runs the TS engine — sanity check that the expected outputs are re-producible (catches fixture-generation bugs).
 
 **Invariants**:
+
 - Fixtures are regenerated on every codegen run (not hand-maintained).
 - `expectedOutput` and `expectedSourceOut` are captured from the TS engine at the time of generation (it is the reference). Any Rust-vs-TS divergence on a fresh fixture is a Rust bug by definition.
 
@@ -365,14 +372,14 @@ type Fixture = RenderFixture | RoundTripFixture;
 
 ## Summary of entities
 
-| Entity | Owner | Serialization | Used by |
-|---|---|---|---|
-| Primitive NodeData | Rust (`sittir-core::types`) | JSON string across napi boundary | TS enrichment (`readTreeNode`, `_wrapTable`); Rust render pipeline |
-| TemplateContext | Both engines | In-process (not serialized) | askama render (Rust, per-kind structs); Nunjucks render (TS) |
-| Edit | Rust (`sittir-core::types`) with `#[napi(object)]` | Direct N-API mapping | `apply_edits` boundary call; TS factory `.toEdit()` |
-| Span | Rust (`sittir-core::types`) | Inline in NodeData | Read pipeline; edit position resolution |
-| SittirEngine | Rust (`sittir-{lang}-napi`) | napi class | JS runtime-selection shim |
-| BackendStatus | TypeScript (`packages/{lang}/src/backend.ts`) | N/A (pure JS object) | Consumer debugging / FR-021 |
-| Fixture records | Codegen (TS) | JSON file per grammar | Both engines' parity-test harnesses |
+| Entity             | Owner                                              | Serialization                    | Used by                                                            |
+| ------------------ | -------------------------------------------------- | -------------------------------- | ------------------------------------------------------------------ |
+| Primitive NodeData | Rust (`sittir-core::types`)                        | JSON string across napi boundary | TS enrichment (`readTreeNode`, `_wrapTable`); Rust render pipeline |
+| TemplateContext    | Both engines                                       | In-process (not serialized)      | askama render (Rust, per-kind structs); Nunjucks render (TS)       |
+| Edit               | Rust (`sittir-core::types`) with `#[napi(object)]` | Direct N-API mapping             | `apply_edits` boundary call; TS factory `.toEdit()`                |
+| Span               | Rust (`sittir-core::types`)                        | Inline in NodeData               | Read pipeline; edit position resolution                            |
+| SittirEngine       | Rust (`sittir-{lang}-napi`)                        | napi class                       | JS runtime-selection shim                                          |
+| BackendStatus      | TypeScript (`packages/{lang}/src/backend.ts`)      | N/A (pure JS object)             | Consumer debugging / FR-021                                        |
+| Fixture records    | Codegen (TS)                                       | JSON file per grammar            | Both engines' parity-test harnesses                                |
 
 All shapes are derived from already-clarified spec decisions. No new ambiguity introduced.
