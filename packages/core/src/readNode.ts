@@ -19,7 +19,12 @@
  * on branch nodes for debugging purposes.
  */
 
-import type { AnyNodeData, AnyTreeNode, FormatRecord, NodeId } from './types.ts';
+import type {
+	AnyNodeData,
+	AnyTreeNode,
+	FormatRecord,
+	NodeId
+} from './types.ts';
 
 /**
  * Whether to emit `$text` on branch nodes (those with `$fields` or
@@ -43,8 +48,9 @@ export interface TreeHandle {
 	 * Per-handle read dispatch. When present, the wrap layer reads
 	 * through this method instead of running `readNode(handle, id)`
 	 * directly. Native-engine handles set this to a closure that
-	 * calls `engine.parseAndRead(source)` (root) / `engine.readNode(id)`
-	 * (drill-in) so reads stay inside the engine that owns the tree.
+	 * calls `engine.reader.parseAndRead(source)` (root) /
+	 * `engine.reader.readNode(id)` (drill-in) so reads stay inside
+	 * the engine that owns the tree.
 	 *
 	 * Why per-handle: tree-sitter `Node::id()` is documented as
 	 * "unique within a given syntax tree" and is a raw-pointer cast,
@@ -52,6 +58,14 @@ export interface TreeHandle {
 	 * tree. The dispatch must live on the handle that owns the tree.
 	 */
 	read?(nodeId?: NodeId): AnyNodeData;
+	/**
+	 * Per-handle render dispatch. When present, the wrap layer renders
+	 * through this method instead of calling a separate renderer. Engine
+	 * handles set this to a closure that calls `engine.render(node, options)`
+	 * so renders stay inside the engine that owns the tree (preserving
+	 * engine-level format config).
+	 */
+	render?(nodeId?: NodeId, options?: { ignoreFormat?: boolean }): string;
 	/**
 	 * Format record inferred from the source file by the native Rust reader.
 	 * Absent on trees produced by the JS reader (readNode never sets this).

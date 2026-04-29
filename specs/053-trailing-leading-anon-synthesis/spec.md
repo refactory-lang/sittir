@@ -603,7 +603,7 @@ today, grouped by action required:
 - `rust/crates/sittir-core/src/prepare.rs` — `TemplateContext::trailing_anon`, `TemplateContext::leading_anon`, `TemplateContext::trailing_sep`, `TemplateContext::leading_sep`, `FlankValues`, `TemplateContext::as_values()`, flank-capture logic
 - `packages/codegen/src/compiler/node-map.ts` — `JinjaTranslateMeta.joinByTrailing`, `JinjaTranslateMeta.joinByLeading`, `JinjaTranslateMeta.trailingFields`, `JinjaTranslateMeta.leadingFields`, `filterForFlanks()`
 - `packages/codegen/src/compiler/template-walker.ts` — `findRepeatFlag`, `findFieldsWithRepeatFlag`, `collectFieldsWithRepeatFlag`
-- `packages/rust/rust-render/src/templates.rs` — `TemplateContext.trailing_sep`, `TemplateContext.leading_sep` fields on every per-kind struct (codegen regenerates this file)
+- `rust/crates/sittir-rust/src/render/src/templates.rs` — `TemplateContext.trailing_sep`, `TemplateContext.leading_sep` fields on every per-kind struct (codegen regenerates this file)
 - `packages/rust/src/boundary.ts` — no change, but the TS render path no longer populates `_trailing_anon` side-channel
 
 ### Modify (Phase 1 + 2)

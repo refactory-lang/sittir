@@ -53,9 +53,9 @@
 
 - [ ] T010 [US1] Create `rust/crates/sittir-core/src/format.rs` — implement `extract_format(source: &str, tree: &tree_sitter::Tree) -> Option<FormatRecord>`; single tree-walk producing a consensus `FormatRecord`; return `None` when source is already template-canonical (FR-002, FR-007, SC-005)
 - [ ] T011 [US1] Declare `pub mod format;` in `rust/crates/sittir-core/src/lib.rs`; ensure `extract_format` is pub-exported from the crate
-- [ ] T012 [US1] Wire `extract_format` into `parse_and_read` in `rust/crates/sittir-rust-napi/src/lib.rs` — after the tree-sitter parse, call `sittir_core::format::extract_format(&source, &tree)`, serialise the result alongside `NodeData`; update the napi method return type to carry `format: Option<FormatRecord>` alongside the root `NodeData`
-- [ ] T013 [P] [US1] Apply the same `extract_format` wiring to `rust/crates/sittir-typescript-napi/src/lib.rs` (mirrors T012 for the TypeScript grammar)
-- [ ] T014 [P] [US1] Apply the same `extract_format` wiring to `rust/crates/sittir-python-napi/src/lib.rs` (mirrors T012 for the Python grammar)
+- [ ] T012 [US1] Wire `extract_format` into `parse_and_read` in `rust/crates/sittir-rust/src/lib.rs` — after the tree-sitter parse, call `sittir_core::format::extract_format(&source, &tree)`, serialise the result alongside `NodeData`; update the napi method return type to carry `format: Option<FormatRecord>` alongside the root `NodeData`
+- [ ] T013 [P] [US1] Apply the same `extract_format` wiring to `rust/crates/sittir-typescript/src/lib.rs` (mirrors T012 for the TypeScript grammar)
+- [ ] T014 [P] [US1] Apply the same `extract_format` wiring to `rust/crates/sittir-python/src/lib.rs` (mirrors T012 for the Python grammar)
 
 ### JS Bridge — populate TreeHandle.format
 
@@ -95,9 +95,9 @@
 **Independent test**: Run corpus fixtures tagged `"both"` through native render; compare output to TS render; assert byte-equal.
 
 - [ ] T029 [P] [US3] Implement `apply_format(canonical: &str, format: &FormatRecord) -> String` in `rust/crates/sittir-core/src/format.rs` — mirrors `packages/core/src/format.ts`'s `applyFormat`; handles `boundary`, `slots`, `literals`, `trivia` (FR-005, FR-007)
-- [ ] T030 [US3] Wire `apply_format` into the Rust render path: in `render()` in `rust/crates/sittir-rust-napi/src/lib.rs` (or the grammar-agnostic render dispatch in `sittir-core/src/prepare.rs`), check for a `format` field on the incoming `NodeData` context and call `apply_format(canonical_render, format)` when present; skip when `ignoreFormat` is set (FR-005)
-- [ ] T031 [P] [US3] Apply the same `apply_format` wiring to the TypeScript grammar napi render path at `rust/crates/sittir-typescript-napi/src/lib.rs`
-- [ ] T032 [P] [US3] Apply the same `apply_format` wiring to the Python grammar napi render path at `rust/crates/sittir-python-napi/src/lib.rs`
+- [ ] T030 [US3] Wire `apply_format` into the Rust render path: in `render()` in `rust/crates/sittir-rust/src/lib.rs` (or the grammar-agnostic render dispatch in `sittir-core/src/prepare.rs`), check for a `format` field on the incoming `NodeData` context and call `apply_format(canonical_render, format)` when present; skip when `ignoreFormat` is set (FR-005)
+- [ ] T031 [P] [US3] Apply the same `apply_format` wiring to the TypeScript grammar napi render path at `rust/crates/sittir-typescript/src/lib.rs`
+- [ ] T032 [P] [US3] Apply the same `apply_format` wiring to the Python grammar napi render path at `rust/crates/sittir-python/src/lib.rs`
 - [ ] T033 [US3] Add backend parity assertions to `tests/format-roundtrip/{rust,typescript,python}.test.ts` — for every fixture with `expectedBackendCoverage: "both"`, run under `SITTIR_BACKEND=native` and assert output bytes equal the TS-engine output for the same fixture (SC-003)
 - [ ] T034 [US3] Run `pnpm test` confirming SC-003 (TS/native byte-equal on "both" fixtures) and no regressions on SC-001, SC-004
 

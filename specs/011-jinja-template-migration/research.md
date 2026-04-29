@@ -204,4 +204,4 @@ interface TemplateContext {
 
 - **Precompile Nunjucks templates at codegen time vs. runtime load?** → Compile-once at first render, cache the template object per renderer. `createRendererFromConfig` already closes over the rules; extend it to also cache compiled Nunjucks `Template` instances.
 - **Where do the `.jinja` files live in the published npm artifact?** → Inside the grammar package (`packages/<grammar>/dist/templates/`). Published via the package's `files` field. Consumers pick them up via the package's `createRenderer(templatesDir)` entry point.
-- **How does the Rust crate find `.jinja` files?** → Copies them into `crates/sittir-render/templates/<grammar>/` at codegen time. askama's `#[template(path = "<grammar>/<kind>.jinja")]` resolves relative to the crate root.
+- **How does the Rust crate find `.jinja` files?** → Copies them into `rust/crates/sittir-{lang}/src/render/templates/<grammar>/` at codegen time. askama's `#[template(path = "<grammar>/<kind>.jinja")]` resolves relative to the crate root.

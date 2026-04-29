@@ -27,11 +27,7 @@ fn upper_ascii_matches_ts() {
         ("camelCase", "CAMELCASE"),
     ];
     for (input, expected) in cases {
-        assert_eq!(
-            upper(input).unwrap(),
-            expected,
-            "upper({input:?}) mismatch"
-        );
+        assert_eq!(upper(input).unwrap(), expected, "upper({input:?}) mismatch");
     }
 }
 
@@ -45,11 +41,7 @@ fn lower_ascii_matches_ts() {
         ("CamelCase", "camelcase"),
     ];
     for (input, expected) in cases {
-        assert_eq!(
-            lower(input).unwrap(),
-            expected,
-            "lower({input:?}) mismatch"
-        );
+        assert_eq!(lower(input).unwrap(), expected, "lower({input:?}) mismatch");
     }
 }
 
@@ -142,14 +134,14 @@ fn joinby_preserves_empty_string_elements() {
 // the per-render value bag, downcasts the `Option<String>` and
 // compares with `sep`.
 
-use sittir_core::filters::{joinWithFlanks, joinWithLeading, joinWithTrailing};
-use sittir_core::prepare::TemplateContext;
+use sittir_core::filters::{joinWithFlanks, joinWithLeading, joinWithTrailing, FlankValues};
 
 #[test]
 fn join_with_trailing_emits_flank_when_anon_text_matches_sep() {
-    let mut ctx = TemplateContext::empty();
-    ctx.trailing_anon = Some(",".into());
-    let values = ctx.as_values();
+    let values = FlankValues {
+        trailing_anon: Some(",".into()),
+        ..FlankValues::default()
+    };
     let xs = ["a", "b"];
     assert_eq!(joinWithTrailing(&xs, &values, ",").unwrap(), "a,b,");
 }
@@ -158,9 +150,10 @@ fn join_with_trailing_emits_flank_when_anon_text_matches_sep() {
 fn join_with_trailing_skips_flank_when_anon_text_differs() {
     // `;`-anon flanking a `,`-joined list contributes nothing — the
     // separator argument is the source of truth for what to emit.
-    let mut ctx = TemplateContext::empty();
-    ctx.trailing_anon = Some(";".into());
-    let values = ctx.as_values();
+    let values = FlankValues {
+        trailing_anon: Some(";".into()),
+        ..FlankValues::default()
+    };
     let xs = ["a", "b"];
     assert_eq!(joinWithTrailing(&xs, &values, ",").unwrap(), "a,b");
 }
@@ -168,17 +161,17 @@ fn join_with_trailing_skips_flank_when_anon_text_differs() {
 #[test]
 fn join_with_trailing_skips_flank_when_anon_absent() {
     // Default ctx has trailing_anon: None — degrades to plain join.
-    let ctx = TemplateContext::empty();
-    let values = ctx.as_values();
+    let values = FlankValues::default();
     let xs = ["a", "b"];
     assert_eq!(joinWithTrailing(&xs, &values, ",").unwrap(), "a,b");
 }
 
 #[test]
 fn join_with_leading_mirrors_trailing_semantics() {
-    let mut ctx = TemplateContext::empty();
-    ctx.leading_anon = Some(",".into());
-    let values = ctx.as_values();
+    let values = FlankValues {
+        leading_anon: Some(",".into()),
+        ..FlankValues::default()
+    };
     let xs = ["a", "b"];
     assert_eq!(joinWithLeading(&xs, &values, ",").unwrap(), ",a,b");
 }
@@ -186,20 +179,20 @@ fn join_with_leading_mirrors_trailing_semantics() {
 #[test]
 fn join_with_flanks_independent_per_side() {
     // Only one flank set — only that side emits.
-    let mut ctx = TemplateContext::empty();
-    ctx.trailing_anon = Some(",".into());
-    ctx.leading_anon = None;
-    let values = ctx.as_values();
+    let values = FlankValues {
+        trailing_anon: Some(",".into()),
+        leading_anon: None,
+    };
     let xs = ["a"];
     assert_eq!(joinWithFlanks(&xs, &values, ",").unwrap(), "a,");
 }
 
 #[test]
 fn join_with_flanks_both_sides_match() {
-    let mut ctx = TemplateContext::empty();
-    ctx.trailing_anon = Some(",".into());
-    ctx.leading_anon = Some(",".into());
-    let values = ctx.as_values();
+    let values = FlankValues {
+        trailing_anon: Some(",".into()),
+        leading_anon: Some(",".into()),
+    };
     let xs = ["a", "b"];
     assert_eq!(joinWithFlanks(&xs, &values, ",").unwrap(), ",a,b,");
 }

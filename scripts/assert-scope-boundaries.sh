@@ -6,8 +6,8 @@
 #       a deferred US3 implementation.
 #   (b) `cargo publish` lurking in any workflow file — sittir-core is
 #       NOT crates.io-published in the MVP (FR-018).
-#   (c) Non-source files inside `packages/{lang}/rust-render/` —
-#       generated render crates contain ONLY `*.rs`, `Cargo.toml`,
+#   (c) Non-source files inside grammar-owned render artifacts —
+#       generated render modules contain ONLY `*.rs`,
 #       `templates/*.jinja`, plus the parity-test data file
 #       `test-fixtures.json` (FR-019).
 #   (d) Disallowed derive-macro / proc-macro crates in the Rust
@@ -52,8 +52,8 @@ if [ -n "${publish_hits}" ]; then
     fail=1
 fi
 
-# ---- (c) only allowed file kinds inside packages/*/rust-render/ -------------
-echo "[scope] (c) scanning packages/*/rust-render/ for unexpected files…"
+# ---- (c) only allowed file kinds inside grammar-owned render dirs -----------
+echo "[scope] (c) scanning rust/crates/sittir-*/ render artifacts for unexpected files…"
 disallowed=()
 while IFS= read -r f; do
     case "${f}" in
@@ -61,20 +61,23 @@ while IFS= read -r f; do
     esac
     base=$(basename "${f}")
     case "${f}" in
-        */rust-render/Cargo.toml) ;;
-        */rust-render/test-fixtures.json) ;;  # FR-019 explicit carve-out — parity harness consumes this; documented in spec.
-        *.rs) ;;
-        *.jinja) ;;
+        */test-fixtures.json) ;;  # FR-019 explicit carve-out — parity harness consumes this; documented in spec.
+        */src/render/*.rs) ;;
+        */templates/*.jinja) ;;
         *)
             disallowed+=("${f}")
             ;;
     esac
-done < <(find packages/rust/rust-render packages/typescript/rust-render packages/python/rust-render -type f 2>/dev/null)
+done < <(find \
+    rust/crates/sittir-rust/src/render rust/crates/sittir-rust/templates rust/crates/sittir-rust/test-fixtures.json \
+    rust/crates/sittir-typescript/src/render rust/crates/sittir-typescript/templates rust/crates/sittir-typescript/test-fixtures.json \
+    rust/crates/sittir-python/src/render rust/crates/sittir-python/templates rust/crates/sittir-python/test-fixtures.json \
+    -type f 2>/dev/null)
 
 if [ ${#disallowed[@]} -gt 0 ]; then
-    echo "FAIL (c): disallowed files in packages/*/rust-render/ (FR-019):"
+    echo "FAIL (c): disallowed files in rust/crates/sittir-* render artifacts (FR-019):"
     printf '  %s\n' "${disallowed[@]}"
-    echo "         Allowed: Cargo.toml, *.rs, templates/*.jinja, test-fixtures.json."
+    echo "         Allowed: src/render/*.rs, templates/*.jinja, test-fixtures.json."
     fail=1
 fi
 

@@ -5,10 +5,7 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts';
-import type {
-	AssembledNode,
-	AssembledField
-} from '../compiler/node-map.ts';
+import type { AssembledNode, AssembledField } from '../compiler/node-map.ts';
 import {
 	isRequired,
 	isMultiple,

@@ -40,32 +40,16 @@ pub struct NodeData {
     #[serde(rename = "$named")]
     pub named: bool,
 
-    #[serde(
-        rename = "$fields",
-        default,
-        skip_serializing_if = "Option::is_none"
-    )]
+    #[serde(rename = "$fields", default, skip_serializing_if = "Option::is_none")]
     pub fields: Option<HashMap<String, FieldValue>>,
 
-    #[serde(
-        rename = "$children",
-        default,
-        skip_serializing_if = "Option::is_none"
-    )]
+    #[serde(rename = "$children", default, skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<NodeData>>,
 
-    #[serde(
-        rename = "$text",
-        default,
-        skip_serializing_if = "Option::is_none"
-    )]
+    #[serde(rename = "$text", default, skip_serializing_if = "Option::is_none")]
     pub text: Option<String>,
 
-    #[serde(
-        rename = "$span",
-        default,
-        skip_serializing_if = "Option::is_none"
-    )]
+    #[serde(rename = "$span", default, skip_serializing_if = "Option::is_none")]
     pub span: Option<Span>,
 
     /// Tree-sitter's canonical node id (from `Node::id()`, a pointer-
@@ -76,19 +60,8 @@ pub struct NodeData {
     /// across engines. Serialized as a JSON number; macOS / Linux
     /// user-space pointers fit in 53 bits so the f64 round-trip is
     /// exact.
-    #[serde(
-        rename = "$nodeId",
-        default,
-        skip_serializing_if = "Option::is_none"
-    )]
+    #[serde(rename = "$nodeId", default, skip_serializing_if = "Option::is_none")]
     pub node_id: Option<u64>,
-
-    #[serde(
-        rename = "$format",
-        default,
-        skip_serializing_if = "Option::is_none"
-    )]
-    pub format: Option<FormatRecord>,
 }
 
 /// Where a `NodeData` originated. `Ts` = `readNode` over a tree-sitter

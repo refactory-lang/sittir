@@ -1,6 +1,12 @@
 # Generated files that use JSON.stringify format (quoted keys).
 # oxfmt reformats these to JSON5 (unquoted keys), which breaks
 # the validator's JSON.parse-based factory-map loader.
+node_modules/
+dist/
+build/
+coverage/
+pnpm-lock.yaml
+
 **/factory-map.json5
 
 # Volatile generated artifacts (codegen-owned, exclude from format scope)

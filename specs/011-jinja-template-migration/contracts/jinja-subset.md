@@ -72,7 +72,7 @@ by the round-trip corpus per-node.
 | `lower`      | native   | alias to `lowercase` | Lowercase                         |
 
 **Alias registration**: The askama side of Phase B registers filter
-aliases in `crates/sittir-render/src/filters.rs`. Templates always use
+aliases in `rust/crates/sittir-{lang}/src/render/filters.rs`. Templates always use
 the Nunjucks name; the alias map converts to askama's native filter at
 build time.
 
@@ -105,7 +105,7 @@ build time.
 
 1. Verify Nunjucks and askama both support it with identical semantics.
 2. Add to the "Allowed constructs" section of this contract.
-3. Add cross-render parity test case to `crates/sittir-render/tests/parity.rs`.
+3. Add cross-render parity test case to `rust/crates/sittir-{lang}/src/render/tests/parity.rs`.
 4. Update the translator (if it's a construct the translator emits).
 5. Re-run the full round-trip corpus.
 

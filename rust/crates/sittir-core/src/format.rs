@@ -129,7 +129,10 @@ mod tests {
         let tree = parse_rust(source);
 
         let result = extract_format(source, &tree);
-        assert!(result.is_some(), "tab-indented source should return Some(FormatRecord)");
+        assert!(
+            result.is_some(),
+            "tab-indented source should return Some(FormatRecord)"
+        );
         let record = result.unwrap();
         assert!(record.boundary.is_some());
         let boundary = record.boundary.unwrap();
@@ -142,7 +145,10 @@ mod tests {
         let tree = parse_rust(source);
 
         let result = extract_format(source, &tree);
-        assert!(result.is_none(), "2-space indent source should return None (already canonical)");
+        assert!(
+            result.is_none(),
+            "2-space indent source should return None (already canonical)"
+        );
     }
 
     #[test]
@@ -151,7 +157,10 @@ mod tests {
         let tree = parse_rust(source);
 
         let result = extract_format(source, &tree);
-        assert!(result.is_some(), "4-space indent source should return Some(FormatRecord)");
+        assert!(
+            result.is_some(),
+            "4-space indent source should return Some(FormatRecord)"
+        );
         let record = result.unwrap();
         let boundary = record.boundary.unwrap();
         assert_eq!(boundary.leading, Some("    ".to_string()));
@@ -178,7 +187,10 @@ mod tests {
             literals: None,
             trivia: trivia.map(|v| {
                 v.into_iter()
-                    .map(|(offset, text)| FormatTrivia { offset, text: text.to_string() })
+                    .map(|(offset, text)| FormatTrivia {
+                        offset,
+                        text: text.to_string(),
+                    })
                     .collect()
             }),
             kinds: None,
@@ -201,11 +213,7 @@ mod tests {
     fn apply_format_trivia_inserted_at_offsets() {
         // canonical = "ab"; trivia: insert "1" at offset 1, "2" at offset 2.
         // Applied right-to-left: "2" at offset 2 → "ab2", then "1" at offset 1 → "a1b2".
-        let fmt = make_record(
-            None,
-            None,
-            Some(vec![(1, "1"), (2, "2")]),
-        );
+        let fmt = make_record(None, None, Some(vec![(1, "1"), (2, "2")]));
         assert_eq!(apply_format("ab", &fmt), "a1b2");
     }
 

@@ -25,7 +25,12 @@ import {
 import type * as TS from 'web-tree-sitter';
 import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 
-import type { AnyNodeData, AnyTreeNode, NodeId, NativeParseResult } from '@sittir/types';
+import type {
+	AnyNodeData,
+	AnyTreeNode,
+	NodeId,
+	NativeParseResult
+} from '@sittir/types';
 import type { TreeHandle } from '@sittir/core';
 import {
 	assertNever,
@@ -210,13 +215,15 @@ export function nativeTreeHandle(
 	// Behavioral note: prior to 017, nativeTreeHandle parsed lazily on first
 	// readNode() call. Parsing is now unconditional at construction time so
 	// the format record is always available before callers access tree.format.
-	const parseResult = JSON.parse(engine.parseAndRead(source)) as NativeParseResult;
+	const parseResult = JSON.parse(
+		engine.parseAndRead(source)
+	) as NativeParseResult;
 	if (parseResult.nodeData === undefined) {
 		const keys = Object.keys(parseResult as object).join(', ');
 		throw new Error(
 			'nativeTreeHandle: engine.parseAndRead() returned JSON without a "nodeData" key. ' +
-			'The engine binary is out of date — rebuild sittir-{lang}-napi against this version. ' +
-			`Received keys: ${keys}`
+				'The engine binary is out of date — rebuild the matching rust/crates/sittir-<grammar>-napi crate against this version. ' +
+				`Received keys: ${keys}`
 		);
 	}
 	const rootData: AnyNodeData = parseResult.nodeData;
@@ -237,13 +244,15 @@ export function nativeTreeHandle(
 		source,
 		read(nodeId?: NodeId) {
 			if (nodeId === undefined) {
-				return rootData as unknown as ReturnType<NonNullable<TreeHandle['read']>>;
+				return rootData as unknown as ReturnType<
+					NonNullable<TreeHandle['read']>
+				>;
 			}
 			return JSON.parse(engine.readNode(nodeId)) as ReturnType<
 				NonNullable<TreeHandle['read']>
 			>;
 		},
-		...(parseResult.format !== undefined && { format: parseResult.format }),
+		...(parseResult.format !== undefined && { format: parseResult.format })
 	};
 	return handle;
 }
@@ -251,8 +260,8 @@ export function nativeTreeHandle(
 /**
  * Build the read-side TreeHandle for the corpus validators. Selects
  * between the wasm/JS handle (default) and a native-engine handle
- * (when `SITTIR_BACKEND=native` is set AND the per-grammar napi
- * package loads). Native handles route every read — root + drill-in +
+ * (when `SITTIR_BACKEND=native` is set AND the grammar-owned native
+ * module loads). Native handles route every read — root + drill-in +
  * drillAs — through `engine.readNode(id)` so the suite exercises the
  * full native pipeline end-to-end.
  *
@@ -267,19 +276,25 @@ export function nativeTreeHandle(
  */
 let _cachedNativeEngine: { grammar: string; engine: NativeEngineLike } | null =
 	null;
+const nativePackages: Record<string, string> = {
+	rust: 'sittir-rust',
+	typescript: 'sittir-typescript',
+	python: 'sittir-python'
+};
 function loadNativeEngineForGrammar(grammar: string): NativeEngineLike | null {
 	if (_cachedNativeEngine && _cachedNativeEngine.grammar === grammar) {
 		return _cachedNativeEngine.engine;
 	}
 	try {
-		// Match probe-kind's loader — try the published package, fall
-		// back to the workspace-local napi build directory.
+		// Match probe-kind's loader — try the package name, then fall
+		// back to the workspace-local grammar crate directory.
 		const req = createRequire(import.meta.url);
-		const pkg = `@sittir/${grammar}-native`;
+		const pkg = nativePackages[grammar];
+		if (!pkg) return null;
 		const repoRoot = fileURLToPath(
 			new URL('../../../..', import.meta.url)
 		).replace(/\/$/, '');
-		const localCratePath = `${repoRoot}/rust/crates/sittir-${grammar}-napi`;
+		const localCratePath = `${repoRoot}/rust/crates/sittir-${grammar}`;
 		let mod: { SittirEngine: new () => NativeEngineLike };
 		try {
 			mod = req(pkg) as typeof mod;

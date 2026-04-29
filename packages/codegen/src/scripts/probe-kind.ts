@@ -535,7 +535,7 @@ async function renderNodeDataFromPath(
 	return bound.render(nodeData as Parameters<typeof bound.render>[0]);
 }
 
-/** @internal — load the native napi engine for `grammar`. Mirrors
+/** @internal — load the grammar-owned native engine for `grammar`. Mirrors
  *  the `createRequire` pattern in `backend.ts`. Throws on failure so
  *  `--engine native` / `both` modes can't silently fall back to the
  *  TS render and mask a parity issue. */
@@ -544,21 +544,25 @@ interface NativeProbeEngine {
 	readNode(nodeId: NodeId): string;
 	render(nodeJson: string): string;
 }
+const nativePackages: Record<string, string> = {
+	rust: 'sittir-rust',
+	typescript: 'sittir-typescript',
+	python: 'sittir-python'
+};
 async function loadNativeEngine(grammar: string): Promise<NativeProbeEngine> {
 	const { createRequire } = await import('node:module');
 	const req = createRequire(import.meta.url);
-	// Try the published package name first; fall back to the
-	// workspace-local napi build at `rust/crates/sittir-<grammar>-napi/`
-	// when the package isn't installed (the common case during
-	// development before `pnpm install` picks up the workspace
-	// package). The crate's package.json `main` points at the local
-	// platform-specific `.node` artifact.
-	const pkg = `@sittir/${grammar}-native`;
+	// Try the package name first; fall back to the workspace-local
+	// grammar crate at `rust/crates/sittir-{grammar}/`. The crate's
+	// package.json `main` points at the local platform-specific `.node`
+	// artifact.
+	const pkg = nativePackages[grammar];
+	if (!pkg) throw new Error(`probe-kind: no native package for ${grammar}`);
 	const repoRoot = new URL('../../../..', import.meta.url).pathname.replace(
 		/\/$/,
 		''
 	);
-	const localCratePath = `${repoRoot}/rust/crates/sittir-${grammar}-napi`;
+	const localCratePath = `${repoRoot}/rust/crates/sittir-${grammar}`;
 	let mod: { SittirEngine: new () => NativeProbeEngine };
 	try {
 		mod = req(pkg) as typeof mod;
@@ -568,7 +572,7 @@ async function loadNativeEngine(grammar: string): Promise<NativeProbeEngine> {
 		} catch (err) {
 			const message = err instanceof Error ? err.message : String(err);
 			throw new Error(
-				`probe-kind: --engine native could not load '${pkg}' or '${localCratePath}' — build the native binary with \`cd rust/crates/sittir-${grammar}-napi && pnpm exec napi build --release\`. Underlying error: ${message}`
+				`probe-kind: --engine native could not load '${pkg}' or '${localCratePath}' — build the native binary with \`cd ${localCratePath} && pnpm exec napi build --release\`. Underlying error: ${message}`
 			);
 		}
 	}

@@ -19,7 +19,7 @@
  * fails the build if any are absent from the matching grammar's fixtures.
  *
  * Runs from `cli.ts --all` after TS + native render artifacts are emitted;
- * produces `packages/{lang}/rust-render/test-fixtures.json` per grammar.
+ * produces `rust/crates/sittir-{lang}/test-fixtures.json` per grammar.
  */
 
 import {
@@ -28,6 +28,7 @@ import {
 	type RenderFixture,
 	type RoundTripFixture
 } from '../validate/roundtrip.ts';
+import { renderModuleFixturesPath } from './render-module-paths.ts';
 
 /** FR-011 exception kinds — at least one fixture of each must appear
  *  in the extracted corpus for its matching grammar. See spec 012
@@ -116,11 +117,11 @@ export function serializeFixtures(fixtures: readonly ParityFixture[]): string {
 	return JSON.stringify(fixtures, null, 2) + '\n';
 }
 
-/** Per-grammar output path. Kept alongside the rust-render crate so a
+/** Per-grammar output path. Kept alongside the render-module module so a
  *  single `packages/{lang}/` regen replaces both the Rust source and
  *  its test inputs. */
 export function fixturesOutputPath(grammar: string): string {
-	return `packages/${grammar}/rust-render/test-fixtures.json`;
+	return renderModuleFixturesPath(grammar as 'rust' | 'typescript' | 'python');
 }
 
 // Re-export the fixture types so cli.ts / tests can reference them

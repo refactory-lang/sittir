@@ -1,21 +1,21 @@
 # sittir
 
-Generate typed factory functions and S-expression render templates from tree-sitter grammars.
+Generate typed factory functions and canonical `.jinja` render templates from tree-sitter grammars.
 
 ## Architecture
 
 Three-layer architecture:
 
-- **`@sittir/core`** — Grammar-driven render engine, validation, CST, Edit creation. S-expression templates parsed once and cached. `render(node, rules)` uses regex replace. No `.from()` resolution — generated packages inline all resolution logic.
+- **`@sittir/core`** — Grammar-driven TypeScript render engine, validation, CST, Edit creation. Canonical `.jinja` templates are authored per grammar and rendered through the TS runtime. No `.from()` resolution — generated packages inline all resolution logic.
 - **`@sittir/types`** — Pure TypeScript types (zero runtime). `AnyNodeData`, `ConfigOf<T>`, `TreeNodeOf<T>`, `FromInputOf<T>` transformation types. `ByteRange`, `Edit`, `RenderContext`.
-- **`@sittir/codegen`** — Reads grammar.json + node-types.json, emits: YAML render templates, unified factory functions, ir namespace, const enums, navigation types, wrap/readNode functions, `.from()` resolution, tests.
+- **`@sittir/codegen`** — Reads grammar.json + node-types.json, emits canonical `.jinja` templates, unified factory functions, backend shims, native render crates, ir namespace, const enums, navigation types, wrap/readNode functions, `.from()` resolution, and tests.
 
 Generated packages (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) contain:
 
 - `grammar.ts` — grammar type literal for type projections
 - `types.ts` — `const enum SyntaxKind`, concrete interfaces (source of truth), `ConfigOf`-derived configs, `TreeNode<K>` interfaces, supertype unions, grammar-bound aliases
-- `rules.ts` — S-expression render templates (tree-sitter query syntax)
-- `joinby.ts` — separator map for list children (ast-grep `joinBy` convention)
+- `rules.ts` — generated render-rule metadata consumed by the TS runtime
+- `hash.ts` / `backend.ts` / `boundary.ts` — native-backend selection + boundary shim
 - `factories.ts` — unified factories: config input (camelCase) → NodeData output (raw fields) + fluent getters/setters + methods
 - `from.ts` — `.from()` ergonomic resolution with inlined per-field logic (tree-shakeable)
 - `wrap.ts` — tree node → NodeData hydration via `readNode()` entry point + per-kind wrap functions + `edit()` alias + override field promotion heuristics
@@ -23,6 +23,14 @@ Generated packages (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) cont
 - `ir.ts` — developer-facing namespace with short names
 - `consts.ts` — discoverable arrays/maps of kinds, keywords, operators
 - `index.ts` — barrel re-exports
+
+Authored templates stay canonical under `packages/{lang}/templates/`.
+The native Askama companions are generated under
+`rust/crates/sittir-{lang}/src/render/`; `--all` regeneration refreshes both
+the TypeScript package outputs and those checked-in native crates. Thin
+grammar-owned N-API entrypoints live under
+`rust/crates/sittir-{lang}/` and delegate generic engine state to
+`sittir-core`.
 
 ## Key Design Decisions
 
@@ -401,7 +409,7 @@ Aggregate totals can hide kinds falling out of the validation universe.
 - TypeScript 6.0.2 (ESM, `.ts` extensions in imports) + `@sittir/core`, `@sittir/types`, `@sittir/codegen` (workspace packages — no new deps) (008-factory-ergonomic-cleanup)
 - File system — per-grammar generated output under `packages/{rust,typescript,python}/src/` (008-factory-ergonomic-cleanup)
 - N/A — the engine is a pure transformation over in-memory strings and parse trees. No persistence layer. (012-rust-core-port)
-- Rust 1.82+, sittir-core, askama 0.14, napi-rs 3, per-grammar render crates at `packages/{lang}/rust-render/` (012-rust-core-port)
+- Rust 1.82+, sittir-core, askama 0.14, napi-rs 3, per-grammar render modules at `rust/crates/sittir-{lang}/src/render/` (012-rust-core-port)
 - TypeScript 6.0.2 (ESM, `.ts` extensions in imports), Rust 1.82+ for native render path (already shipped on 012). + `@sittir/codegen` (walker / emitter / link / assemble / evaluate pipeline), `@sittir/core` (render, readNode, edit), `@sittir/types` (NodeData, ConfigOf, FromInput type projections), per-grammar packages (`@sittir/{rust,typescript,python}`), per-grammar napi crates (`sittir-{rust,typescript,python}-napi` for native render). Vitest for the test suite that defines the baseline. (016-parity-regressions)
 - File system — `specs/016-parity-regressions/baselines/{ts,native}.json` is the durable contract; generated TS/templates under `packages/{lang}/src/` and `packages/{lang}/templates/*.jinja` are codegen output (never hand-edited). (016-parity-regressions)
 

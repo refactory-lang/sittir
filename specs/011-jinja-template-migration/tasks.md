@@ -23,7 +23,7 @@ description: 'Task list for Jinja template migration'
 - Core runtime: `packages/core/src/`
 - Generated grammar packages: `packages/{rust,typescript,python}/`
 - Templates (new): `packages/{rust,typescript,python}/templates/`
-- Phase B crate: `crates/sittir-render/`
+- Phase B crate: `rust/crates/sittir-{lang}/src/render/`
 
 ---
 
@@ -116,7 +116,7 @@ description: 'Task list for Jinja template migration'
 ## Phase 4: User Story 2 — Rust Port with Askama Compile-Time Validation (Priority: P2)
 
 > **⏸ DEFERRED (2026-04-22)**: Phase 4 waits on the full `@sittir/core`
-> Rust port. The original plan stood up `crates/sittir-render/` as an
+> Rust port. The original plan stood up `rust/crates/sittir-{lang}/src/render/` as an
 > isolated askama crate consuming the `.jinja` files produced by
 > Phase 3. Re-scoped direction: when `@sittir/core` itself is ported
 > to Rust, the askama render path is built inside that port (not as a
@@ -129,38 +129,38 @@ description: 'Task list for Jinja template migration'
 > port spec when it exists. None are blocked or stale; they simply
 > wait.
 
-**Goal**: Stand up `crates/sittir-render/` with per-rule askama structs; `.jinja` files are shared with Phase A's TS renderer. Cross-render parity across the corpus.
+**Goal**: Stand up `rust/crates/sittir-{lang}/src/render/` with per-rule askama structs; `.jinja` files are shared with Phase A's TS renderer. Cross-render parity across the corpus.
 
-**Independent Test**: `cargo test -p sittir-render` passes; each corpus node renders byte-identical between TS (Nunjucks) and Rust (askama).
+**Independent Test**: `cargo test -p sittir-parity-tests` passes; each corpus node renders byte-identical between TS (Nunjucks) and Rust (askama).
 
 ### Rust crate scaffolding
 
-- [ ] T040 [US2] Create `crates/sittir-render/Cargo.toml` declaring `askama = "0.x"`, edition = "2024", and a `[package]` section naming the crate.
-- [ ] T041 [US2] Create `crates/sittir-render/src/lib.rs` with module declarations for each grammar: `pub mod rust;`, `pub mod typescript;`, `pub mod python;`.
-- [ ] T042 [P] [US2] Create `crates/sittir-render/templates/rust/`, `crates/sittir-render/templates/typescript/`, `crates/sittir-render/templates/python/` directories with `.gitkeep` files. These mirror the TS-side `packages/<grammar>/templates/` directories.
-- [ ] T043 [US2] Add a `build.rs` to `crates/sittir-render/` that copies `packages/<grammar>/templates/*.jinja` into the crate's `templates/<grammar>/` directory at build time. Ensures the single source of truth remains the `packages/<grammar>/templates/` directory; the Rust crate consumes copies.
-- [ ] T044 [US2] Register `crates/sittir-render/` in the workspace: add `crates/sittir-render` to a top-level `Cargo.toml`'s `[workspace].members` (create the workspace file if absent).
+- [ ] T040 [US2] Create `rust/crates/sittir-{lang}/src/render/Cargo.toml` declaring `askama = "0.x"`, edition = "2024", and a `[package]` section naming the crate.
+- [ ] T041 [US2] Create `rust/crates/sittir-{lang}/src/render/lib.rs` with module declarations for each grammar: `pub mod rust;`, `pub mod typescript;`, `pub mod python;`.
+- [ ] T042 [P] [US2] Create `rust/crates/sittir-{lang}/src/render/templates/rust/`, `rust/crates/sittir-{lang}/src/render/templates/typescript/`, `rust/crates/sittir-{lang}/src/render/templates/python/` directories with `.gitkeep` files. These mirror the TS-side `packages/<grammar>/templates/` directories.
+- [ ] T043 [US2] Add a `build.rs` to `rust/crates/sittir-{lang}/src/render/` that copies `packages/<grammar>/templates/*.jinja` into the crate's `templates/<grammar>/` directory at build time. Ensures the single source of truth remains the `packages/<grammar>/templates/` directory; the Rust crate consumes copies.
+- [ ] T044 [US2] Register `rust/crates/sittir-{lang}/src/render/` in the workspace: add `rust/crates/sittir-{lang}/src/render` to a top-level `Cargo.toml`'s `[workspace].members` (create the workspace file if absent).
 
 ### Rust filter aliases
 
-- [ ] T045 [US2] Create `crates/sittir-render/src/filters.rs` registering Nunjucks-compatible filter aliases: `upper` → `uppercase`, `lower` → `lowercase`, plus any others where askama's native name differs. Use askama's filter-registration mechanism.
-- [ ] T046 [P] [US2] Add unit tests in `crates/sittir-render/src/filters.rs` verifying each alias renders identically to its askama-native counterpart.
+- [ ] T045 [US2] Create `rust/crates/sittir-{lang}/src/render/filters.rs` registering Nunjucks-compatible filter aliases: `upper` → `uppercase`, `lower` → `lowercase`, plus any others where askama's native name differs. Use askama's filter-registration mechanism.
+- [ ] T046 [P] [US2] Add unit tests in `rust/crates/sittir-{lang}/src/render/filters.rs` verifying each alias renders identically to its askama-native counterpart.
 - [ ] T046a [US2] Audit the six standardized filters (`join`, `length`, `default`, `trim`, `upper`, `lower`) for _semantic_ divergence (not just name) between Nunjucks and askama (spec R42 / edge case #2). Produce `specs/011-jinja-template-migration/filter-semantic-audit.md` documenting each filter's behavior on edge inputs (empty string, null/None, whitespace-only, non-ASCII / Unicode). Any divergence found MUST either (a) be normalized on the TS or Rust side before the template sees the value, or (b) be added to the forbidden-construct list in `contracts/jinja-subset.md`. No silent semantic divergence may ship.
 
 ### Codegen: emit Rust askama structs
 
 - [ ] T047 [US2] Create `packages/codegen/src/emitters/rust-source.ts` that, for each rule with a `.jinja` file, emits a Rust source file declaring a `#[derive(askama::Template)]` struct with `#[template(path = "<grammar>/<kind>.jinja")]` and fields matching the grammar-declared field set plus the shared `TemplateContext` slots.
-- [ ] T048 [US2] Extend codegen's main CLI entry (`packages/codegen/src/cli.ts`) with a `--emit-rust-source` flag. When set, emit per-grammar Rust modules into `crates/sittir-render/src/<grammar>/mod.rs` (one file per rule or a consolidated module; decide during implementation).
+- [ ] T048 [US2] Extend codegen's main CLI entry (`packages/codegen/src/cli.ts`) with a `--emit-rust-source` flag. When set, emit per-grammar Rust modules into `rust/crates/sittir-{lang}/src/render/<grammar>/mod.rs` (one file per rule or a consolidated module; decide during implementation).
 - [ ] T049 [US2] Regenerate all three grammars' Rust source files: `npx tsx packages/codegen/src/cli.ts --grammar rust --emit-rust-source` (and equivalents for typescript, python).
-- [ ] T050 [US2] Run `cargo build -p sittir-render`. Iterate on codegen emitter + filter aliases until `cargo build` succeeds with zero errors. Template variable mismatches must surface as build errors (SC-005).
+- [ ] T050 [US2] Run `cargo check -p sittir-parity-tests`. Iterate on codegen emitter + filter aliases until `cargo build` succeeds with zero errors. Template variable mismatches must surface as build errors (SC-005).
 
 ### Cross-render parity test
 
-- [ ] T051 [US2] Design a test protocol in `crates/sittir-render/tests/parity.rs` that loads the round-trip corpus (from the same fixtures the TS tests use), renders each node through the Rust implementation, and compares byte-for-byte against a reference snapshot produced by the TS (Nunjucks) renderer.
-- [ ] T052 [US2] Create the reference snapshot: add a script `scripts/generate-parity-snapshot.ts` that runs the TS renderer over the full corpus and writes one file per node to `crates/sittir-render/tests/snapshots/`. Commit snapshots.
-- [ ] T053 [US2] Run `cargo test -p sittir-render`. Iterate on any divergences; each divergence is a translator or filter-alias bug. Target: 100% of corpus byte-identical.
-- [ ] T054 [P] [US2] Add a benchmark harness in `crates/sittir-render/benches/render.rs` measuring wall-clock per-node render time for Rust and documenting the Phase B perf target (SC-008 ≥ 2× TS).
-- [ ] T055 [US2] Add a negative test in `crates/sittir-render/tests/build-errors.rs` (using `trybuild` or equivalent): intentionally introduce a `.jinja` file referencing an undefined variable; assert `cargo build` fails with an error containing the template filename and the variable name.
+- [ ] T051 [US2] Design a test protocol in `rust/crates/sittir-{lang}/src/render/tests/parity.rs` that loads the round-trip corpus (from the same fixtures the TS tests use), renders each node through the Rust implementation, and compares byte-for-byte against a reference snapshot produced by the TS (Nunjucks) renderer.
+- [ ] T052 [US2] Create the reference snapshot: add a script `scripts/generate-parity-snapshot.ts` that runs the TS renderer over the full corpus and writes one file per node to `rust/crates/sittir-{lang}/src/render/tests/snapshots/`. Commit snapshots.
+- [ ] T053 [US2] Run `cargo test -p sittir-parity-tests`. Iterate on any divergences; each divergence is a translator or filter-alias bug. Target: 100% of corpus byte-identical.
+- [ ] T054 [P] [US2] Add a benchmark harness in `rust/crates/sittir-{lang}/src/render/benches/render.rs` measuring wall-clock per-node render time for Rust and documenting the Phase B perf target (SC-008 ≥ 2× TS).
+- [ ] T055 [US2] Add a negative test in `rust/crates/sittir-{lang}/src/render/tests/build-errors.rs` (using `trybuild` or equivalent): intentionally introduce a `.jinja` file referencing an undefined variable; assert `cargo build` fails with an error containing the template filename and the variable name.
 
 **Checkpoint**: Rust crate builds, parity test green, compile-time validation demonstrated.
 
@@ -210,7 +210,7 @@ Phase 4 (US2 Rust) — DEFERRED, waits on full @sittir/core Rust port.
 **Phase 4 deferred (2026-04-22)**: US2 (the Rust askama renderer)
 waits on the full `@sittir/core` Rust port. When that port lands, the
 askama render path is built inside the ported core rather than as a
-separate `crates/sittir-render/` scaffold. `.jinja` files are
+separate `rust/crates/sittir-{lang}/src/render/` scaffold. `.jinja` files are
 unchanged; only Phase 4's _delivery vehicle_ moves.
 
 **US3 is non-blocking**: Phase 5 tasks are nice-to-have; can land any time after Phase 3 completes.

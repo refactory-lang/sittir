@@ -107,7 +107,7 @@ No `NEEDS CLARIFICATION` markers in the Technical Context — every decision was
 
 ## Decision: Native parity work folded into the same cluster commit when template intent is shared
 
-**Decision**: When a TS-mode cluster fix (e.g. python comprehensions) corresponds to a render-template intent that also exists on the native (Rust Askama) side, the same commit fixes both backends. Native template emit lives under `packages/codegen/src/emitters/templates.ts` (jinja for both backends) plus the per-grammar Rust render crate under `packages/{lang}/rust-render/`; the codegen pipeline owns both.
+**Decision**: When a TS-mode cluster fix (e.g. python comprehensions) corresponds to a render-template intent that also exists on the native (Rust Askama) side, the same commit fixes both backends. Native template emit lives under `packages/codegen/src/emitters/templates.ts` (jinja for both backends) plus the per-grammar Rust render module under `rust/crates/sittir-{lang}/src/render/`; the codegen pipeline owns both.
 
 **Rationale**: Both backends consume the same per-rule template intent (assumption in spec). A cluster fix that touches TS render but leaves native broken creates an artificial split — the next commit would have to reopen the same investigation. The before/after table covers both backends per FR-002, so the commit shape doesn't grow.
 

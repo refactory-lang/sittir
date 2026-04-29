@@ -16,7 +16,7 @@ tree-sitter = { workspace = true }
 # runtime crate. Both are pure Rust — no Node.js is required at
 # compile time, so FR-004 ("sittir-core builds without Node.js/npm")
 # still holds. The actual .node artifact is linked by the
-# sittir-*-napi binding crates; this dep only buys us the boundary
+# sittir-* grammar binding crates; this dep only buys us the boundary
 # attribute on `Edit`.
 napi = { version = "3", default-features = false, features = ["napi4"] }
 napi-derive = "3"
@@ -39,16 +39,3 @@ askama = { workspace = true }
 tree-sitter-rust = "0.24"
 tree-sitter-typescript = "0.23"
 tree-sitter-python = "0.25"
-# T058 — micro-benchmark harness. Criterion is a dev-dep so the
-# production engine artifact stays slim. The bench itself lives at
-# `benches/render.rs` and uses a synthetic NodeData + a stub
-# RenderDispatch (sittir-core can't depend on the per-grammar render
-# crates without inverting the layering).
-criterion = { version = "0.5", default-features = false, features = [
-  "plotters",
-  "cargo_bench_support"
-] }
-
-[[bench]]
-name = "render"
-harness = false

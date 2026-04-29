@@ -3,7 +3,7 @@
 **Artifact**: `packages/{lang}/src/backend.ts` (new; one per grammar package)
 **Governed by**: Spec FR-009, FR-017, FR-020, FR-021
 
-The JS-side runtime-selection shim. Picks between the native backend (`@sittir/{lang}-native`) and the JS fallback (existing Nunjucks engine). Exposes inspection API and optional diagnostic.
+The JS-side runtime-selection shim. Picks between the shared native backend (`@sittir/{lang}`) and the JS fallback (existing Nunjucks engine). Exposes inspection API and optional diagnostic.
 
 ---
 
@@ -12,12 +12,12 @@ The JS-side runtime-selection shim. Picks between the native backend (`@sittir/{
 Runs **once per module load** (effectively once per Node process under normal ESM semantics). Result is cached as a module-local singleton; subsequent `getActiveBackend()` calls return the cached result.
 
 ```text
-1. Attempt to require('@sittir/{lang}-native')
+1. Attempt to require('@sittir/{lang}')
    - On ImportError / platform-not-supported → set status = { name: 'js', reason: 'native binary not available for this platform' }
    - On other load error → set status = { name: 'js', reason: 'native load failed: <error message>' }
 
 2. If loaded:
-   a. Call engine.templateBundleHash (string)
+   a. Construct `new SittirEngine('{lang}')`, then call `engine.templateBundleHash` (string)
    b. Import TEMPLATE_BUNDLE_HASH from packages/{lang}/src/hash.ts
    c. Compare (case-insensitive hex compare)
       - Match → status = { name: 'native', hashMatch: true }

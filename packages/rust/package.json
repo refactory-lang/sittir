@@ -48,8 +48,5 @@
 		"tree-sitter-rust": "^0.24.0",
 		"type-fest": "^5.6.0"
 	},
-	"optionalDependencies": {
-		"@sittir/rust-native": "workspace:*"
-	},
-	"//peer": "spec 012 T036: @sittir/rust-native is now a workspace optionalDependency so pnpm symlinks it from rust/crates/sittir-rust-napi when present. optional=true keeps installs healthy on platforms without a built .node artifact."
+	"//native": "Native artifacts are grammar-local implementation details for @sittir/rust, built from rust/crates/sittir-rust."
 }

@@ -60,7 +60,7 @@ This is enforced by the serde struct definition (no extra fields) and tested via
 
 ## Invariants
 
-1. **`$type` uniqueness**: within a single grammar, each `$type` value corresponds to exactly one template in the render crate. `$variant` (enrichment-added) disambiguates forms on the TS consumer side but is not used for template dispatch — see FR-011.
+1. **`$type` uniqueness**: within a single grammar, each `$type` value corresponds to exactly one template in the render module. `$variant` (enrichment-added) disambiguates forms on the TS consumer side but is not used for template dispatch — see FR-011.
 2. **Field-name casing**: keys in `$fields` are raw (snake_case) names as they appear in `grammar.json` / `node-types.json`. Templates reference them as-is. **Do not** camelCase them.
 3. **Leaf definition**: a node is a "leaf" for `$text` purposes when it has no `$fields` and no `$children`. Such nodes carry `$text` set to `node.utf8_text(source)`.
 4. **Optional elision**: omitted optionals are recoverable as absent — they do NOT round-trip as empty containers. `$fields: {}` is equivalent on the wire to `$fields` elided; implementations SHOULD elide.

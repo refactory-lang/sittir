@@ -360,3 +360,24 @@ export interface NativeParseResult {
 	/** Format inferred from source layout, if inference succeeded. */
 	format?: FormatRecord;
 }
+
+// ---------------------------------------------------------------------------
+// Engine API surfaces
+// ---------------------------------------------------------------------------
+
+/** Options for creating an engine instance. */
+export interface EngineOptions {
+	readonly format?: FormatRecord;
+}
+
+/** A handle to a parsed tree returned by the engine. */
+export interface EngineTreeHandle {
+	readonly format?: FormatRecord;
+	readonly render: (options?: { ignoreFormat?: boolean }) => string;
+}
+
+/** Return value of engine parseAndRead — carries both NodeData and inferred format. */
+export interface ParseAndReadResult {
+	readonly nodeData: AnyNodeData;
+	readonly format?: FormatRecord;
+}

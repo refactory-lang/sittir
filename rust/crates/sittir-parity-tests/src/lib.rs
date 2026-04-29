@@ -5,7 +5,7 @@
 //!
 //! Keeping `lib.rs` minimal so `cargo check -p sittir-parity-tests` on
 //! its own compiles fast; the per-grammar test cases pull the heavy
-//! dependencies (`sittir-{lang}-render`, `tree-sitter-{lang}`) only
+//! dependencies (`sittir-{lang}`, `tree-sitter-{lang}`) only
 //! when the integration-test binary builds.
 
 use serde::Deserialize;
@@ -56,7 +56,7 @@ pub enum ParityFixture {
 /// it regardless of the caller's cwd.
 pub fn load_fixtures(grammar: &str) -> Vec<ParityFixture> {
     let path = format!(
-        "{}/../../../packages/{}/rust-render/test-fixtures.json",
+        "{}/../sittir-{}/test-fixtures.json",
         env!("CARGO_MANIFEST_DIR"),
         grammar,
     );

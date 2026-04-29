@@ -20,7 +20,7 @@
  * branch as a real template-bundle hash drift between TS-codegen
  * output and the baked-in Rust const.
  *
- * On platforms where `@sittir/rust-native` doesn't load at all (no
+ * On platforms where `sittir-rust` doesn't load at all (no
  * `.node` artifact built), the fallback reason is "native binary not
  * available for this platform", not "hash mismatch" — the test
  * detects that case and soft-passes via the `hashMatch` undefined

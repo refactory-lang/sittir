@@ -48,6 +48,7 @@ import {
 	findRepeatSeparator,
 	findRepeatFlag
 } from './template-walker.ts';
+import type { WalkSlotUse } from './template-walker.ts';
 import { tokenToName } from './optimize.ts';
 import { assertNever } from '../polymorph-variant.ts';
 
@@ -161,6 +162,26 @@ export function isNonEmpty(slot: {
 	return (
 		multis.length > 0 && multis.every((v) => v.multiplicity === 'nonEmptyArray')
 	);
+}
+
+export interface RenderTemplateSurface {
+	readonly slots: readonly RenderTemplateSlot[];
+	readonly usesChildren: boolean;
+	readonly usesVariant: boolean;
+	readonly usesText: boolean;
+}
+
+export interface RenderTemplateEntry {
+	readonly template: string;
+	readonly surface: RenderTemplateSurface;
+}
+
+export interface RenderTemplateSlot {
+	readonly name: string;
+	readonly view: 'scalar' | 'list' | 'field';
+	readonly required: boolean;
+	readonly hasLeading: boolean;
+	readonly hasTrailing: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -1574,9 +1595,17 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 	 */
 	protected textTemplate(
 		externals: ReadonlySet<string> | undefined
-	): { template: string } | undefined {
+	): RenderTemplateEntry | undefined {
 		if (this.isTextTemplate(externals)) {
-			return { template: '{{ text }}' };
+			return {
+				template: '{{ text }}',
+				surface: {
+					slots: [],
+					usesChildren: false,
+					usesVariant: false,
+					usesText: true
+				}
+			};
 		}
 		return undefined;
 	}
@@ -1625,8 +1654,9 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 	 */
 	renderTemplate(
 		_rules?: Record<string, Rule>,
-		_wordMatcher?: RegExp
-	): { template: string } | undefined {
+		_wordMatcher?: RegExp,
+		_externals?: ReadonlySet<string>
+	): RenderTemplateEntry | undefined {
 		return undefined;
 	}
 }
@@ -2252,13 +2282,13 @@ function _wrapFormOptionalPlaceholders(
  * fallback when local member inspection can't see the enclosing
  * structural wrapper.
  */
-function deriveOptionalFieldNames(
-	fields: readonly AssembledField[]
+function deriveOptionalSlotNames(
+	slots: readonly { name: string; values: readonly NodeOrTerminal[] }[]
 ): Set<string> {
 	const out = new Set<string>();
-	for (const f of fields) {
-		if (!isRequired(f)) {
-			out.add(f.name);
+	for (const slot of slots) {
+		if (!isRequired(slot)) {
+			out.add(slot.name);
 			continue;
 		}
 		// Cluster G (016): required-at-slot-level but list-shaped + may-be-empty
@@ -2266,9 +2296,48 @@ function deriveOptionalFieldNames(
 		// Wrapping the `$$$NAME` placeholder gates the surrounding separators
 		// on whether the list actually has elements — ts class_declaration's
 		// empty `decorator` no longer leaves a leading space.
-		if (isMultiple(f) && !isNonEmpty(f)) out.add(f.name);
+		if (isMultiple(slot) && !isNonEmpty(slot)) out.add(slot.name);
 	}
 	return out;
+}
+
+function deriveOptionalFieldNames(
+	fields: readonly AssembledField[]
+): Set<string> {
+	return deriveOptionalSlotNames(fields);
+}
+
+function buildRenderSurface(opts?: {
+	fields?: readonly AssembledField[];
+	slots?: readonly WalkSlotUse[];
+	optionalFields?: ReadonlySet<string>;
+	usesChildren?: boolean;
+	usesVariant?: boolean;
+	usesText?: boolean;
+}): RenderTemplateSurface {
+	const fieldsByName = new Map(
+		(opts?.fields ?? []).map((field) => [field.name, field] as const)
+	);
+	const slots = (opts?.slots ?? []).map((slot) => {
+		const field = fieldsByName.get(slot.name);
+		const view =
+			field != null && slot.view === 'list' ? ('field' as const) : slot.view;
+		const required =
+			field != null ? !(opts?.optionalFields?.has(slot.name) ?? false) : false;
+		return {
+			name: slot.name,
+			view,
+			required,
+			hasLeading: field?.hasLeading ?? false,
+			hasTrailing: field?.hasTrailing ?? false
+		};
+	});
+	return {
+		slots,
+		usesChildren: opts?.usesChildren ?? false,
+		usesVariant: opts?.usesVariant ?? false,
+		usesText: opts?.usesText ?? false
+	};
 }
 
 /**
@@ -2465,7 +2534,7 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
 		rules?: Record<string, Rule>,
 		wordMatcher?: RegExp,
 		externals?: ReadonlySet<string>
-	): { template: string } {
+	): RenderTemplateEntry {
 		// Rules whose structure depends on hidden external-scanner
 		// tokens (e.g. rust's raw_string_literal, whose `r#"` and `"#`
 		// are produced by `_raw_string_literal_start` and
@@ -2480,7 +2549,7 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
 		// anonymous delimiters ('(', '{', ';', etc.) to surface as
 		// template text. Only derivations use simplifiedRule.
 		const optionalFields = deriveOptionalFieldNames(this.fields);
-		const { template, clauses, joinByField } = renderRuleTemplate(
+		const { template, clauses, joinByField, usesChildren, slots } = renderRuleTemplate(
 			this.rule,
 			false,
 			rules,
@@ -2515,7 +2584,15 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
 		if (leadingFields.size > 0) meta.leadingFields = leadingFields;
 		if (Object.keys(joinByField).length > 0) meta.joinByField = joinByField;
 		if (optionalFields.size > 0) meta.optionalFields = optionalFields;
-		return { template: translateToJinja(withClauses, meta) };
+		return {
+			template: translateToJinja(withClauses, meta),
+			surface: buildRenderSurface({
+				fields: this.fields,
+				slots,
+				optionalFields,
+				usesChildren
+			})
+		};
 	}
 }
 
@@ -2830,13 +2907,13 @@ export class AssembledContainer extends AssembledNodeBase<
 		rules?: Record<string, Rule>,
 		wordMatcher?: RegExp,
 		externals?: ReadonlySet<string>
-	): { template: string } {
+	): RenderTemplateEntry {
 		const textShape = this.textTemplate(externals);
 		if (textShape) return textShape;
 		// Template walking stays on RAW rule (needs literals); derivations
 		// and separator discovery use simplifiedRule. Containers carry no
 		// fields (children-only), so the optional-field set is empty.
-		const { template, clauses, joinByField } = renderRuleTemplate(
+		const { template, clauses, joinByField, usesChildren, slots } = renderRuleTemplate(
 			this.rule,
 			false,
 			rules,
@@ -2864,7 +2941,13 @@ export class AssembledContainer extends AssembledNodeBase<
 		// absorb flanking spaces into an isPresent conditional — prevents
 		// stray `{  }` when an empty-body factory node renders via this template.
 		if (childrenMayBeEmpty(this.simplifiedRule)) meta.optionalChildren = true;
-		return { template: translateToJinja(withClauses, meta) };
+		return {
+			template: translateToJinja(withClauses, meta),
+			surface: buildRenderSurface({
+				slots,
+				usesChildren
+			})
+		};
 	}
 }
 
@@ -2944,8 +3027,9 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 
 	renderTemplate(
 		rules?: Record<string, Rule>,
-		wordMatcher?: RegExp
-	): { template: string } {
+		wordMatcher?: RegExp,
+		_externals?: ReadonlySet<string>
+	): RenderTemplateEntry {
 		if (this.#forms.length === 0) {
 			throw new Error(
 				`AssembledPolymorph.renderTemplate: '${this.kind}' has zero synthesised forms. ` +
@@ -2959,6 +3043,12 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 		const detect: Record<string, string> = {};
 		const mergedClauses: Record<string, string> = {};
 		const mergedJoinByField: Record<string, string> = {};
+		const mergedOptionalFields = new Set<string>();
+		for (const name of deriveCrossFormOptionalFields(this.#forms)) {
+			mergedOptionalFields.add(name);
+		}
+		let usesChildren = false;
+		const mergedSlots = new Map<string, WalkSlotUse>();
 		// Cluster F step 4 (016): collect optional fields per form so the
 		// polymorph's eventual `translateToJinja` can wrap each form's
 		// unguarded `$NAME` placeholder. Wrapping per-form (instead of
@@ -2966,7 +3056,13 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 		// body honest about which fields are optional in THAT form.
 		const rawTemplates: Record<string, string> = {};
 		for (const form of this.#forms) {
-			const { template, clauses, joinByField } = form.renderParts(
+			const {
+				template,
+				clauses,
+				joinByField,
+				usesChildren: formUsesChildren,
+				slots
+			} = form.renderParts(
 				rules,
 				wordMatcher
 			);
@@ -2978,11 +3074,27 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 			}
 			rawTemplates[form.name] = template;
 			const localOptional = deriveOptionalFieldNames(form.fields);
+			for (const name of localOptional) mergedOptionalFields.add(name);
 			const wrapped =
 				localOptional.size > 0
 					? wrapOptionalFieldPlaceholders(template, localOptional)
 					: template;
 			variants[form.name] = wrapped;
+			usesChildren ||= formUsesChildren;
+			for (const slot of slots) {
+				const guarded =
+					slot.guarded ||
+					localOptional.has(slot.name) ||
+					mergedOptionalFields.has(slot.name);
+				const prev = mergedSlots.get(slot.name);
+				const view =
+					prev == null || prev.view === slot.view ? slot.view : 'field';
+				mergedSlots.set(slot.name, {
+					name: slot.name,
+					view,
+					guarded
+				});
+			}
 			if (form.detectToken) detect[form.name] = form.detectToken;
 			Object.assign(mergedClauses, clauses);
 			Object.assign(mergedJoinByField, joinByField);
@@ -3005,6 +3117,7 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 					normalizeTrailingNewline(variants[formNames[0]!]!)
 			);
 		let templateStr: string;
+		let usesVariant = false;
 		if (allEqual) {
 			templateStr = variants[formNames[0]!]!;
 		} else {
@@ -3041,6 +3154,7 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 				}
 				parts.push('{%- endif -%}');
 				templateStr = parts.join('\n');
+				usesVariant = true;
 			}
 		}
 		// Inline the merged per-form clauses as `{% if x %}body{% endif %}`,
@@ -3064,7 +3178,16 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 		if (mergedLeadingFields.size > 0) meta.leadingFields = mergedLeadingFields;
 		if (Object.keys(mergedJoinByField).length > 0)
 			meta.joinByField = mergedJoinByField;
-		return { template: translateToJinja(withClauses, meta) };
+		return {
+			template: translateToJinja(withClauses, meta),
+			surface: buildRenderSurface({
+				fields: this.structuralFields,
+				slots: [...mergedSlots.values()],
+				optionalFields: mergedOptionalFields,
+				usesChildren,
+				usesVariant
+			})
+		};
 	}
 }
 
@@ -3386,13 +3509,13 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 		rules?: Record<string, Rule>,
 		wordMatcher?: RegExp,
 		externals?: ReadonlySet<string>
-	): { template: string } {
+	): RenderTemplateEntry {
 		const textShape = this.textTemplate(externals);
 		if (textShape) return textShape;
 		// Template walking stays on RAW rule (needs literals); derivations
 		// and separator discovery use simplifiedRule.
 		const optionalFields = deriveOptionalFieldNames(this.fields);
-		const { template, clauses, joinByField } = renderRuleTemplate(
+		const { template, clauses, joinByField, usesChildren, slots } = renderRuleTemplate(
 			this.rule,
 			false,
 			rules,
@@ -3423,7 +3546,15 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 		if (leadingFields.size > 0) meta.leadingFields = leadingFields;
 		if (Object.keys(joinByField).length > 0) meta.joinByField = joinByField;
 		if (optionalFields.size > 0) meta.optionalFields = optionalFields;
-		return { template: translateToJinja(withClauses, meta) };
+		return {
+			template: translateToJinja(withClauses, meta),
+			surface: buildRenderSurface({
+				fields: this.fields,
+				slots,
+				optionalFields,
+				usesChildren
+			})
+		};
 	}
 
 	/**
@@ -3442,6 +3573,8 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 		template: string;
 		clauses: Record<string, string>;
 		joinByField: Record<string, string>;
+		usesChildren: boolean;
+		slots: readonly WalkSlotUse[];
 	} {
 		const optionalFields = deriveOptionalFieldNames(this.fields);
 		return renderRuleTemplate(
