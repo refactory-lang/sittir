@@ -25,7 +25,6 @@
  */
 
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
-import * as common from '../validate/common.ts';
 import * as baseline from '../scripts/collect-baseline.ts';
 
 const grammarKeys = ['python', 'rust', 'typescript'] as const;
@@ -222,23 +221,15 @@ describe('collect-baseline', () => {
 		);
 	});
 
-	it("native baseline threads backend='native' through buildReadHandle", async () => {
-		const seen = new Set<string | undefined>();
-		const original = common.buildReadHandle;
-		const spy = vi
-			.spyOn(common, 'buildReadHandle')
-			.mockImplementation((g, t, s, backend) => {
-				seen.add(backend);
-				return original(g, t, s, backend);
-			});
-		// Dispatch assertion only: whether collectBaseline("native") ultimately
-		// succeeds or fails (e.g. due to pre-existing Task 4 node-id issues),
-		// buildReadHandle must have been called with backend="native" as an
-		// explicit argument. Before Task 3, the validators ran under the TS
-		// engine with backend=undefined because withBackendEnv used process.env.
-		await baseline.collectBaseline('native').catch(() => {});
-		expect(seen).toEqual(new Set(['native']));
-		spy.mockRestore();
+	it("native parity fixtures load the grammar-owned boundary path", async () => {
+		const seen: string[] = [];
+		await baseline.collectParityFixtures('rust', 'native', async (path) => {
+			seen.push(path);
+			return { render: () => '' };
+		});
+		expect(seen).toEqual([
+			expect.stringMatching(/packages\/rust\/src\/boundary\.ts$/)
+		]);
 	});
 
 	it('parity render exceptions surface with fixture context', async () => {
@@ -257,18 +248,16 @@ describe('collect-baseline', () => {
 	});
 
 	it('native baseline failures point at bundle drift instead of looking like parity noise', async () => {
-		// Simulate the Task 3 scenario: native engine is unavailable for a grammar
-		// (e.g. bundle drift caused a hash mismatch that prevented engine load).
-		// Before Task 3: collectBaseline("native") silently succeeded — it fell
-		// back to the TS engine and returned TS numbers labelled "native".
-		// After Task 3: buildReadHandle throws explicitly; that error must
-		// propagate rather than being rewritten into quiet parity numbers.
-		vi.spyOn(common, 'buildReadHandle').mockImplementation((g) => {
-			throw new Error(
-				`SITTIR_BACKEND=native but no native engine is available for grammar '${g}'`
-			);
-		});
-		await expect(baseline.collectBaseline('native')).rejects.toThrow(
+		// Simulate the Task 3 scenario directly on the native parity-render path:
+		// boundary import fails, so native collection must throw rather than
+		// quietly slipping to TS-backed numbers labelled "native".
+		await expect(
+			baseline.collectParityFixtures('python', 'native', async () => {
+				throw new Error(
+					"SITTIR_BACKEND=native but no native engine is available for grammar 'python'"
+				);
+			})
+		).rejects.toThrow(
 			/no native engine is available for grammar/
 		);
 	}, 600_000);

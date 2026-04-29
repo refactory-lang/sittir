@@ -47,7 +47,7 @@ pub struct TemplateContext {
 
 ### askama adaptation
 
-Askama compiles each `.jinja` file into a typed `Display` impl at `cargo build` time. Each template is backed by a codegen-emitted `#[derive(Template)]` struct whose fields match the template's referenced variables. Codegen emits **one struct per kind** in `packages/{lang}/rust-render/src/templates.rs`, with typed fields for that kind's raw grammar field names plus the shared positional fields (`children`, `children_list`, `variant`, `text`, `trailing_sep`, `leading_sep`). A top-level `render_dispatch(kind: &str, ctx: &TemplateContext) -> Result<String, askama::Error>` matches on the kind and constructs the appropriate per-kind struct from `TemplateContext`. See plan.md Complexity Tracking for why per-kind structs are justified here (FR-008 build-time validation mandate).
+Askama compiles each `.jinja` file into a typed `Display` impl at `cargo build` time. Each template is backed by a codegen-emitted `#[derive(Template)]` struct whose fields match the template's referenced variables. Codegen emits **one struct per kind** in `rust/crates/sittir-{lang}/src/render/templates.rs`, with typed fields for that kind's raw grammar field names plus the shared positional fields (`children`, `children_list`, `variant`, `text`, `trailing_sep`, `leading_sep`). A top-level `render_dispatch(kind: &str, ctx: &TemplateContext) -> Result<String, askama::Error>` matches on the kind and constructs the appropriate per-kind struct from `TemplateContext`. See plan.md Complexity Tracking for why per-kind structs are justified here (FR-008 build-time validation mandate).
 
 ---
 

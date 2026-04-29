@@ -1,7 +1,7 @@
 /**
  * T048 — TS-side parity sanity check (typescript grammar).
  *
- * Loads the same `rust-render/test-fixtures.json` the Rust parity
+ * Loads the same grammar-owned native `test-fixtures.json` the Rust parity
  * harness (T047) reads, runs the TS engine over each fixture, and
  * confirms it reproduces the captured `expectedOutput` (render) /
  * `expectedSourceOut` (round-trip). Catches fixture-generator bugs
@@ -47,8 +47,10 @@ type ParityFixture = RenderFixture | RoundTripFixture;
 const GRAMMAR = 'typescript';
 const FIXTURES_PATH = resolve(
 	__dirname,
-	'..',
-	'rust-render',
+	'../../..',
+	'rust',
+	'crates',
+	`sittir-${GRAMMAR}`,
 	'test-fixtures.json'
 );
 const TEMPLATES_PATH = resolve(__dirname, '..', 'templates');

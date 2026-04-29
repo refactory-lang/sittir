@@ -53,8 +53,5 @@
 		"tree-sitter-typescript": "^0.23.2",
 		"type-fest": "^5.6.0"
 	},
-	"optionalDependencies": {
-		"@sittir/typescript-native": "workspace:*"
-	},
-	"//peer": "spec 012 T037: @sittir/typescript-native is a workspace optionalDependency."
+	"//native": "Native artifacts are grammar-local implementation details for @sittir/typescript, built from rust/crates/sittir-typescript."
 }

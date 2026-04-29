@@ -19,7 +19,7 @@ import type { FormatRecord, FormatTrivia } from './types.ts';
  */
 export function applyFormat(
 	canonicalRender: string,
-	format: FormatRecord,
+	format: FormatRecord
 ): string {
 	let result = canonicalRender;
 
@@ -75,18 +75,22 @@ function applyTrivia(s: string, format: FormatRecord): string {
 export function rebaseTrivia(
 	format: FormatRecord,
 	editStart: number,
-	delta: number,
+	delta: number
 ): FormatRecord {
 	const trivia = rebaseTriviaItems(format.trivia, editStart, delta);
 	const kinds = rebaseKinds(format.kinds, editStart, delta);
-	return { ...format, ...(trivia !== undefined && { trivia }), ...(kinds !== undefined && { kinds }) };
+	return {
+		...format,
+		...(trivia !== undefined && { trivia }),
+		...(kinds !== undefined && { kinds })
+	};
 }
 
 /** Rebase a trivia array, returning the adjusted array or undefined if absent. */
 function rebaseTriviaItems(
 	trivia: readonly FormatTrivia[] | undefined,
 	editStart: number,
-	delta: number,
+	delta: number
 ): FormatTrivia[] | undefined {
 	if (!trivia) return undefined;
 	return trivia.map((item) => {
@@ -102,7 +106,7 @@ function rebaseTriviaItems(
 function rebaseKinds(
 	kinds: Record<string, FormatRecord> | undefined,
 	editStart: number,
-	delta: number,
+	delta: number
 ): Record<string, FormatRecord> | undefined {
 	if (!kinds) return undefined;
 	const result: Record<string, FormatRecord> = {};

@@ -31,11 +31,9 @@ scratch/
 /target/
 Cargo.lock
 
-# napi-rs build outputs (spec 012 T036–T038): platform-specific .node
-# binaries + the auto-emitted index.js/index.d.ts shim. Each developer
-# rebuilds locally via `cd rust/crates/sittir-{lang}-napi && napi build`.
-rust/crates/sittir-*-napi/*.node
-rust/crates/sittir-*-napi/index.js
-rust/crates/sittir-*-napi/index.d.ts
+# napi-rs build outputs (spec 012 T036-T038): platform-specific .node
+# binaries. Each developer rebuilds locally via
+# `cd rust/crates/sittir-{lang} && napi build`.
+rust/crates/sittir-*/*.node
 .claude/worktrees/
 tmp-scripts/

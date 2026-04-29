@@ -134,14 +134,25 @@ export function applyEdits(
 /** Splice a single edit into the source string. */
 function applyOneEdit(source: string, edit: Edit): string {
 	if (edit.startPos < 0 || edit.startPos > source.length)
-		throw new Error(`applyEdits: startPos ${edit.startPos} out of bounds (source length ${source.length})`);
+		throw new Error(
+			`applyEdits: startPos ${edit.startPos} out of bounds (source length ${source.length})`
+		);
 	if (edit.endPos < edit.startPos || edit.endPos > source.length)
-		throw new Error(`applyEdits: endPos ${edit.endPos} out of bounds (startPos ${edit.startPos}, source length ${source.length})`);
-	return source.slice(0, edit.startPos) + edit.insertedText + source.slice(edit.endPos);
+		throw new Error(
+			`applyEdits: endPos ${edit.endPos} out of bounds (startPos ${edit.startPos}, source length ${source.length})`
+		);
+	return (
+		source.slice(0, edit.startPos) +
+		edit.insertedText +
+		source.slice(edit.endPos)
+	);
 }
 
 /** Rebase the format record for a single edit, returning undefined if absent. */
-function rebaseOneEdit(format: FormatRecord | undefined, edit: Edit): FormatRecord | undefined {
+function rebaseOneEdit(
+	format: FormatRecord | undefined,
+	edit: Edit
+): FormatRecord | undefined {
 	if (!format) return undefined;
 	const delta = edit.insertedText.length - (edit.endPos - edit.startPos);
 	return rebaseTrivia(format, edit.startPos, delta);

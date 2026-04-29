@@ -1,193 +1,238 @@
-# Feature Specification: Template Engine Converge
+# Feature Specification: Render Pipeline Optimization
 
-**Feature Branch**: `020-template-engine-converge`
-**Created**: 2026-04-25
-**Last Updated**: 2026-04-27
-**Status**: Draft (spec complete; plan not yet written)
-**Input**: User description: "template-engine-converge — collapse the two on-disk template directories (`packages/{lang}/templates/*.jinja` user-facing + `packages/{lang}/rust-render/templates/*.jinja` Askama mirror) into a SINGLE canonical template per kind per grammar. Both runtimes consume the same byte-equal file. The regen-mirror class of bug that produced features 016 Cluster A (python comprehensions) and Cluster B (rust patterns) becomes unrepresentable." Follow-up user-approved scope folded into this same spec: move grammar-local native render crates out of `packages/<grammar>/rust-render` and into `rust/crates/sittir-render-<grammar>`, including crate rename plus all docs/commands/examples updates.
+**Feature Branch**: `020-render-pipeline-optimization`  
+**Created**: 2026-04-25  
+**Last Updated**: 2026-04-28  
+**Status**: Implemented  
+**Input**: User description: "Update/begin spec 020 using `specs/020-template-engine-converge/spec.md`, incorporate the existing 020 content, and fold in the attached design for **Render Pipeline Optimization — Level 1 + Level 3**. Level 1 removes the native step-2→3 clone boundary by borrowing from `TemplateContext`; Level 3 removes `TemplateContext` entirely by rendering directly from `NodeData`. Both levels land only after parity ceilings are zero on both TS and native backends, and they preserve the existing Askama + `.jinja` + N-API surfaces."
+
+## Architecture Addendum (2026-04-28)
+
+The optimization work captured by 020 remains implemented, but the agreed
+**steady-state architecture** has changed since the original rollout:
+
+- `sittir-core` should own the shared Rust primitives **and** the generic
+  engine implementation.
+- `sittir-{lang}` owns the grammar-specific adapter layer: generated
+  render code, tree-sitter language binding, template hash, backend
+  selection, and the thin N-API binding for that grammar.
+- On the JS side, `@sittir/core` currently exposes both low-level runtime
+  primitives and the generic engine surface. Follow-on cleanup should make
+  the engine boundary explicit so `core` is not simultaneously the primitive
+  substrate and the top-level engine shim.
+- The former shared native backend and separate generated render modules were
+  transitional packaging. The desired crate boundary is literal:
+  `rust/crates/sittir-{lang}` owns its generated render module, native
+  binding, tree-sitter language binding, and backend adapter surface.
+
+This addendum does **not** change the Level 1 / Level 3 optimization story
+below. It records the agreed follow-on architecture target so future work
+stops reinforcing the temporary native packaging split.
 
 ## Current Architecture Alignment
 
-This spec is written against the **current main-repo architecture**, not the pre-011 `templates.yaml` era:
+This revision keeps the earlier 020 draft's convergence work as an explicit baseline while shifting the active focus to the **next native-render bottleneck after convergence/parity stabilization**.
 
-- Canonical authored/generated templates already live at `packages/{lang}/templates/*.jinja` (spec 011).
-- The TypeScript renderer (`packages/core/src/render.ts`) reads those canonical files through the Nunjucks path.
-- The native render path currently generates grammar-local crates under `packages/{lang}/rust-render/`, including `src/templates.rs` plus a copied `templates/` directory whose bodies are rewritten for native-only concerns (today this includes list-usage rewriting such as `except_clauses -> except_clauses_list`, plus reserved-keyword accommodations).
-- The shared Rust transport shape is `sittir_core::prepare::TemplateContext` (`fields`, `fields_list`, `children`, `children_list`, `variant`, `text`, flank metadata). Convergence work happens in the **generated Askama view over that transport, the native crate layout, and template-loading paths**, not by changing the feature back to a YAML-based design.
-- The user explicitly chose to **fold the native-crate relocation into spec 020** rather than create a separate feature. 020 therefore owns both: (a) canonical-template-source convergence and (b) relocating/renaming native render crates to `rust/crates/sittir-render-{lang}`.
+- The earlier 020 content remains in force as the prerequisite architecture story, and this feature owns any remaining work needed to finish that baseline before or alongside the optimization rollout:
+  - one canonical template directory per grammar under `packages/{lang}/templates/`,
+  - one standard `--all` regenerate workflow for TS and native artifacts,
+  - no second native-only template body or drift-prone mirror,
+  - parity baselines from feature 016 as the regression gate.
+- The current native render pipeline still pays a substantial per-render cost even after the template/crate layout is made coherent:
 
-020 therefore builds directly on specs **011**, **012**, and **016**.
+  1. deserialize `NodeData`,
+  2. build a `TemplateContext` with `fields`, `fields_list`, `children`, and flank metadata,
+  3. clone those rendered strings/vectors into a per-kind Askama struct,
+  4. render the Askama template into the output string.
 
-## Chosen Approach: Option C (generated Askama-view convergence + centralized native crate relocation) with B -> A as ordered fallbacks
+- For a node with `N` fields, step 2 builds two field maps and step 3 copies data back out of them once. For a representative 7-field node, the step-2→3 boundary performs 14 scalar/list clones before Askama writes any bytes.
+- The user-provided Level 1 + Level 3 design targets that waste without reopening the earlier convergence decisions. Askama remains the template engine, `.jinja` remains the canonical template surface, and the N-API boundary remains `render(node_json) -> String`.
+- This spec therefore treats earlier 020 convergence constraints as **retained baseline requirements**, then adds two optimization levels on top:
+  - **Level 1**: borrow from `TemplateContext` instead of cloning;
+  - **Level 3**: remove `TemplateContext` and render directly from `NodeData`.
 
-This feature commits to **Option C** as the primary path: remove the native-only template-body rewrite layer by changing the generated Askama-facing surface so the canonical templates under `packages/{lang}/templates/*.jinja` can be consumed as-authored by both backends, while simultaneously relocating the generated native render crates from `packages/{lang}/rust-render/` to `rust/crates/sittir-render-{lang}/`.
+## Chosen Approach: Retain convergence baseline, then land Level 1 before Level 3
 
-Concretely:
+020 now covers a staged native-render optimization program:
 
-- the shared `sittir_core::prepare::TemplateContext` may remain the internal transport (`fields`, `fields_list`, etc.);
-- the convergence target is the **generated per-kind Askama struct surface and template-loading path**, so list-shaped fields no longer require a second copied template body with `_list`-suffixed identifiers; and
-- the generated native crate itself becomes a centralized Rust-workspace member (`rust/crates/sittir-render-{lang}`), so repo layout and commands tell one consistent story about where native code lives.
+1. **Retain and respect the earlier convergence baseline**. The repository still converges on one canonical template directory per grammar, one regenerate workflow, and no native-only template mirror. The formerly grammar-owned native/render module layout is now considered transitional rather than a target state.
+2. **Land Level 1 first**. Level 1 is intentionally narrow and codegen-driven: generated Askama structs borrow from the already-built `TemplateContext` instead of owning cloned `String`/`Vec<String>` values. This is the low-risk win.
+3. **Land Level 3 second**. Level 3 is architectural: generated per-kind render functions resolve fields directly from `NodeData`, inline the needed metadata, and feed Askama without an intermediate `TemplateContext`.
+4. **Keep rollback boundaries sharp**. Level 3 is allowed to coexist with the old path while parity is being proven. If direct rendering cannot preserve byte-identical output, the feature stops after Level 1 rather than half-removing the existing preparation layer.
+5. **Treat both levels as full supported-grammar rollouts for completion.** The feature is not complete until `rust`, `typescript`, and `python` all have the relevant level enabled. Temporary mixed-mode validation is allowed only inside the implementation sequence while proving parity, not as the merged end state.
 
-The two alternatives are kept on the record as ordered fallbacks. They activate only if the verification gate below disproves Option C on the current architecture.
+The revised 020 feature therefore has two promises:
 
-- **Option B (first fallback) — native-side accessor adapter, still one template source.** If Askama cannot consume the canonical template text directly from the generated struct surface, introduce a thin generated native adapter layer (custom accessors, wrapper fields, or filter-level helpers) that preserves the single canonical template body. This fallback may change generated Rust code and helpers, but it is **not** allowed to re-introduce a second hand-edited or separately-authored template directory, and it still uses the relocated crate layout.
-- **Option A (second fallback) — deterministic native preprocessor with one declared rule table.** If both direct convergence and a native adapter fail, keep a single canonical template directory but run a deterministic codegen/build-time rewrite into the native load path. The rewrite rules must live in one declared source (for example in `packages/codegen/src/emitters/rust-render.ts`) and be auditable, testable, and minimal. This is the safety net, not the preferred design.
+- **Promise A — earlier 020 content stays valid**: one template source, one regenerate workflow, no hand-maintained native mirror, and a clear distinction between transitional packaging and the target end-state architecture.
+- **Promise B — native rendering gets cheaper in staged steps**: first remove the clone boundary, then remove the intermediate transport entirely.
 
-## User Scenarios & Testing _(mandatory)_
+## Clarifications
 
-### User Story 1 - One template directory per grammar (Priority: P1)
+### Session 2026-04-28
 
-A maintainer touching codegen needs a single canonical place where the per-kind Jinja templates live. Today there are two template directories per grammar — `packages/{lang}/templates/*.jinja` (consumed by the TS/Nunjucks path) and `packages/{lang}/rust-render/templates/*.jinja` (consumed by Askama after a copy-and-rewrite step). The second directory is not independently authored, but it is still a second on-disk bundle that can drift or encode native-only syntax accommodations. After this feature, both runtimes consume the same byte-equal template files from one canonical location; the second directory disappears or becomes a verifiable symlink with no body transformation.
+- Q: Does 020 fully own the retained baseline convergence work, or only assume it as a prerequisite? → A: 020 fully owns any remaining baseline convergence work and the Level 1/Level 3 optimization rollout.
+- Q: Can Level 1 or Level 3 merge grammar-by-grammar, or must each level land across all supported grammars together? → A: Both Level 1 and Level 3 must land across `rust`, `typescript`, and `python` together before the feature is considered complete.
 
-**Why this priority**: This is the core value of the feature. The stale-mirror bug class exposed by feature 016 becomes structurally impossible only when there is exactly one template source per kind per grammar.
+## User Scenarios & Testing *(mandatory)*
 
-**Independent Test**: Pick one grammar (recommend `python`). Run the normal regenerate command, then run parity under both `SITTIR_BACKEND=typescript` and `SITTIR_BACKEND=native`. Confirm that the native render path reads the same template bytes as the TS path and that any native template directory under the relocated crate path is either absent or a symlink with no rewritten bodies.
+### User Story 1 - Native Askama rendering stops cloning field values at the context boundary (Priority: P1)
+
+A maintainer working on the native render path needs the generated Askama structs to borrow already-rendered field values from the render-time context instead of cloning them out of `TemplateContext` one by one. The output must remain byte-identical, and authored `.jinja` files must not change.
+
+**Why this priority**: This is the smallest safe optimization with the clearest payoff. It directly removes the dominant waste at the step-2→3 boundary without changing the broader architecture.
+
+**Independent Test**: Regenerate one grammar, confirm the generated Askama structs use borrowed scalar/list field types, then run parity on both backends. The rendered bytes remain unchanged while the generated dispatcher no longer performs per-field `.cloned().unwrap_or_default()` work.
 
 **Acceptance Scenarios**:
 
-1. **Given** the converged state on this branch, **When** a maintainer lists `packages/{lang}/templates/` and the corresponding native crate path, **Then** they find exactly one canonical template directory and no second independently-generated template body.
-2. **Given** a kind `X` for grammar `G`, **When** the TS renderer and the native renderer each render the same `NodeData(X)`, **Then** both outputs come from the same canonical `packages/G/templates/X.jinja` body; no copied-and-rewritten second template body is consulted.
-3. **Given** a contributor edits `packages/G/templates/X.jinja` and regenerates, **When** the next CI run executes parity and drift checks, **Then** there is no separately-generated native template body that could have gone stale.
+1. **Given** a template-backed native kind with scalar and list fields, **When** the grammar is regenerated after Level 1 lands, **Then** the generated Askama struct borrows those values from the render-time context instead of owning cloned copies.
+2. **Given** the Level 1 native path, **When** the same `NodeData` is rendered through both backends, **Then** the rendered output remains byte-identical to the pre-optimization result.
+3. **Given** existing canonical `.jinja` templates and filters, **When** Level 1 is enabled, **Then** they render correctly without authored template changes.
 
 ---
 
-### User Story 2 - Native render crates live in the Rust workspace, not under grammar packages (Priority: P1)
+### User Story 2 - Native rendering can resolve fields directly from `NodeData` (Priority: P1)
 
-A maintainer working on the native renderer needs the repository layout to reflect that the native render crates are Rust workspace members, not grammar-package subdirectories. Today each grammar has a generated crate under `packages/{lang}/rust-render/`. After this feature, those grammar-local crates are removed and replaced by centralized crates at `rust/crates/sittir-render-rust`, `rust/crates/sittir-render-typescript`, and `rust/crates/sittir-render-python`.
+A maintainer optimizing the native renderer needs the runtime pipeline to skip `TemplateContext` entirely once parity is stable. Instead of building `fields` / `fields_list` hash maps per render, generated per-kind render functions resolve the required data directly from `NodeData`, recurse only when needed, and feed Askama from that direct view.
 
-**Why this priority**: The user explicitly approved this relocation and chose to fold it into 020. Without the relocation, the repo would still tell two conflicting stories: templates are converged, but native crate ownership still appears package-local.
+**Why this priority**: This is the architectural payoff. It removes the remaining per-render field-map allocation layer and aligns the native runtime more closely with the actual model the code generator already knows.
 
-**Independent Test**: After regeneration, verify that no `packages/{lang}/rust-render/` crate directories remain, that `rust/crates/sittir-render-{lang}/` exists for all three grammars, and that Cargo workspace membership plus dependent path references resolve through the new location and crate names.
+**Independent Test**: On a representative grammar, generate per-kind direct-render functions beside the current path, switch dispatch to the direct functions, and run parity on both backends. The output remains byte-identical while the runtime no longer builds `TemplateContext` field maps for template resolution.
 
 **Acceptance Scenarios**:
 
-1. **Given** the converged repository layout, **When** a maintainer searches for generated native render crates, **Then** they find them only under `rust/crates/sittir-render-{lang}/`.
-2. **Given** the old grammar-local path `packages/{lang}/rust-render/`, **When** a maintainer inspects the tree after regeneration, **Then** that crate path no longer exists as the generated native crate location.
-3. **Given** the relocated native crate for grammar `G`, **When** Cargo or a dependent crate references it, **Then** the package name and filesystem path both use the new `sittir-render-{g}` convention consistently.
+1. **Given** a leaf field whose text can be borrowed directly from nested `NodeData`, **When** Level 3 renders that field, **Then** it returns the existing text without recursive rendering or intermediate field-map allocation.
+2. **Given** a structured required field, **When** Level 3 renders the parent kind, **Then** the generated resolve helper recurses only for that field and passes the result straight into the Askama struct.
+3. **Given** a template-backed kind with children, separators, and flank metadata, **When** Level 3 renders that kind, **Then** it preserves the same output semantics as the prior pipeline while avoiding `TemplateContext`.
 
 ---
 
-### User Story 3 - Native artifact regeneration is part of the standard `--all` workflow (Priority: P1)
+### User Story 3 - Optimization rollout remains reversible and parity-gated (Priority: P1)
 
-A maintainer running the regular codegen invocation (`npx tsx packages/codegen/src/cli.ts --grammar X --all --output packages/X/src`) needs the output to be sufficient for **both** backends. Today the native path still has its own regeneration branch and template-copy logic. After this feature, the standard `--all` path is the only workflow needed: it refreshes TypeScript artifacts plus the relocated native render crate artifacts, fixture extracts, and any template-bundle hashes together.
+A maintainer landing this feature needs each optimization step to be independently verifiable and reversible. Level 1 must be a self-contained gain. Level 3 must land in a sequence that can stop safely before cleanup if byte-identical parity is not yet proven.
 
-**Why this priority**: A single template directory is not enough if maintainers can still regenerate TS-facing output and native-facing output through different workflows. The same "forgot the second step" failure mode would remain.
+**Why this priority**: The repository already depends on parity baselines as a hard gate. A partially removed render-preparation layer would be harder to recover from than a paused Level 3 rollout.
 
-**Independent Test**: From a clean checkout, run `--all` for `rust`, `typescript`, and `python` with no extra native-specific flag. Then run both the TS and native parity suites. Both must pass without any follow-up regeneration command, and the refreshed native artifacts must appear under `rust/crates/sittir-render-{lang}/`.
+**Independent Test**: Review the implementation history and repository state after each milestone: helper introduction, per-kind render emission, dispatch switch, parity verification, cleanup. Each milestone can be validated without assuming the later ones have landed.
 
 **Acceptance Scenarios**:
 
-1. **Given** a clean checkout with no prior native regeneration step, **When** the maintainer runs `npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src`, **Then** both backends' parity suites pass without any second regenerate command.
-2. **Given** the post-convergence codegen pipeline, **When** a maintainer reads `packages/codegen/src/cli.ts`, **Then** they find one standard regenerate flow for supported grammars, not a separate template-generation branch that can produce a second template flavour or a second crate-refresh workflow.
-3. **Given** the relocated native render artifacts for grammar `G` (`rust/crates/sittir-render-{g}/src/templates.rs`, `src/hash.rs`, `src/lib.rs`, and crate-local fixture metadata), **When** the regular `--all` workflow runs, **Then** those artifacts are refreshed by that same workflow alongside the canonical templates.
+1. **Given** the beginning of Level 3, **When** direct-render helpers are introduced, **Then** the old `TemplateContext` path may still exist alongside them until parity is proven.
+2. **Given** a parity regression in the direct-render path, **When** the rollback decision is made, **Then** Level 1 may remain while the direct-render cleanup is deferred.
+3. **Given** the final Level 3 cleanup, **When** the obsolete preparation/filter infrastructure is removed, **Then** parity has already been proven on both backends for all supported grammars.
 
 ---
 
-### User Story 4 - Contributors can explain both the template location and the native crate location in one sentence (Priority: P2)
+### User Story 4 - Contributors can explain both the retained baseline and the new optimization stages (Priority: P2)
 
-A new contributor browsing the repository needs to be able to answer both questions — "where do templates live?" and "where do native render crates live?" — with one short explanation: _"Templates live in `packages/{lang}/templates/`; TS reads them directly, native reads that same directory directly or via a symlink, and the generated native render crate for each grammar lives in `rust/crates/sittir-render-{lang}` rather than under the grammar package."_
+A contributor reading the repository needs one coherent explanation of the native render architecture: canonical `.jinja` templates remain the source of truth, `sittir-core` is the long-term home of the generic engine, `sittir-{lang}` is the long-term home of grammar-specific native/render ownership, the JS-side engine surface must stop being conflated with low-level `@sittir/core` primitives, Level 1 borrows from the legacy context, and Level 3 removes that context entirely.
 
-**Why this priority**: The structural fix is easy to accidentally undo if the repo still reads like there are two template systems or two competing native-crate layouts. This story captures the documentation and command updates that prevent future regressions.
+**Why this priority**: The earlier 020 scope and the new optimization scope now coexist. If contributors cannot explain where templates live, where native crates live, and how Level 1 differs from Level 3, the repository will drift back toward accidental duplicate paths and ad-hoc rewrites.
 
-**Independent Test**: A contributor unfamiliar with this feature reads the header comments in `packages/codegen/src/emitters/templates.ts`, `packages/codegen/src/emitters/rust-render.ts`, and the CLI help/README/CLAUDE guidance. Within five minutes they can correctly state where templates live, where the native crates live, how the native path reaches canonical templates, and which regenerate commands/examples are canonical.
+**Independent Test**: A contributor unfamiliar with the change reads the updated spec, generator comments, and contributor docs, then correctly explains the canonical template path, native crate path, current native optimization level, and the staged Level 3 cleanup story.
 
 **Acceptance Scenarios**:
 
-1. **Given** the post-convergence codebase, **When** a contributor reads `packages/codegen/src/emitters/templates.ts`, **Then** it explicitly names `packages/{lang}/templates/` as the canonical template location for both runtimes.
-2. **Given** a contributor reads `packages/codegen/src/emitters/rust-render.ts` and the regen command help, **When** they look for the native crate location and regen command examples, **Then** they find only the relocated `rust/crates/sittir-render-{lang}` path and the updated command/documentation examples.
-3. **Given** a contributor searches the repo docs for the old `packages/{lang}/rust-render` examples, **When** the feature is complete, **Then** contributor-facing commands and examples have been updated to the relocated crate path and naming convention.
+1. **Given** the revised 020 documentation, **When** a contributor asks where templates live, **Then** the answer remains `packages/{lang}/templates/` for all grammars.
+2. **Given** the same contributor asks where native/render ownership should live, **When** they inspect the docs, **Then** they find that the target steady state is grammar-specific ownership in `sittir-{lang}` with the generic engine in `sittir-core`, and that any shared intermediate native crate is transitional only.
+3. **Given** the contributor asks what should happen to the JS-side engine helpers, **When** they inspect the docs, **Then** they find that the generic engine surface should be separated from low-level `@sittir/core` primitives instead of leaving `core` overloaded as both substrate and engine shim.
+3. **Given** the contributor asks what changed in Level 1 versus Level 3, **When** they read the relevant documentation, **Then** they find a clear distinction between borrowed `TemplateContext` rendering and direct `NodeData` rendering.
 
 ---
 
 ### Edge Cases
 
-- **Field referenced in both scalar and list positions**: Some templates use the same logical field in both a presence check and a list join/loop (for example `except_clauses | isPresent` and `except_clauses | join("\n")`). Convergence must preserve that authoring surface without requiring two different template identifiers in the canonical file.
-- **Reserved-word and raw-identifier collisions on the native side**: Rust fields like `type`, `trait`, `crate`, `self`, `super`, and `Self` may need raw identifiers or documented suffix exceptions in generated Rust. Any such exceptions must be declared in one place and be the only allowed native-only identifier divergence.
-- **Cargo path fallout from relocation**: Moving the generated native crates from `packages/{lang}/rust-render/` to `rust/crates/sittir-render-{lang}/` changes workspace membership, dependency paths, and build-script assumptions. All path-sensitive references must be updated atomically so no mixed-layout state survives.
-- **Askama compile-time path stability after relocation**: Askama resolves template paths at `cargo build` time. Relocating the crate changes the relative path from the crate root to the canonical template directory; convergence must not introduce a build-order or path-resolution hazard.
-- **Symlink portability**: macOS and Linux handle symlinks well; Windows and packaging flows are trickier. If the implementation keeps a native `templates/` path as a symlink rather than removing it, the packaging and developer-mode story must be documented and tested. Removal is preferred when practical.
-- **Non-template native artifacts still exist**: Even after convergence, the native path still needs generated Rust source, fixture extracts, and template-bundle hashes. Removing the second template directory and relocating the crate must not orphan `templates.rs`, `hash.rs`, `lib.rs`, or fixture metadata.
-- **Docs/commands/example drift**: The path move and crate rename affect README snippets, CLAUDE guidance, build instructions, and example paths. Partial updates would leave the repository internally inconsistent even if the code compiles.
-- **Filter or control-flow semantic drift beyond `_list` naming**: If Nunjucks and Askama disagree on a filter/control primitive that appears in canonical templates, the mismatch is a hidden engine divergence and must be resolved explicitly rather than papered over by a copied native-only template body.
+- **Field used in both scalar and list positions**: Existing canonical templates may still test a field for presence and also join/iterate it. Level 1 must preserve those usages with borrowed references, and Level 3 must preserve them via direct-resolution helpers.
+- **Leaf vs structured field ambiguity at runtime**: Some generated decisions come from the model, but runtime data may still arrive in multiple structural shapes. Level 3 must short-circuit true leaf text and recurse only when structure is actually present.
+- **Borrow lifetime split**: Level 3 Askama structs may need to borrow simultaneously from stack-local rendered strings and from text borrowed directly out of `NodeData`. The generated code must keep those lifetimes valid for the render call without leaking them outward.
+- **Children separator / flank handling**: Direct child rendering must preserve separators, leading/trailing flank detection, and any per-kind format-driven child-join behavior that currently survives through the preparation layer.
+- **Unknown or non-template kinds**: Kinds without a template-backed render function must continue to fall back safely to existing text behavior rather than forcing empty output or panics.
+- **Retained convergence constraints still apply**: Optimization work must not reintroduce a second native template body, a grammar-local native crate path, or a second regenerate workflow as an implementation shortcut.
+- **Generated-vs-handwritten boundary**: The feature may change codegen sources and hand-written native runtime helpers, but it must not normalize hand-edits to generated `templates.rs`, grammar package outputs, or native render module artifacts.
+- **Format-aware rendering behavior**: Existing format-aware rendering behavior, including tree-level cached format state and per-kind formatting data already modeled by prior features, must remain byte-identical before and after both optimization levels.
 
 ## Risk and Verification Gate
 
-**Load-bearing assumption**: The current native architecture can be converged without retaining the `rewriteListUsage` template-body transform, and that convergence remains valid after the native crates are relocated to `rust/crates/sittir-render-{lang}`. In other words, the generated Askama-facing surface can support canonical usages such as `{% if except_clauses | isPresent %}{{ except_clauses | join("\n") }}{% endif %}` directly from the canonical template body in the relocated crate layout.
+**Load-bearing assumption**: The earlier 020 convergence baseline and the parity baselines from features 016/017 either already hold or can be made to hold before optimization work begins. The optimization feature is not the place to absorb fresh parity debt.
 
-**Verification gate** — the implementation phase's first task is an empirical convergence spike on the current architecture plus the approved relocation target. Procedure:
+The revised 020 gate has two checkpoints:
 
-1. Pick one grammar (recommend `python`) and one representative kind that currently requires list-usage rewriting (`try_statement` is the canonical probe because it exercises both `isPresent` and `join("\n")` on `except_clauses`).
-2. In a throwaway branch off this one, modify the generated-native surface (the relevant logic in `packages/codegen/src/emitters/rust-render.ts`, and if needed `rust/crates/sittir-core/src/prepare.rs` or `filters.rs`) so the generated Askama path can consume the canonical identifier form for that kind **without** rewriting the template body to `except_clauses_list`.
-3. At the same time, relocate the probe grammar's generated native crate to the target layout (`rust/crates/sittir-render-{lang}`) and verify the native template-loading path still resolves the canonical template body from there. Do **not** hand-author a permanent second template.
-4. Run `cargo build` for the relocated native path and then run parity for the probe kind under both `SITTIR_BACKEND=typescript` and `SITTIR_BACKEND=native`.
-5. **Decision**:
-   - **If compile + parity both hold**: Option C is verified. Proceed with full rollout: eliminate the list-usage rewrite, relocate/rename the native crates, converge the directories, and then address only any documented keyword/raw-identifier exceptions.
-   - **If direct convergence fails but a generated native accessor/helper layer can preserve the one-template-source rule**: drop to Option B.
-   - **If both fail** on a meaningful cross-section of rules: drop to Option A and record the exact rewrite rules in one declared place.
-6. Record the result in `specs/020-template-engine-converge/research.md` during planning/implementation before the full rollout begins.
+1. **Prerequisite Gate — stable baseline before optimization**
+   - Canonical templates and one `--all` regeneration workflow remain required baseline constraints, while the native packaging layout is allowed to evolve toward the grammar-owned `sittir-{lang}` end state.
+   - Parity ceilings must be zero on both TS and native backends for supported grammars before Level 1 starts.
 
-## Requirements _(mandatory)_
+2. **Optimization Gates**
+   - **Level 1 gate**: prove on one grammar that Askama can consume borrowed scalar/list/children/text references from the existing render-time context with unchanged authored templates and unchanged filter behavior.
+   - **Level 3 gate**: prove on one grammar and representative kinds that direct `NodeData` render functions can replace `TemplateContext` without output drift, including leaf fields, structured fields, list joins, separators, flank detection, variants, and current format-aware behavior.
+
+**Decision rules**:
+
+- **If Level 1 passes**: land it broadly and keep it even if Level 3 takes longer.
+- **If Level 3 passes for the representative probe set**: continue the staged rollout and cleanup.
+- **If Level 3 does not preserve byte-identical parity**: stop after Level 1, keep the old preparation path, and record the exact blocker before any cleanup removes `TemplateContext`-dependent infrastructure.
+
+## Requirements *(mandatory)*
 
 ### Functional Requirements
 
-- **FR-001**: Per kind per grammar, exactly one canonical `.jinja` template file MUST exist under `packages/{lang}/templates/`. Any native `templates/` path under `rust/crates/sittir-render-{lang}/` is removed entirely or exists only as a verifiable symlink to the canonical directory. No independently-generated second template body is permitted.
-- **FR-002**: The generated native render crates currently under `packages/{lang}/rust-render/` MUST be relocated to `rust/crates/sittir-render-{lang}/`, and the Cargo package names, dependency paths, and crate references MUST be renamed to match that convention.
-- **FR-003**: Both runtimes (TypeScript/Nunjucks and native/Askama) MUST consume byte-equal template files. Native-specific template-body rewrites are forbidden once convergence lands, except for any explicitly documented identifier exception list allowed by FR-010.
-- **FR-004**: The chosen convergence approach is **Option C**. Mechanism:
-  - The shared Rust transport type `sittir_core::prepare::TemplateContext` may remain map-based (`fields`, `fields_list`, `children`, `children_list`, etc.).
-  - The generated Askama-facing surface in `rust/crates/sittir-render-{lang}/src/templates.rs` and its construction logic MUST be changed so canonical template identifiers can be consumed without the current native list-usage rewrite.
-  - The current native template-body rewrite in `packages/codegen/src/cli.ts` (`rewriteListUsage`) MUST be removed.
-  - After verification passes, native template loading MUST come from the canonical directory directly or via a no-transform symlink.
-- **FR-005**: The repository MUST have one standard regenerate workflow for supported grammars. Running `npx tsx packages/codegen/src/cli.ts --grammar X --all --output packages/X/src` MUST refresh both TS and native artifacts. If `--rust-render` remains for compatibility, it MUST be a no-op alias to the standard workflow, not a separate regeneration path.
-- **FR-006**: Non-template native artifacts that previously travelled with the native path MUST continue to be regenerated by the standard workflow at the relocated crate location. At minimum this includes `rust/crates/sittir-render-{lang}/src/templates.rs`, `src/hash.rs`, `src/lib.rs`, and any crate-local fixture metadata used by the native parity workflow.
-- **FR-007**: All passing parity counts established by feature 016 (in `specs/016-parity-regressions/baselines/{ts,native}.json`) MUST hold post-convergence. This feature is non-functional from a render-output standpoint; counts may improve, but they MUST NOT regress.
-- **FR-008**: Documentation, commands, and examples MUST be updated to the relocated crate path and crate names. Contributor-facing references to `packages/{lang}/rust-render` as the native crate location are forbidden once this feature lands.
-- **FR-009**: Hand-edits to generated artifacts remain forbidden. Implementation changes MUST land in hand-written sources such as `packages/codegen/src/*`, `rust/crates/sittir-core/src/*`, and `packages/{lang}/overrides.ts` when needed. Generated outputs (`packages/{lang}/templates/*.jinja`, `packages/{lang}/src/*`, `rust/crates/sittir-render-{lang}/*`) may change only via regeneration.
-- **FR-010**: Any remaining native-only identifier exceptions (for example non-rawable Rust keywords) MUST be declared in one source of truth inside the native emitter and reflected consistently in generated Rust fields and documentation. Ad-hoc per-kind rewrites are forbidden. The only permitted native-only template-identifier divergence after this feature is the documented exception list.
-- **FR-011**: Convergence MUST remove native-only list-shape template rewrites entirely.
-- **FR-012**: Constitutional invariants MUST be preserved:
-  - Principle II (Fewer Abstractions) — convergence removes a duplicated template bundle and clarifies a single native crate layout.
-  - Principle III (Generated vs Hand-Written) — templates remain generated output; no new hand-maintained native template surface is introduced.
-  - Principle VI (Deterministic Output) — one canonical template source produces one deterministic bundle.
-  - Principle VII (Grammar-Agnostic Pipeline) — the convergence and relocation mechanisms work across `rust`, `typescript`, and `python` without per-grammar forks in the overall pipeline; any unavoidable exceptions live in one declared table.
+- **FR-001**: The earlier 020 convergence commitments remain active baseline scope for this feature, and 020 itself owns any remaining work needed to finish that baseline: one canonical template directory per grammar, one standard `--all` regenerate workflow, and no second native-only template mirror. The final native/render ownership target is grammar-specific ownership in `sittir-{lang}` rather than a permanent intermediate shared addon or `sittir-{lang}` crate layer.
+- **FR-002**: Optimization work MUST NOT begin until parity ceilings are zero on both TS and native backends for the supported grammars, using the parity baselines from feature 016 and the current format-aware render behavior as the regression gate.
+- **FR-003**: Level 1 MUST be implemented as a codegen-driven native-render change. It MUST NOT require authored `.jinja` template edits, a JS-renderer redesign, a new N-API boundary, or a new user-facing render API.
+- **FR-004**: In Level 1, generated Askama structs for template-backed kinds MUST borrow scalar field values, list field values, child collections, `variant`, and `text` from the render-time context instead of owning cloned `String` or `Vec<String>` copies.
+- **FR-005**: In Level 1, the generated native dispatcher MUST replace per-field clone extraction with zero-copy borrows or equivalent borrowed access for every template-backed field that previously used `.cloned().unwrap_or_default()` or equivalent copy-out logic.
+- **FR-006**: Existing Askama templates and current native filters MUST continue to render correctly against the Level 1 borrowed field surface without changing the authored template files.
+- **FR-007**: Level 3 MUST replace the native runtime path `NodeData -> TemplateContext -> Askama struct -> output` with `NodeData -> per-kind render function -> Askama struct -> output` for template-backed kinds.
+- **FR-008**: Level 3 generated per-kind render functions MUST resolve fields directly from `NodeData`, using model-driven strategies for required fields, optional fields, repeated fields, leaf fields, structured fields, variant-sensitive fields, and children.
+- **FR-009**: Level 3 MUST inline or compile-time-embed metadata previously queried through runtime render metadata surfaces, including leaf-kind knowledge, separators, variant routing, and equivalent render-time facts needed to populate Askama structs.
+- **FR-010**: Level 3 MUST preserve the current semantics for leaf short-circuiting, child rendering, separator/flank detection, variant routing, and format-aware rendering behavior while bypassing `TemplateContext`.
+- **FR-011**: Level 3 MUST land in staged, independently verifiable steps: helper introduction alongside the current pipeline, per-kind render emission alongside the current dispatch, dispatch switch, parity verification, and only then cleanup of obsolete preparation/filter infrastructure.
+- **FR-012**: If direct `NodeData` rendering cannot preserve byte-identical parity for representative kinds and grammars, the feature MUST stop after Level 1. Removing `TemplateContext`, `prepare.rs`, `GrammarMeta`, or equivalent preparation-only infrastructure is forbidden until parity proves stable.
+- **FR-013**: The generated-vs-handwritten boundary from the earlier 020 draft remains in force. Implementation changes MUST land in hand-written sources such as codegen emitters and shared runtime helpers, not by hand-editing generated `templates.rs`, grammar package outputs, or generated native crate artifacts.
+- **FR-014**: Contributor-facing documentation, commands, and examples MUST continue to describe one canonical template directory per grammar, one regenerate workflow, the target architecture of generic engine logic in `sittir-core` plus grammar-specific native/render ownership in `sittir-{lang}`, and the distinction between Level 1 and Level 3 consistently.
+- **FR-015**: Follow-on architecture guidance MUST also capture the JS-side cleanup target: `@sittir/core` should not remain the long-term location for both low-level runtime primitives and the generic engine entry surface, even if that separation lands as a subpath/module split rather than a new top-level package.
+- **FR-015**: Askama remains the template engine for this feature, canonical `.jinja` files remain the authored template surface, and the current `render(node_json) -> String` N-API boundary remains unchanged.
+- **FR-016**: Existing format-aware render behavior, including tree-level cached format state and any already-supported per-kind formatting data, MUST produce the same output before and after both optimization levels. On the native side, that behavior remains engine-owned state rather than per-node payload metadata.
+- **FR-017**: Level 1 and Level 3 are both whole-feature rollouts across the supported grammars. `rust`, `typescript`, and `python` MUST all complete a given level before that level is considered done for this feature; a grammar-by-grammar merged end state is not allowed.
 
-### Key Entities _(include if feature involves data)_
+### Key Entities *(include if feature involves data)*
 
-- **Canonical Template Directory**: The single per-grammar directory `packages/{lang}/templates/` containing one `.jinja` file per kind. Post-convergence, this is the only authored/generated template bundle both backends read.
-- **Centralized Native Render Crate**: The generated crate at `rust/crates/sittir-render-{lang}/` for each grammar. Post-convergence, this is the only valid filesystem location for the per-grammar native render crate.
-- **Shared TemplateContext Transport**: `sittir_core::prepare::TemplateContext`, the map-based native transport (`fields`, `fields_list`, `children`, `children_list`, `variant`, `text`, flank metadata). It is an internal render transport, not the source of truth for template file layout.
-- **Generated Askama View**: The per-kind generated structs and dispatcher in `rust/crates/sittir-render-{lang}/src/templates.rs` that project `TemplateContext` into Askama's typed template world. This is the native-side adaptation layer that must converge to the canonical template surface.
-- **Legacy Grammar-Local Native Crate**: The pre-convergence `packages/{lang}/rust-render/` path. Post-convergence it is removed as a crate location and survives only, if at all, as a historical concept in old branch history.
-- **Exception List**: The single declared table of any native-only identifier accommodations that remain legal after convergence (for example non-rawable Rust keywords). This list is auditable and testable.
-- **Verification Gate**: The initial spike that proves whether the current architecture can eliminate the native list-rewrite path while keeping canonical templates untouched and the native crate relocated.
+- **Canonical Template Directory**: The per-grammar `packages/{lang}/templates/` directory that remains the only authored template surface for both runtimes.
+- **Grammar-owned Native Layer**: The target steady-state location for generated render code, tree-sitter language binding, template hash, and the thin N-API binding: owned by `sittir-{lang}` rather than a long-lived shared intermediary crate.
+- **NodeData**: The render input model whose fields, children, text, and format data become the direct source for Level 3 per-kind render functions.
+- **TemplateContext**: The current native preparation-layer transport containing rendered field maps, child lists, text, variant, and flank metadata. It remains only as the Level 1 source surface and the pre-Level-3 legacy path.
+- **Borrowed Askama View**: The Level 1 generated struct surface that borrows field/list/child/text/variant data from the existing render-time context instead of cloning it.
+- **Direct Render Function**: A generated Level 3 per-kind function that resolves the right field values from `NodeData` and constructs the Askama struct without building `TemplateContext`.
+- **Resolve Helper Set**: The small shared helper surface for leaf, optional, required, repeated, variant, and child resolution that supports Level 3's direct-render functions.
+- **Verification Gate**: The staged proof that Level 1 compiles and preserves parity, and that Level 3 preserves byte-identical output before cleanup removes the legacy preparation layer.
 
-## Success Criteria _(mandatory)_
+## Success Criteria *(mandatory)*
 
 ### Measurable Outcomes
 
-- **SC-001**: For every grammar in `{rust, typescript, python}`, there is exactly one canonical template directory. Any native `templates/` path under `rust/crates/sittir-render-{lang}/` is either absent or a symlink to the canonical directory. Verified by a repository script or shell loop.
-- **SC-002**: No generated native render crate remains under `packages/{lang}/rust-render/`. Instead, `rust/crates/sittir-render-rust`, `rust/crates/sittir-render-typescript`, and `rust/crates/sittir-render-python` exist and are the only native render crate locations.
-- **SC-003**: Cargo workspace membership, package names, and dependent references use the relocated `sittir-render-{lang}` names consistently. Verified by building the native workspace and grepping for stale crate-path references in contributor-facing sources.
-- **SC-004**: Running `npx tsx packages/codegen/src/cli.ts --grammar X --all --output packages/X/src` is sufficient to refresh both TS and native artifacts for `X in {rust, typescript, python}`. No second regeneration command is required.
-- **SC-005**: All three grammars' parity suites pass on both backends using the converged template layout and relocated native crates. Counts in `specs/016-parity-regressions/baselines/{ts,native}.json` stay equal or improve.
-- **SC-006**: `packages/codegen/src/cli.ts` no longer contains the native list-body rewrite (`rewriteListUsage`) or any equivalent second-flavour template transform.
-- **SC-007**: A maintainer answering "where are the templates and native render crates?" can point to exactly one template directory per grammar and exactly one native crate path per grammar. Verified by spot-checking `templates.ts`, `rust-render.ts`, and contributor docs.
-- **SC-008**: The verification-gate result is written to `specs/020-template-engine-converge/research.md` before the full rollout begins.
+- **SC-001**: All supported grammars continue to pass parity on both backends after Level 1 and again after final Level 3 cleanup. Counts from `specs/016-parity-regressions/baselines/{ts,native}.json` stay equal or improve.
+- **SC-002**: For a representative 7-field template-backed node, the native render path performs zero step-2→3 scalar/list clone operations after Level 1. The generated native dispatcher no longer uses per-field `.cloned().unwrap_or_default()` or equivalent copy-out logic for those fields.
+- **SC-003**: Canonical authored `.jinja` templates remain unchanged by Level 1 and remain the only authored template surface throughout the feature.
+- **SC-004**: After the Level 3 dispatch switch, the native runtime allocates zero per-render field and field-list hash maps for template resolution.
+- **SC-005**: After final Level 3 cleanup, the obsolete preparation-only native render layer (`TemplateContext` construction plus preparation-only metadata/filter bridge code) no longer exists in the runtime path.
+- **SC-006**: Running the standard regenerate workflow for a supported grammar is still sufficient to refresh both TS and native artifacts before parity is run; no extra native-only regenerate step is introduced by the optimization work.
+- **SC-007**: Representative formatted and unformatted fixtures render byte-identically before and after each optimization level, demonstrating that the feature did not change existing format-aware output behavior.
+- **SC-008**: The Level 1 and Level 3 verification-gate results are recorded in the 020 planning/research artifacts before cleanup removes the legacy preparation path.
 
 ## Out of Scope
 
-- **Source format inference** (feature 017). 020 does not capture or replay source-format intent; it only converges the template bundle both render engines consume and relocates the native render crates.
-- **Walker refactors or whitespace-policy changes**. 020 does not redesign template generation semantics; it removes duplicate template bundles, native-only template rewrites, and the old grammar-local native crate layout.
-- **New grammar features**. 020 only converges the existing template/native-crate architecture for `rust`, `typescript`, and `python`.
-- **A new public render API**. `createRenderer`, `render_dispatch`, backend selection, and parity harness APIs stay conceptually the same; this feature changes how templates are sourced and where native generated crates live.
-- **Unbounded engine feature work**. If Askama/Nunjucks need deeper semantic alignment beyond what this convergence requires, that is follow-up work unless it directly blocks single-source template consumption in the relocated layout.
+- **Askama elimination (future Level 4)**. This feature changes how Askama structs are populated, not whether Askama is used.
+- **Changing the canonical `.jinja` template files as an engine split**. Templates remain the shared source of truth rather than becoming backend-specific.
+- **Changing the N-API render boundary**. `render(node_json) -> String` remains the public native entry point.
+- **New grammar features or unrelated parity fixes**. 020 only addresses retained convergence constraints plus native render-pipeline optimization.
+- **Per-node format caches or broader format-inference redesign**. Existing tree-level and engine-owned format state remain as-is; this feature does not move native formatting back onto per-node payloads.
 
 ## Assumptions
 
-- The current mainline architecture from specs 011, 012, and 016 is the baseline for this feature: canonical `.jinja` files already exist, generated native render crates already exist, and parity baselines already exist. 020 does **not** reopen the retired `templates.yaml` design.
-- The user-approved relocation requirement belongs in this feature and does not need a separate spec. Planning and implementation for 020 therefore treat crate relocation, crate rename, and docs/examples updates as first-class scope.
-- The present native divergence is primarily architectural duplication (second directory + copy-time rewrite + grammar-local crate placement), not a fundamental need for a second authored template language or a grammar-package-owned native crate.
-- The standard `--all` workflow can be made the single regeneration entry point for native artifacts. If a separate `--rust-render` flag still exists when implementation starts, 020 absorbs that cleanup as part of convergence rather than treating it as unrelated work.
-- Askama and Nunjucks can share the authored Jinja subset already in use by the repository. Any true semantic mismatch discovered during the verification gate is a fallback trigger (Option B or A), not a reason to keep the current mirror indefinitely.
-- Reserved-keyword/raw-identifier exceptions affect only a small minority of fields and can be managed through one declared exception table without turning back into a second template flavour.
-- The parity corpus and baseline JSONs from feature 016 remain the authoritative regression gate for this feature.
+- The earlier 020 convergence baseline (single canonical template directory, one standard regenerate workflow, no native template mirror) is part of this feature's owned scope. If any of it is still incomplete at implementation time, 020 finishes that baseline before or alongside Level 1 rather than treating it as a separate prerequisite feature.
+- The old shared native packaging was transitional. The current target layout is grammar-owned: `rust/crates/sittir-{lang}` owns the N-API binding, tree-sitter binding, generated `src/render` module, template hash, and backend adapter surface without a shared cross-grammar native package.
+- The current JS package shape is also transitional: `@sittir/core` may continue to host the engine APIs short-term, but the follow-on architecture should separate the generic engine boundary from the low-level runtime primitive surface.
+- Parity baselines from feature 016 and current format-aware render behavior from feature 017 remain the authoritative regression gate for this feature.
+- Askama can consume the borrowed scalar/list/child/text surfaces needed for Level 1 without requiring authored template changes.
+- Direct `NodeData` rendering can coexist beside the legacy `TemplateContext` path long enough to stage, validate, and if needed pause the Level 3 rollout safely.
+- The code generator already has, or can derive, enough model information to choose among leaf, optional, required, repeated, variant, and child-resolution strategies per field without introducing a second hand-maintained metadata source.
+- Only the native render path is being optimized here. The JS render engine keeps its current behavior except for staying output-compatible with the optimized native path.

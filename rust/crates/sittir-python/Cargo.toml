@@ -1,0 +1,28 @@
+[package]
+name = "sittir-python"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "napi-rs binding for the sittir Rust engine — Python grammar."
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = ["napi-bindings"]
+napi-bindings = ["dep:napi", "dep:napi-derive"]
+
+[dependencies]
+sittir-core = { path = "../sittir-core" }
+askama = { workspace = true }
+napi = { version = "3", default-features = false, features = ["napi4"], optional = true }
+napi-derive = { version = "3", optional = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tree-sitter = { workspace = true }
+tree-sitter-python = "0.25"
+
+[build-dependencies]
+napi-build = "2"

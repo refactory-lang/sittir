@@ -1,0 +1,111 @@
+//! Thin N-API binding for the Python grammar.
+
+pub mod render;
+
+#[cfg(feature = "napi-bindings")]
+use napi::bindgen_prelude::*;
+#[cfg(feature = "napi-bindings")]
+use napi_derive::napi;
+#[cfg(feature = "napi-bindings")]
+use sittir_core::engine::{Engine, EngineGrammar};
+#[cfg(feature = "napi-bindings")]
+use sittir_core::types::{Edit, FormatRecord, NodeData};
+
+#[cfg(feature = "napi-bindings")]
+use render::{render_dispatch, TEMPLATE_BUNDLE_HASH};
+
+#[cfg(feature = "napi-bindings")]
+#[derive(Clone, Copy)]
+struct PythonGrammar;
+
+#[cfg(feature = "napi-bindings")]
+impl EngineGrammar for PythonGrammar {
+    fn configure_parser(self, parser: &mut tree_sitter::Parser) -> std::result::Result<(), String> {
+        let language: tree_sitter::Language = tree_sitter_python::LANGUAGE.into();
+        parser
+            .set_language(&language)
+            .map_err(|e| format!("failed to set parser language: {e}"))
+    }
+
+    fn template_bundle_hash(self) -> &'static str {
+        TEMPLATE_BUNDLE_HASH
+    }
+
+    fn render(self, node: &NodeData) -> std::result::Result<String, String> {
+        render_dispatch(node).map_err(|e| e.to_string())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+#[napi(object)]
+pub struct EngineOptions {
+    pub format: Option<String>,
+}
+
+#[cfg(feature = "napi-bindings")]
+#[napi]
+pub struct SittirEngine {
+    inner: Engine<PythonGrammar>,
+}
+
+#[cfg(feature = "napi-bindings")]
+#[napi]
+impl SittirEngine {
+    #[napi(constructor)]
+    pub fn new(options: Option<EngineOptions>) -> Result<Self> {
+        let format = parse_format(options)?;
+        Ok(Self {
+            inner: Engine::new(PythonGrammar, format).map_err(Error::from_reason)?,
+        })
+    }
+
+    #[napi(getter)]
+    pub fn template_bundle_hash(&self) -> &'static str {
+        self.inner.template_bundle_hash()
+    }
+
+    #[napi]
+    pub fn find_and_read(&mut self, source: String, pattern: String) -> Result<String> {
+        self.inner
+            .find_and_read(source, pattern)
+            .map_err(Error::from_reason)
+    }
+
+    #[napi]
+    pub fn parse_and_read(&mut self, source: String) -> Result<String> {
+        self.inner
+            .parse_and_read(source)
+            .map_err(Error::from_reason)
+    }
+
+    #[napi]
+    pub fn read_node(&mut self, node_id: f64) -> Result<String> {
+        self.inner.read_node(node_id).map_err(Error::from_reason)
+    }
+
+    #[napi]
+    pub fn render(&self, node_json: String) -> Result<String> {
+        self.inner.render(node_json).map_err(Error::from_reason)
+    }
+
+    #[napi]
+    pub fn apply_edits(&self, source: String, edits: Vec<Edit>) -> Result<String> {
+        self.inner
+            .apply_edits(source, edits)
+            .map_err(Error::from_reason)
+    }
+
+    #[napi]
+    pub fn dispose(&mut self) {
+        self.inner.dispose();
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+fn parse_format(options: Option<EngineOptions>) -> Result<Option<FormatRecord>> {
+    options
+        .and_then(|opts| opts.format)
+        .map(|json| serde_json::from_str(&json))
+        .transpose()
+        .map_err(|e| Error::from_reason(format!("parse engine format failed: {e}")))
+}

@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitest/config';
+import { fileURLToPath } from 'node:url';
 
 /**
  * Root vitest config. The workspace is still defined in
@@ -11,6 +12,13 @@ import { defineConfig } from 'vitest/config';
  * test discovery to the real TypeScript sources.
  */
 export default defineConfig({
+	resolve: {
+		alias: {
+			'@sittir/core/engine': fileURLToPath(
+				new URL('./packages/core/src/engine-boundary.ts', import.meta.url)
+			)
+		}
+	},
 	test: {
 		exclude: ['**/node_modules/**', '**/dist/**', '**/.worktrees/**'],
 		// Compile every grammar's override parser before any test runs.

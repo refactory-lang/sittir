@@ -8,7 +8,7 @@ clarification Approach A decision (Q1 in `012-rust-core-port/spec.md`
 ## Summary
 
 Spec 012 ships the Rust port of `@sittir/core` as an internal engine
-loaded only via the `@sittir/<grammar>-native` napi binding packages;
+loaded only via the `@sittir/<grammar>-native` N-API binding packages;
 the Rust crate `sittir-core` is intentionally NOT published to
 crates.io for the MVP (FR-018). This follow-up feature lifts that
 restriction:

@@ -25,7 +25,7 @@ The remediation should fix the reviewed defects without widening scope into unre
 
 1. Rework the broader backend architecture beyond the reviewed defects.
 2. Fold in the separate JS-backend rename work.
-3. Fold in the rust-render crate relocation work.
+3. Fold in the render-module crate relocation work.
 4. Redesign the general `AnyNodeData` developer-facing API outside the native boundary.
 
 ## Design
@@ -88,7 +88,7 @@ The branch already has tests asserting the one-flag workflow. The implementation
 That means updating all of the following together:
 
 - CLI option parsing and help text
-- rust-render emitter headers
+- render-module emitter headers
 - CI regeneration commands
 - tests that describe the supported workflow
 

@@ -1,21 +1,21 @@
 interface User {
-    id: number;
-    name: string;
-    email: string;
+	id: number;
+	name: string;
+	email: string;
 }
 
 function createUser(id: number, name: string, email: string): User {
-    return { id, name, email };
+	return { id, name, email };
 }
 
 class UserStore {
-    private users: User[] = [];
+	private users: User[] = [];
 
-    add(user: User): void {
-        this.users.push(user);
-    }
+	add(user: User): void {
+		this.users.push(user);
+	}
 
-    findById(id: number): User | undefined {
-        return this.users.find(u => u.id === id);
-    }
+	findById(id: number): User | undefined {
+		return this.users.find((u) => u.id === id);
+	}
 }

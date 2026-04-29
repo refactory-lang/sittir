@@ -15,7 +15,10 @@ describe('boundary', () => {
 	});
 
 	function mockNativeBackend(
-		SittirEngine: new () => {
+		SittirEngine: new (
+			grammar: string,
+			options?: { format?: string }
+		) => {
 			render(nodeJson: string): string;
 			applyEdits(
 				source: string,
@@ -87,5 +90,40 @@ describe('boundary', () => {
 		} as const;
 		expect(() => render(invalidNode)).toThrow(/node\.\$children\[1\]/);
 		expect(renderSpy).not.toHaveBeenCalled();
+	});
+
+	it('uses engine-owned format when native render is called without per-call format args', async () => {
+		const renderSpy = vi.fn((_nodeJson: string) => '\tx');
+		mockNativeBackend(
+			class {
+				constructor(_grammar: string, _options?: { format?: string }) {}
+				render(nodeJson: string): string {
+					return renderSpy(nodeJson);
+				}
+				applyEdits(source: string): string {
+					return source;
+				}
+				parseAndRead(_source: string): string {
+					return JSON.stringify({ nodeData: identifier });
+				}
+				readNode(_nodeId: number): string {
+					return JSON.stringify(identifier);
+				}
+				dispose(): void {}
+			}
+		);
+
+		// Engine created with reader support
+		const { createEngine } = await import('../src/engine.ts');
+		const engine = createEngine({ format: { boundary: { leading: '\t' } } });
+		expect(engine.render(identifier)).toBe('\tx');
+		expect(renderSpy).toHaveBeenCalledTimes(1);
+
+		// Reader should be available on native engine
+		expect(engine.reader).toBeDefined();
+		if (engine.reader) {
+			const { root } = engine.reader.parseAndRead('x');
+			expect(root).toEqual(identifier);
+		}
 	});
 });

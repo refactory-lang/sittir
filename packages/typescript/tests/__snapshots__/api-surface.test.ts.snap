@@ -84,6 +84,7 @@ exports[`@sittir/typescript — API surface snapshot (SC-008) > top-level export
   "constructSignatureFrom": "function",
   "constructorTypeFrom": "function",
   "continueStatementFrom": "function",
+  "createEngine": "function",
   "createRenderer": "function",
   "debuggerStatementFrom": "function",
   "declaration": "object",

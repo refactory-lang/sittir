@@ -37,30 +37,28 @@
 - `packages/codegen/src/__tests__/check-perf-baseline.test.ts` — lock native-perf validation semantics.
 - `rust/crates/sittir-core/src/lib.rs` — export shared node-id validation helper.
 - `rust/crates/sittir-core/src/boundary.rs` — implement shared `f64 -> u64` node-id validation.
-- `rust/crates/sittir-rust-napi/src/lib.rs` — use shared node-id validation helper.
-- `rust/crates/sittir-typescript-napi/src/lib.rs` — use shared node-id validation helper.
-- `rust/crates/sittir-python-napi/src/lib.rs` — use shared node-id validation helper.
-- `packages/codegen/src/cli.ts` — remove `--rust-render` and make `--all` the single regen path.
-- `packages/codegen/src/emitters/rust-render.ts` — update generated header commands to the one-flag workflow.
+- `rust/crates/sittir-{lang}/src/lib.rs` — use shared node-id validation helper.
+- `packages/codegen/src/cli.ts` — remove `--all` and make `--all` the single regen path.
+- `packages/codegen/src/emitters/render-module.ts` — update generated header commands to the one-flag workflow.
 - `packages/codegen/src/emitters/parity-fixtures.ts` — align comments with the one-flag regen flow.
-- `packages/codegen/src/emitters/rust-render.test.ts` — lock the one-flag command strings.
+- `packages/codegen/src/emitters/render-module.test.ts` — lock the one-flag command strings.
 - `.github/workflows/ci.yml` — regenerate fixtures with the supported one-flag command.
 - `packages/codegen/src/compiler/link.ts` — delete stale alias-synthesis wording.
 - `packages/codegen/src/compiler/node-map.ts` — fix stale derivation-helper wording.
 - `packages/codegen/src/dsl/enrich.ts` — refresh stale enrich-pass documentation.
 - `CLAUDE.md` — remove outdated Nunjucks-only guidance where review flagged drift.
-- `packages/typescript/tests/parity.test.ts` — remove stale `--rust-render` regen wording.
-- `packages/rust/tests/parity.test.ts` — remove stale `--rust-render` regen wording.
-- `packages/python/tests/parity.test.ts` — remove stale `--rust-render` regen wording.
+- `packages/typescript/tests/parity.test.ts` — remove stale `--all` regen wording.
+- `packages/rust/tests/parity.test.ts` — remove stale `--all` regen wording.
+- `packages/python/tests/parity.test.ts` — remove stale `--all` regen wording.
 
 **Regenerate / refresh**
 
 - `packages/{python,rust,typescript}/src/hash.ts`
-- `packages/{python,rust,typescript}/rust-render/src/hash.rs`
-- `packages/{python,rust,typescript}/rust-render/src/templates.rs`
-- `packages/{python,rust,typescript}/rust-render/src/lib.rs`
-- `packages/{python,rust,typescript}/rust-render/templates/*.jinja`
-- `packages/{python,rust,typescript}/rust-render/test-fixtures.json`
+- `rust/crates/sittir-{python,rust,typescript}/src/render/hash.rs`
+- `rust/crates/sittir-{python,rust,typescript}/src/render/templates.rs`
+- `rust/crates/sittir-{python,rust,typescript}/src/render/mod.rs`
+- `rust/crates/sittir-{python,rust,typescript}/templates/*.jinja`
+- `rust/crates/sittir-{python,rust,typescript}/test-fixtures.json`
 
 ---
 
@@ -474,9 +472,7 @@ git commit -m "fix: make native baseline collection honest"
 
 - Modify: `rust/crates/sittir-core/src/lib.rs`
 - Modify: `rust/crates/sittir-core/src/boundary.rs`
-- Modify: `rust/crates/sittir-rust-napi/src/lib.rs`
-- Modify: `rust/crates/sittir-typescript-napi/src/lib.rs`
-- Modify: `rust/crates/sittir-python-napi/src/lib.rs`
+- Modify: `rust/crates/sittir-{lang}/src/lib.rs`
 - Test: `rust/crates/sittir-core/src/boundary.rs`
 
 - [ ] **Step 1: Add a shared node-id validator to `sittir-core`**
@@ -498,18 +494,14 @@ pub fn coerce_node_id(node_id: f64) -> Result<u64, String> {
 
 Export it from `rust/crates/sittir-core/src/lib.rs` via `pub mod boundary;`.
 
-- [ ] **Step 2: Replace direct `as u64` casts in all three N-API crates**
+- [ ] **Step 2: Replace direct `as u64` casts in the shared N-API crate**
 
 ```rust
 let id = sittir_core::boundary::coerce_node_id(node_id)
     .map_err(|msg| Error::from_reason(msg))?;
 ```
 
-Apply the same replacement in:
-
-- `rust/crates/sittir-rust-napi/src/lib.rs`
-- `rust/crates/sittir-typescript-napi/src/lib.rs`
-- `rust/crates/sittir-python-napi/src/lib.rs`
+Apply the same replacement in `rust/crates/sittir-{lang}/src/lib.rs`.
 
 - [ ] **Step 3: Add Rust unit tests for invalid ids**
 
@@ -541,9 +533,7 @@ Run:
 
 ```bash
 cargo test -p sittir-core
-cargo test -p sittir-rust-napi
-cargo test -p sittir-typescript-napi
-cargo test -p sittir-python-napi
+cargo test -p sittir-{lang}
 ```
 
 Expected: **PASS**. Invalid ids are rejected before tree lookup and no crate still uses `node_id as u64`.
@@ -553,9 +543,7 @@ Expected: **PASS**. Invalid ids are rejected before tree lookup and no crate sti
 ```bash
 git add rust/crates/sittir-core/src/lib.rs \
         rust/crates/sittir-core/src/boundary.rs \
-        rust/crates/sittir-rust-napi/src/lib.rs \
-        rust/crates/sittir-typescript-napi/src/lib.rs \
-        rust/crates/sittir-python-napi/src/lib.rs
+        rust/crates/sittir-{lang}/src/lib.rs
 git commit -m "fix(napi): validate read_node ids"
 ```
 
@@ -568,9 +556,9 @@ git commit -m "fix(napi): validate read_node ids"
 - Modify: `packages/codegen/src/scripts/check-perf-baseline.ts`
 - Modify: `packages/codegen/src/__tests__/check-perf-baseline.test.ts`
 - Modify: `packages/codegen/src/cli.ts`
-- Modify: `packages/codegen/src/emitters/rust-render.ts`
+- Modify: `packages/codegen/src/emitters/render-module.ts`
 - Modify: `packages/codegen/src/emitters/parity-fixtures.ts`
-- Modify: `packages/codegen/src/emitters/rust-render.test.ts`
+- Modify: `packages/codegen/src/emitters/render-module.test.ts`
 - Modify: `.github/workflows/ci.yml`
 - Modify: `packages/codegen/src/compiler/link.ts`
 - Modify: `packages/codegen/src/compiler/node-map.ts`
@@ -580,7 +568,7 @@ git commit -m "fix(napi): validate read_node ids"
 - Modify: `packages/rust/tests/parity.test.ts`
 - Modify: `packages/python/tests/parity.test.ts`
 - Test: `packages/codegen/src/__tests__/check-perf-baseline.test.ts`
-- Test: `packages/codegen/src/emitters/rust-render.test.ts`
+- Test: `packages/codegen/src/emitters/render-module.test.ts`
 
 - [ ] **Step 1: Replace the local metrics schema with the canonical type and stricter verdicts**
 
@@ -619,7 +607,7 @@ if (fresh.backend !== 'native')
 if (!fresh.ffi) return { kind: 'missing-ffi' };
 ```
 
-- [ ] **Step 2: Remove `--rust-render` from the CLI contract**
+- [ ] **Step 2: Remove `--all` from the CLI contract**
 
 ```ts
 interface CliArgs {
@@ -638,7 +626,7 @@ interface CliArgs {
 }
 ```
 
-Delete the `case "--rust-render":` parser branch and move the rust-render emission path under:
+Delete the `case "--all":` parser branch and move the render-module emission path under:
 
 ```ts
 const shouldEmitRustRender =
@@ -656,9 +644,9 @@ const shouldEmitRustRender =
 
 Use that command in:
 
-- `packages/codegen/src/emitters/rust-render.ts`
+- `packages/codegen/src/emitters/render-module.ts`
 - `packages/codegen/src/emitters/parity-fixtures.ts`
-- `packages/codegen/src/emitters/rust-render.test.ts`
+- `packages/codegen/src/emitters/render-module.test.ts`
 - `.github/workflows/ci.yml`
 
 - [ ] **Step 4: Fix the stale comments/docs called out by review**
@@ -683,7 +671,7 @@ Run:
 ```bash
 pnpm test \
   packages/codegen/src/__tests__/check-perf-baseline.test.ts \
-  packages/codegen/src/emitters/rust-render.test.ts \
+  packages/codegen/src/emitters/render-module.test.ts \
   packages/typescript/tests/parity.test.ts \
   packages/rust/tests/parity.test.ts \
   packages/python/tests/parity.test.ts
@@ -697,9 +685,9 @@ Expected: **PASS**. Native perf checks reject malformed input, and all one-flag 
 git add packages/codegen/src/scripts/check-perf-baseline.ts \
         packages/codegen/src/__tests__/check-perf-baseline.test.ts \
         packages/codegen/src/cli.ts \
-        packages/codegen/src/emitters/rust-render.ts \
+        packages/codegen/src/emitters/render-module.ts \
         packages/codegen/src/emitters/parity-fixtures.ts \
-        packages/codegen/src/emitters/rust-render.test.ts \
+        packages/codegen/src/emitters/render-module.test.ts \
         .github/workflows/ci.yml \
         packages/codegen/src/compiler/link.ts \
         packages/codegen/src/compiler/node-map.ts \
@@ -718,11 +706,11 @@ git commit -m "fix: finish review remediation cleanup"
 **Files:**
 
 - Modify: `packages/{python,rust,typescript}/src/hash.ts`
-- Modify: `packages/{python,rust,typescript}/rust-render/src/hash.rs`
-- Modify: `packages/{python,rust,typescript}/rust-render/src/templates.rs`
-- Modify: `packages/{python,rust,typescript}/rust-render/src/lib.rs`
-- Modify: `packages/{python,rust,typescript}/rust-render/templates/*.jinja`
-- Modify: `packages/{python,rust,typescript}/rust-render/test-fixtures.json`
+- Modify: `rust/crates/sittir-{python,rust,typescript}/src/render/hash.rs`
+- Modify: `rust/crates/sittir-{python,rust,typescript}/src/render/templates.rs`
+- Modify: `rust/crates/sittir-{python,rust,typescript}/src/render/mod.rs`
+- Modify: `rust/crates/sittir-{python,rust,typescript}/templates/*.jinja`
+- Modify: `rust/crates/sittir-{python,rust,typescript}/test-fixtures.json`
 - Test: repository-wide verification commands
 
 - [ ] **Step 1: Regenerate all three grammars with the one-flag command**
@@ -735,7 +723,7 @@ npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages
 npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src
 ```
 
-Expected: TS output, rust-render artifacts, and `rust-render/test-fixtures.json` refresh in one pass for each grammar.
+Expected: TS output, render-module artifacts, and `render-module/test-fixtures.json` refresh in one pass for each grammar.
 
 - [ ] **Step 2: Run the targeted verification commands**
 
@@ -748,13 +736,11 @@ pnpm test \
   packages/python/tests/backend-boundary.test.ts \
   packages/codegen/src/__tests__/collect-baseline.test.ts \
   packages/codegen/src/__tests__/check-perf-baseline.test.ts \
-  packages/codegen/src/emitters/rust-render.test.ts
+  packages/codegen/src/emitters/render-module.test.ts
 pnpm test
 pnpm -r run type-check
 cargo test -p sittir-core
-cargo test -p sittir-rust-napi
-cargo test -p sittir-typescript-napi
-cargo test -p sittir-python-napi
+cargo test -p sittir-{lang}
 ```
 
 Expected: **PASS**. No review finding remains reproducible, and the repo stays green across the existing TS and Rust verification surfaces.
@@ -762,9 +748,9 @@ Expected: **PASS**. No review finding remains reproducible, and the repo stays g
 - [ ] **Step 3: Commit regenerated artifacts and any final snapshots**
 
 ```bash
-git add packages/python/src packages/python/rust-render \
-        packages/rust/src packages/rust/rust-render \
-        packages/typescript/src packages/typescript/rust-render
+git add packages/python/src rust/crates/sittir-python/src/render \
+        packages/rust/src rust/crates/sittir-rust/src/render \
+        packages/typescript/src rust/crates/sittir-typescript/src/render
 git commit -m "chore: regenerate render artifacts after remediation"
 ```
 

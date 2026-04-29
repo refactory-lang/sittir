@@ -61,6 +61,7 @@ exports[`@sittir/python — API surface snapshot (SC-008) > top-level exports 1`
   "conditionalExpressionFrom": "function",
   "constrainedTypeFrom": "function",
   "continueStatementFrom": "function",
+  "createEngine": "function",
   "createRenderer": "function",
   "decoratedDefinitionFrom": "function",
   "decoratorFrom": "function",

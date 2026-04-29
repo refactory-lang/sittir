@@ -163,23 +163,17 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           key: release-${{ matrix.target }}
-      - name: napi build (release) — @sittir/rust-native
-        run: pnpm exec napi build --platform --release --target ${{ matrix.target }}
-        working-directory: rust/crates/sittir-rust-napi
-      - name: napi build (release) — @sittir/typescript-native
-        run: pnpm exec napi build --platform --release --target ${{ matrix.target }}
-        working-directory: rust/crates/sittir-typescript-napi
-      - name: napi build (release) — @sittir/python-native
-        run: pnpm exec napi build --platform --release --target ${{ matrix.target }}
-        working-directory: rust/crates/sittir-python-napi
+      - name: napi build (release) — grammar-owned native packages
+        run: |
+          for crate in rust typescript python; do
+            pnpm -C "rust/crates/sittir-${crate}" exec napi build --platform --release --target "${{ matrix.target }}"
+          done
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: bindings-${{ matrix.target }}
           path: |
-            rust/crates/sittir-rust-napi/*.node
-            rust/crates/sittir-typescript-napi/*.node
-            rust/crates/sittir-python-napi/*.node
+            rust/crates/sittir-*/*.node
           if-no-files-found: error
 
   napi-artifacts-publish:
@@ -210,13 +204,13 @@ jobs:
           merge-multiple: false
       - name: napi artifacts — repack into platform subpackages
         run: |
-          for crate in sittir-rust-napi sittir-typescript-napi sittir-python-napi; do
-            (cd "rust/crates/${crate}" && pnpm exec napi artifacts --dir ../../../artifacts)
+          for crate in rust typescript python; do
+            (cd "rust/crates/sittir-${crate}" && pnpm exec napi artifacts --dir ../../../artifacts)
           done
       - name: Publish platform subpackages to npm
         run: |
-          for crate in sittir-rust-napi sittir-typescript-napi sittir-python-napi; do
-            (cd "rust/crates/${crate}" && pnpm exec napi prepublish --tag latest --skip-gh-release)
+          for crate in rust typescript python; do
+            (cd "rust/crates/sittir-${crate}" && pnpm exec napi prepublish --tag latest --skip-gh-release)
           done
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

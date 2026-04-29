@@ -67,6 +67,7 @@ exports[`@sittir/rust — API surface snapshot (SC-008) > top-level exports 1`] 
   "constParameterFrom": "function",
   "continueExpressionFrom": "function",
   "crateFrom": "function",
+  "createEngine": "function",
   "createRenderer": "function",
   "declarationListFrom": "function",
   "declarationStatement": "object",
