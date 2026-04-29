@@ -27,7 +27,7 @@ The text the user typed after `/speckit.workflows.hotfix` (or `/speckit.hotfix`)
 Given that incident description, do this:
 
 1. Run the script `.specify/extensions/workflows/scripts/bash/create-hotfix.sh --json "$ARGUMENTS"` from repo root and parse its JSON output for HOTFIX_ID, BRANCH_NAME, HOTFIX_FILE, POSTMORTEM_FILE, and TIMESTAMP. All file paths must be absolute.
-  **IMPORTANT** You must only ever run this script once. The JSON is provided in the terminal as output - always refer to it to get the actual content you're looking for.
+   **IMPORTANT** You must only ever run this script once. The JSON is provided in the terminal as output - always refer to it to get the actual content you're looking for.
 
 2. Load `.specify/extensions/workflows/templates/hotfix/hotfix-template.md` to understand required sections.
 

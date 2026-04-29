@@ -5,6 +5,7 @@
 export type {
 	AnyNodeData,
 	AnyTreeNode,
+	NodeId,
 	TemplateRule,
 	TemplateRuleObject,
 	RulesConfig,
@@ -12,8 +13,15 @@ export type {
 	ByteRange,
 	Position,
 	CSTNode,
+	FormatBoundary,
+	FormatSlot,
+	FormatLiteral,
+	FormatTrivia,
+	FormatRecord,
+	KindFormatRecord,
+	NativeParseResult,
 	RenderContext,
 	ReplaceTarget,
 	Renderable,
-	KindOf,
+	KindOf
 } from '@sittir/types';

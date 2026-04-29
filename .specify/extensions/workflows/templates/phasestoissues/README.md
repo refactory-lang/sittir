@@ -7,6 +7,7 @@ The **phasestoissues** utility creates individual GitHub issues for each develop
 ## Purpose
 
 Convert your spec-kit feature specification into hierarchical GitHub issues:
+
 - **Parent issues**: One per development phase with phase-level context
 - **Sub-issues**: One per task within each phase for granular tracking
 - Phase description and goals
@@ -18,6 +19,7 @@ Convert your spec-kit feature specification into hierarchical GitHub issues:
 ## When to Use
 
 Use this command when you want to:
+
 - Create **one GitHub issue per development phase** (design, implementation, testing, etc.)
 - Enable parallel work across different phases
 - Track progress at a more granular level
@@ -43,48 +45,60 @@ Use this command when you want to:
 Hierarchical GitHub issues with parent phases and task sub-issues:
 
 **Phase 1: Design & Planning (Parent Issue #123)**
+
 ```markdown
 ## Description
+
 [Design phase goals from spec.md]
 
 ## Acceptance Criteria
+
 - [ ] Architecture documented
 - [ ] API contracts defined
 - [ ] Dependencies identified
 
 ## Tasks
+
 See sub-issues for individual task tracking.
 
 ## Context
+
 **Branch**: feature/001-user-auth
 **Phase**: 1/3
 **Feature Directory**: specs/001-user-auth/
 ```
 
 **Task Sub-Issues for Phase 1:**
+
 - **#124**: T001: Create architecture diagram
 - **#125**: T002: Define API contracts
 
 **Phase 2: Implementation (Parent Issue #126)**
+
 ```markdown
 ## Description
+
 [Implementation phase goals]
 
 ## Acceptance Criteria
+
 - [ ] Core functionality implemented
 - [ ] Unit tests passing
 - [ ] Code reviewed
 
 ## Tasks
+
 See sub-issues for individual task tracking.
 
 ## Context
+
 **Branch**: feature/001-user-auth
 **Phase**: 2/3
 **Depends On**: Phase 1 (#123)
 ```
 
 **Task Sub-Issues for Phase 2:**
+
 - **#127**: T003: Implement authentication service
 - **#128**: T004: Add unit tests
 
@@ -100,6 +114,7 @@ Automatically adds workflow-aware labels based on branch pattern:
 - Standard features → `feature`, `enhancement`
 
 Plus status labels:
+
 - `status: planning` - Tasks exist but none completed
 - `status: in-progress` - Some tasks completed
 
@@ -151,23 +166,27 @@ Next Steps:
 Fits naturally into spec-kit workflows:
 
 ### 1. Planning Phase
+
 ```bash
 /speckit.plan      # Create spec.md with phases defined
 /speckit.tasks     # Break down into tasks.md
 ```
 
 ### 2. Issue Creation
+
 ```bash
 /speckit.phasestoissues  # Create GitHub issues per phase
 ```
 
 ### 3. Implementation
+
 ```bash
 /speckit.implement  # Execute tasks
 # Update phase issues as you complete related tasks
 ```
 
 ### 4. Review
+
 ```bash
 /speckit.review     # Validate completion
 # Update phase issues with review results
@@ -175,14 +194,14 @@ Fits naturally into spec-kit workflows:
 
 ## Comparison with Single-Issue Approach
 
-| Aspect | Single Issue | PhasesToIssues |
-|--------|--------------|------------------|
-| **Creates** | One issue for entire feature | One issue per phase |
-| **GitHub Issues** | 1 issue with many checkboxes | N issues (phase count) |
-| **Parallelization** | Limited | Multiple phases in parallel |
-| **Ownership** | One person/pair | Different owners per phase |
-| **Progress Tracking** | Single completion bar | Per-phase progress |
-| **Best For** | Small features | Complex, multi-phase features |
+| Aspect                | Single Issue                 | PhasesToIssues                |
+| --------------------- | ---------------------------- | ----------------------------- |
+| **Creates**           | One issue for entire feature | One issue per phase           |
+| **GitHub Issues**     | 1 issue with many checkboxes | N issues (phase count)        |
+| **Parallelization**   | Limited                      | Multiple phases in parallel   |
+| **Ownership**         | One person/pair              | Different owners per phase    |
+| **Progress Tracking** | Single completion bar        | Per-phase progress            |
+| **Best For**          | Small features               | Complex, multi-phase features |
 
 ## Best Practices
 
@@ -197,18 +216,22 @@ Fits naturally into spec-kit workflows:
 ## Troubleshooting
 
 ### "Remote is not a GitHub URL"
+
 - Ensure your Git remote points to a GitHub repository
 - Check with: `git config --get remote.origin.url`
 
 ### "No spec.md found"
+
 - Run `/speckit.plan` first to create the specification with phases
 - Ensure you're on a feature branch with a feature directory
 
 ### "No phases defined"
+
 - Update spec.md to include clear phase definitions
 - Consider using sections like "Design Phase", "Implementation Phase", "Testing Phase"
 
 ### "No tasks.md found"
+
 - Run `/speckit.tasks` to break down work into tasks
 - Tasks will be grouped by phase in the created issues
 
@@ -230,6 +253,7 @@ Fits naturally into spec-kit workflows:
 ## Additional Resources
 
 See also:
+
 - [PhasesToIssues Guide](../../../docs/phasestoissues.md)
 - [Spec-Kit Documentation](https://github.com/github/spec-kit)
 - [GitHub Issues Documentation](https://docs.github.com/en/issues)

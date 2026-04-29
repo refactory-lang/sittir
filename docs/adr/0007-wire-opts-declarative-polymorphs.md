@@ -54,13 +54,18 @@ The observation that collapsed the design: if the author declares polymorphs onc
 The DSL exposes a single opts-wrapping helper, `wire(config)`, that the author wraps around the options passed to `grammar()`:
 
 ```ts
-export default grammar(enrich(base), wire({
-  polymorphs: {
-    assignment:         { '1/0': 'eq',    '1/1': 'type',   '1/2': 'typed' },
-    closure_expression: { '4/0': 'block', '4/1': 'expr' },
-  },
-  rules: { /* regular rules */ },
-}))
+export default grammar(
+	enrich(base),
+	wire({
+		polymorphs: {
+			assignment: { '1/0': 'eq', '1/1': 'type', '1/2': 'typed' },
+			closure_expression: { '4/0': 'block', '4/1': 'expr' }
+		},
+		rules: {
+			/* regular rules */
+		}
+	})
+);
 ```
 
 `wire(config)` is pure and synchronous:
@@ -91,7 +96,7 @@ The polymorph-variant metadata that downstream sittir codegen consumes (`{parent
 
 - **Enables**: Declarative polymorph authoring at the top of each `overrides.ts`. All 32 `variant()` sites across rust/python/typescript migrated to a `polymorphs: {parent: {path: suffix}}` block; seven rule entries (Case A) vanished entirely, replaced by wire's synthesized rule fns. Per-invocation closure state — two concurrent `wire()` calls can't trip over each other. `evaluate.ts` reads polymorph metadata directly from `opts.__wireContext__` and only falls back to the legacy drain when wire isn't in use.
 - **Costs**: Authors declare polymorphs once per grammar. About 30 variant sites × 3 grammars; mechanical. No signature or output changes at the sittir compiler level.
-- **Scope reduction — `installGrammarWrapper` not fully deleted**: The initial plan targeted full removal of the monkey-patch. During migration we discovered that the wrapper also handles **non-polymorph aliases** — authored `alias($._, $.wildcard_pattern)` sites that register an on-the-fly hidden rule `_wildcard_pattern` without a matching `polymorphs:` declaration. Wire only pre-registers *declared* polymorph hidden rules, so removing the wrapper would break these authored aliases under tree-sitter CLI (the pass-1 dry-run is what makes tree-sitter's `ruleMap` snapshot include them). The wrapper is now narrow-purpose: it handles non-polymorph alias discovery only; its polymorph work has become redundant-but-harmless because wire's dual-write routing absorbs the same deposits. Fully retiring the wrapper would require either (a) absorbing arbitrary aliases into `wire()` via an explicit declaration block (`aliases: [...]`) — adds author boilerplate per standalone alias; or (b) a discovery mechanism we already rejected in the alternatives (static source scan, pre-eval). Kept as an open question for a follow-up ADR if authored aliases grow in number.
+- **Scope reduction — `installGrammarWrapper` not fully deleted**: The initial plan targeted full removal of the monkey-patch. During migration we discovered that the wrapper also handles **non-polymorph aliases** — authored `alias($._, $.wildcard_pattern)` sites that register an on-the-fly hidden rule `_wildcard_pattern` without a matching `polymorphs:` declaration. Wire only pre-registers _declared_ polymorph hidden rules, so removing the wrapper would break these authored aliases under tree-sitter CLI (the pass-1 dry-run is what makes tree-sitter's `ruleMap` snapshot include them). The wrapper is now narrow-purpose: it handles non-polymorph alias discovery only; its polymorph work has become redundant-but-harmless because wire's dual-write routing absorbs the same deposits. Fully retiring the wrapper would require either (a) absorbing arbitrary aliases into `wire()` via an explicit declaration block (`aliases: [...]`) — adds author boilerplate per standalone alias; or (b) a discovery mechanism we already rejected in the alternatives (static source scan, pre-eval). Kept as an open question for a follow-up ADR if authored aliases grow in number.
 - **Follow-ups landed**: wire.ts + unit tests, rust/python/typescript overrides migrated to `polymorphs:` blocks, `evaluate.ts` reading metadata from wire context.
 - **Follow-ups deferred**: Link-time polymorph pattern detection (#71 in task log) — redundant with wire context reads; only needed if non-wire grammar authoring appears. Full wrapper deletion — gated on standalone-alias absorption strategy.
 

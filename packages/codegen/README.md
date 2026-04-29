@@ -94,6 +94,7 @@ export namespace fn {
 ### Type Resolution
 
 The codegen resolves field types from the grammar's `namedTypes`:
+
 - **Single leaf kind** → `Builder<Identifier> | string` (accepts strings in `.from()`)
 - **Single branch kind** → `Builder<Parameters>`
 - **Supertype** → `Builder<Expression>` (expanded union alias)
@@ -121,22 +122,30 @@ This produces a package with the same builder pattern as `@sittir/rust` and `@si
 Stable authoring surface for `packages/<grammar>/overrides.ts` files.
 Tree-sitter baseline DSL (`grammar`, `seq`, `choice`, `optional`,
 `repeat`, `repeat1`, `field`, `token`, `prec`, `alias`, `blank`) is
-injected as globals at evaluate time — *don't* import those. The
+injected as globals at evaluate time — _don't_ import those. The
 sittir-specific extensions below ARE imported explicitly:
 
 ```ts
-import { transform, role, enrich, field, alias, insert, replace } from '@sittir/codegen/dsl'
+import {
+	transform,
+	role,
+	enrich,
+	field,
+	alias,
+	insert,
+	replace
+} from '@sittir/codegen/dsl';
 ```
 
-| Function | Signature | Purpose |
-|---|---|---|
+| Function        | Signature                                            | Purpose                                                                                                                                                                                                                                                                                                                                                                        |
+| --------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **`transform`** | `transform(original, patches: Record<string, Rule>)` | Patch an existing rule by position or path. Numeric keys (`{0: ..., 2: ...}`) apply by flat seq position with recursive descent through choice/wrappers. Path keys (`{'0/0': ..., '0/*\/1': ...}`) reach into nested structures and support `*` wildcards. Precedence wrappers are transparent — the same path works whether sittir strips `prec` or tree-sitter preserves it. |
-| **`role`** | `role(symbol, name)` | Mark an external token symbol with a structural-whitespace role (`indent`/`dedent`/`newline`). Returns the symbol unchanged. Records the binding on a per-grammar accumulator that Link reads. Tree-sitter compat: outside any sittir scope, the side-effect is dropped silently. |
-| **`enrich`** | `enrich(base): base` | Run mechanical enrichment passes on a tree-sitter grammar result before extension. Currently: unambiguous kind-to-name field wrapping. Sittir-only — passes through tree-sitter-shaped input as a no-op. |
-| **`field`** | `field(name)` / `field(name, content)` | Two-arg form delegates to runtime native `field()`. One-arg form returns a placeholder that `transform()` patches swap out using the original member at the target position. |
-| **`alias`** | `alias(rule)` / `alias(rule, value)` | Two-arg form delegates to runtime native `alias()`. One-arg form is shorthand for `alias($.name, $.name)` — aliasing a symbol to itself with `named: true`. |
-| **`insert`** | `insert(rule, position, wrapper)` | Wrap a single seq member at `position` using the wrapper function. Marks the result as `source: 'override'`. |
-| **`replace`** | `replace(rule, position, replacement)` | Replace a seq member by position. Pass `null` to remove. |
+| **`role`**      | `role(symbol, name)`                                 | Mark an external token symbol with a structural-whitespace role (`indent`/`dedent`/`newline`). Returns the symbol unchanged. Records the binding on a per-grammar accumulator that Link reads. Tree-sitter compat: outside any sittir scope, the side-effect is dropped silently.                                                                                              |
+| **`enrich`**    | `enrich(base): base`                                 | Run mechanical enrichment passes on a tree-sitter grammar result before extension. Currently: unambiguous kind-to-name field wrapping. Sittir-only — passes through tree-sitter-shaped input as a no-op.                                                                                                                                                                       |
+| **`field`**     | `field(name)` / `field(name, content)`               | Two-arg form delegates to runtime native `field()`. One-arg form returns a placeholder that `transform()` patches swap out using the original member at the target position.                                                                                                                                                                                                   |
+| **`alias`**     | `alias(rule)` / `alias(rule, value)`                 | Two-arg form delegates to runtime native `alias()`. One-arg form is shorthand for `alias($.name, $.name)` — aliasing a symbol to itself with `named: true`.                                                                                                                                                                                                                    |
+| **`insert`**    | `insert(rule, position, wrapper)`                    | Wrap a single seq member at `position` using the wrapper function. Marks the result as `source: 'override'`.                                                                                                                                                                                                                                                                   |
+| **`replace`**   | `replace(rule, position, replacement)`               | Replace a seq member by position. Pass `null` to remove.                                                                                                                                                                                                                                                                                                                       |
 
 ### Transform examples
 
@@ -189,6 +198,64 @@ esbuild, with the base grammar package and its transitive
 at runtime. `tree-sitter generate` against the bundled output
 produces a parser whose parse tree carries every field label sittir's
 transforms add — verifiable by reading the generated `node-types.json`.
+
+## Templates (`.jinja`) — authoring workflow
+
+Each generated grammar package ships per-rule `.jinja` template files
+under `packages/<grammar>/templates/<kind>.jinja` (feature 011). These
+files drive the TS render pipeline via Nunjucks today, and will drive
+the Rust render pipeline via askama once `@sittir/core` is ported.
+
+### Editing a template
+
+**Never hand-edit a `.jinja` file.** The files are generated output —
+hand-edits are overwritten on the next regeneration and produce
+inconsistent state across grammars.
+
+To change how a rule renders:
+
+1. Edit the rule's **overrides** in `packages/<grammar>/overrides.ts`,
+   its grammar shape, or the template-walker logic in
+   `packages/codegen/src/compiler/` (whichever layer owns the
+   behavior you want to change).
+2. Regenerate:
+   ```bash
+   npx tsx packages/codegen/src/cli.ts --grammar <name> --all --output packages/<name>/src
+   ```
+3. Inspect `git diff packages/<name>/templates/` — a well-scoped
+   change should touch only the rules whose rendering you changed.
+4. Run the round-trip corpus:
+   ```bash
+   pnpm --filter @sittir/<name> test
+   pnpm vitest run packages/codegen/src/__tests__/corpus-validation.test.ts
+   ```
+5. Commit `templates/*.jinja` alongside the source change.
+
+### Authoring subset
+
+Only the Nunjucks ∩ askama intersection is allowed:
+
+- Interpolation: `{{ name }}`, `{{ name | filter }}`
+- Conditionals: `{% if %}` / `{% elif %}` / `{% else %}` / `{% endif %}`
+- Loops: `{% for x in xs %}` with `loop.first`, `loop.last`, `loop.index`
+- Whitespace control: `{%-` / `-%}`
+- Comments: `{# ... #}`
+- Filters: `join(sep)`, `length`, `default(v)`, `trim`, `upper`, `lower`
+
+**Forbidden** (breaks askama portability): `{% extends %}`,
+`{% macro %}`, `{% include %}`, `{% match %}`, `{% set %}`, custom
+filters, method calls. The translator fails loudly if a rule's shape
+would require a forbidden construct.
+
+See `specs/011-jinja-template-migration/contracts/jinja-subset.md`
+for the full contract.
+
+### IDE support
+
+`.vscode/extensions.json` at the repo root recommends the
+[wholroyd.jinja](https://marketplace.visualstudio.com/items?itemName=wholroyd.jinja)
+extension for syntax highlighting in `.jinja` files. `.editorconfig`
+sets consistent indent style across editors.
 
 ## License
 

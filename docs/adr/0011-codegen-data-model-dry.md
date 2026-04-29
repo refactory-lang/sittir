@@ -103,10 +103,11 @@ every fact has one source and one derivation. Specifically:
 
 ### 1. DRY principle promoted to CLAUDE.md's top work convention
 
-Wording verbatim: *"Every fact about the program has exactly one source, and
-exactly one definition of how to extract it."*
+Wording verbatim: _"Every fact about the program has exactly one source, and
+exactly one definition of how to extract it."_
 
 Both clauses load-bearing:
+
 - **One source** — no parallel storage of the same fact.
 - **One derivation** — no second walker producing the same-shaped subset.
 
@@ -144,6 +145,7 @@ documentation.
 `rule` flips from public to **protected**. Enforces the convention
 "only renderTemplate + class internals reach into raw rule" at the type level.
 External consumers go through class accessors:
+
 - `members`, `content`, `separator`, `trailing`, `leading` — structural access
 - `text`, `values`, `subtypes`, `forms`, `pattern`, `elementRule` — content access
 - `isTextTemplate(externals)` — classification
@@ -181,31 +183,31 @@ THE core data-model change. Replaces five fields on `AssembledChild`
 one:
 
 ```ts
-type Multiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray'
+type Multiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray';
 
 interface NodeRef<T extends AssembledNode = AssembledNode> {
-    readonly kind: 'node-ref'
-    readonly node: T | UnresolvedRef
-    readonly multiplicity: Multiplicity
+	readonly kind: 'node-ref';
+	readonly node: T | UnresolvedRef;
+	readonly multiplicity: Multiplicity;
 }
 
 interface TerminalValue {
-    readonly kind: 'terminal'
-    readonly value: string
-    readonly multiplicity: Multiplicity
+	readonly kind: 'terminal';
+	readonly value: string;
+	readonly multiplicity: Multiplicity;
 }
 
 interface UnresolvedRef {
-    readonly kind: 'unresolved-ref'
-    readonly name: string
+	readonly kind: 'unresolved-ref';
+	readonly name: string;
 }
 
-type NodeOrTerminal = NodeRef | TerminalValue
+type NodeOrTerminal = NodeRef | TerminalValue;
 
 interface AssembledChild {
-    readonly name: string
-    readonly propertyName: string
-    readonly values: readonly NodeOrTerminal[]
+	readonly name: string;
+	readonly propertyName: string;
+	readonly values: readonly NodeOrTerminal[];
 }
 ```
 
@@ -218,6 +220,7 @@ Per-value multiplicity correctly represents mixed cases like
 multiplicities, both preserved.
 
 Emission mapping:
+
 - `optional` → `T | undefined`
 - `single` → `T`
 - `array` → `readonly T[]`
@@ -290,7 +293,7 @@ string.
 
 - **Follow-ups**:
   - Rule-layer `SymbolRef` (in `rule.ts`) has the same `optional?: boolean +
-    repeated?: boolean` two-boolean encoding that can't distinguish
+repeated?: boolean` two-boolean encoding that can't distinguish
     repeat/repeat1. Consider the same four-valued multiplicity fix. Separate
     commit since rule.ts is pre-assembled pipeline stage.
   - `node-model.json5` serde needs to serialize `values` with Refs as

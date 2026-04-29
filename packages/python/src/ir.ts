@@ -14,288 +14,409 @@
 import * as F from './factories.js';
 import * as FR from './from.js';
 
-function _attach<T extends (...args: never[]) => unknown, P extends Record<string, unknown>>(fn: T, props: P): T & P {
-  for (const key of Object.keys(props)) {
-    Object.defineProperty(fn, key, { value: props[key], writable: true, configurable: true, enumerable: true });
-  }
-  return fn as T & P;
+function _attach<
+	T extends (...args: never[]) => unknown,
+	P extends Record<string, unknown>
+>(fn: T, props: P): T & P {
+	for (const key of Object.keys(props)) {
+		Object.defineProperty(fn, key, {
+			value: props[key],
+			writable: true,
+			configurable: true,
+			enumerable: true
+		});
+	}
+	return fn as T & P;
 }
 
 // Supertype-grouped sub-namespaces — tree-shakeable top-level consts.
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
 export const statement = {
-  if_: _attach(F.ifStatement, { from: FR.ifStatementFrom }),
-  for_: _attach(F.forStatement, { from: FR.forStatementFrom }),
-  while_: _attach(F.whileStatement, { from: FR.whileStatementFrom }),
-  try_: _attach(F.tryStatement, { from: FR.tryStatementFrom }),
-  with_: _attach(F.withStatement, { from: FR.withStatementFrom }),
-  function_: _attach(F.functionDefinition, { from: FR.functionDefinitionFrom }),
-  class_: _attach(F.classDefinition, { from: FR.classDefinitionFrom }),
-  decorated: _attach(F.decoratedDefinition, { from: FR.decoratedDefinitionFrom }),
-  match: _attach(F.matchStatement, { from: FR.matchStatementFrom }),
+	if_: _attach(F.ifStatement, { from: FR.ifStatementFrom }),
+	for_: _attach(F.forStatement, { from: FR.forStatementFrom }),
+	while_: _attach(F.whileStatement, { from: FR.whileStatementFrom }),
+	try_: _attach(F.tryStatement, { from: FR.tryStatementFrom }),
+	with_: _attach(F.withStatement, { from: FR.withStatementFrom }),
+	function_: _attach(F.functionDefinition, { from: FR.functionDefinitionFrom }),
+	class_: _attach(F.classDefinition, { from: FR.classDefinitionFrom }),
+	decorated: _attach(F.decoratedDefinition, {
+		from: FR.decoratedDefinitionFrom
+	}),
+	match: _attach(F.matchStatement, { from: FR.matchStatementFrom })
 } as const;
 
 export const simpleStatement = {
-  futureImport: _attach(F.futureImportStatement, { from: FR.futureImportStatementFrom }),
-  import_: _attach(F.importStatement, { from: FR.importStatementFrom }),
-  importFrom: _attach(F.importFromStatement, { from: FR.importFromStatementFrom }),
-  print: _attach(F.printStatement, { from: FR.printStatementFrom }),
-  assert: _attach(F.assertStatement, { from: FR.assertStatementFrom }),
-  expression: _attach(F.expressionStatement, { from: FR.expressionStatementFrom }),
-  return_: _attach(F.returnStatement, { from: FR.returnStatementFrom }),
-  delete_: _attach(F.deleteStatement, { from: FR.deleteStatementFrom }),
-  raise: _attach(F.raiseStatement, { from: FR.raiseStatementFrom }),
-  pass: F.passStatement,
-  break_: F.breakStatement,
-  continue_: F.continueStatement,
-  global: _attach(F.globalStatement, { from: FR.globalStatementFrom }),
-  nonlocal: _attach(F.nonlocalStatement, { from: FR.nonlocalStatementFrom }),
-  exec: _attach(F.execStatement, { from: FR.execStatementFrom }),
-  typeAlias: _attach(F.typeAliasStatement, { from: FR.typeAliasStatementFrom }),
+	futureImport: _attach(F.futureImportStatement, {
+		from: FR.futureImportStatementFrom
+	}),
+	import_: _attach(F.importStatement, { from: FR.importStatementFrom }),
+	importFrom: _attach(F.importFromStatement, {
+		from: FR.importFromStatementFrom
+	}),
+	print: _attach(F.printStatement, { from: FR.printStatementFrom }),
+	assert: _attach(F.assertStatement, { from: FR.assertStatementFrom }),
+	expression: _attach(F.expressionStatement, {
+		from: FR.expressionStatementFrom
+	}),
+	return_: _attach(F.returnStatement, { from: FR.returnStatementFrom }),
+	delete_: _attach(F.deleteStatement, { from: FR.deleteStatementFrom }),
+	raise: _attach(F.raiseStatement, { from: FR.raiseStatementFrom }),
+	pass: F.passStatement,
+	break_: F.breakStatement,
+	continue_: F.continueStatement,
+	global: _attach(F.globalStatement, { from: FR.globalStatementFrom }),
+	nonlocal: _attach(F.nonlocalStatement, { from: FR.nonlocalStatementFrom }),
+	exec: _attach(F.execStatement, { from: FR.execStatementFrom }),
+	typeAlias: _attach(F.typeAliasStatement, { from: FR.typeAliasStatementFrom })
 } as const;
 
 export const namedExpressionLhs = {
-  identifier: F.identifier,
+	identifier: F.identifier
 } as const;
 
 export const expressions = {
-  expression: _attach(F.expressionList, { from: FR.expressionListFrom }),
+	expression: _attach(F.expressionList, { from: FR.expressionListFrom })
 } as const;
 
 export const compoundStatement = {
-  if_: _attach(F.ifStatement, { from: FR.ifStatementFrom }),
-  for_: _attach(F.forStatement, { from: FR.forStatementFrom }),
-  while_: _attach(F.whileStatement, { from: FR.whileStatementFrom }),
-  try_: _attach(F.tryStatement, { from: FR.tryStatementFrom }),
-  with_: _attach(F.withStatement, { from: FR.withStatementFrom }),
-  function_: _attach(F.functionDefinition, { from: FR.functionDefinitionFrom }),
-  class_: _attach(F.classDefinition, { from: FR.classDefinitionFrom }),
-  decorated: _attach(F.decoratedDefinition, { from: FR.decoratedDefinitionFrom }),
-  match: _attach(F.matchStatement, { from: FR.matchStatementFrom }),
+	if_: _attach(F.ifStatement, { from: FR.ifStatementFrom }),
+	for_: _attach(F.forStatement, { from: FR.forStatementFrom }),
+	while_: _attach(F.whileStatement, { from: FR.whileStatementFrom }),
+	try_: _attach(F.tryStatement, { from: FR.tryStatementFrom }),
+	with_: _attach(F.withStatement, { from: FR.withStatementFrom }),
+	function_: _attach(F.functionDefinition, { from: FR.functionDefinitionFrom }),
+	class_: _attach(F.classDefinition, { from: FR.classDefinitionFrom }),
+	decorated: _attach(F.decoratedDefinition, {
+		from: FR.decoratedDefinitionFrom
+	}),
+	match: _attach(F.matchStatement, { from: FR.matchStatementFrom })
+} as const;
+
+export const simplePattern = {
+	class_: _attach(F.classPattern, { from: FR.classPatternFrom }),
+	splat: _attach(F.splatPattern, { from: FR.splatPatternFrom }),
+	union: _attach(F.unionPattern, { from: FR.unionPatternFrom }),
+	dict: _attach(F.dictPattern, { from: FR.dictPatternFrom }),
+	string: _attach(F.string, { from: FR.stringFrom }),
+	concatenated: _attach(F.concatenatedString, {
+		from: FR.concatenatedStringFrom
+	}),
+	true_: F.true_,
+	false_: F.false_,
+	none: F.none,
+	complex: _attach(F.complexPattern, { from: FR.complexPatternFrom }),
+	dotted: _attach(F.dottedName, { from: FR.dottedNameFrom })
 } as const;
 
 export const parameter = {
-  identifier: F.identifier,
-  typed: _attach(F.typedParameter, { from: FR.typedParameterFrom }),
-  default_: _attach(F.defaultParameter, { from: FR.defaultParameterFrom }),
-  typedDefault: _attach(F.typedDefaultParameter, { from: FR.typedDefaultParameterFrom }),
-  listSplat: _attach(F.listSplatPattern, { from: FR.listSplatPatternFrom }),
-  tuple: _attach(F.tuplePattern, { from: FR.tuplePatternFrom }),
-  dictionarySplat: _attach(F.dictionarySplatPattern, { from: FR.dictionarySplatPatternFrom }),
+	identifier: F.identifier,
+	typed: _attach(F.typedParameter, { from: FR.typedParameterFrom }),
+	default_: _attach(F.defaultParameter, { from: FR.defaultParameterFrom }),
+	typedDefault: _attach(F.typedDefaultParameter, {
+		from: FR.typedDefaultParameterFrom
+	}),
+	listSplat: _attach(F.listSplatPattern, { from: FR.listSplatPatternFrom }),
+	tuple: _attach(F.tuplePattern, { from: FR.tuplePatternFrom }),
+	dictionarySplat: _attach(F.dictionarySplatPattern, {
+		from: FR.dictionarySplatPatternFrom
+	})
 } as const;
 
 export const pattern = {
-  identifier: F.identifier,
-  subscript: _attach(F.subscript, { from: FR.subscriptFrom }),
-  attribute: _attach(F.attribute, { from: FR.attributeFrom }),
-  listSplat: _attach(F.listSplatPattern, { from: FR.listSplatPatternFrom }),
-  tuple: _attach(F.tuplePattern, { from: FR.tuplePatternFrom }),
-  list: _attach(F.listPattern, { from: FR.listPatternFrom }),
+	identifier: F.identifier,
+	subscript: _attach(F.subscript, { from: FR.subscriptFrom }),
+	attribute: _attach(F.attribute, { from: FR.attributeFrom }),
+	listSplat: _attach(F.listSplatPattern, { from: FR.listSplatPatternFrom }),
+	tuple: _attach(F.tuplePattern, { from: FR.tuplePatternFrom }),
+	list: _attach(F.listPattern, { from: FR.listPatternFrom })
 } as const;
 
 export const expressionWithinForInClause = {
-  lambda: _attach(F.lambda, { from: FR.lambdaFrom }),
+	lambdaWithinForIn: _attach(F.lambdaWithinForInClause, {
+		from: FR.lambdaWithinForInClauseFrom
+	})
 } as const;
 
 export const expression = {
-  comparison: _attach(F.comparisonOperator, { from: FR.comparisonOperatorFrom }),
-  not: _attach(F.notOperator, { from: FR.notOperatorFrom }),
-  boolean: _attach(F.booleanOperator, { from: FR.booleanOperatorFrom }),
-  lambda: _attach(F.lambda, { from: FR.lambdaFrom }),
-  conditional: _attach(F.conditionalExpression, { from: FR.conditionalExpressionFrom }),
-  named: _attach(F.namedExpression, { from: FR.namedExpressionFrom }),
-  as: _attach(F.asPattern, { from: FR.asPatternFrom }),
+	comparison: _attach(F.comparisonOperator, {
+		from: FR.comparisonOperatorFrom
+	}),
+	not: _attach(F.notOperator, { from: FR.notOperatorFrom }),
+	boolean: _attach(F.booleanOperator, { from: FR.booleanOperatorFrom }),
+	lambda: _attach(F.lambda, { from: FR.lambdaFrom }),
+	conditional: _attach(F.conditionalExpression, {
+		from: FR.conditionalExpressionFrom
+	}),
+	named: _attach(F.namedExpression, { from: FR.namedExpressionFrom }),
+	as: _attach(F.asPattern, { from: FR.asPatternFrom })
 } as const;
 
 export const primaryExpression = {
-  await: _attach(F.await_, { from: FR.await_From }),
-  binary: _attach(F.binaryOperator, { from: FR.binaryOperatorFrom }),
-  identifier: F.identifier,
-  string: _attach(F.string, { from: FR.stringFrom }),
-  concatenated: _attach(F.concatenatedString, { from: FR.concatenatedStringFrom }),
-  integer: F.integer,
-  float: F.float,
-  true_: F.true_,
-  false_: F.false_,
-  none: F.none,
-  unary: _attach(F.unaryOperator, { from: FR.unaryOperatorFrom }),
-  attribute: _attach(F.attribute, { from: FR.attributeFrom }),
-  subscript: _attach(F.subscript, { from: FR.subscriptFrom }),
-  call: _attach(F.call, { from: FR.callFrom }),
-  list: _attach(F.list, { from: FR.listFrom }),
-  dictionary: _attach(F.dictionary, { from: FR.dictionaryFrom }),
-  set: _attach(F.set, { from: FR.setFrom }),
-  tuple: _attach(F.tuple, { from: FR.tupleFrom }),
-  parenthesized: _attach(F.parenthesizedExpression, { from: FR.parenthesizedExpressionFrom }),
-  generator: _attach(F.generatorExpression, { from: FR.generatorExpressionFrom }),
+	await: _attach(F.await_, { from: FR.await_From }),
+	binary: _attach(F.binaryOperator, { from: FR.binaryOperatorFrom }),
+	identifier: F.identifier,
+	string: _attach(F.string, { from: FR.stringFrom }),
+	concatenated: _attach(F.concatenatedString, {
+		from: FR.concatenatedStringFrom
+	}),
+	integer: F.integer,
+	float: F.float,
+	true_: F.true_,
+	false_: F.false_,
+	none: F.none,
+	unary: _attach(F.unaryOperator, { from: FR.unaryOperatorFrom }),
+	attribute: _attach(F.attribute, { from: FR.attributeFrom }),
+	subscript: _attach(F.subscript, { from: FR.subscriptFrom }),
+	call: _attach(F.call, { from: FR.callFrom }),
+	list: _attach(F.list, { from: FR.listFrom }),
+	dictionary: _attach(F.dictionary, { from: FR.dictionaryFrom }),
+	set: _attach(F.set, { from: FR.setFrom }),
+	tuple: _attach(F.tuple, { from: FR.tupleFrom }),
+	parenthesized: _attach(F.parenthesizedExpression, {
+		from: FR.parenthesizedExpressionFrom
+	}),
+	generator: _attach(F.generatorExpression, {
+		from: FR.generatorExpressionFrom
+	}),
+	listSplat: _attach(F.listSplatPattern, { from: FR.listSplatPatternFrom })
 } as const;
 
 export const leftHandSide = {
-  pattern: _attach(F.patternList, { from: FR.patternListFrom }),
+	pattern: _attach(F.patternList, { from: FR.patternListFrom })
 } as const;
 
 export const rightHandSide = {
-  expression: _attach(F.expressionList, { from: FR.expressionListFrom }),
-  assignment: _attach(F.assignment, { from: FR.assignmentFrom, "eq": _attach(F.assignmentUFormEq, { from: FR.assignmentUFormEqFrom }), "type": _attach(F.assignmentUFormType, { from: FR.assignmentUFormTypeFrom }), "typed": _attach(F.assignmentUFormTyped, { from: FR.assignmentUFormTypedFrom }) }),
-  augmented: _attach(F.augmentedAssignment, { from: FR.augmentedAssignmentFrom }),
-  pattern: _attach(F.patternList, { from: FR.patternListFrom }),
-  yield_: _attach(F.yield_, { from: FR.yield_From }),
+	expression: _attach(F.expressionList, { from: FR.expressionListFrom }),
+	assignment: _attach(F.assignment, {
+		from: FR.assignmentFrom,
+		eq: _attach(F.assignmentUFormEq, { from: FR.assignmentUFormEqFrom }),
+		type: _attach(F.assignmentUFormType, { from: FR.assignmentUFormTypeFrom }),
+		typed: _attach(F.assignmentUFormTyped, {
+			from: FR.assignmentUFormTypedFrom
+		})
+	}),
+	augmented: _attach(F.augmentedAssignment, {
+		from: FR.augmentedAssignmentFrom
+	}),
+	pattern: _attach(F.patternList, { from: FR.patternListFrom }),
+	yield_: _attach(F.yield_, { from: FR.yield_From })
 } as const;
 
 export const fExpression = {
-  expression: _attach(F.expressionList, { from: FR.expressionListFrom }),
-  pattern: _attach(F.patternList, { from: FR.patternListFrom }),
-  yield_: _attach(F.yield_, { from: FR.yield_From }),
+	expression: _attach(F.expressionList, { from: FR.expressionListFrom }),
+	pattern: _attach(F.patternList, { from: FR.patternListFrom }),
+	yield_: _attach(F.yield_, { from: FR.yield_From })
 } as const;
 
 export const keywordIdentifier = {
-  identifier: F.identifier,
+	identifier: F.identifier
+} as const;
+
+export const dictPatternKv = {
+	splat: _attach(F.splatPattern, { from: FR.splatPatternFrom })
 } as const;
 
 export const ir = {
-  // Node factories
-  module: _attach(F.module, { from: FR.moduleFrom }),
-  importStatement: _attach(F.importStatement, { from: FR.importStatementFrom }),
-  relativeImport: _attach(F.relativeImport, { from: FR.relativeImportFrom }),
-  futureImport: _attach(F.futureImportStatement, { from: FR.futureImportStatementFrom }),
-  importFrom: _attach(F.importFromStatement, { from: FR.importFromStatementFrom }),
-  aliasedImport: _attach(F.aliasedImport, { from: FR.aliasedImportFrom }),
-  print: _attach(F.printStatement, { from: FR.printStatementFrom }),
-  chevron: _attach(F.chevron, { from: FR.chevronFrom }),
-  assert: _attach(F.assertStatement, { from: FR.assertStatementFrom }),
-  expressionStatement: _attach(F.expressionStatement, { from: FR.expressionStatementFrom }),
-  named: _attach(F.namedExpression, { from: FR.namedExpressionFrom }),
-  returnStatement: _attach(F.returnStatement, { from: FR.returnStatementFrom }),
-  deleteStatement: _attach(F.deleteStatement, { from: FR.deleteStatementFrom }),
-  raise: _attach(F.raiseStatement, { from: FR.raiseStatementFrom }),
-  ifStatement: _attach(F.ifStatement, { from: FR.ifStatementFrom }),
-  elifClause: _attach(F.elifClause, { from: FR.elifClauseFrom }),
-  elseClause: _attach(F.elseClause, { from: FR.elseClauseFrom }),
-  match: _attach(F.matchStatement, { from: FR.matchStatementFrom }),
-  caseClause: _attach(F.caseClause, { from: FR.caseClauseFrom }),
-  forStatement: _attach(F.forStatement, { from: FR.forStatementFrom }),
-  whileStatement: _attach(F.whileStatement, { from: FR.whileStatementFrom }),
-  tryStatement: _attach(F.tryStatement, { from: FR.tryStatementFrom }),
-  exceptClause: _attach(F.exceptClause, { from: FR.exceptClauseFrom }),
-  finallyClause: _attach(F.finallyClause, { from: FR.finallyClauseFrom }),
-  withStatement: _attach(F.withStatement, { from: FR.withStatementFrom }),
-  withClause: _attach(F.withClause, { from: FR.withClauseFrom }),
-  withItem: _attach(F.withItem, { from: FR.withItemFrom }),
-  functionDefinition: _attach(F.functionDefinition, { from: FR.functionDefinitionFrom }),
-  parameters: _attach(F.parameters, { from: FR.parametersFrom }),
-  lambdaParameters: _attach(F.lambdaParameters, { from: FR.lambdaParametersFrom }),
-  listSplat: _attach(F.listSplat, { from: FR.listSplatFrom }),
-  dictionarySplat: _attach(F.dictionarySplat, { from: FR.dictionarySplatFrom }),
-  global: _attach(F.globalStatement, { from: FR.globalStatementFrom }),
-  nonlocal: _attach(F.nonlocalStatement, { from: FR.nonlocalStatementFrom }),
-  exec: _attach(F.execStatement, { from: FR.execStatementFrom }),
-  typeAlias: _attach(F.typeAliasStatement, { from: FR.typeAliasStatementFrom }),
-  classDefinition: _attach(F.classDefinition, { from: FR.classDefinitionFrom }),
-  typeParameter: _attach(F.typeParameter, { from: FR.typeParameterFrom }),
-  parenthesizedListSplat: _attach(F.parenthesizedListSplat, { from: FR.parenthesizedListSplatFrom }),
-  argumentList: _attach(F.argumentList, { from: FR.argumentListFrom }),
-  decorated: _attach(F.decoratedDefinition, { from: FR.decoratedDefinitionFrom }),
-  decorator: _attach(F.decorator, { from: FR.decoratorFrom }),
-  block: _attach(F.block, { from: FR.blockFrom }),
-  expressionList: _attach(F.expressionList, { from: FR.expressionListFrom }),
-  dottedName: _attach(F.dottedName, { from: FR.dottedNameFrom }),
-  casePattern: _attach(F.casePattern, { from: FR.casePatternFrom }),
-  unionPattern: _attach(F.unionPattern, { from: FR.unionPatternFrom }),
-  dictPattern: _attach(F.dictPattern, { from: FR.dictPatternFrom }),
-  keywordPattern: _attach(F.keywordPattern, { from: FR.keywordPatternFrom }),
-  splatPattern: _attach(F.splatPattern, { from: FR.splatPatternFrom }),
-  classPattern: _attach(F.classPattern, { from: FR.classPatternFrom }),
-  complexPattern: _attach(F.complexPattern, { from: FR.complexPatternFrom }),
-  tuplePattern: _attach(F.tuplePattern, { from: FR.tuplePatternFrom }),
-  listPattern: _attach(F.listPattern, { from: FR.listPatternFrom }),
-  defaultParameter: _attach(F.defaultParameter, { from: FR.defaultParameterFrom }),
-  typedDefaultParameter: _attach(F.typedDefaultParameter, { from: FR.typedDefaultParameterFrom }),
-  listSplatPattern: _attach(F.listSplatPattern, { from: FR.listSplatPatternFrom }),
-  dictionarySplatPattern: _attach(F.dictionarySplatPattern, { from: FR.dictionarySplatPatternFrom }),
-  asPattern: _attach(F.asPattern, { from: FR.asPatternFrom }),
-  notOperator: _attach(F.notOperator, { from: FR.notOperatorFrom }),
-  booleanOperator: _attach(F.booleanOperator, { from: FR.booleanOperatorFrom }),
-  binaryOperator: _attach(F.binaryOperator, { from: FR.binaryOperatorFrom }),
-  unaryOperator: _attach(F.unaryOperator, { from: FR.unaryOperatorFrom }),
-  comparisonOperator: _attach(F.comparisonOperator, { from: FR.comparisonOperatorFrom }),
-  lambda: _attach(F.lambda, { from: FR.lambdaFrom }),
-  lambdaWithinForInClause: _attach(F.lambdaWithinForInClause, { from: FR.lambdaWithinForInClauseFrom }),
-  assignment: _attach(F.assignment, { from: FR.assignmentFrom, "eq": _attach(F.assignmentUFormEq, { from: FR.assignmentUFormEqFrom }), "type": _attach(F.assignmentUFormType, { from: FR.assignmentUFormTypeFrom }), "typed": _attach(F.assignmentUFormTyped, { from: FR.assignmentUFormTypedFrom }) }),
-  augmentedAssignment: _attach(F.augmentedAssignment, { from: FR.augmentedAssignmentFrom }),
-  patternList: _attach(F.patternList, { from: FR.patternListFrom }),
-  yield_: _attach(F.yield_, { from: FR.yield_From }),
-  attribute: _attach(F.attribute, { from: FR.attributeFrom }),
-  subscript: _attach(F.subscript, { from: FR.subscriptFrom }),
-  slice: _attach(F.slice, { from: FR.sliceFrom }),
-  call: _attach(F.call, { from: FR.callFrom }),
-  typedParameter: _attach(F.typedParameter, { from: FR.typedParameterFrom }),
-  type: _attach(F.type, { from: FR.typeFrom }),
-  splatType: _attach(F.splatType, { from: FR.splatTypeFrom }),
-  genericType: _attach(F.genericType, { from: FR.genericTypeFrom }),
-  unionType: _attach(F.unionType, { from: FR.unionTypeFrom }),
-  constrainedType: _attach(F.constrainedType, { from: FR.constrainedTypeFrom }),
-  memberType: _attach(F.memberType, { from: FR.memberTypeFrom }),
-  keywordArgument: _attach(F.keywordArgument, { from: FR.keywordArgumentFrom }),
-  list: _attach(F.list, { from: FR.listFrom }),
-  set: _attach(F.set, { from: FR.setFrom }),
-  tuple: _attach(F.tuple, { from: FR.tupleFrom }),
-  dictionary: _attach(F.dictionary, { from: FR.dictionaryFrom }),
-  pair: _attach(F.pair, { from: FR.pairFrom }),
-  listComprehension: _attach(F.listComprehension, { from: FR.listComprehensionFrom }),
-  dictionaryComprehension: _attach(F.dictionaryComprehension, { from: FR.dictionaryComprehensionFrom }),
-  setComprehension: _attach(F.setComprehension, { from: FR.setComprehensionFrom }),
-  generator: _attach(F.generatorExpression, { from: FR.generatorExpressionFrom }),
-  parenthesized: _attach(F.parenthesizedExpression, { from: FR.parenthesizedExpressionFrom }),
-  forInClause: _attach(F.forInClause, { from: FR.forInClauseFrom }),
-  ifClause: _attach(F.ifClause, { from: FR.ifClauseFrom }),
-  conditional: _attach(F.conditionalExpression, { from: FR.conditionalExpressionFrom }),
-  concatenatedString: _attach(F.concatenatedString, { from: FR.concatenatedStringFrom }),
-  string: _attach(F.string, { from: FR.stringFrom }),
-  stringContent: _attach(F.stringContent, { from: FR.stringContentFrom }),
-  interpolation: _attach(F.interpolation, { from: FR.interpolationFrom }),
-  formatSpecifier: _attach(F.formatSpecifier, { from: FR.formatSpecifierFrom }),
-  await_: _attach(F.await_, { from: FR.await_From }),
-  asPatternTarget: _attach(F.asPatternTarget, { from: FR.asPatternTargetFrom }),
-  assignmentEq: _attach(F.assignmentEq, { from: FR.assignmentEqFrom }),
-  assignmentType: _attach(F.assignmentType, { from: FR.assignmentTypeFrom }),
-  assignmentTyped: _attach(F.assignmentTyped, { from: FR.assignmentTypedFrom }),
-  format: _attach(F.formatExpression, { from: FR.formatExpressionFrom }),
+	// Node factories
+	module: _attach(F.module, { from: FR.moduleFrom }),
+	importStatement: _attach(F.importStatement, { from: FR.importStatementFrom }),
+	relativeImport: _attach(F.relativeImport, { from: FR.relativeImportFrom }),
+	futureImport: _attach(F.futureImportStatement, {
+		from: FR.futureImportStatementFrom
+	}),
+	importFrom: _attach(F.importFromStatement, {
+		from: FR.importFromStatementFrom
+	}),
+	aliasedImport: _attach(F.aliasedImport, { from: FR.aliasedImportFrom }),
+	print: _attach(F.printStatement, { from: FR.printStatementFrom }),
+	chevron: _attach(F.chevron, { from: FR.chevronFrom }),
+	assert: _attach(F.assertStatement, { from: FR.assertStatementFrom }),
+	expressionStatementTuple: _attach(F.expressionStatementTuple, {
+		from: FR.expressionStatementTupleFrom
+	}),
+	expressionStatement: _attach(F.expressionStatement, {
+		from: FR.expressionStatementFrom
+	}),
+	named: _attach(F.namedExpression, { from: FR.namedExpressionFrom }),
+	returnStatement: _attach(F.returnStatement, { from: FR.returnStatementFrom }),
+	deleteStatement: _attach(F.deleteStatement, { from: FR.deleteStatementFrom }),
+	raise: _attach(F.raiseStatement, { from: FR.raiseStatementFrom }),
+	ifStatement: _attach(F.ifStatement, { from: FR.ifStatementFrom }),
+	elifClause: _attach(F.elifClause, { from: FR.elifClauseFrom }),
+	elseClause: _attach(F.elseClause, { from: FR.elseClauseFrom }),
+	match: _attach(F.matchStatement, { from: FR.matchStatementFrom }),
+	caseClause: _attach(F.caseClause, { from: FR.caseClauseFrom }),
+	forStatement: _attach(F.forStatement, { from: FR.forStatementFrom }),
+	whileStatement: _attach(F.whileStatement, { from: FR.whileStatementFrom }),
+	tryStatement: _attach(F.tryStatement, { from: FR.tryStatementFrom }),
+	exceptClause: _attach(F.exceptClause, { from: FR.exceptClauseFrom }),
+	finallyClause: _attach(F.finallyClause, { from: FR.finallyClauseFrom }),
+	withStatement: _attach(F.withStatement, { from: FR.withStatementFrom }),
+	withClauseBare: _attach(F.withClauseBare, { from: FR.withClauseBareFrom }),
+	withClauseParen: _attach(F.withClauseParen, { from: FR.withClauseParenFrom }),
+	withClause: _attach(F.withClause, {
+		from: FR.withClauseFrom,
+		bare: _attach(F.withClauseUFormBare, { from: FR.withClauseUFormBareFrom }),
+		paren: _attach(F.withClauseUFormParen, {
+			from: FR.withClauseUFormParenFrom
+		})
+	}),
+	withItem: _attach(F.withItem, { from: FR.withItemFrom }),
+	functionDefinition: _attach(F.functionDefinition, {
+		from: FR.functionDefinitionFrom
+	}),
+	parameters: _attach(F.parameters, { from: FR.parametersFrom }),
+	lambdaParameters: _attach(F.lambdaParameters, {
+		from: FR.lambdaParametersFrom
+	}),
+	listSplat: _attach(F.listSplat, { from: FR.listSplatFrom }),
+	dictionarySplat: _attach(F.dictionarySplat, { from: FR.dictionarySplatFrom }),
+	global: _attach(F.globalStatement, { from: FR.globalStatementFrom }),
+	nonlocal: _attach(F.nonlocalStatement, { from: FR.nonlocalStatementFrom }),
+	exec: _attach(F.execStatement, { from: FR.execStatementFrom }),
+	typeAlias: _attach(F.typeAliasStatement, { from: FR.typeAliasStatementFrom }),
+	classDefinition: _attach(F.classDefinition, { from: FR.classDefinitionFrom }),
+	typeParameter: _attach(F.typeParameter, { from: FR.typeParameterFrom }),
+	parenthesizedListSplat: _attach(F.parenthesizedListSplat, {
+		from: FR.parenthesizedListSplatFrom
+	}),
+	argumentList: _attach(F.argumentList, { from: FR.argumentListFrom }),
+	decorated: _attach(F.decoratedDefinition, {
+		from: FR.decoratedDefinitionFrom
+	}),
+	decorator: _attach(F.decorator, { from: FR.decoratorFrom }),
+	block: _attach(F.block, { from: FR.blockFrom }),
+	expressionList: _attach(F.expressionList, { from: FR.expressionListFrom }),
+	dottedName: _attach(F.dottedName, { from: FR.dottedNameFrom }),
+	casePattern: _attach(F.casePattern, { from: FR.casePatternFrom }),
+	unionPattern: _attach(F.unionPattern, { from: FR.unionPatternFrom }),
+	dictPattern: _attach(F.dictPattern, { from: FR.dictPatternFrom }),
+	keywordPattern: _attach(F.keywordPattern, { from: FR.keywordPatternFrom }),
+	splatPattern: _attach(F.splatPattern, { from: FR.splatPatternFrom }),
+	classPattern: _attach(F.classPattern, { from: FR.classPatternFrom }),
+	complexPattern: _attach(F.complexPattern, { from: FR.complexPatternFrom }),
+	tuplePattern: _attach(F.tuplePattern, { from: FR.tuplePatternFrom }),
+	listPattern: _attach(F.listPattern, { from: FR.listPatternFrom }),
+	defaultParameter: _attach(F.defaultParameter, {
+		from: FR.defaultParameterFrom
+	}),
+	typedDefaultParameter: _attach(F.typedDefaultParameter, {
+		from: FR.typedDefaultParameterFrom
+	}),
+	listSplatPattern: _attach(F.listSplatPattern, {
+		from: FR.listSplatPatternFrom
+	}),
+	dictionarySplatPattern: _attach(F.dictionarySplatPattern, {
+		from: FR.dictionarySplatPatternFrom
+	}),
+	asPattern: _attach(F.asPattern, { from: FR.asPatternFrom }),
+	notOperator: _attach(F.notOperator, { from: FR.notOperatorFrom }),
+	booleanOperator: _attach(F.booleanOperator, { from: FR.booleanOperatorFrom }),
+	binaryOperator: _attach(F.binaryOperator, { from: FR.binaryOperatorFrom }),
+	unaryOperator: _attach(F.unaryOperator, { from: FR.unaryOperatorFrom }),
+	comparisonOperator: _attach(F.comparisonOperator, {
+		from: FR.comparisonOperatorFrom
+	}),
+	lambda: _attach(F.lambda, { from: FR.lambdaFrom }),
+	lambdaWithinForInClause: _attach(F.lambdaWithinForInClause, {
+		from: FR.lambdaWithinForInClauseFrom
+	}),
+	assignment: _attach(F.assignment, {
+		from: FR.assignmentFrom,
+		eq: _attach(F.assignmentUFormEq, { from: FR.assignmentUFormEqFrom }),
+		type: _attach(F.assignmentUFormType, { from: FR.assignmentUFormTypeFrom }),
+		typed: _attach(F.assignmentUFormTyped, {
+			from: FR.assignmentUFormTypedFrom
+		})
+	}),
+	augmentedAssignment: _attach(F.augmentedAssignment, {
+		from: FR.augmentedAssignmentFrom
+	}),
+	patternList: _attach(F.patternList, { from: FR.patternListFrom }),
+	yield_: _attach(F.yield_, { from: FR.yield_From }),
+	attribute: _attach(F.attribute, { from: FR.attributeFrom }),
+	subscript: _attach(F.subscript, { from: FR.subscriptFrom }),
+	slice: _attach(F.slice, { from: FR.sliceFrom }),
+	call: _attach(F.call, { from: FR.callFrom }),
+	typedParameter: _attach(F.typedParameter, { from: FR.typedParameterFrom }),
+	type: _attach(F.type, { from: FR.typeFrom }),
+	splatType: _attach(F.splatType, { from: FR.splatTypeFrom }),
+	genericType: _attach(F.genericType, { from: FR.genericTypeFrom }),
+	unionType: _attach(F.unionType, { from: FR.unionTypeFrom }),
+	constrainedType: _attach(F.constrainedType, { from: FR.constrainedTypeFrom }),
+	memberType: _attach(F.memberType, { from: FR.memberTypeFrom }),
+	keywordArgument: _attach(F.keywordArgument, { from: FR.keywordArgumentFrom }),
+	list: _attach(F.list, { from: FR.listFrom }),
+	set: _attach(F.set, { from: FR.setFrom }),
+	tuple: _attach(F.tuple, { from: FR.tupleFrom }),
+	dictionary: _attach(F.dictionary, { from: FR.dictionaryFrom }),
+	pair: _attach(F.pair, { from: FR.pairFrom }),
+	listComprehension: _attach(F.listComprehension, {
+		from: FR.listComprehensionFrom
+	}),
+	dictionaryComprehension: _attach(F.dictionaryComprehension, {
+		from: FR.dictionaryComprehensionFrom
+	}),
+	setComprehension: _attach(F.setComprehension, {
+		from: FR.setComprehensionFrom
+	}),
+	generator: _attach(F.generatorExpression, {
+		from: FR.generatorExpressionFrom
+	}),
+	parenthesized: _attach(F.parenthesizedExpression, {
+		from: FR.parenthesizedExpressionFrom
+	}),
+	forInClause: _attach(F.forInClause, { from: FR.forInClauseFrom }),
+	ifClause: _attach(F.ifClause, { from: FR.ifClauseFrom }),
+	conditional: _attach(F.conditionalExpression, {
+		from: FR.conditionalExpressionFrom
+	}),
+	concatenatedString: _attach(F.concatenatedString, {
+		from: FR.concatenatedStringFrom
+	}),
+	string: _attach(F.string, { from: FR.stringFrom }),
+	stringContent: _attach(F.stringContent, { from: FR.stringContentFrom }),
+	interpolation: _attach(F.interpolation, { from: FR.interpolationFrom }),
+	formatSpecifier: _attach(F.formatSpecifier, { from: FR.formatSpecifierFrom }),
+	await_: _attach(F.await_, { from: FR.await_From }),
 
-  // Keyword factories
-  pass: F.passStatement,
-  breakStatement: F.breakStatement,
-  continueStatement: F.continueStatement,
-  true_: F.true_,
-  false_: F.false_,
-  none: F.none,
+	// Keyword factories
+	pass: F.passStatement,
+	breakStatement: F.breakStatement,
+	continueStatement: F.continueStatement,
+	true_: F.true_,
+	false_: F.false_,
+	none: F.none,
 
-  // Leaf node factories
-  importPrefix: F.importPrefix,
-  escapeSequence: F.escapeSequence,
-  typeConversion: F.typeConversion,
-  integer: F.integer,
-  float: F.float,
-  identifier: F.identifier,
-  comment: F.comment,
-  lineContinuation: F.lineContinuation,
-  stringStart: F.stringStart,
-  escapeInterpolation: F.escapeInterpolation,
-  stringEnd: F.stringEnd,
-  except: F.except,
+	// Leaf node factories
+	importPrefix: F.importPrefix,
+	escapeSequence: F.escapeSequence,
+	typeConversion: F.typeConversion,
+	integer: F.integer,
+	float: F.float,
+	identifier: F.identifier,
+	comment: F.comment,
+	lineContinuation: F.lineContinuation,
+	stringStart: F.stringStart,
+	escapeInterpolation: F.escapeInterpolation,
+	stringEnd: F.stringEnd,
+	except: F.except,
 
-  // Supertype-grouped sub-namespaces (also exported standalone above)
-  statement,
-  simpleStatement,
-  namedExpressionLhs,
-  expressions,
-  compoundStatement,
-  parameter,
-  pattern,
-  expressionWithinForInClause,
-  expression,
-  primaryExpression,
-  leftHandSide,
-  rightHandSide,
-  fExpression,
-  keywordIdentifier,
+	// Supertype-grouped sub-namespaces (also exported standalone above)
+	statement,
+	simpleStatement,
+	namedExpressionLhs,
+	expressions,
+	compoundStatement,
+	simplePattern,
+	parameter,
+	pattern,
+	expressionWithinForInClause,
+	expression,
+	primaryExpression,
+	leftHandSide,
+	rightHandSide,
+	fExpression,
+	keywordIdentifier,
+	dictPatternKv
 } as const;

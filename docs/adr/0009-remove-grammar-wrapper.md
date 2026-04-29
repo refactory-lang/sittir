@@ -186,9 +186,9 @@ catch regressions early.
     `'0/0'`) don't resolve declaratively today. Two paths to fix:
 
     (a) Add `preTransforms:` config to wire — runs before polymorph
-        wrapping, matching inline-transform semantics.
+    wrapping, matching inline-transform semantics.
     (b) Invert wire's composition order so `transforms:` wraps inside
-        `polymorphs:` (transforms run first, polymorphs apply on top).
+    `polymorphs:` (transforms run first, polymorphs apply on top).
 
     Prefer (b) if it doesn't break existing semantics — single
     declarative surface is cleaner. After either, migrate the four
@@ -201,26 +201,27 @@ catch regressions early.
     (`field`, `variant`, `alias`, `transform`, `wire`, `enrich`,
     `role`) plus helpers. Consider:
 
-    ```
-    packages/codegen/src/dsl/
-      index.ts                      ← public surface re-exports
-      primitives/                   ← author-facing DSL
-        field.ts
-        variant.ts
-        alias.ts
-        role.ts
-      transform/                    ← transform family
-        transform.ts
-        transform-path.ts
-        transform-variant.ts        ← from synthetic-rules::registerAliasedVariant
-      wire/
-        wire.ts
-        wire-context.ts             ← WireContext type + accessors
-      enrich.ts                     ← stays at top (single entry point)
-      runtime-shapes.ts             ← stays at top (cross-cutting predicates)
-    ```
+        ```
+        packages/codegen/src/dsl/
+          index.ts                      ← public surface re-exports
+          primitives/                   ← author-facing DSL
+            field.ts
+            variant.ts
+            alias.ts
+            role.ts
+          transform/                    ← transform family
+            transform.ts
+            transform-path.ts
+            transform-variant.ts        ← from synthetic-rules::registerAliasedVariant
+          wire/
+            wire.ts
+            wire-context.ts             ← WireContext type + accessors
+          enrich.ts                     ← stays at top (single entry point)
+          runtime-shapes.ts             ← stays at top (cross-cutting predicates)
+        ```
 
-    The import surface (`import { field, transform, wire, enrich }
+        The import surface (`import { field, transform, wire, enrich }
+
     from '@sittir/codegen/dsl'`) stays unchanged — `index.ts`
     re-exports — so overrides files don't touch. Pure file-layout
     hygiene; defer until the relocations above settle so we're not
@@ -236,6 +237,7 @@ without extending wire's config. That scenario would argue for a
 runtime-discovery mechanism like the wrapper provided.
 
 Signals to revisit:
+
 - A grammar lands that genuinely can't express its synthesis needs in
   `wire({ polymorphs, transforms })`.
 - Corpus regressions appear specifically in rules that use inline

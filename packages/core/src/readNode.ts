@@ -13,19 +13,55 @@
  * → compiled parser), so tree-sitter itself surfaces those fields.
  *
  * No recursion — lazy getters in wrap.ts call readNode again when needed.
+ *
+ * Branch `$text` is omitted by default (branches reconstruct their text
+ * via the render template). Set `SITTIR_DEBUG_TEXT=1` to include `$text`
+ * on branch nodes for debugging purposes.
  */
 
-import type { AnyNodeData, AnyTreeNode } from './types.ts';
+import type { AnyNodeData, AnyTreeNode, FormatRecord, NodeId } from './types.ts';
+
+/**
+ * Whether to emit `$text` on branch nodes (those with `$fields` or
+ * `$children`). Read once at module load from the environment.
+ * Enable with `SITTIR_DEBUG_TEXT=1`.
+ */
+const DEBUG_TEXT = process.env.SITTIR_DEBUG_TEXT === '1';
 
 /**
  * A handle to the parsed tree, providing node lookup by id.
  * Structurally compatible with ast-grep SgRoot and tree-sitter Tree.
  */
 export interface TreeHandle {
-	/** Look up a node by its numeric id (O(1)). */
-	nodeById(id: number): AnyTreeNode;
+	/** Look up a node by its tree-owned id (O(1)). */
+	nodeById(id: NodeId): AnyTreeNode;
 	/** The root node of the tree. */
 	rootNode: AnyTreeNode;
+	/** Original source text. Optional — populated when the factory has it. */
+	source?: string;
+	/**
+	 * Per-handle read dispatch. When present, the wrap layer reads
+	 * through this method instead of running `readNode(handle, id)`
+	 * directly. Native-engine handles set this to a closure that
+	 * calls `engine.parseAndRead(source)` (root) / `engine.readNode(id)`
+	 * (drill-in) so reads stay inside the engine that owns the tree.
+	 *
+	 * Why per-handle: tree-sitter `Node::id()` is documented as
+	 * "unique within a given syntax tree" and is a raw-pointer cast,
+	 * so a wasm-tree id cannot address a node in the napi engine's
+	 * tree. The dispatch must live on the handle that owns the tree.
+	 */
+	read?(nodeId?: NodeId): AnyNodeData;
+	/**
+	 * Format record inferred from the source file by the native Rust reader.
+	 * Absent on trees produced by the JS reader (readNode never sets this).
+	 * Callers can also set this manually to apply a house-style config.
+	 */
+	format?: FormatRecord;
+}
+
+function toNodeId(id: number): NodeId {
+	return id as NodeId;
 }
 
 /**
@@ -43,7 +79,7 @@ export interface TreeHandle {
 function promoteAnonymousKeyword(
 	child: AnyTreeNode,
 	entry: AnyNodeData,
-	fields: Record<string, AnyNodeData | AnyNodeData[]>,
+	fields: Record<string, AnyNodeData | AnyNodeData[]>
 ): boolean {
 	if (child.isNamed()) return false;
 	const text = entry.$text ?? '';
@@ -64,7 +100,13 @@ function promoteAnonymousKeyword(
  * @param tree - The tree handle for node lookup
  * @param nodeId - If provided, read this node; otherwise read the root
  */
-export function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {
+export function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {
+	// Native-handle dispatch: when `tree.read` is present the handle owns a
+	// Rust/napi engine that produces `AnyNodeData` directly (no JS-side tree
+	// walk needed). TS handles do NOT set `tree.read` so this branch is
+	// native-only — no circular recursion risk.
+	if (tree.read) return tree.read(nodeId);
+
 	const node = nodeId != null ? tree.nodeById(nodeId) : tree.rootNode;
 
 	// `Object.create(null)` avoids prototype pollution on field names
@@ -76,7 +118,8 @@ export function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {
 	// entry, corrupting the accumulated array with a null-serializing
 	// function object. Others that can bite the same way: `toString`,
 	// `hasOwnProperty`, `valueOf`, `__proto__`.
-	const fields: Record<string, AnyNodeData | AnyNodeData[]> = Object.create(null);
+	const fields: Record<string, AnyNodeData | AnyNodeData[]> =
+		Object.create(null);
 	const children: AnyNodeData[] = [];
 
 	const allChildren = node.children();
@@ -88,25 +131,33 @@ export function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {
 			$source: 'ts',
 			$text: child.text(),
 			$span: { start: child.range().start.index, end: child.range().end.index },
-			$nodeId: child.id(),
-			$named: child.isNamed(),
+			$nodeId: toNodeId(child.id()),
+			$named: child.isNamed()
 		};
 
 		const fname = node.fieldNameForChild?.(i);
 		if (fname) {
 			// Multi-valued fields (e.g. python's `argument` in
-			// `print a, b, c` where each expression has the same
+			// `print a, b, c` where each expression has each expression has the same
 			// field name) must accumulate into an array instead of
 			// overwriting. But collisions with an anonymous-keyword
 			// placeholder (from promoteAnonymousKeyword earlier in
 			// the loop — e.g. rust's `type_item` has an anonymous
 			// `type` keyword child AND a named `type` field for the
 			// RHS) aren't multi-value: the real field replaces the
-			// placeholder. Accumulate only between genuine fname writes.
+			// placeholder. Same-field anon-after-anon must still
+			// accumulate — typescript ambient_declaration's
+			// `module.exports:` emits five children sharing
+			// `field=declaration` (module, ., property_identifier,
+			// :, object_type); silent replacement drops module/. .
 			const existing = fields[fname];
 			if (existing === undefined) {
 				fields[fname] = entry;
-			} else if (!Array.isArray(existing) && existing.$named === false) {
+			} else if (
+				!Array.isArray(existing) &&
+				existing.$named === false &&
+				entry.$named === true
+			) {
 				fields[fname] = entry;
 			} else if (Array.isArray(existing)) {
 				existing.push(entry);
@@ -120,14 +171,19 @@ export function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {
 		}
 	}
 
+	const hasStructure = Object.keys(fields).length > 0 || children.length > 0;
+
 	return {
 		$type: node.type,
 		$source: 'ts',
-		$text: node.text(),
+		// Branch nodes: emit $text only when DEBUG_TEXT is enabled.
+		// Leaf nodes (no $fields / $children) always carry $text so the
+		// render fast-path and all leaf-consuming callers work correctly.
+		$text: !hasStructure || DEBUG_TEXT ? node.text() : undefined,
 		$fields: Object.keys(fields).length > 0 ? fields : undefined,
 		$children: children.length > 0 ? children : undefined,
 		$span: { start: node.range().start.index, end: node.range().end.index },
-		$nodeId: node.id(),
-		$named: node.isNamed(),
+		$nodeId: toNodeId(node.id()),
+		$named: node.isNamed()
 	};
 }

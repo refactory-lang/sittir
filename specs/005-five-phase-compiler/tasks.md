@@ -67,15 +67,16 @@
   Also fixed a latent bug: `evaluate()` in extension mode was losing the base grammar's references because the already-evaluated rules don't go through the new `$` proxy. Now seeds `refs` from `baseGrammar.references`. Python went from 0 refs to 449.
 
   Deferred (part of T020): synthetic-supertype-detection (needs field content overlap), override-inference / candidate-quality (needs position+role across parents), separator-consistency (separator field not on SymbolRef yet).
+
 - [x] T021 Implement node-types.json validation
-  (`validateAgainstNodeTypes`) as an optional validation-only check.
-  Landed as `packages/codegen/src/compiler/validate-node-types.ts`:
-  walks `node-types.json` for the grammar, verifies every named
-  entry maps to a linked rule, and checks supertype subtype-set
-  agreement between tree-sitter's own truth and Link's
-  classification. Non-mutating. Test coverage in
-  `__tests__/validate-node-types.test.ts` — runs against all
-  three shipped grammars.
+      (`validateAgainstNodeTypes`) as an optional validation-only check.
+      Landed as `packages/codegen/src/compiler/validate-node-types.ts`:
+      walks `node-types.json` for the grammar, verifies every named
+      entry maps to a linked rule, and checks supertype subtype-set
+      agreement between tree-sitter's own truth and Link's
+      classification. Non-mutating. Test coverage in
+      `__tests__/validate-node-types.test.ts` — runs against all
+      three shipped grammars.
 - [x] T022 Write unit tests for Link phase: reference resolution, hidden rule classification, field provenance, clause detection, diagnostic derivations in `packages/codegen/src/__tests__/link.test.ts`
 - [x] T019a [P] Write test for self-referential hidden rule (cycle) — verify cycle is detected and flagged without crashing in `packages/codegen/src/__tests__/link.test.ts`
 - [x] T016a [P] Write test for hidden choice-of-symbols with 3 parent refs (gray zone) — verify it is inlined (not promoted) and appears in suggestedOverrides in `packages/codegen/src/__tests__/link.test.ts`
@@ -135,6 +136,7 @@ Per the design doc's "Eliminated from Emit" table, these functions must be remov
 ### Phase 2g: Rewrite emitters to consume NodeMap directly
 
 Per the design doc's derivation chains:
+
 ```
 NodeMap ──→ types.ts      (interfaces, unions, Config, FromInput)
        ├──→ factories.ts  (constructors, per-form for polymorphs)
@@ -195,15 +197,15 @@ Each emitter's entry point changes from `emitX(config: { grammar, nodes: Hydrate
 **Independent Test**: Run codegen for all three grammars, diff against golden snapshots, confirm e2e tests pass
 
 - [x] T048 [US1] Rust grammar diff vs baseline — classified in
-  `specs/005-five-phase-compiler/baseline/diff-notes.md`. All diffs are
-  intentional improvements (more type coverage, more templates, more
-  consts) or formatting-only (byte-identical grammar.ts/index.ts,
-  camelCase factory naming). One regression tracked as C6-prereq
-  (from.ts resolver gap) — not exercised by current tests.
+      `specs/005-five-phase-compiler/baseline/diff-notes.md`. All diffs are
+      intentional improvements (more type coverage, more templates, more
+      consts) or formatting-only (byte-identical grammar.ts/index.ts,
+      camelCase factory naming). One regression tracked as C6-prereq
+      (from.ts resolver gap) — not exercised by current tests.
 - [x] T049 [US1] TypeScript grammar diff vs baseline — covered by
-  shared `diff-notes.md`. Same pattern as rust.
+      shared `diff-notes.md`. Same pattern as rust.
 - [x] T050 [US1] Python grammar diff vs baseline — covered by shared
-  `diff-notes.md`. Same pattern as rust.
+      `diff-notes.md`. Same pattern as rust.
 - [x] T051 [US1] Run full e2e validation test suite — all 1111 tests pass across 32 files. Fixed 5 latent bugs: polymorph form factories now return the parent kind (via `AssembledGroup.parentKind`), `resolveIrKeys` uses a two-phase claim so suffix-stripped collisions are resolved correctly, the ir namespace uses a `_attach(fn, props)` helper (via `Object.defineProperty`) so polymorphs with a form named `name` don't throw, and `test-v2` emits non-empty dummies for multiple fields and branch children slots. See commit `0b7a463`.
 - [x] T052 [US1] Run type-check across all packages — all three generated packages (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) are type-clean via `tsgo --noEmit`. Emitter fixes: dedup `SyntaxKind` members on typeName collisions, dedup `_Type_/_Config_/_Tree_` identifiers in `type-test-v2`, rename local helpers (`_TypeAssert`, `_TypeExtends`) to avoid collisions with grammar kinds (`assert`, `extends`), emit supertype unions under the AssembledNode typeName, emit token stub interfaces + Tree variants, emit leftover-reference stubs for inlined-but-leaked kinds, use form.typeName directly for polymorph form aliases (fixes `ArrowFunctionUCallSignature`/`ArrowFunctionCallSignature` naming drift), handle keyword 0-arg factories in `resolveField`, emit raw-kind type literals for anonymous Tree interfaces. 50 residual errors in `packages/codegen` test fixtures are pre-existing and unrelated.
 
@@ -226,32 +228,32 @@ These are the critical acceptance tests. Generated code must actually work at ru
 The from emitter should share resolver functions across fields with identical content-type signatures. A field typed `expression | identifier` shared across 10 different branches should generate ONE resolver function, not 10 inline copies.
 
 - [x] T042i Dedupe resolvers in `emitters/from-v2.ts`. Implemented
-  after C6-prereq resolver scaffolding landed. The emitter now
-  interns every unique `(leafKinds, branchKinds)` list into a
-  module-scoped constant and each field resolver call references
-  the constant instead of repeating the literal inline. Supertype
-  matches get readable names (`_super_expression`, `_super_type`);
-  other lists get numeric `_K0`/`_K1` identifiers. The resolver
-  also expands supertype kind refs to their subtype set at emit
-  time so inline `$._expression` fields dedup correctly against
-  Link's promoted supertype. Rust/TS/Python from.ts all benefit.
+      after C6-prereq resolver scaffolding landed. The emitter now
+      interns every unique `(leafKinds, branchKinds)` list into a
+      module-scoped constant and each field resolver call references
+      the constant instead of repeating the literal inline. Supertype
+      matches get readable names (`_super_expression`, `_super_type`);
+      other lists get numeric `_K0`/`_K1` identifiers. The resolver
+      also expands supertype kind refs to their subtype set at emit
+      time so inline `$._expression` fields dedup correctly against
+      Link's promoted supertype. Rust/TS/Python from.ts all benefit.
 - [x] T042j Dedupe factory method signatures. Implemented via two
-  shared helpers at the top of every `factories.ts` — `_fs` for
-  singular-valued fields, `_fsm` for repeated-valued ones. Each
-  fluent setter body is now one call: `_fs(config, fn, key, v,
-  cur)` instead of a hand-inlined ternary. The named-method API
-  is preserved — the wrapper method's explicit parameter / return
-  annotations still narrow per-field — the dedup is purely
-  inside the body. Measurable savings per grammar: rust factories
-  are ~5% smaller, python ~6%, typescript ~4%.
+      shared helpers at the top of every `factories.ts` — `_fs` for
+      singular-valued fields, `_fsm` for repeated-valued ones. Each
+      fluent setter body is now one call: `_fs(config, fn, key, v,
+cur)` instead of a hand-inlined ternary. The named-method API
+      is preserved — the wrapper method's explicit parameter / return
+      annotations still narrow per-field — the dedup is purely
+      inside the body. Measurable savings per grammar: rust factories
+      are ~5% smaller, python ~6%, typescript ~4%.
 - [x] T042k Dedupe repeated multi-type unions into named aliases.
-  Implemented as a two-pass in `emitters/types-v2.ts`: first pass
-  counts every `(field | child)` content-type list; every list seen
-  ≥2 times gets a hoisted `export type _union_A_B_C = A | B | C`
-  declaration and call-site replacement. Rust: 4 aliases, TypeScript:
-  6, Python: 0. Modest but real — surfaces the fact that several
-  grammar fields share the same content set, which is itself useful
-  to see in the generated code.
+      Implemented as a two-pass in `emitters/types-v2.ts`: first pass
+      counts every `(field | child)` content-type list; every list seen
+      ≥2 times gets a hoisted `export type _union_A_B_C = A | B | C`
+      declaration and call-site replacement. Rust: 4 aliases, TypeScript:
+      6, Python: 0. Modest but real — surfaces the fact that several
+      grammar fields share the same content set, which is itself useful
+      to see in the generated code.
 
 **Checkpoint**: All three grammars produce correct output. E2e tests pass. Type-check passes. readNode + factory + render + from() all round-trip correctly. MVP complete.
 
@@ -356,77 +358,77 @@ rather than recomputing via free functions.
 **Priority chain (all completed):** C1 → C3 → C9 → C10 → C11.
 
 - [x] **C1** Collapse free-function naming helpers into `AssembledNode`.
-  Moved `typeName`, `factoryName`, `irKey`, `rawFactoryName`,
-  `treeTypeName`, `configTypeName`, `fromInputTypeName`,
-  `fromFunctionName` onto the class as readonly fields / getters.
-  `naming.ts` still exists but v2 emitters no longer import from it.
+      Moved `typeName`, `factoryName`, `irKey`, `rawFactoryName`,
+      `treeTypeName`, `configTypeName`, `fromInputTypeName`,
+      `fromFunctionName` onto the class as readonly fields / getters.
+      `naming.ts` still exists but v2 emitters no longer import from it.
 - [x] **C2** Unify ir-key resolution into `assemble.ts` → `resolveIrKeys()`
-  post-pass. `buildIrKeyMap` in `emitters/ir-keys.ts` deleted; emitters
-  read `node.irKey` directly.
+      post-pass. `buildIrKeyMap` in `emitters/ir-keys.ts` deleted; emitters
+      read `node.irKey` directly.
 - [x] **C3** Collapse per-emitter `toTypeName` / `toRawFactoryName` /
-  `toShortName` copies. Folded into C1 — every v2 emitter now pulls
-  names from the class.
+      `toShortName` copies. Folded into C1 — every v2 emitter now pulls
+      names from the class.
 - [x] **C4** Done. Executed T045a-d. Deleted v1 grammar-loading/model/factoring files plus all v1 emitters and the v1 unit test directory. Kept `grammar-reader.ts` and (trimmed) `overrides.ts` as v2 helpers — the "absorbed into Evaluate" claim was over-stated. Also deleted `validate-templates.ts` (was a v1 validator, not worth porting; superseded by `validateRenderableFromNodeMap`).
 - [x] **C5** Deleted `packages/codegen/src/compiler/adapter.ts`. wrap-v2
-  now consumes NodeMap directly (T040), and the v1 `generate()` path
-  builds its own HydratedNodeModel[] — so the adapter has zero callers.
-  Migration scaffolding tests (`adapter.test.ts`,
-  `pipeline-comparison.test.ts`) deleted alongside. Commit `e0c6b94`.
+      now consumes NodeMap directly (T040), and the v1 `generate()` path
+      builds its own HydratedNodeModel[] — so the adapter has zero callers.
+      Migration scaffolding tests (`adapter.test.ts`,
+      `pipeline-comparison.test.ts`) deleted alongside. Commit `e0c6b94`.
 - [x] **C6** Delete the legacy `generate()` path in
-  `packages/codegen/src/index.ts`. Done. `index.ts` now only
-  re-exports `generateV2` plus `GenerateConfigV2` / `GeneratedFilesV2`
-  types. `validate-all.test.ts` drives `generateV2({grammar, outputDir: 'src'})`
-  directly. The from.ts resolver gap was closed in the Phase-2
-  emitter refactor (dual-shape `_f = input.fields ?? input` access
-  plus inline-enum literal union typing).
+      `packages/codegen/src/index.ts`. Done. `index.ts` now only
+      re-exports `generateV2` plus `GenerateConfigV2` / `GeneratedFilesV2`
+      types. `validate-all.test.ts` drives `generateV2({grammar, outputDir: 'src'})`
+      directly. The from.ts resolver gap was closed in the Phase-2
+      emitter refactor (dual-shape `_f = input.fields ?? input` access
+      plus inline-enum literal union typing).
 - [x] **C7** Classifier: add `terminal` and `polymorph` to the spec
-  doc. Updated `specs/sittir-grammar-compiler-spec.md` taxonomy table
-  and rule-variant-presence table. Commit `c583646`.
+      doc. Updated `specs/sittir-grammar-compiler-spec.md` taxonomy table
+      and rule-variant-presence table. Commit `c583646`.
 - [x] **C8** Move `hasAnyField` / `hasAnyChild` into class constructors.
-  **Not applicable** — these predicates are called from `classifyNode`
-  and `promotePolymorph` on raw `Rule` objects, *before* any
-  `AssembledNode` exists. No simplification possible at call sites.
-  Closed as won't-do.
+      **Not applicable** — these predicates are called from `classifyNode`
+      and `promotePolymorph` on raw `Rule` objects, _before_ any
+      `AssembledNode` exists. No simplification possible at call sites.
+      Closed as won't-do.
 - [x] **C9** Templates walker: hoist into `AssembledNode.renderTemplate()`.
-  `templates-v2.ts` shrunk from ~400 lines to 81 (preamble + dispatch
-  loop + YAML serialisation). Walker helpers (`renderRule`, `joinParts`,
-  `needsSpace`, `findRepeatSeparator`) live in `rule.ts`.
+      `templates-v2.ts` shrunk from ~400 lines to 81 (preamble + dispatch
+      loop + YAML serialisation). Walker helpers (`renderRule`, `joinParts`,
+      `needsSpace`, `findRepeatSeparator`) live in `rule.ts`.
 - [x] **C10** Factory emitter: hoist per-model emission into
-  `AssembledNode.emitFactory()`. `factories-v2.ts` shrunk from 346
-  lines to 108. Commit `f818b15`.
+      `AssembledNode.emitFactory()`. `factories-v2.ts` shrunk from 346
+      lines to 108. Commit `f818b15`.
 - [x] **C11** from-v2: collapse per-model `emitXxxFrom` into
-  `AssembledNode.emitFromFunction(nodeMap)`. `from-v2.ts` shrunk from
-  263 lines to 85. Commit `3063164`.
+      `AssembledNode.emitFromFunction(nodeMap)`. `from-v2.ts` shrunk from
+      263 lines to 85. Commit `3063164`.
 - [x] **C12** Shared rule-lookup sourced from NodeMap. Added
-  `packages/codegen/src/validators/rule-lookup.ts` with
-  `buildRuleLookup(nodeMap)` returning a classification per kind
-  (`template` / `text` / `dispatch` / `none`). Added
-  `validateRenderableFromNodeMap(grammar, nodeMap)` that consults
-  the lookup directly — no more YAML round-trip for renderability
-  checks. CLI now uses the NodeMap variant. `validate-templates`
-  stays YAML-centric because the YAML is the thing it audits;
-  both validators share the rule-lookup helper when they need a
-  "kinds that render" answer.
+      `packages/codegen/src/validators/rule-lookup.ts` with
+      `buildRuleLookup(nodeMap)` returning a classification per kind
+      (`template` / `text` / `dispatch` / `none`). Added
+      `validateRenderableFromNodeMap(grammar, nodeMap)` that consults
+      the lookup directly — no more YAML round-trip for renderability
+      checks. CLI now uses the NodeMap variant. `validate-templates`
+      stays YAML-centric because the YAML is the thing it audits;
+      both validators share the rule-lookup helper when they need a
+      "kinds that render" answer.
 - [x] **C13** Move `convert-overrides.ts` out of `src/compiler/` into
-  `packages/codegen/scripts/` with a note explaining its historical
-  one-shot role. Commit `6bc6bf3`.
+      `packages/codegen/scripts/` with a note explaining its historical
+      one-shot role. Commit `6bc6bf3`.
 - [x] **C14** Spec doc refresh. Added notes on `promoteTerminals`
-  (Link) and `promotePolymorph` (Optimize); described the class
-  hierarchy and pure-switch classification in the Phase 4 Assemble
-  section. Commit `c583646`.
+      (Link) and `promotePolymorph` (Optimize); described the class
+      hierarchy and pure-switch classification in the Phase 4 Assemble
+      section. Commit `c583646`.
 - [x] **C15** Validator test infrastructure consolidation. Landed
-  `packages/codegen/src/validators/common.ts` with the shared
-  tree-sitter adapter (`adaptNode`, `treeHandle`, `findFirst`,
-  `collectKinds`), corpus parser (`parseCorpus`,
-  `loadCorpusEntries`), supertype-based reparse wrapping
-  (`buildKindToSupertypes`, `wrapForReparse`, `REPARSE_WRAPPERS`),
-  and `WASM_PATHS`. Each of `validate-roundtrip`,
-  `validate-factory-roundtrip`, and `validate-from` now imports
-  from `common.ts` instead of duplicating ~150 lines three times.
-  Per-validator code shrunk to the per-kind assertion logic only.
+      `packages/codegen/src/validators/common.ts` with the shared
+      tree-sitter adapter (`adaptNode`, `treeHandle`, `findFirst`,
+      `collectKinds`), corpus parser (`parseCorpus`,
+      `loadCorpusEntries`), supertype-based reparse wrapping
+      (`buildKindToSupertypes`, `wrapForReparse`, `REPARSE_WRAPPERS`),
+      and `WASM_PATHS`. Each of `validate-roundtrip`,
+      `validate-factory-roundtrip`, and `validate-from` now imports
+      from `common.ts` instead of duplicating ~150 lines three times.
+      Per-validator code shrunk to the per-kind assertion logic only.
 - [x] **C16** Verified. `tests/integration/validate-all.test.ts` is the v2 smoke test exercising `generateV2` + round-trip validators against fresh output. Ceilings are generous upper bounds (rust 50/40, ts 10/10, python 40/30) and currently hold (rust 45/5, ts 0/6, python 6/8). `corpus-validation.test.ts` is the authoritative floor; this file is the smoke ceiling — both are valuable and stay.
 - [x] **C17** Audited the externals lists of all three current grammars
-  (2026-04-13):
+      (2026-04-13):
   - **rust**, **typescript**: no `_indent`/`_dedent`/`_newline`
     externals at all (not indent-based).
   - **python**: uses the canonical names `_newline`, `_indent`,
@@ -442,6 +444,7 @@ rather than recomputing via free functions.
   grammar with differently-named structural-whitespace externals
   is added. Defer adding an `externalRoles` config / position-based
   detection until that need actually arises.
+
 - [~] **C18** Partial — dropped ~968 `as any` casts across the
   three generated packages over two passes:
   - Factory field reads (commit `e2fa0b6`, ~628 casts):
@@ -459,9 +462,10 @@ rather than recomputing via free functions.
   dispatcher casts, fluent getter/setter return types still `any`.
   These need either a tighter `ConfigOf<T>` definition or
   per-call-site type narrowing — left for a later pass.
+
 - [x] **C19** Full type-check across all generated packages — done as
-  part of **T052**. All three generated packages type-clean via
-  `tsgo --noEmit`. Commit `a77f94b`.
+      part of **T052**. All three generated packages type-clean via
+      `tsgo --noEmit`. Commit `a77f94b`.
 
 ### Apples-to-apples v1-vs-v2 comparison (recorded 2026-04-12)
 
@@ -473,12 +477,14 @@ files. Counts below are **after** the enum `factoryName` fix in
 **Byte-identical output:** `grammar.ts`, `index.ts` (all three grammars).
 
 **v2 strictly leaner:**
-- `factories.ts` — v1 slightly larger due to snake_case + trailing-
-  underscore naming (`abstract_type_` vs `abstractType`). Same
+
+- `factories.ts` — v1 slightly larger due to snake*case + trailing-
+  underscore naming (`abstract_type*`vs`abstractType`). Same
   semantic coverage after the enum fix.
 - `utils.ts` — v1 78 → v2 50 lines (shared helper consolidation).
 
 **v2 strictly broader (more coverage):**
+
 - `types.ts` — v2 +145 rust / +179 ts / +97 python interfaces. v2
   emits stub interfaces for every kind a field union references.
 - `templates.yaml` — v2 +67 rust / +197 ts / +82 python entries. v2's
@@ -489,6 +495,7 @@ files. Counts below are **after** the enum `factoryName` fix in
   effectively only emitted one from() binding — a v1 regex bug.
 
 **v2 leaner-but-less-capable (real regression — see C6-prereq below):**
+
 - `from.ts` — v1 4528/4738/2926 lines → v2 1555/1877/1203. v2's
   size drop is not purely dedup; it's missing substantial resolver
   logic v1 had.
@@ -499,9 +506,9 @@ files. Counts below are **after** the enum `factoryName` fix in
    case `'enum'` constructed `AssembledEnum` without passing
    `factoryName` / `irKey`, so visible enums (rust `boolean_literal`,
    `primitive_type`, `fragment_specifier`, etc.) emitted interfaces
-   + SyntaxKind entries but no factories. One-line fix; rust gained
-   4 factories, ts gained 1, python unchanged. All 507 tests still
-   pass.
+   - SyntaxKind entries but no factories. One-line fix; rust gained
+     4 factories, ts gained 1, python unchanged. All 507 tests still
+     pass.
 
 2. **`doc_comment` elimination (needs investigation).** v1 had a
    standalone `doc_comment` kind in rust. v2 only emits the
@@ -514,12 +521,12 @@ files. Counts below are **after** the enum `factoryName` fix in
    for all of python — a v1 regex/detection bug, not a v2 gap.
 
 - [x] **C6-prereq** Done in commit `5737e76`. v2 from.ts now emits a
-  per-grammar resolver helper block at module scope:
-  `_leafRegistry`, `_resolveLeafString`, `_resolveByKind`,
-  `_resolveScalar`, `_resolveOne`, `_resolveMany`. Per-field
-  resolvers in `resolveFieldFromView` emit
-  `_resolveOne(f.field, [leaves], [branches]) as any`. Closes the
-  capability gap from the v1↔v2 comparison:
+      per-grammar resolver helper block at module scope:
+      `_leafRegistry`, `_resolveLeafString`, `_resolveByKind`,
+      `_resolveScalar`, `_resolveOne`, `_resolveMany`. Per-field
+      resolvers in `resolveFieldFromView` emit
+      `_resolveOne(f.field, [leaves], [branches]) as any`. Closes the
+      capability gap from the v1↔v2 comparison:
   - Loose string → leaf-by-value/pattern dispatch ✓
   - Array field → map each loose element ✓
   - Supertype field → dispatch by object `kind` ✓
@@ -547,57 +554,57 @@ the generated `factories.ts` output.
 ### Optimize passes (T060-series)
 
 - [x] **T060** Implement CHOICE fan-out pass. `fanOutSeqChoices(rule)`
-  now distributes a `seq` over an inner `choice`
-  (`seq(a, choice(b, c), d)` → `choice(seq(a, b, d), seq(a, c, d))`),
-  preserving variant labels. Only fires when the seq contains a
-  single choice — multi-choice distribution would explode
-  combinatorially. Wired as the second pass in `optimize()`, after
-  `collapseWrappers`. Covered by `optimize.test.ts > fanOutSeqChoices`.
+      now distributes a `seq` over an inner `choice`
+      (`seq(a, choice(b, c), d)` → `choice(seq(a, b, d), seq(a, c, d))`),
+      preserving variant labels. Only fires when the seq contains a
+      single choice — multi-choice distribution would explode
+      combinatorially. Wired as the second pass in `optimize()`, after
+      `collapseWrappers`. Covered by `optimize.test.ts > fanOutSeqChoices`.
 
 - [x] **T061** Implement seq prefix/suffix factoring.
-  `factorChoiceBranches(rule)` uses the existing
-  `findCommonPrefix` / `findCommonSuffix` helpers to pull shared
-  members out of a `choice` of seqs. Preserves `variant` labels on
-  each branch. Wired as the third Optimize pass; a trailing
-  `collapseWrappers` re-pass flattens the resulting single-element
-  sequences. Covered by `optimize.test.ts > factorChoiceBranches`.
+      `factorChoiceBranches(rule)` uses the existing
+      `findCommonPrefix` / `findCommonSuffix` helpers to pull shared
+      members out of a `choice` of seqs. Preserves `variant` labels on
+      each branch. Wired as the third Optimize pass; a trailing
+      `collapseWrappers` re-pass flattens the resulting single-element
+      sequences. Covered by `optimize.test.ts > factorChoiceBranches`.
 
 - [x] **T062** Collapse chained wrappers. Implemented in
-  `collapseWrappers` (`compiler/optimize.ts`), wired as `optimize()`'s
-  traversal pass. Handles `optional(optional(x))` → `optional(x)`,
-  `repeat(repeat(x))` → `repeat(x)`, `optional(repeat(x))` →
-  `repeat(x)`, `repeat(optional(x))` → `repeat(x)`, `seq([x])` → `x`,
-  `choice([x])` → `x`. Recurses through `field`, `variant`, `clause`,
-  `group`, `token` wrappers. Non-lossy. 1118/1118 tests still passing.
+      `collapseWrappers` (`compiler/optimize.ts`), wired as `optimize()`'s
+      traversal pass. Handles `optional(optional(x))` → `optional(x)`,
+      `repeat(repeat(x))` → `repeat(x)`, `optional(repeat(x))` →
+      `repeat(x)`, `repeat(optional(x))` → `repeat(x)`, `seq([x])` → `x`,
+      `choice([x])` → `x`. Recurses through `field`, `variant`, `clause`,
+      `group`, `token` wrappers. Non-lossy. 1118/1118 tests still passing.
 
 - [x] **T063** Inline single-use hidden seq rules. Implemented as
-  `inlineSingleUseHidden(rules)` in `compiler/optimize.ts`. Iterates
-  to a fixed point: counts every outgoing reference (symbol refs
-  via `walkSymbols` plus `SupertypeRule.subtypes` and polymorph
-  form contents), then inlines any hidden (`_`-prefixed) rule that
-  has exactly one consumer. Structurally meaningful types
-  (`supertype` / `polymorph` / `enum` / `terminal` / `group`) are
-  skipped — they carry explicit classification downstream relies
-  on. Non-observational per the architecture claim: emitters walk
-  the resulting rule tree and produce the same downstream shape
-  whether the helper exists as its own entry or expanded inline.
-  Test impact: 17 hidden-rule kinds disappear from the rule map
-  for rust/typescript/python combined, factories.ts and from.ts
-  shrink, 1142 corpus tests still green.
+      `inlineSingleUseHidden(rules)` in `compiler/optimize.ts`. Iterates
+      to a fixed point: counts every outgoing reference (symbol refs
+      via `walkSymbols` plus `SupertypeRule.subtypes` and polymorph
+      form contents), then inlines any hidden (`_`-prefixed) rule that
+      has exactly one consumer. Structurally meaningful types
+      (`supertype` / `polymorph` / `enum` / `terminal` / `group`) are
+      skipped — they carry explicit classification downstream relies
+      on. Non-observational per the architecture claim: emitters walk
+      the resulting rule tree and produce the same downstream shape
+      whether the helper exists as its own entry or expanded inline.
+      Test impact: 17 hidden-rule kinds disappear from the rule map
+      for rust/typescript/python combined, factories.ts and from.ts
+      shrink, 1142 corpus tests still green.
 
 - [x] **T064** Dedupe structurally identical seq members.
-  `dedupeSeqMembers(rule)` collapses adjacent duplicates via
-  `rulesEqual`. Only adjacent — non-adjacent repetition is almost
-  always intentional. Wired as the fourth Optimize pass. Covered
-  by `optimize.test.ts > dedupeSeqMembers`. (No warnings emitted;
-  adjacent duplicates have been rare on the three shipped grammars
-  and the signal-to-noise on grammar-author warnings wasn't
-  obviously worth it.)
+      `dedupeSeqMembers(rule)` collapses adjacent duplicates via
+      `rulesEqual`. Only adjacent — non-adjacent repetition is almost
+      always intentional. Wired as the fourth Optimize pass. Covered
+      by `optimize.test.ts > dedupeSeqMembers`. (No warnings emitted;
+      adjacent duplicates have been rare on the three shipped grammars
+      and the signal-to-noise on grammar-author warnings wasn't
+      obviously worth it.)
 
 ### Assemble classifier (T065)
 
 - [x] **T065** Shape-inspection fallback in `classifyNode`. Handles
-  three shapes the classifier would otherwise reject:
+      three shapes the classifier would otherwise reject:
   1. **Polymorph**: a raw `choice` with field-carrying variants and
      heterogeneous field sets — what `IncludeFilter.rules = []`
      strict debug mode leaves behind when Link's `promotePolymorph`
@@ -616,14 +623,14 @@ Surfaced by TODOs in `packages/rust/src/factories copy.ts` (the
 scratch file you annotated to track regressions).
 
 - [x] **T066** Remove remaining `(config as any)` casts. Done.
-  `grep -c 'as any' packages/{rust,typescript,python}/src/factories.ts`
-  reports **0** across all three grammars. Setter spreads use
-  `...(config ?? {})`, polymorph dispatcher casts to
-  `ConfigOf<FormN>` per form, `setChildren` rest params are typed
-  as `ChildOf<T>[]`.
+      `grep -c 'as any' packages/{rust,typescript,python}/src/factories.ts`
+      reports **0** across all three grammars. Setter spreads use
+      `...(config ?? {})`, polymorph dispatcher casts to
+      `ConfigOf<FormN>` per form, `setChildren` rest params are typed
+      as `ChildOf<T>[]`.
 
 - [x] **T067** Runtime terminal verification — complete via
-  `GenerateConfigV2.strict` flag.
+      `GenerateConfigV2.strict` flag.
   - **enum**: validates against the closed value set on every
     call (`if (!VALUES.includes(text)) throw`) unconditionally.
   - **keyword**: no-arg signature makes validation moot.
@@ -638,74 +645,74 @@ scratch file you annotated to track regressions).
     and enum validation is always on regardless of flag.
 
 - [x] **T068** Factory return types. Done via the `FluentNode<K, C>`
-  helper in `@sittir/types` plus the `FluentKindMap` / `_FactoryMap`
-  emission in `factories-v2.ts`. Every factory's return type now
-  carries the kind discriminator, typed field accessors, and the
-  common `render`/`toEdit`/`replace` methods. `_factoryMap` is
-  declared as `typeof _factoryMap`, so per-entry signatures come
-  directly from the factory inference without casts. `ir.foo(...)`
-  chains preserve the concrete return through `_attach`'s
-  `(...args: never[]) => unknown` generic bound.
+      helper in `@sittir/types` plus the `FluentKindMap` / `_FactoryMap`
+      emission in `factories-v2.ts`. Every factory's return type now
+      carries the kind discriminator, typed field accessors, and the
+      common `render`/`toEdit`/`replace` methods. `_factoryMap` is
+      declared as `typeof _factoryMap`, so per-entry signatures come
+      directly from the factory inference without casts. `ir.foo(...)`
+      chains preserve the concrete return through `_attach`'s
+      `(...args: never[]) => unknown` generic bound.
 
 ### Repeated-shape derivation (T076)
 
 - [x] **T076** Repeated-shape suggestion pass. Link now walks every
-  field's content-type union and flags kind sets that appear in
-  ≥2 distinct parent rules as `RepeatedShapeEntry` records on the
-  derivation log. The suggested.ts emitter surfaces each entry as
-  a reviewable candidate with a ready-to-paste grammar.js snippet
-  (`choice(...)` declaration + supertype hint). Shapes matching an
-  already-declared supertype are skipped automatically. Covered by
-  the existing corpus runs — rust surfaces 3 candidate sets,
-  typescript more, python several.
+      field's content-type union and flags kind sets that appear in
+      ≥2 distinct parent rules as `RepeatedShapeEntry` records on the
+      derivation log. The suggested.ts emitter surfaces each entry as
+      a reviewable candidate with a ready-to-paste grammar.js snippet
+      (`choice(...)` declaration + supertype hint). Shapes matching an
+      already-declared supertype are skipped automatically. Covered by
+      the existing corpus runs — rust surfaces 3 candidate sets,
+      typescript more, python several.
 
 ### Types emitter sugar (T070-T073)
 
 - [x] **T070** Inline-enum field literal unions. Fields whose content
-  is a choice-of-strings (`binary_expression.operator`,
-  `compound_assignment_expr.operator`, etc.) now emit as
-  `"==" | "!=" | ...` instead of `string`. Implemented by threading
-  `literalValues` on `AssembledField`, populated in `deriveFieldsRaw`
-  (`rule.ts`), merged in `mergeFields`, and consumed by
-  `fieldTypeExpr` (`types-v2.ts`). Paired with removing the
-  phantom-kind leak in `collectAnonymousNodes` + `deriveContentTypes`
-  (enum values are `text` contents, never distinct kinds).
+      is a choice-of-strings (`binary_expression.operator`,
+      `compound_assignment_expr.operator`, etc.) now emit as
+      `"==" | "!=" | ...` instead of `string`. Implemented by threading
+      `literalValues` on `AssembledField`, populated in `deriveFieldsRaw`
+      (`rule.ts`), merged in `mergeFields`, and consumed by
+      `fieldTypeExpr` (`types-v2.ts`). Paired with removing the
+      phantom-kind leak in `collectAnonymousNodes` + `deriveContentTypes`
+      (enum values are `text` contents, never distinct kinds).
 
 - [x] **T071** `Terminal<K, V>` alias. Added `interface Terminal<K, V>`
-  in `@sittir/types` and retargeted every leaf/keyword/enum emission
-  in types-v2 to `export type X = Terminal<"kind", "literal"|...>`.
-  Dedupes hundreds of boilerplate interfaces per grammar.
+      in `@sittir/types` and retargeted every leaf/keyword/enum emission
+      in types-v2 to `export type X = Terminal<"kind", "literal"|...>`.
+      Dedupes hundreds of boilerplate interfaces per grammar.
 
 - [x] **T072** Externals inheritance through grammar extensions.
-  `grammarFn` now inherits `externals`/`extras`/`supertypes`/`inline`/
-  `conflicts`/`word` from the base grammar when the override doesn't
-  redeclare them, and accepts string entries from
-  `previous.concat([...])` patterns. Prevents float_literal /
-  string_content / _automatic_semicolon from vanishing from rust/ts
-  nodeMaps.
+      `grammarFn` now inherits `externals`/`extras`/`supertypes`/`inline`/
+      `conflicts`/`word` from the base grammar when the override doesn't
+      redeclare them, and accepts string entries from
+      `previous.concat([...])` patterns. Prevents float_literal /
+      string_content / \_automatic_semicolon from vanishing from rust/ts
+      nodeMaps.
 
 - [x] **T073** Drop unreferenced `Terminal<K>` aliases. Implemented
-  via `computeReferencedKinds(nodeMap)` — walks every structural
-  node's field / child content types and every supertype's subtype
-  list to build the "kind is referenced" set. A terminal is emitted
-  only when (a) it has a factory binding, so downstream packages
-  import the type, or (b) its kind is in the referenced set.
-  Truly-orphaned hidden tokens that survived Link without a factory
-  get dropped. Savings are substantial: rust 70→31, typescript
-  86→39, python 65→28 Terminal aliases. 1156/1156 tests still
-  passing — every call site that actually reaches a terminal is
-  preserved.
+      via `computeReferencedKinds(nodeMap)` — walks every structural
+      node's field / child content types and every supertype's subtype
+      list to build the "kind is referenced" set. A terminal is emitted
+      only when (a) it has a factory binding, so downstream packages
+      import the type, or (b) its kind is in the referenced set.
+      Truly-orphaned hidden tokens that survived Link without a factory
+      get dropped. Savings are substantial: rust 70→31, typescript
+      86→39, python 65→28 Terminal aliases. 1156/1156 tests still
+      passing — every call site that actually reaches a terminal is
+      preserved.
 
 ### Evaluate follow-up (T069)
 
 - [x] **T069** Better hidden-convention handling. Added shared
-  `isHiddenKind(name, inline?)` helper in `evaluate.ts` that
-  consults both the leading-underscore convention AND the raw
-  grammar's `inline: []` array. Link uses it at both the
-  hidden-rule classification site and the `tagVariants` visible-
-  choice check. Grammars that opt into `inline:` for
-  non-underscore-prefixed rules now get correct visibility
-  treatment without needing to rename.
+      `isHiddenKind(name, inline?)` helper in `evaluate.ts` that
+      consults both the leading-underscore convention AND the raw
+      grammar's `inline: []` array. Link uses it at both the
+      hidden-rule classification site and the `tagVariants` visible-
+      choice check. Grammars that opt into `inline:` for
+      non-underscore-prefixed rules now get correct visibility
+      treatment without needing to rename.
 
 ---
 
@@ -769,6 +776,7 @@ T045a-T045d, T046-T047 (Delete old code) — all [P]
 ### Why This Order Works
 
 The foundational phase IS the rewrite. User stories 2-6 are validation and verification — they test properties that the foundational work should already exhibit. If the foundation is built correctly:
+
 - US2 (phase independence) should already pass
 - US3 (grammar-agnostic) should already pass
 - US4 (polymorphs) should already pass

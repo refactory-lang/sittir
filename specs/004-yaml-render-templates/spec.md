@@ -6,7 +6,7 @@
 **Input**: Render Templates specification — migrate from S-expression TypeScript to ast-grep-style YAML templates with clauses, per-rule joinBy, and literal formatting
 **Design Document**: [design.md](design.md) — full technical reference with render engine pseudocode, type changes, file structure, and complete Rust YAML example
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Codegen produces YAML templates from grammar (Priority: P1)
 
@@ -134,7 +134,7 @@ The codegen inlines per-kind override field promotion code into generated `wrapX
 - What happens when an `overrides.json` entry conflicts with an existing tree-sitter FIELD? (Expected: codegen reports an error — overrides cannot shadow existing FIELDs)
 - What happens when override field promotion encounters a child that matches no heuristic? (Expected: child remains in `children` array, accessible via `$$$CHILDREN` or children-by-kind fallback)
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -175,7 +175,7 @@ The codegen inlines per-kind override field promotion code into generated `wrapX
 - **overrides.json**: A per-grammar supplemental field definition file that provides synthetic field names (and optional `values` arrays for token matching) for nodes where the tree-sitter grammar lacks explicit FIELDs; codegen-time only, not shipped at runtime
 - **Override field promotion**: Per-kind logic inlined into generated `wrapXxx()` functions that promotes override-named children from `children` into `fields`, making render templates and factory output symmetric. Complements the render engine's children-by-kind fallback.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

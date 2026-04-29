@@ -10,8 +10,8 @@ const config: RulesConfig = {
 	metadata: { grammarSha: 'test' },
 	rules: {
 		function_item: 'fn $NAME() $BODY',
-		block: '{ }',
-	},
+		block: '{ }'
+	}
 };
 
 const renderer = createRenderer(config);
@@ -33,8 +33,8 @@ describe('toCst', () => {
 			$type: 'function_item',
 			$fields: {
 				name: { $type: 'identifier', $text: 'main' },
-				body: { $type: 'block', $fields: {} },
-			},
+				body: { $type: 'block', $fields: {} }
+			}
 		};
 		const cst = toCst(node, renderer);
 		expect(cst.type).toBe('function_item');

@@ -15,13 +15,12 @@ pnpm add @sittir/python
 ```ts
 import { ir } from '@sittir/python';
 
-const node = ir.functionDefinition(ir.identifier('greet'))
-  .parameters(ir.parameters())
-  .body(ir.block(
-    ir.return_(ir.identifier('hello'))
-  ));
+const node = ir
+	.functionDefinition(ir.identifier('greet'))
+	.parameters(ir.parameters())
+	.body(ir.block(ir.return_(ir.identifier('hello'))));
 
-node.renderImpl();  // "def greet ( ) : return hello"
+node.renderImpl(); // "def greet ( ) : return hello"
 ```
 
 ### Declarative API (`.from()`)
@@ -29,18 +28,18 @@ node.renderImpl();  // "def greet ( ) : return hello"
 ```ts
 // Strings auto-resolve to LeafBuilder for leaf-typed fields
 const fn = ir.functionDefinition.from({
-  name: 'greet',   // string → LeafBuilder('identifier', 'greet')
-  parameters: ir.parameters(),
-  body: ir.block(),
+	name: 'greet', // string → LeafBuilder('identifier', 'greet')
+	parameters: ir.parameters(),
+	body: ir.block()
 });
 ```
 
 ### Leaf Builders
 
 ```ts
-ir.identifier('x')         // LeafBuilder<'identifier'>
-ir.integer('42')            // LeafBuilder<'integer'>
-ir.string_('hello')         // LeafBuilder<'string'>
+ir.identifier('x'); // LeafBuilder<'identifier'>
+ir.integer('42'); // LeafBuilder<'integer'>
+ir.string_('hello'); // LeafBuilder<'string'>
 ```
 
 ### CST Round-Trip
@@ -56,12 +55,12 @@ const patch = edit(treeSitterNode, (b) => b.body(ir.block()));
 
 ```ts
 import type {
-  PythonGrammar,
-  FunctionDefinition,
-  ClassDefinition,
-  Identifier,       // leaf type
-  Expression,       // supertype union
-  Statement,        // supertype union
+	PythonGrammar,
+	FunctionDefinition,
+	ClassDefinition,
+	Identifier, // leaf type
+	Expression, // supertype union
+	Statement // supertype union
 } from '@sittir/python';
 
 import type { FunctionDefinitionBuilder } from '@sittir/python';

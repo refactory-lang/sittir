@@ -2,9 +2,9 @@
 description: Auto-commit changes after a Spec Kit command completes
 ---
 
-
 <!-- Extension: git -->
 <!-- Config: .specify/extensions/git/ -->
+
 # Auto-Commit Changes
 
 Automatically stage and commit all changes after a Spec Kit command completes.
@@ -35,9 +35,9 @@ In `.specify/extensions/git/git-config.yml`:
 
 ```yaml
 auto_commit:
-  default: false          # Global toggle — set true to enable for all commands
+  default: false # Global toggle — set true to enable for all commands
   after_specify:
-    enabled: true          # Override per-command
+    enabled: true # Override per-command
     message: "[Spec Kit] Add specification"
   after_plan:
     enabled: false

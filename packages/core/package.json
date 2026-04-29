@@ -1,47 +1,49 @@
 {
-  "name": "@sittir/core",
-  "version": "0.1.0",
-  "description": "Grammar-driven render engine, validation, CST, and Edit creation for sittir",
-  "license": "MIT",
-  "homepage": "https://github.com/refactory-lang/sittir#readme",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/refactory-lang/sittir.git",
-    "directory": "packages/core"
-  },
-  "keywords": [
-    "tree-sitter",
-    "ir",
-    "render",
-    "cst",
-    "ast-grep"
-  ],
-  "type": "module",
-  "exports": {
-    ".": {
-      "types": "./src/index.ts",
-      "import": "./src/index.ts",
-      "default": "./src/index.ts"
-    }
-  },
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "build": "tsgo -p tsconfig.build.json",
-    "clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
-    "dev": "tsgo -p tsconfig.build.json --watch",
-    "type-check": "tsgo --noEmit",
-    "test": "vitest run"
-  },
-  "dependencies": {
-    "@sittir/types": "workspace:*",
-    "yaml": "^2.8.3"
-  },
-  "devDependencies": {
-    "@ast-grep/napi": "^0.42.1",
-    "@types/node": "^25.6.0"
-  }
+	"name": "@sittir/core",
+	"version": "0.1.0",
+	"description": "Grammar-driven render engine, validation, CST, and Edit creation for sittir",
+	"keywords": [
+		"ast-grep",
+		"cst",
+		"ir",
+		"render",
+		"tree-sitter"
+	],
+	"homepage": "https://github.com/refactory-lang/sittir#readme",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/refactory-lang/sittir.git",
+		"directory": "packages/core"
+	},
+	"files": [
+		"dist"
+	],
+	"type": "module",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./src/index.ts",
+			"import": "./src/index.ts",
+			"default": "./src/index.ts"
+		}
+	},
+	"scripts": {
+		"build": "tsgo -p tsconfig.build.json",
+		"clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
+		"dev": "tsgo -p tsconfig.build.json --watch",
+		"type-check": "tsgo --noEmit",
+		"test": "vitest run"
+	},
+	"dependencies": {
+		"@sittir/types": "workspace:*",
+		"nunjucks": "^3.2.4",
+		"yaml": "^2.8.3"
+	},
+	"devDependencies": {
+		"@ast-grep/napi": "^0.42.1",
+		"@types/node": "^25.6.0",
+		"@types/nunjucks": "^3.2.6"
+	}
 }

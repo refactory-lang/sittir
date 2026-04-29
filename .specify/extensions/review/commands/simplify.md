@@ -29,7 +29,6 @@ You will analyze recently modified code and apply refinements that:
 2. **Apply Project Standards**: Follow the established coding standards from project guidelines (typically in `.specify/memory/constitution.md`, `CLAUDE.md`, `.github/copilot-instructions.md` or equivalent).
 
 3. **Enhance Clarity**: Simplify code structure by:
-
    - Reducing unnecessary complexity and nesting
    - Eliminating redundant code and abstractions
    - Improving readability through clear variable and function names
@@ -39,7 +38,6 @@ You will analyze recently modified code and apply refinements that:
    - Choose clarity over brevity - explicit code is often better than overly compact code
 
 4. **Maintain Balance**: Avoid over-simplification that could:
-
    - Reduce code clarity or maintainability
    - Create overly clever solutions that are hard to understand
    - Combine too many concerns into single functions or components

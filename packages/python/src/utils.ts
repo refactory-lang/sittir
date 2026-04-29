@@ -5,46 +5,72 @@ import type { AnyNodeData, AnyTreeNodeOf } from '@sittir/types';
 import type { NamespaceMap } from './types.js';
 
 /**
- * Type guard: returns true if `v` is a NodeData (has `$type` + `$fields` or `$text`).
+ * Type guard: returns true if `v` is a NodeData.
+ *
+ * Accepts any node produced by `readNode`, a factory, or `.from()` — distinguished
+ * from loose config bags by the presence of any of:
+ *   - `$fields` (branch nodes with named children),
+ *   - `$text` (leaf nodes, or branch nodes with `SITTIR_DEBUG_TEXT=1`),
+ *   - `$children` (container nodes whose children arrive without field names),
+ *   - `$source` (provenance tag stamped by `readNode` and every factory).
+ *
+ * The `$source` discriminant covers container-style branch nodes (e.g. `match_pattern`)
+ * that carry neither `$fields` nor `$text` when `SITTIR_DEBUG_TEXT` is unset.
  */
 export function isNodeData<K extends keyof NamespaceMap>(
-  v: NamespaceMap[K]['Node'] | NamespaceMap[K]['Loose'] | NamespaceMap[K]['Tree']
+	v:
+		| NamespaceMap[K]['Node']
+		| NamespaceMap[K]['Loose']
+		| NamespaceMap[K]['Tree']
 ): v is NamespaceMap[K]['Node'];
 export function isNodeData(v: unknown): v is AnyNodeData;
 export function isNodeData(v: unknown): v is AnyNodeData {
-  if (v === null || typeof v !== 'object') return false;
-  const o = v as Record<string, unknown>;
-  if (typeof o['$type'] !== 'string') return false;
-  return (o['$fields'] !== null && typeof o['$fields'] === 'object') || typeof o['$text'] === 'string';
+	if (v === null || typeof v !== 'object') return false;
+	const o = v as Record<string, unknown>;
+	if (typeof o['$type'] !== 'string') return false;
+	return (
+		(o['$fields'] !== null && typeof o['$fields'] === 'object') ||
+		typeof o['$text'] === 'string' ||
+		Array.isArray(o['$children']) ||
+		o['$source'] === 'ts' ||
+		o['$source'] === 'sg' ||
+		o['$source'] === 'factory'
+	);
 }
 
 /**
  * Type guard: returns true if `v` is a TreeNode (SgNode-compatible).
  */
 export function isTreeNode<K extends keyof NamespaceMap>(
-  v: NamespaceMap[K]['Tree'] | NamespaceMap[K]['Node']
+	v: NamespaceMap[K]['Tree'] | NamespaceMap[K]['Node']
 ): v is NamespaceMap[K]['Tree'];
 export function isTreeNode(v: unknown): v is AnyTreeNodeOf;
 export function isTreeNode(v: unknown): v is AnyTreeNodeOf {
-  if (v === null || typeof v !== 'object') return false;
-  const o = v as Record<string, unknown>;
-  return typeof o['type'] === 'string' && typeof o['field'] === 'function' && typeof o['text'] === 'function';
+	if (v === null || typeof v !== 'object') return false;
+	const o = v as Record<string, unknown>;
+	return (
+		typeof o['type'] === 'string' &&
+		typeof o['field'] === 'function' &&
+		typeof o['text'] === 'function'
+	);
 }
 
-export function hasKind(v: object): v is { kind: string } & Record<string, unknown> {
-  return 'kind' in v && typeof (v as Record<string, unknown>).kind === 'string';
+export function hasKind(
+	v: object
+): v is { kind: string } & Record<string, unknown> {
+	return 'kind' in v && typeof (v as Record<string, unknown>).kind === 'string';
 }
 
 export function isNodeOfKind<K extends keyof NamespaceMap>(
-  v: unknown,
-  kind: K,
+	v: unknown,
+	kind: K
 ): v is NamespaceMap[K]['Node'] {
-  return isNodeData(v) && v.$type === kind;
+	return isNodeData(v) && v.$type === kind;
 }
 
 export function hasKindOf<K extends keyof NamespaceMap>(
-  v: object,
-  kind: K,
+	v: object,
+	kind: K
 ): v is { kind: K } & NamespaceMap[K]['Loose'] {
-  return 'kind' in v && (v as Record<string, unknown>).kind === kind;
+	return 'kind' in v && (v as Record<string, unknown>).kind === kind;
 }

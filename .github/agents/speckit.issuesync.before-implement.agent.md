@@ -2,6 +2,9 @@
 description: Sync linked issue status for before_implement hook.
 ---
 
+<!-- Extension: workflows -->
+<!-- Config: .specify/extensions/workflows/ -->
+
 Run:
 
 ```bash

@@ -18,16 +18,19 @@ This document resolves the `NEEDS CLARIFICATION` items identified in `plan.md` P
 3. **`seq(X, repeat(X))` → `repeat1(X)` normalization** — NEW. No pre-existing Link implementation.
 
 **Link migration (FR-020a)**: `promoteOptionalKeywordFields` at `packages/codegen/src/compiler/link.ts:1328` is the one Link pass with a mechanical pattern detectable at the tree-sitter grammar level. It wraps `optional(keywordString)` as `optional(field(kw, keywordString, source: 'inferred'))`, skipping on name collision. We will:
+
 - Re-implement the same detection at the tree-sitter grammar level inside `enrich()` (effectively a variant of pass #1 that handles the `optional(...)` wrapper case).
 - Remove the pass from Link once the fidelity ceilings confirm no regression.
 
 **Explicitly staying in Link (FR-020b)**:
+
 - `resolveRule`, `classifyHiddenRule`, `tagVariants`, `wrapVariants`, `deduplicateVariants`, `nameVariant`, `hoistIndentIntoRepeat`, `annotateBlockBearerFields`, `detectClause` — post-Evaluate transformations operating on sittir's internal grammar model. Cannot run at the tree-sitter grammar level.
 - `inferFieldNames` — heuristic (thresholds), violates mechanical-only principle.
 - `promotePolymorph` — heuristic (field-set heterogeneity check).
 - `collectRepeatedShapes` — suggestion-only, drives `suggested-overrides.ts`.
 
 **Alternatives considered**:
+
 - **Port more Link passes into enrich**: impossible — they operate on different abstraction levels. Would require re-running Evaluate or duplicating its logic inside enrich.
 - **Skip Link migration entirely and leave `promoteOptionalKeywordFields` in place**: acceptable fallback, but then enrich would fail to subsume a pattern that's clearly detectable at its level.
 - **Port `inferFieldNames` into enrich**: violates mechanical-only principle (ADR-0002) — it uses frequency thresholds.
@@ -41,6 +44,7 @@ This document resolves the `NEEDS CLARIFICATION` items identified in `plan.md` P
 **Rationale**: The per-package `tree-sitter.json` convention is how tree-sitter itself locates grammars in monorepos, so we're using the tool's own contract rather than inventing one. `.sittir/` as the target directory keeps the transpiled output namespaced away from hand-written sources.
 
 **Alternatives considered**:
+
 - **Single root-level `tree-sitter.json`**: would require cross-package paths and complicates monorepo migration.
 - **Invoke `tree-sitter generate` inside sittir's codegen**: couples sittir to the tree-sitter CLI at runtime; CI-only keeps it as a validation gate rather than a dependency.
 
@@ -51,6 +55,7 @@ This document resolves the `NEEDS CLARIFICATION` items identified in `plan.md` P
 ## R-003 — TS→JS transpile strategy
 
 **Decision**: Use `esbuild` in CJS-output mode, configured to:
+
 - Target `node18` (matches existing sittir CI baseline)
 - Output format `cjs` (tree-sitter CLI uses `require()` on the grammar file)
 - Preserve `@ts-nocheck` comments (needed because the base grammar `.js` import is untyped)
@@ -59,6 +64,7 @@ This document resolves the `NEEDS CLARIFICATION` items identified in `plan.md` P
 **Rationale**: `esbuild` is already a transitive dev dependency via Vitest; it's the fastest of the three candidates (`tsc`, `swc`, `esbuild`) and has the simplest config for this use case. Bundling the DSL import inline avoids shipping `@sittir/codegen` as a runtime dependency of the transpiled output, which would pollute `packages/<lang>/node_modules` for no benefit.
 
 **Alternatives considered**:
+
 - **`tsc`**: slower, generates multi-file output, would need path rewriting for the `@sittir/codegen/dsl` import.
 - **`swc`**: comparable speed but introduces a new dependency.
 - **Write a custom transformer**: overkill and duplicates `esbuild`'s import resolution.
@@ -76,6 +82,7 @@ This document resolves the `NEEDS CLARIFICATION` items identified in `plan.md` P
 **Rationale**: Save/restore is the standard pattern for nestable dynamic scope in JavaScript (see React's hook dispatcher, Zone.js, etc.). Per-grammar scoping is the only correctness requirement from FR-012 and save/restore satisfies it without introducing a context object that every DSL call would need to thread.
 
 **Alternatives considered**:
+
 - **Explicit context parameter**: every `role()` call would take a context, making inline usage inside `externals` arrays ugly (would need a closure wrapper).
 - **`AsyncLocalStorage`**: overkill for synchronous grammar evaluation and adds a Node-specific API to a zero-dep package.
 - **Global without save/restore**: fails FR-012 (nested grammar calls would leak).
@@ -92,6 +99,7 @@ This document resolves the `NEEDS CLARIFICATION` items identified in `plan.md` P
 - `'*'` alone — every top-level position
 
 Rules:
+
 - No leading slash (`/0` is invalid — ambiguous with "root").
 - No trailing slash.
 - `*` matches a single level only, not recursive (no `**`).
@@ -100,9 +108,10 @@ Rules:
 **Rationale**: Forward-slash matches file-path intuition, which every developer has. `*` is the standard wildcard. Single-level-only keeps the matcher simple and predictable; `**` would invite questions about traversal order that don't have clean answers.
 
 **Alternatives considered**:
+
 - **Dot delimiter (`0.0.0`)**: collides visually with decimal numbers in rule definitions.
 - **Array form (`[0, 0, 0]`)**: verbose in practice, no wildcard story.
-- **Recursive `**`**: invites ordering ambiguity. Deferred unless a real use case demands it (P-007).
+- **Recursive `**`\*\*: invites ordering ambiguity. Deferred unless a real use case demands it (P-007).
 
 ---
 
@@ -115,6 +124,7 @@ Rules:
 **Worked example**: `externals: [...base.externals, $.new_token, $.new_token]` → dedupes to `[...base.externals, $.new_token]` because `$.new_token` returns the same proxy both times. `externals: [...base.externals, /regex-a/, /regex-a/]` → **not** deduped because each regex literal is a distinct object.
 
 **Alternatives considered**:
+
 - **Structural comparison**: requires recursive equality over the entire tree-sitter rule tree, including nested sequences. Expensive and underspecified.
 - **No dedupe (option C from clarify)**: simpler but pushes errors to `tree-sitter generate` where the message is cryptic ("duplicate external token") rather than actionable.
 - **Symbol-name comparison for `$.foo` entries only**: special-cases one entry type. Reference equality is uniform across all entry types.

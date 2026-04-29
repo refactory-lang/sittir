@@ -7,24 +7,35 @@
  */
 
 import type {
-    Rule, SeqRule, ChoiceRule, OptionalRule, RepeatRule, Repeat1Rule,
-    FieldRule, TokenRule, StringRule, PatternRule, SymbolRule, AliasRule,
-    EnumRule, SymbolRef,
-} from './rule.ts'
-import type { RawGrammar } from './types.ts'
-import { withRoleScope } from '../dsl/primitives/role.ts'
-import type { WireContext } from '../dsl/wire/wire.ts'
-import type { PolymorphVariant } from './types.ts'
+	Rule,
+	SeqRule,
+	ChoiceRule,
+	OptionalRule,
+	RepeatRule,
+	Repeat1Rule,
+	FieldRule,
+	TokenRule,
+	StringRule,
+	PatternRule,
+	SymbolRule,
+	AliasRule,
+	EnumRule,
+	SymbolRef
+} from './rule.ts';
+import type { RawGrammar } from './types.ts';
+import { withRoleScope } from '../dsl/primitives/role.ts';
+import type { WireContext, RefineForm } from '../dsl/wire/wire.ts';
+import type { PolymorphVariant } from './types.ts';
 
 // ---------------------------------------------------------------------------
 // Input type — anything the DSL functions accept
 // ---------------------------------------------------------------------------
 
-type Input = string | RegExp | Rule
+type Input = string | RegExp | Rule;
 
 // Augmented SymbolRule that carries a ref for in-place enrichment
 interface SymbolRuleWithRef extends SymbolRule {
-    readonly _ref?: SymbolRef
+	readonly _ref?: SymbolRef;
 }
 
 // ---------------------------------------------------------------------------
@@ -32,23 +43,23 @@ interface SymbolRuleWithRef extends SymbolRule {
 // ---------------------------------------------------------------------------
 
 export function normalize(input: Input): Rule {
-    if (input === undefined || input === null) {
-        throw new Error('Undefined symbol')
-    }
+	if (input === undefined || input === null) {
+		throw new Error('Undefined symbol');
+	}
 
-    if (typeof input === 'string') {
-        return { type: 'string', value: input } satisfies StringRule
-    }
+	if (typeof input === 'string') {
+		return { type: 'string', value: input } satisfies StringRule;
+	}
 
-    if (input instanceof RegExp) {
-        return { type: 'pattern', value: input.source } satisfies PatternRule
-    }
+	if (input instanceof RegExp) {
+		return { type: 'pattern', value: input.source } satisfies PatternRule;
+	}
 
-    if (typeof input === 'object' && 'type' in input) {
-        return input as Rule
-    }
+	if (typeof input === 'object' && 'type' in input) {
+		return input as Rule;
+	}
 
-    throw new TypeError(`Invalid rule: ${input}`)
+	throw new TypeError(`Invalid rule: ${input}`);
 }
 
 // ---------------------------------------------------------------------------
@@ -75,17 +86,17 @@ export function normalize(input: Input): Rule {
  * into simplifyRule.
  */
 export function seq(...members: Input[]): Rule {
-    const normalized = members.map(normalize)
+	const normalized = members.map(normalize);
 
-    if (normalized.length === 1) return normalized[0]!
+	if (normalized.length === 1) return normalized[0]!;
 
-    const lifted = liftCommaSep(normalized)
-    if (lifted) return lifted
+	const lifted = liftCommaSep(normalized);
+	if (lifted) return lifted;
 
-    const absorbed = absorbTrailingSeparator(normalized)
-    if (absorbed) return { type: 'seq', members: absorbed }
+	const absorbed = absorbTrailingSeparator(normalized);
+	if (absorbed) return { type: 'seq', members: absorbed };
 
-    return { type: 'seq', members: normalized }
+	return { type: 'seq', members: normalized };
 }
 
 /**
@@ -95,31 +106,34 @@ export function seq(...members: Input[]): Rule {
  * array if any absorption happened, else `null`.
  */
 function absorbTrailingSeparator(members: Rule[]): Rule[] | null {
-    let changed = false
-    const out: Rule[] = []
-    for (let i = 0; i < members.length; i++) {
-        const cur = members[i]!
-        const next = members[i + 1]
-        const isSepRepeat =
-            (cur.type === 'repeat' || cur.type === 'repeat1')
-            && cur.separator !== undefined
-            && !cur.trailing
-        const isOptionalSepLit = (r: Rule | undefined, sep: string): boolean =>
-            !!r
-            && r.type === 'optional'
-            && r.content.type === 'string'
-            && r.content.value === sep
-        if (isSepRepeat && isOptionalSepLit(next, (cur as RepeatRule | Repeat1Rule).separator!)) {
-            // Merge — stamp trailing on the repeat and skip the next member.
-            const sepRule = cur as RepeatRule | Repeat1Rule
-            out.push({ ...sepRule, trailing: true })
-            i++
-            changed = true
-            continue
-        }
-        out.push(cur)
-    }
-    return changed ? out : null
+	let changed = false;
+	const out: Rule[] = [];
+	for (let i = 0; i < members.length; i++) {
+		const cur = members[i]!;
+		const next = members[i + 1];
+		const isSepRepeat =
+			(cur.type === 'repeat' || cur.type === 'repeat1') &&
+			cur.separator !== undefined &&
+			!cur.trailing;
+		const isOptionalSepLit = (r: Rule | undefined, sep: string): boolean =>
+			!!r &&
+			r.type === 'optional' &&
+			r.content.type === 'string' &&
+			r.content.value === sep;
+		if (
+			isSepRepeat &&
+			isOptionalSepLit(next, (cur as RepeatRule | Repeat1Rule).separator!)
+		) {
+			// Merge — stamp trailing on the repeat and skip the next member.
+			const sepRule = cur as RepeatRule | Repeat1Rule;
+			out.push({ ...sepRule, trailing: true });
+			i++;
+			changed = true;
+			continue;
+		}
+		out.push(cur);
+	}
+	return changed ? out : null;
 }
 
 /**
@@ -131,45 +145,47 @@ function absorbTrailingSeparator(members: Rule[]): Rule[] | null {
  * `repeat(x, separator=sep)` by the `repeat()` helper.
  */
 function liftCommaSep(members: Rule[]): Rule | null {
-    if (members.length < 2 || members.length > 3) return null
+	if (members.length < 2 || members.length > 3) return null;
 
-    const repeatIdx = findRepeatWithSeparator(members)
-    if (repeatIdx === -1) return null
-    const repeatNode = members[repeatIdx] as RepeatRule
-    const sep = repeatNode.separator!
-    const elem = repeatNode.content
+	const repeatIdx = findRepeatWithSeparator(members);
+	if (repeatIdx === -1) return null;
+	const repeatNode = members[repeatIdx] as RepeatRule;
+	const sep = repeatNode.separator!;
+	const elem = repeatNode.content;
 
-    const matchesElem = (r: Rule): boolean => rulesEqual(r, elem)
-    const matchesOptionalSep = (r: Rule): boolean =>
-        r.type === 'optional' && r.content.type === 'string' && r.content.value === sep
+	const matchesElem = (r: Rule): boolean => rulesEqual(r, elem);
+	const matchesOptionalSep = (r: Rule): boolean =>
+		r.type === 'optional' &&
+		r.content.type === 'string' &&
+		r.content.value === sep;
 
-    // Case 1: [x, repeat(sep, x)]
-    if (members.length === 2 && repeatIdx === 1 && matchesElem(members[0]!)) {
-        return { type: 'repeat1', content: elem, separator: sep }
-    }
+	// Case 1: [x, repeat(sep, x)]
+	if (members.length === 2 && repeatIdx === 1 && matchesElem(members[0]!)) {
+		return { type: 'repeat1', content: elem, separator: sep };
+	}
 
-    // Case 2: [x, repeat(sep, x), optional(sep)] — trailing allowed.
-    if (
-        members.length === 3
-        && repeatIdx === 1
-        && matchesElem(members[0]!)
-        && matchesOptionalSep(members[2]!)
-    ) {
-        return { type: 'repeat1', content: elem, separator: sep, trailing: true }
-    }
+	// Case 2: [x, repeat(sep, x), optional(sep)] — trailing allowed.
+	if (
+		members.length === 3 &&
+		repeatIdx === 1 &&
+		matchesElem(members[0]!) &&
+		matchesOptionalSep(members[2]!)
+	) {
+		return { type: 'repeat1', content: elem, separator: sep, trailing: true };
+	}
 
-    // Case 3: [sep, x, repeat(sep, x)] — leading separator.
-    if (
-        members.length === 3
-        && repeatIdx === 2
-        && members[0]!.type === 'string'
-        && members[0]!.value === sep
-        && matchesElem(members[1]!)
-    ) {
-        return { type: 'repeat1', content: elem, separator: sep, leading: true }
-    }
+	// Case 3: [sep, x, repeat(sep, x)] — leading separator.
+	if (
+		members.length === 3 &&
+		repeatIdx === 2 &&
+		members[0]!.type === 'string' &&
+		members[0]!.value === sep &&
+		matchesElem(members[1]!)
+	) {
+		return { type: 'repeat1', content: elem, separator: sep, leading: true };
+	}
 
-    return null
+	return null;
 }
 
 /**
@@ -182,7 +198,9 @@ function liftCommaSep(members: Rule[]): Rule | null {
  * more than one means this isn't a commaSep shape.
  */
 function findRepeatWithSeparator(members: Rule[]): number {
-    return members.findIndex(m => m.type === 'repeat' && m.separator !== undefined)
+	return members.findIndex(
+		(m) => m.type === 'repeat' && m.separator !== undefined
+	);
 }
 
 /**
@@ -193,38 +211,51 @@ function findRepeatWithSeparator(members: Rule[]): number {
  * appear only after Link).
  */
 function rulesEqual(a: Rule, b: Rule): boolean {
-    if (a.type !== b.type) return false
-    switch (a.type) {
-        case 'string':
-            return a.value === (b as StringRule).value
-        case 'pattern':
-            return a.value === (b as PatternRule).value
-        case 'symbol':
-            return a.name === (b as SymbolRule).name
-        case 'enum': {
-            const bm = (b as EnumRule).members
-            return a.members.length === bm.length
-                && a.members.every((m, i) => m.value === bm[i]!.value)
-        }
-        case 'seq':
-            return a.members.length === (b as SeqRule).members.length
-                && a.members.every((m, i) => rulesEqual(m, (b as SeqRule).members[i]!))
-        case 'choice':
-            return a.members.length === (b as ChoiceRule).members.length
-                && a.members.every((m, i) => rulesEqual(m, (b as ChoiceRule).members[i]!))
-        case 'optional':
-            return rulesEqual(a.content, (b as OptionalRule).content)
-        case 'repeat':
-            return a.separator === (b as RepeatRule).separator
-                && rulesEqual(a.content, (b as RepeatRule).content)
-        case 'repeat1':
-            return a.separator === (b as Repeat1Rule).separator
-                && rulesEqual(a.content, (b as Repeat1Rule).content)
-        case 'field':
-            return a.name === (b as FieldRule).name && rulesEqual(a.content, (b as FieldRule).content)
-        default:
-            return false
-    }
+	if (a.type !== b.type) return false;
+	switch (a.type) {
+		case 'string':
+			return a.value === (b as StringRule).value;
+		case 'pattern':
+			return a.value === (b as PatternRule).value;
+		case 'symbol':
+			return a.name === (b as SymbolRule).name;
+		case 'enum': {
+			const bm = (b as EnumRule).members;
+			return (
+				a.members.length === bm.length &&
+				a.members.every((m, i) => m.value === bm[i]!.value)
+			);
+		}
+		case 'seq':
+			return (
+				a.members.length === (b as SeqRule).members.length &&
+				a.members.every((m, i) => rulesEqual(m, (b as SeqRule).members[i]!))
+			);
+		case 'choice':
+			return (
+				a.members.length === (b as ChoiceRule).members.length &&
+				a.members.every((m, i) => rulesEqual(m, (b as ChoiceRule).members[i]!))
+			);
+		case 'optional':
+			return rulesEqual(a.content, (b as OptionalRule).content);
+		case 'repeat':
+			return (
+				a.separator === (b as RepeatRule).separator &&
+				rulesEqual(a.content, (b as RepeatRule).content)
+			);
+		case 'repeat1':
+			return (
+				a.separator === (b as Repeat1Rule).separator &&
+				rulesEqual(a.content, (b as Repeat1Rule).content)
+			);
+		case 'field':
+			return (
+				a.name === (b as FieldRule).name &&
+				rulesEqual(a.content, (b as FieldRule).content)
+			);
+		default:
+			return false;
+	}
 }
 
 /**
@@ -246,35 +277,35 @@ function rulesEqual(a: Rule, b: Rule): boolean {
  * handling.
  */
 export function choice(...members: Input[]): Rule {
-    const normalized = members.map(normalize)
+	const normalized = members.map(normalize);
 
-    if (normalized.length === 1) return normalized[0]!
+	if (normalized.length === 1) return normalized[0]!;
 
-    const isBlank = (r: Rule): boolean =>
-        (r.type === 'seq' && r.members.length === 0)
-        || (r.type === 'choice' && r.members.length === 0)
-    const blankIdx = normalized.findIndex(isBlank)
-    if (blankIdx !== -1 && normalized.length === 2) {
-        const other = normalized[1 - blankIdx]!
-        // Recurse through optional() so `optional(optional(x))` keeps
-        // collapsing per rule #5.
-        return optional(other)
-    }
+	const isBlank = (r: Rule): boolean =>
+		(r.type === 'seq' && r.members.length === 0) ||
+		(r.type === 'choice' && r.members.length === 0);
+	const blankIdx = normalized.findIndex(isBlank);
+	if (blankIdx !== -1 && normalized.length === 2) {
+		const other = normalized[1 - blankIdx]!;
+		// Recurse through optional() so `optional(optional(x))` keeps
+		// collapsing per rule #5.
+		return optional(other);
+	}
 
-    // Detect all-string choice → EnumRule
-    if (normalized.length > 0 && normalized.every(m => m.type === 'string')) {
-        return {
-            type: 'enum',
-            members: normalized as StringRule[],
-            source: 'grammar',
-        }
-    }
+	// Detect all-string choice → EnumRule
+	if (normalized.length > 0 && normalized.every((m) => m.type === 'string')) {
+		return {
+			type: 'enum',
+			members: normalized as StringRule[],
+			source: 'grammar'
+		};
+	}
 
-    if (normalized.length >= 2 && normalized.every(m => m.type === 'field')) {
-        return collapseAllFieldChoiceMembers(normalized as FieldRule[])
-    }
+	if (normalized.length >= 2 && normalized.every((m) => m.type === 'field')) {
+		return collapseAllFieldChoiceMembers(normalized as FieldRule[]);
+	}
 
-    return { type: 'choice', members: normalized }
+	return { type: 'choice', members: normalized };
 }
 
 /**
@@ -311,32 +342,32 @@ export function choice(...members: Input[]): Rule {
  * rust `_line_doc_comment_marker` / `_block_doc_comment_marker`).
  */
 function collapseAllFieldChoiceMembers(fieldMembers: FieldRule[]): Rule {
-    const anyAlias = fieldMembers.some(f => f.content.type === 'alias')
-    if (anyAlias) {
-        return { type: 'choice', members: fieldMembers }
-    }
-    const names = fieldMembers.map(f => f.name)
-    const allSameName = names.every(n => n === names[0])
-    if (allSameName) {
-        // Factor: choice(field(x, A), field(x, B)) → field(x, choice(A, B))
-        const inner = choice(...fieldMembers.map(f => f.content))
-        return {
-            type: 'field',
-            name: names[0]!,
-            content: inner,
-            source: 'grammar',
-        }
-    }
-    // Heterogeneous names → retype each field node as a variant node.
-    // Same `name`, same `content`, only the discriminator changes.
-    // Downstream (Link's `promotePolymorph`, walker, assemble) consumes
-    // variants as polymorph-form markers when they appear at the top level.
-    const retyped: Rule[] = fieldMembers.map(f => ({
-        type: 'variant' as const,
-        name: f.name,
-        content: f.content,
-    }))
-    return { type: 'choice', members: retyped }
+	const anyAlias = fieldMembers.some((f) => f.content.type === 'alias');
+	if (anyAlias) {
+		return { type: 'choice', members: fieldMembers };
+	}
+	const names = fieldMembers.map((f) => f.name);
+	const allSameName = names.every((n) => n === names[0]);
+	if (allSameName) {
+		// Factor: choice(field(x, A), field(x, B)) → field(x, choice(A, B))
+		const inner = choice(...fieldMembers.map((f) => f.content));
+		return {
+			type: 'field',
+			name: names[0]!,
+			content: inner,
+			source: 'grammar'
+		};
+	}
+	// Heterogeneous names → retype each field node as a variant node.
+	// Same `name`, same `content`, only the discriminator changes.
+	// Downstream (Link's `promotePolymorph`, walker, assemble) consumes
+	// variants as polymorph-form markers when they appear at the top level.
+	const retyped: Rule[] = fieldMembers.map((f) => ({
+		type: 'variant' as const,
+		name: f.name,
+		content: f.content
+	}));
+	return { type: 'choice', members: retyped };
 }
 
 /**
@@ -359,20 +390,22 @@ function collapseAllFieldChoiceMembers(fieldMembers: FieldRule[]): Rule {
  * is no `optional` wrapper to swallow the empty case.
  */
 export function optional(content: Input): Rule {
-    const resolved = normalize(content)
-    walkRefs(resolved, ref => { ref.optional = true })
-    if (resolved.type === 'optional') return resolved
-    if (resolved.type === 'repeat') return resolved
-    if (resolved.type === 'repeat1') {
-        return {
-            type: 'repeat',
-            content: resolved.content,
-            separator: resolved.separator,
-            trailing: resolved.trailing,
-            leading: resolved.leading,
-        }
-    }
-    return { type: 'optional', content: resolved }
+	const resolved = normalize(content);
+	walkRefs(resolved, (ref) => {
+		ref.optional = true;
+	});
+	if (resolved.type === 'optional') return resolved;
+	if (resolved.type === 'repeat') return resolved;
+	if (resolved.type === 'repeat1') {
+		return {
+			type: 'repeat',
+			content: resolved.content,
+			separator: resolved.separator,
+			trailing: resolved.trailing,
+			leading: resolved.leading
+		};
+	}
+	return { type: 'optional', content: resolved };
 }
 
 /**
@@ -384,27 +417,29 @@ export function optional(content: Input): Rule {
  * Returns `null` if no separator shape is present.
  */
 function extractRepeatSeparator(
-    resolved: Rule,
+	resolved: Rule
 ): { content: Rule; separator: string; trailing?: boolean } | null {
-    if (resolved.type !== 'seq' || resolved.members.length !== 2) return null
-    const [first, second] = resolved.members as [Rule, Rule]
-    // Canonical case: `repeat(seq(SEP, X))` or `repeat(seq(X, SEP))` with
-    // SEP a string literal.
-    if (first.type === 'string' && second.type !== 'string') {
-        return { content: second, separator: first.value }
-    }
-    if (second.type === 'string' && first.type !== 'string') {
-        return { content: first, separator: second.value, trailing: true }
-    }
-    const firstSepChoice = first.type === 'choice' ? extractFirstStringFromChoice(first) : null
-    const secondSepChoice = second.type === 'choice' ? extractFirstStringFromChoice(second) : null
-    if (firstSepChoice !== null && second.type !== 'string') {
-        return { content: second, separator: firstSepChoice }
-    }
-    if (secondSepChoice !== null && first.type !== 'string') {
-        return { content: first, separator: secondSepChoice, trailing: true }
-    }
-    return null
+	if (resolved.type !== 'seq' || resolved.members.length !== 2) return null;
+	const [first, second] = resolved.members as [Rule, Rule];
+	// Canonical case: `repeat(seq(SEP, X))` or `repeat(seq(X, SEP))` with
+	// SEP a string literal.
+	if (first.type === 'string' && second.type !== 'string') {
+		return { content: second, separator: first.value };
+	}
+	if (second.type === 'string' && first.type !== 'string') {
+		return { content: first, separator: second.value, trailing: true };
+	}
+	const firstSepChoice =
+		first.type === 'choice' ? extractFirstStringFromChoice(first) : null;
+	const secondSepChoice =
+		second.type === 'choice' ? extractFirstStringFromChoice(second) : null;
+	if (firstSepChoice !== null && second.type !== 'string') {
+		return { content: second, separator: firstSepChoice };
+	}
+	if (secondSepChoice !== null && first.type !== 'string') {
+		return { content: first, separator: secondSepChoice, trailing: true };
+	}
+	return null;
 }
 
 /**
@@ -425,9 +460,9 @@ function extractRepeatSeparator(
  * `sepBy1(choice(',', _semicolon), choice(property_signature, …))`).
  */
 function extractFirstStringFromChoice(r: Rule): string | null {
-    if (r.type !== 'choice') return null
-    const lit = r.members.find((m): m is import('./rule.ts').StringRule => m.type === 'string')
-    return lit ? lit.value : null
+	if (r.type !== 'choice') return null;
+	const lit = r.members.find((m): m is StringRule => m.type === 'string');
+	return lit ? lit.value : null;
 }
 
 /**
@@ -442,23 +477,37 @@ function extractFirstStringFromChoice(r: Rule): string | null {
  * zero occurrences, so the optional wrapper is redundant.
  */
 export function repeat(content: Input): Rule {
-    const resolved = normalize(content)
-    walkRefs(resolved, ref => { ref.repeated = true })
-    if (resolved.type === 'repeat' && !resolved.separator) return resolved
-    if (resolved.type === 'optional') {
-        const inner = resolved.content
-        walkRefs(inner, ref => { ref.repeated = true })
-        const sep = extractRepeatSeparator(inner)
-        if (sep) {
-            return { type: 'repeat', content: sep.content, separator: sep.separator, trailing: sep.trailing }
-        }
-        return { type: 'repeat', content: inner }
-    }
-    const sep = extractRepeatSeparator(resolved)
-    if (sep) {
-        return { type: 'repeat', content: sep.content, separator: sep.separator, trailing: sep.trailing }
-    }
-    return { type: 'repeat', content: resolved }
+	const resolved = normalize(content);
+	walkRefs(resolved, (ref) => {
+		ref.repeated = true;
+	});
+	if (resolved.type === 'repeat' && !resolved.separator) return resolved;
+	if (resolved.type === 'optional') {
+		const inner = resolved.content;
+		walkRefs(inner, (ref) => {
+			ref.repeated = true;
+		});
+		const sep = extractRepeatSeparator(inner);
+		if (sep) {
+			return {
+				type: 'repeat',
+				content: sep.content,
+				separator: sep.separator,
+				trailing: sep.trailing
+			};
+		}
+		return { type: 'repeat', content: inner };
+	}
+	const sep = extractRepeatSeparator(resolved);
+	if (sep) {
+		return {
+			type: 'repeat',
+			content: sep.content,
+			separator: sep.separator,
+			trailing: sep.trailing
+		};
+	}
+	return { type: 'repeat', content: resolved };
 }
 
 /**
@@ -476,42 +525,47 @@ export function repeat(content: Input): Rule {
  * left alone to preserve grammar author intent.
  */
 export function repeat1(content: Input): Rule {
-    const resolved = normalize(content)
-    walkRefs(resolved, ref => { ref.repeated = true })
-    if (resolved.type === 'repeat1' && !resolved.separator) return resolved
-    const sep = extractRepeatSeparator(resolved)
-    if (sep) {
-        return {
-            type: 'repeat1',
-            content: sep.content,
-            separator: sep.separator,
-            trailing: sep.trailing,
-        }
-    }
-    return { type: 'repeat1', content: resolved }
+	const resolved = normalize(content);
+	walkRefs(resolved, (ref) => {
+		ref.repeated = true;
+	});
+	if (resolved.type === 'repeat1' && !resolved.separator) return resolved;
+	const sep = extractRepeatSeparator(resolved);
+	if (sep) {
+		return {
+			type: 'repeat1',
+			content: sep.content,
+			separator: sep.separator,
+			trailing: sep.trailing
+		};
+	}
+	return { type: 'repeat1', content: resolved };
 }
 
 // ---------------------------------------------------------------------------
 // $ proxy — reference tracking
 // ---------------------------------------------------------------------------
 
-export function createProxy(currentRule: string, refs: SymbolRef[]): Record<string, SymbolRuleWithRef> {
-    return new Proxy({} as Record<string, SymbolRuleWithRef>, {
-        get(_target, name: string): SymbolRuleWithRef {
-            const ref: SymbolRef = { refType: 'symbol', from: currentRule, to: name }
-            refs.push(ref)
-            return {
-                type: 'symbol' as const,
-                name,
-                // `hidden` is a hint for downstream passes only — Link
-                // recomputes the authoritative visibility decision via
-                // `isHiddenKind()`, consulting both the leading-underscore
-                // convention and tree-sitter's explicit `inline` list.
-                hidden: name.startsWith('_'),
-                _ref: ref,
-            }
-        },
-    })
+export function createProxy(
+	currentRule: string,
+	refs: SymbolRef[]
+): Record<string, SymbolRuleWithRef> {
+	return new Proxy({} as Record<string, SymbolRuleWithRef>, {
+		get(_target, name: string): SymbolRuleWithRef {
+			const ref: SymbolRef = { refType: 'symbol', from: currentRule, to: name };
+			refs.push(ref);
+			return {
+				type: 'symbol' as const,
+				name,
+				// `hidden` is a hint for downstream passes only — Link
+				// recomputes the authoritative visibility decision via
+				// `isHiddenKind()`, consulting both the leading-underscore
+				// convention and tree-sitter's explicit `inline` list.
+				hidden: name.startsWith('_'),
+				_ref: ref
+			};
+		}
+	});
 }
 
 /**
@@ -526,10 +580,13 @@ export function createProxy(currentRule: string, refs: SymbolRef[]): Record<stri
  * `inlineList` falls back to convention-only, which is the safe
  * default when Link doesn't have grammar metadata at hand.
  */
-export function isHiddenKind(name: string, inlineList?: readonly string[]): boolean {
-    if (name.startsWith('_')) return true
-    if (inlineList && inlineList.includes(name)) return true
-    return false
+export function isHiddenKind(
+	name: string,
+	inlineList?: readonly string[]
+): boolean {
+	if (name.startsWith('_')) return true;
+	if (inlineList && inlineList.includes(name)) return true;
+	return false;
 }
 
 // ---------------------------------------------------------------------------
@@ -537,7 +594,7 @@ export function isHiddenKind(name: string, inlineList?: readonly string[]): bool
 // ---------------------------------------------------------------------------
 
 function getRef(rule: Rule): SymbolRef | undefined {
-    return (rule as SymbolRuleWithRef)._ref
+	return (rule as SymbolRuleWithRef)._ref;
 }
 
 /**
@@ -554,26 +611,26 @@ function getRef(rule: Rule): SymbolRef | undefined {
  * outer wrapper's modifiers.
  */
 function walkRefs(rule: Rule, visit: (ref: SymbolRef) => void): void {
-    const ref = getRef(rule)
-    if (ref) visit(ref)
-    switch (rule.type) {
-        case 'seq':
-        case 'choice':
-            for (const m of (rule as { members: Rule[] }).members) walkRefs(m, visit)
-            return
-        case 'optional':
-        case 'repeat':
-        case 'repeat1':
-        case 'prec' as never: // prec wrappers are stripped by normalize but defensive
-            walkRefs((rule as { content: Rule }).content, visit)
-            return
-        case 'field':
-        case 'alias':
-            // Stop — inner refs belong to the inner wrapper.
-            return
-        default:
-            return
-    }
+	const ref = getRef(rule);
+	if (ref) visit(ref);
+	switch (rule.type) {
+		case 'seq':
+		case 'choice':
+			for (const m of (rule as { members: Rule[] }).members) walkRefs(m, visit);
+			return;
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'prec' as never: // prec wrappers are stripped by normalize but defensive
+			walkRefs((rule as { content: Rule }).content, visit);
+			return;
+		case 'field':
+		case 'alias':
+			// Stop — inner refs belong to the inner wrapper.
+			return;
+		default:
+			return;
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -605,15 +662,20 @@ function walkRefs(rule: Rule, visit: (ref: SymbolRef) => void): void {
  * overwrite a field name already set by an inner wrapper.
  */
 export function field(name: string, content?: Input): FieldRule {
-    if (content === undefined) {
-        return { type: 'field', name, content: { type: 'string', value: '' }, _needsContent: true }
-    }
-    let resolved = normalize(content)
-    resolved = collapseOptionalRepeatInField(resolved)
-    walkRefs(resolved, ref => {
-        if (ref.fieldName === undefined) ref.fieldName = name
-    })
-    return { type: 'field', name, content: resolved }
+	if (content === undefined) {
+		return {
+			type: 'field',
+			name,
+			content: { type: 'string', value: '' },
+			_needsContent: true
+		};
+	}
+	let resolved = normalize(content);
+	resolved = collapseOptionalRepeatInField(resolved);
+	walkRefs(resolved, (ref) => {
+		if (ref.fieldName === undefined) ref.fieldName = name;
+	});
+	return { type: 'field', name, content: resolved };
 }
 
 /**
@@ -631,21 +693,21 @@ export function field(name: string, content?: Input): FieldRule {
  * write.
  */
 function collapseOptionalRepeatInField(resolved: Rule): Rule {
-    if (resolved.type !== 'optional') return resolved
-    const inner = resolved.content
-    if (inner.type === 'repeat') {
-        return inner
-    }
-    if (inner.type === 'repeat1') {
-        return {
-            type: 'repeat',
-            content: inner.content,
-            separator: inner.separator,
-            trailing: inner.trailing,
-            leading: inner.leading,
-        }
-    }
-    return resolved
+	if (resolved.type !== 'optional') return resolved;
+	const inner = resolved.content;
+	if (inner.type === 'repeat') {
+		return inner;
+	}
+	if (inner.type === 'repeat1') {
+		return {
+			type: 'repeat',
+			content: inner.content,
+			separator: inner.separator,
+			trailing: inner.trailing,
+			leading: inner.leading
+		};
+	}
+	return resolved;
 }
 
 // ---------------------------------------------------------------------------
@@ -660,71 +722,76 @@ function collapseOptionalRepeatInField(resolved: Rule): Rule {
 // ---------------------------------------------------------------------------
 
 interface TokenFn {
-    (content: Input): TokenRule
-    immediate: (content: Input) => TokenRule
+	(content: Input): TokenRule;
+	immediate: (content: Input) => TokenRule;
 }
 
 export const token: TokenFn = Object.assign(
-    function token(content: Input): TokenRule {
-        return { type: 'token', content: normalize(content), immediate: false }
-    },
-    {
-        immediate(content: Input): TokenRule {
-            return { type: 'token', content: normalize(content), immediate: true }
-        },
-    },
-)
+	function token(content: Input): TokenRule {
+		return { type: 'token', content: normalize(content), immediate: false };
+	},
+	{
+		immediate(content: Input): TokenRule {
+			return { type: 'token', content: normalize(content), immediate: true };
+		}
+	}
+);
 
 // ---------------------------------------------------------------------------
 // Precedence — stripped; returns the content Rule
 // ---------------------------------------------------------------------------
 
 interface PrecFn {
-    (precedence: number, content: Input): Rule
-    left: (precedence: number, content: Input) => Rule
-    right: (precedence: number, content: Input) => Rule
-    dynamic: (precedence: number, content: Input) => Rule
+	(precedence: number, content: Input): Rule;
+	left: (precedence: number, content: Input) => Rule;
+	right: (precedence: number, content: Input) => Rule;
+	dynamic: (precedence: number, content: Input) => Rule;
 }
 
 export const prec: PrecFn = Object.assign(
-    function prec(precedenceOrContent: number | Input, content?: Input): Rule {
-        if (content === undefined) return normalize(precedenceOrContent as Input)
-        return normalize(content)
-    },
-    {
-        left(precedenceOrContent: number | Input, content?: Input): Rule {
-            if (content == null) return normalize(precedenceOrContent as Input)
-            return normalize(content)
-        },
-        right(precedenceOrContent: number | Input, content?: Input): Rule {
-            if (content == null) return normalize(precedenceOrContent as Input)
-            return normalize(content)
-        },
-        dynamic(precedenceOrContent: number | Input, content?: Input): Rule {
-            if (content == null) return normalize(precedenceOrContent as Input)
-            return normalize(content)
-        },
-    },
-)
+	function prec(precedenceOrContent: number | Input, content?: Input): Rule {
+		if (content === undefined) return normalize(precedenceOrContent as Input);
+		return normalize(content);
+	},
+	{
+		left(precedenceOrContent: number | Input, content?: Input): Rule {
+			if (content == null) return normalize(precedenceOrContent as Input);
+			return normalize(content);
+		},
+		right(precedenceOrContent: number | Input, content?: Input): Rule {
+			if (content == null) return normalize(precedenceOrContent as Input);
+			return normalize(content);
+		},
+		dynamic(precedenceOrContent: number | Input, content?: Input): Rule {
+			if (content == null) return normalize(precedenceOrContent as Input);
+			return normalize(content);
+		}
+	}
+);
 
 // ---------------------------------------------------------------------------
 // Alias + blank (needed for grammar.js compatibility)
 // ---------------------------------------------------------------------------
 
 export function alias(rule: Input, value: string | Rule): AliasRule {
-    const content = normalize(rule)
-    if (typeof value === 'string') {
-        return { type: 'alias', content, named: false, value }
-    }
-    if (typeof value === 'object' && 'type' in value && value.type === 'symbol') {
-        return { type: 'alias', content, named: true, value: (value as SymbolRule).name }
-    }
-    throw new Error(`Invalid alias value: ${value}`)
+	const content = normalize(rule);
+	if (typeof value === 'string') {
+		return { type: 'alias', content, named: false, value };
+	}
+	if (typeof value === 'object' && 'type' in value && value.type === 'symbol') {
+		return {
+			type: 'alias',
+			content,
+			named: true,
+			value: (value as SymbolRule).name
+		};
+	}
+	throw new Error(`Invalid alias value: ${value}`);
 }
 
 export function blank(): Rule {
-    // BLANK is represented as choice() with no members — absorbed by choice()
-    return { type: 'choice', members: [] }
+	// BLANK is represented as choice() with no members — absorbed by choice()
+	return { type: 'choice', members: [] };
 }
 
 // ---------------------------------------------------------------------------
@@ -732,19 +799,43 @@ export function blank(): Rule {
 // ---------------------------------------------------------------------------
 
 interface GrammarOptions {
-    name: string
-    // tree-sitter's DSL passes `($, previous)` to every rule / metadata
-    // callback — `previous` is the base grammar's version in
-    // extension mode. We type the second arg loosely so extension
-    // callbacks that forward it (`previous.concat([...])`) compile.
-    rules: Record<string, ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input>
-    extras?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[]
-    externals?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[]
-    supertypes?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[]
-    inline?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[]
-    conflicts?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[][]
-    word?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => SymbolRuleWithRef
-    precedences?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[][]
+	name: string;
+	// tree-sitter's DSL passes `($, previous)` to every rule / metadata
+	// callback — `previous` is the base grammar's version in
+	// extension mode. We type the second arg loosely so extension
+	// callbacks that forward it (`previous.concat([...])`) compile.
+	rules: Record<
+		string,
+		($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input
+	>;
+	extras?: (
+		$: Record<string, SymbolRuleWithRef>,
+		previous?: unknown
+	) => Input[];
+	externals?: (
+		$: Record<string, SymbolRuleWithRef>,
+		previous?: unknown
+	) => Input[];
+	supertypes?: (
+		$: Record<string, SymbolRuleWithRef>,
+		previous?: unknown
+	) => Input[];
+	inline?: (
+		$: Record<string, SymbolRuleWithRef>,
+		previous?: unknown
+	) => Input[];
+	conflicts?: (
+		$: Record<string, SymbolRuleWithRef>,
+		previous?: unknown
+	) => Input[][];
+	word?: (
+		$: Record<string, SymbolRuleWithRef>,
+		previous?: unknown
+	) => SymbolRuleWithRef;
+	precedences?: (
+		$: Record<string, SymbolRuleWithRef>,
+		previous?: unknown
+	) => Input[][];
 }
 
 /**
@@ -752,62 +843,174 @@ interface GrammarOptions {
  * When called with one arg: fresh grammar.
  * When called with two args: grammar extension (base + overrides).
  */
-function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: GrammarOptions): { grammar: any } {
-    let baseRules: Record<string, Rule> = {}
-    let baseGrammar: any = null
-    let opts: GrammarOptions
+function grammarFn(
+	optionsOrBase: GrammarOptions | { grammar: any },
+	options?: GrammarOptions
+): { grammar: any } {
+	let baseRules: Record<string, Rule> = {};
+	let baseGrammar: any = null;
+	let opts: GrammarOptions;
 
-    if (options === undefined) {
-        opts = optionsOrBase as GrammarOptions
-    } else {
-        // Extension mode: first arg is a base grammar result
-        baseGrammar = (optionsOrBase as { grammar: any }).grammar
-        baseRules = { ...baseGrammar.rules }
-        opts = options
-    }
+	if (options === undefined) {
+		opts = optionsOrBase as GrammarOptions;
+	} else {
+		// Extension mode: first arg is a base grammar result
+		baseGrammar = (optionsOrBase as { grammar: any }).grammar;
+		baseRules = { ...baseGrammar.rules };
+		opts = options;
+	}
 
-    mergeEnrichOverridesIntoOptions(optionsOrBase, opts)
+	mergeEnrichOverridesIntoOptions(optionsOrBase, opts);
 
-    const refs: SymbolRef[] = seedRefsFromBaseGrammar(baseGrammar)
-    const rules: Record<string, Rule> = { ...baseRules }
+	const refs: SymbolRef[] = seedRefsFromBaseGrammar(baseGrammar);
+	const rules: Record<string, Rule> = { ...baseRules };
 
-    // Extract metadata
-    const extras: string[] = []
-    const externals: string[] = []
-    const supertypes: string[] = []
-    const inline: string[] = []
-    const conflicts: string[][] = []
-    let word: string | null = null
+	// Extract metadata
+	const extras: string[] = [];
+	const externals: string[] = [];
+	const supertypes: string[] = [];
+	const inline: string[] = [];
+	const conflicts: string[][] = [];
+	let word: string | null = null;
 
-    const { roles: collectedRoles } = withRoleScope(() => {
-        evaluateRulesAndInjectSynthetics(opts, baseRules, refs, rules)
-        evaluateMetadataCallbacksInScope(opts, baseGrammar, refs, { extras, externals, supertypes, inline, conflicts }, (w) => { word = w })
-    })
+	const { roles: collectedRoles } = withRoleScope(() => {
+		evaluateRulesAndInjectSynthetics(opts, baseRules, refs, rules);
+		evaluateMetadataCallbacksInScope(
+			opts,
+			baseGrammar,
+			refs,
+			{ extras, externals, supertypes, inline, conflicts },
+			(w) => {
+				word = w;
+			}
+		);
+	});
 
-    inheritBaseGrammarMetadata(opts, baseGrammar, { extras, externals, supertypes, inline, conflicts }, (w) => { word = w })
+	inheritBaseGrammarMetadata(
+		opts,
+		baseGrammar,
+		{ extras, externals, supertypes, inline, conflicts },
+		(w) => {
+			word = w;
+		}
+	);
 
-    const polymorphVariants = drainPolymorphMetadata(opts)
-    const refineForms = drainRefineMetadata(opts)
+	const polymorphVariants = drainPolymorphMetadata(opts);
+	const refineForms = drainRefineMetadata(opts);
 
-    return {
-        grammar: {
-            name: opts.name,
-            rules,
-            extras,
-            externals,
-            supertypes,
-            inline,
-            conflicts,
-            word,
-            references: refs,
-            // Per-grammar role bindings collected from inline `role()`
-            // calls inside externals/rules. Empty when the grammar
-            // declares no roles.
-            externalRoles: collectedRoles.size > 0 ? collectedRoles : undefined,
-            polymorphVariants: polymorphVariants.length > 0 ? polymorphVariants : undefined,
-            refineForms,
-        } satisfies RawGrammar,
-    }
+	// Rules map mirrors tree-sitter's view: no synthesized top-level
+	// entry for alias TARGETS. The source (`_X`) is the canonical
+	// sittir-internal kind; the visible target is identity-only.
+	//
+	// One necessary accommodation: when an alias's source is an
+	// INLINE expression (e.g. `alias(choice(...), $.primitive_type)`)
+	// rather than a bare symbol, there's no existing `_X` rule for
+	// downstream to point at. Synthesize `_${target}` with the inline
+	// body so the `_X → X` invariant holds uniformly — every alias
+	// target has a named hidden source in the rules map.
+	synthesizeInlineAliasSources(rules);
+
+	return {
+		grammar: {
+			name: opts.name,
+			rules,
+			extras,
+			externals,
+			supertypes,
+			inline,
+			conflicts,
+			word,
+			references: refs,
+			// Per-grammar role bindings collected from inline `role()`
+			// calls inside externals/rules. Empty when the grammar
+			// declares no roles.
+			externalRoles: collectedRoles.size > 0 ? collectedRoles : undefined,
+			polymorphVariants:
+				polymorphVariants.length > 0 ? polymorphVariants : undefined,
+			refineForms
+		} satisfies RawGrammar
+	};
+}
+
+/**
+ * For every `alias(inlineContent, $.target)` whose source isn't a
+ * bare symbol reference to an existing rule, synthesize a hidden
+ * rule `_${target}` carrying the inline content and rewrite the
+ * alias's source to point at it.
+ *
+ * Before:
+ *    alias(choice('u8','u16',...), $.primitive_type)
+ *
+ * After:
+ *    rules[_primitive_type] = choice('u8','u16',...)
+ *    alias(symbol(_primitive_type), $.primitive_type)
+ *
+ * Why: downstream (link's `resolveNamedAliasWithProvenance`) produces
+ * `symbol(target, aliasedFrom: source)` ONLY when the alias source is
+ * a bare symbol. For inline content it can't stamp `aliasedFrom` and
+ * drillAs loses the CST-visible target. By making every alias source
+ * a named hidden rule here, we uniformly preserve alias-target
+ * metadata through the pipeline.
+ *
+ * Also: the rules map now has a single named entry per alias target
+ * (the `_${target}` source) without adding entries for visible-only
+ * kinds — matching tree-sitter's declaration view.
+ */
+function synthesizeInlineAliasSources(rules: Record<string, Rule>): void {
+	const ruleEntries = Object.entries(rules);
+	for (const [name, rule] of ruleEntries) {
+		rules[name] = rewriteInlineAliases(rule, rules);
+	}
+}
+
+function rewriteInlineAliases(rule: Rule, rules: Record<string, Rule>): Rule {
+	const recurse = (r: Rule): Rule => rewriteInlineAliases(r, rules);
+	switch (rule.type) {
+		case 'alias':
+			if (rule.named && rule.value) {
+				const inner = rule.content;
+				const isBareSymbolToExistingRule =
+					inner.type === 'symbol' && rules[inner.name] !== undefined;
+				// Also skip when the alias TARGET is already a declared
+				// kind: `alias(inlineBody, $.existingKind)` just relabels
+				// the inline body as that existing kind. Tree-sitter
+				// surfaces instances with `$type: existingKind`, and
+				// downstream uses the existing rule's factory/shape.
+				// Synthesizing `_existingKind` would collide with /
+				// over-ride the existing kind's meaning.
+				const targetAlreadyExists = rules[rule.value] !== undefined;
+				if (!targetAlreadyExists) {
+					const syntheticHiddenName = `_${rule.value}`;
+					if (!rules[syntheticHiddenName]) {
+						rules[syntheticHiddenName] = isBareSymbolToExistingRule
+							? inner
+							: recurse(rule.content);
+					}
+					return {
+						...rule,
+						content: { type: 'symbol', name: syntheticHiddenName } as SymbolRule
+					};
+				}
+			}
+			return { ...rule, content: recurse(rule.content) };
+		case 'seq':
+		case 'choice':
+			return { ...rule, members: rule.members.map(recurse) } as Rule;
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'field':
+		case 'token':
+		case 'variant':
+		case 'clause':
+		case 'group':
+			return {
+				...rule,
+				content: recurse((rule as { content: Rule }).content)
+			} as Rule;
+		default:
+			return rule;
+	}
 }
 
 /**
@@ -823,8 +1026,9 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
  * wire context's `polymorphVariants` array.
  */
 function drainPolymorphMetadata(opts: GrammarOptions): PolymorphVariant[] {
-    const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__
-    return wireCtx ? [...wireCtx.polymorphVariants] : []
+	const wireCtx = (opts as unknown as { __wireContext__?: WireContext })
+		.__wireContext__;
+	return wireCtx ? [...wireCtx.polymorphVariants] : [];
 }
 
 /**
@@ -833,10 +1037,13 @@ function drainPolymorphMetadata(opts: GrammarOptions): PolymorphVariant[] {
  * the `RawGrammar.refineForms` field absent rather than an empty map
  * for downstream consumers that check presence).
  */
-function drainRefineMetadata(opts: GrammarOptions): Map<string, import('../dsl/wire/wire.ts').RefineForm[]> | undefined {
-    const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__
-    if (!wireCtx || wireCtx.refineForms.size === 0) return undefined
-    return new Map(wireCtx.refineForms)
+function drainRefineMetadata(
+	opts: GrammarOptions
+): Map<string, RefineForm[]> | undefined {
+	const wireCtx = (opts as unknown as { __wireContext__?: WireContext })
+		.__wireContext__;
+	if (!wireCtx || wireCtx.refineForms.size === 0) return undefined;
+	return new Map(wireCtx.refineForms);
 }
 
 /**
@@ -863,16 +1070,20 @@ function drainRefineMetadata(opts: GrammarOptions): Map<string, import('../dsl/w
  * deferred.
  */
 function mergeEnrichOverridesIntoOptions(
-    optionsOrBase: GrammarOptions | { grammar: any },
-    opts: GrammarOptions,
+	optionsOrBase: GrammarOptions | { grammar: any },
+	opts: GrammarOptions
 ): void {
-    const enrichOverrides = (optionsOrBase as { __enrichOverrides__?: Record<string, (...a: any[]) => any> }).__enrichOverrides__
-    if (enrichOverrides && opts) {
-        if (!opts.rules) opts.rules = {} as Record<string, (...a: any[]) => any>
-        for (const [name, fn] of Object.entries(enrichOverrides)) {
-            if (!(name in opts.rules)) opts.rules[name] = fn
-        }
-    }
+	const enrichOverrides = (
+		optionsOrBase as {
+			__enrichOverrides__?: Record<string, (...a: any[]) => any>;
+		}
+	).__enrichOverrides__;
+	if (enrichOverrides && opts) {
+		if (!opts.rules) opts.rules = {} as Record<string, (...a: any[]) => any>;
+		for (const [name, fn] of Object.entries(enrichOverrides)) {
+			if (!(name in opts.rules)) opts.rules[name] = fn;
+		}
+	}
 }
 
 /**
@@ -889,7 +1100,7 @@ function mergeEnrichOverridesIntoOptions(
  * are filtered by downstream passes.
  */
 function seedRefsFromBaseGrammar(baseGrammar: any): SymbolRef[] {
-    return baseGrammar?.references ? [...baseGrammar.references] : []
+	return baseGrammar?.references ? [...baseGrammar.references] : [];
 }
 
 /**
@@ -911,17 +1122,18 @@ function seedRefsFromBaseGrammar(baseGrammar: any): SymbolRef[] {
  * @param rules - Mutable output map where evaluated and synthetic rules are stored.
  */
 function evaluateRulesAndInjectSynthetics(
-    opts: GrammarOptions,
-    baseRules: Record<string, Rule>,
-    refs: SymbolRef[],
-    rules: Record<string, Rule>,
+	opts: GrammarOptions,
+	baseRules: Record<string, Rule>,
+	refs: SymbolRef[],
+	rules: Record<string, Rule>
 ): void {
-    evaluateRuleFunctions(opts, baseRules, refs, rules)
-    const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__
-    if (wireCtx) {
-        injectSyntheticRules(wireCtx.deposits, rules)
-        prunePlaceholderOrphans(wireCtx, rules)
-    }
+	evaluateRuleFunctions(opts, baseRules, refs, rules);
+	const wireCtx = (opts as unknown as { __wireContext__?: WireContext })
+		.__wireContext__;
+	if (wireCtx) {
+		injectSyntheticRules(wireCtx.deposits, rules);
+		prunePlaceholderOrphans(wireCtx, rules);
+	}
 }
 
 /**
@@ -951,23 +1163,23 @@ function evaluateRulesAndInjectSynthetics(
  * helpers are legitimate and can have any body).
  */
 function prunePlaceholderOrphans(
-    ctx: WireContext,
-    rules: Record<string, Rule>,
+	ctx: WireContext,
+	rules: Record<string, Rule>
 ): void {
-    for (const name of Object.keys(rules)) {
-        if (!name.startsWith('_')) continue
-        if (ctx.deposits.has(name)) continue
-        const rule = rules[name]
-        if (!rule) continue
-        if (isBlankRule(rule)) delete rules[name]
-    }
+	for (const name of Object.keys(rules)) {
+		if (!name.startsWith('_')) continue;
+		if (ctx.deposits.has(name)) continue;
+		const rule = rules[name];
+		if (!rule) continue;
+		if (isBlankRule(rule)) delete rules[name];
+	}
 }
 
 /**
  * True when `rule` is the empty-choice sentinel returned by `blank()`.
  */
 function isBlankRule(rule: Rule): boolean {
-    return rule.type === 'choice' && rule.members.length === 0
+	return rule.type === 'choice' && rule.members.length === 0;
 }
 
 /**
@@ -986,19 +1198,19 @@ function isBlankRule(rule: Rule): boolean {
  * @param setWord - Callback to record the `word` rule name.
  */
 function evaluateMetadataCallbacksInScope(
-    opts: GrammarOptions,
-    baseGrammar: any,
-    refs: SymbolRef[],
-    sinks: {
-        extras: string[]
-        externals: string[]
-        supertypes: string[]
-        inline: string[]
-        conflicts: string[][]
-    },
-    setWord: (w: string) => void,
+	opts: GrammarOptions,
+	baseGrammar: any,
+	refs: SymbolRef[],
+	sinks: {
+		extras: string[];
+		externals: string[];
+		supertypes: string[];
+		inline: string[];
+		conflicts: string[][];
+	},
+	setWord: (w: string) => void
 ): void {
-    evaluateMetadataCallbacks(opts, baseGrammar, refs, sinks, setWord)
+	evaluateMetadataCallbacks(opts, baseGrammar, refs, sinks, setWord);
 }
 
 /**
@@ -1018,17 +1230,17 @@ function evaluateMetadataCallbacksInScope(
  * (currentRuleKind) per invocation — no try/finally needed here.
  */
 function evaluateRuleFunctions(
-    opts: GrammarOptions,
-    baseRules: Record<string, Rule>,
-    refs: SymbolRef[],
-    rules: Record<string, Rule>,
+	opts: GrammarOptions,
+	baseRules: Record<string, Rule>,
+	refs: SymbolRef[],
+	rules: Record<string, Rule>
 ): void {
-    for (const [name, ruleFn] of Object.entries(opts.rules)) {
-        const $ = createProxy(name, refs)
-        const baseRule = baseRules[name]
-        const result = ruleFn.call($, $, baseRule)
-        rules[name] = normalize(result)
-    }
+	for (const [name, ruleFn] of Object.entries(opts.rules)) {
+		const $ = createProxy(name, refs);
+		const baseRule = baseRules[name];
+		const result = ruleFn.call($, $, baseRule);
+		rules[name] = normalize(result);
+	}
 }
 
 /**
@@ -1041,14 +1253,24 @@ function evaluateRuleFunctions(
  * @remarks
  * Synthetic rules are hidden variant rules for nested-alias polymorphs,
  * created when transform patches use alias() placeholders.
+ *
+ * Only fills keys not already populated by `evaluateRuleFunctions`. A
+ * deferred-content fn registered by `wire/injectHiddenRulePlaceholders`
+ * already ran and wrote the deposited body to `rules[name]` — re-writing
+ * from `syntheticRules` would be a no-op for that case but a REGRESSION
+ * for a nested-polymorph parent where compose's fn ran at that key and
+ * further transformed the deposited body (e.g. `_visibility_modifier_pub`
+ * — the outer's deposit + an inner variant split). Skipping preserves
+ * the transform; the raw deposit is still correct when no compose ran.
  */
 function injectSyntheticRules(
-    syntheticRules: Map<string, unknown>,
-    rules: Record<string, Rule>,
+	syntheticRules: Map<string, unknown>,
+	rules: Record<string, Rule>
 ): void {
-    for (const [name, content] of syntheticRules) {
-        rules[name] = content as Rule
-    }
+	for (const [name, content] of syntheticRules) {
+		if (name in rules) continue;
+		rules[name] = content as Rule;
+	}
 }
 
 /**
@@ -1068,26 +1290,31 @@ function injectSyntheticRules(
  * declaration set instead of an empty list.
  */
 function inheritBaseGrammarMetadata(
-    opts: GrammarOptions,
-    baseGrammar: any,
-    sinks: {
-        extras: string[]
-        externals: string[]
-        supertypes: string[]
-        inline: string[]
-        conflicts: string[][]
-    },
-    setWord: (w: string) => void,
+	opts: GrammarOptions,
+	baseGrammar: any,
+	sinks: {
+		extras: string[];
+		externals: string[];
+		supertypes: string[];
+		inline: string[];
+		conflicts: string[][];
+	},
+	setWord: (w: string) => void
 ): void {
-    const inherited = baseGrammar?.grammar ?? baseGrammar
-    if (inherited) {
-        if (!opts.externals && Array.isArray(inherited.externals)) sinks.externals.push(...inherited.externals)
-        if (!opts.extras && Array.isArray(inherited.extras)) sinks.extras.push(...inherited.extras)
-        if (!opts.supertypes && Array.isArray(inherited.supertypes)) sinks.supertypes.push(...inherited.supertypes)
-        if (!opts.inline && Array.isArray(inherited.inline)) sinks.inline.push(...inherited.inline)
-        if (!opts.conflicts && Array.isArray(inherited.conflicts)) sinks.conflicts.push(...inherited.conflicts)
-        if (!opts.word && inherited.word) setWord(inherited.word)
-    }
+	const inherited = baseGrammar?.grammar ?? baseGrammar;
+	if (inherited) {
+		if (!opts.externals && Array.isArray(inherited.externals))
+			sinks.externals.push(...inherited.externals);
+		if (!opts.extras && Array.isArray(inherited.extras))
+			sinks.extras.push(...inherited.extras);
+		if (!opts.supertypes && Array.isArray(inherited.supertypes))
+			sinks.supertypes.push(...inherited.supertypes);
+		if (!opts.inline && Array.isArray(inherited.inline))
+			sinks.inline.push(...inherited.inline);
+		if (!opts.conflicts && Array.isArray(inherited.conflicts))
+			sinks.conflicts.push(...inherited.conflicts);
+		if (!opts.word && inherited.word) setWord(inherited.word);
+	}
 }
 
 /**
@@ -1104,7 +1331,7 @@ function inheritBaseGrammarMetadata(
  * @param value - The string value to append if not already in `sink`.
  */
 function appendDedup(sink: string[], value: string): void {
-    if (!sink.includes(value)) sink.push(value)
+	if (!sink.includes(value)) sink.push(value);
 }
 
 /**
@@ -1118,89 +1345,104 @@ function appendDedup(sink: string[], value: string): void {
  * version of that property.
  */
 function evaluateMetadataCallbacks(
-    opts: GrammarOptions,
-    baseGrammar: any,
-    refs: SymbolRef[],
-    sinks: {
-        extras: string[]
-        externals: string[]
-        supertypes: string[]
-        inline: string[]
-        conflicts: string[][]
-    },
-    setWord: (w: string) => void,
+	opts: GrammarOptions,
+	baseGrammar: any,
+	refs: SymbolRef[],
+	sinks: {
+		extras: string[];
+		externals: string[];
+		supertypes: string[];
+		inline: string[];
+		conflicts: string[][];
+	},
+	setWord: (w: string) => void
 ): void {
-    if (opts.extras) {
-        const $ = createProxy('_extras_', refs)
-        const baseExtras = baseGrammar?.extras ?? []
-        const result = opts.extras.call($, $, baseExtras)
-        if (Array.isArray(result)) {
-            for (const e of result) {
-                const n = normalize(e)
-                if (n.type === 'symbol') appendDedup(sinks.extras, n.name)
-                else if (n.type === 'pattern') appendDedup(sinks.extras, n.value)
-            }
-        }
-    }
+	if (opts.extras) {
+		const $ = createProxy('_extras_', refs);
+		const baseExtras = baseGrammar?.extras ?? [];
+		const result = opts.extras.call($, $, baseExtras);
+		if (Array.isArray(result)) {
+			for (const e of result) {
+				const n = normalize(e);
+				if (n.type === 'symbol') appendDedup(sinks.extras, n.name);
+				else if (n.type === 'pattern') appendDedup(sinks.extras, n.value);
+			}
+		}
+	}
 
-    if (opts.externals) {
-        const $ = createProxy('_externals_', refs)
-        const baseExternals = baseGrammar?.externals ?? []
-        const result = opts.externals.call($, $, baseExternals)
-        if (Array.isArray(result)) {
-            for (const e of result) {
-                const n = normalize(e)
-                if (n.type === 'symbol') appendDedup(sinks.externals, n.name)
-                else if (n.type === 'string') appendDedup(sinks.externals, n.value)
-            }
-        }
-    }
+	if (opts.externals) {
+		const $ = createProxy('_externals_', refs);
+		const baseExternals = baseGrammar?.externals ?? [];
+		const result = opts.externals.call($, $, baseExternals);
+		if (Array.isArray(result)) {
+			for (const e of result) {
+				const n = normalize(e);
+				if (n.type === 'symbol') appendDedup(sinks.externals, n.name);
+				else if (n.type === 'string') appendDedup(sinks.externals, n.value);
+			}
+		}
+	}
 
-    if (opts.supertypes) {
-        const $ = createProxy('_supertypes_', refs)
-        const baseSupertypes = baseGrammar?.supertypes ?? []
-        const result = opts.supertypes.call($, $, baseSupertypes)
-        if (Array.isArray(result)) {
-            for (const s of result) {
-                const n = normalize(s)
-                if (n.type === 'symbol') appendDedup(sinks.supertypes, n.name)
-            }
-        }
-    }
+	if (opts.supertypes) {
+		const $ = createProxy('_supertypes_', refs);
+		const baseSupertypes = baseGrammar?.supertypes ?? [];
+		const result = opts.supertypes.call($, $, baseSupertypes);
+		if (Array.isArray(result)) {
+			for (const s of result) {
+				// Accept BOTH shapes — the callback's `previous` param
+				// carries already-normalized string names from the base
+				// grammar, while `$.foo` references added in the override
+				// normalize to `{ type: 'symbol', name: 'foo' }`. An
+				// override body like `previous.concat([$.foo])` produces
+				// a mixed array; without the string branch the base-
+				// inherited supertypes silently drop.
+				if (typeof s === 'string') {
+					appendDedup(sinks.supertypes, s);
+					continue;
+				}
+				const n = normalize(s);
+				if (n.type === 'symbol') appendDedup(sinks.supertypes, n.name);
+			}
+		}
+	}
 
-    if (opts.inline) {
-        const $ = createProxy('_inline_', refs)
-        const baseInline = baseGrammar?.inline ?? []
-        const result = opts.inline.call($, $, baseInline)
-        if (Array.isArray(result)) {
-            for (const i of result) {
-                const n = normalize(i)
-                if (n.type === 'symbol') appendDedup(sinks.inline, n.name)
-            }
-        }
-    }
+	if (opts.inline) {
+		const $ = createProxy('_inline_', refs);
+		const baseInline = baseGrammar?.inline ?? [];
+		const result = opts.inline.call($, $, baseInline);
+		if (Array.isArray(result)) {
+			for (const i of result) {
+				const n = normalize(i);
+				if (n.type === 'symbol') appendDedup(sinks.inline, n.name);
+			}
+		}
+	}
 
-    if (opts.conflicts) {
-        const $ = createProxy('_conflicts_', refs)
-        const baseConflicts = baseGrammar?.conflicts ?? []
-        const result = opts.conflicts.call($, $, baseConflicts)
-        if (Array.isArray(result)) {
-            for (const c of result) {
-                if (Array.isArray(c)) {
-                    sinks.conflicts.push(c.map(r => {
-                        const n = normalize(r)
-                        return n.type === 'symbol' ? n.name : ''
-                    }).filter(Boolean))
-                }
-            }
-        }
-    }
+	if (opts.conflicts) {
+		const $ = createProxy('_conflicts_', refs);
+		const baseConflicts = baseGrammar?.conflicts ?? [];
+		const result = opts.conflicts.call($, $, baseConflicts);
+		if (Array.isArray(result)) {
+			for (const c of result) {
+				if (Array.isArray(c)) {
+					sinks.conflicts.push(
+						c
+							.map((r) => {
+								const n = normalize(r);
+								return n.type === 'symbol' ? n.name : '';
+							})
+							.filter(Boolean)
+					);
+				}
+			}
+		}
+	}
 
-    if (opts.word) {
-        const $ = createProxy('_word_', refs)
-        const w = opts.word.call($, $)
-        setWord(w.name)
-    }
+	if (opts.word) {
+		const $ = createProxy('_word_', refs);
+		const w = opts.word.call($, $);
+		setWord(w.name);
+	}
 }
 
 /**
@@ -1210,14 +1452,14 @@ function evaluateMetadataCallbacks(
  * Tree-sitter's grammar(base, { rules }) handles extension merging natively.
  */
 export async function evaluate(entryPath: string): Promise<RawGrammar> {
-    const g = globalThis as unknown as Record<string, unknown>
-    const savedGlobals = saveAndInjectDslGlobals(g)
+	const g = globalThis as unknown as Record<string, unknown>;
+	const savedGlobals = saveAndInjectDslGlobals(g);
 
-    try {
-        return await importAndExtractGrammar(entryPath)
-    } finally {
-        restoreSavedGlobals(g, savedGlobals)
-    }
+	try {
+		return await importAndExtractGrammar(entryPath);
+	} finally {
+		restoreSavedGlobals(g, savedGlobals);
+	}
 }
 
 /**
@@ -1237,26 +1479,28 @@ export async function evaluate(entryPath: string): Promise<RawGrammar> {
  * our DSL props — `Record<string, unknown>` is the honest shape for the
  * bag we mutate inside this scope.
  */
-function saveAndInjectDslGlobals(g: Record<string, unknown>): Record<string, unknown> {
-    const dslFunctions: Record<string, unknown> = {
-        grammar: grammarFn,
-        seq,
-        choice,
-        optional,
-        repeat,
-        repeat1,
-        field,
-        token,
-        prec,
-        alias,
-        blank,
-    }
-    const savedGlobals: Record<string, unknown> = {}
-    for (const [name, fn] of Object.entries(dslFunctions)) {
-        savedGlobals[name] = g[name]
-        g[name] = fn
-    }
-    return savedGlobals
+function saveAndInjectDslGlobals(
+	g: Record<string, unknown>
+): Record<string, unknown> {
+	const dslFunctions: Record<string, unknown> = {
+		grammar: grammarFn,
+		seq,
+		choice,
+		optional,
+		repeat,
+		repeat1,
+		field,
+		token,
+		prec,
+		alias,
+		blank
+	};
+	const savedGlobals: Record<string, unknown> = {};
+	for (const [name, fn] of Object.entries(dslFunctions)) {
+		savedGlobals[name] = g[name];
+		g[name] = fn;
+	}
+	return savedGlobals;
 }
 
 /**
@@ -1267,10 +1511,13 @@ function saveAndInjectDslGlobals(g: Record<string, unknown>): Record<string, unk
  * @returns The RawGrammar produced by the module's top-level `grammar()` call.
  */
 async function importAndExtractGrammar(entryPath: string): Promise<RawGrammar> {
-    const mod = await import(entryPath) as { default?: unknown; grammar?: unknown }
-    const result = (mod.default ?? mod) as { grammar?: unknown }
-    const grammarObj = result.grammar ?? result
-    return grammarObj as RawGrammar
+	const mod = (await import(entryPath)) as {
+		default?: unknown;
+		grammar?: unknown;
+	};
+	const result = (mod.default ?? mod) as { grammar?: unknown };
+	const grammarObj = result.grammar ?? result;
+	return grammarObj as RawGrammar;
 }
 
 /**
@@ -1281,14 +1528,14 @@ async function importAndExtractGrammar(entryPath: string): Promise<RawGrammar> {
  * @param savedGlobals - The snapshot returned by `saveAndInjectDslGlobals`.
  */
 function restoreSavedGlobals(
-    g: Record<string, unknown>,
-    savedGlobals: Record<string, unknown>,
+	g: Record<string, unknown>,
+	savedGlobals: Record<string, unknown>
 ): void {
-    for (const [name, original] of Object.entries(savedGlobals)) {
-        if (original === undefined) {
-            delete g[name]
-        } else {
-            g[name] = original
-        }
-    }
+	for (const [name, original] of Object.entries(savedGlobals)) {
+		if (original === undefined) {
+			delete g[name];
+		} else {
+			g[name] = original;
+		}
+	}
 }

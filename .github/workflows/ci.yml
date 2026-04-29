@@ -25,7 +25,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -42,6 +42,13 @@ jobs:
       - name: Lint
         run: pnpm run lint
 
+      - name: Check .jinja templates (feature 011)
+        # Fails when any .jinja file is missing the @generated header,
+        # contains a forbidden construct from the authoring subset
+        # (extends/macro/include/match/set), or when a YAML template
+        # file reappears under a templates/ directory.
+        run: npx tsx scripts/check-jinja-templates.ts
+
       - name: Format check
         run: pnpm run format:check
         continue-on-error: true
@@ -56,3 +63,410 @@ jobs:
       - name: Security Audit
         run: pnpm audit --audit-level moderate
         continue-on-error: true
+
+  # Spec 016 T009 — regression-checker (TS mode). Compares the PR base's
+  # `specs/016-parity-regressions/baselines/ts.json` against the head's.
+  # Fails the job on any of the five verdict rules in
+  # `specs/016-parity-regressions/contracts/baseline-json.md`
+  # (pass-count drop, total drop, total-fail rise, schema violation,
+  # format-deferred-count rise).
+  #
+  # TS mode runs in its own job (rather than alongside native) because
+  # it has no napi dependency: it can run as soon as `CI` finishes and
+  # doesn't need the `.node` artifacts produced by the `napi-build`
+  # matrix. The native-mode equivalent runs as `regression-checker-native`
+  # below, gated on `napi-build`.
+  #
+  # Skipped on direct pushes (no base ref to diff against). Only runs
+  # on `pull_request` events.
+  regression-checker:
+    name: 016 baseline regression-checker (ts)
+    runs-on: ubuntu-latest
+    needs: CI
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout PR head with full history
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20.x
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Resolve base SHA
+        id: base
+        run: echo "sha=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
+      - name: Snapshot base ts.json
+        run: |
+          mkdir -p /tmp/016-base
+          git show "${{ steps.base.outputs.sha }}:specs/016-parity-regressions/baselines/ts.json" \
+            > /tmp/016-base/ts.json
+      - name: Collect head ts.json
+        run: |
+          mkdir -p /tmp/016-head
+          SITTIR_BACKEND=typescript npx tsx packages/codegen/src/scripts/collect-baseline.ts \
+            > /tmp/016-head/ts.json
+      - name: Diff ts.json against base (verdict rules)
+        run: |
+          npx tsx packages/codegen/src/scripts/check-baseline-regression.ts \
+            --base /tmp/016-base/ts.json \
+            --head /tmp/016-head/ts.json
+
+  # Spec 016 T009 (follow-up) — regression-checker (native mode).
+  # Sibling to `regression-checker`, gated on `napi-build` so the linux
+  # x86_64-gnu `.node` artifacts produced by that matrix are available
+  # to dispatch `SITTIR_BACKEND=native` through the per-grammar boundary.
+  #
+  # The check-baseline-regression script is backend-agnostic (the same
+  # five verdict rules apply to both `ts.json` and `native.json` per
+  # `contracts/baseline-json.md`); only the input differs. This job
+  # downloads the `bindings-x86_64-unknown-linux-gnu` artifact, places
+  # the `.node` files where the per-grammar napi loaders expect them,
+  # collects the head baseline, and diffs against the base SHA's
+  # committed `native.json`.
+  #
+  # The `rust-parity` and `napi-build` jobs above run the parity test
+  # suite under `--ignored` with `continue-on-error: true` — they do
+  # NOT read the baseline JSONs, so a native-count drop would slip
+  # through them. This job is the durable gate.
+  #
+  # Skipped on direct pushes (no base ref to diff against). Only runs
+  # on `pull_request` events.
+  regression-checker-native:
+    name: 016 baseline regression-checker (native)
+    runs-on: ubuntu-22.04
+    needs: napi-build
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout PR head with full history
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20.x
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Download napi `.node` artifacts (linux x86_64-gnu)
+        uses: actions/download-artifact@v4
+        with:
+          name: bindings-x86_64-unknown-linux-gnu
+          path: /tmp/016-bindings
+      - name: Stage `.node` artifacts next to napi crates
+        # The artifact preserves the per-crate subdirs from the upload
+        # step (`rust/crates/sittir-{rust,typescript,python}-napi/*.node`).
+        # Copy them back into the workspace so the per-grammar napi
+        # loaders pick them up at runtime.
+        run: |
+          if [ -d /tmp/016-bindings/rust/crates ]; then
+            cp -R /tmp/016-bindings/rust/crates/. rust/crates/
+          else
+            # Fallback if the artifact was uploaded flat
+            for crate in sittir-rust-napi sittir-typescript-napi sittir-python-napi; do
+              find /tmp/016-bindings -name "*.node" -exec cp {} "rust/crates/${crate}/" \;
+            done
+          fi
+          find rust/crates -name "*.node" -print
+      - name: Resolve base SHA
+        id: base
+        run: echo "sha=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
+      - name: Snapshot base native.json
+        run: |
+          mkdir -p /tmp/016-base
+          git show "${{ steps.base.outputs.sha }}:specs/016-parity-regressions/baselines/native.json" \
+            > /tmp/016-base/native.json
+      - name: Collect head native.json
+        run: |
+          mkdir -p /tmp/016-head
+          SITTIR_BACKEND=native npx tsx packages/codegen/src/scripts/collect-baseline.ts \
+            > /tmp/016-head/native.json
+      - name: Diff native.json against base (verdict rules)
+        run: |
+          npx tsx packages/codegen/src/scripts/check-baseline-regression.ts \
+            --base /tmp/016-base/native.json \
+            --head /tmp/016-head/native.json
+
+  # Spec 054 — perf regression-checker (native only). Compares the FFI
+  # roundtrip + call-count from a fresh native-backend metrics run against
+  # the committed `specs/054-post-016-perf-tracking/baselines/perf-native.json`.
+  # Regressions > 10% on `ffi.meanRoundtripMs` or `ffi.totalCalls` fail the
+  # build EXCEPT when `SITTIR_METRICS_FFI_WARN_ONLY=1` (set below for the
+  # one-month calibration window per FR-008). Skipped when napi build
+  # artifacts are unavailable. Cross-platform deltas auto-skip via the
+  # check's `[INFO] platform mismatch` branch — the perf gate is darwin-only
+  # for now (the baseline was collected on Apple M4 Pro). Linux baseline
+  # collection is a follow-up; until then, the gate is a no-op on linux
+  # CI but the metrics artifacts still get uploaded for inspection.
+  perf-regression-checker:
+    name: 054 perf regression-checker (native, warn-only)
+    runs-on: ubuntu-22.04
+    needs: napi-build
+    if: github.event_name == 'pull_request'
+    env:
+      # Warn-only window: 2026-04-26 → 2026-05-26 per spec 054 FR-008.
+      # Flip to enforcing by removing this env block after the window.
+      SITTIR_METRICS_FFI_WARN_ONLY: "1"
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20.x
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Download napi `.node` artifacts (linux x86_64-gnu)
+        uses: actions/download-artifact@v4
+        with:
+          name: bindings-x86_64-unknown-linux-gnu
+          path: /tmp/054-bindings
+      - name: Stage `.node` artifacts next to napi crates
+        run: |
+          if [ -d /tmp/054-bindings/rust/crates ]; then
+            cp -R /tmp/054-bindings/rust/crates/. rust/crates/
+          else
+            for crate in sittir-rust-napi sittir-typescript-napi sittir-python-napi; do
+              find /tmp/054-bindings -name "*.node" -exec cp {} "rust/crates/${crate}/" \;
+            done
+          fi
+      - name: Collect fresh metrics (native backend)
+        run: |
+          SITTIR_BACKEND=native SITTIR_METRICS=1 \
+            npx tsx packages/codegen/src/scripts/collect-baseline.ts > /dev/null
+      - name: Check perf baseline (warn-only window)
+        run: npx tsx packages/codegen/src/scripts/check-perf-baseline.ts
+      - name: Upload metrics artifact for inspection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: metrics-native-${{ github.run_id }}
+          path: metrics-native.json
+          if-no-files-found: warn
+
+  # Rust workspace compile check (spec 012 Phase 1 T007).
+  # A single cargo-check job — clippy, platform matrix, and release
+  # artifacts come in Phase 4 (T053-T057, T064). The parity harness
+  # is gated in its own `rust-parity` job below (T049).
+  rust:
+    name: cargo check --workspace
+    runs-on: ubuntu-22.04
+    needs: CI
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install Rust toolchain (stable)
+        uses: dtolnay/rust-toolchain@stable
+      - name: Cache cargo registry + target
+        uses: Swatinem/rust-cache@v2
+      - name: cargo check --workspace
+        run: cargo check --workspace
+
+  # Cross-engine parity harness (spec 012 T049 / FR-012 / SC-001a +
+  # SC-001b). Runs the integration-test crate that loads each
+  # grammar's `test-fixtures.json` and asserts the Rust engine
+  # reproduces the TS engine's captured render + roundtrip outputs.
+  #
+  # **Important: continue-on-error scope** — the JOB-level
+  # `continue-on-error: true` was removed during 016 (Cluster A
+  # post-review) because it was masking fixture data-rot: the python
+  # comprehensions cluster failed for 6 fixtures NOT because of any
+  # template bug but because `test-fixtures.json` was captured at
+  # commit 5c89aeda (pre-spec-012) and never refreshed when readNode +
+  # templates moved on. The "Fixture check" step below is now
+  # ENFORCING (no per-step continue-on-error → step inherits job
+  # default which is fail-on-error). The `cargo test parity` step
+  # below it KEEPS its advisory shape via per-step
+  # `continue-on-error: true` while the `#[ignore]`'d test cases
+  # await the flank-metadata plumbing
+  # (`rust/crates/sittir-parity-tests/tests/parity.rs`). Flip the
+  # parity-test step to enforcing once those tests pass un-ignored.
+  rust-parity:
+    name: cargo test parity (advisory)
+    runs-on: ubuntu-22.04
+    needs: rust
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Install Node (for codegen + fixture regen)
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22.x
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Install Rust toolchain (stable)
+        uses: dtolnay/rust-toolchain@stable
+      - name: Cache cargo registry + target
+        uses: Swatinem/rust-cache@v2
+      - name: Regenerate fixtures
+        # The test-fixtures.json files are checked in, but regenerating
+        # here catches drift between committed fixtures and current
+        # render behavior — the pipeline fails LOUDLY if a codegen
+        # change silently shifts the capture without a matching commit.
+        run: |
+          npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src
+          npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src
+          npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src
+      - name: Fixture check — no drift from committed
+        # ENFORCING (no per-step continue-on-error). 016 Cluster A
+        # established that fixture drift → silent data-rot → 6
+        # parity tests failing for the wrong reason. Failing CI
+        # forces the next maintainer to commit the regen output
+        # alongside whatever codegen change caused the drift.
+        run: git diff --exit-code packages/*/rust-render/test-fixtures.json
+      - name: cargo test parity (--ignored for diagnostic)
+        # Advisory until #[ignore]'d tests pass un-ignored — see job
+        # docstring above.
+        continue-on-error: true
+        run: cargo test -p sittir-parity-tests --test parity -- --ignored --nocapture
+
+  # Spec 012 Phase 4 — platform matrix for napi `.node` artifact builds
+  # (T053 macOS arm64/x64, T054 Linux x64 glibc/musl, T055 Linux arm64
+  # glibc/musl, T056 Windows x64). Each matrix job runs the parity
+  # suite as well (T061 — SC-006 requires platform coverage be parity-
+  # gated, not just compile-gated).
+  #
+  # Cross-compile setup uses `napi-rs/setup-node-and-napi@v3` for the
+  # musl + arm64 targets that need a sysroot; native targets use the
+  # standard `dtolnay/rust-toolchain@stable` action.
+  napi-build:
+    name: napi build (${{ matrix.target }})
+    needs: rust
+    runs-on: ${{ matrix.host }}
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # T053 — macOS
+          - target: aarch64-apple-darwin
+            host: macos-14
+            cross: false
+          - target: x86_64-apple-darwin
+            host: macos-13
+            cross: false
+          # T054 — Linux x64
+          - target: x86_64-unknown-linux-gnu
+            host: ubuntu-22.04
+            cross: false
+          - target: x86_64-unknown-linux-musl
+            host: ubuntu-22.04
+            cross: true
+          # T055 — Linux arm64
+          - target: aarch64-unknown-linux-gnu
+            host: ubuntu-22.04
+            cross: true
+          - target: aarch64-unknown-linux-musl
+            host: ubuntu-22.04
+            cross: true
+          # T056 — Windows x64
+          - target: x86_64-pc-windows-msvc
+            host: windows-2022
+            cross: false
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Install Rust toolchain (stable, ${{ matrix.target }})
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - name: Setup cross-compile (musl / arm64)
+        if: matrix.cross == true
+        uses: napi-rs/setup-node-and-napi@v3
+        with:
+          target: ${{ matrix.target }}
+      - name: Cache cargo registry + target
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.target }}
+      - name: napi build — @sittir/rust-native
+        run: pnpm exec napi build --platform --release --target ${{ matrix.target }}
+        working-directory: rust/crates/sittir-rust-napi
+      - name: napi build — @sittir/typescript-native
+        run: pnpm exec napi build --platform --release --target ${{ matrix.target }}
+        working-directory: rust/crates/sittir-typescript-napi
+      - name: napi build — @sittir/python-native
+        run: pnpm exec napi build --platform --release --target ${{ matrix.target }}
+        working-directory: rust/crates/sittir-python-napi
+      - name: cargo test --workspace (skip cross-compiled targets)
+        if: matrix.cross == false
+        run: cargo test --workspace --target ${{ matrix.target }}
+      # T061 — every platform job runs the parity suite (SC-006 gate).
+      # On cross-compiled hosts we still invoke the test binary build
+      # but skip execution (the resulting binary cannot run on the CI
+      # host); the failure path is the build step above.
+      - name: cargo test parity (native targets only)
+        if: matrix.cross == false
+        run: cargo test -p sittir-parity-tests --test parity --target ${{ matrix.target }} -- --ignored --nocapture
+      - name: Upload `.node` artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bindings-${{ matrix.target }}
+          path: |
+            rust/crates/sittir-rust-napi/*.node
+            rust/crates/sittir-typescript-napi/*.node
+            rust/crates/sittir-python-napi/*.node
+          if-no-files-found: ignore
+
+  # Spec 012 T060 — surface parity counts in PR job summary so review
+  # has visibility on engine drift without spelunking logs. Aggregates
+  # the per-platform parity results from `napi-build` into one summary.
+  parity-summary:
+    name: parity counts summary
+    needs: napi-build
+    runs-on: ubuntu-22.04
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v6
+      - name: Render parity counts to job summary
+        run: |
+          {
+            echo "## Spec 012 parity counts"
+            echo ""
+            echo "Per-platform parity-suite status from the \`napi-build\` matrix is"
+            echo "available in each job log under \`cargo test parity\`. The headline"
+            echo "baseline (asserted by \`pnpm -F @sittir/codegen test\`):"
+            echo ""
+            echo "| grammar | fromPass | rtPass | factoryPass |"
+            echo "|--------:|---------:|-------:|------------:|"
+            echo "| rust       | 130/148 | 121/136 | 421/959 |"
+            echo "| typescript | 127/137 |  96/112 | 387/916 |"
+            echo "| python     | 107/114 | 105/115 | 205/860 |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # Spec 012 T064 — scope-boundary enforcement. Fails the build if
+  # WASM artifacts leak into the MVP, if `cargo publish` reappears in
+  # any workflow, if generated render crates contain non-source files,
+  # or if disallowed derive-macro crates show up in the dep graph.
+  scope-boundaries:
+    name: assert scope boundaries
+    needs: rust
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install Rust toolchain (stable)
+        uses: dtolnay/rust-toolchain@stable
+      - name: Cache cargo registry + target
+        uses: Swatinem/rust-cache@v2
+      - name: assert scope boundaries
+        run: bash scripts/assert-scope-boundaries.sh

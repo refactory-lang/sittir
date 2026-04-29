@@ -15,6 +15,7 @@ Use `/speckit.modify` when:
 - Responding to changed requirements
 
 **Do NOT use `/speckit.modify` for**:
+
 - Creating new features → use `/speckit.specify` instead
 - Fixing bugs without changing intended behavior → use `/speckit.bugfix` instead
 - Improving code quality without behavior changes → use `/speckit.refactor` instead
@@ -23,6 +24,7 @@ Use `/speckit.modify` when:
 ## Process
 
 ### 1. Impact Analysis
+
 - Run `scan-impact.sh` to identify affected code
 - Review original feature specification
 - Identify all files that import/use the feature
@@ -30,6 +32,7 @@ Use `/speckit.modify` when:
 - Find related tests that may need updates
 
 ### 2. Modification Planning
+
 - Document what's being added/modified/removed
 - Assess backward compatibility
 - Plan migration path for breaking changes
@@ -37,6 +40,7 @@ Use `/speckit.modify` when:
 - Define rollback strategy
 
 ### 3. Implementation
+
 - Make changes incrementally
 - Update affected code paths
 - Modify contracts/interfaces
@@ -44,6 +48,7 @@ Use `/speckit.modify` when:
 - Add new tests for modified behavior
 
 ### 4. Verification
+
 - All existing tests still pass (or updated appropriately)
 - New tests cover modified behavior
 - Dependent features still work
@@ -51,6 +56,7 @@ Use `/speckit.modify` when:
 - Documentation updated
 
 ### 5. Communication
+
 - Document breaking changes clearly
 - Update API documentation
 - Notify affected teams/users
@@ -85,6 +91,7 @@ specs/
 ```
 
 This will:
+
 1. Find original feature `014-edit-profile-form`
 2. Run impact analysis on feature files
 3. Create branch `014-mod-001-add-avatar-compression`
@@ -94,6 +101,7 @@ This will:
 7. Show "Next Steps" for checkpoint-based workflow
 
 **Next steps after running the command:**
+
 1. Review `modification-spec.md` and `impact-analysis.md`
 2. Check affected files - are there dependencies you missed?
 3. Assess backward compatibility - will this break anything?
@@ -115,16 +123,19 @@ This will:
 ## Changes Overview
 
 ### Added Functionality
+
 - Compress uploaded avatars to max 500KB
 - Support JPEG, PNG, WebP formats
 - Generate multiple sizes (thumbnail, small, medium, large)
 
 ### Modified Functionality
+
 - Profile image upload now triggers compression pipeline
 - API response includes URLs for all image sizes
 - Storage path structure changed to include size variants
 
 ### Removed Functionality
+
 - None
 
 ## Backward Compatibility
@@ -146,6 +157,7 @@ This will:
 ## Impact Analysis
 
 From `impact.md`:
+
 - 3 files directly use profile upload
 - 12 components display user avatars
 - 2 API endpoints return avatar URLs
@@ -165,22 +177,29 @@ The `scan-impact.sh` script automatically generates:
 **Scan Date**: 2025-10-01
 
 ## Feature Files (Created by This Feature)
+
 - `app/routes/profile.edit.tsx` (245 lines)
 - `app/components/EditProfileForm.tsx` (180 lines)
 - `tests/profile-edit.test.ts` (95 lines)
 
 ## Code Dependencies (Other Files Importing Feature Files)
+
 Files importing `app/components/EditProfileForm.tsx`:
+
 - `app/routes/profile.tsx`
 - `app/routes/settings.tsx`
 
 ## Contract Dependencies
+
 Contracts affected by this feature:
+
 - `contracts/profile-request.ts` (used by 3 routes)
 - `contracts/profile-response.ts` (used by 5 components)
 
 ## Test Dependencies
+
 Tests referencing feature files:
+
 - `tests/integration/profile-flow.test.ts`
 ```
 
@@ -189,21 +208,25 @@ Tests referencing feature files:
 The modify workflow uses checkpoints to ensure you review the impact analysis and backward compatibility before making changes:
 
 ### Phase 1: Impact Analysis
+
 - **Command**: `/speckit.modify 014 "description"`
 - **Creates**: `modification-spec.md` and auto-generated `impact-analysis.md`
 - **Checkpoint**: Review impacted files - did the scan catch everything? Are there hidden dependencies?
 
 ### Phase 2: Implementation Planning
+
 - **Command**: `/speckit.plan`
 - **Creates**: `plan.md` with migration strategy and backward compatibility approach
 - **Checkpoint**: Review plan - is the migration path safe? Are breaking changes documented?
 
 ### Phase 3: Task Breakdown
+
 - **Command**: `/speckit.tasks`
 - **Creates**: `tasks.md` with ordered tasks (contracts → tests → implementation)
 - **Checkpoint**: Review tasks - are all affected files included? Is order correct?
 
 ### Phase 4: Implementation
+
 - **Command**: `/speckit.implement`
 - **Executes**: All tasks (update contracts, modify code, update tests, verify)
 - **Result**: Feature modified with all dependent code updated
@@ -215,19 +238,21 @@ The modify workflow uses checkpoints to ensure you review the impact analysis an
 ### Managing Breaking Changes
 
 **Option 1: Versioned APIs**
+
 ```typescript
 // Support both old and new structure
-export function getAvatarUrl(profile: Profile, size: 'thumbnail' | 'medium' = 'medium') {
-  // New structure
-  if (typeof profile.avatarUrl === 'object') {
-    return profile.avatarUrl[size]
-  }
-  // Old structure (deprecated)
-  return profile.avatarUrl
+export function getAvatarUrl(profile: Profile, size: "thumbnail" | "medium" = "medium") {
+	// New structure
+	if (typeof profile.avatarUrl === "object") {
+		return profile.avatarUrl[size];
+	}
+	// Old structure (deprecated)
+	return profile.avatarUrl;
 }
 ```
 
 **Option 2: Gradual Migration**
+
 ```typescript
 // Phase 1: Add new field alongside old
 {
@@ -240,23 +265,26 @@ export function getAvatarUrl(profile: Profile, size: 'thumbnail' | 'medium' = 'm
 ```
 
 **Option 3: Feature Flags**
+
 ```typescript
 if (featureFlags.avatarCompression) {
-  return compressedAvatarUrl
+	return compressedAvatarUrl;
 } else {
-  return originalAvatarUrl
+	return originalAvatarUrl;
 }
 ```
 
 ### When to Create a Modification vs. New Feature
 
 **Create Modification If**:
+
 - Building on existing feature's foundation
 - Sharing most of the original code
 - Users think of it as "enhancing X"
 - Original spec is still mostly accurate
 
 **Create New Feature If**:
+
 - Largely independent functionality
 - Could exist without original feature
 - Users think of it as "new feature Y"
@@ -279,24 +307,31 @@ This workflow upholds:
 ## Common Modifications
 
 ### Adding Optional Parameter
+
 ```typescript
 // Before
-function createTweet(content: string): Tweet
+function createTweet(content: string): Tweet;
 
 // After (backward compatible)
-function createTweet(content: string, options?: { tags?: string[] }): Tweet
+function createTweet(content: string, options?: { tags?: string[] }): Tweet;
 ```
 
 ### Extending Response Data
+
 ```typescript
 // Before
-{ id, username, displayName }
+{
+	(id, username, displayName);
+}
 
 // After (backward compatible)
-{ id, username, displayName, bio, avatarUrl }  // Added fields
+{
+	(id, username, displayName, bio, avatarUrl);
+} // Added fields
 ```
 
 ### Changing Validation Rules
+
 ```typescript
 // Before: Username 3-15 chars
 // After: Username 3-30 chars
@@ -308,4 +343,4 @@ function createTweet(content: string, options?: { tags?: string[] }): Tweet
 
 ---
 
-*Modification Workflow Documentation - Part of Specify Extension System*
+_Modification Workflow Documentation - Part of Specify Extension System_

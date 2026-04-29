@@ -6,10 +6,10 @@ Render templates moved from S-expression strings in TypeScript to YAML files wit
 
 ## Key files per grammar package
 
-| Before | After | Notes |
-|--------|-------|-------|
-| `src/rules.ts` (S-expr map) | `templates.yaml` | YAML loaded by core at runtime |
-| `src/joinby.ts` (empty map) | Per-rule `joinBy` in YAML | Merged into template rules |
+| Before                      | After                     | Notes                          |
+| --------------------------- | ------------------------- | ------------------------------ |
+| `src/rules.ts` (S-expr map) | `templates.yaml`          | YAML loaded by core at runtime |
+| `src/joinby.ts` (empty map) | Per-rule `joinBy` in YAML | Merged into template rules     |
 
 ## Reading a template
 
@@ -17,7 +17,7 @@ Templates look like the code they produce:
 
 ```yaml
 # Simple rule (string form)
-binary_expression: "$LEFT $OPERATOR $RIGHT"
+binary_expression: '$LEFT $OPERATOR $RIGHT'
 
 # Complex rule (object form with clauses and joinBy)
 function_item:
@@ -25,13 +25,14 @@ function_item:
     fn $NAME($$$PARAMETERS) $RETURN_TYPE_CLAUSE{
         $$$BODY
     }
-  return_type_clause: "-> $RETURN_TYPE "
+  return_type_clause: '-> $RETURN_TYPE '
   joinBy:
-    PARAMETERS: ", "
+    PARAMETERS: ', '
     BODY: "\n"
 ```
 
 **Variable syntax** (ast-grep conventions):
+
 - `$NAME` — single named field → `fields.name`
 - `$$$NAME` — multi field (array) → `fields.name`, joined by `joinBy`
 - `$NAME_CLAUSE` — clause reference → looks up `name_clause` key in same rule
@@ -44,8 +45,10 @@ Some tree-sitter grammars lack explicit FIELDs for certain nodes (e.g., Rust `in
 
 ```json
 {
-  "index_expression": { "fields": { "value": {}, "index": {} } },
-  "unary_expression": { "fields": { "operator": { "anonymous": true }, "argument": {} } }
+	"index_expression": { "fields": { "value": {}, "index": {} } },
+	"unary_expression": {
+		"fields": { "operator": { "anonymous": true }, "argument": {} }
+	}
 }
 ```
 
@@ -75,6 +78,7 @@ Existing factory→render tests validate the new engine without changes.
 ## Modifying the render engine
 
 The render engine lives in `packages/core/src/render.ts`. It:
+
 1. Returns `node.text` for leaf nodes
 2. Looks up `config.rules[node.type]`
 3. Scans template string left-to-right for `$` variables

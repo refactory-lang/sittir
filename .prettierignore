@@ -1,0 +1,13 @@
+# Generated files that use JSON.stringify format (quoted keys).
+# oxfmt reformats these to JSON5 (unquoted keys), which breaks
+# the validator's JSON.parse-based factory-map loader.
+**/factory-map.json5
+
+# Volatile generated artifacts (codegen-owned, exclude from format scope)
+# These are regenerated frequently and should not be part of default
+# format/lint coverage. Stability is achieved at the emitter level.
+**/tests/nodes.test.ts
+**/*.sittir/**
+specs/*/baselines/**
+specs/*/perf-baselines/**
+specs/*/perf/**

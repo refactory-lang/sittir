@@ -12,9 +12,9 @@ export interface FunctionItemNs extends NodeNs<FunctionItem> {}
 
 // The single source-of-truth map
 export interface NamespaceMap {
-    readonly 'function_item': FunctionItemNs;
-    readonly 'block': BlockNs;
-    // ... one entry per kind
+	readonly function_item: FunctionItemNs;
+	readonly block: BlockNs;
+	// ... one entry per kind
 }
 
 // Derived accessors

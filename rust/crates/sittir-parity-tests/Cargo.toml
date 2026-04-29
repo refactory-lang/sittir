@@ -1,0 +1,28 @@
+[package]
+name = "sittir-parity-tests"
+version.workspace = true
+edition.workspace = true
+publish = false
+
+# Spec 012 T047 — cross-engine parity fixture harness. Pure integration
+# tests over the extracted `packages/{lang}/rust-render/test-fixtures.json`
+# corpus. No napi involvement — directly dispatches via each render
+# crate's public `render_dispatch`. The napi binding's SittirEngine is
+# covered by its own per-crate tests; this crate asserts byte-level
+# parity (SC-001a) and reparse-structure parity (SC-001b) against the
+# TS engine's captured outputs.
+
+[dependencies]
+sittir-core = { path = "../sittir-core" }
+sittir-rust-render = { path = "../../../packages/rust/rust-render" }
+sittir-typescript-render = { path = "../../../packages/typescript/rust-render" }
+sittir-python-render = { path = "../../../packages/python/rust-render" }
+# askama is re-exported through render_dispatch's Result<_, askama::Error>
+# signature — parity-tests needs it in scope to name the error type.
+askama = "0.14"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tree-sitter = "0.26"
+tree-sitter-rust = "0.24"
+tree-sitter-typescript = "0.23"
+tree-sitter-python = "0.25"

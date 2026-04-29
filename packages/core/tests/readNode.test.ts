@@ -14,6 +14,7 @@
 import { describe, it, expect } from 'vitest';
 import { readNode } from '../src/readNode.ts';
 import type { AnyTreeNode, TreeHandle } from '../src/readNode.ts';
+import type { NodeId } from '../src/types.ts';
 
 interface FakeChild {
 	type: string;
@@ -29,30 +30,33 @@ function makeHandle(rootType: string, children: FakeChild[]): TreeHandle {
 	const idMap = new Map<number, AnyTreeNode>();
 	const root: AnyTreeNode = {
 		type: rootType,
-		id: () => 0,
+		id: () => 0 as NodeId,
 		text: () => '',
 		range: () => ({ start: { index: 0 }, end: { index: 0 } }),
 		isNamed: () => true,
 		children: () => childNodes,
-		fieldNameForChild: (i: number) => children[i]?.fieldName ?? null,
+		fieldNameForChild: (i: number) => children[i]?.fieldName ?? null
 	} as unknown as AnyTreeNode;
-	const childNodes = children.map((c, _i): AnyTreeNode => ({
-		type: c.type,
-		id: () => c.id,
-		text: () => c.text,
-		range: () => ({
-			start: { index: c.start ?? 0 },
-			end: { index: c.end ?? c.text.length },
-		}),
-		isNamed: () => c.named,
-		children: () => [],
-		fieldNameForChild: () => null,
-	} as unknown as AnyTreeNode));
+	const childNodes = children.map(
+		(c, _i): AnyTreeNode =>
+			({
+				type: c.type,
+				id: () => c.id as NodeId,
+				text: () => c.text,
+				range: () => ({
+					start: { index: c.start ?? 0 },
+					end: { index: c.end ?? c.text.length }
+				}),
+				isNamed: () => c.named,
+				children: () => [],
+				fieldNameForChild: () => null
+			}) as unknown as AnyTreeNode
+	);
 	idMap.set(0, root);
 	childNodes.forEach((n, i) => idMap.set(children[i]!.id, n));
 	return {
 		rootNode: root,
-		nodeById: (id: number) => idMap.get(id) as AnyTreeNode,
+		nodeById: (id: NodeId) => idMap.get(id) as AnyTreeNode
 	};
 }
 
@@ -66,10 +70,22 @@ describe('readNode — fname / anonymous-keyword collision', () => {
 		// not array-accumulate with it.
 		const handle = makeHandle('type_item', [
 			{ type: 'type', text: 'type', named: false, id: 1 },
-			{ type: 'type_identifier', text: 'Foo', named: true, fieldName: 'name', id: 2 },
+			{
+				type: 'type_identifier',
+				text: 'Foo',
+				named: true,
+				fieldName: 'name',
+				id: 2
+			},
 			{ type: '=', text: '=', named: false, id: 3 },
-			{ type: 'type_identifier', text: 'u64', named: true, fieldName: 'type', id: 4 },
-			{ type: ';', text: ';', named: false, id: 5 },
+			{
+				type: 'type_identifier',
+				text: 'u64',
+				named: true,
+				fieldName: 'type',
+				id: 4
+			},
+			{ type: ';', text: ';', named: false, id: 5 }
 		]);
 		const data = readNode(handle);
 		// Provenance tag — readNode output must carry $source: 'ts'
@@ -77,7 +93,11 @@ describe('readNode — fname / anonymous-keyword collision', () => {
 		expect(data.$source).toBe('ts');
 		expect(data.$fields?.type).toBeDefined();
 		// $fields.type is the NAMED RHS, not an array and not the anon.
-		const t = data.$fields!.type as { $type: string; $text: string; $named: boolean };
+		const t = data.$fields!.type as {
+			$type: string;
+			$text: string;
+			$named: boolean;
+		};
 		expect(Array.isArray(t)).toBe(false);
 		expect(t.$type).toBe('type_identifier');
 		expect(t.$text).toBe('u64');
@@ -94,13 +114,13 @@ describe('readNode — fname / anonymous-keyword collision', () => {
 			{ type: ',', text: ',', named: false, id: 3 },
 			{ type: 'integer', text: '2', named: true, fieldName: 'argument', id: 4 },
 			{ type: ',', text: ',', named: false, id: 5 },
-			{ type: 'integer', text: '3', named: true, fieldName: 'argument', id: 6 },
+			{ type: 'integer', text: '3', named: true, fieldName: 'argument', id: 6 }
 		]);
 		const data = readNode(handle);
 		const args = data.$fields?.argument;
 		expect(Array.isArray(args)).toBe(true);
 		const arr = args as Array<{ $text: string }>;
 		expect(arr).toHaveLength(3);
-		expect(arr.map(a => a.$text)).toEqual(['1', '2', '3']);
+		expect(arr.map((a) => a.$text)).toEqual(['1', '2', '3']);
 	});
 });

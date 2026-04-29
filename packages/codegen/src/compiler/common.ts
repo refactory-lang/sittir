@@ -8,7 +8,7 @@
  * that file; a helper that is used everywhere lives here.
  */
 
-import type { Rule } from './rule.ts'
+import type { Rule } from './rule.ts';
 
 /**
  * Compile the grammar's `word` rule into a full-match RegExp so
@@ -28,20 +28,24 @@ import type { Rule } from './rule.ts'
  *   keep working.
  */
 export function compileWordMatcher(
-    word: string | null | undefined,
-    rules: Record<string, Rule>,
+	word: string | null | undefined,
+	rules: Record<string, Rule>
 ): RegExp | undefined {
-    if (!word) return undefined
-    const wordRule = rules[word]
-    if (!wordRule) return undefined
-    const src = ruleToRegexSource(wordRule)
-    if (src === null) return undefined
-    const full = `^(?:${src})$`
-    try { return new RegExp(full, 'u') }
-    catch {
-        try { return new RegExp(full) }
-        catch { return undefined }
-    }
+	if (!word) return undefined;
+	const wordRule = rules[word];
+	if (!wordRule) return undefined;
+	const src = ruleToRegexSource(wordRule);
+	if (src === null) return undefined;
+	const full = `^(?:${src})$`;
+	try {
+		return new RegExp(full, 'u');
+	} catch {
+		try {
+			return new RegExp(full);
+		} catch {
+			return undefined;
+		}
+	}
 }
 
 /**
@@ -51,55 +55,55 @@ export function compileWordMatcher(
  * anything outside the supported text-terminal shapes.
  */
 function ruleToRegexSource(rule: Rule): string | null {
-    switch (rule.type) {
-        case 'pattern':
-            return rule.value
-        case 'string':
-            return escapeRegexLiteral(rule.value)
-        case 'token':
-        case 'terminal':
-            return ruleToRegexSource((rule as { content: Rule }).content)
-        case 'seq': {
-            const parts: string[] = []
-            for (const m of rule.members) {
-                const p = ruleToRegexSource(m)
-                if (p === null) return null
-                parts.push(`(?:${p})`)
-            }
-            return parts.join('')
-        }
-        case 'choice': {
-            const parts: string[] = []
-            for (const m of rule.members) {
-                const p = ruleToRegexSource(m)
-                if (p === null) return null
-                parts.push(p)
-            }
-            return `(?:${parts.join('|')})`
-        }
-        case 'optional': {
-            const p = ruleToRegexSource(rule.content)
-            if (p === null) return null
-            return `(?:${p})?`
-        }
-        case 'repeat': {
-            const p = ruleToRegexSource(rule.content)
-            if (p === null) return null
-            return `(?:${p})*`
-        }
-        case 'repeat1': {
-            const p = ruleToRegexSource(rule.content)
-            if (p === null) return null
-            return `(?:${p})+`
-        }
-        default:
-            // symbol / field / variant / supertype / enum / indent /
-            // dedent / newline — none of these have a single regex
-            // representation without additional context.
-            return null
-    }
+	switch (rule.type) {
+		case 'pattern':
+			return rule.value;
+		case 'string':
+			return escapeRegexLiteral(rule.value);
+		case 'token':
+		case 'terminal':
+			return ruleToRegexSource((rule as { content: Rule }).content);
+		case 'seq': {
+			const parts: string[] = [];
+			for (const m of rule.members) {
+				const p = ruleToRegexSource(m);
+				if (p === null) return null;
+				parts.push(`(?:${p})`);
+			}
+			return parts.join('');
+		}
+		case 'choice': {
+			const parts: string[] = [];
+			for (const m of rule.members) {
+				const p = ruleToRegexSource(m);
+				if (p === null) return null;
+				parts.push(p);
+			}
+			return `(?:${parts.join('|')})`;
+		}
+		case 'optional': {
+			const p = ruleToRegexSource(rule.content);
+			if (p === null) return null;
+			return `(?:${p})?`;
+		}
+		case 'repeat': {
+			const p = ruleToRegexSource(rule.content);
+			if (p === null) return null;
+			return `(?:${p})*`;
+		}
+		case 'repeat1': {
+			const p = ruleToRegexSource(rule.content);
+			if (p === null) return null;
+			return `(?:${p})+`;
+		}
+		default:
+			// symbol / field / variant / supertype / enum / indent /
+			// dedent / newline — none of these have a single regex
+			// representation without additional context.
+			return null;
+	}
 }
 
 function escapeRegexLiteral(s: string): string {
-    return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+	return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

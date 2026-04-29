@@ -21,6 +21,7 @@ Otherwise, fall back to the default: execute the `{SCRIPT}` with `--json` to det
 ## AI Slop Detection Categories
 
 ### 1. Type Assertion Abuse
+
 - `as any` — almost always a sign of giving up on type safety
 - `as unknown as T` — double assertion hiding a design flaw
 - `// @ts-ignore` / `// @ts-expect-error` without explanation
@@ -28,6 +29,7 @@ Otherwise, fall back to the default: execute the `{SCRIPT}` with `--json` to det
 - Type assertions (`as T`) where a type guard or generic would be cleaner
 
 ### 2. Over-Documentation
+
 - JSDoc on every function including trivial ones (`/** Gets the name */  getName()`)
 - Comments that restate what the code does (`// increment counter` above `counter++`)
 - Multi-line docstrings on private/internal functions
@@ -35,6 +37,7 @@ Otherwise, fall back to the default: execute the `{SCRIPT}` with `--json` to det
 - README-style explanations inside source files
 
 ### 3. Defensive Coding Against Impossible States
+
 - Null checks on values that are already narrowed or guaranteed non-null
 - Try/catch around code that cannot throw
 - Fallback values for required parameters (`param ?? defaultValue` where param is never undefined)
@@ -42,6 +45,7 @@ Otherwise, fall back to the default: execute the `{SCRIPT}` with `--json` to det
 - Error handling for conditions the type system already prevents
 
 ### 4. Premature Abstraction
+
 - Helper functions called exactly once
 - Wrapper functions that just forward to another function
 - Utility files with a single export
@@ -50,6 +54,7 @@ Otherwise, fall back to the default: execute the `{SCRIPT}` with `--json` to det
 - Factory functions that always produce the same thing
 
 ### 5. Verbose Patterns
+
 - `return await` in async functions (redundant — just `return`)
 - `=== true` / `=== false` comparisons on booleans
 - `if (condition) { return true; } else { return false; }` instead of `return condition`
@@ -58,12 +63,14 @@ Otherwise, fall back to the default: execute the `{SCRIPT}` with `--json` to det
 - Destructuring a single property just to rename it
 
 ### 6. Backwards Compatibility Hedging
+
 - Renaming variables to `_unused` instead of deleting them
 - `// removed` or `// deprecated` comments instead of actual removal
 - Re-exporting removed symbols as `undefined` for "backwards compat"
 - Feature flags for code that should just be changed
 
 ### 7. Over-Engineered Error Handling
+
 - Custom error classes for a single throw site
 - Error codes/enums with one member
 - Wrapping every external call in try/catch when the caller already handles errors
@@ -71,6 +78,7 @@ Otherwise, fall back to the default: execute the `{SCRIPT}` with `--json` to det
 - `catch (e) { throw e }` — literally doing nothing
 
 ### 8. Structural Bloat
+
 - Files with a single small export that should be inlined
 - Index files that just re-export from one module
 - Barrel files (`index.ts`) that re-export everything from a directory with only one file

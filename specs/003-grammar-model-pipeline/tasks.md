@@ -26,7 +26,7 @@ All paths relative to `packages/codegen/src/`.
 - [x] T001 Define NodeModelBase, all 7 NodeModel variants (BranchModel, ContainerModel, LeafModel, EnumModel, KeywordModel, TokenModel, SupertypeModel) in `packages/codegen/src/node-model.ts`
 - [x] T002 Define FieldModel (SingleFieldModel | ListFieldModel), ChildModel (SingleChildModel | ListChildModel), NodeMember in `packages/codegen/src/node-model.ts`
 - [x] T003 Define type guards (isBranch, isContainer, isLeaf, isEnum, isKeyword, isToken, isSupertype, isStructural) in `packages/codegen/src/node-model.ts`
-- [x] T004 Define Hydrate<T> mapped type, all Hydrated* type aliases, HydratedNodeModel union in `packages/codegen/src/node-model.ts`
+- [x] T004 Define Hydrate<T> mapped type, all Hydrated\* type aliases, HydratedNodeModel union in `packages/codegen/src/node-model.ts`
 - [x] T005 Define GrammarModel interface (name, models: ReadonlyMap, signatures: SignaturePool) in `packages/codegen/src/node-model.ts`
 - [x] T006 [P] Define EnrichedRule discriminated union (SupertypeRule, BranchRule, ContainerRule, KeywordRule, EnumRule, LeafRule) in `packages/codegen/src/enriched-grammar.ts`
 - [x] T007 [P] Define Grammar interface and GrammarRule type in `packages/codegen/src/grammar.ts` (extract from existing grammar-reader.ts)
@@ -242,6 +242,7 @@ Task T046: "Migrate emitters/index-file.ts"
 ### Incremental Delivery
 
 Each phase produces a testable artifact:
+
 1. Types compile → type safety established
 2. Loaders work → can parse all three grammars
 3. classifyRules works → can verify grammar-only classification

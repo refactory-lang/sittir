@@ -20,11 +20,13 @@ Generated language packages (`@sittir/rust`, etc.) contain **types + render tabl
 With input validation at factory creation time (O(1) per string input via reserved keyword sets + pattern matching), tree-sitter parsing is no longer in the runtime path — it's only used in the codegen test suite for regression testing render rules. This makes the TypeScript core production-ready without a Rust port.
 
 Phase B remains an option for:
+
 - **Native Rust `ir` module** — enables pure-Rust codemod authors (ast-grep plugin ecosystem) to use sittir without JS/WASM
 - **Dogfooding** — validates `@refactory/typescript-to-rust` pipeline on a real codebase
 - **Browser bundle size** — WASM binary may be smaller than equivalent JS for the render engine
 
 Phase B is NOT needed for:
+
 - Performance — input validation eliminates the parse bottleneck; render is string concatenation (fast in JS)
 - Correctness — TypeScript types + input validation guarantee valid output by construction
 
@@ -48,16 +50,16 @@ Eliminate unnecessary abstractions (`LeafBuilder`, `LeafOptions`, `Builder` base
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
-| Principle | Status | Notes |
-|-----------|--------|-------|
-| I. Grammar Alignment | PASS | All naming uses tree-sitter terms (kind, field, named, supertype) |
-| II. Fewer Abstractions | PASS | Eliminating LeafBuilder, LeafOptions; generated code is data+types, not classes with renderImpl |
-| III. Generated vs Hand-Written | PASS | Clear separation: codegen (TS, hand-written) → render tables + types (generated); core (Rust, hand-written) |
-| IV. Test-First | PASS | Generated per-node tests + Rust unit tests for render engine |
-| V. Library-First | PASS | No CLI/formatting ownership; Edit interface for codemod integration |
-| VI. Deterministic Output | PASS | SC-007 requires byte-identical regeneration; Rust core is deterministic |
+| Principle                      | Status | Notes                                                                                                       |
+| ------------------------------ | ------ | ----------------------------------------------------------------------------------------------------------- |
+| I. Grammar Alignment           | PASS   | All naming uses tree-sitter terms (kind, field, named, supertype)                                           |
+| II. Fewer Abstractions         | PASS   | Eliminating LeafBuilder, LeafOptions; generated code is data+types, not classes with renderImpl             |
+| III. Generated vs Hand-Written | PASS   | Clear separation: codegen (TS, hand-written) → render tables + types (generated); core (Rust, hand-written) |
+| IV. Test-First                 | PASS   | Generated per-node tests + Rust unit tests for render engine                                                |
+| V. Library-First               | PASS   | No CLI/formatting ownership; Edit interface for codemod integration                                         |
+| VI. Deterministic Output       | PASS   | SC-007 requires byte-identical regeneration; Rust core is deterministic                                     |
 
 All gates pass.
 
@@ -136,6 +138,7 @@ packages/
 Phase A delivers everything in TypeScript. Phase B ports `packages/core` to Rust/WASM via `@refactory/typescript-to-rust`, adds Rust `ir` module, and adds a Rust emitter to codegen. Generated packages don't change — same API, same `NodeData`, backed by WASM instead of JS.
 
 **Package dependency graph**:
+
 ```
 @sittir/types         — zero runtime (pure types)
 @sittir/core          — TypeScript runtime (Phase A) → Rust/WASM (Phase B)
@@ -146,6 +149,7 @@ Phase A delivers everything in TypeScript. Phase B ports `packages/core` to Rust
 ```
 
 **Data flow (Phase A — all TypeScript)**:
+
 ```
 grammar.json ──┐                    ┌── rules.ts (render tables)
                ├─→ codegen ────────→├── factories.ts (unified: declarative + fluent + mixed)

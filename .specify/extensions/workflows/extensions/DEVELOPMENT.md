@@ -73,25 +73,31 @@ Create `.specify/extensions/workflows/your-workflow/template.md`:
 **Status**: [ ] Stage1 | [ ] Stage2 | [ ] Complete
 
 ## Overview
+
 [What is being done and why]
 
 ## Phases
 
 ### Phase 1: [Name]
+
 [Details, checklist items, documentation]
 
 ### Phase 2: [Name]
+
 [Details, checklist items, documentation]
 
 ## Verification Checklist
+
 - [ ] Criterion 1
 - [ ] Criterion 2
 
 ---
-*Created using `/your-workflow` workflow*
+
+_Created using `/your-workflow` workflow_
 ```
 
 **Template Best Practices**:
+
 - Use `###` as placeholder for workflow number (replaced by script)
 - Include clear phases/sections
 - Add checklists for tracking progress
@@ -136,6 +142,7 @@ Create `.specify/extensions/workflows/your-workflow/tasks-template.md`:
 ```
 
 **Task Template Best Practices**:
+
 - Number tasks sequentially (T001, T002, ...)
 - Group tasks by phase
 - Make tasks specific and actionable
@@ -291,6 +298,7 @@ chmod +x .specify/scripts/bash/create-your-workflow.sh
 ```
 
 **Script Best Practices**:
+
 - Support `--json` flag for AI agent consumption
 - Find repository root dynamically (git or .specify)
 - Generate sequential workflow numbers
@@ -345,6 +353,7 @@ Note: [Any special considerations for this workflow]
 ```
 
 **Command Best Practices**:
+
 - Clear description in frontmatter
 - Parse $ARGUMENTS correctly
 - Only run initialization script once
@@ -378,6 +387,7 @@ Update `.specify/extensions/README.md` to include your workflow in the "Availabl
 **When to use**: [Specific scenarios]
 
 **Process**:
+
 1. [Phase 1 summary]
 2. [Phase 2 summary]
 
@@ -389,23 +399,27 @@ Update `.specify/extensions/README.md` to include your workflow in the "Availabl
 ### Step 9: Test Your Workflow
 
 1. **Test script execution**:
+
 ```bash
 cd /path/to/repo
 .specify/scripts/bash/create-your-workflow.sh --json "test description"
 ```
 
 Verify:
+
 - JSON output is valid
 - Branch created correctly
 - Files created in right location
 - Placeholders replaced
 
 2. **Test Claude command**:
+
 ```
 /your-workflow "test description"
 ```
 
 Verify:
+
 - Script runs once
 - JSON parsed correctly
 - Documentation populated
@@ -413,6 +427,7 @@ Verify:
 - Status reported
 
 3. **Test workflow end-to-end**:
+
 - Complete all tasks
 - Verify quality gates
 - Ensure documentation is useful
@@ -567,6 +582,7 @@ sed -i '' "s/###/${NUM}/g" file 2>/dev/null || true
 ### Claude command doesn't appear
 
 Ensure:
+
 1. File is in `.claude/commands/`
 2. File has `.md` extension
 3. Frontmatter has `description` field
@@ -575,6 +591,7 @@ Ensure:
 ### Workflow enabled but not working
 
 Check `.specify/extensions/enabled.conf`:
+
 - Workflow name matches directory name
 - No typos
 - Not commented out with `#`
@@ -608,4 +625,4 @@ See the built-in workflows for reference:
 
 ---
 
-*Extension Development Guide - Version 1.0.0*
+_Extension Development Guide - Version 1.0.0_

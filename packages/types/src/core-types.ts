@@ -36,6 +36,11 @@ export type NodeFieldValue =
  */
 export type NodeChildValue = AnyNodeData | string | number;
 
+declare const nodeIdBrand: unique symbol;
+
+/** Opaque tree-owned node id used for drill-in APIs. */
+export type NodeId = number & { readonly [nodeIdBrand]: true };
+
 /**
  * Runtime node shape — grammar-agnostic. Used by @sittir/core functions
  * that accept any node regardless of grammar.
@@ -54,15 +59,52 @@ export interface AnyNodeData {
 	$variant?: string;
 	$fields?: { readonly [key: string]: NodeFieldValue };
 	$children?: readonly NodeChildValue[];
+	/**
+	 * Source text for this node.
+	 *
+	 * **Leaf nodes** (`$fields` and `$children` both absent): always
+	 * populated — the render fast-path short-circuits to `$text` without
+	 * walking children.
+	 *
+	 * **Branch nodes** (`$fields` and/or `$children` present): omitted by
+	 * default. Branches reconstruct their text via the render template,
+	 * so carrying `$text` is redundant and confusing. Set the environment
+	 * variable `SITTIR_DEBUG_TEXT=1` before loading `@sittir/core` to
+	 * include `$text` on branch nodes (read once at module load time in
+	 * `readNode.ts`).
+	 *
+	 * Factory-built nodes never set `$text`; the `$TEXT` template
+	 * variable falls back to a best-effort field+children concatenation.
+	 */
 	$text?: string;
 	/** Byte offset span in source. */
 	$span?: { start: number; end: number };
 	/** Tree-sitter node id for O(1) drill-in via tree.nodeById(). */
-	$nodeId?: number;
+	$nodeId?: NodeId;
 	/** Whether this is a named (vs anonymous) node in the grammar.
 	 * Optional at the type level because generated kind interfaces
 	 * omit it by convention (factory output always sets it at runtime). */
 	$named?: boolean;
+	/** Per-node format override. Set by callers to override the tree-level format
+	 *  (ctx.format) for this specific node. Never set by inference — inferred format
+	 *  lives on TreeHandle.format. Absent on all factory and readNode output. */
+	$format?: FormatRecord;
+}
+
+export type NativeFieldValue =
+	| NativeNodeData
+	| readonly NativeNodeData[]
+	| string;
+
+export interface NativeNodeData {
+	readonly $type: string;
+	readonly $source: 'ts' | 'sg' | 'factory';
+	readonly $named: boolean;
+	readonly $fields?: { readonly [key: string]: NativeFieldValue };
+	readonly $children?: readonly NativeNodeData[];
+	readonly $text?: string;
+	readonly $span?: { readonly start: number; readonly end: number };
+	readonly $nodeId?: NodeId;
 }
 
 // ---------------------------------------------------------------------------
@@ -88,19 +130,27 @@ export interface AnyNodeData {
  * anonymous tokens with non-required fields. If any variable in the
  * clause is absent, the entire clause is omitted.
  */
-export type TemplateRule =
-	| string
-	| TemplateRuleObject;
+export type TemplateRule = string | TemplateRuleObject;
 
 export interface TemplateRuleObject {
 	/** Standard template — mutually exclusive with `variants`. */
 	template?: string;
-	/** Named subtype templates — mutually exclusive with `template`. */
+	/** Named subtype templates — mutually exclusive with `template`.
+	 *  Legacy YAML path only; post-011 walker inlines variant branching
+	 *  directly into `template` via `{% if variant == "X" %}…{% endif %}`
+	 *  and no longer emits this field. */
 	variants?: Record<string, string>;
-	/** Discriminator tokens for detecting variant from anonymous children. */
+	/** Discriminator tokens for detecting variant from anonymous children.
+	 *  Legacy YAML path only; see note on `variants`. */
 	detect?: Record<string, string>;
+	/** Rule-level default separator for multi-valued slots. */
 	joinBy?: string;
-	[clauseKey: `${string}_clause`]: string;
+	/** Per-field separator override — wins over `joinBy` for that field. */
+	joinByField?: Record<string, string>;
+	/** Emit leading separator token when the grammar permitted one. */
+	joinByLeading?: boolean;
+	/** Emit trailing separator token when the grammar permitted one. */
+	joinByTrailing?: boolean;
 }
 
 /**
@@ -164,6 +214,78 @@ export interface CSTNode {
 }
 
 // ---------------------------------------------------------------------------
+// Format record — residual source-text metadata
+// ---------------------------------------------------------------------------
+
+/** Leading/trailing bytes around the canonical body of a node's span. */
+export interface FormatBoundary {
+	/** Bytes before the canonical body — indent, preceding blank lines. */
+	leading?: string;
+	/** Bytes after the canonical body — trailing newline, blank lines. */
+	trailing?: string;
+}
+
+/**
+ * Per-position separator/optional-token override.
+ * Key: field name (raw snake_case) or child-array index as string.
+ *
+ * Discriminated union: `absent: true` marks the slot as omitted in source
+ * (e.g. a trailing semicolon that was absent). When absent, `sep` and
+ * `trailingPresent` are meaningless and excluded by the type. JSON-wire
+ * compatible with the Rust `FormatSlot` struct (all fields skip-serialize-if-none).
+ */
+export type FormatSlot =
+	| { readonly absent: true }
+	| { readonly absent?: false; sep?: string; trailingPresent?: boolean };
+
+/**
+ * Literal-spelling override for a leaf node.
+ * Key: field name or "$text" for the node's own text.
+ */
+export interface FormatLiteral {
+	/** Exact source spelling — overrides `$text` at render time. */
+	raw: string;
+}
+
+/** A single trivia item (comment or blank line) with position in the span. */
+export interface FormatTrivia {
+	/**
+	 * Byte offset within the enclosing node's span (relative to span start).
+	 *
+	 * @remarks
+	 * Must be non-negative. Mirrors Rust's `u32` offset field — the TS
+	 * `number` type does not enforce this at the type level. `rebaseTrivia`
+	 * clamps shifted offsets to `Math.max(0, n)` to guard against negative
+	 * values produced by large deletions.
+	 */
+	offset: number;
+	/** Verbatim text of the comment or blank-line sequence. */
+	text: string;
+}
+
+/**
+ * Per-kind format record: a {@link FormatRecord} without recursive `kinds`.
+ * Used for entries inside `FormatRecord.kinds` — nesting `kinds` inside
+ * `kinds` is not supported by the render path (resolves only one level deep).
+ */
+export type KindFormatRecord = Omit<FormatRecord, 'kinds'>;
+
+/** Residual format metadata for a tree or a specific node kind. */
+export interface FormatRecord {
+	boundary?: FormatBoundary;
+	slots?: Record<string, FormatSlot>;
+	literals?: Record<string, FormatLiteral>;
+	trivia?: FormatTrivia[];
+	/**
+	 * Per-kind format overrides. Key is the raw node kind (e.g. "function_item").
+	 * Render lookup: node.$format ?? kinds[node.$type] ?? parent FormatRecord.
+	 * Entries here use {@link KindFormatRecord} — nesting is not supported
+	 * and the render path resolves only one level deep.
+	 */
+	kinds?: Record<string, KindFormatRecord>;
+}
+
+// ---------------------------------------------------------------------------
 // Render context
 // ---------------------------------------------------------------------------
 
@@ -173,14 +295,21 @@ export interface RenderContext {
 	parser?: unknown;
 	/** Indentation unit. Default: two spaces. */
 	indent?: string;
-	/** External formatting hook — called after render if present. */
-	format?: (source: string) => string | Promise<string>;
+	/** Tree-level format record. The render path resolves format for each node as:
+	 *    node.$format                      // per-node inline override (highest priority)
+	 *    ?? ctx.format?.kinds?.[node.$type] // per-kind entry on the tree-level record
+	 *    ?? ctx.format                      // tree-level default
+	 *    ?? undefined                       // template-canonical fallback
+	 *  When absent (and node.$format absent), template-canonical output is used. */
+	format?: FormatRecord;
+	/** When true, ignore all format records and render template-canonical.
+	 *  Default: false (apply format when present). */
+	ignoreFormat?: boolean;
 }
 
 // ---------------------------------------------------------------------------
 // Render registries
 // ---------------------------------------------------------------------------
-
 
 // ---------------------------------------------------------------------------
 // Edit helpers — structural types for ast-grep SgNode compatibility
@@ -196,7 +325,7 @@ export interface ReplaceTarget<T extends string = string> {
  * Structurally compatible with ast-grep SgNode.
  */
 export interface AnyTreeNode extends ReplaceTarget {
-	id(): number;
+	id(): NodeId;
 	field(name: string): AnyTreeNode | null;
 	fieldChildren(name: string): AnyTreeNode[];
 	fieldNameForChild?(index: number): string | null;
@@ -211,4 +340,23 @@ export interface Renderable {
 }
 
 /** Extract type string(s) from a navigation node type. */
-export type KindOf<T> = T extends { readonly type: infer K extends string } ? K : never;
+export type KindOf<T> = T extends { readonly type: infer K extends string }
+	? K
+	: never;
+
+// ---------------------------------------------------------------------------
+// Native (NAPI) parse result
+// ---------------------------------------------------------------------------
+
+/**
+ * Return value of the native (NAPI) `parseAndRead` call.
+ * Carries both the hydrated node data and the inferred format (if any)
+ * so callers can attach format to the {@link TreeHandle} without a
+ * second round-trip.
+ */
+export interface NativeParseResult {
+	/** Hydrated root node data produced by the native parser. */
+	nodeData: AnyNodeData;
+	/** Format inferred from source layout, if inference succeeded. */
+	format?: FormatRecord;
+}

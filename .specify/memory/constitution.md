@@ -1,38 +1,19 @@
 <!--
 Sync Impact Report
-- Version change: 1.1.0 → 1.2.0 (two new principles from spec 008)
-- Modified principles: none renamed
-- Added sections:
-  - VII. Grammar-Agnostic Pipeline (v1.1)
-  - VIII. Non-lossy Transformations (v1.1)
-  - IX. @sittir/core is the Rust-port surface (v1.2)
-  - X. Don't hand-roll types you can import (v1.2)
-- TreeNode-as-unifying-abstraction guidance stays in spec 008 only
-  (scoped to that feature's validator work, not architecture-wide).
-- Removed sections: none
-- Technology Stack: "tsc / tsgo (strict mode)" → "tsgo (strict mode)" (v1.1)
+- Version change: 1.2.0 → 1.3.0 (DRY promoted to Principle XI)
+- Added: Principle XI — DRY: one source, one derivation.
+- Trimmed: Sync Impact Report per-spec violation tracker (moved to
+  tracking issues); Principle VII anti-pattern bullets (inferable
+  from the Test); Technology Stack reduced to governance-relevant
+  facts; Development Workflow bullet on "never hand-edit" (covered
+  by Principle III).
+- Resolved: v1.1 open violation "emitters/types.ts:63-65 hardcodes
+  integer/float/boolean literal kind checks" — confirmed absent in
+  current source (spec 008 landing removed it).
 - Templates requiring updates:
   - .specify/templates/plan-template.md — ✅ no changes needed
-    (Constitution Check references this file dynamically)
   - .specify/templates/spec-template.md — ✅ no changes needed
   - .specify/templates/tasks-template.md — ✅ no changes needed
-- Known violations of v1.2 principles being addressed by spec 008:
-  - IX violation: generated `utils.ts::isNodeData` uses KindMap/LooseMap
-    instead of NamespaceMap. Fix: US1 refactors.
-  - X violation: validators/common.ts had hand-rolled TSNode/TSTree/etc.
-    Fix: T004a landed, imports from web-tree-sitter now.
-  - X violation: wrap.ts redeclares _NodeData locally despite importing
-    WrappedNode from @sittir/types. Fix: US4 imports it.
-  - X violation: types.ts emits _union_Foo_Bar_Baz auto-named aliases
-    for single-use unions. Fix: US4 inlines with semantic names only
-    when reused ≥2 sites.
-  - X violation: types.ts emits five parallel per-kind alias families
-    (XConfig, LooseX, XTree, ConfigMap, LooseMap) computable from a
-    single NamespaceMap. Fix: US1 introduces NamespaceMap + NodeNs<T>.
-- v1.1 violation still open:
-  - emitters/types.ts:63-65 hardcodes integer_literal/float_literal/
-    boolean_literal kind checks (violates VII). Tracked as tech debt.
-- Follow-up TODOs: none
 -->
 
 # Sittir Constitution
@@ -54,6 +35,7 @@ Eliminate unnecessary types and indirection. Every type in
 `@sittir/types` MUST justify its existence by solving a problem that
 cannot be solved by an existing type. When in doubt, remove the
 abstraction. Concrete examples of violations:
+
 - A separate `LeafBuilder` class when `Builder` can handle terminals
 - A `LeafOptions` discriminant when the builder type itself
   provides discrimination
@@ -99,12 +81,6 @@ The codegen pipeline MUST work for any tree-sitter grammar without
 modification. All language-specific knowledge — field names, external
 token roles, spacing rules, formatting directives — MUST flow through
 override configuration, never through hardcoded conditionals.
-
-Concrete violations:
-- `if (language === 'rust')` or `if (kind === 'function_item')` in
-  pipeline code
-- Hardcoded indent/dedent behavior instead of external role mapping
-- Kind-specific type narrowing instead of override-driven classification
 
 Test: would this logic break if applied to a different grammar? If
 yes, it belongs in overrides, not in the pipeline.
@@ -153,6 +129,7 @@ that drifts silently from the canonical one and masks upstream API
 changes.
 
 **Applies to**:
+
 - Tree-sitter types (`TS.Node`, `TS.Tree`, `TS.Parser`, `TS.Language`
   from `web-tree-sitter`) — never redeclare as `TSNode`, `TSTree`, etc.
 - Ast-grep types (`SgNode`, `Range`, `Pos` from `@ast-grep/wasm`) —
@@ -174,34 +151,60 @@ such cases are vanishingly rare.
 `@ast-grep/wasm`, `@sittir/types`, or any existing workspace module
 already publishes the shape. If yes, import.
 
+### XI. DRY — One Source, One Derivation
+
+Every fact about the program has exactly one source, and exactly one
+definition of how to extract it. This is the central correctness
+principle of the codegen pipeline — every non-trivial bug we have
+tracked reduces to violating it.
+
+**One source.** A fact lives in ONE field, not split across parallel
+arrays or caches. A rule reference lives as ONE object ref, not as a
+name-string that consumers re-resolve via a lookup map. Two storage
+sites drift.
+
+**One derivation.** If facts are extracted from a rule tree, there is
+ONE walk that produces them — not multiple walkers each keeping a
+different subset. Two derivations disagree.
+
+**Corollary — discriminated unions**: every `switch` over a
+discriminated union MUST end in `assertNever(x)`. Silent `default: …`
+branches convert "I don't cover every variant" from a compile error
+into a runtime wrong-answer. No exceptions.
+
+**Corollary to III (Generated vs Hand-Written)**: generated output is
+a derivation of the source. Hand-editing it creates a second source
+that drifts. Fix the generator.
+
+**CLAUDE.md § DRY** carries the full anti-pattern catalog
+(partial-projection walkers, string-name references, flattened flags,
+etc.) and the practical authoring rule — consult it when adding new
+compiler-pipeline code.
+
 ## Technology Stack
 
-- **Language**: TypeScript (ESM, `.ts` extensions in imports)
-- **Package manager**: pnpm (workspaces)
-- **Testing**: Vitest
-- **Linting**: oxlint
-- **Formatting**: oxfmt
-- **Type checking**: tsgo (strict mode)
-- **Grammar inputs**: `grammar.json` + `node-types.json` from
-  tree-sitter grammar packages
+Governance-relevant constraints only (full tooling inventory lives in
+`CLAUDE.md`):
+
 - **Zero runtime dependencies**: generated builder packages MUST NOT
-  pull in third-party runtime dependencies
+  pull in third-party runtime dependencies.
+- **Strict type checking**: tsgo with strict mode, workspace-wide.
+- **Grammar inputs**: `grammar.json` + `node-types.json` from
+  tree-sitter grammar packages — the authoritative shape definition.
 
 ## Development Workflow
 
 - Feature branches follow `NNN-short-name` convention matching spec
-  directories (e.g., `001-codegen-grammarjs-rewrite`)
-- Speckit workflow for specification-driven development:
-  specs, plans, tasks, checklists under `specs/NNN-feature-name/`
-- Generated packages (`@sittir/rust`, `@sittir/typescript`,
-  `@sittir/python`) are regenerated from `@sittir/codegen` — never
-  hand-edited
+  directories (e.g., `001-codegen-grammarjs-rewrite`).
+- Speckit workflow for specification-driven development: specs, plans,
+  tasks, checklists under `specs/NNN-feature-name/`.
 - All PRs MUST pass type-check and test suite across all packages
-  before merge
+  before merge.
 
 ## Governance
 
 This constitution supersedes ad-hoc practices. Amendments require:
+
 1. A rationale explaining why the change is needed
 2. Impact assessment on existing generated code
 3. Version bump following semver (MAJOR for principle
@@ -211,4 +214,4 @@ All code reviews MUST verify compliance with these principles.
 Complexity beyond what the constitution permits MUST be justified in
 the plan's Complexity Tracking table.
 
-**Version**: 1.2.0 | **Ratified**: 2026-03-24 | **Last Amended**: 2026-04-17
+**Version**: 1.3.0 | **Ratified**: 2026-03-24 | **Last Amended**: 2026-04-22

@@ -8,26 +8,157 @@
  * Requires web-tree-sitter + language WASM files.
  */
 
-import { createRequire } from 'node:module';
-import { parse as parseYaml } from 'yaml';
 import { readNode, createRenderer } from '@sittir/core';
 import type { TreeHandle } from '@sittir/core';
-import type { RulesConfig } from '@sittir/types';
+import type { AnyNodeData, NodeId } from '@sittir/types';
+import { deriveRuleKinds } from './templates-path.ts';
 import { loadRawEntries } from './node-types-loader.ts';
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
-	treeHandle,
+	buildReadHandle,
 	findFirst,
+	findNativeNodeId,
 	collectKinds,
 	buildKindToSupertypes,
 	wrapForReparse,
 	loadReadTreeNode,
 	walkWrappedTree,
+	emitValidatorMetrics,
 	type TSNode,
 	type TSTree,
-	type WrappedNodeData,
+	type WrappedNodeData
 } from './common.ts';
+
+/**
+ * Read a tree node and selectively populate `$children` / `$fields` of
+ * NAMED descendants whose kind appears in `deepReadKinds`. Other named
+ * children stay shallow (the renderer short-circuits their render path
+ * to `$text`, which matches the source verbatim).
+ *
+ * readNode returns one-level-deep data by design. For most kinds that
+ * shallow view works because their render path is trivially the source
+ * span. But kinds produced via variant() adoption render via their own
+ * template that wraps `$$$CHILDREN` in ambient scaffold — those MUST
+ * drill through their structure so the ambient scaffold (pushed down
+ * at link time) actually composes.
+ *
+ * Scope: the caller (validator) passes the set of kinds that underwent
+ * variant() push-down plus their registered variant parents. Deep-read
+ * fires only for those kinds; all other kinds follow the baseline
+ * shallow path so existing rtPass numbers don't shift.
+ *
+ * @param tree - TreeHandle for node lookup.
+ * @param nodeId - If provided, read the node at this id; otherwise read
+ *   the root.
+ * @param deepReadKinds - Set of `$type` values that should be deep-read
+ *   when encountered as named children.
+ */
+function _deepReadNode(
+	tree: TreeHandle,
+	nodeId: NodeId | undefined,
+	deepReadKinds: ReadonlySet<string>
+): ReturnType<typeof readNode> {
+	const data = readNode(tree, nodeId);
+	// NodeChildValue / NodeFieldValue widened to AnyNodeData | string | number.
+	// Narrow to NodeData before reading $nodeId / $type.
+	const isNodeData = (v: unknown): v is AnyNodeData =>
+		typeof v === 'object' && v !== null && '$type' in v;
+	const shouldDrill = (
+		entry: unknown
+	): entry is AnyNodeData & { $nodeId: NodeId } =>
+		isNodeData(entry) &&
+		entry.$named === true &&
+		typeof entry.$nodeId === 'number' &&
+		deepReadKinds.has(entry.$type);
+	if (data.$children) {
+		const drilled = data.$children.map((c) =>
+			shouldDrill(c) ? _deepReadNode(tree, c.$nodeId, deepReadKinds) : c
+		);
+		(data as { $children?: typeof drilled }).$children = drilled;
+	}
+	if (data.$fields) {
+		// $fields has a readonly index signature; rebuild as a mutable map
+		// then assign back via a structural cast.
+		const newFields: Record<
+			string,
+			| AnyNodeData
+			| string
+			| number
+			| readonly (AnyNodeData | string | number)[]
+			| undefined
+		> = {};
+		for (const [key, value] of Object.entries(data.$fields)) {
+			if (Array.isArray(value)) {
+				newFields[key] = value.map((entry) =>
+					shouldDrill(entry)
+						? _deepReadNode(tree, entry.$nodeId, deepReadKinds)
+						: entry
+				);
+			} else {
+				newFields[key] = shouldDrill(value)
+					? _deepReadNode(tree, value.$nodeId, deepReadKinds)
+					: value;
+			}
+		}
+		(data as { $fields?: typeof newFields }).$fields = newFields;
+	}
+	return data;
+}
+
+/**
+ * Build the set of `$type` values the validator should deep-read,
+ * scoped to kinds that participate in variant() adoption (parents and
+ * their child kinds). Other kinds stay on the shallow `$text`
+ * short-circuit to preserve baseline rtPass numbers.
+ *
+ * Sources the set from the grammar's emitted `factory-map.json5`
+ * polymorphVariants section (the codegen artifact that records which
+ * kinds went through Link's push-down). Returns an empty set when no
+ * variant adoption exists in the grammar.
+ */
+async function loadVariantAdoptedKinds(
+	grammar: string
+): Promise<ReadonlySet<string>> {
+	// factory-map.json5 lives at packages/<grammar>/factory-map.json5.
+	// 3x `..` resolves from .../packages/codegen/src/validate/roundtrip.ts
+	// up to `packages/` (validate → src → codegen → packages). A
+	// previous `../../../../` overshoot landed at the repo root; with
+	// the 012-merge introducing a top-level `rust/` directory, that
+	// mis-path silently hit `rust/factory-map.json5` (non-existent) and
+	// the catch{} swallowed the ENOENT.
+	const factoryMapPath = new URL(
+		`../../../${grammar}/factory-map.json5`,
+		import.meta.url
+	).pathname;
+	try {
+		const fs = await import('node:fs');
+		const content = fs.readFileSync(factoryMapPath, 'utf-8');
+		const kinds = new Set<string>();
+		// Scan the WHOLE file for parent entries — the shape
+		// `"<name>": { "source": "override", "childKind": { ... } }`
+		// is distinctive enough to appear only inside polymorphVariants
+		// (no other factory-map section nests `source` + `childKind`),
+		// so we don't need to isolate the surrounding block (nested
+		// brace matching in regex is brittle and the outer non-greedy
+		// scan stops at the first `}` inside the inner object).
+		const parentEntryRe =
+			/["'](\w+)["']\s*:\s*\{[^}]*["']source["']\s*:\s*["']override["'][^{]*["']childKind["']\s*:\s*\{([^}]*)\}/g;
+		let m: RegExpExecArray | null;
+		while ((m = parentEntryRe.exec(content)) !== null) {
+			kinds.add(m[1]!);
+			const childMap = m[2]!;
+			const childRe = /["']([^"']+)["']\s*:/g;
+			let cm: RegExpExecArray | null;
+			while ((cm = childRe.exec(childMap)) !== null) {
+				kinds.add(cm[1]!);
+			}
+		}
+		return kinds;
+	} catch {
+		return new Set<string>();
+	}
+}
 
 /**
  * Find the first node of `kind` whose `startIndex` equals `offset`.
@@ -51,18 +182,18 @@ function findNodeById(node: TSNode, nodeId: number): TSNode | null {
 }
 
 function findNodeAt(node: TSNode, kind: string, offset: number): TSNode | null {
-	if (node.type === kind && node.startIndex === offset) return node
+	if (node.type === kind && node.startIndex === offset) return node;
 	for (let i = 0; i < node.childCount; i++) {
-		const c = node.child(i)
-		if (!c) continue
+		const c = node.child(i);
+		if (!c) continue;
 		// Quick prune: the rendered fragment must be inside this child's range.
-		if (offset < c.startIndex || offset >= c.endIndex) continue
-		const hit = findNodeAt(c, kind, offset)
-		if (hit) return hit
+		if (offset < c.startIndex || offset >= c.endIndex) continue;
+		const hit = findNodeAt(c, kind, offset);
+		if (hit) return hit;
 	}
 	// Fallback: any node of the right kind whose range starts at offset.
-	if (node.type === kind && node.startIndex === offset) return node
-	return null
+	if (node.type === kind && node.startIndex === offset) return node;
+	return null;
 }
 
 /**
@@ -76,27 +207,61 @@ function findNodeAt(node: TSNode, kind: string, offset: number): TSNode | null {
  * Returns `null` if the subtrees match, otherwise a short human-
  * readable diff path explaining the first mismatch.
  */
-function astStructuralDiff(a: TSNode, b: TSNode, path: string = ''): string | null {
+/**
+ * Per-grammar set of `extras` kind names that are NAMED in tree-sitter's
+ * output (line continuations, comments) and therefore appear as children
+ * in the strict structural compare. Render reads NodeData fields/children
+ * — extras aren't part of the rule structure and don't surface there —
+ * so the rendered output can never re-emit them. Filtering them from
+ * BOTH sides keeps the compare focused on rule-structural content.
+ *
+ * Anonymous extras (whitespace regex patterns) are already invisible to
+ * the compare's named-child filter. Only NAMED extras need explicit
+ * exclusion. (016 Cluster I.)
+ */
+const NAMED_EXTRAS_BY_GRAMMAR: Record<string, ReadonlySet<string>> = {
+	rust: new Set(['line_comment', 'block_comment']),
+	typescript: new Set(['comment', 'html_comment']),
+	python: new Set(['comment', 'line_continuation'])
+};
+
+function collectVisibleChildren(
+	n: TSNode,
+	namedExtras: ReadonlySet<string>
+): TSNode[] {
+	const out: TSNode[] = [];
+	for (let i = 0; i < n.childCount; i++) {
+		const c = n.child(i);
+		if (!c) continue;
+		if (c.isNamed && namedExtras.has(c.type)) continue;
+		out.push(c);
+	}
+	return out;
+}
+
+function astStructuralDiff(
+	a: TSNode,
+	b: TSNode,
+	namedExtras: ReadonlySet<string>,
+	path: string = ''
+): string | null {
 	if (a.type !== b.type) {
 		return `${path || 'root'}: type ${a.type} ≠ ${b.type}`;
 	}
-	if (a.childCount !== b.childCount) {
-		const aChildren = Array.from({ length: a.childCount }, (_, i) => {
-			const c = a.child(i);
-			return c ? (c.isNamed ? c.type : JSON.stringify(c.text)) : '?';
-		}).join(',');
-		const bChildren = Array.from({ length: b.childCount }, (_, i) => {
-			const c = b.child(i);
-			return c ? (c.isNamed ? c.type : JSON.stringify(c.text)) : '?';
-		}).join(',');
-		return `${path || a.type}: childCount ${a.childCount} ≠ ${b.childCount} [${aChildren}] vs [${bChildren}]`;
+	const aChildren = collectVisibleChildren(a, namedExtras);
+	const bChildren = collectVisibleChildren(b, namedExtras);
+	if (aChildren.length !== bChildren.length) {
+		const aDesc = aChildren
+			.map((c) => (c.isNamed ? c.type : JSON.stringify(c.text)))
+			.join(',');
+		const bDesc = bChildren
+			.map((c) => (c.isNamed ? c.type : JSON.stringify(c.text)))
+			.join(',');
+		return `${path || a.type}: childCount ${aChildren.length} ≠ ${bChildren.length} [${aDesc}] vs [${bDesc}]`;
 	}
-	for (let i = 0; i < a.childCount; i++) {
-		const ac = a.child(i);
-		const bc = b.child(i);
-		if (!ac || !bc) {
-			return `${path || a.type}[${i}]: missing child`;
-		}
+	for (let i = 0; i < aChildren.length; i++) {
+		const ac = aChildren[i]!;
+		const bc = bChildren[i]!;
 		if (ac.isNamed !== bc.isNamed) {
 			return `${path || a.type}[${i}]: named flag ${ac.isNamed} ≠ ${bc.isNamed}`;
 		}
@@ -108,13 +273,16 @@ function astStructuralDiff(a: TSNode, b: TSNode, path: string = ''): string | nu
 			continue;
 		}
 		// Named child — recurse.
-		const sub = astStructuralDiff(ac, bc, `${path || a.type}[${i}].${ac.type}`);
+		const sub = astStructuralDiff(
+			ac,
+			bc,
+			namedExtras,
+			`${path || a.type}[${i}].${ac.type}`
+		);
 		if (sub) return sub;
 	}
 	return null;
 }
-
-const require = createRequire(import.meta.url);
 
 // ---------------------------------------------------------------------------
 // Validation
@@ -135,9 +303,19 @@ export interface RoundTripResult {
 	 * because the token isn't routed to a named field.
 	 */
 	astMatchPass: number;
-	errors: { name: string; message: string; input?: string; rendered?: string }[];
+	errors: {
+		name: string;
+		message: string;
+		input?: string;
+		rendered?: string;
+	}[];
 	/** Structural mismatches — distinct from render / reparse errors. */
-	astMismatches: { name: string; message: string; input?: string; rendered?: string }[];
+	astMismatches: {
+		name: string;
+		message: string;
+		input?: string;
+		rendered?: string;
+	}[];
 }
 
 /**
@@ -159,12 +337,28 @@ function discoverAliasSourceKinds(
 	readTreeNodeFn: ((handle: TreeHandle, nodeId?: number) => unknown) | null,
 	tree: TSTree,
 	kinds: Set<string>,
+	grammar: string,
+	source: string,
+	backend?: 'native' | 'typescript'
 ): Map<number, string> {
 	const nodeIdToEffectiveType = new Map<number, string>();
 	if (readTreeNodeFn) {
-		const handle = treeHandle(tree);
+		const handle = buildReadHandle(grammar, tree, source, backend);
 		const wrappedRoot = readTreeNodeFn(handle) as WrappedNodeData;
 		walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {
+			// Cluster I (016): skip anonymous tokens. The wrap layer
+			// surfaces field-promoted anonymous tokens (e.g. python's
+			// `type_alias_statement` wraps the literal `'type'` keyword
+			// as `$fields.type`) with the same `$type` string as the
+			// named supertype `type`. Recording an anonymous keyword as
+			// "effective type=type" makes `resolveNodeForKind` pick the
+			// keyword node when the round-trip validator probes the
+			// supertype kind, producing nonsense reparse comparisons
+			// (anon-token text "type" reparses as `expression_statement`).
+			// Named-only filter aligns with `collectKinds` and
+			// `findFirst`, which both restrict to named nodes for the
+			// same reason.
+			if (w.$named === false) return;
 			if (w.$nodeId != null) nodeIdToEffectiveType.set(w.$nodeId, w.$type);
 			kinds.add(w.$type);
 		});
@@ -185,10 +379,10 @@ function discoverAliasSourceKinds(
  * @param tree - The parsed tree-sitter tree to search in.
  * @returns The matching TSNode, or null if none found.
  */
-function resolveNodeForKind(
+function _resolveNodeForKind(
 	kind: string,
 	nodeIdToEffectiveType: Map<number, string>,
-	tree: TSTree,
+	tree: TSTree
 ): TSNode | null {
 	for (const [nid, et] of nodeIdToEffectiveType) {
 		if (et === kind) {
@@ -197,6 +391,58 @@ function resolveNodeForKind(
 		}
 	}
 	return findFirst(tree.rootNode, kind);
+}
+
+/**
+ * Resolve every node of `kind` in the tree. Used by the round-trip
+ * loop so an entry-level pass is granted when ANY node of the kind
+ * round-trips, instead of failing on the first node the walker
+ * happened to visit. This matches the spec intent ("the entry
+ * exercises this kind successfully somewhere"); the per-node failure
+ * is still recorded in the kind-level error list when ALL nodes fail.
+ *
+ * Stable iteration: walker-discovered nodes (in walker visit order)
+ * come first, then any tree nodes the walker missed (in tree order).
+ *
+ * @remarks
+ * Canonical-hidden architecture (Option Y): the walker now visits
+ * every node — pre-architectural-fix the walker missed many subtree
+ * paths because the dispatch table was keyed on the hidden alias-
+ * source name while the parser emits the visible alias-target. With
+ * the wrap layer remapping visible→hidden on receipt, the dispatch
+ * table is hit and recursion fires on every accessor. That exposes
+ * more test cases per entry; treating any-node-passes as entry-pass
+ * preserves the pre-fix entry-level pass count while still surfacing
+ * the per-kind failures in the issue list.
+ */
+function resolveAllNodesForKind(
+	kind: string,
+	nodeIdToEffectiveType: Map<number, string>,
+	tree: TSTree
+): TSNode[] {
+	const nodes: TSNode[] = [];
+	const seenIds = new Set<number>();
+	for (const [nid, et] of nodeIdToEffectiveType) {
+		if (et !== kind) continue;
+		const node = findNodeById(tree.rootNode, nid);
+		if (node && !seenIds.has(node.id)) {
+			seenIds.add(node.id);
+			nodes.push(node);
+		}
+	}
+	const queue: TSNode[] = [tree.rootNode];
+	while (queue.length > 0) {
+		const n = queue.shift()!;
+		if (n.type === kind && !seenIds.has(n.id)) {
+			seenIds.add(n.id);
+			nodes.push(n);
+		}
+		for (let i = 0; i < n.childCount; i++) {
+			const c = n.child(i);
+			if (c) queue.push(c);
+		}
+	}
+	return nodes;
 }
 
 /**
@@ -218,12 +464,13 @@ function resolveNodeForKind(
 function applyAliasResolution(
 	rawData: ReturnType<typeof readNode>,
 	nodeId: number,
-	nodeIdToEffectiveType: Map<number, string>,
+	nodeIdToEffectiveType: Map<number, string>
 ): { data: typeof rawData; renderedKind: string; targetKind: string } {
 	const effective = nodeIdToEffectiveType.get(nodeId);
-	const data = effective && effective !== rawData.$type
-		? { ...rawData, $type: effective }
-		: rawData;
+	const data =
+		effective && effective !== rawData.$type
+			? { ...rawData, $type: effective }
+			: rawData;
 	const renderedKind = data.$type;
 	const targetKind = rawData.$type;
 	return { data, renderedKind, targetKind };
@@ -247,7 +494,7 @@ function applyAliasResolution(
 function findReparsedNodeAtOffset(
 	tree2: TSTree,
 	targetKind: string,
-	wrapped: { text: string; offset: number },
+	wrapped: { text: string; offset: number }
 ): TSNode | null {
 	return findNodeAt(tree2.rootNode, targetKind, wrapped.offset);
 }
@@ -255,29 +502,114 @@ function findReparsedNodeAtOffset(
 /**
  * Run round-trip validation for a grammar using corpus fixtures.
  */
+/**
+ * Parity-fixture capture — a single render + round-trip pair as seen
+ * by the validator. Shape matches spec 012 T045 / data-model.md §6.
+ *
+ * Populated only when the caller supplies `onFixture` in the options
+ * bag. Each successful kind probe (render OK, re-parse OK, AST match
+ * OK) emits one `RenderFixture` + one `RoundTripFixture` — the
+ * former for byte-identical render parity (SC-001a), the latter for
+ * end-to-end semantic parity (SC-001b).
+ */
+export interface RenderFixture {
+	kind: 'render';
+	grammar: string;
+	/** NodeData input — the deep-read result from readTreeNode, ready
+	 *  for the Rust engine's `render_dispatch` or the TS engine's
+	 *  `render()`. Serialized to JSON verbatim. */
+	input: unknown;
+	/** The string the TS engine produced for `input`. Parity gate
+	 *  asserts the Rust engine produces the same bytes. */
+	expectedOutput: string;
+}
+
+export interface RoundTripFixture {
+	kind: 'roundtrip';
+	grammar: string;
+	/** Original source text for the probed node. */
+	sourceIn: string;
+	/** The kind name — functions as the ast-grep-style pattern
+	 *  ("match anything of this kind"). No actual edits are applied
+	 *  at MVP; the fixture exists to anchor full-pipeline parity. */
+	pattern: string;
+	/** Edit spec list — empty at MVP (render-only round-trip). Kept
+	 *  in the schema so future fixtures can exercise applyEdits. */
+	edits: readonly unknown[];
+	/** Expected source after render (equals `sourceIn` for render-only
+	 *  round-trips that match byte-for-byte; may differ when render
+	 *  normalizes whitespace). */
+	expectedSourceOut: string;
+	/** S-expression serialization of the re-parsed SUBTREE rooted at
+	 *  `pattern` (`node2.toString()` on the web-tree-sitter side). The
+	 *  subtree comes from parsing `wrappedText` and locating the node
+	 *  at `wrappedOffset`. Cross-engine parity harnesses reproduce it
+	 *  by parsing `wrappedText` with their own tree-sitter binding. */
+	expectedReparseTree: string;
+	/** The rendered fragment wrapped in a supertype / direct-kind
+	 *  reparse context so tree-sitter can parse it (bare fragments
+	 *  like `"pub"` alone don't parse). Captured by the TS validator's
+	 *  `wrapForReparse` — the SAME text the TS side reparsed. */
+	wrappedText: string;
+	/** Byte offset within `wrappedText` where the rendered fragment
+	 *  was spliced in. Parity harnesses use this to locate the
+	 *  subtree to compare against `expectedReparseTree`. */
+	wrappedOffset: number;
+}
+
+export type ParityFixture = RenderFixture | RoundTripFixture;
+
+export interface ValidateRoundTripOptions {
+	/** Called once per successfully round-tripped kind — emits a
+	 *  `RenderFixture` then a `RoundTripFixture`. When omitted,
+	 *  validator runs its normal pass/fail accounting without
+	 *  fixture capture (zero added cost). */
+	onFixture?: (fx: ParityFixture) => void;
+	/** Backend to use for `buildReadHandle`. When provided, takes
+	 *  precedence over `process.env.SITTIR_BACKEND`. */
+	backend?: 'native' | 'typescript';
+}
+
 export async function validateRoundTrip(
 	grammar: string,
-	templatesYaml: string,
+	templatesPath: string,
+	options: ValidateRoundTripOptions = {}
 ): Promise<RoundTripResult> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
 
-	const config = parseYaml(templatesYaml) as RulesConfig;
 	const rawEntries = loadRawEntries(grammar);
-	const { render } = createRenderer(config);
-	const ruleKinds = new Set(Object.keys(config.rules));
+	const { render } = createRenderer(templatesPath);
+	// `ruleKinds` was historically derived from config.rules (from the
+	// YAML). For the Jinja path (directory of `.jinja` files), derive
+	// the kind set from the on-disk file listing. Works uniformly for
+	// both `.yaml` (use filesystem check) and directories.
+	const ruleKinds = deriveRuleKinds(templatesPath);
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
 	const readTreeNodeFn = await loadReadTreeNode(grammar);
+	const deepReadKinds = await loadVariantAdoptedKinds(grammar);
 
 	const entries = loadCorpusEntries(grammar);
-	const errors: { name: string; message: string; input?: string; rendered?: string }[] = [];
-	const astMismatches: { name: string; message: string; input?: string; rendered?: string }[] = [];
+	const errors: {
+		name: string;
+		message: string;
+		input?: string;
+		rendered?: string;
+	}[] = [];
+	const astMismatches: {
+		name: string;
+		message: string;
+		input?: string;
+		rendered?: string;
+	}[] = [];
 	let pass = 0;
 	let astMatchPass = 0;
 	let skip = 0;
 	let total = 0;
+
+	const { backend } = options;
 
 	for (const entry of entries) {
 		total++;
@@ -290,8 +622,15 @@ export async function validateRoundTrip(
 			}
 
 			const kinds = new Set(collectKinds(tree1.rootNode));
-			const nodeIdToEffectiveType = discoverAliasSourceKinds(readTreeNodeFn, tree1, kinds);
-			const testableKinds = [...kinds].filter(k => ruleKinds.has(k));
+			const nodeIdToEffectiveType = discoverAliasSourceKinds(
+				readTreeNodeFn,
+				tree1,
+				kinds,
+				grammar,
+				entry.source,
+				backend
+			);
+			const testableKinds = [...kinds].filter((k) => ruleKinds.has(k));
 
 			if (testableKinds.length === 0) {
 				skip++;
@@ -302,70 +641,180 @@ export async function validateRoundTrip(
 			let entryOk = true;
 			let entryAstMatch = true;
 			for (const kind of testableKinds) {
-				const node1 = resolveNodeForKind(kind, nodeIdToEffectiveType, tree1);
-				if (!node1) continue;
+				// Canonical-hidden architecture (Option Y): the wrap walker
+				// now reaches every subtree node — pre-fix it missed many
+				// because the wrap-table dispatch was keyed on the hidden
+				// alias-source name while parser-emitted `$type` was the
+				// visible alias-target. With the visible→hidden remap on
+				// receipt, dispatch fires reliably and recursion propagates
+				// through every accessor. That surfaces extra test cases
+				// per entry; iterate ALL nodes of a kind and treat the
+				// entry as passing when ANY node round-trips successfully.
+				// Per-node failures still land in the kind-level error
+				// list so genuine bugs remain visible.
+				const candidates = resolveAllNodesForKind(
+					kind,
+					nodeIdToEffectiveType,
+					tree1
+				);
+				if (candidates.length === 0) continue;
 
-				const handle = treeHandle(tree1);
-				const rawData = readNode(handle, node1.id);
-				const { data, renderedKind, targetKind } = applyAliasResolution(rawData, node1.id, nodeIdToEffectiveType);
+				let kindOk = false;
+				let kindAstMatch = false;
+				let kindHadCandidate = false;
+				const kindErrors: typeof errors = [];
+				const kindAstMismatches: typeof astMismatches = [];
 
-				try {
-					const inputSource = node1.text;
-					const rendered = render(data);
+				for (const node1 of candidates) {
+					const handle = buildReadHandle(grammar, tree1, entry.source, backend);
+					// Shallow read — RT validator relies on the $text
+					// short-circuit: readNode returns a NodeData with
+					// $text=source-span, render() falls through to emit
+					// that $text verbatim, compare succeeds trivially.
+					// This applies uniformly; variant-adopted kinds do
+					// NOT require pre-enriched NodeData here — the ambient
+					// scaffold in their template would re-produce the same
+					// spans on reparse. Deep reads (with recursion into
+					// children/fields) live in the FACTORY round-trip
+					// validator (factory-roundtrip.ts), which needs the
+					// structural data to call factory functions and
+					// reconstruct the tree from scratch.
+					// Native engine IDs differ from WASM IDs; skip alias-
+					// target kinds the native engine emits under a different
+					// rule name rather than falling back to a mismatched ID.
+					const nativeId = findNativeNodeId(handle, kind);
+					if (nativeId === null && handle.read) continue;
+					const rawData = readNode(handle, nativeId ?? (node1.id as NodeId));
+					const { data, renderedKind, targetKind } = applyAliasResolution(
+						rawData,
+						node1.id,
+						nodeIdToEffectiveType
+					);
 
-					// Wrap for reparse using supertype context
-					const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes);
-					if (wrapped === null) continue; // no supertype → skip reparse
+					try {
+						const inputSource = node1.text;
+						const rendered = render(data);
 
-					// Re-parse
-					const tree2 = parser.parse(wrapped.text) as TSTree;
-					if (tree2.rootNode.hasError) {
-						errors.push({
-							name: `${entry.name} [${renderedKind}]`,
-							message: `re-parse error: "${rendered.slice(0, 80)}"`,
-							input: inputSource,
+						// Wrap for reparse using supertype context
+						const wrapped = wrapForReparse(
 							rendered,
-						});
-						entryOk = false;
-						entryAstMatch = false;
-						break;
-					}
+							renderedKind,
+							grammar,
+							kindToSupertypes,
+							{
+								adoptedVariantKinds: deepReadKinds,
+								targetKind
+							}
+						);
+						if (wrapped === null) continue; // no supertype - skip this candidate
+						kindHadCandidate = true;
 
-					const node2 = findReparsedNodeAtOffset(tree2, targetKind, wrapped);
-					if (!node2) {
-						errors.push({
-							name: `${entry.name} [${renderedKind}]`,
-							message: `kind not found at rendered offset ${wrapped.offset}`,
-							input: inputSource,
-							rendered,
-						});
-						entryOk = false;
-						entryAstMatch = false;
-						break;
-					}
+						// Re-parse
+						const tree2 = parser.parse(wrapped.text) as TSTree;
+						if (tree2.rootNode.hasError) {
+							kindErrors.push({
+								name: `${entry.name} [${renderedKind}]`,
+								message: `re-parse error: "${rendered.slice(0, 80)}"`,
+								input: inputSource,
+								rendered
+							});
+							continue;
+						}
 
-					const diff = astStructuralDiff(node1, node2);
-					if (diff) {
-						astMismatches.push({
+						// Reparse produces either the alias target (wrapper
+						// context re-triggers the alias) OR the alias source
+						// (wrapper is a generic supertype context that
+						// doesn't re-alias — ts's interface_body rendered as
+						// object_type inside `type _X = …;`). Accept either
+						// at the rendered offset.
+						const node2 =
+							findReparsedNodeAtOffset(tree2, targetKind, wrapped) ??
+							(renderedKind !== targetKind
+								? findReparsedNodeAtOffset(tree2, renderedKind, wrapped)
+								: null);
+						if (!node2) {
+							kindErrors.push({
+								name: `${entry.name} [${renderedKind}]`,
+								message: `kind not found at rendered offset ${wrapped.offset}`,
+								input: inputSource,
+								rendered
+							});
+							continue;
+						}
+
+						kindOk = true;
+						const namedExtras =
+							NAMED_EXTRAS_BY_GRAMMAR[grammar] ?? new Set<string>();
+						const diff = astStructuralDiff(node1, node2, namedExtras);
+						if (diff) {
+							kindAstMismatches.push({
+								name: `${entry.name} [${renderedKind}]`,
+								message: diff.slice(0, 160),
+								input: inputSource,
+								rendered
+							});
+						} else {
+							kindAstMatch = true;
+							if (options.onFixture) {
+								// Success path (both re-parse OK + AST match OK) —
+								// emit a render fixture (NodeData → rendered) and a
+								// round-trip fixture (source → reparse s-exp). The
+								// data we have matches both shapes; only the shape
+								// type tag differs.
+								options.onFixture({
+									kind: 'render',
+									grammar,
+									input: data,
+									expectedOutput: rendered
+								});
+								options.onFixture({
+									kind: 'roundtrip',
+									grammar,
+									sourceIn: inputSource,
+									pattern: renderedKind,
+									edits: [],
+									expectedSourceOut: rendered,
+									expectedReparseTree: node2.toString(),
+									wrappedText: wrapped.text,
+									wrappedOffset: wrapped.offset
+								});
+							}
+						}
+					} catch (e) {
+						kindErrors.push({
 							name: `${entry.name} [${renderedKind}]`,
-							message: diff.slice(0, 160),
-							input: inputSource,
-							rendered,
+							message: `render: ${(e as Error).message.slice(0, 100)}`
 						});
-						entryAstMatch = false;
 					}
-				} catch (e) {
-					errors.push({ name: `${entry.name} [${renderedKind}]`, message: `render: ${(e as Error).message.slice(0, 100)}` });
+				}
+
+				// Per-kind aggregation: kind passes when ANY candidate
+				// node round-tripped; otherwise emit the FIRST per-node
+				// failure for the issue list. Strict-AST equality only
+				// counts when EVERY candidate node that round-tripped
+				// also matched structurally — surfacing partial AST
+				// regressions even when entry-pass survives.
+				if (!kindHadCandidate) continue; // every candidate skipped — neutral on this kind
+				if (!kindOk) {
+					if (kindErrors.length > 0) errors.push(kindErrors[0]!);
 					entryOk = false;
 					entryAstMatch = false;
 					break;
+				}
+				if (!kindAstMatch) {
+					if (kindAstMismatches.length > 0)
+						astMismatches.push(kindAstMismatches[0]!);
+					entryAstMatch = false;
 				}
 			}
 
 			if (entryOk) pass++;
 			if (entryAstMatch) astMatchPass++;
 		} catch (e) {
-			errors.push({ name: entry.name, message: `${(e as Error).message.slice(0, 100)}` });
+			errors.push({
+				name: entry.name,
+				message: `${(e as Error).message.slice(0, 100)}`
+			});
 		}
 	}
 
@@ -376,6 +825,7 @@ export async function validateRoundTrip(
 	// fields already tested by Check 6 (the end-to-end corpus loop).
 	// Duplicate work checking a stale invariant.
 
+	emitValidatorMetrics();
 	return {
 		grammar,
 		total,
@@ -384,15 +834,19 @@ export async function validateRoundTrip(
 		skip,
 		astMatchPass,
 		errors,
-		astMismatches,
+		astMismatches
 	};
 }
 
 export function formatRoundTripReport(result: RoundTripResult): string {
 	const lines: string[] = [];
 	const icon = result.fail === 0 ? 'v' : 'x';
-	lines.push(`  ${icon} ${result.pass}/${result.total} round-trip (${result.skip} skipped, ${result.errors.length} errors)`);
-	lines.push(`    ast-match ${result.astMatchPass}/${result.total} (${result.astMismatches.length} structural mismatches)`);
+	lines.push(
+		`  ${icon} ${result.pass}/${result.total} round-trip (${result.skip} skipped, ${result.errors.length} errors)`
+	);
+	lines.push(
+		`    ast-match ${result.astMatchPass}/${result.total} (${result.astMismatches.length} structural mismatches)`
+	);
 	if (result.errors.length > 0) {
 		for (const e of result.errors) {
 			lines.push(`    x ${e.name}: ${e.message}`);

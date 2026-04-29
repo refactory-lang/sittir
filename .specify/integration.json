@@ -1,7 +1,4 @@
 {
-  "integration": "claude",
-  "version": "0.6.2.dev0",
-  "scripts": {
-    "update-context": ".specify/integrations/claude/scripts/update-context.sh"
-  }
+	"integration": "copilot",
+	"version": "0.8.2.dev0"
 }

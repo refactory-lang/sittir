@@ -5,6 +5,7 @@
 {
   "factoryShapes": {
     "module": "children",
+    "_simple_statements": "children",
     "import_statement": "config",
     "import_prefix": "text",
     "relative_import": "config",
@@ -14,7 +15,8 @@
     "print_statement": "config",
     "chevron": "config",
     "assert_statement": "children",
-    "expression_statement": "children",
+    "expression_statement_tuple": "children",
+    "expression_statement": "config",
     "named_expression": "config",
     "return_statement": "children",
     "delete_statement": "children",
@@ -26,7 +28,7 @@
     "elif_clause": "config",
     "else_clause": "config",
     "match_statement": "config",
-    "_match_block": "config",
+    "_match_block": "children",
     "case_clause": "config",
     "for_statement": "config",
     "while_statement": "config",
@@ -34,7 +36,9 @@
     "except_clause": "config",
     "finally_clause": "config",
     "with_statement": "config",
-    "with_clause": "children",
+    "with_clause_bare": "children",
+    "with_clause_paren": "children",
+    "with_clause": "config",
     "with_item": "config",
     "function_definition": "config",
     "parameters": "children",
@@ -51,12 +55,14 @@
     "argument_list": "children",
     "decorated_definition": "config",
     "decorator": "config",
+    "_suite": "children",
     "block": "children",
-    "expression_list": "config",
+    "expression_list": "children",
     "dotted_name": "children",
     "case_pattern": "children",
+    "_as_pattern": "children",
     "union_pattern": "children",
-    "dict_pattern": "config",
+    "dict_pattern": "children",
     "keyword_pattern": "config",
     "splat_pattern": "config",
     "class_pattern": "config",
@@ -77,7 +83,7 @@
     "lambda_within_for_in_clause": "config",
     "assignment": "config",
     "augmented_assignment": "config",
-    "pattern_list": "config",
+    "pattern_list": "children",
     "yield": "children",
     "attribute": "config",
     "subscript": "config",
@@ -100,12 +106,13 @@
     "dictionary_comprehension": "config",
     "set_comprehension": "config",
     "generator_expression": "config",
+    "_comprehension_clauses": "children",
     "parenthesized_expression": "children",
     "for_in_clause": "config",
     "if_clause": "config",
     "conditional_expression": "config",
-    "concatenated_string": "config",
-    "string": "config",
+    "concatenated_string": "children",
+    "string": "text",
     "string_content": "children",
     "interpolation": "config",
     "escape_sequence": "text",
@@ -120,18 +127,24 @@
     "await": "config",
     "comment": "text",
     "line_continuation": "text",
+    "_as_pattern_target": "children",
+    "_format_expression": "children",
+    "_kw_async_marker": "text",
+    "_assignment_eq": "config",
+    "_assignment_type": "config",
+    "_assignment_typed": "config",
+    "_with_clause_paren": "children",
+    "_match_block_block": "config",
+    "_simple_pattern_negative": "text",
+    "_newline": "text",
     "string_start": "text",
+    "_string_content": "text",
     "escape_interpolation": "text",
     "string_end": "text",
     "]": "text",
     ")": "text",
     "}": "text",
     "except": "text",
-    "as_pattern_target": "children",
-    "assignment_eq": "config",
-    "assignment_type": "config",
-    "assignment_typed": "config",
-    "format_expression": "config",
     "import": "text",
     "from": "text",
     "as": "text",
@@ -170,6 +183,9 @@
   "fieldAliasMap": {
     "match_statement.body": {
       "block": "_match_block"
+    },
+    "as_pattern.alias": {
+      "as_pattern_target": "_as_pattern_target"
     }
   },
   "factoryFields": {
@@ -181,11 +197,6 @@
       "dotted_name"
     ],
     "future_import_statement": [
-      "name"
-    ],
-    "import_from_statement": [
-      "module_name",
-      "wildcard_import",
       "name"
     ],
     "aliased_import": [
@@ -215,11 +226,8 @@
       "subject",
       "body"
     ],
-    "_match_block": [
-      "alternative"
-    ],
     "for_statement": [
-      "async",
+      "async_marker",
       "left",
       "right",
       "body",
@@ -240,7 +248,7 @@
       "block"
     ],
     "with_statement": [
-      "async",
+      "async_marker",
       "with_clause",
       "body"
     ],
@@ -248,7 +256,7 @@
       "value"
     ],
     "function_definition": [
-      "async",
+      "async_marker",
       "name",
       "type_parameters",
       "parameters",
@@ -380,7 +388,7 @@
       "value"
     ],
     "for_in_clause": [
-      "async",
+      "async_marker",
       "left",
       "right"
     ],
@@ -405,20 +413,53 @@
     "await": [
       "primary_expression"
     ],
-    "assignment_eq": [
+    "_assignment_eq": [
       "right"
     ],
-    "assignment_type": [
+    "_assignment_type": [
       "type"
     ],
-    "assignment_typed": [
+    "_assignment_typed": [
       "type",
       "right"
     ],
-    "format_expression": [
-      "expression",
-      "type_conversion",
-      "format_specifier"
+    "_match_block_block": [
+      "alternative"
     ]
+  },
+  "polymorphVariants": {
+    "expression_statement": {
+      "source": "override",
+      "childKind": {
+        "expression_statement_tuple": "tuple"
+      }
+    },
+    "_match_block": {
+      "source": "override",
+      "childKind": {
+        "_match_block_block": "block"
+      }
+    },
+    "with_clause": {
+      "source": "override",
+      "childKind": {
+        "with_clause_bare": "bare",
+        "with_clause_paren": "paren"
+      }
+    },
+    "dict_pattern": {
+      "source": "override",
+      "childKind": {
+        "dict_pattern_kv": "kv"
+      }
+    },
+    "assignment": {
+      "source": "override",
+      "childKind": {
+        "assignment_eq": "eq",
+        "assignment_type": "type",
+        "assignment_typed": "typed"
+      }
+    }
   }
 }

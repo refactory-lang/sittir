@@ -176,14 +176,14 @@ cat specs/refactor/001-extract-tweet-service/metrics-before.md
 
 ## Workflow Cheat Sheet
 
-| Workflow | Command | When to Use | Key Feature |
-|----------|---------|-------------|-------------|
-| **Feature** | `/speckit.specify "..."` | New functionality | Full spec + TDD |
-| **Bugfix** | `/speckit.bugfix "..."` | Broken behavior | Regression test first |
-| **Modify** | `/speckit.modify 014 "..."` | Change existing | Impact analysis |
-| **Refactor** | `/speckit.refactor "..."` | Code quality | Metrics + incremental |
-| **Hotfix** | `/speckit.hotfix "..."` | Production emergency | Tests after (only exception) |
-| **Deprecate** | `/speckit.deprecate 014 "..."` | Remove feature | 3-phase sunset |
+| Workflow      | Command                        | When to Use          | Key Feature                  |
+| ------------- | ------------------------------ | -------------------- | ---------------------------- |
+| **Feature**   | `/speckit.specify "..."`       | New functionality    | Full spec + TDD              |
+| **Bugfix**    | `/speckit.bugfix "..."`        | Broken behavior      | Regression test first        |
+| **Modify**    | `/speckit.modify 014 "..."`    | Change existing      | Impact analysis              |
+| **Refactor**  | `/speckit.refactor "..."`      | Code quality         | Metrics + incremental        |
+| **Hotfix**    | `/speckit.hotfix "..."`        | Production emergency | Tests after (only exception) |
+| **Deprecate** | `/speckit.deprecate 014 "..."` | Remove feature       | 3-phase sunset               |
 
 ## Common Questions
 
@@ -206,6 +206,7 @@ No. The 3-phase approach is required to give users adequate migration time. Skip
 ### What if I pick the wrong workflow?
 
 No problem! The worst case is you have the wrong template. You can:
+
 1. Create a new branch with the correct workflow
 2. Copy over your work
 3. Delete the old branch
@@ -273,6 +274,7 @@ specs/
 ## Troubleshooting
 
 **Command doesn't work**: Ensure you're using the exact format:
+
 - ✅ `/speckit.bugfix "description"`
 - ❌ `/speckit.bugfix description` (missing quotes)
 
@@ -286,4 +288,4 @@ specs/
 
 **Ready to start?** Pick a workflow above and try it on your next task!
 
-*Extension System Quickstart - Version 1.0.0*
+_Extension System Quickstart - Version 1.0.0_

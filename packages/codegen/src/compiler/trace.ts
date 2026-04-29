@@ -10,14 +10,17 @@
  *
  * Noise-free when unset: the env-var lookup is O(1) and returns early.
  */
-import type { Rule } from './rule.ts'
+import type { Rule } from './rule.ts';
 
-const FLAG = 'SITTIR_TRACE'
+const FLAG = 'SITTIR_TRACE';
 
 function tracedKinds(): readonly string[] {
-    const env = typeof process !== 'undefined' && process?.env?.[FLAG]
-    if (!env) return []
-    return env.split(',').map(s => s.trim()).filter(Boolean)
+	const env = typeof process !== 'undefined' && process?.env?.[FLAG];
+	if (!env) return [];
+	return env
+		.split(',')
+		.map((s) => s.trim())
+		.filter(Boolean);
 }
 
 /**
@@ -28,20 +31,22 @@ function tracedKinds(): readonly string[] {
  * Optimize may inline single-use hidden rules, removing the entry).
  */
 export function tracePhaseRules(
-    phase: string,
-    rules: Record<string, Rule> | undefined | null,
+	phase: string,
+	rules: Record<string, Rule> | undefined | null
 ): void {
-    const kinds = tracedKinds()
-    if (kinds.length === 0 || !rules) return
-    for (const k of kinds) {
-        const rule = rules[k]
-        if (rule === undefined) {
-            console.error(`[sittir-trace] ${phase}: '${k}' (not present in this phase)`)
-            continue
-        }
-        console.error(`[sittir-trace] ${phase}: '${k}'`)
-        console.error(JSON.stringify(rule, null, 2))
-    }
+	const kinds = tracedKinds();
+	if (kinds.length === 0 || !rules) return;
+	for (const k of kinds) {
+		const rule = rules[k];
+		if (rule === undefined) {
+			console.error(
+				`[sittir-trace] ${phase}: '${k}' (not present in this phase)`
+			);
+			continue;
+		}
+		console.error(`[sittir-trace] ${phase}: '${k}'`);
+		console.error(JSON.stringify(rule, null, 2));
+	}
 }
 
 /**
@@ -51,24 +56,39 @@ export function tracePhaseRules(
  * rather than full JSON (which pulls in parent-map cycles).
  */
 export function traceAssembleNodes(
-    phase: string,
-    nodes: Map<string, { kind: string; modelType: string; typeName: string; rule?: Rule } & Record<string, unknown>>,
+	phase: string,
+	nodes: Map<
+		string,
+		{ kind: string; modelType: string; typeName: string; rule?: Rule } & Record<
+			string,
+			unknown
+		>
+	>
 ): void {
-    const kinds = tracedKinds()
-    if (kinds.length === 0) return
-    for (const k of kinds) {
-        const node = nodes.get(k)
-        if (!node) {
-            console.error(`[sittir-trace] ${phase}: '${k}' (not in NodeMap)`)
-            continue
-        }
-        console.error(`[sittir-trace] ${phase}: '${k}'`)
-        console.error(`  modelType=${node.modelType} typeName=${node.typeName}`)
-        // Lazy-access the derivation getters if present. AssembledBranch's
-        // `fields` / `children` are computed on access.
-        const fields = (node as unknown as { fields?: Array<{ name: string }> }).fields
-        const children = (node as unknown as { children?: Array<{ name: string; values?: unknown[] }> }).children
-        if (fields) console.error(`  fields=${JSON.stringify(fields.map(f => f.name))}`)
-        if (children) console.error(`  children=${JSON.stringify(children.map(c => ({ name: c.name, slots: c.values?.length ?? 0 })))}`)
-    }
+	const kinds = tracedKinds();
+	if (kinds.length === 0) return;
+	for (const k of kinds) {
+		const node = nodes.get(k);
+		if (!node) {
+			console.error(`[sittir-trace] ${phase}: '${k}' (not in NodeMap)`);
+			continue;
+		}
+		console.error(`[sittir-trace] ${phase}: '${k}'`);
+		console.error(`  modelType=${node.modelType} typeName=${node.typeName}`);
+		// Lazy-access the derivation getters if present. AssembledBranch's
+		// `fields` / `children` are computed on access.
+		const fields = (node as unknown as { fields?: Array<{ name: string }> })
+			.fields;
+		const children = (
+			node as unknown as {
+				children?: Array<{ name: string; values?: unknown[] }>;
+			}
+		).children;
+		if (fields)
+			console.error(`  fields=${JSON.stringify(fields.map((f) => f.name))}`);
+		if (children)
+			console.error(
+				`  children=${JSON.stringify(children.map((c) => ({ name: c.name, slots: c.values?.length ?? 0 })))}`
+			);
+	}
 }

@@ -5,17 +5,17 @@ scripts:
   sh: scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks
   ps: scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks
 handoffs:
-- label: Address findings and re-implement
-  agent: speckit.implement
-  prompt: Address the verification findings and re-run implementation to resolve issues
-- label: Re-analyze specification consistency
-  agent: speckit.analyze
-  prompt: Re-analyze specification consistency based on verification findings
+  - label: Address findings and re-implement
+    agent: speckit.implement
+    prompt: Address the verification findings and re-run implementation to resolve issues
+  - label: Re-analyze specification consistency
+    agent: speckit.analyze
+    prompt: Re-analyze specification consistency based on verification findings
 ---
-
 
 <!-- Extension: verify -->
 <!-- Config: .specify/extensions/verify/ -->
+
 ## User Input
 
 ```text
@@ -156,18 +156,18 @@ Output a Markdown report (no file writes) with the following structure:
 
 ## Verification Report
 
-| ID | Category | Severity | Location(s) | Summary | Recommendation |
-|----|----------|----------|-------------|---------|----------------|
-| A1 | Task Completion | CRITICAL | tasks.md | 3 of 12 tasks incomplete | Complete tasks T05, T08, T11 |
-| B1 | File Existence | CRITICAL | src/auth.ts | Task-referenced file missing | Create file or update task reference |
-| C1 | Requirement Coverage | CRITICAL | spec.md:FR-003 | No implementation evidence | Implement FR-003 |
+| ID  | Category             | Severity | Location(s)    | Summary                      | Recommendation                       |
+| --- | -------------------- | -------- | -------------- | ---------------------------- | ------------------------------------ |
+| A1  | Task Completion      | CRITICAL | tasks.md       | 3 of 12 tasks incomplete     | Complete tasks T05, T08, T11         |
+| B1  | File Existence       | CRITICAL | src/auth.ts    | Task-referenced file missing | Create file or update task reference |
+| C1  | Requirement Coverage | CRITICAL | spec.md:FR-003 | No implementation evidence   | Implement FR-003                     |
 
 (Add one row per finding; generate stable IDs prefixed by check letter: A1, B1, C1... Reference specific files and line numbers in Location(s) where applicable.)
 
 **Task Summary Table:**
 
 | Task ID | Status | Referenced Files | Notes |
-|---------|--------|-----------------|-------|
+| ------- | ------ | ---------------- | ----- |
 
 **Constitution Alignment Issues:** (if any)
 

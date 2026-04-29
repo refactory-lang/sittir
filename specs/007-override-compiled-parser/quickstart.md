@@ -76,11 +76,11 @@ wc -l packages/codegen/src/compiler/link.ts
 
 ## Validation Checkpoints
 
-| Checkpoint | Command | Expected |
-|-----------|---------|----------|
-| Parser compiles | `tree-sitter build --wasm` in `.sittir/` | Produces `parser.wasm` |
-| Parser loads | `Language.load(wasmPath)` | No errors |
-| Fields present | Parse + readNode on `conditional_expression` | `body`, `condition`, `alternative` fields |
-| Fidelity holds | `pnpm test -- --grep "corpus-validation"` | All ceilings pass |
-| No runtime promotion | Grep wrap.ts for promotion logic | Deleted |
-| Link reduced | `wc -l link.ts` | < 1427 lines |
+| Checkpoint           | Command                                      | Expected                                  |
+| -------------------- | -------------------------------------------- | ----------------------------------------- |
+| Parser compiles      | `tree-sitter build --wasm` in `.sittir/`     | Produces `parser.wasm`                    |
+| Parser loads         | `Language.load(wasmPath)`                    | No errors                                 |
+| Fields present       | Parse + readNode on `conditional_expression` | `body`, `condition`, `alternative` fields |
+| Fidelity holds       | `pnpm test -- --grep "corpus-validation"`    | All ceilings pass                         |
+| No runtime promotion | Grep wrap.ts for promotion logic             | Deleted                                   |
+| Link reduced         | `wc -l link.ts`                              | < 1427 lines                              |

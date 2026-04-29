@@ -10,12 +10,12 @@ Source files that were deleted from `packages/codegen` during the
 v1 retirement (commit `aaf45e0`). Kept here as read-only reference
 — these files are NOT on the import path and won't be built.
 
-| File | Purpose |
-|---|---|
-| `rules.ts` | v1 template emitter — the one referenced by "why is rules.ts being used at all?". Replaced by `emitters/templates-v2.ts`. |
-| `index.ts` | Pre-collapse public API with the synchronous v1 `generate()` function and its full v1-emitter import chain. Current `index.ts` is stripped to just grammar-reader re-exports plus a `generateV2` convenience re-export. |
-| `generate-rust.test.ts` | v1-naming-coupled integration smoke test (`struct_item_` trailing-underscore factory naming). Deleted because its assertions didn't translate to v2 camelCase. |
-| `rules.test.ts` | Unit test for the deleted `rules.ts`. |
+| File                    | Purpose                                                                                                                                                                                                                 |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `rules.ts`              | v1 template emitter — the one referenced by "why is rules.ts being used at all?". Replaced by `emitters/templates-v2.ts`.                                                                                               |
+| `index.ts`              | Pre-collapse public API with the synchronous v1 `generate()` function and its full v1-emitter import chain. Current `index.ts` is stripped to just grammar-reader re-exports plus a `generateV2` convenience re-export. |
+| `generate-rust.test.ts` | v1-naming-coupled integration smoke test (`struct_item_` trailing-underscore factory naming). Deleted because its assertions didn't translate to v2 camelCase.                                                          |
+| `rules.test.ts`         | Unit test for the deleted `rules.ts`.                                                                                                                                                                                   |
 
 ## `previous/{rust,typescript,python}/`
 
@@ -33,7 +33,7 @@ caught. Snapshot includes:
 Useful for three kinds of comparison:
 
 1. **Regression detection** — `diff packages/rust/src/factories.ts
-   specs/005-five-phase-compiler/baseline/previous/rust/src/factories.ts`
+specs/005-five-phase-compiler/baseline/previous/rust/src/factories.ts`
    highlights every per-node change the pipeline work produced.
 
 2. **A/B on the inference rewrites** — see which kinds went from

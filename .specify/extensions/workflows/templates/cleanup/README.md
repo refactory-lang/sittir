@@ -16,6 +16,7 @@ Use `/speckit.cleanup` when:
 - Periodically as maintenance to keep specs organized
 
 **Do NOT use `/speckit.cleanup` for**:
+
 - Fixing code issues → use appropriate workflow instead
 - Changing spec content → edit files directly
 - Deleting old specs → archive them manually first
@@ -23,22 +24,27 @@ Use `/speckit.cleanup` when:
 ## Process
 
 ### 1. Validation Phase
+
 The cleanup script checks:
+
 - **Sequential numbering**: Each workflow type should have 001, 002, 003, etc.
 - **Directory structure**: Specs should be organized under workflow types (bugfix/, modify/, refactor/, hotfix/, deprecate/, features/)
 - **Misplaced workflow directories**: Detects workflow-prefixed directories at wrong level (e.g., `bugfix-001-*` or `refactor-002-*` at root instead of in workflow subdirectories)
 - **Unrecognized directories**: Flags unknown directories that don't match expected patterns
 - **Required files**: Each spec directory should have its main spec file
-- **No duplicates**: No two directories with the same number *within each workflow subdirectory* (bugfix/001 and refactor/001 are both valid)
+- **No duplicates**: No two directories with the same number _within each workflow subdirectory_ (bugfix/001 and refactor/001 are both valid)
 - **No gaps**: Numbering should be continuous within each workflow type
 
 ### 2. Issue Detection
+
 Reports issues in three severity levels:
+
 - **ERROR**: Critical issues that prevent proper workflow operation (e.g., misplaced workflow directories, duplicates)
 - **WARNING**: Issues that should be addressed but don't break functionality (e.g., unrecognized directories, missing spec files)
 - **INFO**: Informational notices about non-critical inconsistencies (e.g., gaps in numbering)
 
 #### Issue types detected
+
 - **Misplaced workflow directories (ERROR, auto-fixable)**: Workflow-prefixed folders at the wrong level (e.g., `bugfix-001-*` under `specs/` instead of `specs/bugfix/001-*`).
 - **Duplicate numbers within a workflow (ERROR)**: Same numeric prefix reused inside a workflow directory.
 - **Invalid directory names (ERROR)**: Entries inside workflow folders that do not start with a 3-digit prefix.
@@ -47,7 +53,9 @@ Reports issues in three severity levels:
 - **Missing spec file (WARNING)**: Required spec file for the workflow type is absent (e.g., `bug-report.md`, `refactor-spec.md`, `spec.md`).
 
 ### 3. Auto-Fix (Optional)
+
 With `--auto-fix` flag, the script can:
+
 - Move misplaced workflow directories to their correct locations
 - Renumber directories to be sequential
 - Fix gaps in numbering
@@ -57,7 +65,9 @@ With `--auto-fix` flag, the script can:
 **Important**: Auto-fix only affects directory names and organization in `specs/`. Code files are never moved or modified.
 
 ### 4. Output
+
 Provides validation results with:
+
 - All issues found (with severity levels)
 - Actions taken or suggested
 - Summary of validation checks performed
@@ -74,22 +84,26 @@ Provides validation results with:
 ## Output Only
 
 The cleanup workflow **validates** and **reorganizes** but does not create any files or directories. It only:
+
 - Outputs validation results to stdout (or JSON)
 - Renames/renumbers existing directories when using `--auto-fix`
 
 ## Command Usage
 
 ### Basic validation (dry-run):
+
 ```bash
 /speckit.cleanup --dry-run "regular maintenance"
 ```
 
 ### Validation and auto-fix:
+
 ```bash
 /speckit.cleanup --auto-fix "fix numbering after merge"
 ```
 
 ### Just validate and report:
+
 ```bash
 /speckit.cleanup "pre-release validation"
 ```
@@ -101,6 +115,7 @@ The cleanup workflow **validates** and **reorganizes** but does not create any f
 ```
 
 Options:
+
 - `--json`: Output results in JSON format
 - `--dry-run`: Show what would be done without making changes
 - `--auto-fix`: Automatically fix numbering and organization issues
@@ -115,6 +130,7 @@ Options:
 ```
 
 Result:
+
 - Scans all spec directories
 - Reports any organizational issues
 - Outputs validation results
@@ -129,6 +145,7 @@ After merging branches that both added bugfix specs:
 ```
 
 Before:
+
 ```
 specs/bugfix/
 ├── 001-login-bug/
@@ -139,6 +156,7 @@ specs/bugfix/
 ```
 
 After:
+
 ```
 specs/bugfix/
 ├── 001-login-bug/
@@ -167,6 +185,7 @@ When workflow directories are created at the wrong level:
 ```
 
 Before:
+
 ```
 specs/
 ├── bugfix-001-after-applying-bugfix/    # Wrong location!
@@ -179,6 +198,7 @@ specs/
 ```
 
 After:
+
 ```
 specs/
 ├── copilot/                             # Remains (flagged as warning)
@@ -191,6 +211,7 @@ specs/
 ```
 
 Issues detected:
+
 - `[ERROR] Misplaced workflow directory: bugfix-001-after-applying-bugfix should be in bugfix/001-after-applying-bugfix/`
 - `[ERROR] Misplaced workflow directory: refactor-001-migrate-project-to should be in refactor/001-migrate-project-to/`
 - `[WARNING] Unrecognized directory in specs/: copilot (not a numbered spec or known workflow type)`
@@ -217,19 +238,20 @@ Actions suggested:
 ```
 
 **JSON output example:**
+
 ```json
 {
-  "status": "issues_found",
-  "message": "Found 3 issue(s)",
-  "issues": [
-    "[ERROR] Duplicate number in bugfix/: 003",
-    "[INFO] Non-sequential numbering in bugfix/ (gaps detected)",
-    "[WARNING] Missing spec file in 004-form-validation"
-  ],
-  "actions": [
-    "Cannot auto-fix bugfix/: resolve ERROR-level issues first (e.g., duplicates)",
-    "Review and verify 004-form-validation has required files"
-  ]
+	"status": "issues_found",
+	"message": "Found 3 issue(s)",
+	"issues": [
+		"[ERROR] Duplicate number in bugfix/: 003",
+		"[INFO] Non-sequential numbering in bugfix/ (gaps detected)",
+		"[WARNING] Missing spec file in 004-form-validation"
+	],
+	"actions": [
+		"Cannot auto-fix bugfix/: resolve ERROR-level issues first (e.g., duplicates)",
+		"Review and verify 004-form-validation has required files"
+	]
 }
 ```
 
@@ -248,11 +270,13 @@ The cleanup script validates these workflow subdirectories:
 ### When to Run Cleanup
 
 **Regularly:**
+
 - Before releases
 - After merging multiple branches
 - Monthly as part of maintenance
 
 **As Needed:**
+
 - When numbering gets confusing
 - After reorganizing specs
 - When onboarding new team members (clean slate)
@@ -268,6 +292,7 @@ The cleanup script validates these workflow subdirectories:
 ### Common Scenarios
 
 **After Git Merge Conflicts:**
+
 ```bash
 # Two branches both created bugfix-003
 # After resolving conflict, cleanup to renumber
@@ -275,6 +300,7 @@ The cleanup script validates these workflow subdirectories:
 ```
 
 **Periodic Maintenance:**
+
 ```bash
 # Monthly cleanup to keep specs organized
 /speckit.cleanup --dry-run "monthly maintenance check"
@@ -283,6 +309,7 @@ The cleanup script validates these workflow subdirectories:
 ```
 
 **Pre-Release Validation:**
+
 ```bash
 # Ensure all specs are properly organized before release
 /speckit.cleanup "validate specs for v3.0 release"
@@ -299,12 +326,14 @@ This workflow upholds:
 ## Safety Guarantees
 
 ### What Cleanup WILL Do:
+
 - ✅ Rename directories in `specs/` to fix numbering
 - ✅ Report organizational issues
 - ✅ Output validation results
 - ✅ Validate directory structure
 
 ### What Cleanup WILL NOT Do:
+
 - ❌ Move or modify code files
 - ❌ Change content of spec files
 - ❌ Delete any files or directories
@@ -324,18 +353,22 @@ All other workflows create and work within the structure that cleanup validates:
 ## Troubleshooting
 
 ### "Duplicate number" Error
+
 **Cause**: Two directories with the same number prefix
 **Fix**: Run with `--auto-fix` to renumber sequentially
 
 ### "Gap detected" Info
+
 **Cause**: Missing numbers in sequence (e.g., 001, 002, 005)
 **Fix**: Either acceptable if specs deleted, or run `--auto-fix` to close gaps
 
 ### "Invalid directory name" Error
+
 **Cause**: Directory doesn't follow `NNN-description` format
 **Fix**: Manually rename to proper format, then run cleanup
 
 ### "Missing spec file" Warning
+
 **Cause**: Directory exists but doesn't have its main spec file
 **Fix**: Add the required spec file (bug-report.md, refactor-spec.md, etc.)
 
@@ -350,4 +383,4 @@ Track these for continuous improvement:
 
 ---
 
-*Cleanup Workflow Documentation - Part of Specify Extension System*
+_Cleanup Workflow Documentation - Part of Specify Extension System_

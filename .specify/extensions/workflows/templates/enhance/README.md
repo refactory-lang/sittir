@@ -17,6 +17,7 @@ Use `/speckit.enhance` when:
 - Adding simple validation or edge case handling
 
 **Do NOT use `/speckit.enhance` for**:
+
 - Major new features → use `/speckit.specify` instead
 - Bug fixes → use `/speckit.bugfix` instead
 - Changing existing feature behavior → use `/speckit.modify` instead
@@ -28,18 +29,21 @@ Use `/speckit.enhance` when:
 ## Process
 
 ### 1. Planning Phase
+
 - Document the enhancement in a single file
 - Define what's changing and why
 - Create a simple, single-phase plan with tasks
 - Identify files to modify
 
 ### 2. Implementation
+
 - Follow the task list
 - Write tests as needed
 - Make the changes
 - Verify everything works
 
 ### 3. Verification
+
 - All tests pass
 - No regressions
 - Documentation updated if needed
@@ -67,12 +71,14 @@ specs/
 ```
 
 This will:
+
 1. Create branch `enhance/001-add-tooltip-to`
 2. Generate `enhancement.md` with condensed template
 3. Set `SPECIFY_ENHANCE` environment variable
 4. Ready for immediate implementation
 
 **Next steps after running the command:**
+
 1. Review and complete the enhancement document
 2. Follow the implementation tasks
 3. Verify all tests pass
@@ -88,13 +94,16 @@ This will:
 **Component**: UI Components
 
 ## Overview
+
 Add a helpful tooltip to the save button explaining what data will be saved.
 
 ## Proposed Changes
+
 - Add tooltip component to SaveButton
 - Include text: "Save profile changes to database"
 
 **Files to Modify**:
+
 - components/SaveButton.tsx - add Tooltip wrapper
 
 ## Implementation Plan
@@ -102,6 +111,7 @@ Add a helpful tooltip to the save button explaining what data will be saved.
 **Phase 1: Implementation**
 
 **Tasks**:
+
 1. [ ] Import Tooltip component from UI library
 2. [ ] Wrap SaveButton with Tooltip
 3. [ ] Add tooltip text prop
@@ -109,6 +119,7 @@ Add a helpful tooltip to the save button explaining what data will be saved.
 5. [ ] Verify button still functions correctly
 
 **Acceptance Criteria**:
+
 - [ ] Tooltip appears on hover
 - [ ] Tooltip text is clear and helpful
 - [ ] Save functionality unchanged
@@ -116,19 +127,20 @@ Add a helpful tooltip to the save button explaining what data will be saved.
 
 ## Comparison with Full Feature Workflow
 
-| Aspect | Enhancement | Feature |
-|--------|-------------|---------|
-| **Scope** | Minor improvements | New functionality |
-| **Documentation** | Single condensed file | Separate spec, plan, tasks files |
-| **Planning** | 1 phase maximum | Multiple phases as needed |
-| **Complexity** | Simple, quick changes | Complex, multi-step implementation |
-| **Timeline** | Hours to 1 day | Days to weeks |
+| Aspect            | Enhancement           | Feature                            |
+| ----------------- | --------------------- | ---------------------------------- |
+| **Scope**         | Minor improvements    | New functionality                  |
+| **Documentation** | Single condensed file | Separate spec, plan, tasks files   |
+| **Planning**      | 1 phase maximum       | Multiple phases as needed          |
+| **Complexity**    | Simple, quick changes | Complex, multi-step implementation |
+| **Timeline**      | Hours to 1 day        | Days to weeks                      |
 
 ## Tips
 
 ### When to Upgrade to Feature
 
 If during planning you find:
+
 - More than 5-7 tasks needed
 - Multiple phases required
 - Complex architecture decisions
@@ -141,15 +153,19 @@ Consider using `/speckit.specify` instead for proper feature development.
 
 ```markdown
 # Good: Clear and concise
+
 Add validation to email input field to check format before submission
 
 # Bad: Too vague
+
 Make email better
 
 # Good: Specific scope
+
 Add loading spinner to login button during authentication
 
 # Bad: Too broad (should be feature)
+
 Redesign entire authentication flow with OAuth and SSO
 ```
 
@@ -186,4 +202,4 @@ Track these for continuous improvement:
 
 ---
 
-*Enhancement Workflow Documentation - Part of Specify Extension System*
+_Enhancement Workflow Documentation - Part of Specify Extension System_

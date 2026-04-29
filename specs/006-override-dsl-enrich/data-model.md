@@ -24,6 +24,7 @@ The untouched tree-sitter grammar object imported from a published grammar packa
 Output of `enrich(base)`. Same shape as Base Grammar but with mechanical transformations applied to `rules`. `externals`, `extras`, `supertypes`, `word` pass through unchanged (enrich does not touch top-level arrays).
 
 **Invariants**:
+
 - `enrich(base)` is pure: `enrich(g) === enrich(g)` (by structural equality).
 - `enrich(enrich(g))` is a fixed point: applying enrich twice produces the same grammar as applying it once.
 - Skipped passes are reported to stderr (FR-010a) but do not affect the returned value.
@@ -35,6 +36,7 @@ Output of `enrich(base)`. Same shape as Base Grammar but with mechanical transfo
 The hand-authored `packages/<lang>/overrides.ts` module. Its default export is a tree-sitter grammar object produced by `grammar(baseOrEnriched, config)`.
 
 **Fields in `config`**:
+
 - `name: string` — grammar name (must match base's name or tree-sitter errors)
 - `rules: Record<string, (... ) => Rule>` — rule overrides (can call `transform()`, `role()`, etc.)
 - `supertypes?: Rule[]` — extension entries (merged with base per R-006)
@@ -55,6 +57,7 @@ Per-grammar collection of role names accumulated during `overrides.ts` evaluatio
 **Consumer**: Link phase reads `grammar.sittirRoles` and resolves each name against the `externals` array to find the token being tagged.
 
 **Invariants**:
+
 - Scoped to the enclosing `grammar(...)` call — nested calls do not leak.
 - Calling `role()` outside any grammar scope is a hard error.
 
@@ -65,6 +68,7 @@ Per-grammar collection of role names accumulated during `overrides.ts` evaluatio
 A targeted modification applied to a rule's structure by the pre-evaluate phase. Created by calling `transform()`, `insert()`, or `replace()` in the override file.
 
 **Shape** (conceptual):
+
 ```
 {
   kind: 'transform' | 'insert' | 'replace',
@@ -76,6 +80,7 @@ A targeted modification applied to a rule's structure by the pre-evaluate phase.
 **Application**: pre-evaluate walks the base rule, resolves the path (including wildcards), and returns a new rule with the patch applied. The base rule is not mutated.
 
 **Invariants**:
+
 - Out-of-bounds paths fail at patch-application time with a message naming the path and the actual shape.
 - Wildcard patches apply to every matching branch; if zero branches match, it's a hard error (a silent no-op would be a typo magnet).
 
@@ -88,6 +93,7 @@ The grammar object after the pre-evaluate phase has applied all `enrich` passes,
 **Shape**: tree-sitter grammar object + sidecar `sittirRoles` field. Tree-sitter ignores `sittirRoles`; sittir reads it in Link.
 
 **Invariants**:
+
 - Must be a valid tree-sitter grammar (FR-019).
 - Must be serializable back to `grammar.js` source for the transpile step.
 
@@ -98,17 +104,20 @@ The grammar object after the pre-evaluate phase has applied all `enrich` passes,
 A per-pass notification emitted to stderr when enrich could not apply a mechanical transformation.
 
 **Shape** (line format):
+
 ```
 enrich: skipped <pass-name> on <rule-name> (<reason>)
 ```
 
 **Example**:
+
 ```
 enrich: skipped keyword-prefix-promotion on function_definition (field 'async' already exists)
 enrich: skipped kind-to-name on tuple_expression (multiple expression children present)
 ```
 
 **Invariants**:
+
 - Non-fatal — enrich continues on the next rule.
 - One line per skipped pass per rule.
 - Writes to `process.stderr`, not `process.stdout`, so codegen output stays pipeable.
@@ -120,6 +129,7 @@ enrich: skipped kind-to-name on tuple_expression (multiple expression children p
 Output of merging an override file's extension fields (`supertypes`, `externals`, `extras`, `word`) with the base grammar's.
 
 **Shape** (conceptual, applied per-field):
+
 ```
 supertypes:  dedupe([...base.supertypes, ...overrides.supertypes])     // reference-equality dedupe
 externals:   dedupe([...base.externals, ...overrides.externals])
@@ -128,6 +138,7 @@ word:        overrides.word ?? base.word                                // scala
 ```
 
 **Invariants**:
+
 - Order: base entries first, override entries appended.
 - Dedupe: reference equality (R-006).
 - Omitted extension fields leave base unchanged (FR-019c).
