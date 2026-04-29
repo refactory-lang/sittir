@@ -294,4 +294,74 @@ describe('emitConsts', () => {
 		expect(output).toContain('Pub = 1 << 0,');
 		expect(output).toContain('PubCrate = 1 << 1,');
 	});
+
+	it('emits tree-sitter numeric kind and field ID enums from generated metadata', () => {
+		const nodeMap = makeNodeMap([
+			[
+				'source_file',
+				{
+					kind: 'source_file',
+					typeName: 'SourceFile',
+					factoryName: 'sourceFile',
+					modelType: 'branch',
+					fields: [
+						{
+							name: 'item',
+							propertyName: 'item',
+							paramName: 'item',
+							values: [],
+							source: 'grammar',
+							projection: { typeName: '', kinds: [] }
+						}
+					]
+				} as unknown as AssembledBranch
+			],
+			[
+				';',
+				{
+					kind: ';',
+					typeName: 'Semi',
+					modelType: 'token'
+				} as unknown as AssembledToken
+			]
+		]);
+
+		const output = emitConsts({
+			grammar: 'test',
+			nodeMap,
+			generatedIdTables: {
+				kindIds: {
+					source_file: { id: 1, cName: 'sym_source_file' },
+					';': { id: 2, cName: 'anon_sym_SEMI' },
+					missing: { id: 99, cName: 'sym_missing' }
+				},
+				fieldIds: {
+					item: { id: 7, cName: 'field_item' },
+					missing: { id: 99, cName: 'field_missing' }
+				},
+				sourceArtifact: 'parser.wasm'
+			}
+		});
+
+		expect(output).toContain(
+			'export const TREE_SITTER_ID_SOURCE = "parser.wasm";'
+		);
+		expect(output).toContain('export const enum TSKindId {');
+		expect(output).toContain('SourceFile = 1,');
+		expect(output).toContain('AnonSemi = 2,');
+		expect(output).toContain('"source_file": TSKindId.SourceFile,');
+		expect(output).toContain('";": TSKindId.AnonSemi,');
+		expect(output).not.toContain('missing');
+		expect(output).toContain('export const enum TSFieldId {');
+		expect(output).toContain('FieldItem = 7,');
+		expect(output).toContain('"item": TSFieldId.FieldItem,');
+		expect(output).toContain('export const TREE_SITTER_KIND_ID_JSON = [');
+		expect(output).toContain(
+			'{ name: "source_file", id: 1, enumName: "SourceFile", cName: "sym_source_file" },'
+		);
+		expect(output).toContain('export const TREE_SITTER_FIELD_ID_JSON = [');
+		expect(output).toContain(
+			'{ name: "item", id: 7, enumName: "FieldItem", cName: "field_item" },'
+		);
+	});
 });

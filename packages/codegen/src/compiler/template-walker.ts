@@ -239,7 +239,7 @@ export function renderRuleTemplate(
 function deriveWalkSlots(template: string): readonly WalkSlotUse[] {
 	const guarded = new Set<string>();
 	for (const match of template.matchAll(
-		/\{%\s*if\s+([a-z0-9_]+)\s*\|\s*isPresent\s*%\}/g
+		/\{%\s*if\s+([a-z0-9_]+)\s*\|\s*(?:isPresent|is_present)\s*%\}/g
 	)) {
 		const name = match[1];
 		if (name) guarded.add(name);

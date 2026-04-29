@@ -170,18 +170,24 @@ function registerSittirFilters(env: nunjucks.Environment): void {
 		const suffix = sides.trailing && flanked._trailing_anon === s ? s : '';
 		return prefix + joinWithLineCommentFix(v, s) + suffix;
 	};
-	env.addFilter('joinWithTrailing', (value: unknown, sep: unknown) =>
+	const joinWithTrailing = (value: unknown, sep: unknown) =>
 		flankJoin(value, sep, 'joinWithTrailing', {
 			leading: false,
 			trailing: true
 		})
-	);
-	env.addFilter('joinWithLeading', (value: unknown, sep: unknown) =>
+	;
+	env.addFilter('joinWithTrailing', joinWithTrailing);
+	env.addFilter('join_with_trailing', joinWithTrailing);
+	const joinWithLeading = (value: unknown, sep: unknown) =>
 		flankJoin(value, sep, 'joinWithLeading', { leading: true, trailing: false })
-	);
-	env.addFilter('joinWithFlanks', (value: unknown, sep: unknown) =>
+	;
+	env.addFilter('joinWithLeading', joinWithLeading);
+	env.addFilter('join_with_leading', joinWithLeading);
+	const joinWithFlanks = (value: unknown, sep: unknown) =>
 		flankJoin(value, sep, 'joinWithFlanks', { leading: true, trailing: true })
-	);
+	;
+	env.addFilter('joinWithFlanks', joinWithFlanks);
+	env.addFilter('join_with_flanks', joinWithFlanks);
 
 	// Presence-check filters — templates use `{% if foo | isBlank %}`
 	// (or the negated `{% if foo | isPresent %}`) for optional-field
@@ -201,7 +207,10 @@ function registerSittirFilters(env: nunjucks.Environment): void {
 		return false;
 	};
 	env.addFilter('isBlank', isBlank);
-	env.addFilter('isPresent', (value: unknown) => !isBlank(value));
+	env.addFilter('is_blank', isBlank);
+	const isPresent = (value: unknown) => !isBlank(value);
+	env.addFilter('isPresent', isPresent);
+	env.addFilter('is_present', isPresent);
 
 	// `value` filter — render an optional field as its inner value
 	// when present, or empty string when absent. Pairs with `isPresent`

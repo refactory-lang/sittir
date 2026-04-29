@@ -32,6 +32,7 @@ import { emitIndex } from '../emitters/index-file.ts';
 import { emitSuggested } from '../emitters/suggested.ts';
 import { emitIs } from '../emitters/is.ts';
 import { emitNodeModel } from '../emitters/node-model.ts';
+import { loadGeneratedIdTables } from './generated-metadata.ts';
 
 import type { NodeMap, IncludeFilter } from './types.ts';
 import type { EmittedTemplates } from '../emitters/templates.ts';
@@ -148,6 +149,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		'assemble',
 		nodeMap.nodes as unknown as Map<string, never>
 	);
+	const generatedIdTables = await loadGeneratedIdTables(cfg.grammar);
 
 	// Phase 5: Emit — every emitter consumes NodeMap directly. The
 	// ir-namespace keys are populated on each AssembledNode during
@@ -167,7 +169,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		utils: emitClientUtils({ nodeMap }),
 		from: emitFrom({ grammar: cfg.grammar, nodeMap }),
 		irNamespace: emitIr({ grammar: cfg.grammar, nodeMap }),
-		consts: emitConsts({ grammar: cfg.grammar, nodeMap }),
+		consts: emitConsts({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
 		index: emitIndex({ grammar: cfg.grammar, nodeMap }),
 		tests: emitTests({ grammar: cfg.grammar, nodeMap }),
 		typeTests: emitTypeTests({ nodeMap }),

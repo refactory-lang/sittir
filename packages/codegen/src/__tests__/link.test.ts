@@ -8,6 +8,7 @@ import {
 import type { DerivationLog } from '../compiler/types.ts';
 import type { Rule, SymbolRef } from '../compiler/rule.ts';
 import type { RawGrammar } from '../compiler/types.ts';
+import { createEmptyRuleCatalog } from '../compiler/rule-catalog.ts';
 
 function makeRaw(
 	rules: Record<string, Rule>,
@@ -16,6 +17,7 @@ function makeRaw(
 	return {
 		name: 'test',
 		rules,
+		ruleCatalog: createEmptyRuleCatalog(),
 		extras: [],
 		externals: [],
 		supertypes: [],

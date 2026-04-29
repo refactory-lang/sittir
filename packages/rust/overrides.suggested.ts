@@ -14,7 +14,7 @@
 // ---------------------------------------------------------------
 // Summary
 // ---------------------------------------------------------------
-// Field inferences:  7  (0 applied, 7 held)
+// Field inferences:  9  (0 applied, 9 held)
 // Rule promotions:   99  (91 applied, 8 held)
 // Repeated shapes:   4  (advisory — suggested supertypes/groups)
 
@@ -43,27 +43,34 @@ export const suggestedTransforms = {
   },
 
 
-  // _non_special_token: 1 inferred field(s)
-  // [held] _non_special_token field 'mutable_specifier' on $.mutable_specifier — 100% agreement, 9 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-
-  // _pointer_type_mut: 1 inferred field(s)
-  // [held] _pointer_type_mut field 'mutable_specifier' on $.mutable_specifier — 100% agreement, 9 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-
-  // _reference_expression_raw_mut: 1 inferred field(s)
-  _reference_expression_raw_mut: {
-      // [held] 100% agreement, 9 parents
-      1: field("mutable_specifier"),  // $.mutable_specifier
+  // captured_pattern: 1 inferred field(s)
+  captured_pattern: {
+      // [held] 100% agreement, 6 parents
+      2: field("pattern"),  // $._pattern
   },
 
-  // _struct_item_brace: 1 inferred field(s)
-  // [held] _struct_item_brace field 'where_clause' on $.where_clause — 89% agreement, 9 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+  // closure_parameters: 1 inferred field(s)
+  // [held] closure_parameters field 'pattern' on $._pattern — 100% agreement, 6 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
-  // _struct_item_tuple: 1 inferred field(s)
-  // [held] _struct_item_tuple field 'where_clause' on $.where_clause — 89% agreement, 9 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+  // match_pattern: 1 inferred field(s)
+  match_pattern: {
+      // [held] 100% agreement, 6 parents
+      0: field("pattern"),  // $._pattern
+  },
+
+  // mut_pattern: 1 inferred field(s)
+  mut_pattern: {
+      // [held] 100% agreement, 6 parents
+      1: field("pattern"),  // $._pattern
+  },
 
 
-  // reference_expression: 1 inferred field(s)
-  // [held] reference_expression field 'mutable_specifier' on $.mutable_specifier — 100% agreement, 9 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+  // ref_pattern: 1 inferred field(s)
+  ref_pattern: {
+      // [held] 100% agreement, 6 parents
+      1: field("pattern"),  // $._pattern
+  },
+
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   reference_expression: {
       "1/0": variant("form0"),
@@ -75,6 +82,15 @@ export const suggestedTransforms = {
       "0": variant("form0"),
       "1": variant("form1"),
   },
+
+  // slice_pattern: 1 inferred field(s)
+  // [held] slice_pattern field 'pattern' on $._pattern — 100% agreement, 6 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+
+  // tuple_pattern: 1 inferred field(s)
+  // [held] tuple_pattern field 'pattern' on $._pattern — 100% agreement, 6 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+
+  // tuple_struct_pattern: 1 inferred field(s)
+  // [held] tuple_struct_pattern field 'pattern' on $._pattern — 100% agreement, 6 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
   // type_arguments: 1 inferred field(s)
   // [held] type_arguments field 'bounds' on $.trait_bounds — 100% agreement, 5 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
@@ -144,11 +160,11 @@ export const suggestedRules = {
   _use_clause: $ => choice($.self, $.identifier, $.metavariable, $.super, $.crate, $.scoped_identifier, $.use_as_clause, $.use_list, $.scoped_use_list, $.use_wildcard),
 
   // --- Repeated-shape candidates (reused across ≥2 parents) ---
-  // parents: function_item, function_signature_item
-  _shared_2: $ => choice($.identifier, $.metavariable),
-
   // parents: _function_type_trait_form, struct_pattern
   _type_identifier: $ => choice($._type_identifier, $.scoped_type_identifier),
+
+  // parents: _range_pattern_left_with_right, _range_pattern_prefix
+  _shared_2: $ => choice($._literal_pattern, $._path),
 
 };
 
@@ -272,12 +288,14 @@ export interface InferredField {
   readonly applied: boolean;
 }
 export const inferredFields: readonly InferredField[] = [
-  { kind: "_non_special_token", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 9, applied: false },
-  { kind: "_pointer_type_mut", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 9, applied: false },
-  { kind: "_reference_expression_raw_mut", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 9, applied: false },
-  { kind: "reference_expression", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 9, applied: false },
-  { kind: "_struct_item_brace", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.889, sampleSize: 9, applied: false },
-  { kind: "_struct_item_tuple", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.889, sampleSize: 9, applied: false },
+  { kind: "captured_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
+  { kind: "closure_parameters", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
+  { kind: "match_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
+  { kind: "mut_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
+  { kind: "ref_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
+  { kind: "slice_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
+  { kind: "tuple_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
+  { kind: "tuple_struct_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
   { kind: "type_arguments", fieldName: "bounds", targetSymbol: "trait_bounds", confidence: "high", agreement: 1.000, sampleSize: 5, applied: false },
 ];
 
@@ -288,8 +306,8 @@ export interface RepeatedShape {
   readonly shape: 'supertype' | 'group';
 }
 export const repeatedShapes: readonly RepeatedShape[] = [
-  { suggestedName: "_shared_2", kinds: ["identifier","metavariable"], parents: ["function_item","function_signature_item"], shape: "supertype" },
-  { suggestedName: "_shared_2", kinds: ["_field_identifier","integer_literal"], parents: ["field_expression","field_initializer"], shape: "supertype" },
   { suggestedName: "_type_identifier", kinds: ["_type_identifier","scoped_type_identifier"], parents: ["_function_type_trait_form","struct_pattern"], shape: "supertype" },
   { suggestedName: "_shared_2", kinds: ["_literal_pattern","_path"], parents: ["_range_pattern_left_with_right","_range_pattern_prefix"], shape: "supertype" },
+  { suggestedName: "_shared_2", kinds: ["_field_identifier","integer_literal"], parents: ["field_expression","field_initializer"], shape: "supertype" },
+  { suggestedName: "_shared_2", kinds: ["identifier","metavariable"], parents: ["function_item","function_signature_item"], shape: "supertype" },
 ];

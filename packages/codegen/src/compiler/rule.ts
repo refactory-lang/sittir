@@ -22,37 +22,45 @@
 // Rule — the shared intermediate representation
 // ---------------------------------------------------------------------------
 
-export type Rule =
+export type RuleId = string;
+
+export interface RuleIdentity {
+	readonly id?: RuleId;
+}
+
+export type Rule = RuleIdentity &
 	// Structural grouping — Optimize restructures these
-	| SeqRule
-	| OptionalRule
-	| ChoiceRule
-	| RepeatRule
-	| Repeat1Rule
+	(
+		| SeqRule
+		| OptionalRule
+		| ChoiceRule
+		| RepeatRule
+		| Repeat1Rule
 
-	// Named patterns — clean wrappers, no derived metadata
-	| FieldRule
-	| VariantRule
-	| ClauseRule
-	| EnumRule
-	| SupertypeRule
-	| GroupRule
-	| TerminalRule
-	| PolymorphRule
+		// Named patterns — clean wrappers, no derived metadata
+		| FieldRule
+		| VariantRule
+		| ClauseRule
+		| EnumRule
+		| SupertypeRule
+		| GroupRule
+		| TerminalRule
+		| PolymorphRule
 
-	// Terminals
-	| StringRule
-	| PatternRule
+		// Terminals
+		| StringRule
+		| PatternRule
 
-	// Structural whitespace
-	| IndentRule
-	| DedentRule
-	| NewlineRule
+		// Structural whitespace
+		| IndentRule
+		| DedentRule
+		| NewlineRule
 
-	// References — Link resolves these; absent after Link
-	| SymbolRule
-	| AliasRule
-	| TokenRule;
+		// References — Link resolves these; absent after Link
+		| SymbolRule
+		| AliasRule
+		| TokenRule
+	);
 
 // ---------------------------------------------------------------------------
 // Structural grouping
@@ -360,6 +368,7 @@ export interface SymbolRef {
 	refType: 'symbol' | 'alias' | 'token';
 	from: string;
 	to: string;
+	fromRuleId?: RuleId;
 	fieldName?: string;
 	optional?: boolean;
 	repeated?: boolean;

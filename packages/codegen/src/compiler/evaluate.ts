@@ -23,6 +23,8 @@ import type {
 	SymbolRef
 } from './rule.ts';
 import type { RawGrammar } from './types.ts';
+import type { RuleProvenance } from './types.ts';
+import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import type { WireContext, RefineForm } from '../dsl/wire/wire.ts';
 import type { PolymorphVariant } from './types.ts';
@@ -864,6 +866,7 @@ function grammarFn(
 
 	const refs: SymbolRef[] = seedRefsFromBaseGrammar(baseGrammar);
 	const rules: Record<string, Rule> = { ...baseRules };
+	const provenanceByKind = new Map<string, RuleProvenance>();
 
 	// Extract metadata
 	const extras: string[] = [];
@@ -874,7 +877,14 @@ function grammarFn(
 	let word: string | null = null;
 
 	const { roles: collectedRoles } = withRoleScope(() => {
-		evaluateRulesAndInjectSynthetics(opts, baseRules, refs, rules);
+		evaluateRulesAndInjectSynthetics(
+			opts,
+			baseRules,
+			refs,
+			rules,
+			provenanceByKind,
+			baseGrammar !== null
+		);
 		evaluateMetadataCallbacksInScope(
 			opts,
 			baseGrammar,
@@ -908,19 +918,22 @@ function grammarFn(
 	// downstream to point at. Synthesize `_${target}` with the inline
 	// body so the `_X → X` invariant holds uniformly — every alias
 	// target has a named hidden source in the rules map.
-	synthesizeInlineAliasSources(rules);
+	synthesizeInlineAliasSources(rules, provenanceByKind);
+	const identified = buildRuleCatalog(rules, provenanceByKind);
+	const references = attachReferenceRuleIds(refs, identified.ruleCatalog);
 
 	return {
 		grammar: {
 			name: opts.name,
-			rules,
+			rules: identified.rules,
 			extras,
 			externals,
 			supertypes,
 			inline,
 			conflicts,
 			word,
-			references: refs,
+			references,
+			ruleCatalog: identified.ruleCatalog,
 			// Per-grammar role bindings collected from inline `role()`
 			// calls inside externals/rules. Empty when the grammar
 			// declares no roles.
@@ -956,15 +969,23 @@ function grammarFn(
  * (the `_${target}` source) without adding entries for visible-only
  * kinds — matching tree-sitter's declaration view.
  */
-function synthesizeInlineAliasSources(rules: Record<string, Rule>): void {
+function synthesizeInlineAliasSources(
+	rules: Record<string, Rule>,
+	provenanceByKind: Map<string, RuleProvenance>
+): void {
 	const ruleEntries = Object.entries(rules);
 	for (const [name, rule] of ruleEntries) {
-		rules[name] = rewriteInlineAliases(rule, rules);
+		rules[name] = rewriteInlineAliases(rule, rules, provenanceByKind);
 	}
 }
 
-function rewriteInlineAliases(rule: Rule, rules: Record<string, Rule>): Rule {
-	const recurse = (r: Rule): Rule => rewriteInlineAliases(r, rules);
+function rewriteInlineAliases(
+	rule: Rule,
+	rules: Record<string, Rule>,
+	provenanceByKind: Map<string, RuleProvenance>
+): Rule {
+	const recurse = (r: Rule): Rule =>
+		rewriteInlineAliases(r, rules, provenanceByKind);
 	switch (rule.type) {
 		case 'alias':
 			if (rule.named && rule.value) {
@@ -985,6 +1006,7 @@ function rewriteInlineAliases(rule: Rule, rules: Record<string, Rule>): Rule {
 						rules[syntheticHiddenName] = isBareSymbolToExistingRule
 							? inner
 							: recurse(rule.content);
+						provenanceByKind.set(syntheticHiddenName, 'evaluate-synthesized');
 					}
 					return {
 						...rule,
@@ -1125,13 +1147,22 @@ function evaluateRulesAndInjectSynthetics(
 	opts: GrammarOptions,
 	baseRules: Record<string, Rule>,
 	refs: SymbolRef[],
-	rules: Record<string, Rule>
+	rules: Record<string, Rule>,
+	provenanceByKind: Map<string, RuleProvenance>,
+	isExtension: boolean
 ): void {
-	evaluateRuleFunctions(opts, baseRules, refs, rules);
+	evaluateRuleFunctions(
+		opts,
+		baseRules,
+		refs,
+		rules,
+		provenanceByKind,
+		isExtension
+	);
 	const wireCtx = (opts as unknown as { __wireContext__?: WireContext })
 		.__wireContext__;
 	if (wireCtx) {
-		injectSyntheticRules(wireCtx.deposits, rules);
+		injectSyntheticRules(wireCtx.deposits, rules, provenanceByKind);
 		prunePlaceholderOrphans(wireCtx, rules);
 	}
 }
@@ -1233,13 +1264,19 @@ function evaluateRuleFunctions(
 	opts: GrammarOptions,
 	baseRules: Record<string, Rule>,
 	refs: SymbolRef[],
-	rules: Record<string, Rule>
+	rules: Record<string, Rule>,
+	provenanceByKind: Map<string, RuleProvenance>,
+	isExtension: boolean
 ): void {
 	for (const [name, ruleFn] of Object.entries(opts.rules)) {
 		const $ = createProxy(name, refs);
 		const baseRule = baseRules[name];
 		const result = ruleFn.call($, $, baseRule);
 		rules[name] = normalize(result);
+		provenanceByKind.set(
+			name,
+			isExtension ? 'override-authored-or-replaced' : 'grammar-authored'
+		);
 	}
 }
 
@@ -1265,11 +1302,13 @@ function evaluateRuleFunctions(
  */
 function injectSyntheticRules(
 	syntheticRules: Map<string, unknown>,
-	rules: Record<string, Rule>
+	rules: Record<string, Rule>,
+	provenanceByKind: Map<string, RuleProvenance>
 ): void {
 	for (const [name, content] of syntheticRules) {
 		if (name in rules) continue;
 		rules[name] = content as Rule;
+		provenanceByKind.set(name, 'evaluate-synthesized');
 	}
 }
 

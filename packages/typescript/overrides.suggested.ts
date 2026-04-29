@@ -14,7 +14,7 @@
 // ---------------------------------------------------------------
 // Summary
 // ---------------------------------------------------------------
-// Field inferences:  7  (0 applied, 7 held)
+// Field inferences:  0  (0 applied, 0 held)
 // Rule promotions:   86  (78 applied, 8 held)
 // Repeated shapes:   7  (advisory — suggested supertypes/groups)
 
@@ -25,48 +25,16 @@
 // candidates target the same kind).
 // ---------------------------------------------------------------
 export const suggestedTransforms = {
-  // _class_body_member: 1 inferred field(s)
-  // [held] _class_body_member field 'semicolon' on $._semicolon — 87% agreement, 15 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   _class_body_member: {
       "1/0": variant("form0"),
       "1/1": variant("form1"),
   },
 
-  // _class_body_method: 1 inferred field(s)
-  // [held] _class_body_method field 'semicolon' on $._semicolon — 87% agreement, 15 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   _class_body_method_sig: {
       "1/0": variant("form0"),
       "1/1": variant("form1"),
-  },
-
-  // _export_statement_default_decl_arm_default_kw_value: 1 inferred field(s)
-  // [held] _export_statement_default_decl_arm_default_kw_value field 'semicolon' on $._semicolon — 87% agreement, 15 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-
-  // _export_statement_default_from_arm: 1 inferred field(s)
-  _export_statement_default_from_arm: {
-      // [held] 87% agreement, 15 parents
-      2: field("semicolon"),  // $._semicolon
-  },
-
-  // _export_statement_equals_export: 1 inferred field(s)
-  _export_statement_equals_export: {
-      // [held] 87% agreement, 15 parents
-      3: field("semicolon"),  // $._semicolon
-  },
-
-  // _export_statement_namespace_export: 1 inferred field(s)
-  _export_statement_namespace_export: {
-      // [held] 87% agreement, 15 parents
-      4: field("semicolon"),  // $._semicolon
-  },
-
-  // _export_statement_type_export: 1 inferred field(s)
-  _export_statement_type_export: {
-      // [held] 87% agreement, 15 parents
-      4: field("semicolon"),  // $._semicolon
   },
 
   // [held] polymorph — 1 choice position(s), 3 arm(s) total
@@ -325,13 +293,6 @@ export interface InferredField {
   readonly applied: boolean;
 }
 export const inferredFields: readonly InferredField[] = [
-  { kind: "_class_body_member", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
-  { kind: "_class_body_method", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
-  { kind: "_export_statement_default_decl_arm_default_kw_value", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
-  { kind: "_export_statement_default_from_arm", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
-  { kind: "_export_statement_equals_export", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
-  { kind: "_export_statement_namespace_export", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
-  { kind: "_export_statement_type_export", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
 ];
 
 export interface RepeatedShape {
