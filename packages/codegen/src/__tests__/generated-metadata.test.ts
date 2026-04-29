@@ -3,6 +3,7 @@ import { field, seq } from '../compiler/evaluate.ts';
 import { buildRuleCatalog } from '../compiler/rule-catalog.ts';
 import {
 	deriveGeneratedIdTablesFromLanguage,
+	deriveGeneratedIdTablesFromParserCSource,
 	deriveGeneratedMetadata,
 	type TreeSitterLanguageMetadata
 } from '../compiler/generated-metadata.ts';
@@ -72,6 +73,42 @@ describe('generated metadata', () => {
 				['item', 1],
 				['name', 2]
 			])
+		);
+	});
+
+	it('derives generated IDs and C names from generated parser.c', async () => {
+		const tables = await deriveGeneratedIdTablesFromParserCSource(
+			`
+enum ts_symbol_identifiers {
+  sym_identifier = 1,
+  anon_sym_BANG_EQ_EQ = 2,
+};
+
+static const char * const ts_symbol_names[] = {
+  [sym_identifier] = "identifier",
+  [anon_sym_BANG_EQ_EQ] = "!==",
+};
+
+enum ts_field_identifiers {
+  field_name = 1,
+};
+
+static const char * const ts_field_names[] = {
+  [0] = NULL,
+  [field_name] = "name",
+};
+`,
+			'parser.c'
+		);
+
+		expect(tables.kindIds).toEqual(
+			new Map([
+				['identifier', { id: 1, cName: 'sym_identifier' }],
+				['!==', { id: 2, cName: 'anon_sym_BANG_EQ_EQ' }]
+			])
+		);
+		expect(tables.fieldIds).toEqual(
+			new Map([['name', { id: 1, cName: 'field_name' }]])
 		);
 	});
 });
