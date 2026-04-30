@@ -394,6 +394,12 @@ pub trait PresenceCheck {
     fn is_present_check(&self) -> bool;
 }
 
+// NOTE: each of `str` / `&str` / `String` / `&String` needs its own
+// impl. Deref coercion does NOT apply to `T: PresenceCheck + ?Sized`
+// trait bounds — the askama filter macros monomorphize each call site
+// with the concrete reference type, so collapsing to a single
+// `impl for str` causes E0277 at every call site that uses `&str`.
+
 impl PresenceCheck for str {
     fn is_present_check(&self) -> bool {
         !self.trim().is_empty()
