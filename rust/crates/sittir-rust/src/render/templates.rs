@@ -6833,18 +6833,18 @@ fn render_array_expression_list_transport(node: &ArrayExpressionListTransport) -
             leading: false,
             trailing: false,
         },
-        attributes: ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
+        attributes: ::sittir_core::filters::ListNonterminalView {
             items: attributes_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
-        }),
-        elements: ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
+        },
+        elements: ::sittir_core::filters::ListNonterminalView {
             items: elements_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
-        }),
+        },
     };
     template.render()
 }
@@ -6859,14 +6859,14 @@ fn render_array_expression_semi_transport(node: &ArrayExpressionSemiTransport) -
     let elements_text = render_transport_dispatch(node.elements.as_ref())?;
     let length_text = render_transport_dispatch(node.length.as_ref())?;
     let template = ArrayExpressionSemiTemplate {
-        attributes: ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
+        attributes: ::sittir_core::filters::ListNonterminalView {
             items: attributes_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
-        }),
-        elements: elements_text.as_str(),
-        length: length_text.as_str(),
+        },
+        elements: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(elements_text.as_str())),
+        length: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(length_text.as_str())),
     };
     template.render()
 }
@@ -6879,8 +6879,8 @@ fn render_closure_expression_block_transport(node: &ClosureExpressionBlockTransp
         String::new()
     };
     let template = ClosureExpressionBlockTemplate {
-        body: body_text.as_str(),
-        return_type: return_type_text.as_str(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
+        return_type: if node.return_type.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(return_type_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -6888,7 +6888,7 @@ fn render_closure_expression_block_transport(node: &ClosureExpressionBlockTransp
 fn render__closure_expression_expr_transport(node: &_ClosureExpressionExprTransport) -> Result<String, ::askama::Error> {
     let body_text = render_transport_dispatch(node.body.as_ref())?;
     let template = _ClosureExpressionExprTemplate {
-        body: body_text.as_str(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
     };
     template.render()
 }
@@ -7009,8 +7009,8 @@ fn render_field_pattern_named_transport(node: &FieldPatternNamedTransport) -> Re
     let name_text = render_transport_dispatch(node.name.as_ref())?;
     let pattern_text = render_transport_dispatch(node.pattern.as_ref())?;
     let template = FieldPatternNamedTemplate {
-        name: name_text.as_str(),
-        pattern: pattern_text.as_str(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(pattern_text.as_str())),
     };
     template.render()
 }
@@ -7018,7 +7018,7 @@ fn render_field_pattern_named_transport(node: &FieldPatternNamedTransport) -> Re
 fn render__field_pattern_shorthand_transport(node: &_FieldPatternShorthandTransport) -> Result<String, ::askama::Error> {
     let name_text = render_transport_dispatch(node.name.as_ref())?;
     let template = _FieldPatternShorthandTemplate {
-        name: name_text.as_str(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
     };
     template.render()
 }
@@ -7026,7 +7026,7 @@ fn render__field_pattern_shorthand_transport(node: &_FieldPatternShorthandTransp
 fn render__foreign_mod_item_body_transport(node: &_ForeignModItemBodyTransport) -> Result<String, ::askama::Error> {
     let body_text = render_transport_dispatch(node.body.as_ref())?;
     let template = _ForeignModItemBodyTemplate {
-        body: body_text.as_str(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
     };
     template.render()
 }
@@ -7057,7 +7057,7 @@ fn render_function_type_fn_form_transport(node: &FunctionTypeFnFormTransport) ->
 fn render_function_type_trait_form_transport(node: &FunctionTypeTraitFormTransport) -> Result<String, ::askama::Error> {
     let r#trait_text = render_transport_dispatch(node.r#trait.as_ref())?;
     let template = FunctionTypeTraitFormTemplate {
-        r#trait: r#trait_text.as_str(),
+        r#trait: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#trait_text.as_str())),
     };
     template.render()
 }
@@ -7065,7 +7065,7 @@ fn render_function_type_trait_form_transport(node: &FunctionTypeTraitFormTranspo
 fn render__impl_item_body_transport(node: &_ImplItemBodyTransport) -> Result<String, ::askama::Error> {
     let body_text = render_transport_dispatch(node.body.as_ref())?;
     let template = _ImplItemBodyTemplate {
-        body: body_text.as_str(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
     };
     template.render()
 }
@@ -7131,9 +7131,9 @@ fn render_line_comment_content_transport(t: &LineCommentContentTransport) -> Res
 fn render_line_comment_doc_transport(node: &LineCommentDocTransport) -> Result<String, ::askama::Error> {
     let doc_text = render_transport_dispatch(node.doc.as_ref())?;
     let template = LineCommentDocTemplate {
-        doc: doc_text.as_str(),
-        inner: "",
-        outer: "",
+        doc: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(doc_text.as_str())),
+        inner: ::sittir_core::filters::OptionalNonterminalView::Missing,
+        outer: ::sittir_core::filters::OptionalNonterminalView::Missing,
     };
     template.render()
 }
@@ -7202,7 +7202,7 @@ fn render__macro_definition_paren_transport(node: &_MacroDefinitionParenTranspor
 fn render__match_arm_block_ending_transport(node: &_MatchArmBlockEndingTransport) -> Result<String, ::askama::Error> {
     let value_text = render_transport_dispatch(node.value.as_ref())?;
     let template = _MatchArmBlockEndingTemplate {
-        value: value_text.as_str(),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
     };
     template.render()
 }
@@ -7210,7 +7210,7 @@ fn render__match_arm_block_ending_transport(node: &_MatchArmBlockEndingTransport
 fn render_match_arm_with_comma_transport(node: &MatchArmWithCommaTransport) -> Result<String, ::askama::Error> {
     let value_text = render_transport_dispatch(node.value.as_ref())?;
     let template = MatchArmWithCommaTemplate {
-        value: value_text.as_str(),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
     };
     template.render()
 }
@@ -7222,7 +7222,7 @@ fn render_mod_item_external_transport(t: &ModItemExternalTransport) -> Result<St
 fn render__mod_item_inline_transport(node: &_ModItemInlineTransport) -> Result<String, ::askama::Error> {
     let body_text = render_transport_dispatch(node.body.as_ref())?;
     let template = _ModItemInlineTemplate {
-        body: body_text.as_str(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
     };
     template.render()
 }
@@ -7239,8 +7239,8 @@ fn render_or_pattern_binary_transport(node: &OrPatternBinaryTransport) -> Result
     let left_text = render_transport_dispatch(node.left.as_ref())?;
     let right_text = render_transport_dispatch(node.right.as_ref())?;
     let template = OrPatternBinaryTemplate {
-        left: left_text.as_str(),
-        right: right_text.as_str(),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(right_text.as_str())),
     };
     template.render()
 }
@@ -7248,7 +7248,7 @@ fn render_or_pattern_binary_transport(node: &OrPatternBinaryTransport) -> Result
 fn render_or_pattern_prefix_transport(node: &OrPatternPrefixTransport) -> Result<String, ::askama::Error> {
     let right_text = render_transport_dispatch(node.right.as_ref())?;
     let template = OrPatternPrefixTemplate {
-        right: right_text.as_str(),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(right_text.as_str())),
     };
     template.render()
 }
@@ -7286,7 +7286,7 @@ fn render_primitive_type_transport(t: &PrimitiveTypeTransport) -> Result<String,
 fn render__range_expression_bare_transport(node: &_RangeExpressionBareTransport) -> Result<String, ::askama::Error> {
     let operator_text = render_transport_dispatch(node.operator.as_ref())?;
     let template = _RangeExpressionBareTemplate {
-        operator: operator_text.as_str(),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operator_text.as_str())),
     };
     template.render()
 }
@@ -7296,9 +7296,9 @@ fn render_range_expression_binary_transport(node: &RangeExpressionBinaryTranspor
     let operator_text = render_transport_dispatch(node.operator.as_ref())?;
     let start_text = render_transport_dispatch(node.start.as_ref())?;
     let template = RangeExpressionBinaryTemplate {
-        end: end_text.as_str(),
-        operator: operator_text.as_str(),
-        start: start_text.as_str(),
+        end: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(end_text.as_str())),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operator_text.as_str())),
+        start: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(start_text.as_str())),
     };
     template.render()
 }
@@ -7307,8 +7307,8 @@ fn render_range_expression_postfix_transport(node: &RangeExpressionPostfixTransp
     let operator_text = render_transport_dispatch(node.operator.as_ref())?;
     let start_text = render_transport_dispatch(node.start.as_ref())?;
     let template = RangeExpressionPostfixTemplate {
-        operator: operator_text.as_str(),
-        start: start_text.as_str(),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operator_text.as_str())),
+        start: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(start_text.as_str())),
     };
     template.render()
 }
@@ -7317,8 +7317,8 @@ fn render_range_expression_prefix_transport(node: &RangeExpressionPrefixTranspor
     let end_text = render_transport_dispatch(node.end.as_ref())?;
     let operator_text = render_transport_dispatch(node.operator.as_ref())?;
     let template = RangeExpressionPrefixTemplate {
-        end: end_text.as_str(),
-        operator: operator_text.as_str(),
+        end: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(end_text.as_str())),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operator_text.as_str())),
     };
     template.render()
 }
@@ -7330,7 +7330,7 @@ fn render_range_pattern_left_bare_transport(t: &RangePatternLeftBareTransport) -
 fn render_range_pattern_left_with_right_transport(node: &RangePatternLeftWithRightTransport) -> Result<String, ::askama::Error> {
     let right_text = render_transport_dispatch(node.right.as_ref())?;
     let template = RangePatternLeftWithRightTemplate {
-        right: right_text.as_str(),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(right_text.as_str())),
     };
     template.render()
 }
@@ -7338,7 +7338,7 @@ fn render_range_pattern_left_with_right_transport(node: &RangePatternLeftWithRig
 fn render_range_pattern_prefix_transport(node: &RangePatternPrefixTransport) -> Result<String, ::askama::Error> {
     let right_text = render_transport_dispatch(node.right.as_ref())?;
     let template = RangePatternPrefixTemplate {
-        right: right_text.as_str(),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(right_text.as_str())),
     };
     template.render()
 }
@@ -7435,7 +7435,7 @@ fn render_struct_item_brace_transport(node: &StructItemBraceTransport) -> Result
             leading: false,
             trailing: false,
         },
-        body: body_text.as_str(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
     };
     template.render()
 }
@@ -7456,7 +7456,7 @@ fn render_struct_item_tuple_transport(node: &StructItemTupleTransport) -> Result
             leading: false,
             trailing: false,
         },
-        body: body_text.as_str(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
     };
     template.render()
 }
@@ -7624,7 +7624,7 @@ fn render_visibility_modifier_in_path_transport(node: &VisibilityModifierInPathT
             leading: false,
             trailing: false,
         },
-        r#in: r#in_text.as_str(),
+        r#in: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#in_text.as_str())),
     };
     template.render()
 }
@@ -7645,7 +7645,7 @@ fn render_visibility_modifier_pub_transport(node: &VisibilityModifierPubTranspor
             leading: false,
             trailing: false,
         },
-        r#pub: r#pub_text.as_str(),
+        r#pub: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#pub_text.as_str())),
     };
     template.render()
 }
@@ -7662,8 +7662,8 @@ fn render_abstract_type_transport(node: &AbstractTypeTransport) -> Result<String
         String::new()
     };
     let template = AbstractTypeTemplate {
-        r#trait: r#trait_text.as_str(),
-        type_parameters: type_parameters_text.as_str(),
+        r#trait: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#trait_text.as_str())),
+        type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -7737,8 +7737,8 @@ fn render_array_type_transport(node: &ArrayTypeTransport) -> Result<String, ::as
         String::new()
     };
     let template = ArrayTypeTemplate {
-        element: element_text.as_str(),
-        length: length_text.as_str(),
+        element: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(element_text.as_str())),
+        length: if node.length.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(length_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -7747,8 +7747,8 @@ fn render_assignment_expression_transport(node: &AssignmentExpressionTransport) 
     let left_text = render_transport_dispatch(node.left.as_ref())?;
     let right_text = render_transport_dispatch(node.right.as_ref())?;
     let template = AssignmentExpressionTemplate {
-        left: left_text.as_str(),
-        right: right_text.as_str(),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(right_text.as_str())),
     };
     template.render()
 }
@@ -7771,10 +7771,10 @@ fn render_associated_type_transport(node: &AssociatedTypeTransport) -> Result<St
         String::new()
     };
     let template = AssociatedTypeTemplate {
-        bounds: bounds_text.as_str(),
-        name: name_text.as_str(),
-        type_parameters: type_parameters_text.as_str(),
-        where_clause: where_clause_text.as_str(),
+        bounds: if node.bounds.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(bounds_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        where_clause: if node.where_clause.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(where_clause_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -7787,8 +7787,8 @@ fn render_async_block_transport(node: &AsyncBlockTransport) -> Result<String, ::
         String::new()
     };
     let template = AsyncBlockTemplate {
-        block: block_text.as_str(),
-        move_marker: move_marker_text.as_str(),
+        block: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(block_text.as_str())),
+        move_marker: if node.move_marker.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(move_marker_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -7807,8 +7807,8 @@ fn render_attribute_transport(node: &AttributeTransport) -> Result<String, ::ask
             leading: false,
             trailing: false,
         },
-        arguments: "",
-        value: "",
+        arguments: ::sittir_core::filters::OptionalNonterminalView::Missing,
+        value: ::sittir_core::filters::OptionalNonterminalView::Missing,
     };
     template.render()
 }
@@ -7816,7 +7816,7 @@ fn render_attribute_transport(node: &AttributeTransport) -> Result<String, ::ask
 fn render_attribute_item_transport(node: &AttributeItemTransport) -> Result<String, ::askama::Error> {
     let attribute_text = render_transport_dispatch(node.attribute.as_ref())?;
     let template = AttributeItemTemplate {
-        attribute: attribute_text.as_str(),
+        attribute: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(attribute_text.as_str())),
     };
     template.render()
 }
@@ -7862,9 +7862,9 @@ fn render_binary_expression_transport(node: &BinaryExpressionTransport) -> Resul
     let operator_text = render_transport_dispatch(node.operator.as_ref())?;
     let right_text = render_transport_dispatch(node.right.as_ref())?;
     let template = BinaryExpressionTemplate {
-        left: left_text.as_str(),
-        operator: operator_text.as_str(),
-        right: right_text.as_str(),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operator_text.as_str())),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(right_text.as_str())),
     };
     template.render()
 }
@@ -7888,7 +7888,7 @@ fn render_block_transport(node: &BlockTransport) -> Result<String, ::askama::Err
             leading: false,
             trailing: false,
         },
-        label: label_text.as_str(),
+        label: if node.label.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(label_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -7900,9 +7900,9 @@ fn render_block_comment_transport(node: &BlockCommentTransport) -> Result<String
         String::new()
     };
     let template = BlockCommentTemplate {
-        doc: doc_text.as_str(),
-        inner: "",
-        outer: "",
+        doc: if node.doc.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(doc_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        inner: ::sittir_core::filters::OptionalNonterminalView::Missing,
+        outer: ::sittir_core::filters::OptionalNonterminalView::Missing,
     };
     template.render()
 }
@@ -7922,8 +7922,8 @@ fn render_bounded_type_transport(node: &BoundedTypeTransport) -> Result<String, 
             leading: false,
             trailing: false,
         },
-        left: left_text.as_str(),
-        right: right_text.as_str(),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(right_text.as_str())),
     };
     template.render()
 }
@@ -7966,7 +7966,7 @@ fn render_break_expression_transport(node: &BreakExpressionTransport) -> Result<
             leading: false,
             trailing: false,
         },
-        label: label_text.as_str(),
+        label: if node.label.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(label_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -7975,8 +7975,8 @@ fn render_call_expression_transport(node: &CallExpressionTransport) -> Result<St
     let arguments_text = render_transport_dispatch(node.arguments.as_ref())?;
     let function_text = render_transport_dispatch(node.function.as_ref())?;
     let template = CallExpressionTemplate {
-        arguments: arguments_text.as_str(),
-        function: function_text.as_str(),
+        arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(arguments_text.as_str())),
+        function: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(function_text.as_str())),
     };
     template.render()
 }
@@ -7996,7 +7996,7 @@ fn render_captured_pattern_transport(node: &CapturedPatternTransport) -> Result<
             leading: false,
             trailing: false,
         },
-        identifier: identifier_text.as_str(),
+        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(identifier_text.as_str())),
     };
     template.render()
 }
@@ -8008,7 +8008,7 @@ fn render_char_literal_transport(t: &CharLiteralTransport) -> Result<String, ::a
 fn render_closure_expression_expr_transport(node: &ClosureExpressionExprTransport) -> Result<String, ::askama::Error> {
     let body_text = render_transport_dispatch(node.body.as_ref())?;
     let template = ClosureExpressionExprTemplate {
-        body: body_text.as_str(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
     };
     template.render()
 }
@@ -8050,10 +8050,10 @@ fn render_closure_expression_uform_block_transport(node: &ClosureExpressionUForm
             leading: false,
             trailing: false,
         },
-        async_marker: async_marker_text.as_str(),
-        move_marker: move_marker_text.as_str(),
-        parameters: parameters_text.as_str(),
-        static_marker: static_marker_text.as_str(),
+        async_marker: if node.async_marker.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(async_marker_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        move_marker: if node.move_marker.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(move_marker_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        parameters: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(parameters_text.as_str())),
+        static_marker: if node.static_marker.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(static_marker_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -8088,10 +8088,10 @@ fn render_closure_expression_uform_expr_transport(node: &ClosureExpressionUFormE
             leading: false,
             trailing: false,
         },
-        async_marker: async_marker_text.as_str(),
-        move_marker: move_marker_text.as_str(),
-        parameters: parameters_text.as_str(),
-        static_marker: static_marker_text.as_str(),
+        async_marker: if node.async_marker.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(async_marker_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        move_marker: if node.move_marker.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(move_marker_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        parameters: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(parameters_text.as_str())),
+        static_marker: if node.static_marker.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(static_marker_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -8137,9 +8137,9 @@ fn render_compound_assignment_expr_transport(node: &CompoundAssignmentExprTransp
     let operator_text = render_transport_dispatch(node.operator.as_ref())?;
     let right_text = render_transport_dispatch(node.right.as_ref())?;
     let template = CompoundAssignmentExprTemplate {
-        left: left_text.as_str(),
-        operator: operator_text.as_str(),
-        right: right_text.as_str(),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operator_text.as_str())),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(right_text.as_str())),
     };
     template.render()
 }
@@ -8147,7 +8147,7 @@ fn render_compound_assignment_expr_transport(node: &CompoundAssignmentExprTransp
 fn render_const_block_transport(node: &ConstBlockTransport) -> Result<String, ::askama::Error> {
     let body_text = render_transport_dispatch(node.body.as_ref())?;
     let template = ConstBlockTemplate {
-        body: body_text.as_str(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
     };
     template.render()
 }
@@ -8166,10 +8166,10 @@ fn render_const_item_transport(node: &ConstItemTransport) -> Result<String, ::as
         String::new()
     };
     let template = ConstItemTemplate {
-        name: name_text.as_str(),
-        r#type: r#type_text.as_str(),
-        value: value_text.as_str(),
-        visibility_modifier: visibility_modifier_text.as_str(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
+        value: if node.value.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(value_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -8183,9 +8183,9 @@ fn render_const_parameter_transport(node: &ConstParameterTransport) -> Result<St
         String::new()
     };
     let template = ConstParameterTemplate {
-        name: name_text.as_str(),
-        r#type: r#type_text.as_str(),
-        value: value_text.as_str(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
+        value: if node.value.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(value_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -8197,7 +8197,7 @@ fn render_continue_expression_transport(node: &ContinueExpressionTransport) -> R
         String::new()
     };
     let template = ContinueExpressionTemplate {
-        label: label_text.as_str(),
+        label: if node.label.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(label_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -8343,7 +8343,7 @@ fn render_delim_token_tree_uform_brace_transport(node: &DelimTokenTreeUFormBrace
 fn render_dynamic_type_transport(node: &DynamicTypeTransport) -> Result<String, ::askama::Error> {
     let r#trait_text = render_transport_dispatch(node.r#trait.as_ref())?;
     let template = DynamicTypeTemplate {
-        r#trait: r#trait_text.as_str(),
+        r#trait: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#trait_text.as_str())),
     };
     template.render()
 }
@@ -8389,11 +8389,11 @@ fn render_enum_item_transport(node: &EnumItemTransport) -> Result<String, ::aska
         String::new()
     };
     let template = EnumItemTemplate {
-        body: body_text.as_str(),
-        name: name_text.as_str(),
-        type_parameters: type_parameters_text.as_str(),
-        visibility_modifier: visibility_modifier_text.as_str(),
-        where_clause: where_clause_text.as_str(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        where_clause: if node.where_clause.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(where_clause_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -8416,10 +8416,10 @@ fn render_enum_variant_transport(node: &EnumVariantTransport) -> Result<String, 
         String::new()
     };
     let template = EnumVariantTemplate {
-        body: body_text.as_str(),
-        name: name_text.as_str(),
-        value: value_text.as_str(),
-        visibility_modifier: visibility_modifier_text.as_str(),
+        body: if node.body.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(body_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        value: if node.value.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(value_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -8539,10 +8539,10 @@ fn render_extern_crate_declaration_transport(node: &ExternCrateDeclarationTransp
         String::new()
     };
     let template = ExternCrateDeclarationTemplate {
-        alias: alias_text.as_str(),
-        crate_: crate__text.as_str(),
-        name: name_text.as_str(),
-        visibility_modifier: visibility_modifier_text.as_str(),
+        alias: if node.alias.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(alias_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        crate_: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(crate__text.as_str())),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -8554,7 +8554,7 @@ fn render_extern_modifier_transport(node: &ExternModifierTransport) -> Result<St
         String::new()
     };
     let template = ExternModifierTemplate {
-        string_literal: string_literal_text.as_str(),
+        string_literal: if node.string_literal.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(string_literal_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -8568,9 +8568,9 @@ fn render_field_declaration_transport(node: &FieldDeclarationTransport) -> Resul
         String::new()
     };
     let template = FieldDeclarationTemplate {
-        name: name_text.as_str(),
-        r#type: r#type_text.as_str(),
-        visibility_modifier: visibility_modifier_text.as_str(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
+        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -8597,8 +8597,8 @@ fn render_field_expression_transport(node: &FieldExpressionTransport) -> Result<
     let field_text = render_transport_dispatch(node.field.as_ref())?;
     let value_text = render_transport_dispatch(node.value.as_ref())?;
     let template = FieldExpressionTemplate {
-        field: field_text.as_str(),
-        value: value_text.as_str(),
+        field: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_text.as_str())),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
     };
     template.render()
 }
@@ -8619,8 +8619,8 @@ fn render_field_initializer_transport(node: &FieldInitializerTransport) -> Resul
             leading: false,
             trailing: false,
         },
-        field: field_text.as_str(),
-        value: value_text.as_str(),
+        field: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_text.as_str())),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
     };
     template.render()
 }
@@ -8646,7 +8646,7 @@ fn render_field_initializer_list_transport(node: &FieldInitializerListTransport)
 fn render_field_pattern_shorthand_transport(node: &FieldPatternShorthandTransport) -> Result<String, ::askama::Error> {
     let name_text = render_transport_dispatch(node.name.as_ref())?;
     let template = FieldPatternShorthandTemplate {
-        name: name_text.as_str(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
     };
     template.render()
 }
@@ -8682,8 +8682,8 @@ fn render_field_pattern_uform_shorthand_transport(node: &FieldPatternUFormShorth
             leading: false,
             trailing: false,
         },
-        mutable_specifier: mutable_specifier_text.as_str(),
-        ref_marker: ref_marker_text.as_str(),
+        mutable_specifier: if node.mutable_specifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(mutable_specifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        ref_marker: if node.ref_marker.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(ref_marker_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -8712,8 +8712,8 @@ fn render_field_pattern_uform_named_transport(node: &FieldPatternUFormNamedTrans
             leading: false,
             trailing: false,
         },
-        mutable_specifier: mutable_specifier_text.as_str(),
-        ref_marker: ref_marker_text.as_str(),
+        mutable_specifier: if node.mutable_specifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(mutable_specifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        ref_marker: if node.ref_marker.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(ref_marker_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -8728,10 +8728,10 @@ fn render_for_expression_transport(node: &ForExpressionTransport) -> Result<Stri
     let pattern_text = render_transport_dispatch(node.pattern.as_ref())?;
     let value_text = render_transport_dispatch(node.value.as_ref())?;
     let template = ForExpressionTemplate {
-        body: body_text.as_str(),
-        label: label_text.as_str(),
-        pattern: pattern_text.as_str(),
-        value: value_text.as_str(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
+        label: if node.label.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(label_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(pattern_text.as_str())),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
     };
     template.render()
 }
@@ -8757,7 +8757,7 @@ fn render_for_lifetimes_transport(node: &ForLifetimesTransport) -> Result<String
 fn render_foreign_mod_item_body_transport(node: &ForeignModItemBodyTransport) -> Result<String, ::askama::Error> {
     let body_text = render_transport_dispatch(node.body.as_ref())?;
     let template = ForeignModItemBodyTemplate {
-        body: body_text.as_str(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
     };
     template.render()
 }
@@ -8789,8 +8789,8 @@ fn render_foreign_mod_item_uform_semi_transport(node: &ForeignModItemUFormSemiTr
             leading: false,
             trailing: false,
         },
-        extern_modifier: extern_modifier_text.as_str(),
-        visibility_modifier: visibility_modifier_text.as_str(),
+        extern_modifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(extern_modifier_text.as_str())),
+        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -8815,8 +8815,8 @@ fn render_foreign_mod_item_uform_body_transport(node: &ForeignModItemUFormBodyTr
             leading: false,
             trailing: false,
         },
-        extern_modifier: extern_modifier_text.as_str(),
-        visibility_modifier: visibility_modifier_text.as_str(),
+        extern_modifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(extern_modifier_text.as_str())),
+        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -8855,14 +8855,14 @@ fn render_function_item_transport(node: &FunctionItemTransport) -> Result<String
         String::new()
     };
     let template = FunctionItemTemplate {
-        body: body_text.as_str(),
-        function_modifiers: function_modifiers_text.as_str(),
-        name: name_text.as_str(),
-        parameters: parameters_text.as_str(),
-        return_type: return_type_text.as_str(),
-        type_parameters: type_parameters_text.as_str(),
-        visibility_modifier: visibility_modifier_text.as_str(),
-        where_clause: where_clause_text.as_str(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
+        function_modifiers: if node.function_modifiers.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(function_modifiers_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        parameters: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(parameters_text.as_str())),
+        return_type: if node.return_type.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(return_type_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        where_clause: if node.where_clause.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(where_clause_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -8882,12 +8882,12 @@ fn render_function_modifiers_transport(node: &FunctionModifiersTransport) -> Res
             leading: false,
             trailing: false,
         },
-        modifier: ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
+        modifier: ::sittir_core::filters::ListNonterminalView {
             items: modifier_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
-        }),
+        },
     };
     template.render()
 }
@@ -8921,13 +8921,13 @@ fn render_function_signature_item_transport(node: &FunctionSignatureItemTranspor
         String::new()
     };
     let template = FunctionSignatureItemTemplate {
-        function_modifiers: function_modifiers_text.as_str(),
-        name: name_text.as_str(),
-        parameters: parameters_text.as_str(),
-        return_type: return_type_text.as_str(),
-        type_parameters: type_parameters_text.as_str(),
-        visibility_modifier: visibility_modifier_text.as_str(),
-        where_clause: where_clause_text.as_str(),
+        function_modifiers: if node.function_modifiers.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(function_modifiers_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        parameters: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(parameters_text.as_str())),
+        return_type: if node.return_type.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(return_type_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        where_clause: if node.where_clause.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(where_clause_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -8957,9 +8957,9 @@ fn render_function_type_transport(node: &FunctionTypeTransport) -> Result<String
             leading: false,
             trailing: false,
         },
-        for_lifetimes: for_lifetimes_text.as_str(),
-        parameters: parameters_text.as_str(),
-        return_type: return_type_text.as_str(),
+        for_lifetimes: if node.for_lifetimes.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(for_lifetimes_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        parameters: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(parameters_text.as_str())),
+        return_type: if node.return_type.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(return_type_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -8972,8 +8972,8 @@ fn render_gen_block_transport(node: &GenBlockTransport) -> Result<String, ::aska
         String::new()
     };
     let template = GenBlockTemplate {
-        block: block_text.as_str(),
-        move_marker: move_marker_text.as_str(),
+        block: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(block_text.as_str())),
+        move_marker: if node.move_marker.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(move_marker_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -8982,8 +8982,8 @@ fn render_generic_function_transport(node: &GenericFunctionTransport) -> Result<
     let function_text = render_transport_dispatch(node.function.as_ref())?;
     let type_arguments_text = render_transport_dispatch(node.type_arguments.as_ref())?;
     let template = GenericFunctionTemplate {
-        function: function_text.as_str(),
-        type_arguments: type_arguments_text.as_str(),
+        function: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(function_text.as_str())),
+        type_arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(type_arguments_text.as_str())),
     };
     template.render()
 }
@@ -9003,7 +9003,7 @@ fn render_generic_pattern_transport(node: &GenericPatternTransport) -> Result<St
             leading: false,
             trailing: false,
         },
-        type_arguments: type_arguments_text.as_str(),
+        type_arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(type_arguments_text.as_str())),
     };
     template.render()
 }
@@ -9012,8 +9012,8 @@ fn render_generic_type_transport(node: &GenericTypeTransport) -> Result<String, 
     let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
     let type_arguments_text = render_transport_dispatch(node.type_arguments.as_ref())?;
     let template = GenericTypeTemplate {
-        r#type: r#type_text.as_str(),
-        type_arguments: type_arguments_text.as_str(),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
+        type_arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(type_arguments_text.as_str())),
     };
     template.render()
 }
@@ -9023,9 +9023,9 @@ fn render_generic_type_with_turbofish_transport(node: &GenericTypeWithTurbofishT
     let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
     let type_arguments_text = render_transport_dispatch(node.type_arguments.as_ref())?;
     let template = GenericTypeWithTurbofishTemplate {
-        turbofish: turbofish_text.as_str(),
-        r#type: r#type_text.as_str(),
-        type_arguments: type_arguments_text.as_str(),
+        turbofish: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(turbofish_text.as_str())),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
+        type_arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(type_arguments_text.as_str())),
     };
     template.render()
 }
@@ -9034,8 +9034,8 @@ fn render_higher_ranked_trait_bound_transport(node: &HigherRankedTraitBoundTrans
     let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
     let type_parameters_text = render_transport_dispatch(node.type_parameters.as_ref())?;
     let template = HigherRankedTraitBoundTemplate {
-        r#type: r#type_text.as_str(),
-        type_parameters: type_parameters_text.as_str(),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
+        type_parameters: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())),
     };
     template.render()
 }
@@ -9053,9 +9053,9 @@ fn render_if_expression_transport(node: &IfExpressionTransport) -> Result<String
     let condition_text = render_transport_dispatch(node.condition.as_ref())?;
     let consequence_text = render_transport_dispatch(node.consequence.as_ref())?;
     let template = IfExpressionTemplate {
-        alternative: alternative_text.as_str(),
-        condition: condition_text.as_str(),
-        consequence: consequence_text.as_str(),
+        alternative: if node.alternative.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(alternative_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        condition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(condition_text.as_str())),
+        consequence: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(consequence_text.as_str())),
     };
     template.render()
 }
@@ -9063,7 +9063,7 @@ fn render_if_expression_transport(node: &IfExpressionTransport) -> Result<String
 fn render_impl_item_body_transport(node: &ImplItemBodyTransport) -> Result<String, ::askama::Error> {
     let body_text = render_transport_dispatch(node.body.as_ref())?;
     let template = ImplItemBodyTemplate {
-        body: body_text.as_str(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
     };
     template.render()
 }
@@ -9115,12 +9115,12 @@ fn render_impl_item_uform_body_transport(node: &ImplItemUFormBodyTransport) -> R
             leading: false,
             trailing: false,
         },
-        negative: negative_text.as_str(),
-        r#trait: r#trait_text.as_str(),
-        r#type: r#type_text.as_str(),
-        type_parameters: type_parameters_text.as_str(),
-        unsafe_marker: unsafe_marker_text.as_str(),
-        where_clause: where_clause_text.as_str(),
+        negative: if node.negative.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(negative_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        r#trait: if node.r#trait.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(r#trait_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
+        type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        unsafe_marker: if node.unsafe_marker.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(unsafe_marker_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        where_clause: if node.where_clause.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(where_clause_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -9165,12 +9165,12 @@ fn render_impl_item_uform_semi_transport(node: &ImplItemUFormSemiTransport) -> R
             leading: false,
             trailing: false,
         },
-        negative: negative_text.as_str(),
-        r#trait: r#trait_text.as_str(),
-        r#type: r#type_text.as_str(),
-        type_parameters: type_parameters_text.as_str(),
-        unsafe_marker: unsafe_marker_text.as_str(),
-        where_clause: where_clause_text.as_str(),
+        negative: if node.negative.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(negative_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        r#trait: if node.r#trait.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(r#trait_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
+        type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        unsafe_marker: if node.unsafe_marker.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(unsafe_marker_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        where_clause: if node.where_clause.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(where_clause_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -9179,8 +9179,8 @@ fn render_index_expression_transport(node: &IndexExpressionTransport) -> Result<
     let index_text = render_transport_dispatch(node.index.as_ref())?;
     let object_text = render_transport_dispatch(node.object.as_ref())?;
     let template = IndexExpressionTemplate {
-        index: index_text.as_str(),
-        object: object_text.as_str(),
+        index: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(index_text.as_str())),
+        object: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(object_text.as_str())),
     };
     template.render()
 }
@@ -9188,7 +9188,7 @@ fn render_index_expression_transport(node: &IndexExpressionTransport) -> Result<
 fn render_inner_attribute_item_transport(node: &InnerAttributeItemTransport) -> Result<String, ::askama::Error> {
     let attribute_text = render_transport_dispatch(node.attribute.as_ref())?;
     let template = InnerAttributeItemTemplate {
-        attribute: attribute_text.as_str(),
+        attribute: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(attribute_text.as_str())),
     };
     template.render()
 }
@@ -9200,7 +9200,7 @@ fn render_integer_literal_transport(t: &IntegerLiteralTransport) -> Result<Strin
 fn render_label_transport(node: &LabelTransport) -> Result<String, ::askama::Error> {
     let identifier_text = render_transport_dispatch(node.identifier.as_ref())?;
     let template = LabelTemplate {
-        identifier: identifier_text.as_str(),
+        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(identifier_text.as_str())),
     };
     template.render()
 }
@@ -9221,8 +9221,8 @@ fn render_last_match_arm_transport(node: &LastMatchArmTransport) -> Result<Strin
             leading: false,
             trailing: false,
         },
-        pattern: pattern_text.as_str(),
-        value: value_text.as_str(),
+        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(pattern_text.as_str())),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
     };
     template.render()
 }
@@ -9231,8 +9231,8 @@ fn render_let_condition_transport(node: &LetConditionTransport) -> Result<String
     let pattern_text = render_transport_dispatch(node.pattern.as_ref())?;
     let value_text = render_transport_dispatch(node.value.as_ref())?;
     let template = LetConditionTemplate {
-        pattern: pattern_text.as_str(),
-        value: value_text.as_str(),
+        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(pattern_text.as_str())),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
     };
     template.render()
 }
@@ -9260,11 +9260,11 @@ fn render_let_declaration_transport(node: &LetDeclarationTransport) -> Result<St
         String::new()
     };
     let template = LetDeclarationTemplate {
-        alternative: alternative_text.as_str(),
-        mutable_specifier: mutable_specifier_text.as_str(),
-        pattern: pattern_text.as_str(),
-        r#type: r#type_text.as_str(),
-        value: value_text.as_str(),
+        alternative: if node.alternative.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(alternative_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        mutable_specifier: if node.mutable_specifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(mutable_specifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(pattern_text.as_str())),
+        r#type: if node.r#type.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(r#type_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        value: if node.value.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(value_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -9272,7 +9272,7 @@ fn render_let_declaration_transport(node: &LetDeclarationTransport) -> Result<St
 fn render_lifetime_transport(node: &LifetimeTransport) -> Result<String, ::askama::Error> {
     let identifier_text = render_transport_dispatch(node.identifier.as_ref())?;
     let template = LifetimeTemplate {
-        identifier: identifier_text.as_str(),
+        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(identifier_text.as_str())),
     };
     template.render()
 }
@@ -9285,8 +9285,8 @@ fn render_lifetime_parameter_transport(node: &LifetimeParameterTransport) -> Res
     };
     let name_text = render_transport_dispatch(node.name.as_ref())?;
     let template = LifetimeParameterTemplate {
-        bounds: bounds_text.as_str(),
-        name: name_text.as_str(),
+        bounds: if node.bounds.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(bounds_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
     };
     template.render()
 }
@@ -9361,8 +9361,8 @@ fn render_loop_expression_transport(node: &LoopExpressionTransport) -> Result<St
         String::new()
     };
     let template = LoopExpressionTemplate {
-        body: body_text.as_str(),
-        label: label_text.as_str(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
+        label: if node.label.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(label_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -9447,7 +9447,7 @@ fn render_macro_definition_uform_paren_transport(node: &MacroDefinitionUFormPare
             leading: false,
             trailing: false,
         },
-        name: name_text.as_str(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
     };
     template.render()
 }
@@ -9467,7 +9467,7 @@ fn render_macro_definition_uform_bracket_transport(node: &MacroDefinitionUFormBr
             leading: false,
             trailing: false,
         },
-        name: name_text.as_str(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
     };
     template.render()
 }
@@ -9487,7 +9487,7 @@ fn render_macro_definition_uform_brace_transport(node: &MacroDefinitionUFormBrac
             leading: false,
             trailing: false,
         },
-        name: name_text.as_str(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
     };
     template.render()
 }
@@ -9496,8 +9496,8 @@ fn render_macro_invocation_transport(node: &MacroInvocationTransport) -> Result<
     let r#macro_text = render_transport_dispatch(node.r#macro.as_ref())?;
     let token_tree_text = render_transport_dispatch(node.token_tree.as_ref())?;
     let template = MacroInvocationTemplate {
-        r#macro: r#macro_text.as_str(),
-        token_tree: token_tree_text.as_str(),
+        r#macro: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#macro_text.as_str())),
+        token_tree: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(token_tree_text.as_str())),
     };
     template.render()
 }
@@ -9506,8 +9506,8 @@ fn render_macro_rule_transport(node: &MacroRuleTransport) -> Result<String, ::as
     let left_text = render_transport_dispatch(node.left.as_ref())?;
     let right_text = render_transport_dispatch(node.right.as_ref())?;
     let template = MacroRuleTemplate {
-        left: left_text.as_str(),
-        right: right_text.as_str(),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(right_text.as_str())),
     };
     template.render()
 }
@@ -9515,7 +9515,7 @@ fn render_macro_rule_transport(node: &MacroRuleTransport) -> Result<String, ::as
 fn render_match_arm_block_ending_transport(node: &MatchArmBlockEndingTransport) -> Result<String, ::askama::Error> {
     let value_text = render_transport_dispatch(node.value.as_ref())?;
     let template = MatchArmBlockEndingTemplate {
-        value: value_text.as_str(),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
     };
     template.render()
 }
@@ -9542,7 +9542,7 @@ fn render_match_arm_uform_with_comma_transport(node: &MatchArmUFormWithCommaTran
             leading: false,
             trailing: false,
         },
-        pattern: pattern_text.as_str(),
+        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(pattern_text.as_str())),
     };
     template.render()
 }
@@ -9562,7 +9562,7 @@ fn render_match_arm_uform_block_ending_transport(node: &MatchArmUFormBlockEnding
             leading: false,
             trailing: false,
         },
-        pattern: pattern_text.as_str(),
+        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(pattern_text.as_str())),
     };
     template.render()
 }
@@ -9590,8 +9590,8 @@ fn render_match_expression_transport(node: &MatchExpressionTransport) -> Result<
     let body_text = render_transport_dispatch(node.body.as_ref())?;
     let value_text = render_transport_dispatch(node.value.as_ref())?;
     let template = MatchExpressionTemplate {
-        body: body_text.as_str(),
-        value: value_text.as_str(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
     };
     template.render()
 }
@@ -9615,7 +9615,7 @@ fn render_match_pattern_transport(node: &MatchPatternTransport) -> Result<String
             leading: false,
             trailing: false,
         },
-        condition: condition_text.as_str(),
+        condition: if node.condition.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(condition_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -9627,7 +9627,7 @@ fn render_metavariable_transport(t: &MetavariableTransport) -> Result<String, ::
 fn render_mod_item_inline_transport(node: &ModItemInlineTransport) -> Result<String, ::askama::Error> {
     let body_text = render_transport_dispatch(node.body.as_ref())?;
     let template = ModItemInlineTemplate {
-        body: body_text.as_str(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
     };
     template.render()
 }
@@ -9659,8 +9659,8 @@ fn render_mod_item_uform_external_transport(node: &ModItemUFormExternalTransport
             leading: false,
             trailing: false,
         },
-        name: name_text.as_str(),
-        visibility_modifier: visibility_modifier_text.as_str(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -9685,8 +9685,8 @@ fn render_mod_item_uform_inline_transport(node: &ModItemUFormInlineTransport) ->
             leading: false,
             trailing: false,
         },
-        name: name_text.as_str(),
-        visibility_modifier: visibility_modifier_text.as_str(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -9706,7 +9706,7 @@ fn render_mut_pattern_transport(node: &MutPatternTransport) -> Result<String, ::
             leading: false,
             trailing: false,
         },
-        mutable_specifier: mutable_specifier_text.as_str(),
+        mutable_specifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(mutable_specifier_text.as_str())),
     };
     template.render()
 }
@@ -9725,7 +9725,7 @@ fn render_negative_literal_transport(node: &NegativeLiteralTransport) -> Result<
             leading: false,
             trailing: false,
         },
-        value: value_text.as_str(),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
     };
     template.render()
 }
@@ -9792,12 +9792,12 @@ fn render_ordered_field_declaration_list_transport(node: &OrderedFieldDeclaratio
             leading: false,
             trailing: false,
         },
-        r#type: ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
+        r#type: ::sittir_core::filters::ListNonterminalView {
             items: r#type_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
-        }),
+        },
     };
     template.render()
 }
@@ -9811,9 +9811,9 @@ fn render_parameter_transport(node: &ParameterTransport) -> Result<String, ::ask
     let pattern_text = render_transport_dispatch(node.pattern.as_ref())?;
     let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
     let template = ParameterTemplate {
-        mutable_specifier: mutable_specifier_text.as_str(),
-        pattern: pattern_text.as_str(),
-        r#type: r#type_text.as_str(),
+        mutable_specifier: if node.mutable_specifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(mutable_specifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(pattern_text.as_str())),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
     };
     template.render()
 }
@@ -9894,7 +9894,7 @@ fn render_pointer_type_uform_const_transport(node: &PointerTypeUFormConstTranspo
             leading: false,
             trailing: false,
         },
-        r#type: r#type_text.as_str(),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
     };
     template.render()
 }
@@ -9914,7 +9914,7 @@ fn render_pointer_type_uform_mut_transport(node: &PointerTypeUFormMutTransport) 
             leading: false,
             trailing: false,
         },
-        r#type: r#type_text.as_str(),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
     };
     template.render()
 }
@@ -9923,8 +9923,8 @@ fn render_qualified_type_transport(node: &QualifiedTypeTransport) -> Result<Stri
     let alias_text = render_transport_dispatch(node.alias.as_ref())?;
     let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
     let template = QualifiedTypeTemplate {
-        alias: alias_text.as_str(),
-        r#type: r#type_text.as_str(),
+        alias: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(alias_text.as_str())),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
     };
     template.render()
 }
@@ -9932,7 +9932,7 @@ fn render_qualified_type_transport(node: &QualifiedTypeTransport) -> Result<Stri
 fn render_range_expression_bare_transport(node: &RangeExpressionBareTransport) -> Result<String, ::askama::Error> {
     let operator_text = render_transport_dispatch(node.operator.as_ref())?;
     let template = RangeExpressionBareTemplate {
-        operator: operator_text.as_str(),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operator_text.as_str())),
     };
     template.render()
 }
@@ -10041,7 +10041,7 @@ fn render_range_pattern_uform_left_with_right_transport(node: &RangePatternUForm
             leading: false,
             trailing: false,
         },
-        left: left_text.as_str(),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
     };
     template.render()
 }
@@ -10061,7 +10061,7 @@ fn render_range_pattern_uform_left_bare_transport(node: &RangePatternUFormLeftBa
             leading: false,
             trailing: false,
         },
-        left: left_text.as_str(),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
     };
     template.render()
 }
@@ -10080,7 +10080,7 @@ fn render_range_pattern_uform_prefix_transport(node: &RangePatternUFormPrefixTra
             leading: false,
             trailing: false,
         },
-        left: "",
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render()
 }
@@ -10125,7 +10125,7 @@ fn render_reference_expression_transport(node: &ReferenceExpressionTransport) ->
             leading: false,
             trailing: false,
         },
-        value: value_text.as_str(),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
     };
     template.render()
 }
@@ -10138,8 +10138,8 @@ fn render_reference_pattern_transport(node: &ReferencePatternTransport) -> Resul
     };
     let pattern_text = render_transport_dispatch(node.pattern.as_ref())?;
     let template = ReferencePatternTemplate {
-        mutable_specifier: mutable_specifier_text.as_str(),
-        pattern: pattern_text.as_str(),
+        mutable_specifier: if node.mutable_specifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(mutable_specifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(pattern_text.as_str())),
     };
     template.render()
 }
@@ -10157,9 +10157,9 @@ fn render_reference_type_transport(node: &ReferenceTypeTransport) -> Result<Stri
     };
     let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
     let template = ReferenceTypeTemplate {
-        lifetime: lifetime_text.as_str(),
-        mutable_specifier: mutable_specifier_text.as_str(),
-        r#type: r#type_text.as_str(),
+        lifetime: if node.lifetime.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(lifetime_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        mutable_specifier: if node.mutable_specifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(mutable_specifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
     };
     template.render()
 }
@@ -10213,8 +10213,8 @@ fn render_scoped_identifier_transport(node: &ScopedIdentifierTransport) -> Resul
         String::new()
     };
     let template = ScopedIdentifierTemplate {
-        name: name_text.as_str(),
-        path: path_text.as_str(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        path: if node.path.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(path_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -10227,8 +10227,8 @@ fn render_scoped_type_identifier_transport(node: &ScopedTypeIdentifierTransport)
         String::new()
     };
     let template = ScopedTypeIdentifierTemplate {
-        name: name_text.as_str(),
-        path: path_text.as_str(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        path: if node.path.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(path_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -10241,8 +10241,8 @@ fn render_scoped_type_identifier_in_expression_position_transport(node: &ScopedT
         String::new()
     };
     let template = ScopedTypeIdentifierInExpressionPositionTemplate {
-        name: name_text.as_str(),
-        path: path_text.as_str(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        path: if node.path.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(path_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -10255,8 +10255,8 @@ fn render_scoped_use_list_transport(node: &ScopedUseListTransport) -> Result<Str
         String::new()
     };
     let template = ScopedUseListTemplate {
-        list: list_text.as_str(),
-        path: path_text.as_str(),
+        list: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(list_text.as_str())),
+        path: if node.path.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(path_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -10283,10 +10283,10 @@ fn render_self_parameter_transport(node: &SelfParameterTransport) -> Result<Stri
     };
     let self__text = render_transport_dispatch(node.self_.as_ref())?;
     let template = SelfParameterTemplate {
-        lifetime: lifetime_text.as_str(),
-        mutable_specifier: mutable_specifier_text.as_str(),
-        reference: reference_text.as_str(),
-        self_: self__text.as_str(),
+        lifetime: if node.lifetime.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(lifetime_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        mutable_specifier: if node.mutable_specifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(mutable_specifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        reference: if node.reference.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(reference_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        self_: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(self__text.as_str())),
     };
     template.render()
 }
@@ -10304,13 +10304,13 @@ fn render_shorthand_field_initializer_transport(node: &ShorthandFieldInitializer
         .collect();
     let identifier_text = render_transport_dispatch(node.identifier.as_ref())?;
     let template = ShorthandFieldInitializerTemplate {
-        attributes: ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
+        attributes: ::sittir_core::filters::ListNonterminalView {
             items: attributes_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
-        }),
-        identifier: identifier_text.as_str(),
+        },
+        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(identifier_text.as_str())),
     };
     template.render()
 }
@@ -10346,13 +10346,13 @@ fn render_source_file_transport(node: &SourceFileTransport) -> Result<String, ::
         String::new()
     };
     let template = SourceFileTemplate {
-        shebang: shebang_text.as_str(),
-        statements: ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
+        shebang: if node.shebang.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(shebang_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        statements: ::sittir_core::filters::ListNonterminalView {
             items: statements_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
-        }),
+        },
     };
     template.render()
 }
@@ -10376,12 +10376,12 @@ fn render_static_item_transport(node: &StaticItemTransport) -> Result<String, ::
         String::new()
     };
     let template = StaticItemTemplate {
-        mutable_specifier: mutable_specifier_text.as_str(),
-        name: name_text.as_str(),
-        ref_marker: "",
-        r#type: r#type_text.as_str(),
-        value: value_text.as_str(),
-        visibility_modifier: visibility_modifier_text.as_str(),
+        mutable_specifier: if node.mutable_specifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(mutable_specifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        ref_marker: ::sittir_core::filters::OptionalNonterminalView::Missing,
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
+        value: if node.value.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(value_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -10408,8 +10408,8 @@ fn render_struct_expression_transport(node: &StructExpressionTransport) -> Resul
     let body_text = render_transport_dispatch(node.body.as_ref())?;
     let name_text = render_transport_dispatch(node.name.as_ref())?;
     let template = StructExpressionTemplate {
-        body: body_text.as_str(),
-        name: name_text.as_str(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
     };
     template.render()
 }
@@ -10447,9 +10447,9 @@ fn render_struct_item_uform_brace_transport(node: &StructItemUFormBraceTransport
             leading: false,
             trailing: false,
         },
-        name: name_text.as_str(),
-        type_parameters: type_parameters_text.as_str(),
-        visibility_modifier: visibility_modifier_text.as_str(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -10479,9 +10479,9 @@ fn render_struct_item_uform_tuple_transport(node: &StructItemUFormTupleTransport
             leading: false,
             trailing: false,
         },
-        name: name_text.as_str(),
-        type_parameters: type_parameters_text.as_str(),
-        visibility_modifier: visibility_modifier_text.as_str(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -10511,9 +10511,9 @@ fn render_struct_item_uform_unit_transport(node: &StructItemUFormUnitTransport) 
             leading: false,
             trailing: false,
         },
-        name: name_text.as_str(),
-        type_parameters: type_parameters_text.as_str(),
-        visibility_modifier: visibility_modifier_text.as_str(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -10533,7 +10533,7 @@ fn render_struct_pattern_transport(node: &StructPatternTransport) -> Result<Stri
             leading: false,
             trailing: false,
         },
-        r#type: r#type_text.as_str(),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
     };
     template.render()
 }
@@ -10546,8 +10546,8 @@ fn render_token_binding_pattern_transport(node: &TokenBindingPatternTransport) -
     let name_text = render_transport_dispatch(node.name.as_ref())?;
     let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
     let template = TokenBindingPatternTemplate {
-        name: name_text.as_str(),
-        r#type: r#type_text.as_str(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
     };
     template.render()
 }
@@ -10867,13 +10867,13 @@ fn render_trait_item_transport(node: &TraitItemTransport) -> Result<String, ::as
         String::new()
     };
     let template = TraitItemTemplate {
-        body: body_text.as_str(),
-        bounds: bounds_text.as_str(),
-        name: name_text.as_str(),
-        type_parameters: type_parameters_text.as_str(),
-        unsafe_marker: unsafe_marker_text.as_str(),
-        visibility_modifier: visibility_modifier_text.as_str(),
-        where_clause: where_clause_text.as_str(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
+        bounds: if node.bounds.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(bounds_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        unsafe_marker: if node.unsafe_marker.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(unsafe_marker_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        where_clause: if node.where_clause.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(where_clause_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -10881,7 +10881,7 @@ fn render_trait_item_transport(node: &TraitItemTransport) -> Result<String, ::as
 fn render_try_block_transport(node: &TryBlockTransport) -> Result<String, ::askama::Error> {
     let block_text = render_transport_dispatch(node.block.as_ref())?;
     let template = TryBlockTemplate {
-        block: block_text.as_str(),
+        block: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(block_text.as_str())),
     };
     template.render()
 }
@@ -10889,7 +10889,7 @@ fn render_try_block_transport(node: &TryBlockTransport) -> Result<String, ::aska
 fn render_try_expression_transport(node: &TryExpressionTransport) -> Result<String, ::askama::Error> {
     let value_text = render_transport_dispatch(node.value.as_ref())?;
     let template = TryExpressionTemplate {
-        value: value_text.as_str(),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
     };
     template.render()
 }
@@ -10909,18 +10909,18 @@ fn render_tuple_expression_transport(node: &TupleExpressionTransport) -> Result<
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = TupleExpressionTemplate {
-        attributes: ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
+        attributes: ::sittir_core::filters::ListNonterminalView {
             items: attributes_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
-        }),
-        elements: ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
+        },
+        elements: ::sittir_core::filters::ListNonterminalView {
             items: elements_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
-        }),
+        },
     };
     template.render()
 }
@@ -10958,7 +10958,7 @@ fn render_tuple_struct_pattern_transport(node: &TupleStructPatternTransport) -> 
             leading: false,
             trailing: false,
         },
-        r#type: r#type_text.as_str(),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
     };
     template.render()
 }
@@ -11008,9 +11008,9 @@ fn render_type_binding_transport(node: &TypeBindingTransport) -> Result<String, 
         String::new()
     };
     let template = TypeBindingTemplate {
-        name: name_text.as_str(),
-        r#type: r#type_text.as_str(),
-        type_arguments: type_arguments_text.as_str(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
+        type_arguments: if node.type_arguments.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_arguments_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -11019,8 +11019,8 @@ fn render_type_cast_expression_transport(node: &TypeCastExpressionTransport) -> 
     let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
     let value_text = render_transport_dispatch(node.value.as_ref())?;
     let template = TypeCastExpressionTemplate {
-        r#type: r#type_text.as_str(),
-        value: value_text.as_str(),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
     };
     template.render()
 }
@@ -11049,12 +11049,12 @@ fn render_type_item_transport(node: &TypeItemTransport) -> Result<String, ::aska
         String::new()
     };
     let template = TypeItemTemplate {
-        name: name_text.as_str(),
-        trailing_where_clause: trailing_where_clause_text.as_str(),
-        r#type: r#type_text.as_str(),
-        type_parameters: type_parameters_text.as_str(),
-        visibility_modifier: visibility_modifier_text.as_str(),
-        where_clause: where_clause_text.as_str(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        trailing_where_clause: if node.trailing_where_clause.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(trailing_where_clause_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
+        type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        where_clause: if node.where_clause.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(where_clause_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -11072,9 +11072,9 @@ fn render_type_parameter_transport(node: &TypeParameterTransport) -> Result<Stri
     };
     let name_text = render_transport_dispatch(node.name.as_ref())?;
     let template = TypeParameterTemplate {
-        bounds: bounds_text.as_str(),
-        default_type: default_type_text.as_str(),
-        name: name_text.as_str(),
+        bounds: if node.bounds.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(bounds_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        default_type: if node.default_type.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(default_type_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
     };
     template.render()
 }
@@ -11101,8 +11101,8 @@ fn render_unary_expression_transport(node: &UnaryExpressionTransport) -> Result<
     let operand_text = render_transport_dispatch(node.operand.as_ref())?;
     let operator_text = render_transport_dispatch(node.operator.as_ref())?;
     let template = UnaryExpressionTemplate {
-        operand: operand_text.as_str(),
-        operator: operator_text.as_str(),
+        operand: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operand_text.as_str())),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operator_text.as_str())),
     };
     template.render()
 }
@@ -11126,11 +11126,11 @@ fn render_union_item_transport(node: &UnionItemTransport) -> Result<String, ::as
         String::new()
     };
     let template = UnionItemTemplate {
-        body: body_text.as_str(),
-        name: name_text.as_str(),
-        type_parameters: type_parameters_text.as_str(),
-        visibility_modifier: visibility_modifier_text.as_str(),
-        where_clause: where_clause_text.as_str(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        where_clause: if node.where_clause.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(where_clause_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -11146,7 +11146,7 @@ fn render_unit_type_transport(t: &UnitTypeTransport) -> Result<String, ::askama:
 fn render_unsafe_block_transport(node: &UnsafeBlockTransport) -> Result<String, ::askama::Error> {
     let block_text = render_transport_dispatch(node.block.as_ref())?;
     let template = UnsafeBlockTemplate {
-        block: block_text.as_str(),
+        block: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(block_text.as_str())),
     };
     template.render()
 }
@@ -11155,8 +11155,8 @@ fn render_use_as_clause_transport(node: &UseAsClauseTransport) -> Result<String,
     let alias_text = render_transport_dispatch(node.alias.as_ref())?;
     let path_text = render_transport_dispatch(node.path.as_ref())?;
     let template = UseAsClauseTemplate {
-        alias: alias_text.as_str(),
-        path: path_text.as_str(),
+        alias: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(alias_text.as_str())),
+        path: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(path_text.as_str())),
     };
     template.render()
 }
@@ -11187,8 +11187,8 @@ fn render_use_declaration_transport(node: &UseDeclarationTransport) -> Result<St
         String::new()
     };
     let template = UseDeclarationTemplate {
-        argument: argument_text.as_str(),
-        visibility_modifier: visibility_modifier_text.as_str(),
+        argument: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(argument_text.as_str())),
+        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -11218,7 +11218,7 @@ fn render_use_wildcard_transport(node: &UseWildcardTransport) -> Result<String, 
         String::new()
     };
     let template = UseWildcardTemplate {
-        path: path_text.as_str(),
+        path: if node.path.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(path_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -11235,8 +11235,8 @@ fn render_variadic_parameter_transport(node: &VariadicParameterTransport) -> Res
         String::new()
     };
     let template = VariadicParameterTemplate {
-        mutable_specifier: mutable_specifier_text.as_str(),
-        pattern: pattern_text.as_str(),
+        mutable_specifier: if node.mutable_specifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(mutable_specifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        pattern: if node.pattern.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(pattern_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -11343,8 +11343,8 @@ fn render_where_predicate_transport(node: &WherePredicateTransport) -> Result<St
     let bounds_text = render_transport_dispatch(node.bounds.as_ref())?;
     let left_text = render_transport_dispatch(node.left.as_ref())?;
     let template = WherePredicateTemplate {
-        bounds: bounds_text.as_str(),
-        left: left_text.as_str(),
+        bounds: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(bounds_text.as_str())),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
     };
     template.render()
 }
@@ -11358,9 +11358,9 @@ fn render_while_expression_transport(node: &WhileExpressionTransport) -> Result<
         String::new()
     };
     let template = WhileExpressionTemplate {
-        body: body_text.as_str(),
-        condition: condition_text.as_str(),
-        label: label_text.as_str(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
+        condition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(condition_text.as_str())),
+        label: if node.label.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(label_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
@@ -18988,29 +18988,29 @@ pub fn render_transport(transport: AnyTransport) -> Result<String, ::askama::Err
 #[template(path = "_array_expression_list.jinja", escape = "none")]
 pub struct ArrayExpressionListTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub attributes: ::sittir_core::filters::NonterminalView<'a>,
-    pub elements: ::sittir_core::filters::NonterminalView<'a>,
+    pub attributes: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub elements: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_array_expression_semi.jinja", escape = "none")]
 pub struct ArrayExpressionSemiTemplate<'a> {
-    pub attributes: ::sittir_core::filters::NonterminalView<'a>,
-    pub elements: &'a str,
-    pub length: &'a str,
+    pub attributes: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub elements: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub length: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_closure_expression_block.jinja", escape = "none")]
 pub struct ClosureExpressionBlockTemplate<'a> {
-    pub body: &'a str,
-    pub return_type: &'a str,
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub return_type: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_closure_expression_expr.jinja", escape = "none")]
 pub struct _ClosureExpressionExprTemplate<'a> {
-    pub body: &'a str,
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19052,20 +19052,20 @@ pub struct FieldIdentifierTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_field_pattern_named.jinja", escape = "none")]
 pub struct FieldPatternNamedTemplate<'a> {
-    pub name: &'a str,
-    pub pattern: &'a str,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub pattern: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_field_pattern_shorthand.jinja", escape = "none")]
 pub struct _FieldPatternShorthandTemplate<'a> {
-    pub name: &'a str,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_foreign_mod_item_body.jinja", escape = "none")]
 pub struct _ForeignModItemBodyTemplate<'a> {
-    pub body: &'a str,
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19077,13 +19077,13 @@ pub struct FunctionTypeFnFormTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_function_type_trait_form.jinja", escape = "none")]
 pub struct FunctionTypeTraitFormTemplate<'a> {
-    pub r#trait: &'a str,
+    pub r#trait: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_impl_item_body.jinja", escape = "none")]
 pub struct _ImplItemBodyTemplate<'a> {
-    pub body: &'a str,
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19095,9 +19095,9 @@ pub struct LetChainTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_line_comment_doc.jinja", escape = "none")]
 pub struct LineCommentDocTemplate<'a> {
-    pub doc: &'a str,
-    pub inner: &'a str,
-    pub outer: &'a str,
+    pub doc: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub inner: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub outer: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19121,32 +19121,32 @@ pub struct _MacroDefinitionParenTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_match_arm_block_ending.jinja", escape = "none")]
 pub struct _MatchArmBlockEndingTemplate<'a> {
-    pub value: &'a str,
+    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_match_arm_with_comma.jinja", escape = "none")]
 pub struct MatchArmWithCommaTemplate<'a> {
-    pub value: &'a str,
+    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_mod_item_inline.jinja", escape = "none")]
 pub struct _ModItemInlineTemplate<'a> {
-    pub body: &'a str,
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_or_pattern_binary.jinja", escape = "none")]
 pub struct OrPatternBinaryTemplate<'a> {
-    pub left: &'a str,
-    pub right: &'a str,
+    pub left: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_or_pattern_prefix.jinja", escape = "none")]
 pub struct OrPatternPrefixTemplate<'a> {
-    pub right: &'a str,
+    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19158,41 +19158,41 @@ pub struct _PointerTypeMutTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_range_expression_bare.jinja", escape = "none")]
 pub struct _RangeExpressionBareTemplate<'a> {
-    pub operator: &'a str,
+    pub operator: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_range_expression_binary.jinja", escape = "none")]
 pub struct RangeExpressionBinaryTemplate<'a> {
-    pub end: &'a str,
-    pub operator: &'a str,
-    pub start: &'a str,
+    pub end: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub operator: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub start: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_range_expression_postfix.jinja", escape = "none")]
 pub struct RangeExpressionPostfixTemplate<'a> {
-    pub operator: &'a str,
-    pub start: &'a str,
+    pub operator: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub start: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_range_expression_prefix.jinja", escape = "none")]
 pub struct RangeExpressionPrefixTemplate<'a> {
-    pub end: &'a str,
-    pub operator: &'a str,
+    pub end: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub operator: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_range_pattern_left_with_right.jinja", escape = "none")]
 pub struct RangePatternLeftWithRightTemplate<'a> {
-    pub right: &'a str,
+    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_range_pattern_prefix.jinja", escape = "none")]
 pub struct RangePatternPrefixTemplate<'a> {
-    pub right: &'a str,
+    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19223,14 +19223,14 @@ pub struct _StringContentTemplate<'a> {
 #[template(path = "_struct_item_brace.jinja", escape = "none")]
 pub struct StructItemBraceTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub body: &'a str,
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_struct_item_tuple.jinja", escape = "none")]
 pub struct StructItemTupleTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub body: &'a str,
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19285,21 +19285,21 @@ pub struct _VisibilityModifierCrateTemplate<'a> {
 #[template(path = "_visibility_modifier_in_path.jinja", escape = "none")]
 pub struct VisibilityModifierInPathTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub r#in: &'a str,
+    pub r#in: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_visibility_modifier_pub.jinja", escape = "none")]
 pub struct VisibilityModifierPubTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub r#pub: &'a str,
+    pub r#pub: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "abstract_type.jinja", escape = "none")]
 pub struct AbstractTypeTemplate<'a> {
-    pub r#trait: &'a str,
-    pub type_parameters: &'a str,
+    pub r#trait: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub type_parameters: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19317,45 +19317,45 @@ pub struct ArrayExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "array_type.jinja", escape = "none")]
 pub struct ArrayTypeTemplate<'a> {
-    pub element: &'a str,
-    pub length: &'a str,
+    pub element: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub length: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "assignment_expression.jinja", escape = "none")]
 pub struct AssignmentExpressionTemplate<'a> {
-    pub left: &'a str,
-    pub right: &'a str,
+    pub left: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "associated_type.jinja", escape = "none")]
 pub struct AssociatedTypeTemplate<'a> {
-    pub bounds: &'a str,
-    pub name: &'a str,
-    pub type_parameters: &'a str,
-    pub where_clause: &'a str,
+    pub bounds: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub type_parameters: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub where_clause: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "async_block.jinja", escape = "none")]
 pub struct AsyncBlockTemplate<'a> {
-    pub block: &'a str,
-    pub move_marker: &'a str,
+    pub block: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub move_marker: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "attribute_item.jinja", escape = "none")]
 pub struct AttributeItemTemplate<'a> {
-    pub attribute: &'a str,
+    pub attribute: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "attribute.jinja", escape = "none")]
 pub struct AttributeTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub arguments: &'a str,
-    pub value: &'a str,
+    pub arguments: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub value: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19373,32 +19373,32 @@ pub struct BaseFieldInitializerTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "binary_expression.jinja", escape = "none")]
 pub struct BinaryExpressionTemplate<'a> {
-    pub left: &'a str,
-    pub operator: &'a str,
-    pub right: &'a str,
+    pub left: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub operator: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "block_comment.jinja", escape = "none")]
 pub struct BlockCommentTemplate<'a> {
-    pub doc: &'a str,
-    pub inner: &'a str,
-    pub outer: &'a str,
+    pub doc: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub inner: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub outer: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "block.jinja", escape = "none")]
 pub struct BlockTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub label: &'a str,
+    pub label: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "bounded_type.jinja", escape = "none")]
 pub struct BoundedTypeTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub left: &'a str,
-    pub right: &'a str,
+    pub left: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19411,37 +19411,37 @@ pub struct BracketedTypeTemplate<'a> {
 #[template(path = "break_expression.jinja", escape = "none")]
 pub struct BreakExpressionTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub label: &'a str,
+    pub label: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "call_expression.jinja", escape = "none")]
 pub struct CallExpressionTemplate<'a> {
-    pub arguments: &'a str,
-    pub function: &'a str,
+    pub arguments: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub function: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "captured_pattern.jinja", escape = "none")]
 pub struct CapturedPatternTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub identifier: &'a str,
+    pub identifier: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "closure_expression_expr.jinja", escape = "none")]
 pub struct ClosureExpressionExprTemplate<'a> {
-    pub body: &'a str,
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "closure_expression.jinja", escape = "none")]
 pub struct ClosureExpressionTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub async_marker: &'a str,
-    pub move_marker: &'a str,
-    pub parameters: &'a str,
-    pub static_marker: &'a str,
+    pub async_marker: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub move_marker: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub parameters: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub static_marker: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19459,38 +19459,38 @@ pub struct CommentTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "compound_assignment_expr.jinja", escape = "none")]
 pub struct CompoundAssignmentExprTemplate<'a> {
-    pub left: &'a str,
-    pub operator: &'a str,
-    pub right: &'a str,
+    pub left: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub operator: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "const_block.jinja", escape = "none")]
 pub struct ConstBlockTemplate<'a> {
-    pub body: &'a str,
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "const_item.jinja", escape = "none")]
 pub struct ConstItemTemplate<'a> {
-    pub name: &'a str,
-    pub r#type: &'a str,
-    pub value: &'a str,
-    pub visibility_modifier: &'a str,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub value: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub visibility_modifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "const_parameter.jinja", escape = "none")]
 pub struct ConstParameterTemplate<'a> {
-    pub name: &'a str,
-    pub r#type: &'a str,
-    pub value: &'a str,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub value: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "continue_expression.jinja", escape = "none")]
 pub struct ContinueExpressionTemplate<'a> {
-    pub label: &'a str,
+    pub label: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19526,7 +19526,7 @@ pub struct DelimTokenTreeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "dynamic_type.jinja", escape = "none")]
 pub struct DynamicTypeTemplate<'a> {
-    pub r#trait: &'a str,
+    pub r#trait: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19538,11 +19538,11 @@ pub struct ElseClauseTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "enum_item.jinja", escape = "none")]
 pub struct EnumItemTemplate<'a> {
-    pub body: &'a str,
-    pub name: &'a str,
-    pub type_parameters: &'a str,
-    pub visibility_modifier: &'a str,
-    pub where_clause: &'a str,
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub type_parameters: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub visibility_modifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub where_clause: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19554,10 +19554,10 @@ pub struct EnumVariantListTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "enum_variant.jinja", escape = "none")]
 pub struct EnumVariantTemplate<'a> {
-    pub body: &'a str,
-    pub name: &'a str,
-    pub value: &'a str,
-    pub visibility_modifier: &'a str,
+    pub body: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub value: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub visibility_modifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19581,16 +19581,16 @@ pub struct ExpressionStatementTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "extern_crate_declaration.jinja", escape = "none")]
 pub struct ExternCrateDeclarationTemplate<'a> {
-    pub alias: &'a str,
-    pub crate_: &'a str,
-    pub name: &'a str,
-    pub visibility_modifier: &'a str,
+    pub alias: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub crate_: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub visibility_modifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "extern_modifier.jinja", escape = "none")]
 pub struct ExternModifierTemplate<'a> {
-    pub string_literal: &'a str,
+    pub string_literal: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19602,16 +19602,16 @@ pub struct FieldDeclarationListTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "field_declaration.jinja", escape = "none")]
 pub struct FieldDeclarationTemplate<'a> {
-    pub name: &'a str,
-    pub r#type: &'a str,
-    pub visibility_modifier: &'a str,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub visibility_modifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "field_expression.jinja", escape = "none")]
 pub struct FieldExpressionTemplate<'a> {
-    pub field: &'a str,
-    pub value: &'a str,
+    pub field: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19624,31 +19624,31 @@ pub struct FieldInitializerListTemplate<'a> {
 #[template(path = "field_initializer.jinja", escape = "none")]
 pub struct FieldInitializerTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub field: &'a str,
-    pub value: &'a str,
+    pub field: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "field_pattern_shorthand.jinja", escape = "none")]
 pub struct FieldPatternShorthandTemplate<'a> {
-    pub name: &'a str,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "field_pattern.jinja", escape = "none")]
 pub struct FieldPatternTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub mutable_specifier: &'a str,
-    pub ref_marker: &'a str,
+    pub mutable_specifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub ref_marker: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "for_expression.jinja", escape = "none")]
 pub struct ForExpressionTemplate<'a> {
-    pub body: &'a str,
-    pub label: &'a str,
-    pub pattern: &'a str,
-    pub value: &'a str,
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub label: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub pattern: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19660,182 +19660,182 @@ pub struct ForLifetimesTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "foreign_mod_item_body.jinja", escape = "none")]
 pub struct ForeignModItemBodyTemplate<'a> {
-    pub body: &'a str,
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "foreign_mod_item.jinja", escape = "none")]
 pub struct ForeignModItemTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub extern_modifier: &'a str,
-    pub visibility_modifier: &'a str,
+    pub extern_modifier: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub visibility_modifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "function_item.jinja", escape = "none")]
 pub struct FunctionItemTemplate<'a> {
-    pub body: &'a str,
-    pub function_modifiers: &'a str,
-    pub name: &'a str,
-    pub parameters: &'a str,
-    pub return_type: &'a str,
-    pub type_parameters: &'a str,
-    pub visibility_modifier: &'a str,
-    pub where_clause: &'a str,
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub function_modifiers: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub parameters: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub return_type: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub type_parameters: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub visibility_modifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub where_clause: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "function_modifiers.jinja", escape = "none")]
 pub struct FunctionModifiersTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub modifier: ::sittir_core::filters::NonterminalView<'a>,
+    pub modifier: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "function_signature_item.jinja", escape = "none")]
 pub struct FunctionSignatureItemTemplate<'a> {
-    pub function_modifiers: &'a str,
-    pub name: &'a str,
-    pub parameters: &'a str,
-    pub return_type: &'a str,
-    pub type_parameters: &'a str,
-    pub visibility_modifier: &'a str,
-    pub where_clause: &'a str,
+    pub function_modifiers: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub parameters: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub return_type: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub type_parameters: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub visibility_modifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub where_clause: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "function_type.jinja", escape = "none")]
 pub struct FunctionTypeTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub for_lifetimes: &'a str,
-    pub parameters: &'a str,
-    pub return_type: &'a str,
+    pub for_lifetimes: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub parameters: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub return_type: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "gen_block.jinja", escape = "none")]
 pub struct GenBlockTemplate<'a> {
-    pub block: &'a str,
-    pub move_marker: &'a str,
+    pub block: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub move_marker: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "generic_function.jinja", escape = "none")]
 pub struct GenericFunctionTemplate<'a> {
-    pub function: &'a str,
-    pub type_arguments: &'a str,
+    pub function: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub type_arguments: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "generic_pattern.jinja", escape = "none")]
 pub struct GenericPatternTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub type_arguments: &'a str,
+    pub type_arguments: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "generic_type_with_turbofish.jinja", escape = "none")]
 pub struct GenericTypeWithTurbofishTemplate<'a> {
-    pub turbofish: &'a str,
-    pub r#type: &'a str,
-    pub type_arguments: &'a str,
+    pub turbofish: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub type_arguments: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "generic_type.jinja", escape = "none")]
 pub struct GenericTypeTemplate<'a> {
-    pub r#type: &'a str,
-    pub type_arguments: &'a str,
+    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub type_arguments: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "higher_ranked_trait_bound.jinja", escape = "none")]
 pub struct HigherRankedTraitBoundTemplate<'a> {
-    pub r#type: &'a str,
-    pub type_parameters: &'a str,
+    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub type_parameters: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "if_expression.jinja", escape = "none")]
 pub struct IfExpressionTemplate<'a> {
-    pub alternative: &'a str,
-    pub condition: &'a str,
-    pub consequence: &'a str,
+    pub alternative: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub condition: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub consequence: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "impl_item_body.jinja", escape = "none")]
 pub struct ImplItemBodyTemplate<'a> {
-    pub body: &'a str,
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "impl_item.jinja", escape = "none")]
 pub struct ImplItemTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub negative: &'a str,
-    pub r#trait: &'a str,
-    pub r#type: &'a str,
-    pub type_parameters: &'a str,
-    pub unsafe_marker: &'a str,
-    pub where_clause: &'a str,
+    pub negative: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub r#trait: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub type_parameters: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub unsafe_marker: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub where_clause: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "index_expression.jinja", escape = "none")]
 pub struct IndexExpressionTemplate<'a> {
-    pub index: &'a str,
-    pub object: &'a str,
+    pub index: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub object: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "inner_attribute_item.jinja", escape = "none")]
 pub struct InnerAttributeItemTemplate<'a> {
-    pub attribute: &'a str,
+    pub attribute: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "label.jinja", escape = "none")]
 pub struct LabelTemplate<'a> {
-    pub identifier: &'a str,
+    pub identifier: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "last_match_arm.jinja", escape = "none")]
 pub struct LastMatchArmTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub pattern: &'a str,
-    pub value: &'a str,
+    pub pattern: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "let_condition.jinja", escape = "none")]
 pub struct LetConditionTemplate<'a> {
-    pub pattern: &'a str,
-    pub value: &'a str,
+    pub pattern: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "let_declaration.jinja", escape = "none")]
 pub struct LetDeclarationTemplate<'a> {
-    pub alternative: &'a str,
-    pub mutable_specifier: &'a str,
-    pub pattern: &'a str,
-    pub r#type: &'a str,
-    pub value: &'a str,
+    pub alternative: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub mutable_specifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub pattern: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub r#type: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub value: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "lifetime_parameter.jinja", escape = "none")]
 pub struct LifetimeParameterTemplate<'a> {
-    pub bounds: &'a str,
-    pub name: &'a str,
+    pub bounds: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "lifetime.jinja", escape = "none")]
 pub struct LifetimeTemplate<'a> {
-    pub identifier: &'a str,
+    pub identifier: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19847,8 +19847,8 @@ pub struct LineCommentTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "loop_expression.jinja", escape = "none")]
 pub struct LoopExpressionTemplate<'a> {
-    pub body: &'a str,
-    pub label: &'a str,
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub label: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19873,34 +19873,34 @@ pub struct MacroDefinitionParenTemplate<'a> {
 #[template(path = "macro_definition.jinja", escape = "none")]
 pub struct MacroDefinitionTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub name: &'a str,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "macro_invocation.jinja", escape = "none")]
 pub struct MacroInvocationTemplate<'a> {
-    pub r#macro: &'a str,
-    pub token_tree: &'a str,
+    pub r#macro: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub token_tree: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "macro_rule.jinja", escape = "none")]
 pub struct MacroRuleTemplate<'a> {
-    pub left: &'a str,
-    pub right: &'a str,
+    pub left: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "match_arm_block_ending.jinja", escape = "none")]
 pub struct MatchArmBlockEndingTemplate<'a> {
-    pub value: &'a str,
+    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "match_arm.jinja", escape = "none")]
 pub struct MatchArmTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub pattern: &'a str,
+    pub pattern: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19912,43 +19912,43 @@ pub struct MatchBlockTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "match_expression.jinja", escape = "none")]
 pub struct MatchExpressionTemplate<'a> {
-    pub body: &'a str,
-    pub value: &'a str,
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "match_pattern.jinja", escape = "none")]
 pub struct MatchPatternTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub condition: &'a str,
+    pub condition: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "mod_item_inline.jinja", escape = "none")]
 pub struct ModItemInlineTemplate<'a> {
-    pub body: &'a str,
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "mod_item.jinja", escape = "none")]
 pub struct ModItemTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub name: &'a str,
-    pub visibility_modifier: &'a str,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub visibility_modifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "mut_pattern.jinja", escape = "none")]
 pub struct MutPatternTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub mutable_specifier: &'a str,
+    pub mutable_specifier: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "negative_literal.jinja", escape = "none")]
 pub struct NegativeLiteralTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub value: &'a str,
+    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19961,15 +19961,15 @@ pub struct OrPatternTemplate<'a> {
 #[template(path = "ordered_field_declaration_list.jinja", escape = "none")]
 pub struct OrderedFieldDeclarationListTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub r#type: ::sittir_core::filters::NonterminalView<'a>,
+    pub r#type: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "parameter.jinja", escape = "none")]
 pub struct ParameterTemplate<'a> {
-    pub mutable_specifier: &'a str,
-    pub pattern: &'a str,
-    pub r#type: &'a str,
+    pub mutable_specifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub pattern: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19994,20 +19994,20 @@ pub struct PointerTypeMutTemplate<'a> {
 #[template(path = "pointer_type.jinja", escape = "none")]
 pub struct PointerTypeTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub r#type: &'a str,
+    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "qualified_type.jinja", escape = "none")]
 pub struct QualifiedTypeTemplate<'a> {
-    pub alias: &'a str,
-    pub r#type: &'a str,
+    pub alias: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "range_expression_bare.jinja", escape = "none")]
 pub struct RangeExpressionBareTemplate<'a> {
-    pub operator: &'a str,
+    pub operator: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20020,7 +20020,7 @@ pub struct RangeExpressionTemplate<'a> {
 #[template(path = "range_pattern.jinja", escape = "none")]
 pub struct RangePatternTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub left: &'a str,
+    pub left: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20039,22 +20039,22 @@ pub struct RefPatternTemplate<'a> {
 #[template(path = "reference_expression.jinja", escape = "none")]
 pub struct ReferenceExpressionTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub value: &'a str,
+    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "reference_pattern.jinja", escape = "none")]
 pub struct ReferencePatternTemplate<'a> {
-    pub mutable_specifier: &'a str,
-    pub pattern: &'a str,
+    pub mutable_specifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub pattern: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "reference_type.jinja", escape = "none")]
 pub struct ReferenceTypeTemplate<'a> {
-    pub lifetime: &'a str,
-    pub mutable_specifier: &'a str,
-    pub r#type: &'a str,
+    pub lifetime: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub mutable_specifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20072,45 +20072,45 @@ pub struct ReturnExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "scoped_identifier.jinja", escape = "none")]
 pub struct ScopedIdentifierTemplate<'a> {
-    pub name: &'a str,
-    pub path: &'a str,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub path: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "scoped_type_identifier_in_expression_position.jinja", escape = "none")]
 pub struct ScopedTypeIdentifierInExpressionPositionTemplate<'a> {
-    pub name: &'a str,
-    pub path: &'a str,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub path: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "scoped_type_identifier.jinja", escape = "none")]
 pub struct ScopedTypeIdentifierTemplate<'a> {
-    pub name: &'a str,
-    pub path: &'a str,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub path: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "scoped_use_list.jinja", escape = "none")]
 pub struct ScopedUseListTemplate<'a> {
-    pub list: &'a str,
-    pub path: &'a str,
+    pub list: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub path: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "self_parameter.jinja", escape = "none")]
 pub struct SelfParameterTemplate<'a> {
-    pub lifetime: &'a str,
-    pub mutable_specifier: &'a str,
-    pub reference: &'a str,
-    pub self_: &'a str,
+    pub lifetime: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub mutable_specifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub reference: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub self_: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "shorthand_field_initializer.jinja", escape = "none")]
 pub struct ShorthandFieldInitializerTemplate<'a> {
-    pub attributes: ::sittir_core::filters::NonterminalView<'a>,
-    pub identifier: &'a str,
+    pub attributes: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub identifier: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20122,19 +20122,19 @@ pub struct SlicePatternTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "source_file.jinja", escape = "none")]
 pub struct SourceFileTemplate<'a> {
-    pub shebang: &'a str,
-    pub statements: ::sittir_core::filters::NonterminalView<'a>,
+    pub shebang: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub statements: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "static_item.jinja", escape = "none")]
 pub struct StaticItemTemplate<'a> {
-    pub mutable_specifier: &'a str,
-    pub name: &'a str,
-    pub ref_marker: &'a str,
-    pub r#type: &'a str,
-    pub value: &'a str,
-    pub visibility_modifier: &'a str,
+    pub mutable_specifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub ref_marker: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub value: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub visibility_modifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20146,31 +20146,31 @@ pub struct StringLiteralTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "struct_expression.jinja", escape = "none")]
 pub struct StructExpressionTemplate<'a> {
-    pub body: &'a str,
-    pub name: &'a str,
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "struct_item.jinja", escape = "none")]
 pub struct StructItemTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub name: &'a str,
-    pub type_parameters: &'a str,
-    pub visibility_modifier: &'a str,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub type_parameters: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub visibility_modifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "struct_pattern.jinja", escape = "none")]
 pub struct StructPatternTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub r#type: &'a str,
+    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "token_binding_pattern.jinja", escape = "none")]
 pub struct TokenBindingPatternTemplate<'a> {
-    pub name: &'a str,
-    pub r#type: &'a str,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20242,32 +20242,32 @@ pub struct TraitBoundsTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "trait_item.jinja", escape = "none")]
 pub struct TraitItemTemplate<'a> {
-    pub body: &'a str,
-    pub bounds: &'a str,
-    pub name: &'a str,
-    pub type_parameters: &'a str,
-    pub unsafe_marker: &'a str,
-    pub visibility_modifier: &'a str,
-    pub where_clause: &'a str,
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub bounds: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub type_parameters: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub unsafe_marker: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub visibility_modifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub where_clause: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "try_block.jinja", escape = "none")]
 pub struct TryBlockTemplate<'a> {
-    pub block: &'a str,
+    pub block: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "try_expression.jinja", escape = "none")]
 pub struct TryExpressionTemplate<'a> {
-    pub value: &'a str,
+    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "tuple_expression.jinja", escape = "none")]
 pub struct TupleExpressionTemplate<'a> {
-    pub attributes: ::sittir_core::filters::NonterminalView<'a>,
-    pub elements: ::sittir_core::filters::NonterminalView<'a>,
+    pub attributes: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub elements: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20280,7 +20280,7 @@ pub struct TuplePatternTemplate<'a> {
 #[template(path = "tuple_struct_pattern.jinja", escape = "none")]
 pub struct TupleStructPatternTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub r#type: &'a str,
+    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20298,35 +20298,35 @@ pub struct TypeArgumentsTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "type_binding.jinja", escape = "none")]
 pub struct TypeBindingTemplate<'a> {
-    pub name: &'a str,
-    pub r#type: &'a str,
-    pub type_arguments: &'a str,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub type_arguments: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "type_cast_expression.jinja", escape = "none")]
 pub struct TypeCastExpressionTemplate<'a> {
-    pub r#type: &'a str,
-    pub value: &'a str,
+    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "type_item.jinja", escape = "none")]
 pub struct TypeItemTemplate<'a> {
-    pub name: &'a str,
-    pub trailing_where_clause: &'a str,
-    pub r#type: &'a str,
-    pub type_parameters: &'a str,
-    pub visibility_modifier: &'a str,
-    pub where_clause: &'a str,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub trailing_where_clause: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub type_parameters: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub visibility_modifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub where_clause: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "type_parameter.jinja", escape = "none")]
 pub struct TypeParameterTemplate<'a> {
-    pub bounds: &'a str,
-    pub default_type: &'a str,
-    pub name: &'a str,
+    pub bounds: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub default_type: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20338,31 +20338,31 @@ pub struct TypeParametersTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "unary_expression.jinja", escape = "none")]
 pub struct UnaryExpressionTemplate<'a> {
-    pub operand: &'a str,
-    pub operator: &'a str,
+    pub operand: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub operator: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "union_item.jinja", escape = "none")]
 pub struct UnionItemTemplate<'a> {
-    pub body: &'a str,
-    pub name: &'a str,
-    pub type_parameters: &'a str,
-    pub visibility_modifier: &'a str,
-    pub where_clause: &'a str,
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub type_parameters: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub visibility_modifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub where_clause: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "unsafe_block.jinja", escape = "none")]
 pub struct UnsafeBlockTemplate<'a> {
-    pub block: &'a str,
+    pub block: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "use_as_clause.jinja", escape = "none")]
 pub struct UseAsClauseTemplate<'a> {
-    pub alias: &'a str,
-    pub path: &'a str,
+    pub alias: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub path: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20374,8 +20374,8 @@ pub struct UseBoundsTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "use_declaration.jinja", escape = "none")]
 pub struct UseDeclarationTemplate<'a> {
-    pub argument: &'a str,
-    pub visibility_modifier: &'a str,
+    pub argument: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub visibility_modifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20387,14 +20387,14 @@ pub struct UseListTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "use_wildcard.jinja", escape = "none")]
 pub struct UseWildcardTemplate<'a> {
-    pub path: &'a str,
+    pub path: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "variadic_parameter.jinja", escape = "none")]
 pub struct VariadicParameterTemplate<'a> {
-    pub mutable_specifier: &'a str,
-    pub pattern: &'a str,
+    pub mutable_specifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub pattern: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20418,16 +20418,16 @@ pub struct WhereClauseTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "where_predicate.jinja", escape = "none")]
 pub struct WherePredicateTemplate<'a> {
-    pub bounds: &'a str,
-    pub left: &'a str,
+    pub bounds: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub left: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "while_expression.jinja", escape = "none")]
 pub struct WhileExpressionTemplate<'a> {
-    pub body: &'a str,
-    pub condition: &'a str,
-    pub label: &'a str,
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub condition: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub label: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20927,25 +20927,17 @@ fn render_hidden_array_expression_list(node: &NodeData) -> Result<String, ::aska
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        attributes: match field_0.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::NonterminalView::Missing,
-            ResolvedFieldKind::Scalar => ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-            ResolvedFieldKind::List => ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
-                items: field_0_renderables.as_slice(),
-                separator: field_0.separator,
-                leading: field_0.leading_sep,
-                trailing: field_0.trailing_sep,
-            }),
+        attributes: ::sittir_core::filters::ListNonterminalView {
+            items: field_0_renderables.as_slice(),
+            separator: field_0.separator,
+            leading: field_0.leading_sep,
+            trailing: field_0.trailing_sep,
         },
-        elements: match field_1.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::NonterminalView::Missing,
-            ResolvedFieldKind::Scalar => ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-            ResolvedFieldKind::List => ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
-                items: field_1_renderables.as_slice(),
-                separator: field_1.separator,
-                leading: field_1.leading_sep,
-                trailing: field_1.trailing_sep,
-            }),
+        elements: ::sittir_core::filters::ListNonterminalView {
+            items: field_1_renderables.as_slice(),
+            separator: field_1.separator,
+            leading: field_1.leading_sep,
+            trailing: field_1.trailing_sep,
         },
     };
     template.render()
@@ -20958,18 +20950,14 @@ fn render_hidden_array_expression_semi(node: &NodeData) -> Result<String, ::aska
     let field_2 = resolve_field(node, "length", true)?;
     let field_0_renderables = field_0.renderable_items();
     let template = ArrayExpressionSemiTemplate {
-        attributes: match field_0.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::NonterminalView::Missing,
-            ResolvedFieldKind::Scalar => ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-            ResolvedFieldKind::List => ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
-                items: field_0_renderables.as_slice(),
-                separator: field_0.separator,
-                leading: field_0.leading_sep,
-                trailing: field_0.trailing_sep,
-            }),
+        attributes: ::sittir_core::filters::ListNonterminalView {
+            items: field_0_renderables.as_slice(),
+            separator: field_0.separator,
+            leading: field_0.leading_sep,
+            trailing: field_0.trailing_sep,
         },
-        elements: field_1.as_scalar(),
-        length: field_2.as_scalar(),
+        elements: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        length: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
     };
     template.render()
 }
@@ -20979,8 +20967,11 @@ fn render_hidden_closure_expression_block(node: &NodeData) -> Result<String, ::a
     let field_0 = resolve_field(node, "body", true)?;
     let field_1 = resolve_field(node, "return_type", false)?;
     let template = ClosureExpressionBlockTemplate {
-        body: field_0.as_scalar(),
-        return_type: field_1.as_scalar(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        return_type: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
     };
     template.render()
 }
@@ -20989,7 +20980,7 @@ fn render_hidden_closure_expression_expr(node: &NodeData) -> Result<String, ::as
     let children = resolve_children(node, &["body"])?;
     let field_0 = resolve_field(node, "body", true)?;
     let template = _ClosureExpressionExprTemplate {
-        body: field_0.as_scalar(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -21083,8 +21074,8 @@ fn render_hidden_field_pattern_named(node: &NodeData) -> Result<String, ::askama
     let field_0 = resolve_field(node, "name", true)?;
     let field_1 = resolve_field(node, "pattern", true)?;
     let template = FieldPatternNamedTemplate {
-        name: field_0.as_scalar(),
-        pattern: field_1.as_scalar(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -21093,7 +21084,7 @@ fn render_hidden_field_pattern_shorthand(node: &NodeData) -> Result<String, ::as
     let children = resolve_children(node, &["name"])?;
     let field_0 = resolve_field(node, "name", true)?;
     let template = _FieldPatternShorthandTemplate {
-        name: field_0.as_scalar(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -21102,7 +21093,7 @@ fn render_hidden_foreign_mod_item_body(node: &NodeData) -> Result<String, ::aska
     let children = resolve_children(node, &["body"])?;
     let field_0 = resolve_field(node, "body", true)?;
     let template = _ForeignModItemBodyTemplate {
-        body: field_0.as_scalar(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -21125,7 +21116,7 @@ fn render_hidden_function_type_trait_form(node: &NodeData) -> Result<String, ::a
     let children = resolve_children(node, &["trait"])?;
     let field_0 = resolve_field(node, "trait", true)?;
     let template = FunctionTypeTraitFormTemplate {
-        r#trait: field_0.as_scalar(),
+        r#trait: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -21134,7 +21125,7 @@ fn render_hidden_impl_item_body(node: &NodeData) -> Result<String, ::askama::Err
     let children = resolve_children(node, &["body"])?;
     let field_0 = resolve_field(node, "body", true)?;
     let template = _ImplItemBodyTemplate {
-        body: field_0.as_scalar(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -21159,9 +21150,15 @@ fn render_hidden_line_comment_doc(node: &NodeData) -> Result<String, ::askama::E
     let field_1 = resolve_field(node, "inner", false)?;
     let field_2 = resolve_field(node, "outer", false)?;
     let template = LineCommentDocTemplate {
-        doc: field_0.as_scalar(),
-        inner: field_1.as_scalar(),
-        outer: field_2.as_scalar(),
+        doc: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        inner: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
+        outer: match field_2.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        },
     };
     template.render()
 }
@@ -21212,7 +21209,7 @@ fn render_hidden_match_arm_block_ending(node: &NodeData) -> Result<String, ::ask
     let children = resolve_children(node, &["value"])?;
     let field_0 = resolve_field(node, "value", true)?;
     let template = _MatchArmBlockEndingTemplate {
-        value: field_0.as_scalar(),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -21221,7 +21218,7 @@ fn render_hidden_match_arm_with_comma(node: &NodeData) -> Result<String, ::askam
     let children = resolve_children(node, &["value"])?;
     let field_0 = resolve_field(node, "value", true)?;
     let template = MatchArmWithCommaTemplate {
-        value: field_0.as_scalar(),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -21230,7 +21227,7 @@ fn render_hidden_mod_item_inline(node: &NodeData) -> Result<String, ::askama::Er
     let children = resolve_children(node, &["body"])?;
     let field_0 = resolve_field(node, "body", true)?;
     let template = _ModItemInlineTemplate {
-        body: field_0.as_scalar(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -21240,8 +21237,8 @@ fn render_hidden_or_pattern_binary(node: &NodeData) -> Result<String, ::askama::
     let field_0 = resolve_field(node, "left", true)?;
     let field_1 = resolve_field(node, "right", true)?;
     let template = OrPatternBinaryTemplate {
-        left: field_0.as_scalar(),
-        right: field_1.as_scalar(),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -21250,7 +21247,7 @@ fn render_hidden_or_pattern_prefix(node: &NodeData) -> Result<String, ::askama::
     let children = resolve_children(node, &["right"])?;
     let field_0 = resolve_field(node, "right", true)?;
     let template = OrPatternPrefixTemplate {
-        right: field_0.as_scalar(),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -21273,7 +21270,7 @@ fn render_hidden_range_expression_bare(node: &NodeData) -> Result<String, ::aska
     let children = resolve_children(node, &["operator"])?;
     let field_0 = resolve_field(node, "operator", true)?;
     let template = _RangeExpressionBareTemplate {
-        operator: field_0.as_scalar(),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -21284,9 +21281,9 @@ fn render_hidden_range_expression_binary(node: &NodeData) -> Result<String, ::as
     let field_1 = resolve_field(node, "operator", true)?;
     let field_2 = resolve_field(node, "start", true)?;
     let template = RangeExpressionBinaryTemplate {
-        end: field_0.as_scalar(),
-        operator: field_1.as_scalar(),
-        start: field_2.as_scalar(),
+        end: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        start: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
     };
     template.render()
 }
@@ -21296,8 +21293,8 @@ fn render_hidden_range_expression_postfix(node: &NodeData) -> Result<String, ::a
     let field_0 = resolve_field(node, "operator", true)?;
     let field_1 = resolve_field(node, "start", true)?;
     let template = RangeExpressionPostfixTemplate {
-        operator: field_0.as_scalar(),
-        start: field_1.as_scalar(),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        start: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -21307,8 +21304,8 @@ fn render_hidden_range_expression_prefix(node: &NodeData) -> Result<String, ::as
     let field_0 = resolve_field(node, "end", true)?;
     let field_1 = resolve_field(node, "operator", true)?;
     let template = RangeExpressionPrefixTemplate {
-        end: field_0.as_scalar(),
-        operator: field_1.as_scalar(),
+        end: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -21317,7 +21314,7 @@ fn render_hidden_range_pattern_left_with_right(node: &NodeData) -> Result<String
     let children = resolve_children(node, &["right"])?;
     let field_0 = resolve_field(node, "right", true)?;
     let template = RangePatternLeftWithRightTemplate {
-        right: field_0.as_scalar(),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -21326,7 +21323,7 @@ fn render_hidden_range_pattern_prefix(node: &NodeData) -> Result<String, ::askam
     let children = resolve_children(node, &["right"])?;
     let field_0 = resolve_field(node, "right", true)?;
     let template = RangePatternPrefixTemplate {
-        right: field_0.as_scalar(),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -21398,7 +21395,7 @@ fn render_hidden_struct_item_brace(node: &NodeData) -> Result<String, ::askama::
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        body: field_0.as_scalar(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -21414,7 +21411,7 @@ fn render_hidden_struct_item_tuple(node: &NodeData) -> Result<String, ::askama::
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        body: field_0.as_scalar(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -21542,7 +21539,7 @@ fn render_hidden_visibility_modifier_in_path(node: &NodeData) -> Result<String, 
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        r#in: field_0.as_scalar(),
+        r#in: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -21558,7 +21555,7 @@ fn render_hidden_visibility_modifier_pub(node: &NodeData) -> Result<String, ::as
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        r#pub: field_0.as_scalar(),
+        r#pub: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -21568,8 +21565,11 @@ fn render_abstract_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "trait", true)?;
     let field_1 = resolve_field(node, "type_parameters", false)?;
     let template = AbstractTypeTemplate {
-        r#trait: field_0.as_scalar(),
-        type_parameters: field_1.as_scalar(),
+        r#trait: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        type_parameters: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
     };
     template.render()
 }
@@ -21607,8 +21607,11 @@ fn render_array_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "element", true)?;
     let field_1 = resolve_field(node, "length", false)?;
     let template = ArrayTypeTemplate {
-        element: field_0.as_scalar(),
-        length: field_1.as_scalar(),
+        element: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        length: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
     };
     template.render()
 }
@@ -21618,8 +21621,8 @@ fn render_assignment_expression(node: &NodeData) -> Result<String, ::askama::Err
     let field_0 = resolve_field(node, "left", true)?;
     let field_1 = resolve_field(node, "right", true)?;
     let template = AssignmentExpressionTemplate {
-        left: field_0.as_scalar(),
-        right: field_1.as_scalar(),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -21631,10 +21634,19 @@ fn render_associated_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_2 = resolve_field(node, "type_parameters", false)?;
     let field_3 = resolve_field(node, "where_clause", false)?;
     let template = AssociatedTypeTemplate {
-        bounds: field_0.as_scalar(),
-        name: field_1.as_scalar(),
-        type_parameters: field_2.as_scalar(),
-        where_clause: field_3.as_scalar(),
+        bounds: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        type_parameters: match field_2.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        },
+        where_clause: match field_3.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+        },
     };
     template.render()
 }
@@ -21644,8 +21656,11 @@ fn render_async_block(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "block", true)?;
     let field_1 = resolve_field(node, "move_marker", false)?;
     let template = AsyncBlockTemplate {
-        block: field_0.as_scalar(),
-        move_marker: field_1.as_scalar(),
+        block: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        move_marker: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
     };
     template.render()
 }
@@ -21654,7 +21669,7 @@ fn render_attribute_item(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["attribute"])?;
     let field_0 = resolve_field(node, "attribute", true)?;
     let template = AttributeItemTemplate {
-        attribute: field_0.as_scalar(),
+        attribute: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -21671,8 +21686,14 @@ fn render_attribute(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        arguments: field_0.as_scalar(),
-        value: field_1.as_scalar(),
+        arguments: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
+        value: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
     };
     template.render()
 }
@@ -21711,9 +21732,9 @@ fn render_binary_expression(node: &NodeData) -> Result<String, ::askama::Error> 
     let field_1 = resolve_field(node, "operator", true)?;
     let field_2 = resolve_field(node, "right", true)?;
     let template = BinaryExpressionTemplate {
-        left: field_0.as_scalar(),
-        operator: field_1.as_scalar(),
-        right: field_2.as_scalar(),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
     };
     template.render()
 }
@@ -21724,9 +21745,18 @@ fn render_block_comment(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "inner", false)?;
     let field_2 = resolve_field(node, "outer", false)?;
     let template = BlockCommentTemplate {
-        doc: field_0.as_scalar(),
-        inner: field_1.as_scalar(),
-        outer: field_2.as_scalar(),
+        doc: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
+        inner: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
+        outer: match field_2.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        },
     };
     template.render()
 }
@@ -21742,7 +21772,10 @@ fn render_block(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        label: field_0.as_scalar(),
+        label: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
     };
     template.render()
 }
@@ -21759,8 +21792,8 @@ fn render_bounded_type(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        left: field_0.as_scalar(),
-        right: field_1.as_scalar(),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -21790,7 +21823,10 @@ fn render_break_expression(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        label: field_0.as_scalar(),
+        label: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
     };
     template.render()
 }
@@ -21800,8 +21836,8 @@ fn render_call_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "arguments", true)?;
     let field_1 = resolve_field(node, "function", true)?;
     let template = CallExpressionTemplate {
-        arguments: field_0.as_scalar(),
-        function: field_1.as_scalar(),
+        arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        function: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -21817,7 +21853,7 @@ fn render_captured_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        identifier: field_0.as_scalar(),
+        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -21826,7 +21862,7 @@ fn render_closure_expression_expr(node: &NodeData) -> Result<String, ::askama::E
     let children = resolve_children(node, &["body"])?;
     let field_0 = resolve_field(node, "body", true)?;
     let template = ClosureExpressionExprTemplate {
-        body: field_0.as_scalar(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -21845,10 +21881,19 @@ fn render_closure_expression(node: &NodeData) -> Result<String, ::askama::Error>
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        async_marker: field_0.as_scalar(),
-        move_marker: field_1.as_scalar(),
-        parameters: field_2.as_scalar(),
-        static_marker: field_3.as_scalar(),
+        async_marker: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
+        move_marker: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
+        parameters: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        static_marker: match field_3.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+        },
     };
     template.render()
 }
@@ -21887,9 +21932,9 @@ fn render_compound_assignment_expr(node: &NodeData) -> Result<String, ::askama::
     let field_1 = resolve_field(node, "operator", true)?;
     let field_2 = resolve_field(node, "right", true)?;
     let template = CompoundAssignmentExprTemplate {
-        left: field_0.as_scalar(),
-        operator: field_1.as_scalar(),
-        right: field_2.as_scalar(),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
     };
     template.render()
 }
@@ -21898,7 +21943,7 @@ fn render_const_block(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["body"])?;
     let field_0 = resolve_field(node, "body", true)?;
     let template = ConstBlockTemplate {
-        body: field_0.as_scalar(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -21910,10 +21955,16 @@ fn render_const_item(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_2 = resolve_field(node, "value", false)?;
     let field_3 = resolve_field(node, "visibility_modifier", false)?;
     let template = ConstItemTemplate {
-        name: field_0.as_scalar(),
-        r#type: field_1.as_scalar(),
-        value: field_2.as_scalar(),
-        visibility_modifier: field_3.as_scalar(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        value: match field_2.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        },
+        visibility_modifier: match field_3.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+        },
     };
     template.render()
 }
@@ -21924,9 +21975,12 @@ fn render_const_parameter(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "type", true)?;
     let field_2 = resolve_field(node, "value", false)?;
     let template = ConstParameterTemplate {
-        name: field_0.as_scalar(),
-        r#type: field_1.as_scalar(),
-        value: field_2.as_scalar(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        value: match field_2.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        },
     };
     template.render()
 }
@@ -21935,7 +21989,10 @@ fn render_continue_expression(node: &NodeData) -> Result<String, ::askama::Error
     let children = resolve_children(node, &["label"])?;
     let field_0 = resolve_field(node, "label", false)?;
     let template = ContinueExpressionTemplate {
-        label: field_0.as_scalar(),
+        label: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
     };
     template.render()
 }
@@ -22014,7 +22071,7 @@ fn render_dynamic_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["trait"])?;
     let field_0 = resolve_field(node, "trait", true)?;
     let template = DynamicTypeTemplate {
-        r#trait: field_0.as_scalar(),
+        r#trait: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22041,11 +22098,20 @@ fn render_enum_item(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_3 = resolve_field(node, "visibility_modifier", false)?;
     let field_4 = resolve_field(node, "where_clause", false)?;
     let template = EnumItemTemplate {
-        body: field_0.as_scalar(),
-        name: field_1.as_scalar(),
-        type_parameters: field_2.as_scalar(),
-        visibility_modifier: field_3.as_scalar(),
-        where_clause: field_4.as_scalar(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        type_parameters: match field_2.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        },
+        visibility_modifier: match field_3.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+        },
+        where_clause: match field_4.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+        },
     };
     template.render()
 }
@@ -22071,10 +22137,19 @@ fn render_enum_variant(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_2 = resolve_field(node, "value", false)?;
     let field_3 = resolve_field(node, "visibility_modifier", false)?;
     let template = EnumVariantTemplate {
-        body: field_0.as_scalar(),
-        name: field_1.as_scalar(),
-        value: field_2.as_scalar(),
-        visibility_modifier: field_3.as_scalar(),
+        body: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        value: match field_2.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        },
+        visibility_modifier: match field_3.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+        },
     };
     template.render()
 }
@@ -22128,10 +22203,16 @@ fn render_extern_crate_declaration(node: &NodeData) -> Result<String, ::askama::
     let field_2 = resolve_field(node, "name", true)?;
     let field_3 = resolve_field(node, "visibility_modifier", false)?;
     let template = ExternCrateDeclarationTemplate {
-        alias: field_0.as_scalar(),
-        crate_: field_1.as_scalar(),
-        name: field_2.as_scalar(),
-        visibility_modifier: field_3.as_scalar(),
+        alias: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
+        crate_: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        visibility_modifier: match field_3.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+        },
     };
     template.render()
 }
@@ -22140,7 +22221,10 @@ fn render_extern_modifier(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["string_literal"])?;
     let field_0 = resolve_field(node, "string_literal", false)?;
     let template = ExternModifierTemplate {
-        string_literal: field_0.as_scalar(),
+        string_literal: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
     };
     template.render()
 }
@@ -22165,9 +22249,12 @@ fn render_field_declaration(node: &NodeData) -> Result<String, ::askama::Error> 
     let field_1 = resolve_field(node, "type", true)?;
     let field_2 = resolve_field(node, "visibility_modifier", false)?;
     let template = FieldDeclarationTemplate {
-        name: field_0.as_scalar(),
-        r#type: field_1.as_scalar(),
-        visibility_modifier: field_2.as_scalar(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        visibility_modifier: match field_2.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        },
     };
     template.render()
 }
@@ -22177,8 +22264,8 @@ fn render_field_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "field", true)?;
     let field_1 = resolve_field(node, "value", true)?;
     let template = FieldExpressionTemplate {
-        field: field_0.as_scalar(),
-        value: field_1.as_scalar(),
+        field: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22209,8 +22296,8 @@ fn render_field_initializer(node: &NodeData) -> Result<String, ::askama::Error> 
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        field: field_0.as_scalar(),
-        value: field_1.as_scalar(),
+        field: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22219,7 +22306,7 @@ fn render_field_pattern_shorthand(node: &NodeData) -> Result<String, ::askama::E
     let children = resolve_children(node, &["name"])?;
     let field_0 = resolve_field(node, "name", true)?;
     let template = FieldPatternShorthandTemplate {
-        name: field_0.as_scalar(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22236,8 +22323,14 @@ fn render_field_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        mutable_specifier: field_0.as_scalar(),
-        ref_marker: field_1.as_scalar(),
+        mutable_specifier: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
+        ref_marker: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
     };
     template.render()
 }
@@ -22249,10 +22342,13 @@ fn render_for_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_2 = resolve_field(node, "pattern", true)?;
     let field_3 = resolve_field(node, "value", true)?;
     let template = ForExpressionTemplate {
-        body: field_0.as_scalar(),
-        label: field_1.as_scalar(),
-        pattern: field_2.as_scalar(),
-        value: field_3.as_scalar(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        label: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
+        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
     };
     template.render()
 }
@@ -22275,7 +22371,7 @@ fn render_foreign_mod_item_body(node: &NodeData) -> Result<String, ::askama::Err
     let children = resolve_children(node, &["body"])?;
     let field_0 = resolve_field(node, "body", true)?;
     let template = ForeignModItemBodyTemplate {
-        body: field_0.as_scalar(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22292,8 +22388,11 @@ fn render_foreign_mod_item(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        extern_modifier: field_0.as_scalar(),
-        visibility_modifier: field_1.as_scalar(),
+        extern_modifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        visibility_modifier: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
     };
     template.render()
 }
@@ -22309,14 +22408,29 @@ fn render_function_item(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_6 = resolve_field(node, "visibility_modifier", false)?;
     let field_7 = resolve_field(node, "where_clause", false)?;
     let template = FunctionItemTemplate {
-        body: field_0.as_scalar(),
-        function_modifiers: field_1.as_scalar(),
-        name: field_2.as_scalar(),
-        parameters: field_3.as_scalar(),
-        return_type: field_4.as_scalar(),
-        type_parameters: field_5.as_scalar(),
-        visibility_modifier: field_6.as_scalar(),
-        where_clause: field_7.as_scalar(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        function_modifiers: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        parameters: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+        return_type: match field_4.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+        },
+        type_parameters: match field_5.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_5.as_scalar())),
+        },
+        visibility_modifier: match field_6.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_6.as_scalar())),
+        },
+        where_clause: match field_7.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_7.as_scalar())),
+        },
     };
     template.render()
 }
@@ -22333,15 +22447,11 @@ fn render_function_modifiers(node: &NodeData) -> Result<String, ::askama::Error>
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        modifier: match field_0.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::NonterminalView::Missing,
-            ResolvedFieldKind::Scalar => ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-            ResolvedFieldKind::List => ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
-                items: field_0_renderables.as_slice(),
-                separator: field_0.separator,
-                leading: field_0.leading_sep,
-                trailing: field_0.trailing_sep,
-            }),
+        modifier: ::sittir_core::filters::ListNonterminalView {
+            items: field_0_renderables.as_slice(),
+            separator: field_0.separator,
+            leading: field_0.leading_sep,
+            trailing: field_0.trailing_sep,
         },
     };
     template.render()
@@ -22357,13 +22467,28 @@ fn render_function_signature_item(node: &NodeData) -> Result<String, ::askama::E
     let field_5 = resolve_field(node, "visibility_modifier", false)?;
     let field_6 = resolve_field(node, "where_clause", false)?;
     let template = FunctionSignatureItemTemplate {
-        function_modifiers: field_0.as_scalar(),
-        name: field_1.as_scalar(),
-        parameters: field_2.as_scalar(),
-        return_type: field_3.as_scalar(),
-        type_parameters: field_4.as_scalar(),
-        visibility_modifier: field_5.as_scalar(),
-        where_clause: field_6.as_scalar(),
+        function_modifiers: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        parameters: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        return_type: match field_3.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+        },
+        type_parameters: match field_4.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+        },
+        visibility_modifier: match field_5.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_5.as_scalar())),
+        },
+        where_clause: match field_6.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_6.as_scalar())),
+        },
     };
     template.render()
 }
@@ -22381,9 +22506,15 @@ fn render_function_type(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        for_lifetimes: field_0.as_scalar(),
-        parameters: field_1.as_scalar(),
-        return_type: field_2.as_scalar(),
+        for_lifetimes: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
+        parameters: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        return_type: match field_2.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        },
     };
     template.render()
 }
@@ -22393,8 +22524,11 @@ fn render_gen_block(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "block", true)?;
     let field_1 = resolve_field(node, "move_marker", false)?;
     let template = GenBlockTemplate {
-        block: field_0.as_scalar(),
-        move_marker: field_1.as_scalar(),
+        block: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        move_marker: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
     };
     template.render()
 }
@@ -22404,8 +22538,8 @@ fn render_generic_function(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "function", true)?;
     let field_1 = resolve_field(node, "type_arguments", true)?;
     let template = GenericFunctionTemplate {
-        function: field_0.as_scalar(),
-        type_arguments: field_1.as_scalar(),
+        function: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        type_arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22421,7 +22555,7 @@ fn render_generic_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        type_arguments: field_0.as_scalar(),
+        type_arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22432,9 +22566,9 @@ fn render_generic_type_with_turbofish(node: &NodeData) -> Result<String, ::askam
     let field_1 = resolve_field(node, "type", true)?;
     let field_2 = resolve_field(node, "type_arguments", true)?;
     let template = GenericTypeWithTurbofishTemplate {
-        turbofish: field_0.as_scalar(),
-        r#type: field_1.as_scalar(),
-        type_arguments: field_2.as_scalar(),
+        turbofish: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        type_arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
     };
     template.render()
 }
@@ -22444,8 +22578,8 @@ fn render_generic_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "type", true)?;
     let field_1 = resolve_field(node, "type_arguments", true)?;
     let template = GenericTypeTemplate {
-        r#type: field_0.as_scalar(),
-        type_arguments: field_1.as_scalar(),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        type_arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22455,8 +22589,8 @@ fn render_higher_ranked_trait_bound(node: &NodeData) -> Result<String, ::askama:
     let field_0 = resolve_field(node, "type", true)?;
     let field_1 = resolve_field(node, "type_parameters", true)?;
     let template = HigherRankedTraitBoundTemplate {
-        r#type: field_0.as_scalar(),
-        type_parameters: field_1.as_scalar(),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        type_parameters: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22467,9 +22601,12 @@ fn render_if_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "condition", true)?;
     let field_2 = resolve_field(node, "consequence", true)?;
     let template = IfExpressionTemplate {
-        alternative: field_0.as_scalar(),
-        condition: field_1.as_scalar(),
-        consequence: field_2.as_scalar(),
+        alternative: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
+        condition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        consequence: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
     };
     template.render()
 }
@@ -22478,7 +22615,7 @@ fn render_impl_item_body(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["body"])?;
     let field_0 = resolve_field(node, "body", true)?;
     let template = ImplItemBodyTemplate {
-        body: field_0.as_scalar(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22499,12 +22636,27 @@ fn render_impl_item(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        negative: field_0.as_scalar(),
-        r#trait: field_1.as_scalar(),
-        r#type: field_2.as_scalar(),
-        type_parameters: field_3.as_scalar(),
-        unsafe_marker: field_4.as_scalar(),
-        where_clause: field_5.as_scalar(),
+        negative: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
+        r#trait: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        type_parameters: match field_3.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+        },
+        unsafe_marker: match field_4.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+        },
+        where_clause: match field_5.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_5.as_scalar())),
+        },
     };
     template.render()
 }
@@ -22514,8 +22666,8 @@ fn render_index_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "index", true)?;
     let field_1 = resolve_field(node, "object", true)?;
     let template = IndexExpressionTemplate {
-        index: field_0.as_scalar(),
-        object: field_1.as_scalar(),
+        index: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        object: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22524,7 +22676,7 @@ fn render_inner_attribute_item(node: &NodeData) -> Result<String, ::askama::Erro
     let children = resolve_children(node, &["attribute"])?;
     let field_0 = resolve_field(node, "attribute", true)?;
     let template = InnerAttributeItemTemplate {
-        attribute: field_0.as_scalar(),
+        attribute: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22533,7 +22685,7 @@ fn render_label(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["identifier"])?;
     let field_0 = resolve_field(node, "identifier", true)?;
     let template = LabelTemplate {
-        identifier: field_0.as_scalar(),
+        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22550,8 +22702,8 @@ fn render_last_match_arm(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        pattern: field_0.as_scalar(),
-        value: field_1.as_scalar(),
+        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22561,8 +22713,8 @@ fn render_let_condition(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "pattern", true)?;
     let field_1 = resolve_field(node, "value", true)?;
     let template = LetConditionTemplate {
-        pattern: field_0.as_scalar(),
-        value: field_1.as_scalar(),
+        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22575,11 +22727,23 @@ fn render_let_declaration(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_3 = resolve_field(node, "type", false)?;
     let field_4 = resolve_field(node, "value", false)?;
     let template = LetDeclarationTemplate {
-        alternative: field_0.as_scalar(),
-        mutable_specifier: field_1.as_scalar(),
-        pattern: field_2.as_scalar(),
-        r#type: field_3.as_scalar(),
-        value: field_4.as_scalar(),
+        alternative: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
+        mutable_specifier: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
+        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        r#type: match field_3.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+        },
+        value: match field_4.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+        },
     };
     template.render()
 }
@@ -22589,8 +22753,11 @@ fn render_lifetime_parameter(node: &NodeData) -> Result<String, ::askama::Error>
     let field_0 = resolve_field(node, "bounds", false)?;
     let field_1 = resolve_field(node, "name", true)?;
     let template = LifetimeParameterTemplate {
-        bounds: field_0.as_scalar(),
-        name: field_1.as_scalar(),
+        bounds: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22599,7 +22766,7 @@ fn render_lifetime(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["identifier"])?;
     let field_0 = resolve_field(node, "identifier", true)?;
     let template = LifetimeTemplate {
-        identifier: field_0.as_scalar(),
+        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22623,8 +22790,11 @@ fn render_loop_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "body", true)?;
     let field_1 = resolve_field(node, "label", false)?;
     let template = LoopExpressionTemplate {
-        body: field_0.as_scalar(),
-        label: field_1.as_scalar(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        label: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
     };
     template.render()
 }
@@ -22682,7 +22852,7 @@ fn render_macro_definition(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        name: field_0.as_scalar(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22692,8 +22862,8 @@ fn render_macro_invocation(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "macro", true)?;
     let field_1 = resolve_field(node, "token_tree", true)?;
     let template = MacroInvocationTemplate {
-        r#macro: field_0.as_scalar(),
-        token_tree: field_1.as_scalar(),
+        r#macro: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        token_tree: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22703,8 +22873,8 @@ fn render_macro_rule(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "left", true)?;
     let field_1 = resolve_field(node, "right", true)?;
     let template = MacroRuleTemplate {
-        left: field_0.as_scalar(),
-        right: field_1.as_scalar(),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22713,7 +22883,7 @@ fn render_match_arm_block_ending(node: &NodeData) -> Result<String, ::askama::Er
     let children = resolve_children(node, &["value"])?;
     let field_0 = resolve_field(node, "value", true)?;
     let template = MatchArmBlockEndingTemplate {
-        value: field_0.as_scalar(),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22729,7 +22899,7 @@ fn render_match_arm(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        pattern: field_0.as_scalar(),
+        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22753,8 +22923,8 @@ fn render_match_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "body", true)?;
     let field_1 = resolve_field(node, "value", true)?;
     let template = MatchExpressionTemplate {
-        body: field_0.as_scalar(),
-        value: field_1.as_scalar(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22770,7 +22940,10 @@ fn render_match_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        condition: field_0.as_scalar(),
+        condition: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
     };
     template.render()
 }
@@ -22779,7 +22952,7 @@ fn render_mod_item_inline(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["body"])?;
     let field_0 = resolve_field(node, "body", true)?;
     let template = ModItemInlineTemplate {
-        body: field_0.as_scalar(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22796,8 +22969,11 @@ fn render_mod_item(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        name: field_0.as_scalar(),
-        visibility_modifier: field_1.as_scalar(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        visibility_modifier: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
     };
     template.render()
 }
@@ -22813,7 +22989,7 @@ fn render_mut_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        mutable_specifier: field_0.as_scalar(),
+        mutable_specifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22829,7 +23005,7 @@ fn render_negative_literal(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        value: field_0.as_scalar(),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22860,15 +23036,11 @@ fn render_ordered_field_declaration_list(node: &NodeData) -> Result<String, ::as
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        r#type: match field_0.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::NonterminalView::Missing,
-            ResolvedFieldKind::Scalar => ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-            ResolvedFieldKind::List => ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
-                items: field_0_renderables.as_slice(),
-                separator: field_0.separator,
-                leading: field_0.leading_sep,
-                trailing: field_0.trailing_sep,
-            }),
+        r#type: ::sittir_core::filters::ListNonterminalView {
+            items: field_0_renderables.as_slice(),
+            separator: field_0.separator,
+            leading: field_0.leading_sep,
+            trailing: field_0.trailing_sep,
         },
     };
     template.render()
@@ -22880,9 +23052,12 @@ fn render_parameter(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "pattern", true)?;
     let field_2 = resolve_field(node, "type", true)?;
     let template = ParameterTemplate {
-        mutable_specifier: field_0.as_scalar(),
-        pattern: field_1.as_scalar(),
-        r#type: field_2.as_scalar(),
+        mutable_specifier: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
+        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
     };
     template.render()
 }
@@ -22940,7 +23115,7 @@ fn render_pointer_type(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        r#type: field_0.as_scalar(),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22950,8 +23125,8 @@ fn render_qualified_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "alias", true)?;
     let field_1 = resolve_field(node, "type", true)?;
     let template = QualifiedTypeTemplate {
-        alias: field_0.as_scalar(),
-        r#type: field_1.as_scalar(),
+        alias: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22960,7 +23135,7 @@ fn render_range_expression_bare(node: &NodeData) -> Result<String, ::askama::Err
     let children = resolve_children(node, &["operator"])?;
     let field_0 = resolve_field(node, "operator", true)?;
     let template = RangeExpressionBareTemplate {
-        operator: field_0.as_scalar(),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22990,7 +23165,7 @@ fn render_range_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        left: field_0.as_scalar(),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -23029,7 +23204,7 @@ fn render_reference_expression(node: &NodeData) -> Result<String, ::askama::Erro
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        value: field_0.as_scalar(),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -23039,8 +23214,11 @@ fn render_reference_pattern(node: &NodeData) -> Result<String, ::askama::Error> 
     let field_0 = resolve_field(node, "mutable_specifier", false)?;
     let field_1 = resolve_field(node, "pattern", true)?;
     let template = ReferencePatternTemplate {
-        mutable_specifier: field_0.as_scalar(),
-        pattern: field_1.as_scalar(),
+        mutable_specifier: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
+        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -23051,9 +23229,15 @@ fn render_reference_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "mutable_specifier", false)?;
     let field_2 = resolve_field(node, "type", true)?;
     let template = ReferenceTypeTemplate {
-        lifetime: field_0.as_scalar(),
-        mutable_specifier: field_1.as_scalar(),
-        r#type: field_2.as_scalar(),
+        lifetime: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
+        mutable_specifier: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
     };
     template.render()
 }
@@ -23091,8 +23275,11 @@ fn render_scoped_identifier(node: &NodeData) -> Result<String, ::askama::Error> 
     let field_0 = resolve_field(node, "name", true)?;
     let field_1 = resolve_field(node, "path", false)?;
     let template = ScopedIdentifierTemplate {
-        name: field_0.as_scalar(),
-        path: field_1.as_scalar(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        path: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
     };
     template.render()
 }
@@ -23102,8 +23289,11 @@ fn render_scoped_type_identifier_in_expression_position(node: &NodeData) -> Resu
     let field_0 = resolve_field(node, "name", true)?;
     let field_1 = resolve_field(node, "path", false)?;
     let template = ScopedTypeIdentifierInExpressionPositionTemplate {
-        name: field_0.as_scalar(),
-        path: field_1.as_scalar(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        path: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
     };
     template.render()
 }
@@ -23113,8 +23303,11 @@ fn render_scoped_type_identifier(node: &NodeData) -> Result<String, ::askama::Er
     let field_0 = resolve_field(node, "name", true)?;
     let field_1 = resolve_field(node, "path", false)?;
     let template = ScopedTypeIdentifierTemplate {
-        name: field_0.as_scalar(),
-        path: field_1.as_scalar(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        path: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
     };
     template.render()
 }
@@ -23124,8 +23317,11 @@ fn render_scoped_use_list(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "list", true)?;
     let field_1 = resolve_field(node, "path", false)?;
     let template = ScopedUseListTemplate {
-        list: field_0.as_scalar(),
-        path: field_1.as_scalar(),
+        list: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        path: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
     };
     template.render()
 }
@@ -23137,10 +23333,19 @@ fn render_self_parameter(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_2 = resolve_field(node, "reference", false)?;
     let field_3 = resolve_field(node, "self", true)?;
     let template = SelfParameterTemplate {
-        lifetime: field_0.as_scalar(),
-        mutable_specifier: field_1.as_scalar(),
-        reference: field_2.as_scalar(),
-        self_: field_3.as_scalar(),
+        lifetime: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
+        mutable_specifier: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
+        reference: match field_2.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        },
+        self_: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
     };
     template.render()
 }
@@ -23151,17 +23356,13 @@ fn render_shorthand_field_initializer(node: &NodeData) -> Result<String, ::askam
     let field_1 = resolve_field(node, "identifier", true)?;
     let field_0_renderables = field_0.renderable_items();
     let template = ShorthandFieldInitializerTemplate {
-        attributes: match field_0.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::NonterminalView::Missing,
-            ResolvedFieldKind::Scalar => ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-            ResolvedFieldKind::List => ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
-                items: field_0_renderables.as_slice(),
-                separator: field_0.separator,
-                leading: field_0.leading_sep,
-                trailing: field_0.trailing_sep,
-            }),
+        attributes: ::sittir_core::filters::ListNonterminalView {
+            items: field_0_renderables.as_slice(),
+            separator: field_0.separator,
+            leading: field_0.leading_sep,
+            trailing: field_0.trailing_sep,
         },
-        identifier: field_1.as_scalar(),
+        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -23186,16 +23387,15 @@ fn render_source_file(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "statements", true)?;
     let field_1_renderables = field_1.renderable_items();
     let template = SourceFileTemplate {
-        shebang: field_0.as_scalar(),
-        statements: match field_1.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::NonterminalView::Missing,
-            ResolvedFieldKind::Scalar => ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-            ResolvedFieldKind::List => ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
-                items: field_1_renderables.as_slice(),
-                separator: field_1.separator,
-                leading: field_1.leading_sep,
-                trailing: field_1.trailing_sep,
-            }),
+        shebang: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
+        statements: ::sittir_core::filters::ListNonterminalView {
+            items: field_1_renderables.as_slice(),
+            separator: field_1.separator,
+            leading: field_1.leading_sep,
+            trailing: field_1.trailing_sep,
         },
     };
     template.render()
@@ -23210,12 +23410,24 @@ fn render_static_item(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_4 = resolve_field(node, "value", false)?;
     let field_5 = resolve_field(node, "visibility_modifier", false)?;
     let template = StaticItemTemplate {
-        mutable_specifier: field_0.as_scalar(),
-        name: field_1.as_scalar(),
-        ref_marker: field_2.as_scalar(),
-        r#type: field_3.as_scalar(),
-        value: field_4.as_scalar(),
-        visibility_modifier: field_5.as_scalar(),
+        mutable_specifier: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        ref_marker: match field_2.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        },
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+        value: match field_4.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+        },
+        visibility_modifier: match field_5.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_5.as_scalar())),
+        },
     };
     template.render()
 }
@@ -23239,8 +23451,8 @@ fn render_struct_expression(node: &NodeData) -> Result<String, ::askama::Error> 
     let field_0 = resolve_field(node, "body", true)?;
     let field_1 = resolve_field(node, "name", true)?;
     let template = StructExpressionTemplate {
-        body: field_0.as_scalar(),
-        name: field_1.as_scalar(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -23258,9 +23470,15 @@ fn render_struct_item(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        name: field_0.as_scalar(),
-        type_parameters: field_1.as_scalar(),
-        visibility_modifier: field_2.as_scalar(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        type_parameters: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
+        visibility_modifier: match field_2.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        },
     };
     template.render()
 }
@@ -23276,7 +23494,7 @@ fn render_struct_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        r#type: field_0.as_scalar(),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -23286,8 +23504,8 @@ fn render_token_binding_pattern(node: &NodeData) -> Result<String, ::askama::Err
     let field_0 = resolve_field(node, "name", true)?;
     let field_1 = resolve_field(node, "type", true)?;
     let template = TokenBindingPatternTemplate {
-        name: field_0.as_scalar(),
-        r#type: field_1.as_scalar(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -23456,13 +23674,28 @@ fn render_trait_item(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_5 = resolve_field(node, "visibility_modifier", false)?;
     let field_6 = resolve_field(node, "where_clause", false)?;
     let template = TraitItemTemplate {
-        body: field_0.as_scalar(),
-        bounds: field_1.as_scalar(),
-        name: field_2.as_scalar(),
-        type_parameters: field_3.as_scalar(),
-        unsafe_marker: field_4.as_scalar(),
-        visibility_modifier: field_5.as_scalar(),
-        where_clause: field_6.as_scalar(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        bounds: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        type_parameters: match field_3.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+        },
+        unsafe_marker: match field_4.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+        },
+        visibility_modifier: match field_5.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_5.as_scalar())),
+        },
+        where_clause: match field_6.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_6.as_scalar())),
+        },
     };
     template.render()
 }
@@ -23471,7 +23704,7 @@ fn render_try_block(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["block"])?;
     let field_0 = resolve_field(node, "block", true)?;
     let template = TryBlockTemplate {
-        block: field_0.as_scalar(),
+        block: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -23480,7 +23713,7 @@ fn render_try_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["value"])?;
     let field_0 = resolve_field(node, "value", true)?;
     let template = TryExpressionTemplate {
-        value: field_0.as_scalar(),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -23492,25 +23725,17 @@ fn render_tuple_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0_renderables = field_0.renderable_items();
     let field_1_renderables = field_1.renderable_items();
     let template = TupleExpressionTemplate {
-        attributes: match field_0.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::NonterminalView::Missing,
-            ResolvedFieldKind::Scalar => ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-            ResolvedFieldKind::List => ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
-                items: field_0_renderables.as_slice(),
-                separator: field_0.separator,
-                leading: field_0.leading_sep,
-                trailing: field_0.trailing_sep,
-            }),
+        attributes: ::sittir_core::filters::ListNonterminalView {
+            items: field_0_renderables.as_slice(),
+            separator: field_0.separator,
+            leading: field_0.leading_sep,
+            trailing: field_0.trailing_sep,
         },
-        elements: match field_1.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::NonterminalView::Missing,
-            ResolvedFieldKind::Scalar => ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-            ResolvedFieldKind::List => ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
-                items: field_1_renderables.as_slice(),
-                separator: field_1.separator,
-                leading: field_1.leading_sep,
-                trailing: field_1.trailing_sep,
-            }),
+        elements: ::sittir_core::filters::ListNonterminalView {
+            items: field_1_renderables.as_slice(),
+            separator: field_1.separator,
+            leading: field_1.leading_sep,
+            trailing: field_1.trailing_sep,
         },
     };
     template.render()
@@ -23541,7 +23766,7 @@ fn render_tuple_struct_pattern(node: &NodeData) -> Result<String, ::askama::Erro
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        r#type: field_0.as_scalar(),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -23580,9 +23805,12 @@ fn render_type_binding(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "type", true)?;
     let field_2 = resolve_field(node, "type_arguments", false)?;
     let template = TypeBindingTemplate {
-        name: field_0.as_scalar(),
-        r#type: field_1.as_scalar(),
-        type_arguments: field_2.as_scalar(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        type_arguments: match field_2.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        },
     };
     template.render()
 }
@@ -23592,8 +23820,8 @@ fn render_type_cast_expression(node: &NodeData) -> Result<String, ::askama::Erro
     let field_0 = resolve_field(node, "type", true)?;
     let field_1 = resolve_field(node, "value", true)?;
     let template = TypeCastExpressionTemplate {
-        r#type: field_0.as_scalar(),
-        value: field_1.as_scalar(),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -23607,12 +23835,24 @@ fn render_type_item(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_4 = resolve_field(node, "visibility_modifier", false)?;
     let field_5 = resolve_field(node, "where_clause", false)?;
     let template = TypeItemTemplate {
-        name: field_0.as_scalar(),
-        trailing_where_clause: field_1.as_scalar(),
-        r#type: field_2.as_scalar(),
-        type_parameters: field_3.as_scalar(),
-        visibility_modifier: field_4.as_scalar(),
-        where_clause: field_5.as_scalar(),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        trailing_where_clause: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        type_parameters: match field_3.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+        },
+        visibility_modifier: match field_4.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+        },
+        where_clause: match field_5.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_5.as_scalar())),
+        },
     };
     template.render()
 }
@@ -23623,9 +23863,15 @@ fn render_type_parameter(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "default_type", false)?;
     let field_2 = resolve_field(node, "name", true)?;
     let template = TypeParameterTemplate {
-        bounds: field_0.as_scalar(),
-        default_type: field_1.as_scalar(),
-        name: field_2.as_scalar(),
+        bounds: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
+        default_type: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
     };
     template.render()
 }
@@ -23649,8 +23895,8 @@ fn render_unary_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "operand", true)?;
     let field_1 = resolve_field(node, "operator", true)?;
     let template = UnaryExpressionTemplate {
-        operand: field_0.as_scalar(),
-        operator: field_1.as_scalar(),
+        operand: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -23663,11 +23909,20 @@ fn render_union_item(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_3 = resolve_field(node, "visibility_modifier", false)?;
     let field_4 = resolve_field(node, "where_clause", false)?;
     let template = UnionItemTemplate {
-        body: field_0.as_scalar(),
-        name: field_1.as_scalar(),
-        type_parameters: field_2.as_scalar(),
-        visibility_modifier: field_3.as_scalar(),
-        where_clause: field_4.as_scalar(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        type_parameters: match field_2.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        },
+        visibility_modifier: match field_3.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+        },
+        where_clause: match field_4.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+        },
     };
     template.render()
 }
@@ -23676,7 +23931,7 @@ fn render_unsafe_block(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["block"])?;
     let field_0 = resolve_field(node, "block", true)?;
     let template = UnsafeBlockTemplate {
-        block: field_0.as_scalar(),
+        block: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -23686,8 +23941,8 @@ fn render_use_as_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "alias", true)?;
     let field_1 = resolve_field(node, "path", true)?;
     let template = UseAsClauseTemplate {
-        alias: field_0.as_scalar(),
-        path: field_1.as_scalar(),
+        alias: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        path: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -23711,8 +23966,11 @@ fn render_use_declaration(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "argument", true)?;
     let field_1 = resolve_field(node, "visibility_modifier", false)?;
     let template = UseDeclarationTemplate {
-        argument: field_0.as_scalar(),
-        visibility_modifier: field_1.as_scalar(),
+        argument: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        visibility_modifier: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
     };
     template.render()
 }
@@ -23735,7 +23993,10 @@ fn render_use_wildcard(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["path"])?;
     let field_0 = resolve_field(node, "path", false)?;
     let template = UseWildcardTemplate {
-        path: field_0.as_scalar(),
+        path: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
     };
     template.render()
 }
@@ -23745,8 +24006,14 @@ fn render_variadic_parameter(node: &NodeData) -> Result<String, ::askama::Error>
     let field_0 = resolve_field(node, "mutable_specifier", false)?;
     let field_1 = resolve_field(node, "pattern", false)?;
     let template = VariadicParameterTemplate {
-        mutable_specifier: field_0.as_scalar(),
-        pattern: field_1.as_scalar(),
+        mutable_specifier: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
+        pattern: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
     };
     template.render()
 }
@@ -23798,8 +24065,8 @@ fn render_where_predicate(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "bounds", true)?;
     let field_1 = resolve_field(node, "left", true)?;
     let template = WherePredicateTemplate {
-        bounds: field_0.as_scalar(),
-        left: field_1.as_scalar(),
+        bounds: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -23810,9 +24077,12 @@ fn render_while_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "condition", true)?;
     let field_2 = resolve_field(node, "label", false)?;
     let template = WhileExpressionTemplate {
-        body: field_0.as_scalar(),
-        condition: field_1.as_scalar(),
-        label: field_2.as_scalar(),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        condition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        label: match field_2.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        },
     };
     template.render()
 }

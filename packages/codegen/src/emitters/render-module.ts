@@ -303,17 +303,9 @@ function renderStructDefs(structs: EmittedStruct[]): string {
 			lines.push(`    pub text: &'a str,`);
 		}
 		for (const f of s.fields) {
-			if (f.view === 'scalar') {
-				lines.push(`    pub ${rustFieldIdent(f.name)}: &'a str,`);
-			} else if (f.view === 'list') {
-				lines.push(
-					`    pub ${rustFieldIdent(f.name)}: ::sittir_core::filters::ListNonterminalView<'a>,`
-				);
-			} else {
-				lines.push(
-					`    pub ${rustFieldIdent(f.name)}: ::sittir_core::filters::NonterminalView<'a>,`
-				);
-			}
+			lines.push(
+				`    pub ${rustFieldIdent(f.name)}: ${slotFieldType(f)},`
+			);
 		}
 		lines.push(`}`);
 		lines.push('');
@@ -324,6 +316,29 @@ function renderStructDefs(structs: EmittedStruct[]): string {
 function renderFnName(kind: string): string {
 	const base = kind.replace(/^_+/, 'hidden_').replace(/[^a-zA-Z0-9]+/g, '_');
 	return `render_${base}`;
+}
+
+/**
+ * Pick the per-cardinality nonterminal-view type for an emitted slot.
+ *
+ * The four-type taxonomy:
+ * - `SingleNonterminalView<'a>` — known-required, single occurrence.
+ * - `OptionalNonterminalView<'a>` — known zero-or-one.
+ * - `ListNonterminalView<'a>` — known zero-or-more.
+ * - `NonterminalView<'a>` — escape hatch when cardinality is genuinely
+ *   ambiguous at codegen time. Under current rules every emitted slot
+ *   resolves to one of the three concrete types; the umbrella is
+ *   reserved for future cases where the walker can't decide.
+ */
+function slotFieldType(f: EmittedField): string {
+	const C = '::sittir_core::filters::';
+	// list view OR field-view-with-multiple → always-list
+	if (f.view === 'list' || (f.view === 'field' && f.multiple)) {
+		return `${C}ListNonterminalView<'a>`;
+	}
+	// scalar OR field-view-single
+	if (f.required) return `${C}SingleNonterminalView<'a>`;
+	return `${C}OptionalNonterminalView<'a>`;
 }
 
 function renderDirectSupport(meta: MetaData): string {
@@ -854,27 +869,25 @@ function renderPerKindFns(structs: EmittedStruct[]): string {
 			lines.push(`        text: text.as_str(),`);
 		}
 		for (const [index, f] of s.fields.entries()) {
-			if (f.view === 'scalar') {
-				lines.push(
-					`        ${rustFieldIdent(f.name)}: field_${index}.as_scalar(),`
-				);
-			} else if (f.view === 'list') {
-				lines.push(`        ${rustFieldIdent(f.name)}: ::sittir_core::filters::ListNonterminalView {`);
+			const rIdent = rustFieldIdent(f.name);
+			if (f.view === 'list' || (f.view === 'field' && f.multiple)) {
+				// Always-list slot.
+				lines.push(`        ${rIdent}: ::sittir_core::filters::ListNonterminalView {`);
 				lines.push(`            items: field_${index}_renderables.as_slice(),`);
 				lines.push(`            separator: field_${index}.separator,`);
 				lines.push(`            leading: field_${index}.leading_sep,`);
 				lines.push(`            trailing: field_${index}.trailing_sep,`);
 				lines.push(`        },`);
+			} else if (f.required) {
+				// Required scalar (view='scalar' or single-valued field-view).
+				lines.push(
+					`        ${rIdent}: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_${index}.as_scalar())),`
+				);
 			} else {
-				lines.push(`        ${rustFieldIdent(f.name)}: match field_${index}.kind {`);
-				lines.push(`            ResolvedFieldKind::Missing => ::sittir_core::filters::NonterminalView::Missing,`);
-				lines.push(`            ResolvedFieldKind::Scalar => ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(field_${index}.as_scalar())),`);
-				lines.push(`            ResolvedFieldKind::List => ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {`);
-				lines.push(`                items: field_${index}_renderables.as_slice(),`);
-				lines.push(`                separator: field_${index}.separator,`);
-				lines.push(`                leading: field_${index}.leading_sep,`);
-				lines.push(`                trailing: field_${index}.trailing_sep,`);
-				lines.push(`            }),`);
+				// Optional scalar — use ResolvedField.kind to gate Missing vs Present.
+				lines.push(`        ${rIdent}: match field_${index}.kind {`);
+				lines.push(`            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,`);
+				lines.push(`            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_${index}.as_scalar())),`);
 				lines.push(`        },`);
 			}
 		}
@@ -1248,12 +1261,18 @@ function renderTypedFormFn(
 					hasTrailing: formField.hasTrailing
 				};
 			}
-			// Slot present in parent template but not in this form — default it.
+			// Slot present in parent template but not in this form — default
+			// it. CRITICAL: inherit `required` and `multiple` from the parent
+			// so the construction picks the same per-cardinality view type
+			// the parent template struct declares (SingleNonterminalView /
+			// OptionalNonterminalView / ListNonterminalView). The slot's
+			// runtime value will be empty text / Missing / empty list — the
+			// concrete cardinality wrapper just has to match.
 			return {
 				name: parentField.name,
 				view: parentField.view,
-				required: false,
-				multiple: false,
+				required: parentField.required,
+				multiple: parentField.multiple,
 				hasTransportField: false,
 				hasLeading: false,
 				hasTrailing: false
@@ -1437,67 +1456,51 @@ function buildTypedTemplateBody(
 
 	for (const f of struct.fields) {
 		const rIdent = rustFieldIdent(f.name);
-		if (f.view === 'scalar') {
-			if (f.hasTransportField) {
-				lines.push(`        ${rIdent}: ${rIdent}_text.as_str(),`);
-			} else {
-				// Virtual presentation slot — no backing transport field; default to "".
-				lines.push(`        ${rIdent}: "",`);
-			}
-		} else if (f.view === 'list') {
-			if (f.hasTransportField) {
-				lines.push(`        ${rIdent}: ::sittir_core::filters::ListNonterminalView {`);
-				lines.push(`            items: ${rIdent}_buf.as_slice(),`);
-				lines.push(`            separator: ${sepLiteral},`);
-				lines.push(`            leading: false,`);
-				lines.push(`            trailing: false,`);
-				lines.push(`        },`);
-			} else {
-				lines.push(`        ${rIdent}: ::sittir_core::filters::ListNonterminalView {`);
-				lines.push(`            items: &[],`);
-				lines.push(`            separator: ${sepLiteral},`);
-				lines.push(`            leading: false,`);
-				lines.push(`            trailing: false,`);
-				lines.push(`        },`);
-			}
-		} else if (f.multiple) {
-			// view === 'field' && multiple — Many(ListNonterminalView)
-			if (f.hasTransportField) {
-				lines.push(`        ${rIdent}: ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {`);
-				lines.push(`            items: ${rIdent}_buf.as_slice(),`);
-				lines.push(`            separator: ${sepLiteral},`);
-				lines.push(`            leading: false,`);
-				lines.push(`            trailing: false,`);
-				lines.push(`        }),`);
-			} else {
-				lines.push(`        ${rIdent}: ::sittir_core::filters::NonterminalView::Missing,`);
-			}
+		const C = '::sittir_core::filters::';
+		if (f.view === 'list' || (f.view === 'field' && f.multiple)) {
+			// Always-list slot. Empty list when transport-field absent.
+			const items = f.hasTransportField ? `${rIdent}_buf.as_slice()` : '&[]';
+			lines.push(`        ${rIdent}: ${C}ListNonterminalView {`);
+			lines.push(`            items: ${items},`);
+			lines.push(`            separator: ${sepLiteral},`);
+			lines.push(`            leading: false,`);
+			lines.push(`            trailing: false,`);
+			lines.push(`        },`);
 		} else if (f.required) {
-			// view === 'field', single, required — One(Renderable::Text)
-			if (f.hasTransportField) {
+			// Required scalar (view='scalar' or view='field' single required).
+			if (f.view === 'scalar' && f.hasTransportField) {
 				lines.push(
-					`        ${rIdent}: ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(${rIdent}_rendered.as_str())),`
+					`        ${rIdent}: ${C}SingleNonterminalView(${C}Renderable::Text(${rIdent}_text.as_str())),`
+				);
+			} else if (f.hasTransportField) {
+				// view='field' single required — pre-rendered to String.
+				lines.push(
+					`        ${rIdent}: ${C}SingleNonterminalView(${C}Renderable::Text(${rIdent}_rendered.as_str())),`
 				);
 			} else {
+				// Virtual presentation slot — no backing transport field. Wrap
+				// empty Text since SingleNonterminalView has no Missing variant.
 				lines.push(
-					`        ${rIdent}: ::sittir_core::filters::NonterminalView::Missing,`
+					`        ${rIdent}: ${C}SingleNonterminalView(${C}Renderable::Text("")),`
 				);
 			}
 		} else {
-			// view === 'field', single, optional — One or Missing
-			if (f.hasTransportField) {
+			// Optional scalar (view='scalar' optional, or view='field' single optional).
+			if (f.view === 'scalar' && f.hasTransportField) {
+				lines.push(
+					`        ${rIdent}: if node.${rIdent}.is_some() { ${C}OptionalNonterminalView::Present(${C}Renderable::Text(${rIdent}_text.as_str())) } else { ${C}OptionalNonterminalView::Missing },`
+				);
+			} else if (f.hasTransportField) {
 				lines.push(`        ${rIdent}: match &${rIdent}_rendered {`);
 				lines.push(
-					`            Some(s) => ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(s.as_str())),`
+					`            Some(s) => ${C}OptionalNonterminalView::Present(${C}Renderable::Text(s.as_str())),`
 				);
 				lines.push(
-					`            None => ::sittir_core::filters::NonterminalView::Missing,`
+					`            None => ${C}OptionalNonterminalView::Missing,`
 				);
 				lines.push(`        },`);
 			} else {
-				lines.push(
-					`        ${rIdent}: ::sittir_core::filters::NonterminalView::Missing,`
-				);
+				lines.push(`        ${rIdent}: ${C}OptionalNonterminalView::Missing,`);
 			}
 		}
 	}
