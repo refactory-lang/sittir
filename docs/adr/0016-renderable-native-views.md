@@ -1,6 +1,6 @@
 # ADR 0016 — Renderable native views and streaming join filters
 
-**Status**: Proposed
+**Status**: Accepted (2026-04-29)
 **Date**: 2026-04-29
 **Related**: ADR-0015 (model-driven native render contract), ADR-0014 (shared `.jinja` template surface), specs/012-rust-core-port/
 
@@ -11,12 +11,17 @@ Askama surface is model-driven via a walker-owned render contract, not from raw
 template scans and not from an exploded `foo + foo_list + foo_*_sep` bundle.
 
 That still leaves a second render-side question open: **what values should the
-native view layer carry?**
+native view layer carry, and where should typed projection happen?**
 
 The current post-ADR-0015 direction uses borrowed native views such as
 `ListView<'a>` and `FieldView<'a>`, but those views are still fundamentally
-string-backed. That is correct and much cleaner than the old exploded surface,
-but it means join-style filters conceptually operate on already-rendered text.
+string-backed and sit downstream of an erased JS→Rust `NodeData`-style
+boundary. That is correct and much cleaner than the old exploded surface, but
+it means:
+
+- join-style filters conceptually operate on already-rendered text
+- Rust still pays for a generic runtime shape even when the JS side already
+  knows the exact per-kind type being sent
 
 Askama's public filter-output surface suggests a stronger follow-up design is
 possible. The practical findings are:
@@ -27,9 +32,14 @@ possible. The practical findings are:
   public surface
 - templates themselves already participate in Askama's fast writable path
 
-That opens the door to a render surface where field/list views carry
-**renderables** rather than pre-rendered strings, and filters like `joinby`
-return a wrapper that Askama writes directly.
+That opens the door to a stronger end-state:
+
+- JS sends **plain objects over N-API**, not JSON text
+- those objects mirror the existing generated per-kind TypeScript interfaces,
+  but as **data-only transport objects**
+- Rust decodes directly into matching generated per-kind transport types
+- field/list views carry **renderables** rather than pre-rendered strings
+- filters like `joinby` return a wrapper that Askama writes directly
 
 ## Forcing Constraint
 
@@ -56,14 +66,21 @@ return a wrapper that Askama writes directly.
 
 ## Decision
 
-The next-step native render design is to move from string-backed field/list
-views toward **renderable native views**. `FieldView` / `ListView` should carry
-renderable values, not only rendered strings. Join-style filters like `joinby`
-should return a wrapper that implements `FastWritable` and `Display`, likely
-wrapped in `Safe<T>` when escape semantics require it, so Askama can stream the
-joined result directly. This remains a follow-up to ADR-0015, not a replacement
-for it: ADR-0015 owns slot truth and struct shape; this ADR owns the value
-representation carried by those model-driven native views.
+Sittir's end-state native render architecture moves typed projection **before**
+the JS→Rust boundary and moves value composition **onto renderables**. JS sends
+plain N-API object graphs that mirror the existing generated per-kind
+TypeScript interfaces in data-only form. Rust decodes those objects directly
+into matching generated transport structs/enums instead of a generic erased
+`NodeData` envelope. Generated `from_transport(...)` bridges then build the
+Askama-facing view layer. `FieldView` / `ListView` carry a small closed
+renderable family rather than only strings, and join-style filters like
+`joinby` return streaming wrappers (`FastWritable` + `Display`, typically inside
+`Safe<T>` when required). Slots may short-circuit to `Renderable::Text(...)`
+whenever they are already final render-ready text, whether that text came
+straight from parser-owned fields or from a pre-rendered intermediate. This
+remains a follow-up to ADR-0015, not a replacement for it: ADR-0015 owns slot
+truth and struct shape; this ADR owns the typed transport/value representation
+carried by those model-driven native views.
 
 ## Principles Applied
 
@@ -83,10 +100,13 @@ representation carried by those model-driven native views.
   - join-style filters can become streaming wrappers rather than
     string-producing helpers
   - field/list views can carry subtemplates or renderable wrappers directly
+  - JS can send familiar grammar-shaped plain objects over N-API without paying
+    for a generic Rust-side `NodeData` decode layer
   - Askama can stay on its fast writable path for more of the native render
     pipeline
 
 - **Costs**:
+  - generated transport types now exist on both sides of the JS→Rust boundary
   - the native view layer becomes more abstract and must distinguish
     renderability from already-rendered text explicitly
   - wrapper types will need careful lifetime and escaping design
@@ -114,7 +134,9 @@ Revisit this ADR if either of these becomes true:
 Signals that would confirm the design:
 
 1. A prototype `joinby` returns a renderable wrapper rather than `String`.
-2. `FieldView` / `ListView` can carry renderable values without regressing the
+2. JS→Rust transport uses plain object graphs matching generated per-kind TS
+   interfaces, not JSON text and not an erased runtime envelope.
+3. `FieldView` / `ListView` can carry renderable values without regressing the
    shared template contract from ADR-0015.
-3. Native Askama rendering can compose those values directly through public
+4. Native Askama rendering can compose those values directly through public
    Askama traits and wrappers.
