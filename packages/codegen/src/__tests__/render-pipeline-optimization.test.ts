@@ -162,7 +162,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 			'pub struct RustGrammarMeta'
 		);
 		expect(emitted.libRs.contents).toContain(
-			'pub use templates::render_dispatch;'
+			'pub use templates::{render_dispatch, render_transport, AnyTransport};'
 		);
 		expect(emitted.libRs.contents).not.toContain('RustGrammarMeta');
 	});
