@@ -19,16 +19,25 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type {
 	AssembledNode,
-	RenderTemplateSurface
+	RenderTemplateSurface,
+	AssembledField,
+	AssembledChild,
+	AssembledForm
 } from '../compiler/node-map.ts';
 import {
 	AssembledContainer,
-	AssembledPolymorph
+	AssembledPolymorph,
+	isMultiple,
+	isRequired
 } from '../compiler/node-map.ts';
 import { compileWordMatcher } from '../compiler/common.ts';
 import type { TemplateFile } from './template-hash.ts';
 import { computeTemplateBundleHash } from './template-hash.ts';
 import { renderModuleSrcDir } from './render-module-paths.ts';
+import {
+	collectTransportProjection,
+	type TransportLiteral
+} from './transport-projection.ts';
 
 /** Grammars the emitter supports. Matches the three per-grammar packages. */
 export type Grammar = 'rust' | 'typescript' | 'python';
@@ -590,21 +599,21 @@ function renderDirectSupport(meta: MetaData): string {
 	lines.push(`            let rendered = render_node_value(child)?;`);
 	lines.push(`            Ok(ResolvedField::from_scalar(rendered))`);
 	lines.push(`        }`);
-		lines.push(`        Some(FieldValue::Multiple(items)) => {`);
-		lines.push(`            let mut rendered = Vec::new();`);
-		lines.push(`            for item in items {`);
+	lines.push(`        Some(FieldValue::Multiple(items)) => {`);
+	lines.push(`            let mut rendered = Vec::new();`);
+	lines.push(`            for item in items {`);
 	lines.push(`                if !item.named {`);
 	lines.push(`                    continue;`);
 	lines.push(`                }`);
 	lines.push(`                rendered.push(render_node_value(item)?);`);
 	lines.push(`            }`);
-		lines.push(`            Ok(ResolvedField::from_items(`);
-		lines.push(`                rendered,`);
-		lines.push(`                separator_for(node.type_.as_str()),`);
-		lines.push(`                false,`);
-		lines.push(`                detect_field_trailing_sep(node, name),`);
-		lines.push(`            ))`);
-		lines.push(`        }`);
+	lines.push(`            Ok(ResolvedField::from_items(`);
+	lines.push(`                rendered,`);
+	lines.push(`                separator_for(node.type_.as_str()),`);
+	lines.push(`                false,`);
+	lines.push(`                detect_field_trailing_sep(node, name),`);
+	lines.push(`            ))`);
+	lines.push(`        }`);
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
@@ -915,7 +924,7 @@ pub mod hash;
 pub mod templates;
 
 pub use hash::TEMPLATE_BUNDLE_HASH;
-pub use templates::render_dispatch;
+pub use templates::{render_dispatch, render_transport, render_transport_parts, AnyTransport};
 `;
 }
 
@@ -932,7 +941,10 @@ pub use templates::render_dispatch;
 export function emitHashFiles(
 	lang: Grammar,
 	files: readonly TemplateFile[]
-): { hashRs: RustRenderModuleEmit['hashRs']; hashTs: RustRenderModuleEmit['hashTs'] } {
+): {
+	hashRs: RustRenderModuleEmit['hashRs'];
+	hashTs: RustRenderModuleEmit['hashTs'];
+} {
 	const hash = computeTemplateBundleHash(files);
 	return {
 		hashRs: {
@@ -1000,7 +1012,7 @@ export function emitRenderModule(
 	const templatesRs = [
 		templatesRsHeader(lang),
 		'',
-		'#![allow(dead_code, unused_imports, non_snake_case)]',
+		'#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]',
 		'',
 		// Askama resolves custom filters by looking for a sibling
 		// `filters` module at the derive-macro's call site. Re-export the
@@ -1039,6 +1051,8 @@ export function emitRenderModule(
 		'    };',
 		'}',
 		'',
+		renderTransportSupport(nodeMap),
+		'',
 		renderStructDefs(structs),
 		renderDirectSupport(meta),
 		'',
@@ -1058,4 +1072,487 @@ export function emitRenderModule(
 			contents: libRsContents(lang)
 		}
 	};
+}
+
+function renderTransportSupport(nodeMap: NodeMap): string {
+	const projection = collectTransportProjection(nodeMap);
+	const nodes = projection.nodes;
+	return [
+		'#[derive(Debug, Clone, ::serde::Deserialize)]',
+		'#[serde(tag = "$type")]',
+		'pub enum AnyTransport {',
+		...nodes.map((node) => {
+			const variant = rustTransportVariantName(node);
+			const structName = rustTransportStructName(node);
+			return [
+				`    #[serde(rename = ${JSON.stringify(node.kind)})]`,
+				`    ${variant}(${structName}),`
+			].join('\n');
+		}),
+		...projection.literals.map((literal, index) => {
+			const variant = rustLiteralTransportVariantName(literal, index);
+			return [
+				`    #[serde(rename = ${JSON.stringify(literal.kind)})]`,
+				`    ${variant}(LiteralTransport),`
+			].join('\n');
+		}),
+		'}',
+		'',
+		...renderLiteralTransportStruct(projection.literals),
+		'',
+		...nodes.flatMap((node) => renderTransportStruct(node)),
+		'',
+		...renderTransportBridge(nodes, projection.literals)
+	].join('\n');
+}
+
+function renderTransportBridge(
+	nodes: readonly AssembledNode[],
+	literals: readonly TransportLiteral[]
+): string[] {
+	return [
+		'use ::sittir_core::types::{FieldValue as TransportFieldValue, NodeData as TransportNodeData, Source as TransportSource};',
+		'use ::std::collections::HashMap as TransportHashMap;',
+		'',
+		'fn transport_node_data(',
+		'    kind: &str,',
+		'    source: Option<TransportSource>,',
+		'    named: Option<bool>,',
+		'    default_named: bool,',
+		'    text: Option<String>,',
+		'    span: Option<::sittir_core::types::Span>,',
+		'    node_id: Option<u64>,',
+		'    fields: Option<TransportHashMap<String, TransportFieldValue>>,',
+		'    children: Option<Vec<TransportNodeData>>,',
+		') -> TransportNodeData {',
+		'    TransportNodeData {',
+		'        type_: kind.to_string(),',
+		'        source: source.unwrap_or(TransportSource::Factory),',
+		'        named: named.unwrap_or(default_named),',
+		'        fields,',
+		'        children,',
+		'        text,',
+		'        span,',
+		'        node_id,',
+		'    }',
+		'}',
+		'',
+		'fn transport_field_value(value: Box<AnyTransport>) -> Result<TransportFieldValue, ::askama::Error> {',
+		'    let node = transport_to_node(*value)?;',
+		'    if !node.named {',
+		'        if let Some(text) = node.text.clone() {',
+		'            return Ok(TransportFieldValue::Text(text));',
+		'        }',
+		'    }',
+		'    Ok(TransportFieldValue::Single(Box::new(node)))',
+		'}',
+		'',
+		'fn transport_field_values(values: Vec<Box<AnyTransport>>) -> Result<TransportFieldValue, ::askama::Error> {',
+		'    let mut nodes = Vec::with_capacity(values.len());',
+		'    for value in values {',
+		'        nodes.push(transport_to_node(*value)?);',
+		'    }',
+		'    Ok(TransportFieldValue::Multiple(nodes))',
+		'}',
+		'',
+		'fn transport_children(values: Vec<Box<AnyTransport>>) -> Result<Vec<TransportNodeData>, ::askama::Error> {',
+		'    let mut nodes = Vec::with_capacity(values.len());',
+		'    for value in values {',
+		'        nodes.push(transport_to_node(*value)?);',
+		'    }',
+		'    Ok(nodes)',
+		'}',
+		'',
+		'fn literal_transport_to_node(kind: &str, transport: LiteralTransport) -> Result<TransportNodeData, ::askama::Error> {',
+		'    Ok(transport_node_data(',
+		'        kind,',
+		'        transport.transport_source,',
+		'        transport.transport_named,',
+		'        false,',
+		'        Some(transport.text),',
+		'        transport.transport_span,',
+		'        transport.transport_node_id,',
+		'        None,',
+		'        None,',
+		'    ))',
+		'}',
+		'',
+		'fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::askama::Error> {',
+		'    match transport {',
+		...nodes.map((node) => {
+			return `        AnyTransport::${rustTransportVariantName(node)}(data) => ${rustTransportToNodeFnName(node.typeName)}(data),`;
+		}),
+		...literals.map((literal, index) => {
+			return `        AnyTransport::${rustLiteralTransportVariantName(literal, index)}(data) => literal_transport_to_node(${JSON.stringify(literal.kind)}, data),`;
+		}),
+		'    }',
+		'}',
+		'',
+		...nodes.flatMap((node) => renderTransportToNodeFns(node)),
+		'pub fn node_data_from_transport(transport: AnyTransport) -> Result<TransportNodeData, ::askama::Error> {',
+		'    transport_to_node(transport)',
+		'}',
+		'',
+		'pub fn render_transport_parts(transport: AnyTransport) -> Result<(TransportNodeData, String), ::askama::Error> {',
+		'    let node = node_data_from_transport(transport)?;',
+		'    let rendered = render_dispatch(&node)?;',
+		'    Ok((node, rendered))',
+		'}',
+		'',
+		'pub fn from_transport(transport: AnyTransport) -> Result<String, ::askama::Error> {',
+		'    let (_node, rendered) = render_transport_parts(transport)?;',
+		'    Ok(rendered)',
+		'}',
+		'',
+		'pub fn render_transport(transport: AnyTransport) -> Result<String, ::askama::Error> {',
+		'    from_transport(transport)',
+		'}'
+	];
+}
+
+function renderTransportToNodeFns(node: AssembledNode): string[] {
+	if (node.modelType === 'polymorph' && node.forms.length > 0) {
+		const lines: string[] = [];
+		lines.push(
+			`fn ${rustTransportToNodeFnName(node.typeName)}(transport: ${rustTransportStructName(node)}) -> Result<TransportNodeData, ::askama::Error> {`
+		);
+		lines.push('    match transport {');
+		for (const form of node.forms) {
+			lines.push(
+				`        ${rustTransportStructName(node)}::${rustTransportFormVariantName(form)}(data) => ${rustTransportToNodeFnName(form.typeName)}(data),`
+			);
+		}
+		lines.push('    }');
+		lines.push('}');
+		lines.push('');
+		for (const form of node.forms) {
+			lines.push(
+				...renderTransportDataToNodeFn(
+					rustTransportToNodeFnName(form.typeName),
+					rustTransportFormStructName(form),
+					node.kind,
+					form.fields,
+					form.children,
+					true,
+					true
+				)
+			);
+		}
+		return lines;
+	}
+
+	switch (node.modelType) {
+		case 'branch':
+		case 'container':
+		case 'group':
+			return renderTransportDataToNodeFn(
+				rustTransportToNodeFnName(node.typeName),
+				rustTransportStructName(node),
+				node.kind,
+				node.structuralFields,
+				node.structuralChildren,
+				true,
+				true
+			);
+		case 'leaf':
+		case 'keyword':
+		case 'token':
+		case 'enum':
+			return renderTerminalTransportToNodeFn(node);
+		default:
+			return [];
+	}
+}
+
+function renderTransportDataToNodeFn(
+	fnName: string,
+	structName: string,
+	kind: string,
+	fields: readonly AssembledField[],
+	children: readonly AssembledChild[],
+	defaultNamed: boolean,
+	hasOptionalText: boolean
+): string[] {
+	const lines: string[] = [];
+	lines.push(
+		`fn ${fnName}(transport: ${structName}) -> Result<TransportNodeData, ::askama::Error> {`
+	);
+	lines.push('    let mut fields = TransportHashMap::new();');
+	for (const field of fields) {
+		const access = `transport.${rustFieldIdent(field.name)}`;
+		if (isMultiple(field)) {
+			if (isRequired(field)) {
+				lines.push(
+					`    fields.insert(${JSON.stringify(field.name)}.to_string(), transport_field_values(${access})?);`
+				);
+			} else {
+				lines.push(`    if let Some(value) = ${access} {`);
+				lines.push(
+					`        fields.insert(${JSON.stringify(field.name)}.to_string(), transport_field_values(value)?);`
+				);
+				lines.push('    }');
+			}
+		} else if (isRequired(field)) {
+			lines.push(
+				`    fields.insert(${JSON.stringify(field.name)}.to_string(), transport_field_value(${access})?);`
+			);
+		} else {
+			lines.push(`    if let Some(value) = ${access} {`);
+			lines.push(
+				`        fields.insert(${JSON.stringify(field.name)}.to_string(), transport_field_value(value)?);`
+			);
+			lines.push('    }');
+		}
+	}
+	lines.push('    let fields = if fields.is_empty() { None } else { Some(fields) };');
+	lines.push(...renderTransportChildrenBinding(children));
+	lines.push('    Ok(transport_node_data(');
+	lines.push(`        ${JSON.stringify(kind)},`);
+	lines.push('        transport.transport_source,');
+	lines.push('        transport.transport_named,');
+	lines.push(`        ${defaultNamed ? 'true' : 'false'},`);
+	lines.push(hasOptionalText ? '        transport.transport_text,' : '        None,');
+	lines.push('        transport.transport_span,');
+	lines.push('        transport.transport_node_id,');
+	lines.push('        fields,');
+	lines.push('        children,');
+	lines.push('    ))');
+	lines.push('}');
+	lines.push('');
+	return lines;
+}
+
+function renderTransportChildrenBinding(
+	children: readonly AssembledChild[]
+): string[] {
+	if (children.length === 0) return ['    let children = None;'];
+	if (hasRequiredChild(children)) {
+		return ['    let children = Some(transport_children(transport.children)?);'];
+	}
+	return [
+		'    let children = match transport.children {',
+		'        Some(children) => Some(transport_children(children)?),',
+		'        None => None,',
+		'    };'
+	];
+}
+
+function renderTerminalTransportToNodeFn(node: AssembledNode): string[] {
+	return [
+		`fn ${rustTransportToNodeFnName(node.typeName)}(transport: ${rustTransportStructName(node)}) -> Result<TransportNodeData, ::askama::Error> {`,
+		'    Ok(transport_node_data(',
+		`        ${JSON.stringify(node.kind)},`,
+		'        transport.transport_source,',
+		'        transport.transport_named,',
+		'        true,',
+		'        Some(transport.text),',
+		'        transport.transport_span,',
+		'        transport.transport_node_id,',
+		'        None,',
+		'        None,',
+		'    ))',
+		'}',
+		''
+	];
+}
+
+function renderLiteralTransportStruct(
+	literals: readonly TransportLiteral[]
+): string[] {
+	if (literals.length === 0) return [];
+	return [
+		'#[derive(Debug, Clone, ::serde::Deserialize)]',
+		'pub struct LiteralTransport {',
+		...renderTransportMetadataFields(false),
+		'    #[serde(rename = "$text")]',
+		'    pub text: String,',
+		'}'
+	];
+}
+
+function renderTransportStruct(node: AssembledNode): string[] {
+	if (node.modelType === 'polymorph' && node.forms.length > 0) {
+		return renderPolymorphTransportDefs(node);
+	}
+	return renderTransportDataStruct(
+		rustTransportStructName(node),
+		node,
+		node.structuralFields,
+		node.structuralChildren
+	);
+}
+
+function renderPolymorphTransportDefs(
+	node: Extract<AssembledNode, { modelType: 'polymorph' }>
+): string[] {
+	const lines: string[] = [];
+	lines.push('#[derive(Debug, Clone, ::serde::Deserialize)]');
+	lines.push('#[serde(tag = "$variant")]');
+	lines.push(`pub enum ${rustTransportStructName(node)} {`);
+	for (const form of node.forms) {
+		lines.push(`    #[serde(rename = ${JSON.stringify(form.name)})]`);
+		lines.push(
+			`    ${rustTransportFormVariantName(form)}(${rustTransportFormStructName(form)}),`
+		);
+	}
+	lines.push('}');
+	lines.push('');
+	for (const form of node.forms) {
+		lines.push(
+			...renderTransportDataStruct(
+				rustTransportFormStructName(form),
+				form,
+				form.fields,
+				form.children
+			)
+		);
+	}
+	return lines;
+}
+
+function renderTransportDataStruct(
+	structName: string,
+	node: AssembledNode,
+	fields: readonly AssembledField[],
+	children: readonly AssembledChild[]
+): string[] {
+	const lines: string[] = [];
+	lines.push('#[derive(Debug, Clone, ::serde::Deserialize)]');
+	lines.push(`pub struct ${structName} {`);
+	switch (node.modelType) {
+		case 'branch':
+		case 'container':
+		case 'group':
+		case 'polymorph':
+			lines.push(...renderTransportMetadataFields(true));
+			for (const field of fields) {
+				lines.push(...renderTransportField(field));
+			}
+			if (children.length > 0) {
+				lines.push('    #[serde(rename = "$children")]');
+				if (!hasRequiredChild(children)) {
+					lines.push('    #[serde(default)]');
+				}
+				lines.push(`    pub children: ${rustTransportChildrenType(children)},`);
+			}
+			break;
+		case 'leaf':
+		case 'keyword':
+		case 'token':
+		case 'enum':
+			lines.push(...renderTransportMetadataFields(false));
+			lines.push('    #[serde(rename = "$text")]');
+			lines.push('    pub text: String,');
+			break;
+	}
+	lines.push('}');
+	lines.push('');
+	return lines;
+}
+
+function renderTransportMetadataFields(includeText: boolean): string[] {
+	const lines = [
+		'    #[serde(rename = "$source", default)]',
+		'    pub transport_source: Option<::sittir_core::types::Source>,',
+		'    #[serde(rename = "$named", default)]',
+		'    pub transport_named: Option<bool>,'
+	];
+	if (includeText) {
+		lines.push(
+			'    #[serde(rename = "$text", default)]',
+			'    pub transport_text: Option<String>,'
+		);
+	}
+	lines.push(
+		'    #[serde(rename = "$span", default)]',
+		'    pub transport_span: Option<::sittir_core::types::Span>,',
+		'    #[serde(rename = "$nodeId", default)]',
+		'    pub transport_node_id: Option<u64>,'
+	);
+	return lines;
+}
+
+function renderTransportField(field: AssembledField): string[] {
+	const lines: string[] = [];
+	const rustName = rustFieldIdent(field.name);
+	if (rustName !== field.name) {
+		lines.push(`    #[serde(rename = ${JSON.stringify(field.name)})]`);
+	}
+	if (!isRequired(field)) {
+		lines.push('    #[serde(default)]');
+	}
+	lines.push(`    pub ${rustName}: ${rustTransportFieldType(field)},`);
+	return lines;
+}
+
+function rustTransportFieldType(field: AssembledField): string {
+	if (isMultiple(field)) {
+		const inner = 'Vec<Box<AnyTransport>>';
+		return isRequired(field) ? inner : `Option<${inner}>`;
+	}
+	const inner = 'Box<AnyTransport>';
+	return isRequired(field) ? inner : `Option<${inner}>`;
+}
+
+function rustTransportChildrenType(
+	children: readonly AssembledChild[]
+): string {
+	const inner = 'Vec<Box<AnyTransport>>';
+	return hasRequiredChild(children) ? inner : `Option<${inner}>`;
+}
+
+function hasRequiredChild(children: readonly AssembledChild[]): boolean {
+	return children.some((child) => isRequired(child));
+}
+
+function rustTransportStructName(node: AssembledNode): string {
+	return `${rustTypeIdent(node.typeName)}Transport`;
+}
+
+function rustTransportVariantName(node: AssembledNode): string {
+	return rustTypeIdent(node.typeName);
+}
+
+function rustTransportFormStructName(form: AssembledForm): string {
+	return `${rustTypeIdent(form.typeName)}Transport`;
+}
+
+function rustTransportFormVariantName(form: AssembledForm): string {
+	return rustTypeIdent(form.typeName);
+}
+
+function rustTransportToNodeFnName(typeName: string): string {
+	return `transport_to_node_${rustSnakeIdent(typeName)}`;
+}
+
+function rustSnakeIdent(name: string): string {
+	const snake = name
+		.replace(/([a-z0-9])([A-Z])/g, '$1_$2')
+		.replace(/[^A-Za-z0-9_]/g, '_')
+		.toLowerCase();
+	return snake.length > 0 ? snake : 'transport';
+}
+
+function rustLiteralTransportVariantName(
+	literal: TransportLiteral,
+	index: number
+): string {
+	const suffix =
+		literal.kind.length === 0
+			? 'empty'
+			: [...literal.kind]
+					.map(
+						(char) => char.codePointAt(0)?.toString(16).padStart(2, '0') ?? '00'
+					)
+					.join('_');
+	return rustTypeIdent(`Literal${index}_${suffix}`);
+}
+
+function rustTypeIdent(name: string): string {
+	const replaced = name.replace(/[^A-Za-z0-9_]/g, '_');
+	const withStart = /^[A-Za-z_]/.test(replaced)
+		? replaced
+		: `Transport${replaced}`;
+	const ident = withStart.length > 0 ? withStart : 'Transport';
+	return RUST_KEYWORDS.has(ident) ? `${ident}_` : ident;
 }

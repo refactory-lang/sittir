@@ -33,7 +33,7 @@ describe('engine', () => {
 				hashMatch: true,
 				native: {
 					SittirEngine: class {
-						render(_nodeJson: string): string {
+						render(_node: Record<string, unknown>): string {
 							return 'ok';
 						}
 						applyEdits(
@@ -91,7 +91,7 @@ describe('engine', () => {
 				hashMatch: true,
 				native: {
 					SittirEngine: class {
-						render(_nodeJson: string): string {
+						render(_node: Record<string, unknown>): string {
 							return 'def main(): pass';
 						}
 						applyEdits(
@@ -137,7 +137,7 @@ describe('engine', () => {
 				hashMatch: true,
 				native: {
 					SittirEngine: class {
-						render(_nodeJson: string): string {
+						render(_node: Record<string, unknown>): string {
 							return 'def main(): pass';
 						}
 						applyEdits(

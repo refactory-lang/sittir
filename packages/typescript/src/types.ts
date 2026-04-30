@@ -5851,3 +5851,4816 @@ export namespace YieldExpression {
   export type Tree = TreeFor<'yield_expression'>;
   export type Kind = 'yield_expression';
 }
+
+// Native render transport types — data-only JS → native boundary
+export interface TerminalTransport<K extends string, V extends string = string> {
+  readonly $type: K;
+  readonly $source?: 'ts' | 'sg' | 'factory';
+  readonly $named?: boolean;
+  readonly $text: V;
+  readonly $span?: { readonly start: number; readonly end: number };
+  readonly $nodeId?: number;
+}
+
+export interface LiteralTransport<K extends string, V extends string = K> extends TerminalTransport<K, V> {}
+
+export namespace _ArrowFunctionUCallSignature {
+  export interface Transport {
+    readonly $type: '_arrow_function__call_signature';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type_parameters?: TypeParameters.Transport;
+    readonly parameters: FormalParameters.Transport;
+    readonly return_type?: TypeAnnotation.Transport | AssertsAnnotation.Transport | TypePredicateAnnotation.Transport;
+  }
+}
+
+export namespace _ArrowFunctionParameter {
+  export interface Transport {
+    readonly $type: '_arrow_function_parameter';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly parameter: ReservedIdentifier.Transport;
+  }
+}
+
+export namespace CallExpressionCall {
+  export interface Transport {
+    readonly $type: '_call_expression_call';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly function: Expression.Transport | Import.Transport;
+    readonly type_arguments?: TypeArguments.Transport;
+    readonly arguments: Arguments.Transport;
+  }
+}
+
+export namespace CallExpressionMember {
+  export interface Transport {
+    readonly $type: '_call_expression_member';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly function: PrimaryExpression.Transport;
+    readonly type_arguments?: TypeArguments.Transport;
+    readonly arguments: Arguments.Transport;
+  }
+}
+
+export namespace CallExpressionTemplateCall {
+  export interface Transport {
+    readonly $type: '_call_expression_template_call';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly function: PrimaryExpression.Transport | NewExpression.Transport;
+    readonly arguments: TemplateString.Transport;
+  }
+}
+
+export namespace _CallSignature {
+  export interface Transport {
+    readonly $type: '_call_signature';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type_parameters?: TypeParameters.Transport;
+    readonly parameters: FormalParameters.Transport;
+    readonly return_type?: TypeAnnotation.Transport | AssertsAnnotation.Transport | TypePredicateAnnotation.Transport;
+  }
+}
+
+export namespace ClassBodyMember {
+  export interface Transport {
+    readonly $type: '_class_body_member';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [AbstractMethodSignature.Transport | IndexSignature.Transport | MethodSignature.Transport | PublicFieldDefinition.Transport | Semicolon.Transport];
+  }
+}
+
+export namespace ClassBodyMethod {
+  export interface Transport {
+    readonly $type: '_class_body_method';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly decorator: readonly (Decorator.Transport)[];
+    readonly $children: readonly [MethodDefinition.Transport | Semicolon.Transport];
+  }
+}
+
+export namespace ClassBodyMethodSig {
+  export interface Transport {
+    readonly $type: '_class_body_method_sig';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [MethodSignature.Transport | FunctionSignatureAutomaticSemicolon.Transport];
+  }
+}
+
+export namespace _ClassHeritageExtendsClause {
+  export interface Transport {
+    readonly $type: '_class_heritage_extends_clause';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [ExtendsClause.Transport | ImplementsClause.Transport];
+  }
+}
+
+export namespace _ClassHeritageImplementsClause {
+  export interface Transport {
+    readonly $type: '_class_heritage_implements_clause';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [ImplementsClause.Transport];
+  }
+}
+
+export namespace ExportStatementDefaultDeclArm {
+  export interface Transport {
+    readonly $type: '_export_statement_default_decl_arm';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly decorator: readonly (Decorator.Transport)[];
+    readonly $children: readonly [ExportStatementDefaultDeclArmDefaultKw.Transport];
+  }
+}
+
+export namespace ExportStatementDefaultDeclArmDefaultKw {
+  export interface Transport {
+    readonly $type: '_export_statement_default_decl_arm_default_kw';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [ExportStatementDefaultDeclArmDefaultKwValue.Transport];
+  }
+}
+
+export namespace ExportStatementDefaultDeclArmDefaultKwValue {
+  export interface Transport {
+    readonly $type: '_export_statement_default_decl_arm_default_kw_value';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly value: Expression.Transport;
+    readonly $children: readonly [Semicolon.Transport];
+  }
+}
+
+export namespace ExportStatementDefaultFromArm {
+  export interface Transport {
+    readonly $type: '_export_statement_default_from_arm';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [ExportStatementDefaultFromArmStarFrom.Transport | ExportStatementDefaultFromArmNsFrom.Transport | ExportStatementDefaultFromArmClauseFrom.Transport | ExportClause.Transport | Semicolon.Transport];
+  }
+}
+
+export namespace ExportStatementDefaultFromArmClauseFrom {
+  export interface Transport {
+    readonly $type: '_export_statement_default_from_arm_clause_from';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly source: String.Transport;
+    readonly $children: readonly [ExportClause.Transport];
+  }
+}
+
+export namespace ExportStatementDefaultFromArmNsFrom {
+  export interface Transport {
+    readonly $type: '_export_statement_default_from_arm_ns_from';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly source: String.Transport;
+    readonly $children: readonly [NamespaceExport.Transport];
+  }
+}
+
+export namespace ExportStatementDefaultFromArmStarFrom {
+  export interface Transport {
+    readonly $type: '_export_statement_default_from_arm_star_from';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly source: String.Transport;
+  }
+}
+
+export namespace _ExportStatementEqualsExport {
+  export interface Transport {
+    readonly $type: '_export_statement_equals_export';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [Expression.Transport | Semicolon.Transport];
+  }
+}
+
+export namespace _ExportStatementNamespaceExport {
+  export interface Transport {
+    readonly $type: '_export_statement_namespace_export';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [Identifier.Transport | Semicolon.Transport];
+  }
+}
+
+export namespace _ExportStatementTypeExport {
+  export interface Transport {
+    readonly $type: '_export_statement_type_export';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly source?: String.Transport;
+    readonly $children: readonly [ExportClause.Transport | Semicolon.Transport];
+  }
+}
+
+export namespace ExtendsClauseSingle {
+  export interface Transport {
+    readonly $type: '_extends_clause_single';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly value: Expression.Transport;
+    readonly type_arguments?: TypeArguments.Transport;
+  }
+}
+
+export namespace ForHeader {
+  export interface Transport {
+    readonly $type: '_for_header';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly operator: LiteralTransport<"in", "in"> | LiteralTransport<"of", "of">;
+    readonly right: Expressions.Transport;
+    readonly $children: readonly [ForHeaderLhs.Transport | ForHeaderVarKind.Transport | ForHeaderLetConstKind.Transport];
+  }
+}
+
+export namespace ForHeaderLetConstKind {
+  export interface Transport {
+    readonly $type: '_for_header_let_const_kind';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly kind: LiteralTransport<"let", "let"> | LiteralTransport<"const", "const">;
+    readonly left: Identifier.Transport | DestructuringPattern.Transport;
+    readonly $children?: readonly [AutomaticSemicolon.Transport];
+  }
+}
+
+export namespace ForHeaderLhs {
+  export interface Transport {
+    readonly $type: '_for_header_lhs';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly left: LhsExpression.Transport | ParenthesizedExpression.Transport;
+  }
+}
+
+export namespace ForHeaderVarKind {
+  export interface Transport {
+    readonly $type: '_for_header_var_kind';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly kind: LiteralTransport<"var", "var">;
+    readonly left: Identifier.Transport | DestructuringPattern.Transport;
+    readonly $children?: readonly [Initializer.Transport];
+  }
+}
+
+export namespace FromClause {
+  export interface Transport {
+    readonly $type: '_from_clause';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly source: String.Transport;
+  }
+}
+
+export namespace _ImportClauseDefaultImport {
+  export interface Transport {
+    readonly $type: '_import_clause_default_import';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [ImportIdentifier.Transport | NamespaceImport.Transport | NamedImports.Transport];
+  }
+}
+
+export namespace _ImportClauseNamedImports {
+  export interface Transport {
+    readonly $type: '_import_clause_named_imports';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [NamedImports.Transport];
+  }
+}
+
+export namespace _ImportClauseNamespaceImport {
+  export interface Transport {
+    readonly $type: '_import_clause_namespace_import';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [NamespaceImport.Transport];
+  }
+}
+
+export namespace ImportSpecifierAs {
+  export interface Transport {
+    readonly $type: '_import_specifier_as';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: ModuleExportName.Transport | Identifier.Transport;
+    readonly alias: ImportIdentifier.Transport;
+  }
+}
+
+export namespace _ImportSpecifierName {
+  export interface Transport {
+    readonly $type: '_import_specifier_name';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: ImportIdentifier.Transport;
+  }
+}
+
+export namespace IndexSignatureColon {
+  export interface Transport {
+    readonly $type: '_index_signature_colon';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: ReservedIdentifier.Transport;
+    readonly index_type: Type.Transport;
+  }
+}
+
+export namespace _IndexSignatureMappedTypeClause {
+  export interface Transport {
+    readonly $type: '_index_signature_mapped_type_clause';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [MappedTypeClause.Transport];
+  }
+}
+
+export namespace Initializer {
+  export interface Transport {
+    readonly $type: '_initializer';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly value: Expression.Transport;
+  }
+}
+
+export namespace InterfaceBody {
+  export interface Transport {
+    readonly $type: '_interface_body';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [ObjectType.Transport];
+  }
+}
+
+export namespace JsxStartOpeningElement {
+  export interface Transport {
+    readonly $type: '_jsx_start_opening_element';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name?: JsxIdentifier.Transport | JsxNamespaceName.Transport | Identifier.Transport | NestedIdentifier.Transport;
+    readonly type_arguments?: TypeArguments.Transport;
+    readonly attribute: readonly (JsxAttribute.Transport)[];
+  }
+}
+
+export namespace JsxString {
+  export interface Transport {
+    readonly $type: '_jsx_string';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (StringFragment.Transport | HtmlCharacterReference.Transport)[];
+  }
+}
+
+export namespace KwAbstractMarker {
+  export type Transport = TerminalTransport<"_kw_abstract_marker", "abstract">;
+}
+
+export namespace KwAsyncMarker {
+  export type Transport = TerminalTransport<"_kw_async_marker", "async">;
+}
+
+export namespace KwConstMarker {
+  export type Transport = TerminalTransport<"_kw_const_marker", "const">;
+}
+
+export namespace KwOptionalMarker {
+  export type Transport = TerminalTransport<"_kw_optional_marker", "?">;
+}
+
+export namespace KwReadonlyMarker {
+  export type Transport = TerminalTransport<"_kw_readonly_marker", "readonly">;
+}
+
+export namespace KwStaticMarker {
+  export type Transport = TerminalTransport<"_kw_static_marker", "static">;
+}
+
+export namespace LhsExpression {
+  export interface Transport {
+    readonly $type: '_lhs_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [MemberExpression.Transport | SubscriptExpression.Transport | Identifier.Transport | ReservedIdentifier.Transport | DestructuringPattern.Transport | NonNullExpression.Transport];
+  }
+}
+
+export namespace _Module {
+  export interface Transport {
+    readonly $type: '_module';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: String.Transport | Identifier.Transport | NestedIdentifier.Transport;
+    readonly body?: StatementBlock.Transport;
+  }
+}
+
+export namespace _Number {
+  export interface Transport {
+    readonly $type: '_number';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly operator: LiteralTransport<"-", "-"> | LiteralTransport<"+", "+">;
+    readonly argument: Number.Transport;
+  }
+}
+
+export namespace ParameterName {
+  export interface Transport {
+    readonly $type: '_parameter_name';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly decorator: readonly (Decorator.Transport)[];
+    readonly readonly_marker?: LiteralTransport<"readonly", "readonly">;
+    readonly pattern: Pattern.Transport | This.Transport;
+    readonly $children?: readonly [AccessibilityModifier.Transport | OverrideModifier.Transport];
+  }
+}
+
+export namespace _ParenthesizedExpressionSequence {
+  export interface Transport {
+    readonly $type: '_parenthesized_expression_sequence';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [SequenceExpression.Transport];
+  }
+}
+
+export namespace ParenthesizedExpressionTyped {
+  export interface Transport {
+    readonly $type: '_parenthesized_expression_typed';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type?: TypeAnnotation.Transport;
+    readonly $children: readonly [Expression.Transport];
+  }
+}
+
+export namespace PropertyIdentifier {
+  export interface Transport {
+    readonly $type: '_property_identifier';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [Identifier.Transport];
+  }
+}
+
+export namespace PublicFieldDefinitionAbstractFirst {
+  export interface Transport {
+    readonly $type: '_public_field_definition_abstract_first';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly abstract_marker: LiteralTransport<"abstract", "abstract">;
+    readonly readonly_marker?: LiteralTransport<"readonly", "readonly">;
+  }
+}
+
+export namespace PublicFieldDefinitionAccessFirst {
+  export interface Transport {
+    readonly $type: '_public_field_definition_access_first';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly declare_marker?: LiteralTransport<"declare", "declare">;
+    readonly $children: readonly [AccessibilityModifier.Transport];
+  }
+}
+
+export namespace PublicFieldDefinitionAccessorOpt {
+  export interface Transport {
+    readonly $type: '_public_field_definition_accessor_opt';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly accessor_marker: LiteralTransport<"accessor", "accessor">;
+  }
+}
+
+export namespace PublicFieldDefinitionDeclareFirst {
+  export interface Transport {
+    readonly $type: '_public_field_definition_declare_first';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children?: readonly [AccessibilityModifier.Transport];
+  }
+}
+
+export namespace PublicFieldDefinitionReadonlyFirst {
+  export interface Transport {
+    readonly $type: '_public_field_definition_readonly_first';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly readonly_marker: LiteralTransport<"readonly", "readonly">;
+    readonly abstract_marker?: LiteralTransport<"abstract", "abstract">;
+  }
+}
+
+export namespace PublicFieldDefinitionStaticMods {
+  export interface Transport {
+    readonly $type: '_public_field_definition_static_mods';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly static_marker: LiteralTransport<"static", "static">;
+    readonly readonly_marker?: LiteralTransport<"readonly", "readonly">;
+    readonly $children?: readonly [OverrideModifier.Transport];
+  }
+}
+
+export namespace ReservedIdentifier {
+  export type Transport = TerminalTransport<"_reserved_identifier", string>;
+}
+
+export namespace StatementIdentifier {
+  export interface Transport {
+    readonly $type: '_statement_identifier';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [Identifier.Transport];
+  }
+}
+
+export namespace _StringDouble {
+  export interface Transport {
+    readonly $type: '_string_double';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (StringFragment.Transport | EscapeSequence.Transport)[];
+  }
+}
+
+export namespace StringFragment {
+  export interface Transport {
+    readonly $type: '_string_fragment';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [UnescapedDoubleJsxStringFragment.Transport];
+  }
+}
+
+export namespace _StringSingle {
+  export interface Transport {
+    readonly $type: '_string_single';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (StringFragment.Transport | EscapeSequence.Transport)[];
+  }
+}
+
+export namespace ThisType {
+  export interface Transport {
+    readonly $type: '_this_type';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [This.Transport];
+  }
+}
+
+export namespace TypeIdentifier {
+  export interface Transport {
+    readonly $type: '_type_identifier';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [TypeIdentifier.Transport];
+  }
+}
+
+export namespace TypeQueryCallExpression {
+  export interface Transport {
+    readonly $type: '_type_query_call_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly function: Import.Transport | Identifier.Transport | TypeQueryMemberExpression.Transport | TypeQuerySubscriptExpression.Transport;
+    readonly arguments: Arguments.Transport;
+  }
+}
+
+export namespace TypeQueryCallExpressionInTypeAnnotation {
+  export interface Transport {
+    readonly $type: '_type_query_call_expression_in_type_annotation';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly function: Import.Transport | TypeQueryMemberExpressionInTypeAnnotation.Transport;
+    readonly arguments: Arguments.Transport;
+  }
+}
+
+export namespace TypeQueryInstantiationExpression {
+  export interface Transport {
+    readonly $type: '_type_query_instantiation_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly function: Import.Transport | Identifier.Transport | TypeQueryMemberExpression.Transport | TypeQuerySubscriptExpression.Transport;
+    readonly type_arguments: TypeArguments.Transport;
+  }
+}
+
+export namespace TypeQueryMemberExpression {
+  export interface Transport {
+    readonly $type: '_type_query_member_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly object: Identifier.Transport | This.Transport | TypeQuerySubscriptExpression.Transport | TypeQueryMemberExpression.Transport | TypeQueryCallExpression.Transport;
+    readonly property: PrivatePropertyIdentifier.Transport | PropertyIdentifier.Transport;
+  }
+}
+
+export namespace TypeQueryMemberExpressionInTypeAnnotation {
+  export interface Transport {
+    readonly $type: '_type_query_member_expression_in_type_annotation';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly object: Import.Transport | TypeQueryMemberExpressionInTypeAnnotation.Transport | TypeQueryCallExpressionInTypeAnnotation.Transport;
+    readonly property: PrivatePropertyIdentifier.Transport | PropertyIdentifier.Transport;
+  }
+}
+
+export namespace TypeQuerySubscriptExpression {
+  export interface Transport {
+    readonly $type: '_type_query_subscript_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly object: Identifier.Transport | This.Transport | TypeQuerySubscriptExpression.Transport | TypeQueryMemberExpression.Transport | TypeQueryCallExpression.Transport;
+    readonly index: PredefinedType.Transport | String.Transport | Number.Transport;
+  }
+}
+
+export namespace UpdateExpressionPostfix {
+  export interface Transport {
+    readonly $type: '_update_expression_postfix';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly argument: Expression.Transport;
+    readonly operator: LiteralTransport<"++", "++"> | LiteralTransport<"--", "--">;
+  }
+}
+
+export namespace UpdateExpressionPrefix {
+  export interface Transport {
+    readonly $type: '_update_expression_prefix';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly operator: LiteralTransport<"++", "++"> | LiteralTransport<"--", "--">;
+    readonly argument: Expression.Transport;
+  }
+}
+
+export namespace AbstractClassDeclaration {
+  export interface Transport {
+    readonly $type: 'abstract_class_declaration';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly decorator: readonly (Decorator.Transport)[];
+    readonly name: TypeIdentifier.Transport;
+    readonly type_parameters?: TypeParameters.Transport;
+    readonly class_heritage?: ClassHeritage.Transport;
+    readonly body: ClassBody.Transport;
+  }
+}
+
+export namespace AbstractMethodSignature {
+  export interface Transport {
+    readonly $type: 'abstract_method_signature';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly accessibility_modifier?: AccessibilityModifier.Transport;
+    readonly override_modifier?: OverrideModifier.Transport;
+    readonly accessor_kind?: LiteralTransport<"get", "get"> | LiteralTransport<"set", "set"> | LiteralTransport<"*", "*">;
+    readonly name: PropertyName.Transport;
+    readonly optional_marker?: LiteralTransport<"?", "?">;
+    readonly type_parameters?: TypeParameters.Transport;
+    readonly parameters: FormalParameters.Transport;
+    readonly return_type?: TypeAnnotation.Transport | AssertsAnnotation.Transport | TypePredicateAnnotation.Transport;
+  }
+}
+
+export namespace AccessibilityModifier {
+  export type Transport = TerminalTransport<"accessibility_modifier", "public" | "private" | "protected">;
+}
+
+export namespace AddingTypeAnnotation {
+  export interface Transport {
+    readonly $type: 'adding_type_annotation';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type: Type.Transport;
+  }
+}
+
+export namespace AmbientDeclaration {
+  export interface Transport {
+    readonly $type: 'ambient_declaration';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly declaration: Declaration.Transport | LiteralTransport<"global", "global"> | StatementBlock.Transport | LiteralTransport<"module", "module"> | PropertyIdentifier.Transport | Type.Transport | Semicolon.Transport;
+  }
+}
+
+export namespace Arguments {
+  export interface Transport {
+    readonly $type: 'arguments';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Expression.Transport | SpreadElement.Transport)[];
+  }
+}
+
+export namespace Array {
+  export interface Transport {
+    readonly $type: 'array';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Expression.Transport | SpreadElement.Transport)[];
+  }
+}
+
+export namespace ArrayPattern {
+  export interface Transport {
+    readonly $type: 'array_pattern';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Pattern.Transport | AssignmentPattern.Transport)[];
+  }
+}
+
+export namespace ArrayType {
+  export interface Transport {
+    readonly $type: 'array_type';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly primary_type: PrimaryType.Transport;
+  }
+}
+
+export namespace ArrowFunctionParameter {
+  export interface Transport {
+    readonly $type: 'arrow_function_parameter';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly parameter: ReservedIdentifier.Transport;
+  }
+}
+
+export namespace ArrowFunctionUCallSignature {
+  export interface Transport {
+    readonly $type: 'arrow_function__call_signature';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type_parameters?: TypeParameters.Transport;
+    readonly parameters: FormalParameters.Transport;
+    readonly return_type?: TypeAnnotation.Transport | AssertsAnnotation.Transport | TypePredicateAnnotation.Transport;
+  }
+}
+
+export namespace ArrowFunctionUFormParameter {
+  export interface Transport {
+    readonly $type: 'arrow_function';
+    readonly $variant: 'parameter';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly async_marker?: LiteralTransport<"async", "async">;
+    readonly body: Expression.Transport | StatementBlock.Transport;
+    readonly $children: readonly [_ArrowFunctionParameter.Transport];
+  }
+}
+
+export namespace ArrowFunctionUFormUCallSignature {
+  export interface Transport {
+    readonly $type: 'arrow_function';
+    readonly $variant: '_call_signature';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly async_marker?: LiteralTransport<"async", "async">;
+    readonly body: Expression.Transport | StatementBlock.Transport;
+    readonly $children: readonly [_ArrowFunctionUCallSignature.Transport];
+  }
+}
+
+export namespace ArrowFunction {
+  export type Transport = ArrowFunctionUFormParameter.Transport | ArrowFunctionUFormUCallSignature.Transport;
+}
+
+export namespace AsExpression {
+  export interface Transport {
+    readonly $type: 'as_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly expression: Expression.Transport;
+    readonly type_annotation: LiteralTransport<"const", "const"> | Type.Transport;
+  }
+}
+
+export namespace Asserts {
+  export interface Transport {
+    readonly $type: 'asserts';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [TypePredicate.Transport | Identifier.Transport | This.Transport];
+  }
+}
+
+export namespace AssertsAnnotation {
+  export interface Transport {
+    readonly $type: 'asserts_annotation';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly asserts: LiteralTransport<":", ":"> | Asserts.Transport;
+  }
+}
+
+export namespace AssignmentExpression {
+  export interface Transport {
+    readonly $type: 'assignment_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly using_marker?: LiteralTransport<"using", "using">;
+    readonly left: ParenthesizedExpression.Transport | LhsExpression.Transport;
+    readonly right: Expression.Transport;
+  }
+}
+
+export namespace AssignmentPattern {
+  export interface Transport {
+    readonly $type: 'assignment_pattern';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly left: Pattern.Transport;
+    readonly right: Expression.Transport;
+  }
+}
+
+export namespace AugmentedAssignmentExpression {
+  export interface Transport {
+    readonly $type: 'augmented_assignment_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly left: MemberExpression.Transport | SubscriptExpression.Transport | ReservedIdentifier.Transport | ParenthesizedExpression.Transport | NonNullExpression.Transport;
+    readonly operator: LiteralTransport<"+=", "+="> | LiteralTransport<"-=", "-="> | LiteralTransport<"*=", "*="> | LiteralTransport<"/=", "/="> | LiteralTransport<"%=", "%="> | LiteralTransport<"^=", "^="> | LiteralTransport<"&=", "&="> | LiteralTransport<"|=", "|="> | LiteralTransport<">>=", ">>="> | LiteralTransport<">>>=", ">>>="> | LiteralTransport<"<<=", "<<="> | LiteralTransport<"**=", "**="> | LiteralTransport<"&&=", "&&="> | LiteralTransport<"||=", "||="> | LiteralTransport<"??=", "??=">;
+    readonly right: Expression.Transport;
+  }
+}
+
+export namespace AwaitExpression {
+  export interface Transport {
+    readonly $type: 'await_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly expression: Expression.Transport;
+  }
+}
+
+export namespace BinaryExpression {
+  export interface Transport {
+    readonly $type: 'binary_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly left: Expression.Transport | PrivatePropertyIdentifier.Transport;
+    readonly operator: LiteralTransport<"&&", "&&"> | LiteralTransport<"||", "||"> | LiteralTransport<">>", ">>"> | LiteralTransport<">>>", ">>>"> | LiteralTransport<"<<", "<<"> | LiteralTransport<"&", "&"> | LiteralTransport<"^", "^"> | LiteralTransport<"|", "|"> | LiteralTransport<"+", "+"> | LiteralTransport<"-", "-"> | LiteralTransport<"*", "*"> | LiteralTransport<"/", "/"> | LiteralTransport<"%", "%"> | LiteralTransport<"**", "**"> | LiteralTransport<"<", "<"> | LiteralTransport<"<=", "<="> | LiteralTransport<"==", "=="> | LiteralTransport<"===", "==="> | LiteralTransport<"!=", "!="> | LiteralTransport<"!==", "!=="> | LiteralTransport<">=", ">="> | LiteralTransport<">", ">"> | LiteralTransport<"??", "??"> | LiteralTransport<"instanceof", "instanceof"> | LiteralTransport<"in", "in">;
+    readonly right: Expression.Transport;
+  }
+}
+
+export namespace BreakStatement {
+  export interface Transport {
+    readonly $type: 'break_statement';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly label?: StatementIdentifier.Transport;
+    readonly semicolon: Semicolon.Transport;
+  }
+}
+
+export namespace CallExpressionUFormCall {
+  export interface Transport {
+    readonly $type: 'call_expression';
+    readonly $variant: 'call';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [CallExpressionCall.Transport];
+  }
+}
+
+export namespace CallExpressionUFormTemplateCall {
+  export interface Transport {
+    readonly $type: 'call_expression';
+    readonly $variant: 'template_call';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [CallExpressionTemplateCall.Transport];
+  }
+}
+
+export namespace CallExpressionUFormMember {
+  export interface Transport {
+    readonly $type: 'call_expression';
+    readonly $variant: 'member';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [CallExpressionMember.Transport];
+  }
+}
+
+export namespace CallExpression {
+  export type Transport = CallExpressionUFormCall.Transport | CallExpressionUFormTemplateCall.Transport | CallExpressionUFormMember.Transport;
+}
+
+export namespace CallSignature {
+  export interface Transport {
+    readonly $type: 'call_signature';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type_parameters?: TypeParameters.Transport;
+    readonly parameters: FormalParameters.Transport;
+    readonly return_type?: TypeAnnotation.Transport | AssertsAnnotation.Transport | TypePredicateAnnotation.Transport;
+  }
+}
+
+export namespace CatchClause {
+  export interface Transport {
+    readonly $type: 'catch_clause';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly parameter?: Identifier.Transport | DestructuringPattern.Transport;
+    readonly type?: TypeAnnotation.Transport;
+    readonly body: StatementBlock.Transport;
+  }
+}
+
+export namespace Class {
+  export interface Transport {
+    readonly $type: 'class';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly decorator: readonly (Decorator.Transport)[];
+    readonly name?: TypeIdentifier.Transport;
+    readonly type_parameters?: TypeParameters.Transport;
+    readonly class_heritage?: ClassHeritage.Transport;
+    readonly body: ClassBody.Transport;
+  }
+}
+
+export namespace ClassBody {
+  export interface Transport {
+    readonly $type: 'class_body';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (ClassBodyMethod.Transport | ClassBodyMethodSig.Transport | ClassStaticBlock.Transport | ClassBodyMember.Transport)[];
+  }
+}
+
+export namespace ClassDeclaration {
+  export interface Transport {
+    readonly $type: 'class_declaration';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly decorator: readonly (Decorator.Transport)[];
+    readonly name: TypeIdentifier.Transport;
+    readonly type_parameters?: TypeParameters.Transport;
+    readonly class_heritage?: ClassHeritage.Transport;
+    readonly body: ClassBody.Transport;
+    readonly automatic_semicolon?: AutomaticSemicolon.Transport;
+  }
+}
+
+export namespace ClassHeritageExtendsClause {
+  export interface Transport {
+    readonly $type: 'class_heritage_extends_clause';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [ExtendsClause.Transport | ImplementsClause.Transport];
+  }
+}
+
+export namespace ClassHeritageImplementsClause {
+  export interface Transport {
+    readonly $type: 'class_heritage_implements_clause';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [ImplementsClause.Transport];
+  }
+}
+
+export namespace ClassHeritageUFormExtendsClause {
+  export interface Transport {
+    readonly $type: 'class_heritage';
+    readonly $variant: 'extends_clause';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [_ClassHeritageExtendsClause.Transport];
+  }
+}
+
+export namespace ClassHeritageUFormImplementsClause {
+  export interface Transport {
+    readonly $type: 'class_heritage';
+    readonly $variant: 'implements_clause';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [_ClassHeritageImplementsClause.Transport];
+  }
+}
+
+export namespace ClassHeritage {
+  export type Transport = ClassHeritageUFormExtendsClause.Transport | ClassHeritageUFormImplementsClause.Transport;
+}
+
+export namespace ClassStaticBlock {
+  export interface Transport {
+    readonly $type: 'class_static_block';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly body: StatementBlock.Transport;
+    readonly $children?: readonly [AutomaticSemicolon.Transport];
+  }
+}
+
+export namespace Comment {
+  export type Transport = TerminalTransport<"comment", string>;
+}
+
+export namespace ComputedPropertyName {
+  export interface Transport {
+    readonly $type: 'computed_property_name';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly expression: Expression.Transport;
+  }
+}
+
+export namespace ConditionalType {
+  export interface Transport {
+    readonly $type: 'conditional_type';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly left: Type.Transport;
+    readonly right: Type.Transport;
+    readonly consequence: Type.Transport;
+    readonly alternative: Type.Transport;
+  }
+}
+
+export namespace Constraint {
+  export interface Transport {
+    readonly $type: 'constraint';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type: Type.Transport;
+  }
+}
+
+export namespace ConstructSignature {
+  export interface Transport {
+    readonly $type: 'construct_signature';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly abstract_marker?: LiteralTransport<"abstract", "abstract">;
+    readonly type_parameters?: TypeParameters.Transport;
+    readonly parameters: FormalParameters.Transport;
+    readonly type?: TypeAnnotation.Transport;
+  }
+}
+
+export namespace ConstructorType {
+  export interface Transport {
+    readonly $type: 'constructor_type';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly abstract_marker?: LiteralTransport<"abstract", "abstract">;
+    readonly type_parameters?: TypeParameters.Transport;
+    readonly parameters: FormalParameters.Transport;
+    readonly type: Type.Transport;
+  }
+}
+
+export namespace ContinueStatement {
+  export interface Transport {
+    readonly $type: 'continue_statement';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly label?: StatementIdentifier.Transport;
+    readonly semicolon: Semicolon.Transport;
+  }
+}
+
+export namespace DebuggerStatement {
+  export interface Transport {
+    readonly $type: 'debugger_statement';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly semicolon: Semicolon.Transport;
+  }
+}
+
+export namespace Decorator {
+  export interface Transport {
+    readonly $type: 'decorator';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [Identifier.Transport | DecoratorMemberExpression.Transport | DecoratorCallExpression.Transport | DecoratorParenthesizedExpression.Transport];
+  }
+}
+
+export namespace DecoratorCallExpression {
+  export interface Transport {
+    readonly $type: 'decorator_call_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly function: Identifier.Transport | DecoratorMemberExpression.Transport;
+    readonly type_arguments?: TypeArguments.Transport;
+    readonly arguments: Arguments.Transport;
+  }
+}
+
+export namespace DecoratorMemberExpression {
+  export interface Transport {
+    readonly $type: 'decorator_member_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly object: Identifier.Transport | DecoratorMemberExpression.Transport;
+    readonly property: PropertyIdentifier.Transport;
+  }
+}
+
+export namespace DecoratorParenthesizedExpression {
+  export interface Transport {
+    readonly $type: 'decorator_parenthesized_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [Identifier.Transport | DecoratorMemberExpression.Transport | DecoratorCallExpression.Transport];
+  }
+}
+
+export namespace DefaultType {
+  export interface Transport {
+    readonly $type: 'default_type';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type: Type.Transport;
+  }
+}
+
+export namespace DoStatement {
+  export interface Transport {
+    readonly $type: 'do_statement';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly body: Statement.Transport;
+    readonly condition: ParenthesizedExpression.Transport;
+    readonly semicolon?: Semicolon.Transport;
+  }
+}
+
+export namespace ElseClause {
+  export interface Transport {
+    readonly $type: 'else_clause';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly statement: Statement.Transport;
+  }
+}
+
+export namespace EmptyStatement {
+  export type Transport = TerminalTransport<"empty_statement", ";">;
+}
+
+export namespace EnumAssignment {
+  export interface Transport {
+    readonly $type: 'enum_assignment';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: PropertyName.Transport;
+    readonly value: Expression.Transport;
+  }
+}
+
+export namespace EnumBody {
+  export interface Transport {
+    readonly $type: 'enum_body';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (EnumAssignment.Transport)[];
+  }
+}
+
+export namespace EnumDeclaration {
+  export interface Transport {
+    readonly $type: 'enum_declaration';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly const_marker?: LiteralTransport<"const", "const">;
+    readonly name: Identifier.Transport;
+    readonly body: EnumBody.Transport;
+  }
+}
+
+export namespace EscapeSequence {
+  export type Transport = TerminalTransport<"escape_sequence", string>;
+}
+
+export namespace ExistentialType {
+  export type Transport = TerminalTransport<"existential_type", "*">;
+}
+
+export namespace ExportClause {
+  export interface Transport {
+    readonly $type: 'export_clause';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (ExportSpecifier.Transport)[];
+  }
+}
+
+export namespace ExportSpecifier {
+  export interface Transport {
+    readonly $type: 'export_specifier';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly export_kind?: LiteralTransport<"type", "type"> | LiteralTransport<"typeof", "typeof">;
+    readonly name: ModuleExportName.Transport;
+    readonly alias?: ModuleExportName.Transport;
+  }
+}
+
+export namespace ExportStatementTypeExport {
+  export interface Transport {
+    readonly $type: 'export_statement_type_export';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly source?: String.Transport;
+    readonly $children: readonly [ExportClause.Transport | Semicolon.Transport];
+  }
+}
+
+export namespace ExportStatementEqualsExport {
+  export interface Transport {
+    readonly $type: 'export_statement_equals_export';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [Expression.Transport | Semicolon.Transport];
+  }
+}
+
+export namespace ExportStatementNamespaceExport {
+  export interface Transport {
+    readonly $type: 'export_statement_namespace_export';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [Identifier.Transport | Semicolon.Transport];
+  }
+}
+
+export namespace ExportStatementUFormDefault {
+  export interface Transport {
+    readonly $type: 'export_statement';
+    readonly $variant: 'default';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [ExportStatementDefault.Transport];
+  }
+}
+
+export namespace ExportStatementUFormTypeExport {
+  export interface Transport {
+    readonly $type: 'export_statement';
+    readonly $variant: 'type_export';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [_ExportStatementTypeExport.Transport];
+  }
+}
+
+export namespace ExportStatementUFormEqualsExport {
+  export interface Transport {
+    readonly $type: 'export_statement';
+    readonly $variant: 'equals_export';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [_ExportStatementEqualsExport.Transport];
+  }
+}
+
+export namespace ExportStatementUFormNamespaceExport {
+  export interface Transport {
+    readonly $type: 'export_statement';
+    readonly $variant: 'namespace_export';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [_ExportStatementNamespaceExport.Transport];
+  }
+}
+
+export namespace ExportStatement {
+  export type Transport = ExportStatementUFormDefault.Transport | ExportStatementUFormTypeExport.Transport | ExportStatementUFormEqualsExport.Transport | ExportStatementUFormNamespaceExport.Transport;
+}
+
+export namespace ExpressionStatement {
+  export interface Transport {
+    readonly $type: 'expression_statement';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly semicolon: Semicolon.Transport;
+    readonly $children: readonly [Expressions.Transport];
+  }
+}
+
+export namespace ExtendsClause {
+  export interface Transport {
+    readonly $type: 'extends_clause';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly value: readonly (Expression.Transport)[];
+    readonly type_arguments?: TypeArguments.Transport;
+  }
+}
+
+export namespace ExtendsTypeClause {
+  export interface Transport {
+    readonly $type: 'extends_type_clause';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type: readonly (TypeIdentifier.Transport | NestedTypeIdentifier.Transport | GenericType.Transport)[];
+  }
+}
+
+export namespace False {
+  export type Transport = TerminalTransport<"false", "false">;
+}
+
+export namespace FieldDefinition {
+  export interface Transport {
+    readonly $type: 'field_definition';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly decorator: readonly (Decorator.Transport)[];
+    readonly static_marker?: LiteralTransport<"static", "static">;
+    readonly property: PropertyName.Transport;
+    readonly value?: Expression.Transport;
+  }
+}
+
+export namespace FinallyClause {
+  export interface Transport {
+    readonly $type: 'finally_clause';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly body: StatementBlock.Transport;
+  }
+}
+
+export namespace FlowMaybeType {
+  export interface Transport {
+    readonly $type: 'flow_maybe_type';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly primary_type: PrimaryType.Transport;
+  }
+}
+
+export namespace ForInStatement {
+  export interface Transport {
+    readonly $type: 'for_in_statement';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly await_marker?: LiteralTransport<"await", "await">;
+    readonly operator: LiteralTransport<"in", "in"> | LiteralTransport<"of", "of">;
+    readonly right: Expressions.Transport;
+    readonly body: Statement.Transport;
+    readonly $children: readonly [ForHeaderLhs.Transport | ForHeaderVarKind.Transport | ForHeaderLetConstKind.Transport];
+  }
+}
+
+export namespace ForStatement {
+  export interface Transport {
+    readonly $type: 'for_statement';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly initializer: LexicalDeclaration.Transport | VariableDeclaration.Transport | Expressions.Transport | EmptyStatement.Transport;
+    readonly condition: Expressions.Transport | EmptyStatement.Transport;
+    readonly increment?: Expressions.Transport;
+    readonly body: Statement.Transport;
+  }
+}
+
+export namespace FormalParameters {
+  export interface Transport {
+    readonly $type: 'formal_parameters';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (FormalParameter.Transport)[];
+  }
+}
+
+export namespace FunctionDeclaration {
+  export interface Transport {
+    readonly $type: 'function_declaration';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly async_marker?: LiteralTransport<"async", "async">;
+    readonly name: Identifier.Transport;
+    readonly type_parameters?: TypeParameters.Transport;
+    readonly parameters: FormalParameters.Transport;
+    readonly return_type?: TypeAnnotation.Transport | AssertsAnnotation.Transport | TypePredicateAnnotation.Transport;
+    readonly body: StatementBlock.Transport;
+    readonly $children?: readonly [AutomaticSemicolon.Transport];
+  }
+}
+
+export namespace FunctionExpression {
+  export interface Transport {
+    readonly $type: 'function_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly async_marker?: LiteralTransport<"async", "async">;
+    readonly name?: Identifier.Transport;
+    readonly type_parameters?: TypeParameters.Transport;
+    readonly parameters: FormalParameters.Transport;
+    readonly return_type?: TypeAnnotation.Transport | AssertsAnnotation.Transport | TypePredicateAnnotation.Transport;
+    readonly body: StatementBlock.Transport;
+  }
+}
+
+export namespace FunctionSignature {
+  export interface Transport {
+    readonly $type: 'function_signature';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly async_marker?: LiteralTransport<"async", "async">;
+    readonly name: Identifier.Transport;
+    readonly type_parameters?: TypeParameters.Transport;
+    readonly parameters: FormalParameters.Transport;
+    readonly return_type?: TypeAnnotation.Transport | AssertsAnnotation.Transport | TypePredicateAnnotation.Transport;
+    readonly semicolon: Semicolon.Transport | FunctionSignatureAutomaticSemicolon.Transport;
+  }
+}
+
+export namespace FunctionType {
+  export interface Transport {
+    readonly $type: 'function_type';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type_parameters?: TypeParameters.Transport;
+    readonly parameters: FormalParameters.Transport;
+    readonly return_type: Type.Transport | Asserts.Transport | TypePredicate.Transport;
+  }
+}
+
+export namespace GeneratorFunction {
+  export interface Transport {
+    readonly $type: 'generator_function';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly async_marker?: LiteralTransport<"async", "async">;
+    readonly name?: Identifier.Transport;
+    readonly type_parameters?: TypeParameters.Transport;
+    readonly parameters: FormalParameters.Transport;
+    readonly return_type?: TypeAnnotation.Transport | AssertsAnnotation.Transport | TypePredicateAnnotation.Transport;
+    readonly body: StatementBlock.Transport;
+  }
+}
+
+export namespace GeneratorFunctionDeclaration {
+  export interface Transport {
+    readonly $type: 'generator_function_declaration';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly async_marker?: LiteralTransport<"async", "async">;
+    readonly name: Identifier.Transport;
+    readonly type_parameters?: TypeParameters.Transport;
+    readonly parameters: FormalParameters.Transport;
+    readonly return_type?: TypeAnnotation.Transport | AssertsAnnotation.Transport | TypePredicateAnnotation.Transport;
+    readonly body: StatementBlock.Transport;
+    readonly $children?: readonly [AutomaticSemicolon.Transport];
+  }
+}
+
+export namespace GenericType {
+  export interface Transport {
+    readonly $type: 'generic_type';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: TypeIdentifier.Transport | NestedTypeIdentifier.Transport;
+    readonly type_arguments: TypeArguments.Transport;
+  }
+}
+
+export namespace HashBangLine {
+  export type Transport = TerminalTransport<"hash_bang_line", string>;
+}
+
+export namespace HtmlCharacterReference {
+  export type Transport = TerminalTransport<"html_character_reference", string>;
+}
+
+export namespace Identifier {
+  export type Transport = TerminalTransport<"identifier", string>;
+}
+
+export namespace IfStatement {
+  export interface Transport {
+    readonly $type: 'if_statement';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly condition: ParenthesizedExpression.Transport;
+    readonly consequence: Statement.Transport;
+    readonly alternative?: ElseClause.Transport;
+  }
+}
+
+export namespace ImplementsClause {
+  export interface Transport {
+    readonly $type: 'implements_clause';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Type.Transport)[];
+  }
+}
+
+export namespace Import {
+  export type Transport = TerminalTransport<"import", "import">;
+}
+
+export namespace ImportAlias {
+  export interface Transport {
+    readonly $type: 'import_alias';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: Identifier.Transport;
+    readonly value: Identifier.Transport | NestedIdentifier.Transport;
+    readonly semicolon: Semicolon.Transport;
+  }
+}
+
+export namespace ImportAttribute {
+  export interface Transport {
+    readonly $type: 'import_attribute';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly object: LiteralTransport<"with", "with"> | LiteralTransport<"assert", "assert"> | Object.Transport;
+  }
+}
+
+export namespace ImportClauseNamespaceImport {
+  export interface Transport {
+    readonly $type: 'import_clause_namespace_import';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [NamespaceImport.Transport];
+  }
+}
+
+export namespace ImportClauseNamedImports {
+  export interface Transport {
+    readonly $type: 'import_clause_named_imports';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [NamedImports.Transport];
+  }
+}
+
+export namespace ImportClauseDefaultImport {
+  export interface Transport {
+    readonly $type: 'import_clause_default_import';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [ImportIdentifier.Transport | NamespaceImport.Transport | NamedImports.Transport];
+  }
+}
+
+export namespace ImportClauseUFormNamespaceImport {
+  export interface Transport {
+    readonly $type: 'import_clause';
+    readonly $variant: 'namespace_import';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [_ImportClauseNamespaceImport.Transport];
+  }
+}
+
+export namespace ImportClauseUFormNamedImports {
+  export interface Transport {
+    readonly $type: 'import_clause';
+    readonly $variant: 'named_imports';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [_ImportClauseNamedImports.Transport];
+  }
+}
+
+export namespace ImportClauseUFormDefaultImport {
+  export interface Transport {
+    readonly $type: 'import_clause';
+    readonly $variant: 'default_import';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [_ImportClauseDefaultImport.Transport];
+  }
+}
+
+export namespace ImportClause {
+  export type Transport = ImportClauseUFormNamespaceImport.Transport | ImportClauseUFormNamedImports.Transport | ImportClauseUFormDefaultImport.Transport;
+}
+
+export namespace ImportRequireClause {
+  export interface Transport {
+    readonly $type: 'import_require_clause';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly identifier: Identifier.Transport;
+    readonly source: String.Transport;
+  }
+}
+
+export namespace ImportSpecifierName {
+  export interface Transport {
+    readonly $type: 'import_specifier_name';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: ImportIdentifier.Transport;
+  }
+}
+
+export namespace ImportSpecifierUFormName {
+  export interface Transport {
+    readonly $type: 'import_specifier';
+    readonly $variant: 'name';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly import_kind?: LiteralTransport<"type", "type"> | LiteralTransport<"typeof", "typeof">;
+    readonly $children: readonly [_ImportSpecifierName.Transport];
+  }
+}
+
+export namespace ImportSpecifierUFormAs {
+  export interface Transport {
+    readonly $type: 'import_specifier';
+    readonly $variant: 'as';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly import_kind?: LiteralTransport<"type", "type"> | LiteralTransport<"typeof", "typeof">;
+    readonly $children: readonly [ImportSpecifierAs.Transport];
+  }
+}
+
+export namespace ImportSpecifier {
+  export type Transport = ImportSpecifierUFormName.Transport | ImportSpecifierUFormAs.Transport;
+}
+
+export namespace ImportStatement {
+  export interface Transport {
+    readonly $type: 'import_statement';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly import_clause?: LiteralTransport<"type", "type"> | LiteralTransport<"typeof", "typeof">;
+    readonly from_clause: ImportClause.Transport | LiteralTransport<"from", "from"> | String.Transport | ImportRequireClause.Transport;
+    readonly import_attribute?: ImportAttribute.Transport;
+    readonly semicolon: Semicolon.Transport;
+  }
+}
+
+export namespace IndexSignatureMappedTypeClause {
+  export interface Transport {
+    readonly $type: 'index_signature_mapped_type_clause';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [MappedTypeClause.Transport];
+  }
+}
+
+export namespace IndexSignatureUFormColon {
+  export interface Transport {
+    readonly $type: 'index_signature';
+    readonly $variant: 'colon';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly sign?: LiteralTransport<"-", "-"> | LiteralTransport<"+", "+">;
+    readonly type: TypeAnnotation.Transport | OmittingTypeAnnotation.Transport | AddingTypeAnnotation.Transport | OptingTypeAnnotation.Transport;
+    readonly $children: readonly [IndexSignatureColon.Transport];
+  }
+}
+
+export namespace IndexSignatureUFormMappedTypeClause {
+  export interface Transport {
+    readonly $type: 'index_signature';
+    readonly $variant: 'mapped_type_clause';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly sign?: LiteralTransport<"-", "-"> | LiteralTransport<"+", "+">;
+    readonly type: TypeAnnotation.Transport | OmittingTypeAnnotation.Transport | AddingTypeAnnotation.Transport | OptingTypeAnnotation.Transport;
+    readonly $children: readonly [_IndexSignatureMappedTypeClause.Transport];
+  }
+}
+
+export namespace IndexSignature {
+  export type Transport = IndexSignatureUFormColon.Transport | IndexSignatureUFormMappedTypeClause.Transport;
+}
+
+export namespace IndexTypeQuery {
+  export interface Transport {
+    readonly $type: 'index_type_query';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly primary_type: PrimaryType.Transport;
+  }
+}
+
+export namespace InferType {
+  export interface Transport {
+    readonly $type: 'infer_type';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type_identifier: TypeIdentifier.Transport;
+    readonly type?: Type.Transport;
+  }
+}
+
+export namespace InstantiationExpression {
+  export interface Transport {
+    readonly $type: 'instantiation_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly expression: Expression.Transport;
+    readonly type_arguments: TypeArguments.Transport;
+  }
+}
+
+export namespace InterfaceDeclaration {
+  export interface Transport {
+    readonly $type: 'interface_declaration';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: TypeIdentifier.Transport;
+    readonly type_parameters?: TypeParameters.Transport;
+    readonly extends_type_clause?: ExtendsTypeClause.Transport;
+    readonly body: InterfaceBody.Transport;
+  }
+}
+
+export namespace InternalModule {
+  export interface Transport {
+    readonly $type: 'internal_module';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: String.Transport | Identifier.Transport | NestedIdentifier.Transport;
+    readonly body?: StatementBlock.Transport;
+  }
+}
+
+export namespace IntersectionType {
+  export interface Transport {
+    readonly $type: 'intersection_type';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly left?: Type.Transport;
+    readonly right: Type.Transport;
+  }
+}
+
+export namespace JsxAttribute {
+  export interface Transport {
+    readonly $type: 'jsx_attribute';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [JsxAttributeName.Transport | JsxAttributeValue.Transport];
+  }
+}
+
+export namespace JsxClosingElement {
+  export interface Transport {
+    readonly $type: 'jsx_closing_element';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name?: JsxElementName.Transport;
+  }
+}
+
+export namespace JsxElement {
+  export interface Transport {
+    readonly $type: 'jsx_element';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly open_tag: JsxOpeningElement.Transport;
+    readonly close_tag: JsxClosingElement.Transport;
+    readonly $children: readonly (JsxChild.Transport)[];
+  }
+}
+
+export namespace JsxExpression {
+  export interface Transport {
+    readonly $type: 'jsx_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children?: readonly [Expression.Transport | SequenceExpression.Transport | SpreadElement.Transport];
+  }
+}
+
+export namespace JsxIdentifier {
+  export type Transport = TerminalTransport<"jsx_identifier", string>;
+}
+
+export namespace JsxNamespaceName {
+  export interface Transport {
+    readonly $type: 'jsx_namespace_name';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (JsxIdentifier.Transport)[];
+  }
+}
+
+export namespace JsxOpeningElement {
+  export interface Transport {
+    readonly $type: 'jsx_opening_element';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name?: JsxIdentifier.Transport | JsxNamespaceName.Transport | Identifier.Transport | NestedIdentifier.Transport;
+    readonly type_arguments?: TypeArguments.Transport;
+    readonly attribute: readonly (JsxAttribute.Transport)[];
+  }
+}
+
+export namespace JsxSelfClosingElement {
+  export interface Transport {
+    readonly $type: 'jsx_self_closing_element';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name?: JsxIdentifier.Transport | JsxNamespaceName.Transport | Identifier.Transport | NestedIdentifier.Transport;
+    readonly type_arguments?: TypeArguments.Transport;
+    readonly attribute: readonly (JsxAttribute.Transport)[];
+  }
+}
+
+export namespace LabeledStatement {
+  export interface Transport {
+    readonly $type: 'labeled_statement';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly label: StatementIdentifier.Transport;
+    readonly body: Statement.Transport;
+  }
+}
+
+export namespace LexicalDeclaration {
+  export interface Transport {
+    readonly $type: 'lexical_declaration';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly kind: LiteralTransport<"let", "let"> | LiteralTransport<"const", "const">;
+    readonly declarators: readonly (VariableDeclarator.Transport)[];
+    readonly semicolon: Semicolon.Transport;
+  }
+}
+
+export namespace LiteralType {
+  export interface Transport {
+    readonly $type: 'literal_type';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [_Number.Transport | Number.Transport | String.Transport | True.Transport | False.Transport | Null.Transport | Undefined.Transport];
+  }
+}
+
+export namespace LookupType {
+  export interface Transport {
+    readonly $type: 'lookup_type';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly primary_type: PrimaryType.Transport;
+    readonly index_type: Type.Transport;
+  }
+}
+
+export namespace MappedTypeClause {
+  export interface Transport {
+    readonly $type: 'mapped_type_clause';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: TypeIdentifier.Transport;
+    readonly type: Type.Transport;
+    readonly alias?: Type.Transport;
+  }
+}
+
+export namespace MemberExpression {
+  export interface Transport {
+    readonly $type: 'member_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly object: Expression.Transport | PrimaryExpression.Transport | Import.Transport;
+    readonly property: PrivatePropertyIdentifier.Transport | PropertyIdentifier.Transport;
+  }
+}
+
+export namespace MetaProperty {
+  export type Transport = TerminalTransport<"meta_property", string>;
+}
+
+export namespace MethodDefinition {
+  export interface Transport {
+    readonly $type: 'method_definition';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly accessibility_modifier?: AccessibilityModifier.Transport;
+    readonly static_marker?: LiteralTransport<"static", "static">;
+    readonly override_modifier?: OverrideModifier.Transport;
+    readonly readonly_marker?: LiteralTransport<"readonly", "readonly">;
+    readonly async_marker?: LiteralTransport<"async", "async">;
+    readonly accessor_kind?: LiteralTransport<"get", "get"> | LiteralTransport<"set", "set"> | LiteralTransport<"*", "*">;
+    readonly name: PropertyName.Transport;
+    readonly optional_marker?: LiteralTransport<"?", "?">;
+    readonly type_parameters?: TypeParameters.Transport;
+    readonly parameters: FormalParameters.Transport;
+    readonly return_type?: TypeAnnotation.Transport | AssertsAnnotation.Transport | TypePredicateAnnotation.Transport;
+    readonly body: StatementBlock.Transport;
+  }
+}
+
+export namespace MethodSignature {
+  export interface Transport {
+    readonly $type: 'method_signature';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly accessibility_modifier?: AccessibilityModifier.Transport;
+    readonly static_marker?: LiteralTransport<"static", "static">;
+    readonly override_modifier?: OverrideModifier.Transport;
+    readonly readonly_marker?: LiteralTransport<"readonly", "readonly">;
+    readonly async_marker?: LiteralTransport<"async", "async">;
+    readonly accessor_kind?: LiteralTransport<"get", "get"> | LiteralTransport<"set", "set"> | LiteralTransport<"*", "*">;
+    readonly name: PropertyName.Transport;
+    readonly optional_marker?: LiteralTransport<"?", "?">;
+    readonly type_parameters?: TypeParameters.Transport;
+    readonly parameters: FormalParameters.Transport;
+    readonly return_type?: TypeAnnotation.Transport | AssertsAnnotation.Transport | TypePredicateAnnotation.Transport;
+  }
+}
+
+export namespace Module {
+  export interface Transport {
+    readonly $type: 'module';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: String.Transport | Identifier.Transport | NestedIdentifier.Transport;
+    readonly body?: StatementBlock.Transport;
+  }
+}
+
+export namespace NamedImports {
+  export interface Transport {
+    readonly $type: 'named_imports';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (ImportSpecifier.Transport)[];
+  }
+}
+
+export namespace NamespaceExport {
+  export interface Transport {
+    readonly $type: 'namespace_export';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [ModuleExportName.Transport];
+  }
+}
+
+export namespace NamespaceImport {
+  export interface Transport {
+    readonly $type: 'namespace_import';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly identifier: Identifier.Transport;
+  }
+}
+
+export namespace NestedIdentifier {
+  export interface Transport {
+    readonly $type: 'nested_identifier';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly object: Identifier.Transport | NestedIdentifier.Transport;
+    readonly property: PropertyIdentifier.Transport;
+  }
+}
+
+export namespace NestedTypeIdentifier {
+  export interface Transport {
+    readonly $type: 'nested_type_identifier';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly module: Identifier.Transport | NestedIdentifier.Transport;
+    readonly name: TypeIdentifier.Transport;
+  }
+}
+
+export namespace NewExpression {
+  export interface Transport {
+    readonly $type: 'new_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly constructor: PrimaryExpression.Transport;
+    readonly type_arguments?: TypeArguments.Transport;
+    readonly arguments?: Arguments.Transport;
+  }
+}
+
+export namespace NonNullExpression {
+  export interface Transport {
+    readonly $type: 'non_null_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly expression: Expression.Transport;
+  }
+}
+
+export namespace Null {
+  export type Transport = TerminalTransport<"null", "null">;
+}
+
+export namespace Number {
+  export type Transport = TerminalTransport<"number", string>;
+}
+
+export namespace Object {
+  export interface Transport {
+    readonly $type: 'object';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children?: readonly (Pair.Transport | SpreadElement.Transport | MethodDefinition.Transport | ShorthandPropertyIdentifier.Transport)[];
+  }
+}
+
+export namespace ObjectAssignmentPattern {
+  export interface Transport {
+    readonly $type: 'object_assignment_pattern';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly left: ShorthandPropertyIdentifierPattern.Transport | DestructuringPattern.Transport;
+    readonly right: Expression.Transport;
+  }
+}
+
+export namespace ObjectPattern {
+  export interface Transport {
+    readonly $type: 'object_pattern';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children?: readonly (PairPattern.Transport | RestPattern.Transport | ObjectAssignmentPattern.Transport | ShorthandPropertyIdentifierPattern.Transport)[];
+  }
+}
+
+export namespace ObjectType {
+  export interface Transport {
+    readonly $type: 'object_type';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly opening: LiteralTransport<"{", "{"> | LiteralTransport<"{|", "{|">;
+    readonly members?: readonly (LiteralTransport<",", ","> | LiteralTransport<";", ";"> | ExportStatement.Transport | PropertySignature.Transport | CallSignature.Transport | ConstructSignature.Transport | IndexSignature.Transport | MethodSignature.Transport | Semicolon.Transport)[];
+    readonly closing: LiteralTransport<"}", "}"> | LiteralTransport<"|}", "|}">;
+  }
+}
+
+export namespace OmittingTypeAnnotation {
+  export interface Transport {
+    readonly $type: 'omitting_type_annotation';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type: Type.Transport;
+  }
+}
+
+export namespace OptingTypeAnnotation {
+  export interface Transport {
+    readonly $type: 'opting_type_annotation';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type: Type.Transport;
+  }
+}
+
+export namespace OptionalChain {
+  export type Transport = TerminalTransport<"optional_chain", "?.">;
+}
+
+export namespace OptionalParameter {
+  export interface Transport {
+    readonly $type: 'optional_parameter';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly decorator: readonly (Decorator.Transport)[];
+    readonly readonly_marker?: LiteralTransport<"readonly", "readonly">;
+    readonly pattern: Pattern.Transport | This.Transport;
+    readonly type?: TypeAnnotation.Transport;
+    readonly value?: Expression.Transport;
+    readonly $children?: readonly [AccessibilityModifier.Transport | OverrideModifier.Transport];
+  }
+}
+
+export namespace OptionalTupleParameter {
+  export interface Transport {
+    readonly $type: 'optional_tuple_parameter';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: Identifier.Transport;
+    readonly type: TypeAnnotation.Transport;
+  }
+}
+
+export namespace OptionalType {
+  export interface Transport {
+    readonly $type: 'optional_type';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type: Type.Transport;
+  }
+}
+
+export namespace OverrideModifier {
+  export type Transport = TerminalTransport<"override_modifier", "override">;
+}
+
+export namespace Pair {
+  export interface Transport {
+    readonly $type: 'pair';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly key: PropertyName.Transport;
+    readonly value: Expression.Transport;
+  }
+}
+
+export namespace PairPattern {
+  export interface Transport {
+    readonly $type: 'pair_pattern';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly key: PropertyName.Transport;
+    readonly value: Pattern.Transport | AssignmentPattern.Transport;
+  }
+}
+
+export namespace ParenthesizedExpressionSequence {
+  export interface Transport {
+    readonly $type: 'parenthesized_expression_sequence';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [SequenceExpression.Transport];
+  }
+}
+
+export namespace ParenthesizedExpressionUFormTyped {
+  export interface Transport {
+    readonly $type: 'parenthesized_expression';
+    readonly $variant: 'typed';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [ParenthesizedExpressionTyped.Transport];
+  }
+}
+
+export namespace ParenthesizedExpressionUFormSequence {
+  export interface Transport {
+    readonly $type: 'parenthesized_expression';
+    readonly $variant: 'sequence';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [_ParenthesizedExpressionSequence.Transport];
+  }
+}
+
+export namespace ParenthesizedExpression {
+  export type Transport = ParenthesizedExpressionUFormTyped.Transport | ParenthesizedExpressionUFormSequence.Transport;
+}
+
+export namespace ParenthesizedType {
+  export interface Transport {
+    readonly $type: 'parenthesized_type';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type: Type.Transport;
+  }
+}
+
+export namespace PredefinedType {
+  export type Transport = TerminalTransport<"predefined_type", string>;
+}
+
+export namespace PrivatePropertyIdentifier {
+  export type Transport = TerminalTransport<"private_property_identifier", string>;
+}
+
+export namespace Program {
+  export interface Transport {
+    readonly $type: 'program';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly hash_bang_line?: HashBangLine.Transport;
+    readonly statements: readonly (Statement.Transport)[];
+  }
+}
+
+export namespace PropertySignature {
+  export interface Transport {
+    readonly $type: 'property_signature';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly accessibility_modifier?: AccessibilityModifier.Transport;
+    readonly static_marker?: LiteralTransport<"static", "static">;
+    readonly override_modifier?: OverrideModifier.Transport;
+    readonly readonly_marker?: LiteralTransport<"readonly", "readonly">;
+    readonly name: PropertyName.Transport;
+    readonly optional_marker?: LiteralTransport<"?", "?">;
+    readonly type?: TypeAnnotation.Transport;
+  }
+}
+
+export namespace PublicFieldDefinition {
+  export interface Transport {
+    readonly $type: 'public_field_definition';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly decorator: readonly (Decorator.Transport)[];
+    readonly name: PropertyName.Transport;
+    readonly optionality_marker?: LiteralTransport<"?", "?"> | LiteralTransport<"!", "!">;
+    readonly type?: TypeAnnotation.Transport;
+    readonly value?: Expression.Transport;
+    readonly $children?: readonly [PublicFieldDefinitionDeclareFirst.Transport | PublicFieldDefinitionAccessFirst.Transport | PublicFieldDefinitionStaticMods.Transport | PublicFieldDefinitionAbstractFirst.Transport | PublicFieldDefinitionReadonlyFirst.Transport | PublicFieldDefinitionAccessorOpt.Transport];
+  }
+}
+
+export namespace ReadonlyType {
+  export interface Transport {
+    readonly $type: 'readonly_type';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type: Type.Transport;
+  }
+}
+
+export namespace Regex {
+  export interface Transport {
+    readonly $type: 'regex';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly pattern: RegexPattern.Transport;
+    readonly flags?: RegexFlags.Transport;
+  }
+}
+
+export namespace RegexFlags {
+  export type Transport = TerminalTransport<"regex_flags", string>;
+}
+
+export namespace RegexPattern {
+  export type Transport = TerminalTransport<"regex_pattern", string>;
+}
+
+export namespace RequiredParameter {
+  export interface Transport {
+    readonly $type: 'required_parameter';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly decorator: readonly (Decorator.Transport)[];
+    readonly readonly_marker?: LiteralTransport<"readonly", "readonly">;
+    readonly pattern: Pattern.Transport | This.Transport;
+    readonly type?: TypeAnnotation.Transport;
+    readonly value?: Expression.Transport;
+    readonly $children?: readonly [AccessibilityModifier.Transport | OverrideModifier.Transport];
+  }
+}
+
+export namespace RestPattern {
+  export interface Transport {
+    readonly $type: 'rest_pattern';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [LhsExpression.Transport];
+  }
+}
+
+export namespace RestType {
+  export interface Transport {
+    readonly $type: 'rest_type';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type: Type.Transport;
+  }
+}
+
+export namespace ReturnStatement {
+  export interface Transport {
+    readonly $type: 'return_statement';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly semicolon: Semicolon.Transport;
+    readonly $children?: readonly [Expressions.Transport];
+  }
+}
+
+export namespace SatisfiesExpression {
+  export interface Transport {
+    readonly $type: 'satisfies_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly expression: Expression.Transport;
+    readonly type_annotation: Type.Transport;
+  }
+}
+
+export namespace SequenceExpression {
+  export interface Transport {
+    readonly $type: 'sequence_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Expression.Transport)[];
+  }
+}
+
+export namespace SpreadElement {
+  export interface Transport {
+    readonly $type: 'spread_element';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly expression: Expression.Transport;
+  }
+}
+
+export namespace StatementBlock {
+  export interface Transport {
+    readonly $type: 'statement_block';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly statements: readonly (Statement.Transport)[];
+    readonly automatic_semicolon?: AutomaticSemicolon.Transport;
+  }
+}
+
+export namespace StringDouble {
+  export interface Transport {
+    readonly $type: 'string_double';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (StringFragment.Transport | EscapeSequence.Transport)[];
+  }
+}
+
+export namespace StringSingle {
+  export interface Transport {
+    readonly $type: 'string_single';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (StringFragment.Transport | EscapeSequence.Transport)[];
+  }
+}
+
+export namespace StringUFormDouble {
+  export interface Transport {
+    readonly $type: 'string';
+    readonly $variant: 'double';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [_StringDouble.Transport];
+  }
+}
+
+export namespace StringUFormSingle {
+  export interface Transport {
+    readonly $type: 'string';
+    readonly $variant: 'single';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [_StringSingle.Transport];
+  }
+}
+
+export namespace String {
+  export type Transport = StringUFormDouble.Transport | StringUFormSingle.Transport;
+}
+
+export namespace SubscriptExpression {
+  export interface Transport {
+    readonly $type: 'subscript_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly object: Expression.Transport | PrimaryExpression.Transport;
+    readonly optional_chain?: OptionalChain.Transport;
+    readonly index: Expressions.Transport;
+  }
+}
+
+export namespace Super {
+  export type Transport = TerminalTransport<"super", "super">;
+}
+
+export namespace SwitchBody {
+  export interface Transport {
+    readonly $type: 'switch_body';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (SwitchCase.Transport | SwitchDefault.Transport)[];
+  }
+}
+
+export namespace SwitchCase {
+  export interface Transport {
+    readonly $type: 'switch_case';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly value: Expressions.Transport;
+    readonly body: readonly (Statement.Transport)[];
+  }
+}
+
+export namespace SwitchDefault {
+  export interface Transport {
+    readonly $type: 'switch_default';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly body: readonly (Statement.Transport)[];
+  }
+}
+
+export namespace SwitchStatement {
+  export interface Transport {
+    readonly $type: 'switch_statement';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly value: ParenthesizedExpression.Transport;
+    readonly body: SwitchBody.Transport;
+  }
+}
+
+export namespace TemplateLiteralType {
+  export interface Transport {
+    readonly $type: 'template_literal_type';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (StringFragment.Transport | TemplateType.Transport)[];
+  }
+}
+
+export namespace TemplateString {
+  export interface Transport {
+    readonly $type: 'template_string';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (StringFragment.Transport | EscapeSequence.Transport | TemplateSubstitution.Transport)[];
+  }
+}
+
+export namespace TemplateSubstitution {
+  export interface Transport {
+    readonly $type: 'template_substitution';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [Expressions.Transport];
+  }
+}
+
+export namespace TemplateType {
+  export interface Transport {
+    readonly $type: 'template_type';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [PrimaryType.Transport | InferType.Transport];
+  }
+}
+
+export namespace TernaryExpression {
+  export interface Transport {
+    readonly $type: 'ternary_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly condition: Expression.Transport;
+    readonly consequence: Expression.Transport;
+    readonly alternative: Expression.Transport;
+  }
+}
+
+export namespace This {
+  export type Transport = TerminalTransport<"this", "this">;
+}
+
+export namespace ThrowStatement {
+  export interface Transport {
+    readonly $type: 'throw_statement';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly semicolon: Semicolon.Transport;
+    readonly $children: readonly [Expressions.Transport];
+  }
+}
+
+export namespace True {
+  export type Transport = TerminalTransport<"true", "true">;
+}
+
+export namespace TryStatement {
+  export interface Transport {
+    readonly $type: 'try_statement';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly body: StatementBlock.Transport;
+    readonly handler?: CatchClause.Transport;
+    readonly finalizer?: FinallyClause.Transport;
+  }
+}
+
+export namespace TupleParameter {
+  export interface Transport {
+    readonly $type: 'tuple_parameter';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: Identifier.Transport | RestPattern.Transport;
+    readonly type: TypeAnnotation.Transport;
+  }
+}
+
+export namespace TupleType {
+  export interface Transport {
+    readonly $type: 'tuple_type';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (TupleTypeMember.Transport)[];
+  }
+}
+
+export namespace TypeAliasDeclaration {
+  export interface Transport {
+    readonly $type: 'type_alias_declaration';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: TypeIdentifier.Transport;
+    readonly type_parameters?: TypeParameters.Transport;
+    readonly value: Type.Transport;
+    readonly semicolon: Semicolon.Transport;
+  }
+}
+
+export namespace TypeAnnotation {
+  export interface Transport {
+    readonly $type: 'type_annotation';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type: Type.Transport;
+  }
+}
+
+export namespace TypeArguments {
+  export interface Transport {
+    readonly $type: 'type_arguments';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Type.Transport)[];
+  }
+}
+
+export namespace TypeAssertion {
+  export interface Transport {
+    readonly $type: 'type_assertion';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type_arguments: TypeArguments.Transport;
+    readonly expression: Expression.Transport;
+  }
+}
+
+export namespace TypeParameter {
+  export interface Transport {
+    readonly $type: 'type_parameter';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly const_marker?: LiteralTransport<"const", "const">;
+    readonly name: TypeIdentifier.Transport;
+    readonly constraint?: Constraint.Transport;
+    readonly value?: DefaultType.Transport;
+  }
+}
+
+export namespace TypeParameters {
+  export interface Transport {
+    readonly $type: 'type_parameters';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (TypeParameter.Transport)[];
+  }
+}
+
+export namespace TypePredicate {
+  export interface Transport {
+    readonly $type: 'type_predicate';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: PredefinedType.Transport | This.Transport;
+    readonly type: Type.Transport;
+  }
+}
+
+export namespace TypePredicateAnnotation {
+  export interface Transport {
+    readonly $type: 'type_predicate_annotation';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type_predicate: LiteralTransport<":", ":"> | TypePredicate.Transport;
+  }
+}
+
+export namespace TypeQuery {
+  export interface Transport {
+    readonly $type: 'type_query';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [TypeQuerySubscriptExpression.Transport | TypeQueryMemberExpression.Transport | TypeQueryCallExpression.Transport | TypeQueryInstantiationExpression.Transport | Identifier.Transport | This.Transport];
+  }
+}
+
+export namespace UnaryExpression {
+  export interface Transport {
+    readonly $type: 'unary_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly operator: LiteralTransport<"!", "!"> | LiteralTransport<"~", "~"> | LiteralTransport<"-", "-"> | LiteralTransport<"+", "+"> | LiteralTransport<"typeof", "typeof"> | LiteralTransport<"void", "void"> | LiteralTransport<"delete", "delete">;
+    readonly argument: Expression.Transport;
+  }
+}
+
+export namespace Undefined {
+  export type Transport = TerminalTransport<"undefined", "undefined">;
+}
+
+export namespace UnescapedDoubleJsxStringFragment {
+  export type Transport = TerminalTransport<"unescaped_double_jsx_string_fragment", string>;
+}
+
+export namespace UnescapedDoubleStringFragment {
+  export type Transport = TerminalTransport<"unescaped_double_string_fragment", string>;
+}
+
+export namespace UnescapedSingleJsxStringFragment {
+  export type Transport = TerminalTransport<"unescaped_single_jsx_string_fragment", string>;
+}
+
+export namespace UnescapedSingleStringFragment {
+  export type Transport = TerminalTransport<"unescaped_single_string_fragment", string>;
+}
+
+export namespace UnionType {
+  export interface Transport {
+    readonly $type: 'union_type';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly left?: Type.Transport;
+    readonly right: Type.Transport;
+  }
+}
+
+export namespace UpdateExpressionUFormPostfix {
+  export interface Transport {
+    readonly $type: 'update_expression';
+    readonly $variant: 'postfix';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [UpdateExpressionPostfix.Transport];
+  }
+}
+
+export namespace UpdateExpressionUFormPrefix {
+  export interface Transport {
+    readonly $type: 'update_expression';
+    readonly $variant: 'prefix';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [UpdateExpressionPrefix.Transport];
+  }
+}
+
+export namespace UpdateExpression {
+  export type Transport = UpdateExpressionUFormPostfix.Transport | UpdateExpressionUFormPrefix.Transport;
+}
+
+export namespace VariableDeclaration {
+  export interface Transport {
+    readonly $type: 'variable_declaration';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly declarators: readonly (VariableDeclarator.Transport)[];
+    readonly semicolon: Semicolon.Transport;
+  }
+}
+
+export namespace VariableDeclarator {
+  export interface Transport {
+    readonly $type: 'variable_declarator';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: Identifier.Transport | DestructuringPattern.Transport;
+    readonly type?: TypeAnnotation.Transport;
+    readonly value?: Expression.Transport;
+  }
+}
+
+export namespace WhileStatement {
+  export interface Transport {
+    readonly $type: 'while_statement';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly condition: ParenthesizedExpression.Transport;
+    readonly body: Statement.Transport;
+  }
+}
+
+export namespace WithStatement {
+  export interface Transport {
+    readonly $type: 'with_statement';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly object: ParenthesizedExpression.Transport;
+    readonly body: Statement.Transport;
+  }
+}
+
+export namespace YieldExpression {
+  export interface Transport {
+    readonly $type: 'yield_expression';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly expression?: Expression.Transport;
+  }
+}
+
+export namespace AutomaticSemicolon {
+  export type Transport = TerminalTransport<"_automatic_semicolon", string>;
+}
+
+export namespace TemplateChars {
+  export type Transport = TerminalTransport<"_template_chars", string>;
+}
+
+export namespace TernaryQmark {
+  export type Transport = TerminalTransport<"_ternary_qmark", string>;
+}
+
+export namespace HtmlComment {
+  export type Transport = TerminalTransport<"html_comment", string>;
+}
+
+export namespace Oror {
+  export type Transport = TerminalTransport<"||", string>;
+}
+
+export namespace JsxText {
+  export type Transport = TerminalTransport<"jsx_text", string>;
+}
+
+export namespace FunctionSignatureAutomaticSemicolon {
+  export type Transport = TerminalTransport<"_function_signature_automatic_semicolon", string>;
+}
+
+export namespace ErrorRecovery {
+  export type Transport = TerminalTransport<"__error_recovery", string>;
+}
+
+export namespace TokQDot {
+  export type Transport = TerminalTransport<"?.", "?.">;
+}
+
+export namespace Comma {
+  export type Transport = TerminalTransport<",", ",">;
+}
+
+export namespace Export {
+  export type Transport = TerminalTransport<"export", "export">;
+}
+
+export namespace Default {
+  export type Transport = TerminalTransport<"default", "default">;
+}
+
+export namespace Star {
+  export type Transport = TerminalTransport<"*", "*">;
+}
+
+export namespace Eq {
+  export type Transport = TerminalTransport<"=", "=">;
+}
+
+export namespace As {
+  export type Transport = TerminalTransport<"as", "as">;
+}
+
+export namespace Namespace {
+  export type Transport = TerminalTransport<"namespace", "namespace">;
+}
+
+export namespace Paren {
+  export type Transport = TerminalTransport<"(", "(">;
+}
+
+export namespace CloseParen {
+  export type Transport = TerminalTransport<")", ")">;
+}
+
+export namespace Var {
+  export type Transport = TerminalTransport<"var", "var">;
+}
+
+export namespace From {
+  export type Transport = TerminalTransport<"from", "from">;
+}
+
+export namespace Colon {
+  export type Transport = TerminalTransport<":", ":">;
+}
+
+export namespace Lt {
+  export type Transport = TerminalTransport<"<", "<">;
+}
+
+export namespace TokDq {
+  export type Transport = TerminalTransport<"\"", "\"">;
+}
+
+export namespace TokSq {
+  export type Transport = TerminalTransport<"'", "'">;
+}
+
+export namespace Abstract {
+  export type Transport = TerminalTransport<"abstract", "abstract">;
+}
+
+export namespace Async {
+  export type Transport = TerminalTransport<"async", "async">;
+}
+
+export namespace Const {
+  export type Transport = TerminalTransport<"const", "const">;
+}
+
+export namespace Question {
+  export type Transport = TerminalTransport<"?", "?">;
+}
+
+export namespace Readonly {
+  export type Transport = TerminalTransport<"readonly", "readonly">;
+}
+
+export namespace Static {
+  export type Transport = TerminalTransport<"static", "static">;
+}
+
+export namespace Declare {
+  export type Transport = TerminalTransport<"declare", "declare">;
+}
+
+export namespace Accessor {
+  export type Transport = TerminalTransport<"accessor", "accessor">;
+}
+
+export namespace Dot {
+  export type Transport = TerminalTransport<".", ".">;
+}
+
+export namespace Bracket {
+  export type Transport = TerminalTransport<"[", "[">;
+}
+
+export namespace CloseBracket {
+  export type Transport = TerminalTransport<"]", "]">;
+}
+
+export namespace TokPlusQColon {
+  export type Transport = TerminalTransport<"+?:", "+?:">;
+}
+
+export namespace Global {
+  export type Transport = TerminalTransport<"global", "global">;
+}
+
+export namespace Using {
+  export type Transport = TerminalTransport<"using", "using">;
+}
+
+export namespace Await {
+  export type Transport = TerminalTransport<"await", "await">;
+}
+
+export namespace Andand {
+  export type Transport = TerminalTransport<"&&", "&&">;
+}
+
+export namespace Shr {
+  export type Transport = TerminalTransport<">>", ">>">;
+}
+
+export namespace TokGtGtGt {
+  export type Transport = TerminalTransport<">>>", ">>>">;
+}
+
+export namespace Shl {
+  export type Transport = TerminalTransport<"<<", "<<">;
+}
+
+export namespace Amp {
+  export type Transport = TerminalTransport<"&", "&">;
+}
+
+export namespace Caret {
+  export type Transport = TerminalTransport<"^", "^">;
+}
+
+export namespace Pipe {
+  export type Transport = TerminalTransport<"|", "|">;
+}
+
+export namespace Plus {
+  export type Transport = TerminalTransport<"+", "+">;
+}
+
+export namespace Minus {
+  export type Transport = TerminalTransport<"-", "-">;
+}
+
+export namespace Slash {
+  export type Transport = TerminalTransport<"/", "/">;
+}
+
+export namespace Percent {
+  export type Transport = TerminalTransport<"%", "%">;
+}
+
+export namespace Starstar {
+  export type Transport = TerminalTransport<"**", "**">;
+}
+
+export namespace Le {
+  export type Transport = TerminalTransport<"<=", "<=">;
+}
+
+export namespace Eqeq {
+  export type Transport = TerminalTransport<"==", "==">;
+}
+
+export namespace TokEqEqEq {
+  export type Transport = TerminalTransport<"===", "===">;
+}
+
+export namespace Neq {
+  export type Transport = TerminalTransport<"!=", "!=">;
+}
+
+export namespace TokBangEqEq {
+  export type Transport = TerminalTransport<"!==", "!==">;
+}
+
+export namespace Ge {
+  export type Transport = TerminalTransport<">=", ">=">;
+}
+
+export namespace Gt {
+  export type Transport = TerminalTransport<">", ">">;
+}
+
+export namespace TokQQ {
+  export type Transport = TerminalTransport<"??", "??">;
+}
+
+export namespace Instanceof {
+  export type Transport = TerminalTransport<"instanceof", "instanceof">;
+}
+
+export namespace In {
+  export type Transport = TerminalTransport<"in", "in">;
+}
+
+export namespace Break {
+  export type Transport = TerminalTransport<"break", "break">;
+}
+
+export namespace Catch {
+  export type Transport = TerminalTransport<"catch", "catch">;
+}
+
+export namespace Brace {
+  export type Transport = TerminalTransport<"{", "{">;
+}
+
+export namespace Semi {
+  export type Transport = TerminalTransport<";", ";">;
+}
+
+export namespace CloseBrace {
+  export type Transport = TerminalTransport<"}", "}">;
+}
+
+export namespace Extends {
+  export type Transport = TerminalTransport<"extends", "extends">;
+}
+
+export namespace New {
+  export type Transport = TerminalTransport<"new", "new">;
+}
+
+export namespace FatArrow {
+  export type Transport = TerminalTransport<"=>", "=>">;
+}
+
+export namespace Continue {
+  export type Transport = TerminalTransport<"continue", "continue">;
+}
+
+export namespace Debugger {
+  export type Transport = TerminalTransport<"debugger", "debugger">;
+}
+
+export namespace At {
+  export type Transport = TerminalTransport<"@", "@">;
+}
+
+export namespace Do {
+  export type Transport = TerminalTransport<"do", "do">;
+}
+
+export namespace While {
+  export type Transport = TerminalTransport<"while", "while">;
+}
+
+export namespace Else {
+  export type Transport = TerminalTransport<"else", "else">;
+}
+
+export namespace Enum {
+  export type Transport = TerminalTransport<"enum", "enum">;
+}
+
+export namespace Finally {
+  export type Transport = TerminalTransport<"finally", "finally">;
+}
+
+export namespace For {
+  export type Transport = TerminalTransport<"for", "for">;
+}
+
+export namespace Function {
+  export type Transport = TerminalTransport<"function", "function">;
+}
+
+export namespace If {
+  export type Transport = TerminalTransport<"if", "if">;
+}
+
+export namespace Implements {
+  export type Transport = TerminalTransport<"implements", "implements">;
+}
+
+export namespace Require {
+  export type Transport = TerminalTransport<"require", "require">;
+}
+
+export namespace Keyof {
+  export type Transport = TerminalTransport<"keyof", "keyof">;
+}
+
+export namespace Infer {
+  export type Transport = TerminalTransport<"infer", "infer">;
+}
+
+export namespace Interface {
+  export type Transport = TerminalTransport<"interface", "interface">;
+}
+
+export namespace TokLtSlash {
+  export type Transport = TerminalTransport<"</", "</">;
+}
+
+export namespace TokSlashGt {
+  export type Transport = TerminalTransport<"/>", "/>">;
+}
+
+export namespace Bang {
+  export type Transport = TerminalTransport<"!", "!">;
+}
+
+export namespace TokMinusQColon {
+  export type Transport = TerminalTransport<"-?:", "-?:">;
+}
+
+export namespace TokQColon {
+  export type Transport = TerminalTransport<"?:", "?:">;
+}
+
+export namespace Override {
+  export type Transport = TerminalTransport<"override", "override">;
+}
+
+export namespace Ellipsis {
+  export type Transport = TerminalTransport<"...", "...">;
+}
+
+export namespace Return {
+  export type Transport = TerminalTransport<"return", "return">;
+}
+
+export namespace Satisfies {
+  export type Transport = TerminalTransport<"satisfies", "satisfies">;
+}
+
+export namespace Case {
+  export type Transport = TerminalTransport<"case", "case">;
+}
+
+export namespace Switch {
+  export type Transport = TerminalTransport<"switch", "switch">;
+}
+
+export namespace TokBt {
+  export type Transport = TerminalTransport<"`", "`">;
+}
+
+export namespace TokDollarLbr {
+  export type Transport = TerminalTransport<"${", "${">;
+}
+
+export namespace Throw {
+  export type Transport = TerminalTransport<"throw", "throw">;
+}
+
+export namespace Try {
+  export type Transport = TerminalTransport<"try", "try">;
+}
+
+export namespace Is {
+  export type Transport = TerminalTransport<"is", "is">;
+}
+
+export namespace Typeof {
+  export type Transport = TerminalTransport<"typeof", "typeof">;
+}
+
+export namespace With {
+  export type Transport = TerminalTransport<"with", "with">;
+}
+
+export namespace Yield {
+  export type Transport = TerminalTransport<"yield", "yield">;
+}
+
+export namespace DestructuringPattern {
+  export type Transport = ObjectPattern.Transport | ArrayPattern.Transport;
+}
+
+export namespace ExportStatementDefault {
+  export type Transport = ExportStatementDefaultFromArm.Transport | ExportStatementDefaultDeclArm.Transport;
+}
+
+export namespace Expressions {
+  export type Transport = SequenceExpression.Transport;
+}
+
+export namespace FormalParameter {
+  export type Transport = RequiredParameter.Transport | OptionalParameter.Transport;
+}
+
+export namespace _Identifier {
+  export type Transport = Undefined.Transport | Identifier.Transport;
+}
+
+export namespace ImportIdentifier {
+  export type Transport = Identifier.Transport;
+}
+
+export namespace _JsxAttribute {
+  export type Transport = JsxAttribute.Transport | JsxExpression.Transport;
+}
+
+export namespace JsxAttributeName {
+  export type Transport = Identifier.Transport | JsxNamespaceName.Transport;
+}
+
+export namespace JsxAttributeValue {
+  export type Transport = JsxString.Transport | JsxExpression.Transport | JsxElement.Transport | JsxSelfClosingElement.Transport;
+}
+
+export namespace JsxChild {
+  export type Transport = JsxText.Transport | HtmlCharacterReference.Transport | JsxElement.Transport | JsxSelfClosingElement.Transport | JsxExpression.Transport;
+}
+
+export namespace _JsxElement {
+  export type Transport = JsxElement.Transport | JsxSelfClosingElement.Transport;
+}
+
+export namespace JsxElementName {
+  export type Transport = JsxIdentifier.Transport | Identifier.Transport | NestedIdentifier.Transport | JsxNamespaceName.Transport;
+}
+
+export namespace _JsxIdentifier {
+  export type Transport = JsxIdentifier.Transport | Identifier.Transport;
+}
+
+export namespace ModuleExportName {
+  export type Transport = Identifier.Transport | String.Transport;
+}
+
+export namespace PropertyName {
+  export type Transport = Identifier.Transport | PrivatePropertyIdentifier.Transport | String.Transport | Number.Transport | ComputedPropertyName.Transport;
+}
+
+export namespace Semicolon {
+  export type Transport = AutomaticSemicolon.Transport;
+}
+
+export namespace ShorthandPropertyIdentifier {
+  export type Transport = Identifier.Transport | ReservedIdentifier.Transport;
+}
+
+export namespace ShorthandPropertyIdentifierPattern {
+  export type Transport = Identifier.Transport | ReservedIdentifier.Transport;
+}
+
+export namespace TupleTypeMember {
+  export type Transport = TupleParameter.Transport | OptionalTupleParameter.Transport | OptionalType.Transport | RestType.Transport;
+}
+
+export namespace Declaration {
+  export type Transport = FunctionSignature.Transport | AbstractClassDeclaration.Transport | Module.Transport | InternalModule.Transport | TypeAliasDeclaration.Transport | EnumDeclaration.Transport | InterfaceDeclaration.Transport | ImportAlias.Transport | AmbientDeclaration.Transport;
+}
+
+export namespace Expression {
+  export type Transport = AsExpression.Transport | SatisfiesExpression.Transport | InstantiationExpression.Transport | InternalModule.Transport | TypeAssertion.Transport | AssignmentExpression.Transport | AugmentedAssignmentExpression.Transport | AwaitExpression.Transport | UnaryExpression.Transport | BinaryExpression.Transport | TernaryExpression.Transport | UpdateExpression.Transport | NewExpression.Transport | YieldExpression.Transport;
+}
+
+export namespace Pattern {
+  export type Transport = MemberExpression.Transport | SubscriptExpression.Transport | Undefined.Transport | Identifier.Transport | ObjectPattern.Transport | ArrayPattern.Transport | NonNullExpression.Transport | RestPattern.Transport;
+}
+
+export namespace PrimaryExpression {
+  export type Transport = NonNullExpression.Transport;
+}
+
+export namespace PrimaryType {
+  export type Transport = ParenthesizedType.Transport | PredefinedType.Transport | TypeIdentifier.Transport | NestedTypeIdentifier.Transport | GenericType.Transport | ObjectType.Transport | ArrayType.Transport | TupleType.Transport | FlowMaybeType.Transport | TypeQuery.Transport | IndexTypeQuery.Transport | This.Transport | ExistentialType.Transport | LiteralType.Transport | LookupType.Transport | ConditionalType.Transport | TemplateLiteralType.Transport | IntersectionType.Transport | UnionType.Transport;
+}
+
+export namespace Statement {
+  export type Transport = ExportStatement.Transport | ImportStatement.Transport | DebuggerStatement.Transport | ExpressionStatement.Transport | StatementBlock.Transport | IfStatement.Transport | SwitchStatement.Transport | ForStatement.Transport | ForInStatement.Transport | WhileStatement.Transport | DoStatement.Transport | TryStatement.Transport | WithStatement.Transport | BreakStatement.Transport | ContinueStatement.Transport | ReturnStatement.Transport | ThrowStatement.Transport | EmptyStatement.Transport | LabeledStatement.Transport;
+}
+
+export namespace Type {
+  export type Transport = FunctionType.Transport | ReadonlyType.Transport | ConstructorType.Transport | InferType.Transport | TypeQueryMemberExpressionInTypeAnnotation.Transport | TypeQueryCallExpressionInTypeAnnotation.Transport;
+}
+
+export type TransportFor<K extends SyntaxKind | keyof KindMap> =
+  K extends "_arrow_function__call_signature" ? _ArrowFunctionUCallSignature.Transport :
+  K extends "_arrow_function_parameter" ? _ArrowFunctionParameter.Transport :
+  K extends "_call_expression_call" ? CallExpressionCall.Transport :
+  K extends "_call_expression_member" ? CallExpressionMember.Transport :
+  K extends "_call_expression_template_call" ? CallExpressionTemplateCall.Transport :
+  K extends "_call_signature" ? _CallSignature.Transport :
+  K extends "_class_body_member" ? ClassBodyMember.Transport :
+  K extends "_class_body_method" ? ClassBodyMethod.Transport :
+  K extends "_class_body_method_sig" ? ClassBodyMethodSig.Transport :
+  K extends "_class_heritage_extends_clause" ? _ClassHeritageExtendsClause.Transport :
+  K extends "_class_heritage_implements_clause" ? _ClassHeritageImplementsClause.Transport :
+  K extends "_export_statement_default_decl_arm" ? ExportStatementDefaultDeclArm.Transport :
+  K extends "_export_statement_default_decl_arm_default_kw" ? ExportStatementDefaultDeclArmDefaultKw.Transport :
+  K extends "_export_statement_default_decl_arm_default_kw_value" ? ExportStatementDefaultDeclArmDefaultKwValue.Transport :
+  K extends "_export_statement_default_from_arm" ? ExportStatementDefaultFromArm.Transport :
+  K extends "_export_statement_default_from_arm_clause_from" ? ExportStatementDefaultFromArmClauseFrom.Transport :
+  K extends "_export_statement_default_from_arm_ns_from" ? ExportStatementDefaultFromArmNsFrom.Transport :
+  K extends "_export_statement_default_from_arm_star_from" ? ExportStatementDefaultFromArmStarFrom.Transport :
+  K extends "_export_statement_equals_export" ? _ExportStatementEqualsExport.Transport :
+  K extends "_export_statement_namespace_export" ? _ExportStatementNamespaceExport.Transport :
+  K extends "_export_statement_type_export" ? _ExportStatementTypeExport.Transport :
+  K extends "_extends_clause_single" ? ExtendsClauseSingle.Transport :
+  K extends "_for_header" ? ForHeader.Transport :
+  K extends "_for_header_let_const_kind" ? ForHeaderLetConstKind.Transport :
+  K extends "_for_header_lhs" ? ForHeaderLhs.Transport :
+  K extends "_for_header_var_kind" ? ForHeaderVarKind.Transport :
+  K extends "_from_clause" ? FromClause.Transport :
+  K extends "_import_clause_default_import" ? _ImportClauseDefaultImport.Transport :
+  K extends "_import_clause_named_imports" ? _ImportClauseNamedImports.Transport :
+  K extends "_import_clause_namespace_import" ? _ImportClauseNamespaceImport.Transport :
+  K extends "_import_specifier_as" ? ImportSpecifierAs.Transport :
+  K extends "_import_specifier_name" ? _ImportSpecifierName.Transport :
+  K extends "_index_signature_colon" ? IndexSignatureColon.Transport :
+  K extends "_index_signature_mapped_type_clause" ? _IndexSignatureMappedTypeClause.Transport :
+  K extends "_initializer" ? Initializer.Transport :
+  K extends "_interface_body" ? InterfaceBody.Transport :
+  K extends "_jsx_start_opening_element" ? JsxStartOpeningElement.Transport :
+  K extends "_jsx_string" ? JsxString.Transport :
+  K extends "_kw_abstract_marker" ? KwAbstractMarker.Transport :
+  K extends "_kw_async_marker" ? KwAsyncMarker.Transport :
+  K extends "_kw_const_marker" ? KwConstMarker.Transport :
+  K extends "_kw_optional_marker" ? KwOptionalMarker.Transport :
+  K extends "_kw_readonly_marker" ? KwReadonlyMarker.Transport :
+  K extends "_kw_static_marker" ? KwStaticMarker.Transport :
+  K extends "_lhs_expression" ? LhsExpression.Transport :
+  K extends "_module" ? _Module.Transport :
+  K extends "_number" ? _Number.Transport :
+  K extends "_parameter_name" ? ParameterName.Transport :
+  K extends "_parenthesized_expression_sequence" ? _ParenthesizedExpressionSequence.Transport :
+  K extends "_parenthesized_expression_typed" ? ParenthesizedExpressionTyped.Transport :
+  K extends "_property_identifier" ? PropertyIdentifier.Transport :
+  K extends "_public_field_definition_abstract_first" ? PublicFieldDefinitionAbstractFirst.Transport :
+  K extends "_public_field_definition_access_first" ? PublicFieldDefinitionAccessFirst.Transport :
+  K extends "_public_field_definition_accessor_opt" ? PublicFieldDefinitionAccessorOpt.Transport :
+  K extends "_public_field_definition_declare_first" ? PublicFieldDefinitionDeclareFirst.Transport :
+  K extends "_public_field_definition_readonly_first" ? PublicFieldDefinitionReadonlyFirst.Transport :
+  K extends "_public_field_definition_static_mods" ? PublicFieldDefinitionStaticMods.Transport :
+  K extends "_reserved_identifier" ? ReservedIdentifier.Transport :
+  K extends "_statement_identifier" ? StatementIdentifier.Transport :
+  K extends "_string_double" ? _StringDouble.Transport :
+  K extends "_string_fragment" ? StringFragment.Transport :
+  K extends "_string_single" ? _StringSingle.Transport :
+  K extends "_this_type" ? ThisType.Transport :
+  K extends "_type_identifier" ? TypeIdentifier.Transport :
+  K extends "_type_query_call_expression" ? TypeQueryCallExpression.Transport :
+  K extends "_type_query_call_expression_in_type_annotation" ? TypeQueryCallExpressionInTypeAnnotation.Transport :
+  K extends "_type_query_instantiation_expression" ? TypeQueryInstantiationExpression.Transport :
+  K extends "_type_query_member_expression" ? TypeQueryMemberExpression.Transport :
+  K extends "_type_query_member_expression_in_type_annotation" ? TypeQueryMemberExpressionInTypeAnnotation.Transport :
+  K extends "_type_query_subscript_expression" ? TypeQuerySubscriptExpression.Transport :
+  K extends "_update_expression_postfix" ? UpdateExpressionPostfix.Transport :
+  K extends "_update_expression_prefix" ? UpdateExpressionPrefix.Transport :
+  K extends "abstract_class_declaration" ? AbstractClassDeclaration.Transport :
+  K extends "abstract_method_signature" ? AbstractMethodSignature.Transport :
+  K extends "accessibility_modifier" ? AccessibilityModifier.Transport :
+  K extends "adding_type_annotation" ? AddingTypeAnnotation.Transport :
+  K extends "ambient_declaration" ? AmbientDeclaration.Transport :
+  K extends "arguments" ? Arguments.Transport :
+  K extends "array" ? Array.Transport :
+  K extends "array_pattern" ? ArrayPattern.Transport :
+  K extends "array_type" ? ArrayType.Transport :
+  K extends "arrow_function_parameter" ? ArrowFunctionParameter.Transport :
+  K extends "arrow_function__call_signature" ? ArrowFunctionUCallSignature.Transport :
+  K extends "arrow_function" ? ArrowFunction.Transport :
+  K extends "as_expression" ? AsExpression.Transport :
+  K extends "asserts" ? Asserts.Transport :
+  K extends "asserts_annotation" ? AssertsAnnotation.Transport :
+  K extends "assignment_expression" ? AssignmentExpression.Transport :
+  K extends "assignment_pattern" ? AssignmentPattern.Transport :
+  K extends "augmented_assignment_expression" ? AugmentedAssignmentExpression.Transport :
+  K extends "await_expression" ? AwaitExpression.Transport :
+  K extends "binary_expression" ? BinaryExpression.Transport :
+  K extends "break_statement" ? BreakStatement.Transport :
+  K extends "call_expression" ? CallExpression.Transport :
+  K extends "call_signature" ? CallSignature.Transport :
+  K extends "catch_clause" ? CatchClause.Transport :
+  K extends "class" ? Class.Transport :
+  K extends "class_body" ? ClassBody.Transport :
+  K extends "class_declaration" ? ClassDeclaration.Transport :
+  K extends "class_heritage_extends_clause" ? ClassHeritageExtendsClause.Transport :
+  K extends "class_heritage_implements_clause" ? ClassHeritageImplementsClause.Transport :
+  K extends "class_heritage" ? ClassHeritage.Transport :
+  K extends "class_static_block" ? ClassStaticBlock.Transport :
+  K extends "comment" ? Comment.Transport :
+  K extends "computed_property_name" ? ComputedPropertyName.Transport :
+  K extends "conditional_type" ? ConditionalType.Transport :
+  K extends "constraint" ? Constraint.Transport :
+  K extends "construct_signature" ? ConstructSignature.Transport :
+  K extends "constructor_type" ? ConstructorType.Transport :
+  K extends "continue_statement" ? ContinueStatement.Transport :
+  K extends "debugger_statement" ? DebuggerStatement.Transport :
+  K extends "decorator" ? Decorator.Transport :
+  K extends "decorator_call_expression" ? DecoratorCallExpression.Transport :
+  K extends "decorator_member_expression" ? DecoratorMemberExpression.Transport :
+  K extends "decorator_parenthesized_expression" ? DecoratorParenthesizedExpression.Transport :
+  K extends "default_type" ? DefaultType.Transport :
+  K extends "do_statement" ? DoStatement.Transport :
+  K extends "else_clause" ? ElseClause.Transport :
+  K extends "empty_statement" ? EmptyStatement.Transport :
+  K extends "enum_assignment" ? EnumAssignment.Transport :
+  K extends "enum_body" ? EnumBody.Transport :
+  K extends "enum_declaration" ? EnumDeclaration.Transport :
+  K extends "escape_sequence" ? EscapeSequence.Transport :
+  K extends "existential_type" ? ExistentialType.Transport :
+  K extends "export_clause" ? ExportClause.Transport :
+  K extends "export_specifier" ? ExportSpecifier.Transport :
+  K extends "export_statement_type_export" ? ExportStatementTypeExport.Transport :
+  K extends "export_statement_equals_export" ? ExportStatementEqualsExport.Transport :
+  K extends "export_statement_namespace_export" ? ExportStatementNamespaceExport.Transport :
+  K extends "export_statement" ? ExportStatement.Transport :
+  K extends "expression_statement" ? ExpressionStatement.Transport :
+  K extends "extends_clause" ? ExtendsClause.Transport :
+  K extends "extends_type_clause" ? ExtendsTypeClause.Transport :
+  K extends "false" ? False.Transport :
+  K extends "field_definition" ? FieldDefinition.Transport :
+  K extends "finally_clause" ? FinallyClause.Transport :
+  K extends "flow_maybe_type" ? FlowMaybeType.Transport :
+  K extends "for_in_statement" ? ForInStatement.Transport :
+  K extends "for_statement" ? ForStatement.Transport :
+  K extends "formal_parameters" ? FormalParameters.Transport :
+  K extends "function_declaration" ? FunctionDeclaration.Transport :
+  K extends "function_expression" ? FunctionExpression.Transport :
+  K extends "function_signature" ? FunctionSignature.Transport :
+  K extends "function_type" ? FunctionType.Transport :
+  K extends "generator_function" ? GeneratorFunction.Transport :
+  K extends "generator_function_declaration" ? GeneratorFunctionDeclaration.Transport :
+  K extends "generic_type" ? GenericType.Transport :
+  K extends "hash_bang_line" ? HashBangLine.Transport :
+  K extends "html_character_reference" ? HtmlCharacterReference.Transport :
+  K extends "identifier" ? Identifier.Transport :
+  K extends "if_statement" ? IfStatement.Transport :
+  K extends "implements_clause" ? ImplementsClause.Transport :
+  K extends "import" ? Import.Transport :
+  K extends "import_alias" ? ImportAlias.Transport :
+  K extends "import_attribute" ? ImportAttribute.Transport :
+  K extends "import_clause_namespace_import" ? ImportClauseNamespaceImport.Transport :
+  K extends "import_clause_named_imports" ? ImportClauseNamedImports.Transport :
+  K extends "import_clause_default_import" ? ImportClauseDefaultImport.Transport :
+  K extends "import_clause" ? ImportClause.Transport :
+  K extends "import_require_clause" ? ImportRequireClause.Transport :
+  K extends "import_specifier_name" ? ImportSpecifierName.Transport :
+  K extends "import_specifier" ? ImportSpecifier.Transport :
+  K extends "import_statement" ? ImportStatement.Transport :
+  K extends "index_signature_mapped_type_clause" ? IndexSignatureMappedTypeClause.Transport :
+  K extends "index_signature" ? IndexSignature.Transport :
+  K extends "index_type_query" ? IndexTypeQuery.Transport :
+  K extends "infer_type" ? InferType.Transport :
+  K extends "instantiation_expression" ? InstantiationExpression.Transport :
+  K extends "interface_declaration" ? InterfaceDeclaration.Transport :
+  K extends "internal_module" ? InternalModule.Transport :
+  K extends "intersection_type" ? IntersectionType.Transport :
+  K extends "jsx_attribute" ? JsxAttribute.Transport :
+  K extends "jsx_closing_element" ? JsxClosingElement.Transport :
+  K extends "jsx_element" ? JsxElement.Transport :
+  K extends "jsx_expression" ? JsxExpression.Transport :
+  K extends "jsx_identifier" ? JsxIdentifier.Transport :
+  K extends "jsx_namespace_name" ? JsxNamespaceName.Transport :
+  K extends "jsx_opening_element" ? JsxOpeningElement.Transport :
+  K extends "jsx_self_closing_element" ? JsxSelfClosingElement.Transport :
+  K extends "labeled_statement" ? LabeledStatement.Transport :
+  K extends "lexical_declaration" ? LexicalDeclaration.Transport :
+  K extends "literal_type" ? LiteralType.Transport :
+  K extends "lookup_type" ? LookupType.Transport :
+  K extends "mapped_type_clause" ? MappedTypeClause.Transport :
+  K extends "member_expression" ? MemberExpression.Transport :
+  K extends "meta_property" ? MetaProperty.Transport :
+  K extends "method_definition" ? MethodDefinition.Transport :
+  K extends "method_signature" ? MethodSignature.Transport :
+  K extends "module" ? Module.Transport :
+  K extends "named_imports" ? NamedImports.Transport :
+  K extends "namespace_export" ? NamespaceExport.Transport :
+  K extends "namespace_import" ? NamespaceImport.Transport :
+  K extends "nested_identifier" ? NestedIdentifier.Transport :
+  K extends "nested_type_identifier" ? NestedTypeIdentifier.Transport :
+  K extends "new_expression" ? NewExpression.Transport :
+  K extends "non_null_expression" ? NonNullExpression.Transport :
+  K extends "null" ? Null.Transport :
+  K extends "number" ? Number.Transport :
+  K extends "object" ? Object.Transport :
+  K extends "object_assignment_pattern" ? ObjectAssignmentPattern.Transport :
+  K extends "object_pattern" ? ObjectPattern.Transport :
+  K extends "object_type" ? ObjectType.Transport :
+  K extends "omitting_type_annotation" ? OmittingTypeAnnotation.Transport :
+  K extends "opting_type_annotation" ? OptingTypeAnnotation.Transport :
+  K extends "optional_chain" ? OptionalChain.Transport :
+  K extends "optional_parameter" ? OptionalParameter.Transport :
+  K extends "optional_tuple_parameter" ? OptionalTupleParameter.Transport :
+  K extends "optional_type" ? OptionalType.Transport :
+  K extends "override_modifier" ? OverrideModifier.Transport :
+  K extends "pair" ? Pair.Transport :
+  K extends "pair_pattern" ? PairPattern.Transport :
+  K extends "parenthesized_expression_sequence" ? ParenthesizedExpressionSequence.Transport :
+  K extends "parenthesized_expression" ? ParenthesizedExpression.Transport :
+  K extends "parenthesized_type" ? ParenthesizedType.Transport :
+  K extends "predefined_type" ? PredefinedType.Transport :
+  K extends "private_property_identifier" ? PrivatePropertyIdentifier.Transport :
+  K extends "program" ? Program.Transport :
+  K extends "property_signature" ? PropertySignature.Transport :
+  K extends "public_field_definition" ? PublicFieldDefinition.Transport :
+  K extends "readonly_type" ? ReadonlyType.Transport :
+  K extends "regex" ? Regex.Transport :
+  K extends "regex_flags" ? RegexFlags.Transport :
+  K extends "regex_pattern" ? RegexPattern.Transport :
+  K extends "required_parameter" ? RequiredParameter.Transport :
+  K extends "rest_pattern" ? RestPattern.Transport :
+  K extends "rest_type" ? RestType.Transport :
+  K extends "return_statement" ? ReturnStatement.Transport :
+  K extends "satisfies_expression" ? SatisfiesExpression.Transport :
+  K extends "sequence_expression" ? SequenceExpression.Transport :
+  K extends "spread_element" ? SpreadElement.Transport :
+  K extends "statement_block" ? StatementBlock.Transport :
+  K extends "string_double" ? StringDouble.Transport :
+  K extends "string_single" ? StringSingle.Transport :
+  K extends "string" ? String.Transport :
+  K extends "subscript_expression" ? SubscriptExpression.Transport :
+  K extends "super" ? Super.Transport :
+  K extends "switch_body" ? SwitchBody.Transport :
+  K extends "switch_case" ? SwitchCase.Transport :
+  K extends "switch_default" ? SwitchDefault.Transport :
+  K extends "switch_statement" ? SwitchStatement.Transport :
+  K extends "template_literal_type" ? TemplateLiteralType.Transport :
+  K extends "template_string" ? TemplateString.Transport :
+  K extends "template_substitution" ? TemplateSubstitution.Transport :
+  K extends "template_type" ? TemplateType.Transport :
+  K extends "ternary_expression" ? TernaryExpression.Transport :
+  K extends "this" ? This.Transport :
+  K extends "throw_statement" ? ThrowStatement.Transport :
+  K extends "true" ? True.Transport :
+  K extends "try_statement" ? TryStatement.Transport :
+  K extends "tuple_parameter" ? TupleParameter.Transport :
+  K extends "tuple_type" ? TupleType.Transport :
+  K extends "type_alias_declaration" ? TypeAliasDeclaration.Transport :
+  K extends "type_annotation" ? TypeAnnotation.Transport :
+  K extends "type_arguments" ? TypeArguments.Transport :
+  K extends "type_assertion" ? TypeAssertion.Transport :
+  K extends "type_parameter" ? TypeParameter.Transport :
+  K extends "type_parameters" ? TypeParameters.Transport :
+  K extends "type_predicate" ? TypePredicate.Transport :
+  K extends "type_predicate_annotation" ? TypePredicateAnnotation.Transport :
+  K extends "type_query" ? TypeQuery.Transport :
+  K extends "unary_expression" ? UnaryExpression.Transport :
+  K extends "undefined" ? Undefined.Transport :
+  K extends "unescaped_double_jsx_string_fragment" ? UnescapedDoubleJsxStringFragment.Transport :
+  K extends "unescaped_double_string_fragment" ? UnescapedDoubleStringFragment.Transport :
+  K extends "unescaped_single_jsx_string_fragment" ? UnescapedSingleJsxStringFragment.Transport :
+  K extends "unescaped_single_string_fragment" ? UnescapedSingleStringFragment.Transport :
+  K extends "union_type" ? UnionType.Transport :
+  K extends "update_expression" ? UpdateExpression.Transport :
+  K extends "variable_declaration" ? VariableDeclaration.Transport :
+  K extends "variable_declarator" ? VariableDeclarator.Transport :
+  K extends "while_statement" ? WhileStatement.Transport :
+  K extends "with_statement" ? WithStatement.Transport :
+  K extends "yield_expression" ? YieldExpression.Transport :
+  K extends "_automatic_semicolon" ? AutomaticSemicolon.Transport :
+  K extends "_template_chars" ? TemplateChars.Transport :
+  K extends "_ternary_qmark" ? TernaryQmark.Transport :
+  K extends "html_comment" ? HtmlComment.Transport :
+  K extends "||" ? Oror.Transport :
+  K extends "jsx_text" ? JsxText.Transport :
+  K extends "_function_signature_automatic_semicolon" ? FunctionSignatureAutomaticSemicolon.Transport :
+  K extends "__error_recovery" ? ErrorRecovery.Transport :
+  K extends "?." ? TokQDot.Transport :
+  K extends "," ? Comma.Transport :
+  K extends "export" ? Export.Transport :
+  K extends "default" ? Default.Transport :
+  K extends "*" ? Star.Transport :
+  K extends "=" ? Eq.Transport :
+  K extends "as" ? As.Transport :
+  K extends "namespace" ? Namespace.Transport :
+  K extends "(" ? Paren.Transport :
+  K extends ")" ? CloseParen.Transport :
+  K extends "var" ? Var.Transport :
+  K extends "from" ? From.Transport :
+  K extends ":" ? Colon.Transport :
+  K extends "<" ? Lt.Transport :
+  K extends "\"" ? TokDq.Transport :
+  K extends "'" ? TokSq.Transport :
+  K extends "abstract" ? Abstract.Transport :
+  K extends "async" ? Async.Transport :
+  K extends "const" ? Const.Transport :
+  K extends "?" ? Question.Transport :
+  K extends "readonly" ? Readonly.Transport :
+  K extends "static" ? Static.Transport :
+  K extends "declare" ? Declare.Transport :
+  K extends "accessor" ? Accessor.Transport :
+  K extends "." ? Dot.Transport :
+  K extends "[" ? Bracket.Transport :
+  K extends "]" ? CloseBracket.Transport :
+  K extends "+?:" ? TokPlusQColon.Transport :
+  K extends "global" ? Global.Transport :
+  K extends "using" ? Using.Transport :
+  K extends "await" ? Await.Transport :
+  K extends "&&" ? Andand.Transport :
+  K extends ">>" ? Shr.Transport :
+  K extends ">>>" ? TokGtGtGt.Transport :
+  K extends "<<" ? Shl.Transport :
+  K extends "&" ? Amp.Transport :
+  K extends "^" ? Caret.Transport :
+  K extends "|" ? Pipe.Transport :
+  K extends "+" ? Plus.Transport :
+  K extends "-" ? Minus.Transport :
+  K extends "/" ? Slash.Transport :
+  K extends "%" ? Percent.Transport :
+  K extends "**" ? Starstar.Transport :
+  K extends "<=" ? Le.Transport :
+  K extends "==" ? Eqeq.Transport :
+  K extends "===" ? TokEqEqEq.Transport :
+  K extends "!=" ? Neq.Transport :
+  K extends "!==" ? TokBangEqEq.Transport :
+  K extends ">=" ? Ge.Transport :
+  K extends ">" ? Gt.Transport :
+  K extends "??" ? TokQQ.Transport :
+  K extends "instanceof" ? Instanceof.Transport :
+  K extends "in" ? In.Transport :
+  K extends "break" ? Break.Transport :
+  K extends "catch" ? Catch.Transport :
+  K extends "{" ? Brace.Transport :
+  K extends ";" ? Semi.Transport :
+  K extends "}" ? CloseBrace.Transport :
+  K extends "extends" ? Extends.Transport :
+  K extends "new" ? New.Transport :
+  K extends "=>" ? FatArrow.Transport :
+  K extends "continue" ? Continue.Transport :
+  K extends "debugger" ? Debugger.Transport :
+  K extends "@" ? At.Transport :
+  K extends "do" ? Do.Transport :
+  K extends "while" ? While.Transport :
+  K extends "else" ? Else.Transport :
+  K extends "enum" ? Enum.Transport :
+  K extends "finally" ? Finally.Transport :
+  K extends "for" ? For.Transport :
+  K extends "function" ? Function.Transport :
+  K extends "if" ? If.Transport :
+  K extends "implements" ? Implements.Transport :
+  K extends "require" ? Require.Transport :
+  K extends "keyof" ? Keyof.Transport :
+  K extends "infer" ? Infer.Transport :
+  K extends "interface" ? Interface.Transport :
+  K extends "</" ? TokLtSlash.Transport :
+  K extends "/>" ? TokSlashGt.Transport :
+  K extends "!" ? Bang.Transport :
+  K extends "-?:" ? TokMinusQColon.Transport :
+  K extends "?:" ? TokQColon.Transport :
+  K extends "override" ? Override.Transport :
+  K extends "..." ? Ellipsis.Transport :
+  K extends "return" ? Return.Transport :
+  K extends "satisfies" ? Satisfies.Transport :
+  K extends "case" ? Case.Transport :
+  K extends "switch" ? Switch.Transport :
+  K extends "`" ? TokBt.Transport :
+  K extends "${" ? TokDollarLbr.Transport :
+  K extends "throw" ? Throw.Transport :
+  K extends "try" ? Try.Transport :
+  K extends "is" ? Is.Transport :
+  K extends "typeof" ? Typeof.Transport :
+  K extends "with" ? With.Transport :
+  K extends "yield" ? Yield.Transport :
+  never;
+
+export type AnyTransport =
+  | _ArrowFunctionUCallSignature.Transport
+  | _ArrowFunctionParameter.Transport
+  | CallExpressionCall.Transport
+  | CallExpressionMember.Transport
+  | CallExpressionTemplateCall.Transport
+  | _CallSignature.Transport
+  | ClassBodyMember.Transport
+  | ClassBodyMethod.Transport
+  | ClassBodyMethodSig.Transport
+  | _ClassHeritageExtendsClause.Transport
+  | _ClassHeritageImplementsClause.Transport
+  | ExportStatementDefaultDeclArm.Transport
+  | ExportStatementDefaultDeclArmDefaultKw.Transport
+  | ExportStatementDefaultDeclArmDefaultKwValue.Transport
+  | ExportStatementDefaultFromArm.Transport
+  | ExportStatementDefaultFromArmClauseFrom.Transport
+  | ExportStatementDefaultFromArmNsFrom.Transport
+  | ExportStatementDefaultFromArmStarFrom.Transport
+  | _ExportStatementEqualsExport.Transport
+  | _ExportStatementNamespaceExport.Transport
+  | _ExportStatementTypeExport.Transport
+  | ExtendsClauseSingle.Transport
+  | ForHeader.Transport
+  | ForHeaderLetConstKind.Transport
+  | ForHeaderLhs.Transport
+  | ForHeaderVarKind.Transport
+  | FromClause.Transport
+  | _ImportClauseDefaultImport.Transport
+  | _ImportClauseNamedImports.Transport
+  | _ImportClauseNamespaceImport.Transport
+  | ImportSpecifierAs.Transport
+  | _ImportSpecifierName.Transport
+  | IndexSignatureColon.Transport
+  | _IndexSignatureMappedTypeClause.Transport
+  | Initializer.Transport
+  | InterfaceBody.Transport
+  | JsxStartOpeningElement.Transport
+  | JsxString.Transport
+  | KwAbstractMarker.Transport
+  | KwAsyncMarker.Transport
+  | KwConstMarker.Transport
+  | KwOptionalMarker.Transport
+  | KwReadonlyMarker.Transport
+  | KwStaticMarker.Transport
+  | LhsExpression.Transport
+  | _Module.Transport
+  | _Number.Transport
+  | ParameterName.Transport
+  | _ParenthesizedExpressionSequence.Transport
+  | ParenthesizedExpressionTyped.Transport
+  | PropertyIdentifier.Transport
+  | PublicFieldDefinitionAbstractFirst.Transport
+  | PublicFieldDefinitionAccessFirst.Transport
+  | PublicFieldDefinitionAccessorOpt.Transport
+  | PublicFieldDefinitionDeclareFirst.Transport
+  | PublicFieldDefinitionReadonlyFirst.Transport
+  | PublicFieldDefinitionStaticMods.Transport
+  | ReservedIdentifier.Transport
+  | StatementIdentifier.Transport
+  | _StringDouble.Transport
+  | StringFragment.Transport
+  | _StringSingle.Transport
+  | ThisType.Transport
+  | TypeIdentifier.Transport
+  | TypeQueryCallExpression.Transport
+  | TypeQueryCallExpressionInTypeAnnotation.Transport
+  | TypeQueryInstantiationExpression.Transport
+  | TypeQueryMemberExpression.Transport
+  | TypeQueryMemberExpressionInTypeAnnotation.Transport
+  | TypeQuerySubscriptExpression.Transport
+  | UpdateExpressionPostfix.Transport
+  | UpdateExpressionPrefix.Transport
+  | AbstractClassDeclaration.Transport
+  | AbstractMethodSignature.Transport
+  | AccessibilityModifier.Transport
+  | AddingTypeAnnotation.Transport
+  | AmbientDeclaration.Transport
+  | Arguments.Transport
+  | Array.Transport
+  | ArrayPattern.Transport
+  | ArrayType.Transport
+  | ArrowFunctionParameter.Transport
+  | ArrowFunctionUCallSignature.Transport
+  | ArrowFunction.Transport
+  | AsExpression.Transport
+  | Asserts.Transport
+  | AssertsAnnotation.Transport
+  | AssignmentExpression.Transport
+  | AssignmentPattern.Transport
+  | AugmentedAssignmentExpression.Transport
+  | AwaitExpression.Transport
+  | BinaryExpression.Transport
+  | BreakStatement.Transport
+  | CallExpression.Transport
+  | CallSignature.Transport
+  | CatchClause.Transport
+  | Class.Transport
+  | ClassBody.Transport
+  | ClassDeclaration.Transport
+  | ClassHeritageExtendsClause.Transport
+  | ClassHeritageImplementsClause.Transport
+  | ClassHeritage.Transport
+  | ClassStaticBlock.Transport
+  | Comment.Transport
+  | ComputedPropertyName.Transport
+  | ConditionalType.Transport
+  | Constraint.Transport
+  | ConstructSignature.Transport
+  | ConstructorType.Transport
+  | ContinueStatement.Transport
+  | DebuggerStatement.Transport
+  | Decorator.Transport
+  | DecoratorCallExpression.Transport
+  | DecoratorMemberExpression.Transport
+  | DecoratorParenthesizedExpression.Transport
+  | DefaultType.Transport
+  | DoStatement.Transport
+  | ElseClause.Transport
+  | EmptyStatement.Transport
+  | EnumAssignment.Transport
+  | EnumBody.Transport
+  | EnumDeclaration.Transport
+  | EscapeSequence.Transport
+  | ExistentialType.Transport
+  | ExportClause.Transport
+  | ExportSpecifier.Transport
+  | ExportStatementTypeExport.Transport
+  | ExportStatementEqualsExport.Transport
+  | ExportStatementNamespaceExport.Transport
+  | ExportStatement.Transport
+  | ExpressionStatement.Transport
+  | ExtendsClause.Transport
+  | ExtendsTypeClause.Transport
+  | False.Transport
+  | FieldDefinition.Transport
+  | FinallyClause.Transport
+  | FlowMaybeType.Transport
+  | ForInStatement.Transport
+  | ForStatement.Transport
+  | FormalParameters.Transport
+  | FunctionDeclaration.Transport
+  | FunctionExpression.Transport
+  | FunctionSignature.Transport
+  | FunctionType.Transport
+  | GeneratorFunction.Transport
+  | GeneratorFunctionDeclaration.Transport
+  | GenericType.Transport
+  | HashBangLine.Transport
+  | HtmlCharacterReference.Transport
+  | Identifier.Transport
+  | IfStatement.Transport
+  | ImplementsClause.Transport
+  | Import.Transport
+  | ImportAlias.Transport
+  | ImportAttribute.Transport
+  | ImportClauseNamespaceImport.Transport
+  | ImportClauseNamedImports.Transport
+  | ImportClauseDefaultImport.Transport
+  | ImportClause.Transport
+  | ImportRequireClause.Transport
+  | ImportSpecifierName.Transport
+  | ImportSpecifier.Transport
+  | ImportStatement.Transport
+  | IndexSignatureMappedTypeClause.Transport
+  | IndexSignature.Transport
+  | IndexTypeQuery.Transport
+  | InferType.Transport
+  | InstantiationExpression.Transport
+  | InterfaceDeclaration.Transport
+  | InternalModule.Transport
+  | IntersectionType.Transport
+  | JsxAttribute.Transport
+  | JsxClosingElement.Transport
+  | JsxElement.Transport
+  | JsxExpression.Transport
+  | JsxIdentifier.Transport
+  | JsxNamespaceName.Transport
+  | JsxOpeningElement.Transport
+  | JsxSelfClosingElement.Transport
+  | LabeledStatement.Transport
+  | LexicalDeclaration.Transport
+  | LiteralType.Transport
+  | LookupType.Transport
+  | MappedTypeClause.Transport
+  | MemberExpression.Transport
+  | MetaProperty.Transport
+  | MethodDefinition.Transport
+  | MethodSignature.Transport
+  | Module.Transport
+  | NamedImports.Transport
+  | NamespaceExport.Transport
+  | NamespaceImport.Transport
+  | NestedIdentifier.Transport
+  | NestedTypeIdentifier.Transport
+  | NewExpression.Transport
+  | NonNullExpression.Transport
+  | Null.Transport
+  | Number.Transport
+  | Object.Transport
+  | ObjectAssignmentPattern.Transport
+  | ObjectPattern.Transport
+  | ObjectType.Transport
+  | OmittingTypeAnnotation.Transport
+  | OptingTypeAnnotation.Transport
+  | OptionalChain.Transport
+  | OptionalParameter.Transport
+  | OptionalTupleParameter.Transport
+  | OptionalType.Transport
+  | OverrideModifier.Transport
+  | Pair.Transport
+  | PairPattern.Transport
+  | ParenthesizedExpressionSequence.Transport
+  | ParenthesizedExpression.Transport
+  | ParenthesizedType.Transport
+  | PredefinedType.Transport
+  | PrivatePropertyIdentifier.Transport
+  | Program.Transport
+  | PropertySignature.Transport
+  | PublicFieldDefinition.Transport
+  | ReadonlyType.Transport
+  | Regex.Transport
+  | RegexFlags.Transport
+  | RegexPattern.Transport
+  | RequiredParameter.Transport
+  | RestPattern.Transport
+  | RestType.Transport
+  | ReturnStatement.Transport
+  | SatisfiesExpression.Transport
+  | SequenceExpression.Transport
+  | SpreadElement.Transport
+  | StatementBlock.Transport
+  | StringDouble.Transport
+  | StringSingle.Transport
+  | String.Transport
+  | SubscriptExpression.Transport
+  | Super.Transport
+  | SwitchBody.Transport
+  | SwitchCase.Transport
+  | SwitchDefault.Transport
+  | SwitchStatement.Transport
+  | TemplateLiteralType.Transport
+  | TemplateString.Transport
+  | TemplateSubstitution.Transport
+  | TemplateType.Transport
+  | TernaryExpression.Transport
+  | This.Transport
+  | ThrowStatement.Transport
+  | True.Transport
+  | TryStatement.Transport
+  | TupleParameter.Transport
+  | TupleType.Transport
+  | TypeAliasDeclaration.Transport
+  | TypeAnnotation.Transport
+  | TypeArguments.Transport
+  | TypeAssertion.Transport
+  | TypeParameter.Transport
+  | TypeParameters.Transport
+  | TypePredicate.Transport
+  | TypePredicateAnnotation.Transport
+  | TypeQuery.Transport
+  | UnaryExpression.Transport
+  | Undefined.Transport
+  | UnescapedDoubleJsxStringFragment.Transport
+  | UnescapedDoubleStringFragment.Transport
+  | UnescapedSingleJsxStringFragment.Transport
+  | UnescapedSingleStringFragment.Transport
+  | UnionType.Transport
+  | UpdateExpression.Transport
+  | VariableDeclaration.Transport
+  | VariableDeclarator.Transport
+  | WhileStatement.Transport
+  | WithStatement.Transport
+  | YieldExpression.Transport
+  | AutomaticSemicolon.Transport
+  | TemplateChars.Transport
+  | TernaryQmark.Transport
+  | HtmlComment.Transport
+  | Oror.Transport
+  | JsxText.Transport
+  | FunctionSignatureAutomaticSemicolon.Transport
+  | ErrorRecovery.Transport
+  | TokQDot.Transport
+  | Comma.Transport
+  | Export.Transport
+  | Default.Transport
+  | Star.Transport
+  | Eq.Transport
+  | As.Transport
+  | Namespace.Transport
+  | Paren.Transport
+  | CloseParen.Transport
+  | Var.Transport
+  | From.Transport
+  | Colon.Transport
+  | Lt.Transport
+  | TokDq.Transport
+  | TokSq.Transport
+  | Abstract.Transport
+  | Async.Transport
+  | Const.Transport
+  | Question.Transport
+  | Readonly.Transport
+  | Static.Transport
+  | Declare.Transport
+  | Accessor.Transport
+  | Dot.Transport
+  | Bracket.Transport
+  | CloseBracket.Transport
+  | TokPlusQColon.Transport
+  | Global.Transport
+  | Using.Transport
+  | Await.Transport
+  | Andand.Transport
+  | Shr.Transport
+  | TokGtGtGt.Transport
+  | Shl.Transport
+  | Amp.Transport
+  | Caret.Transport
+  | Pipe.Transport
+  | Plus.Transport
+  | Minus.Transport
+  | Slash.Transport
+  | Percent.Transport
+  | Starstar.Transport
+  | Le.Transport
+  | Eqeq.Transport
+  | TokEqEqEq.Transport
+  | Neq.Transport
+  | TokBangEqEq.Transport
+  | Ge.Transport
+  | Gt.Transport
+  | TokQQ.Transport
+  | Instanceof.Transport
+  | In.Transport
+  | Break.Transport
+  | Catch.Transport
+  | Brace.Transport
+  | Semi.Transport
+  | CloseBrace.Transport
+  | Extends.Transport
+  | New.Transport
+  | FatArrow.Transport
+  | Continue.Transport
+  | Debugger.Transport
+  | At.Transport
+  | Do.Transport
+  | While.Transport
+  | Else.Transport
+  | Enum.Transport
+  | Finally.Transport
+  | For.Transport
+  | Function.Transport
+  | If.Transport
+  | Implements.Transport
+  | Require.Transport
+  | Keyof.Transport
+  | Infer.Transport
+  | Interface.Transport
+  | TokLtSlash.Transport
+  | TokSlashGt.Transport
+  | Bang.Transport
+  | TokMinusQColon.Transport
+  | TokQColon.Transport
+  | Override.Transport
+  | Ellipsis.Transport
+  | Return.Transport
+  | Satisfies.Transport
+  | Case.Transport
+  | Switch.Transport
+  | TokBt.Transport
+  | TokDollarLbr.Transport
+  | Throw.Transport
+  | Try.Transport
+  | Is.Transport
+  | Typeof.Transport
+  | With.Transport
+  | Yield.Transport
+  | LiteralTransport<"of", "of">
+  | LiteralTransport<"let", "let">
+  | LiteralTransport<"++", "++">
+  | LiteralTransport<"--", "--">
+  | LiteralTransport<"get", "get">
+  | LiteralTransport<"set", "set">
+  | LiteralTransport<"+=", "+=">
+  | LiteralTransport<"-=", "-=">
+  | LiteralTransport<"*=", "*=">
+  | LiteralTransport<"/=", "/=">
+  | LiteralTransport<"%=", "%=">
+  | LiteralTransport<"^=", "^=">
+  | LiteralTransport<"&=", "&=">
+  | LiteralTransport<"|=", "|=">
+  | LiteralTransport<">>=", ">>=">
+  | LiteralTransport<">>>=", ">>>=">
+  | LiteralTransport<"<<=", "<<=">
+  | LiteralTransport<"**=", "**=">
+  | LiteralTransport<"&&=", "&&=">
+  | LiteralTransport<"||=", "||=">
+  | LiteralTransport<"??=", "??=">
+  | LiteralTransport<"type", "type">
+  | LiteralTransport<"assert", "assert">
+  | LiteralTransport<"{|", "{|">
+  | LiteralTransport<"|}", "|}">
+  | LiteralTransport<"~", "~">
+  | LiteralTransport<"void", "void">
+  | LiteralTransport<"delete", "delete">
+;

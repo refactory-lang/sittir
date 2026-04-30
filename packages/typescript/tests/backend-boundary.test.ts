@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { TEMPLATE_BUNDLE_HASH } from '../src/hash.ts';
 
 const identifier = {
 	$type: 'identifier',
@@ -10,16 +11,17 @@ const identifier = {
 describe('boundary', () => {
 	afterEach(() => {
 		vi.doUnmock('../src/backend.js');
+		vi.doUnmock('node:module');
 		vi.restoreAllMocks();
 		vi.resetModules();
+		delete process.env.SITTIR_BACKEND;
 	});
 
 	function mockNativeBackend(
 		SittirEngine: new (
-			grammar: string,
 			options?: { format?: string }
 		) => {
-			render(nodeJson: string): string;
+			render(node: Record<string, unknown>): string;
 			applyEdits(
 				source: string,
 				edits: { startPos: number; endPos: number; insertedText: string }[]
@@ -39,7 +41,7 @@ describe('boundary', () => {
 	function mockNativeFailureBackend(): void {
 		mockNativeBackend(
 			class {
-				render(_nodeJson: string): never {
+				render(_node: Record<string, unknown>): never {
 					throw new Error('native render boom');
 				}
 
@@ -65,12 +67,34 @@ describe('boundary', () => {
 		expect(() => applyEdits('abc', [])).toThrow(/native apply boom/);
 	});
 
-	it('rejects payloads that do not satisfy the native wire contract', async () => {
-		const renderSpy = vi.fn((nodeJson: string) => `ok:${nodeJson.length}`);
+	it('passes a plain transport object to native render', async () => {
+		const renderSpy = vi.fn(
+			(node: Record<string, unknown>) => `ok:${String(node.$type)}`
+		);
 		mockNativeBackend(
 			class {
-				render(nodeJson: string): string {
-					return renderSpy(nodeJson);
+				render(node: Record<string, unknown>): string {
+					return renderSpy(node);
+				}
+				applyEdits(source: string): string {
+					return source;
+				}
+			}
+		);
+
+		const { render } = await import('../src/boundary.ts');
+		expect(render(identifier)).toBe('ok:identifier');
+		expect(renderSpy).toHaveBeenCalledWith(identifier);
+	});
+
+	it('rejects payloads that do not satisfy the native wire contract', async () => {
+		const renderSpy = vi.fn(
+			(node: Record<string, unknown>) => `ok:${Object.keys(node).length}`
+		);
+		mockNativeBackend(
+			class {
+				render(node: Record<string, unknown>): string {
+					return renderSpy(node);
 				}
 
 				applyEdits(
@@ -88,17 +112,45 @@ describe('boundary', () => {
 			$named: true,
 			$children: [identifier, 'oops']
 		} as const;
-		expect(() => render(invalidNode)).toThrow(/node\.\$children\[1\]/);
+		expect(() => render(invalidNode)).toThrow(
+			/unsupported native transport kind|node\.\$children\[\d+\]|must be one of/
+		);
+		expect(renderSpy).not.toHaveBeenCalled();
+	});
+
+	it('rejects per-node format metadata at the native render boundary', async () => {
+		const renderSpy = vi.fn(
+			(node: Record<string, unknown>) => `ok:${String(node.$type)}`
+		);
+		mockNativeBackend(
+			class {
+				render(node: Record<string, unknown>): string {
+					return renderSpy(node);
+				}
+				applyEdits(source: string): string {
+					return source;
+				}
+			}
+		);
+
+		const { render } = await import('../src/boundary.ts');
+		const invalidNode = {
+			...identifier,
+			$format: { boundary: { leading: '\t' } }
+		};
+		expect(() => render(invalidNode)).toThrow(
+			/node\.\$format is not supported by the native render boundary/
+		);
 		expect(renderSpy).not.toHaveBeenCalled();
 	});
 
 	it('uses engine-owned format when native render is called without per-call format args', async () => {
-		const renderSpy = vi.fn((_nodeJson: string) => '\tx');
+		const renderSpy = vi.fn((_node: Record<string, unknown>) => '\tx');
 		mockNativeBackend(
 			class {
-				constructor(_grammar: string, _options?: { format?: string }) {}
-				render(nodeJson: string): string {
-					return renderSpy(nodeJson);
+				constructor(_options?: { format?: string }) {}
+				render(node: Record<string, unknown>): string {
+					return renderSpy(node);
 				}
 				applyEdits(source: string): string {
 					return source;
@@ -111,5 +163,23 @@ describe('boundary', () => {
 		const engine = createEngine({ format: { boundary: { leading: '\t' } } });
 		expect(engine.render(identifier)).toBe('\tx');
 		expect(renderSpy).toHaveBeenCalledTimes(1);
+	});
+
+	it('falls back when native render transport ABI is stale', async () => {
+		vi.doMock('node:module', () => ({
+			createRequire: () => () => ({
+				SittirEngine: class {
+					get templateBundleHash(): string {
+						return TEMPLATE_BUNDLE_HASH;
+					}
+				}
+			})
+		}));
+
+		const { getActiveBackend } = await import('../src/backend.ts');
+		expect(getActiveBackend()).toMatchObject({
+			name: 'js',
+			reason: 'native render transport ABI mismatch'
+		});
 	});
 });

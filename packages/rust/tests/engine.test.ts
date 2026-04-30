@@ -33,7 +33,7 @@ describe('engine', () => {
 				hashMatch: true,
 				native: {
 					SittirEngine: class {
-						render(_nodeJson: string): string {
+						render(_node: Record<string, unknown>): string {
 							return 'ok';
 						}
 						applyEdits(
@@ -91,7 +91,7 @@ describe('engine', () => {
 				hashMatch: true,
 				native: {
 					SittirEngine: class {
-						render(_nodeJson: string): string {
+						render(_node: Record<string, unknown>): string {
 							return 'fn main() {}';
 						}
 						applyEdits(
@@ -114,10 +114,10 @@ describe('engine', () => {
 		const engine = createEngine();
 
 		const node = {
-			$type: 'function_item',
+			$type: 'identifier',
 			$source: 'factory' as const,
 			$named: true,
-			$fields: {}
+			$text: 'x'
 		};
 
 		// ignoreFormat: false or undefined should work
@@ -137,7 +137,7 @@ describe('engine', () => {
 				hashMatch: true,
 				native: {
 					SittirEngine: class {
-						render(_nodeJson: string): string {
+						render(_node: Record<string, unknown>): string {
 							return 'fn main() {}';
 						}
 						applyEdits(

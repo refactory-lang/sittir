@@ -9,14 +9,14 @@
 import {
 	createJsEngine,
 	type SittirEngineLike,
-	type JsEngineOptions,
-	assertNativeNodeData
+	type JsEngineOptions
 } from '@sittir/core/engine';
 import type { TreeHandle } from '@sittir/core';
 import type { AnyNodeData, AnyTreeNode, FormatRecord } from '@sittir/types';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getActiveBackend } from './backend.js';
+import { toNativeRenderTransport } from './utils.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -49,16 +49,16 @@ function getNativeBackendEngine(
 			node: Parameters<SittirEngineLike['render']>[0],
 			opts?: Parameters<SittirEngineLike['render']>[1]
 		): string {
-			assertNativeNodeData(node);
+			const transport = toNativeRenderTransport(node);
 			// Native engine does not yet support ignoreFormat option (Task 4).
 			// Until engine-owned format state is implemented, throw explicitly.
 			if (opts?.ignoreFormat === true) {
 				throw new Error(
 					'ignoreFormat option not yet supported by native engine. ' +
-						'Use JS engine or wait for Task 4 (engine-owned format state).'
+					'Use JS engine or wait for Task 4 (engine-owned format state).'
 				);
 			}
-			return engine.render(JSON.stringify(node));
+			return engine.render(transport);
 		}
 
 		// Wrap the native engine to match SittirEngineLike interface

@@ -5,4 +5,4 @@ pub mod hash;
 pub mod templates;
 
 pub use hash::TEMPLATE_BUNDLE_HASH;
-pub use templates::render_dispatch;
+pub use templates::{render_dispatch, render_transport, render_transport_parts, AnyTransport};

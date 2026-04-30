@@ -20,12 +20,17 @@ import type {
 	AssembledNode,
 	AssembledField,
 	AssembledForm,
-	AssembledChild
+	AssembledChild,
+	AssembledLeaf,
+	AssembledKeyword,
+	AssembledToken,
+	AssembledEnum
 } from '../compiler/node-map.ts';
 import {
 	AssembledBranch,
 	AssembledContainer,
 	AssembledPolymorph,
+	AssembledGroup,
 	snakeToCamel,
 	isNodeRef,
 	isTerminalValue,
@@ -48,8 +53,21 @@ import {
 import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
+import {
+	collectTransportProjection,
+	resolveTransportReferenceKind
+} from './transport-projection.ts';
 
-type StructuralNode = AssembledBranch | AssembledContainer | AssembledPolymorph;
+type StructuralNode =
+	| AssembledBranch
+	| AssembledContainer
+	| AssembledPolymorph
+	| AssembledGroup;
+type TerminalNode =
+	| AssembledLeaf
+	| AssembledKeyword
+	| AssembledToken
+	| AssembledEnum;
 
 export interface EmitTypesConfig {
 	grammar: string;
@@ -367,6 +385,8 @@ export function emitTypes(config: EmitTypesConfig): string {
 	}
 	lines.push('');
 
+	emitTransportDeclarations(lines, supertypes, nodeMap, generatedTypes);
+
 	// Splice in the bitflag const-enum import after the main header imports.
 	// Collected during emit so only consts actually referenced by `Bitflag<>`
 	// expressions are imported — no dead identifiers.
@@ -472,12 +492,12 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 			case 'branch':
 			case 'container':
 			case 'polymorph':
-				structNodes.push(node as StructuralNode);
+				structNodes.push(node);
 				break;
 			case 'group':
 				if (!nodeMap.polymorphFormKinds.has(kind)) {
 					// Standalone group — treat like a branch for type emission.
-					structNodes.push(node as unknown as StructuralNode);
+					structNodes.push(node);
 				}
 				break;
 			case 'leaf':
@@ -497,6 +517,348 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 		}
 	}
 	return { structNodes, leafKinds, supertypes, keywordKinds, leafValueMap };
+}
+
+// ---------------------------------------------------------------------------
+// Native transport type emission
+// ---------------------------------------------------------------------------
+
+/**
+ * Emit the data-only native render transport projection.
+ *
+ * @remarks
+ * This projection deliberately reuses each assembled node's
+ * `structuralFields` / `structuralChildren` and the shared slot component
+ * walker. It is a typed view over the same grammar facts as the normal
+ * NodeData interfaces, but it never exposes fluent methods or runtime helper
+ * intersections.
+ */
+function emitTransportDeclarations(
+	lines: string[],
+	supertypes: { kind: string; subtypes: string[] }[],
+	nodeMap: NodeMap,
+	generatedTypes: Set<string>
+): void {
+	const projection = collectTransportProjection(nodeMap);
+	const transportNodeKinds = projection.nodeKinds;
+
+	lines.push(
+		'// Native render transport types — data-only JS → native boundary'
+	);
+	lines.push(
+		'export interface TerminalTransport<K extends string, V extends string = string> {'
+	);
+	lines.push('  readonly $type: K;');
+	lines.push("  readonly $source?: 'ts' | 'sg' | 'factory';");
+	lines.push('  readonly $named?: boolean;');
+	lines.push('  readonly $text: V;');
+	lines.push(
+		'  readonly $span?: { readonly start: number; readonly end: number };'
+	);
+	lines.push('  readonly $nodeId?: number;');
+	lines.push('}');
+	lines.push('');
+	lines.push(
+		'export interface LiteralTransport<K extends string, V extends string = K> extends TerminalTransport<K, V> {}'
+	);
+	lines.push('');
+
+	for (const node of projection.nodes) {
+		switch (node.modelType) {
+			case 'branch':
+			case 'container':
+			case 'polymorph':
+			case 'group':
+				emitStructuralTransportNamespace(
+					lines,
+					node,
+					nodeMap,
+					transportNodeKinds
+				);
+				break;
+			case 'leaf':
+			case 'keyword':
+			case 'token':
+			case 'enum':
+				emitTerminalTransportNamespace(lines, node.kind, node);
+				break;
+			case 'supertype':
+			case 'multi':
+				break;
+		}
+	}
+
+	for (const st of supertypes) {
+		const node = nodeMap.nodes.get(st.kind);
+		if (!node || !generatedTypes.has(node.typeName)) continue;
+		const members = st.subtypes
+			.map((kind) => nodeMap.nodes.get(kind))
+			.filter((member): member is AssembledNode => {
+				return (
+					member !== undefined &&
+					generatedTypes.has(member.typeName) &&
+					transportNodeKinds.has(member.kind)
+				);
+			})
+			.map((member) => `${member.typeName}.Transport`);
+		if (members.length === 0) continue;
+		lines.push(`export namespace ${node.typeName} {`);
+		lines.push(`  export type Transport = ${members.join(' | ')};`);
+		lines.push('}');
+		lines.push('');
+	}
+
+	lines.push(
+		'export type TransportFor<K extends SyntaxKind | keyof KindMap> ='
+	);
+	for (const node of projection.nodes) {
+		const kind = node.kind;
+		lines.push(
+			`  K extends ${JSON.stringify(kind)} ? ${node.typeName}.Transport :`
+		);
+	}
+	lines.push('  never;');
+	lines.push('');
+
+	lines.push('export type AnyTransport =');
+	for (const node of projection.nodes) {
+		lines.push(`  | ${node.typeName}.Transport`);
+	}
+	for (const literal of projection.literals) {
+		lines.push(
+			`  | LiteralTransport<${JSON.stringify(literal.kind)}, ${JSON.stringify(literal.text)}>`
+		);
+	}
+	lines.push(';');
+	lines.push('');
+}
+
+function emitStructuralTransportNamespace(
+	lines: string[],
+	node: StructuralNode,
+	nodeMap: NodeMap,
+	transportNodeKinds: ReadonlySet<string>
+): void {
+	if (node.modelType === 'polymorph' && node.forms.length > 0) {
+		emitPolymorphTransportNamespace(lines, node, nodeMap, transportNodeKinds);
+		return;
+	}
+	emitTransportInterfaceNamespace(
+		lines,
+		node.typeName,
+		node.kind,
+		undefined,
+		node.structuralFields,
+		node.structuralChildren,
+		nodeMap,
+		transportNodeKinds
+	);
+}
+
+function emitPolymorphTransportNamespace(
+	lines: string[],
+	node: AssembledPolymorph,
+	nodeMap: NodeMap,
+	transportNodeKinds: ReadonlySet<string>
+): void {
+	const formTypeNames: string[] = [];
+	for (const form of node.forms) {
+		const typeName = resolvePolymorphFormTypeName(form);
+		formTypeNames.push(typeName);
+		emitTransportInterfaceNamespace(
+			lines,
+			typeName,
+			node.kind,
+			form.name,
+			form.fields,
+			form.children,
+			nodeMap,
+			transportNodeKinds
+		);
+	}
+
+	lines.push(`export namespace ${node.typeName} {`);
+	if (formTypeNames.length > 1) {
+		lines.push(
+			`  export type Transport = ${formTypeNames.map((name) => `${name}.Transport`).join(' | ')};`
+		);
+	} else {
+		lines.push(`  export type Transport = ${formTypeNames[0]}.Transport;`);
+	}
+	lines.push('}');
+	lines.push('');
+}
+
+function emitTransportInterfaceNamespace(
+	lines: string[],
+	typeName: string,
+	kind: string,
+	variant: string | undefined,
+	fields: readonly AssembledField[],
+	children: readonly AssembledChild[],
+	nodeMap: NodeMap,
+	transportNodeKinds: ReadonlySet<string>
+): void {
+	lines.push(`export namespace ${typeName} {`);
+	lines.push('  export interface Transport {');
+	lines.push(`    readonly $type: '${kind}';`);
+	if (variant !== undefined) {
+		lines.push(`    readonly $variant: '${variant}';`);
+	}
+	lines.push("    readonly $source?: 'ts' | 'sg' | 'factory';");
+	lines.push('    readonly $named?: boolean;');
+	lines.push('    readonly $text?: string;');
+	lines.push(
+		'    readonly $span?: { readonly start: number; readonly end: number };'
+	);
+	lines.push('    readonly $nodeId?: number;');
+
+	if (fields.length > 0) {
+		for (const field of fields) {
+			const opt = isRequired(field) ? '' : '?';
+			const typeExpr = transportFieldTypeExpr(
+				field,
+				nodeMap,
+				transportNodeKinds
+			);
+			if (isMultiple(field)) {
+				lines.push(
+					`    readonly ${quoteKey(field.name)}${opt}: readonly (${typeExpr})[];`
+				);
+			} else {
+				lines.push(`    readonly ${quoteKey(field.name)}${opt}: ${typeExpr};`);
+			}
+		}
+	}
+
+	if (children.length > 0) {
+		const childTypes = children
+			.map((child) =>
+				transportChildTypeExpr(child, nodeMap, transportNodeKinds)
+			)
+			.filter((expr) => expr.length > 0);
+		if (childTypes.length > 0) {
+			const union = [...new Set(childTypes)].join(' | ');
+			const anyMultiple = children.some((child) => isMultiple(child));
+			const opt = children.some((child) => isRequired(child)) ? '' : '?';
+			if (anyMultiple) {
+				lines.push(`    readonly $children${opt}: readonly (${union})[];`);
+			} else {
+				lines.push(`    readonly $children${opt}: readonly [${union}];`);
+			}
+		}
+	}
+
+	lines.push('  }');
+	lines.push('}');
+	lines.push('');
+}
+
+function emitTerminalTransportNamespace(
+	lines: string[],
+	kind: string,
+	node: TerminalNode
+): void {
+	lines.push(`export namespace ${node.typeName} {`);
+	lines.push(
+		`  export type Transport = TerminalTransport<${JSON.stringify(kind)}, ${terminalTransportTextType(node)}>;`
+	);
+	lines.push('}');
+	lines.push('');
+}
+
+function transportFieldTypeExpr(
+	field: AssembledField,
+	nodeMap: NodeMap,
+	transportNodeKinds: ReadonlySet<string>
+): string {
+	const components = fieldTypeComponents(field, nodeMap);
+	if (components.length === 0) return 'TerminalTransport<string>';
+	const parts = components.map((component) =>
+		transportComponentTypeExpr(component, nodeMap, transportNodeKinds)
+	);
+	return [...new Set(parts)].join(' | ');
+}
+
+function transportChildTypeExpr(
+	child: AssembledChild,
+	nodeMap: NodeMap,
+	transportNodeKinds: ReadonlySet<string>
+): string {
+	const parts: string[] = [];
+	for (const value of child.values) {
+		if (isTerminalValue(value)) {
+			parts.push(
+				`LiteralTransport<${JSON.stringify(value.value)}, ${JSON.stringify(value.value)}>`
+			);
+			continue;
+		}
+		if (!isNodeRef(value)) continue;
+		const kind = isUnresolvedRef(value.node)
+			? value.node.name
+			: value.node.kind;
+		parts.push(transportTypeForKind(kind, nodeMap, transportNodeKinds));
+	}
+	return [...new Set(parts)].join(' | ');
+}
+
+function transportComponentTypeExpr(
+	component: ReturnType<typeof fieldTypeComponents>[number],
+	nodeMap: NodeMap,
+	transportNodeKinds: ReadonlySet<string>
+): string {
+	if (component.kind === 'literal') {
+		return `LiteralTransport<${JSON.stringify(component.value)}, ${JSON.stringify(component.value)}>`;
+	}
+	if (component.kind === 'missing') {
+		return `TerminalTransport<${JSON.stringify(component.rawKind)}>`;
+	}
+	return transportTypeForKind(component.rawKind, nodeMap, transportNodeKinds);
+}
+
+function transportTypeForKind(
+	kind: string,
+	nodeMap: NodeMap,
+	transportNodeKinds: ReadonlySet<string>
+): string {
+	const resolvedKind = resolveTransportReferenceKind(kind, nodeMap);
+	if (resolvedKind !== kind) {
+		return transportTypeForKind(resolvedKind, nodeMap, transportNodeKinds);
+	}
+
+	const literal = resolveHiddenKeywordLiteral(kind, nodeMap);
+	if (literal !== undefined) {
+		return `TerminalTransport<${JSON.stringify(kind)}, ${JSON.stringify(literal)}>`;
+	}
+	const node = nodeMap.nodes.get(kind);
+	if (!node) return `TerminalTransport<${JSON.stringify(kind)}>`;
+	if (!transportNodeKinds.has(kind) && isTerminalTransportNode(node)) {
+		return `TerminalTransport<${JSON.stringify(kind)}, ${terminalTransportTextType(node)}>`;
+	}
+	return `${node.typeName}.Transport`;
+}
+
+function isTerminalTransportNode(node: AssembledNode): node is TerminalNode {
+	switch (node.modelType) {
+		case 'leaf':
+		case 'keyword':
+		case 'token':
+		case 'enum':
+			return true;
+		default:
+			return false;
+	}
+}
+
+function terminalTransportTextType(node: TerminalNode): string {
+	if (node.modelType === 'keyword') return JSON.stringify(node.text);
+	if (node.modelType === 'token' && node.text !== undefined) {
+		return JSON.stringify(node.text);
+	}
+	if (node.modelType === 'enum') {
+		return node.values.map((value) => JSON.stringify(value)).join(' | ');
+	}
+	return 'string';
 }
 
 // ---------------------------------------------------------------------------
@@ -1263,7 +1625,7 @@ function emitFormInterface(
 
 /**
  * Emit the `readonly $children` slot for a polymorph form interface, if the
- * form has any children.
+ * form contains children.
  *
  * @remarks
  * T063 inlining can introduce children slots on polymorph forms that were not
@@ -1311,9 +1673,8 @@ function emitFormChildrenSlot(
 		if (resolveHiddenKeywordLiteral(t, nodeMap) !== undefined) return false;
 		// Empty branch / group — no fields and no children to construct.
 		if (n.modelType === 'branch' || n.modelType === 'group') {
-			const fs = (n as unknown as { fields: readonly unknown[] }).fields;
-			const cs = (n as unknown as { children?: readonly unknown[] }).children;
-			if ((fs?.length ?? 0) === 0 && (cs?.length ?? 0) === 0) return false;
+			if (n.structuralFields.length === 0 && n.structuralChildren.length === 0)
+				return false;
 		}
 		return true;
 	};
