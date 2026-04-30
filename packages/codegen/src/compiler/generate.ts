@@ -150,6 +150,12 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		nodeMap.nodes as unknown as Map<string, never>
 	);
 	const generatedIdTables = await loadGeneratedIdTables(cfg.grammar);
+	if (!generatedIdTables) {
+		throw new Error(
+			`generate: missing generated kind IDs for '${cfg.grammar}'. ` +
+				'TSKindId emission requires parser metadata from loadGeneratedIdTables().'
+		);
+	}
 
 	// Phase 5: Emit — every emitter consumes NodeMap directly. The
 	// ir-namespace keys are populated on each AssembledNode during
@@ -157,7 +163,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// directly. No side-channel map plumbing, no NodeMap→Hydrated adapter.
 	return {
 		grammar: emitGrammar({ grammar: cfg.grammar }),
-		types: emitTypes({ grammar: cfg.grammar, nodeMap }),
+		types: emitTypes({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
 		jinjaTemplates: emitJinjaTemplates({ grammar: cfg.grammar, nodeMap }),
 		factories: emitFactories({
 			grammar: cfg.grammar,

@@ -60,6 +60,7 @@ import { evaluate } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
 import { optimize } from '../compiler/optimize.ts';
 import { assemble } from '../compiler/assemble.ts';
+import { loadGeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { emitTypes } from '../emitters/types.ts';
 import { emitJinjaTemplates } from '../emitters/templates.ts';
 
@@ -113,11 +114,17 @@ async function main(): Promise<void> {
 	const nodeMap = assemble(optimized);
 	const node = nodeMap.nodes.get(kind) ?? null;
 	stages.assemble = node ? summarizeAssembled(node) : null;
+	const generatedIdTables = await loadGeneratedIdTables(grammar);
 
 	// Phase 5: emit (optional — heavy).
 	if (!values['skip-emit']) {
 		try {
-			const types = emitTypes({ grammar, nodeMap });
+			if (!generatedIdTables) {
+				throw new Error(
+					`probe-stages: missing generated kind IDs for '${grammar}'`
+				);
+			}
+			const types = emitTypes({ grammar, nodeMap, generatedIdTables });
 			const ifacePat = new RegExp(
 				`export interface ${kindToPascal(kind)}[^\\{]*\\{[\\s\\S]*?\\n\\}`,
 				'm'

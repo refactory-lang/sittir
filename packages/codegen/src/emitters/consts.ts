@@ -213,14 +213,13 @@ function emitTreeSitterIdConsts(
 	}
 	lines.push('');
 
-	emitIdEnumBlock(lines, {
-		enumName: 'TSKindId',
+	emitIdMaps(lines, {
 		forwardName: 'TREE_SITTER_KIND_ID_BY_KIND',
 		reverseName: 'TREE_SITTER_KIND_BY_KIND_ID',
 		jsonName: 'TREE_SITTER_KIND_ID_JSON',
-		recordType: 'Record<string, TSKindId>',
 		entries: kindEntries
 	});
+	lines.push('');
 
 	emitIdEnumBlock(lines, {
 		enumName: 'TSFieldId',
@@ -278,6 +277,40 @@ function emitIdEnumBlock(
 	}
 	lines.push('] as const;');
 	lines.push('');
+}
+
+function emitIdMaps(
+	lines: string[],
+	config: {
+		readonly forwardName: string;
+		readonly reverseName: string;
+		readonly jsonName: string;
+		readonly entries: readonly IdEnumEntry[];
+	}
+): void {
+	if (config.entries.length === 0) return;
+
+	lines.push(`export const ${config.forwardName} = {`);
+	for (const entry of config.entries) {
+		lines.push(`  ${JSON.stringify(entry.key)}: ${entry.id},`);
+	}
+	lines.push('} as const satisfies Record<string, number>;');
+	lines.push('');
+
+	lines.push(`export const ${config.reverseName} = {`);
+	for (const entry of config.entries) {
+		lines.push(`  [${entry.id}]: ${JSON.stringify(entry.key)},`);
+	}
+	lines.push('} as const;');
+	lines.push('');
+
+	lines.push(`export const ${config.jsonName} = [`);
+	for (const entry of config.entries) {
+		lines.push(
+			`  { name: ${JSON.stringify(entry.key)}, id: ${entry.id}, enumName: ${JSON.stringify(entry.memberName)}, cName: ${JSON.stringify(entry.cName ?? null)} },`
+		);
+	}
+	lines.push('] as const;');
 }
 
 function collectIdEntries(
