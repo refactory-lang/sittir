@@ -234,153 +234,81 @@ impl ::askama::FastWritable for FieldView<'_> {
     }
 }
 
-pub trait JoinSource {
-    fn len(&self) -> usize;
-    fn item(&self, index: usize) -> &str;
-
-    fn leading_sep_for(&self, _sep: &str) -> bool {
+/// Trait for types that can supply a slice of [`Renderable`]s for joining.
+///
+/// Replaces the string-based `JoinSource` from Task 2 scaffolding.
+/// `ListView` and `FieldView` are the primary implementors; the old
+/// string-slice impls (`[S]`, `Vec<S>`, `[S; N]`) are removed because
+/// the join filters now operate exclusively on `Renderable`-backed views.
+pub trait JoinSource<'a> {
+    fn renderables(&self) -> &'a [Renderable<'a>];
+    fn separator(&self) -> &'a str;
+    fn leading(&self) -> bool {
         false
     }
-
-    fn trailing_sep_for(&self, _sep: &str) -> bool {
+    fn trailing(&self) -> bool {
         false
     }
 }
 
-impl<S: AsRef<str>> JoinSource for [S] {
-    fn len(&self) -> usize {
-        <[S]>::len(self)
+impl<'a> JoinSource<'a> for ListView<'a> {
+    fn renderables(&self) -> &'a [Renderable<'a>] {
+        self.items
     }
-
-    fn item(&self, index: usize) -> &str {
-        self[index].as_ref()
+    fn separator(&self) -> &'a str {
+        self.separator
     }
-}
-
-impl<S: AsRef<str>> JoinSource for Vec<S> {
-    fn len(&self) -> usize {
-        self.as_slice().len()
+    fn leading(&self) -> bool {
+        self.leading
     }
-
-    fn item(&self, index: usize) -> &str {
-        self.as_slice()[index].as_ref()
+    fn trailing(&self) -> bool {
+        self.trailing
     }
 }
 
-impl<S: AsRef<str>, const N: usize> JoinSource for [S; N] {
-    fn len(&self) -> usize {
-        self.as_slice().len()
-    }
-
-    fn item(&self, index: usize) -> &str {
-        self.as_slice()[index].as_ref()
-    }
-}
-
-// TEMPORARY — Task 3 replaces JoinSource wholesale with a Renderable-based
-// trait; these stubs exist only to make Task 2 compile. Delete in Task 3.
-impl JoinSource for ListView<'_> {
-    fn len(&self) -> usize {
-        self.items.len()
-    }
-
-    fn item(&self, _index: usize) -> &str {
-        unimplemented!("removed in Task 3 — JoinSource::item not valid on Renderable-backed ListView")
-    }
-
-    fn leading_sep_for(&self, sep: &str) -> bool {
-        self.separator == sep && self.leading
-    }
-
-    fn trailing_sep_for(&self, sep: &str) -> bool {
-        self.separator == sep && self.trailing
-    }
-}
-
-// TEMPORARY — Task 3 replaces JoinSource wholesale with a Renderable-based
-// trait; these stubs exist only to make Task 2 compile. Delete in Task 3.
-impl JoinSource for FieldView<'_> {
-    fn len(&self) -> usize {
+impl<'a> JoinSource<'a> for FieldView<'a> {
+    fn renderables(&self) -> &'a [Renderable<'a>] {
         match self {
-            Self::Missing => 0,
-            Self::One(_) => 1,
-            Self::Many(view) => view.len(),
+            Self::Missing | Self::One(_) => &[],
+            Self::Many(view) => view.items,
         }
     }
-
-    fn item(&self, _index: usize) -> &str {
-        unimplemented!("removed in Task 3 — JoinSource::item not valid on Renderable-backed FieldView")
+    fn separator(&self) -> &'a str {
+        match self {
+            Self::Many(view) => view.separator,
+            _ => "",
+        }
     }
-
-    fn leading_sep_for(&self, sep: &str) -> bool {
-        matches!(self, Self::Many(view) if view.leading_sep_for(sep))
+    fn leading(&self) -> bool {
+        matches!(self, Self::Many(v) if v.leading)
     }
-
-    fn trailing_sep_for(&self, sep: &str) -> bool {
-        matches!(self, Self::Many(view) if view.trailing_sep_for(sep))
+    fn trailing(&self) -> bool {
+        matches!(self, Self::Many(v) if v.trailing)
     }
 }
 
-/// Join a pre-rendered sequence with a separator, with optional leading +
-/// trailing separator flanks.
-pub fn joinby<T: JoinSource + ?Sized>(
-    xs: &T,
-    sep: &str,
+/// Join a `Renderable`-backed sequence with a separator, with optional
+/// leading + trailing separator flanks.
+///
+/// Returns `Safe<Joined<'a>>` so Askama can stream the result into its
+/// output buffer without an intermediate `String` allocation. The
+/// `join_with_line_comment_fix` and `ends_line_comment` helpers from the
+/// string-backed era are removed here; Task 4's `from_transport` bridge
+/// must surface line-comment-ending leaves with their trailing `\n`
+/// already inside `Renderable::Text(...)` so the separator is never
+/// emitted after them.
+pub fn joinby<'a, T: JoinSource<'a> + ?Sized>(
+    xs: &'a T,
+    sep: &'a str,
     leading: bool,
     trailing: bool,
-) -> Result<String, askama::Error> {
-    if xs.len() == 0 {
-        return Ok(String::new());
-    }
-    let prefix = if leading { sep } else { "" };
-    let suffix = if trailing { sep } else { "" };
-    let joined = join_with_line_comment_fix(xs, sep);
-    Ok(format!("{prefix}{joined}{suffix}"))
-}
-
-/// Detect whether a rendered child ends with a `//` or `#` line-terminated
-/// comment. Mirrors the TS `endsLineComment` helper in
-/// `packages/core/src/templates/nunjucks-env.ts` — used by the join helpers
-/// to force a `\n` separator after a line-comment-ending child so the
-/// following sibling doesn't get folded into the comment at reparse time.
-fn ends_line_comment(s: &str) -> bool {
-    let trimmed = s.trim_end_matches([' ', '\t']);
-    if trimmed.ends_with('\n') {
-        return false;
-    }
-    // Find the start of the last line (everything after the final `\n`).
-    let last_line_start = trimmed.rfind('\n').map_or(0, |i| i + 1);
-    let last_line = &trimmed[last_line_start..];
-    let stripped = last_line.trim_start();
-    stripped.starts_with("//") || stripped.starts_with('#')
-}
-
-/// Join `xs` with `sep`, but force `\n` instead of `sep` after any element
-/// that ends with a line-terminated comment (`//` or `#`). Joining with
-/// ` ` would otherwise fold the next sibling into the comment at reparse
-/// time. Cluster J (016): mirrors the TS Nunjucks `join` filter so the
-/// two engines stay byte-identical on fixtures containing `// comment`
-/// followed by a statement (e.g. rust block round-trip).
-fn join_with_line_comment_fix<T: JoinSource + ?Sized>(xs: &T, sep: &str) -> String {
-    if xs.len() == 0 {
-        return String::new();
-    }
-    if xs.len() == 1 {
-        return xs.item(0).to_string();
-    }
-    let mut out = String::new();
-    for i in 0..xs.len() {
-        let s = xs.item(i);
-        out.push_str(s);
-        if i + 1 < xs.len() {
-            if ends_line_comment(s) {
-                out.push('\n');
-            } else {
-                out.push_str(sep);
-            }
-        }
-    }
-    out
+) -> Result<askama::filters::Safe<Joined<'a>>, askama::Error> {
+    Ok(askama::filters::Safe(Joined {
+        items: xs.renderables(),
+        separator: sep,
+        leading,
+        trailing,
+    }))
 }
 
 /// Minimal askama values bridge for flank-aware filters.
@@ -561,50 +489,49 @@ fn flank_match(values: &dyn askama::Values, key: &str, sep: &str) -> bool {
     }
 }
 
-/// Askama filter — `{{ children | joinWithTrailing(",") }}`. Emits a
-/// trailing `sep` iff the children list captured a trailing anonymous
-/// token whose text matches `sep`. Source: the generated render
-/// crate's Askama values bag under key `"trailing_anon"`.
+/// Plain Rust implementation for `joinWithTrailing` — callable from both
+/// Rust tests and via the per-grammar `#[askama::filter_fn]` wrapper in
+/// generated render crates.
+///
+/// Emits a trailing `sep` iff the children list captured a trailing anonymous
+/// token whose text matches `sep`. Source: the generated render crate's
+/// Askama values bag under key `"trailing_anon"`.
 ///
 /// On a context with no flank metadata the filter degrades to plain
 /// `join` — matches TS engine behavior when the children array has no
 /// `_trailing_anon` property.
-#[askama::filter_fn]
 #[allow(non_snake_case)]
-pub fn joinWithTrailing<T: JoinSource + ?Sized>(
-    xs: &T,
+pub fn joinWithTrailing<'a, T: JoinSource<'a> + ?Sized>(
+    xs: &'a T,
     values: &dyn askama::Values,
-    sep: &str,
-) -> Result<String, askama::Error> {
-    let trailing = xs.trailing_sep_for(sep) || flank_match(values, "trailing_anon", sep);
+    sep: &'a str,
+) -> Result<askama::filters::Safe<Joined<'a>>, askama::Error> {
+    let trailing = xs.trailing() || flank_match(values, "trailing_anon", sep);
     joinby(xs, sep, false, trailing)
 }
 
-/// Askama filter — `{{ children | joinWithLeading(",") }}`. Symmetric to
+/// Plain Rust implementation for `joinWithLeading`. Symmetric to
 /// `joinWithTrailing`: emits a leading `sep` iff the children list
 /// captured a leading anonymous token whose text matches `sep`.
-#[askama::filter_fn]
 #[allow(non_snake_case)]
-pub fn joinWithLeading<T: JoinSource + ?Sized>(
-    xs: &T,
+pub fn joinWithLeading<'a, T: JoinSource<'a> + ?Sized>(
+    xs: &'a T,
     values: &dyn askama::Values,
-    sep: &str,
-) -> Result<String, askama::Error> {
-    let leading = xs.leading_sep_for(sep) || flank_match(values, "leading_anon", sep);
+    sep: &'a str,
+) -> Result<askama::filters::Safe<Joined<'a>>, askama::Error> {
+    let leading = xs.leading() || flank_match(values, "leading_anon", sep);
     joinby(xs, sep, leading, false)
 }
 
-/// Askama filter — `{{ children | joinWithFlanks(",") }}`. Both
-/// directions; emits each flank independently iff its captured anon
-/// text matches `sep`.
-#[askama::filter_fn]
+/// Plain Rust implementation for `joinWithFlanks`. Both directions;
+/// emits each flank independently iff its captured anon text matches `sep`.
 #[allow(non_snake_case)]
-pub fn joinWithFlanks<T: JoinSource + ?Sized>(
-    xs: &T,
+pub fn joinWithFlanks<'a, T: JoinSource<'a> + ?Sized>(
+    xs: &'a T,
     values: &dyn askama::Values,
-    sep: &str,
-) -> Result<String, askama::Error> {
-    let leading = xs.leading_sep_for(sep) || flank_match(values, "leading_anon", sep);
-    let trailing = xs.trailing_sep_for(sep) || flank_match(values, "trailing_anon", sep);
+    sep: &'a str,
+) -> Result<askama::filters::Safe<Joined<'a>>, askama::Error> {
+    let leading = xs.leading() || flank_match(values, "leading_anon", sep);
+    let trailing = xs.trailing() || flank_match(values, "trailing_anon", sep);
     joinby(xs, sep, leading, trailing)
 }
