@@ -16,10 +16,9 @@ describe('boundary', () => {
 
 	function mockNativeBackend(
 		SittirEngine: new (
-			grammar: string,
 			options?: { format?: string }
 		) => {
-			render(nodeJson: string): string;
+			render(node: Record<string, unknown>): string;
 			applyEdits(
 				source: string,
 				edits: { startPos: number; endPos: number; insertedText: string }[]
@@ -39,7 +38,7 @@ describe('boundary', () => {
 	function mockNativeFailureBackend(): void {
 		mockNativeBackend(
 			class {
-				render(_nodeJson: string): never {
+				render(_node: Record<string, unknown>): never {
 					throw new Error('native render boom');
 				}
 
@@ -65,12 +64,34 @@ describe('boundary', () => {
 		expect(() => applyEdits('abc', [])).toThrow(/native apply boom/);
 	});
 
-	it('rejects payloads that do not satisfy the native wire contract', async () => {
-		const renderSpy = vi.fn((nodeJson: string) => `ok:${nodeJson.length}`);
+	it('passes a plain transport object to native render', async () => {
+		const renderSpy = vi.fn(
+			(node: Record<string, unknown>) => `ok:${String(node.$type)}`
+		);
 		mockNativeBackend(
 			class {
-				render(nodeJson: string): string {
-					return renderSpy(nodeJson);
+				render(node: Record<string, unknown>): string {
+					return renderSpy(node);
+				}
+				applyEdits(source: string): string {
+					return source;
+				}
+			}
+		);
+
+		const { render } = await import('../src/boundary.ts');
+		expect(render(identifier)).toBe('ok:identifier');
+		expect(renderSpy).toHaveBeenCalledWith(identifier);
+	});
+
+	it('rejects payloads that do not satisfy the native wire contract', async () => {
+		const renderSpy = vi.fn(
+			(node: Record<string, unknown>) => `ok:${Object.keys(node).length}`
+		);
+		mockNativeBackend(
+			class {
+				render(node: Record<string, unknown>): string {
+					return renderSpy(node);
 				}
 
 				applyEdits(
@@ -93,12 +114,12 @@ describe('boundary', () => {
 	});
 
 	it('uses engine-owned format when native render is called without per-call format args', async () => {
-		const renderSpy = vi.fn((_nodeJson: string) => '\tx');
+		const renderSpy = vi.fn((_node: Record<string, unknown>) => '\tx');
 		mockNativeBackend(
 			class {
-				constructor(_grammar: string, _options?: { format?: string }) {}
-				render(nodeJson: string): string {
-					return renderSpy(nodeJson);
+				constructor(_options?: { format?: string }) {}
+				render(node: Record<string, unknown>): string {
+					return renderSpy(node);
 				}
 				applyEdits(source: string): string {
 					return source;

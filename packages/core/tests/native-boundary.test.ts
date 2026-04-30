@@ -28,4 +28,16 @@ describe('native render boundary', () => {
 		expect(() => assertNativeNodeData(withVariant)).not.toThrow();
 		expect(isNativeNodeData(withVariant)).toBe(true);
 	});
+
+	it('rejects non-data values at the native transport boundary', async () => {
+		const invalidNode = {
+			$type: 'identifier',
+			$source: 'factory',
+			$named: true,
+			$text: 'x',
+			render: () => 'nope'
+		} as const;
+
+		expect(() => assertNativeNodeData(invalidNode as never)).toThrow(/render/);
+	});
 });
