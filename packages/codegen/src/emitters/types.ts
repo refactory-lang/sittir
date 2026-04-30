@@ -963,10 +963,14 @@ function collectKindEntries(
 	for (const kind of allKinds) {
 		const id = kindIds.get(kind);
 		if (id === undefined) {
-			throw new Error(
-				`types: missing generated kind ID for '${kind}'. ` +
-					'Pass loadGeneratedIdTables(...) into emitTypes so TSKindId can be emitted from real metadata.'
-			);
+			// The kind exists in the codegen rule set but has no parser
+			// symbol — tree-sitter fully inlined it during parser
+			// compilation, so it never carries a `$type` on a parsed tree
+			// (TSGrammar without TSRuntime in the KindID symbol-catalog
+			// design, 2026-04-30). Skip emitting a TSKindId member for it;
+			// the kind's interface still gets a string-discriminant `$type`
+			// via `kindDiscriminantExpr`'s pre-kindEntries fallback path.
+			continue;
 		}
 		const member = kindIdMemberName(nodeMap, kind);
 		if (seenMembers.has(member)) continue;
@@ -983,6 +987,11 @@ function kindDiscriminantExpr(
 	kindEntries?: readonly KindEnumEntry[]
 ): string {
 	if (!kindEntries) return JSON.stringify(kind);
+	// A kind with no entry was skipped because tree-sitter inlined it (no
+	// parser symbol). Use the string discriminant so generated code stays
+	// consistent — the kind still has a string-shaped `$type`.
+	const hasEntry = kindEntries.some((e) => e.kind === kind);
+	if (!hasEntry) return JSON.stringify(kind);
 	return `TSKindId.${kindIdMemberName(nodeMap, kind)}`;
 }
 

@@ -83,10 +83,63 @@ export interface RuleCatalog {
 	readonly classificationById: ReadonlyMap<RuleId, RuleClassification>;
 }
 
+/**
+ * Where a kind/field exists across the pipeline. Per KindID runtime
+ * migration design (2026-04-30): describes ontology / existence, kept
+ * separate from `KindUseFlag` which describes operations.
+ */
+export const KindPresenceFlag = {
+	None: 0,
+	/** Rule appears in `grammar.js` (codegen rule catalog). */
+	TSGrammar: 1 << 0,
+	/** Kind appears in `node-types.json`. */
+	TSNodeTypes: 1 << 1,
+	/** Kind has a parser symbol — can carry a runtime `$type`. */
+	TSRuntime: 1 << 2
+} as const;
+export type KindPresenceFlag = number;
+
+/**
+ * What sittir can do with a kind. Behavior-based; complements
+ * `KindPresenceFlag`'s file-based / existence-based view.
+ */
+export const KindUseFlag = {
+	None: 0,
+	/** Sittir can ingest/hydrate the kind from parsed runtime nodes. */
+	Readable: 1 << 0,
+	/** Sittir can produce/build it from factories or `.from()`. */
+	Buildable: 1 << 1,
+	/** Sittir can render/dispatch it. */
+	Renderable: 1 << 2
+} as const;
+export type KindUseFlag = number;
+
+/**
+ * Parser-origin metadata for a kind. Derived from the C symbol name.
+ * `parserName` is the prefix-stripped form (the canonical join term);
+ * `displayName` is the lossy `ts_symbol_names[]` label, kept for
+ * diagnostics only.
+ */
+export interface KindParserMetadata {
+	readonly cSymbol: string;
+	readonly parserName: string;
+	readonly displayName?: string;
+	readonly anon: boolean;
+	readonly aux: boolean;
+	readonly alias: boolean;
+	readonly hidden: boolean;
+}
+
 export interface GeneratedMetadata {
 	readonly kindId?: number;
 	readonly fieldId?: number;
 	readonly sourceArtifact: string;
+	/** Presence bitfield (`TSGrammar | TSNodeTypes | TSRuntime`). */
+	readonly presence?: KindPresenceFlag;
+	/** Use bitfield (`Readable | Buildable | Renderable`). */
+	readonly uses?: KindUseFlag;
+	/** Parser-origin metadata; absent when the kind has no parser symbol. */
+	readonly parser?: KindParserMetadata;
 }
 
 export interface GeneratedMetadataCatalog {

@@ -15,7 +15,7 @@
 // protection on `polymorphs` / `transforms` / `rules` keys. Only the
 // final `grammar(enrich(base), wire(config))` line and the injected
 // DSL globals inside rule callbacks need suppression.
-import base from '../../node_modules/.pnpm/tree-sitter-rust@0.24.0/node_modules/tree-sitter-rust/grammar.js';
+import base from '../../node_modules/.pnpm/tree-sitter-rust@0.24.0_tree-sitter@0.22.4/node_modules/tree-sitter-rust/grammar.js';
 import {
 	transform,
 	enrich,
