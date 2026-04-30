@@ -150,12 +150,6 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		nodeMap.nodes as unknown as Map<string, never>
 	);
 	const generatedIdTables = await loadGeneratedIdTables(cfg.grammar);
-	if (!generatedIdTables) {
-		throw new Error(
-			`generate: missing generated kind IDs for '${cfg.grammar}'. ` +
-				'TSKindId emission requires parser metadata from loadGeneratedIdTables().'
-		);
-	}
 
 	// Phase 5: Emit — every emitter consumes NodeMap directly. The
 	// ir-namespace keys are populated on each AssembledNode during

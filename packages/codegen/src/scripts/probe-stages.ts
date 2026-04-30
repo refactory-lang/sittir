@@ -119,11 +119,6 @@ async function main(): Promise<void> {
 	// Phase 5: emit (optional — heavy).
 	if (!values['skip-emit']) {
 		try {
-			if (!generatedIdTables) {
-				throw new Error(
-					`probe-stages: missing generated kind IDs for '${grammar}'`
-				);
-			}
 			const types = emitTypes({ grammar, nodeMap, generatedIdTables });
 			const ifacePat = new RegExp(
 				`export interface ${kindToPascal(kind)}[^\\{]*\\{[\\s\\S]*?\\n\\}`,
