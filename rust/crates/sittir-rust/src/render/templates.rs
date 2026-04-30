@@ -20,31 +20,64 @@
 pub mod filters {
     //! Askama resolves custom-filter names by searching for a
     //! sibling `filters` module at the derive-macro site. This
-    //! module just re-exports the canonical implementations
-    //! from `sittir_core::filters`.
+    //! module wraps the canonical sittir_core implementations with
+    //! the `#[askama::filter_fn]` attribute so Askama can call them
+    //! from templates.
+    use ::sittir_core::filters::{Joined, JoinSource};
+
     #[::askama::filter_fn]
-    pub fn joinby<T: ::sittir_core::filters::JoinSource + ?Sized>(
-        xs: &T,
+    pub fn joinby<'a, T: JoinSource<'a> + ?Sized>(
+        xs: &'a T,
         _values: &dyn ::askama::Values,
-        sep: &str,
+        sep: &'a str,
         leading: bool,
         trailing: bool,
-    ) -> Result<String, ::askama::Error> {
+    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {
         ::sittir_core::filters::joinby(xs, sep, leading, trailing)
     }
 
     #[::askama::filter_fn]
-    pub fn join<T: ::sittir_core::filters::JoinSource + ?Sized>(
-        xs: &T,
-        sep: &str,
-    ) -> Result<String, ::askama::Error> {
+    pub fn join<'a, T: JoinSource<'a> + ?Sized>(
+        xs: &'a T,
+        _values: &dyn ::askama::Values,
+        sep: &'a str,
+    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {
         ::sittir_core::filters::joinby(xs, sep, false, false)
+    }
+
+    #[::askama::filter_fn]
+    #[allow(non_snake_case)]
+    pub fn joinWithTrailing<'a, T: JoinSource<'a> + ?Sized>(
+        xs: &'a T,
+        values: &dyn ::askama::Values,
+        sep: &'a str,
+    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {
+        ::sittir_core::filters::joinWithTrailing(xs, values, sep)
+    }
+
+    #[::askama::filter_fn]
+    #[allow(non_snake_case)]
+    pub fn joinWithLeading<'a, T: JoinSource<'a> + ?Sized>(
+        xs: &'a T,
+        values: &dyn ::askama::Values,
+        sep: &'a str,
+    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {
+        ::sittir_core::filters::joinWithLeading(xs, values, sep)
+    }
+
+    #[::askama::filter_fn]
+    #[allow(non_snake_case)]
+    pub fn joinWithFlanks<'a, T: JoinSource<'a> + ?Sized>(
+        xs: &'a T,
+        values: &dyn ::askama::Values,
+        sep: &'a str,
+    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {
+        ::sittir_core::filters::joinWithFlanks(xs, values, sep)
     }
 
     pub use ::sittir_core::filters::{
         upper, lower,
         isBlank, isPresent,
-        joinWithTrailing, joinWithLeading, joinWithFlanks,
     };
 }
 
@@ -15144,9 +15177,24 @@ impl ResolvedField {
     }
 
     fn from_items(items: Vec<String>, separator: &'static str, leading_sep: bool, trailing_sep: bool) -> Self {
+        let mut scalar = String::new();
+        if leading_sep && !items.is_empty() {
+            scalar.push_str(separator);
+        }
+        let mut first = true;
+        for item in &items {
+            if !first {
+                scalar.push_str(separator);
+            }
+            scalar.push_str(item);
+            first = false;
+        }
+        if trailing_sep && !items.is_empty() {
+            scalar.push_str(separator);
+        }
         Self {
             kind: ResolvedFieldKind::List,
-            scalar: ::sittir_core::filters::joinby(&items, separator, leading_sep, trailing_sep).unwrap_or_default(),
+            scalar,
             items,
             separator,
             leading_sep,
@@ -15158,21 +15206,8 @@ impl ResolvedField {
         self.scalar.as_str()
     }
 
-    fn as_list_view(&self) -> ::sittir_core::filters::ListView<'_> {
-        ::sittir_core::filters::ListView {
-            items: self.items.as_slice(),
-            separator: self.separator,
-            leading: self.leading_sep,
-            trailing: self.trailing_sep,
-        }
-    }
-
-    fn as_field_view(&self) -> ::sittir_core::filters::FieldView<'_> {
-        match self.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
-            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::Scalar(self.scalar.as_str()),
-            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::List(self.as_list_view()),
-        }
+    fn renderable_items(&self) -> Vec<::sittir_core::filters::Renderable<'_>> {
+        self.items.iter().map(|s| ::sittir_core::filters::Renderable::Text(s.as_str())).collect()
     }
 }
 
@@ -15589,10 +15624,36 @@ fn render_hidden_array_expression_list(node: &NodeData) -> Result<String, ::aska
     let children = resolve_children(node, &["attributes", "elements"])?;
     let field_0 = resolve_field(node, "attributes", false)?;
     let field_1 = resolve_field(node, "elements", false)?;
+    let children_renderables = children.renderable_items();
+    let field_0_renderables = field_0.renderable_items();
+    let field_1_renderables = field_1.renderable_items();
     let template = ArrayExpressionListTemplate {
-        children: children.as_list_view(),
-        attributes: field_0.as_field_view(),
-        elements: field_1.as_field_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+        attributes: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_0_renderables.as_slice(),
+                separator: field_0.separator,
+                leading: field_0.leading_sep,
+                trailing: field_0.trailing_sep,
+            }),
+        },
+        elements: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_1_renderables.as_slice(),
+                separator: field_1.separator,
+                leading: field_1.leading_sep,
+                trailing: field_1.trailing_sep,
+            }),
+        },
     };
     template.render()
 }
@@ -15602,8 +15663,18 @@ fn render_hidden_array_expression_semi(node: &NodeData) -> Result<String, ::aska
     let field_0 = resolve_field(node, "attributes", false)?;
     let field_1 = resolve_field(node, "elements", true)?;
     let field_2 = resolve_field(node, "length", true)?;
+    let field_0_renderables = field_0.renderable_items();
     let template = ArrayExpressionSemiTemplate {
-        attributes: field_0.as_field_view(),
+        attributes: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_0_renderables.as_slice(),
+                separator: field_0.separator,
+                leading: field_0.leading_sep,
+                trailing: field_0.trailing_sep,
+            }),
+        },
         elements: field_1.as_scalar(),
         length: field_2.as_scalar(),
     };
@@ -15632,48 +15703,84 @@ fn render_hidden_closure_expression_expr(node: &NodeData) -> Result<String, ::as
 
 fn render_hidden_delim_token_tree_brace(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _DelimTokenTreeBraceTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_delim_token_tree_bracket(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _DelimTokenTreeBracketTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_delim_token_tree_paren(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _DelimTokenTreeParenTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_expression_statement_block_ending(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _ExpressionStatementBlockEndingTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_expression_statement_with_semi(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _ExpressionStatementWithSemiTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_field_identifier(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = FieldIdentifierTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -15709,8 +15816,14 @@ fn render_hidden_foreign_mod_item_body(node: &NodeData) -> Result<String, ::aska
 
 fn render_hidden_function_type_fn_form(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = FunctionTypeFnFormTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -15735,8 +15848,14 @@ fn render_hidden_impl_item_body(node: &NodeData) -> Result<String, ::askama::Err
 
 fn render_hidden_let_chain(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = LetChainTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -15756,24 +15875,42 @@ fn render_hidden_line_comment_doc(node: &NodeData) -> Result<String, ::askama::E
 
 fn render_hidden_macro_definition_brace(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _MacroDefinitionBraceTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_macro_definition_bracket(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _MacroDefinitionBracketTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_macro_definition_paren(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _MacroDefinitionParenTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -15827,8 +15964,14 @@ fn render_hidden_or_pattern_prefix(node: &NodeData) -> Result<String, ::askama::
 
 fn render_hidden_pointer_type_mut(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _PointerTypeMutTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -15897,32 +16040,56 @@ fn render_hidden_range_pattern_prefix(node: &NodeData) -> Result<String, ::askam
 
 fn render_hidden_reference_expression_raw_mut(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ReferenceExpressionRawMutTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_reserved_identifier(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ReservedIdentifierTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_shorthand_field_identifier(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ShorthandFieldIdentifierTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_string_content(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _StringContentTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -15930,8 +16097,14 @@ fn render_hidden_string_content(node: &NodeData) -> Result<String, ::askama::Err
 fn render_hidden_struct_item_brace(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["body"])?;
     let field_0 = resolve_field(node, "body", true)?;
+    let children_renderables = children.renderable_items();
     let template = StructItemBraceTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         body: field_0.as_scalar(),
     };
     template.render()
@@ -15940,8 +16113,14 @@ fn render_hidden_struct_item_brace(node: &NodeData) -> Result<String, ::askama::
 fn render_hidden_struct_item_tuple(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["body"])?;
     let field_0 = resolve_field(node, "body", true)?;
+    let children_renderables = children.renderable_items();
     let template = StructItemTupleTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         body: field_0.as_scalar(),
     };
     template.render()
@@ -15949,64 +16128,112 @@ fn render_hidden_struct_item_tuple(node: &NodeData) -> Result<String, ::askama::
 
 fn render_hidden_token_tree_brace(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _TokenTreeBraceTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_token_tree_bracket(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _TokenTreeBracketTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_token_tree_paren(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _TokenTreeParenTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_token_tree_pattern_brace(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _TokenTreePatternBraceTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_token_tree_pattern_bracket(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _TokenTreePatternBracketTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_token_tree_pattern_paren(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _TokenTreePatternParenTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_type_identifier(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TypeIdentifierTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_visibility_modifier_crate(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _VisibilityModifierCrateTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -16014,8 +16241,14 @@ fn render_hidden_visibility_modifier_crate(node: &NodeData) -> Result<String, ::
 fn render_hidden_visibility_modifier_in_path(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["in"])?;
     let field_0 = resolve_field(node, "in", true)?;
+    let children_renderables = children.renderable_items();
     let template = VisibilityModifierInPathTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         r#in: field_0.as_scalar(),
     };
     template.render()
@@ -16024,8 +16257,14 @@ fn render_hidden_visibility_modifier_in_path(node: &NodeData) -> Result<String, 
 fn render_hidden_visibility_modifier_pub(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["pub"])?;
     let field_0 = resolve_field(node, "pub", true)?;
+    let children_renderables = children.renderable_items();
     let template = VisibilityModifierPubTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         r#pub: field_0.as_scalar(),
     };
     template.render()
@@ -16044,16 +16283,28 @@ fn render_abstract_type(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_arguments(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ArgumentsTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_array_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ArrayExpressionTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -16119,8 +16370,14 @@ fn render_attribute(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["arguments", "value"])?;
     let field_0 = resolve_field(node, "arguments", false)?;
     let field_1 = resolve_field(node, "value", false)?;
+    let children_renderables = children.renderable_items();
     let template = AttributeTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         arguments: field_0.as_scalar(),
         value: field_1.as_scalar(),
     };
@@ -16129,16 +16386,28 @@ fn render_attribute(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_await_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = AwaitExpressionTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_base_field_initializer(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = BaseFieldInitializerTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -16172,8 +16441,14 @@ fn render_block_comment(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_block(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["label"])?;
     let field_0 = resolve_field(node, "label", false)?;
+    let children_renderables = children.renderable_items();
     let template = BlockTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         label: field_0.as_scalar(),
     };
     template.render()
@@ -16183,8 +16458,14 @@ fn render_bounded_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["left", "right"])?;
     let field_0 = resolve_field(node, "left", true)?;
     let field_1 = resolve_field(node, "right", true)?;
+    let children_renderables = children.renderable_items();
     let template = BoundedTypeTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         left: field_0.as_scalar(),
         right: field_1.as_scalar(),
     };
@@ -16193,8 +16474,14 @@ fn render_bounded_type(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_bracketed_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = BracketedTypeTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -16202,8 +16489,14 @@ fn render_bracketed_type(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_break_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["label"])?;
     let field_0 = resolve_field(node, "label", false)?;
+    let children_renderables = children.renderable_items();
     let template = BreakExpressionTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         label: field_0.as_scalar(),
     };
     template.render()
@@ -16223,8 +16516,14 @@ fn render_call_expression(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_captured_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["identifier"])?;
     let field_0 = resolve_field(node, "identifier", true)?;
+    let children_renderables = children.renderable_items();
     let template = CapturedPatternTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         identifier: field_0.as_scalar(),
     };
     template.render()
@@ -16245,8 +16544,14 @@ fn render_closure_expression(node: &NodeData) -> Result<String, ::askama::Error>
     let field_1 = resolve_field(node, "move_marker", false)?;
     let field_2 = resolve_field(node, "parameters", true)?;
     let field_3 = resolve_field(node, "static_marker", false)?;
+    let children_renderables = children.renderable_items();
     let template = ClosureExpressionTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         async_marker: field_0.as_scalar(),
         move_marker: field_1.as_scalar(),
         parameters: field_2.as_scalar(),
@@ -16257,16 +16562,28 @@ fn render_closure_expression(node: &NodeData) -> Result<String, ::askama::Error>
 
 fn render_closure_parameters(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ClosureParametersTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_comment(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = CommentTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -16332,40 +16649,70 @@ fn render_continue_expression(node: &NodeData) -> Result<String, ::askama::Error
 
 fn render_declaration_list(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = DeclarationListTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_delim_token_tree_brace(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = DelimTokenTreeBraceTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_delim_token_tree_bracket(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = DelimTokenTreeBracketTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_delim_token_tree_paren(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = DelimTokenTreeParenTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_delim_token_tree(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = DelimTokenTreeTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -16381,8 +16728,14 @@ fn render_dynamic_type(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_else_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ElseClauseTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -16406,8 +16759,14 @@ fn render_enum_item(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_enum_variant_list(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = EnumVariantListTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -16429,24 +16788,42 @@ fn render_enum_variant(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_expression_statement_block_ending(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ExpressionStatementBlockEndingTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_expression_statement_with_semi(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ExpressionStatementWithSemiTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_expression_statement(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ExpressionStatementTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -16477,8 +16854,14 @@ fn render_extern_modifier(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_field_declaration_list(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = FieldDeclarationListTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -16509,8 +16892,14 @@ fn render_field_expression(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_field_initializer_list(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = FieldInitializerListTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -16519,8 +16908,14 @@ fn render_field_initializer(node: &NodeData) -> Result<String, ::askama::Error> 
     let children = resolve_children(node, &["field", "value"])?;
     let field_0 = resolve_field(node, "field", true)?;
     let field_1 = resolve_field(node, "value", true)?;
+    let children_renderables = children.renderable_items();
     let template = FieldInitializerTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         field: field_0.as_scalar(),
         value: field_1.as_scalar(),
     };
@@ -16540,8 +16935,14 @@ fn render_field_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["mutable_specifier", "ref_marker"])?;
     let field_0 = resolve_field(node, "mutable_specifier", false)?;
     let field_1 = resolve_field(node, "ref_marker", false)?;
+    let children_renderables = children.renderable_items();
     let template = FieldPatternTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         mutable_specifier: field_0.as_scalar(),
         ref_marker: field_1.as_scalar(),
     };
@@ -16565,8 +16966,14 @@ fn render_for_expression(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_for_lifetimes(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ForLifetimesTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -16584,8 +16991,14 @@ fn render_foreign_mod_item(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["extern_modifier", "visibility_modifier"])?;
     let field_0 = resolve_field(node, "extern_modifier", true)?;
     let field_1 = resolve_field(node, "visibility_modifier", false)?;
+    let children_renderables = children.renderable_items();
     let template = ForeignModItemTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         extern_modifier: field_0.as_scalar(),
         visibility_modifier: field_1.as_scalar(),
     };
@@ -16618,9 +17031,25 @@ fn render_function_item(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_function_modifiers(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["modifier"])?;
     let field_0 = resolve_field(node, "modifier", true)?;
+    let children_renderables = children.renderable_items();
+    let field_0_renderables = field_0.renderable_items();
     let template = FunctionModifiersTemplate {
-        children: children.as_list_view(),
-        modifier: field_0.as_field_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+        modifier: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_0_renderables.as_slice(),
+                separator: field_0.separator,
+                leading: field_0.leading_sep,
+                trailing: field_0.trailing_sep,
+            }),
+        },
     };
     template.render()
 }
@@ -16651,8 +17080,14 @@ fn render_function_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "for_lifetimes", false)?;
     let field_1 = resolve_field(node, "parameters", true)?;
     let field_2 = resolve_field(node, "return_type", false)?;
+    let children_renderables = children.renderable_items();
     let template = FunctionTypeTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         for_lifetimes: field_0.as_scalar(),
         parameters: field_1.as_scalar(),
         return_type: field_2.as_scalar(),
@@ -16685,8 +17120,14 @@ fn render_generic_function(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_generic_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["type_arguments"])?;
     let field_0 = resolve_field(node, "type_arguments", true)?;
+    let children_renderables = children.renderable_items();
     let template = GenericPatternTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         type_arguments: field_0.as_scalar(),
     };
     template.render()
@@ -16757,8 +17198,14 @@ fn render_impl_item(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_3 = resolve_field(node, "type_parameters", false)?;
     let field_4 = resolve_field(node, "unsafe_marker", false)?;
     let field_5 = resolve_field(node, "where_clause", false)?;
+    let children_renderables = children.renderable_items();
     let template = ImplItemTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         negative: field_0.as_scalar(),
         r#trait: field_1.as_scalar(),
         r#type: field_2.as_scalar(),
@@ -16802,8 +17249,14 @@ fn render_last_match_arm(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["pattern", "value"])?;
     let field_0 = resolve_field(node, "pattern", true)?;
     let field_1 = resolve_field(node, "value", true)?;
+    let children_renderables = children.renderable_items();
     let template = LastMatchArmTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         pattern: field_0.as_scalar(),
         value: field_1.as_scalar(),
     };
@@ -16860,8 +17313,14 @@ fn render_lifetime(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_line_comment(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = LineCommentTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -16879,24 +17338,42 @@ fn render_loop_expression(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_macro_definition_brace(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = MacroDefinitionBraceTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_macro_definition_bracket(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = MacroDefinitionBracketTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_macro_definition_paren(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = MacroDefinitionParenTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -16904,8 +17381,14 @@ fn render_macro_definition_paren(node: &NodeData) -> Result<String, ::askama::Er
 fn render_macro_definition(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["name"])?;
     let field_0 = resolve_field(node, "name", true)?;
+    let children_renderables = children.renderable_items();
     let template = MacroDefinitionTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         name: field_0.as_scalar(),
     };
     template.render()
@@ -16945,8 +17428,14 @@ fn render_match_arm_block_ending(node: &NodeData) -> Result<String, ::askama::Er
 fn render_match_arm(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["pattern"])?;
     let field_0 = resolve_field(node, "pattern", true)?;
+    let children_renderables = children.renderable_items();
     let template = MatchArmTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         pattern: field_0.as_scalar(),
     };
     template.render()
@@ -16954,8 +17443,14 @@ fn render_match_arm(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_match_block(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = MatchBlockTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -16974,8 +17469,14 @@ fn render_match_expression(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_match_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["condition"])?;
     let field_0 = resolve_field(node, "condition", false)?;
+    let children_renderables = children.renderable_items();
     let template = MatchPatternTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         condition: field_0.as_scalar(),
     };
     template.render()
@@ -16994,8 +17495,14 @@ fn render_mod_item(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["name", "visibility_modifier"])?;
     let field_0 = resolve_field(node, "name", true)?;
     let field_1 = resolve_field(node, "visibility_modifier", false)?;
+    let children_renderables = children.renderable_items();
     let template = ModItemTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         name: field_0.as_scalar(),
         visibility_modifier: field_1.as_scalar(),
     };
@@ -17005,8 +17512,14 @@ fn render_mod_item(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_mut_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["mutable_specifier"])?;
     let field_0 = resolve_field(node, "mutable_specifier", true)?;
+    let children_renderables = children.renderable_items();
     let template = MutPatternTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         mutable_specifier: field_0.as_scalar(),
     };
     template.render()
@@ -17015,8 +17528,14 @@ fn render_mut_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_negative_literal(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["value"])?;
     let field_0 = resolve_field(node, "value", true)?;
+    let children_renderables = children.renderable_items();
     let template = NegativeLiteralTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         value: field_0.as_scalar(),
     };
     template.render()
@@ -17024,8 +17543,14 @@ fn render_negative_literal(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_or_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = OrPatternTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17033,9 +17558,25 @@ fn render_or_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_ordered_field_declaration_list(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["type"])?;
     let field_0 = resolve_field(node, "type", false)?;
+    let children_renderables = children.renderable_items();
+    let field_0_renderables = field_0.renderable_items();
     let template = OrderedFieldDeclarationListTemplate {
-        children: children.as_list_view(),
-        r#type: field_0.as_field_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+        r#type: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_0_renderables.as_slice(),
+                separator: field_0.separator,
+                leading: field_0.leading_sep,
+                trailing: field_0.trailing_sep,
+            }),
+        },
     };
     template.render()
 }
@@ -17055,24 +17596,42 @@ fn render_parameter(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_parameters(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ParametersTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_parenthesized_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ParenthesizedExpressionTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_pointer_type_mut(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = PointerTypeMutTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17080,8 +17639,14 @@ fn render_pointer_type_mut(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_pointer_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["type"])?;
     let field_0 = resolve_field(node, "type", true)?;
+    let children_renderables = children.renderable_items();
     let template = PointerTypeTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         r#type: field_0.as_scalar(),
     };
     template.render()
@@ -17109,8 +17674,14 @@ fn render_range_expression_bare(node: &NodeData) -> Result<String, ::askama::Err
 
 fn render_range_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = RangeExpressionTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17118,8 +17689,14 @@ fn render_range_expression(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_range_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["left"])?;
     let field_0 = resolve_field(node, "left", false)?;
+    let children_renderables = children.renderable_items();
     let template = RangePatternTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         left: field_0.as_scalar(),
     };
     template.render()
@@ -17136,8 +17713,14 @@ fn render_raw_string_literal(node: &NodeData) -> Result<String, ::askama::Error>
 
 fn render_ref_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = RefPatternTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17145,8 +17728,14 @@ fn render_ref_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_reference_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["value"])?;
     let field_0 = resolve_field(node, "value", true)?;
+    let children_renderables = children.renderable_items();
     let template = ReferenceExpressionTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         value: field_0.as_scalar(),
     };
     template.render()
@@ -17178,16 +17767,28 @@ fn render_reference_type(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_removed_trait_bound(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = RemovedTraitBoundTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_return_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ReturnExpressionTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17255,8 +17856,18 @@ fn render_shorthand_field_initializer(node: &NodeData) -> Result<String, ::askam
     let children = resolve_children(node, &["attributes", "identifier"])?;
     let field_0 = resolve_field(node, "attributes", false)?;
     let field_1 = resolve_field(node, "identifier", true)?;
+    let field_0_renderables = field_0.renderable_items();
     let template = ShorthandFieldInitializerTemplate {
-        attributes: field_0.as_field_view(),
+        attributes: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_0_renderables.as_slice(),
+                separator: field_0.separator,
+                leading: field_0.leading_sep,
+                trailing: field_0.trailing_sep,
+            }),
+        },
         identifier: field_1.as_scalar(),
     };
     template.render()
@@ -17264,8 +17875,14 @@ fn render_shorthand_field_initializer(node: &NodeData) -> Result<String, ::askam
 
 fn render_slice_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = SlicePatternTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17274,9 +17891,19 @@ fn render_source_file(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["shebang", "statements"])?;
     let field_0 = resolve_field(node, "shebang", false)?;
     let field_1 = resolve_field(node, "statements", false)?;
+    let field_1_renderables = field_1.renderable_items();
     let template = SourceFileTemplate {
         shebang: field_0.as_scalar(),
-        statements: field_1.as_field_view(),
+        statements: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_1_renderables.as_slice(),
+                separator: field_1.separator,
+                leading: field_1.leading_sep,
+                trailing: field_1.trailing_sep,
+            }),
+        },
     };
     template.render()
 }
@@ -17302,8 +17929,14 @@ fn render_static_item(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_string_literal(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = StringLiteralTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17324,8 +17957,14 @@ fn render_struct_item(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "name", true)?;
     let field_1 = resolve_field(node, "type_parameters", false)?;
     let field_2 = resolve_field(node, "visibility_modifier", false)?;
+    let children_renderables = children.renderable_items();
     let template = StructItemTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         name: field_0.as_scalar(),
         type_parameters: field_1.as_scalar(),
         visibility_modifier: field_2.as_scalar(),
@@ -17336,8 +17975,14 @@ fn render_struct_item(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_struct_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["type"])?;
     let field_0 = resolve_field(node, "type", true)?;
+    let children_renderables = children.renderable_items();
     let template = StructPatternTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         r#type: field_0.as_scalar(),
     };
     template.render()
@@ -17356,88 +18001,154 @@ fn render_token_binding_pattern(node: &NodeData) -> Result<String, ::askama::Err
 
 fn render_token_repetition_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TokenRepetitionPatternTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_token_repetition(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TokenRepetitionTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_token_tree_brace(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TokenTreeBraceTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_token_tree_bracket(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TokenTreeBracketTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_token_tree_paren(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TokenTreeParenTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_token_tree_pattern_brace(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TokenTreePatternBraceTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_token_tree_pattern_bracket(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TokenTreePatternBracketTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_token_tree_pattern_paren(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TokenTreePatternParenTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_token_tree_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TokenTreePatternTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_token_tree(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TokenTreeTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_trait_bounds(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TraitBoundsTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17485,17 +18196,43 @@ fn render_tuple_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["attributes", "elements"])?;
     let field_0 = resolve_field(node, "attributes", false)?;
     let field_1 = resolve_field(node, "elements", false)?;
+    let field_0_renderables = field_0.renderable_items();
+    let field_1_renderables = field_1.renderable_items();
     let template = TupleExpressionTemplate {
-        attributes: field_0.as_field_view(),
-        elements: field_1.as_field_view(),
+        attributes: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_0_renderables.as_slice(),
+                separator: field_0.separator,
+                leading: field_0.leading_sep,
+                trailing: field_0.trailing_sep,
+            }),
+        },
+        elements: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_1_renderables.as_slice(),
+                separator: field_1.separator,
+                leading: field_1.leading_sep,
+                trailing: field_1.trailing_sep,
+            }),
+        },
     };
     template.render()
 }
 
 fn render_tuple_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TuplePatternTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17503,8 +18240,14 @@ fn render_tuple_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_tuple_struct_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["type"])?;
     let field_0 = resolve_field(node, "type", true)?;
+    let children_renderables = children.renderable_items();
     let template = TupleStructPatternTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         r#type: field_0.as_scalar(),
     };
     template.render()
@@ -17512,16 +18255,28 @@ fn render_tuple_struct_pattern(node: &NodeData) -> Result<String, ::askama::Erro
 
 fn render_tuple_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TupleTypeTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_type_arguments(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TypeArgumentsTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17584,8 +18339,14 @@ fn render_type_parameter(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_type_parameters(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TypeParametersTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17640,8 +18401,14 @@ fn render_use_as_clause(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_use_bounds(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = UseBoundsTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17659,8 +18426,14 @@ fn render_use_declaration(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_use_list(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = UseListTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17687,24 +18460,42 @@ fn render_variadic_parameter(node: &NodeData) -> Result<String, ::askama::Error>
 
 fn render_visibility_modifier_crate(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = VisibilityModifierCrateTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_visibility_modifier(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = VisibilityModifierTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_where_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = WhereClauseTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17735,8 +18526,14 @@ fn render_while_expression(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_yield_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = YieldExpressionTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }

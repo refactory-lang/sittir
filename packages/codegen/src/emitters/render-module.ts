@@ -323,11 +323,24 @@ function renderDirectSupport(meta: MetaData): string {
 	lines.push(
 		`    fn from_items(items: Vec<String>, separator: &'static str, leading_sep: bool, trailing_sep: bool) -> Self {`
 	);
+	lines.push(`        let mut scalar = String::new();`);
+	lines.push(`        if leading_sep && !items.is_empty() {`);
+	lines.push(`            scalar.push_str(separator);`);
+	lines.push(`        }`);
+	lines.push(`        let mut first = true;`);
+	lines.push(`        for item in &items {`);
+	lines.push(`            if !first {`);
+	lines.push(`                scalar.push_str(separator);`);
+	lines.push(`            }`);
+	lines.push(`            scalar.push_str(item);`);
+	lines.push(`            first = false;`);
+	lines.push(`        }`);
+	lines.push(`        if trailing_sep && !items.is_empty() {`);
+	lines.push(`            scalar.push_str(separator);`);
+	lines.push(`        }`);
 	lines.push(`        Self {`);
 	lines.push(`            kind: ResolvedFieldKind::List,`);
-	lines.push(
-		`            scalar: ::sittir_core::filters::joinby(&items, separator, leading_sep, trailing_sep).unwrap_or_default(),`
-	);
+	lines.push(`            scalar,`);
 	lines.push(`            items,`);
 	lines.push(`            separator,`);
 	lines.push(`            leading_sep,`);
@@ -339,31 +352,8 @@ function renderDirectSupport(meta: MetaData): string {
 	lines.push(`        self.scalar.as_str()`);
 	lines.push(`    }`);
 	lines.push('');
-	lines.push(
-		`    fn as_list_view(&self) -> ::sittir_core::filters::ListView<'_> {`
-	);
-	lines.push(`        ::sittir_core::filters::ListView {`);
-	lines.push(`            items: self.items.as_slice(),`);
-	lines.push(`            separator: self.separator,`);
-	lines.push(`            leading: self.leading_sep,`);
-	lines.push(`            trailing: self.trailing_sep,`);
-	lines.push(`        }`);
-	lines.push(`    }`);
-	lines.push('');
-	lines.push(
-		`    fn as_field_view(&self) -> ::sittir_core::filters::FieldView<'_> {`
-	);
-	lines.push(`        match self.kind {`);
-	lines.push(
-		`            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,`
-	);
-	lines.push(
-		`            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::Scalar(self.scalar.as_str()),`
-	);
-	lines.push(
-		`            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::List(self.as_list_view()),`
-	);
-	lines.push(`        }`);
+	lines.push(`    fn renderable_items(&self) -> Vec<::sittir_core::filters::Renderable<'_>> {`);
+	lines.push(`        self.items.iter().map(|s| ::sittir_core::filters::Renderable::Text(s.as_str())).collect()`);
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
@@ -793,9 +783,28 @@ function renderPerKindFns(structs: EmittedStruct[]): string {
 		if (s.hasText) {
 			lines.push(`    let text = resolve_text(node)?;`);
 		}
+		// Build stack-local renderable buffers so the template can borrow
+		// `Renderable::Text(&str)` views over the resolved string items.
+		// `ResolvedField::items: Vec<String>` lives in this stack frame, so the
+		// renderable vec borrowing from it is sound for the template's
+		// lifetime.
+		if (s.hasChildren) {
+			lines.push(`    let children_renderables = children.renderable_items();`);
+		}
+		for (const [index, f] of s.fields.entries()) {
+			if (f.view === 'scalar') continue;
+			lines.push(
+				`    let field_${index}_renderables = field_${index}.renderable_items();`
+			);
+		}
 		lines.push(`    let template = ${s.name} {`);
 		if (s.hasChildren) {
-			lines.push(`        children: children.as_list_view(),`);
+			lines.push(`        children: ::sittir_core::filters::ListView {`);
+			lines.push(`            items: children_renderables.as_slice(),`);
+			lines.push(`            separator: children.separator,`);
+			lines.push(`            leading: children.leading_sep,`);
+			lines.push(`            trailing: children.trailing_sep,`);
+			lines.push(`        },`);
 		}
 		if (s.hasVariant) {
 			lines.push(`        variant,`);
@@ -809,13 +818,23 @@ function renderPerKindFns(structs: EmittedStruct[]): string {
 					`        ${rustFieldIdent(f.name)}: field_${index}.as_scalar(),`
 				);
 			} else if (f.view === 'list') {
-				lines.push(
-					`        ${rustFieldIdent(f.name)}: field_${index}.as_list_view(),`
-				);
+				lines.push(`        ${rustFieldIdent(f.name)}: ::sittir_core::filters::ListView {`);
+				lines.push(`            items: field_${index}_renderables.as_slice(),`);
+				lines.push(`            separator: field_${index}.separator,`);
+				lines.push(`            leading: field_${index}.leading_sep,`);
+				lines.push(`            trailing: field_${index}.trailing_sep,`);
+				lines.push(`        },`);
 			} else {
-				lines.push(
-					`        ${rustFieldIdent(f.name)}: field_${index}.as_field_view(),`
-				);
+				lines.push(`        ${rustFieldIdent(f.name)}: match field_${index}.kind {`);
+				lines.push(`            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,`);
+				lines.push(`            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_${index}.as_scalar())),`);
+				lines.push(`            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {`);
+				lines.push(`                items: field_${index}_renderables.as_slice(),`);
+				lines.push(`                separator: field_${index}.separator,`);
+				lines.push(`                leading: field_${index}.leading_sep,`);
+				lines.push(`                trailing: field_${index}.trailing_sep,`);
+				lines.push(`            }),`);
+				lines.push(`        },`);
 			}
 		}
 		lines.push(`    };`);

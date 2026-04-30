@@ -21,7 +21,7 @@ export declare class SittirEngine {
   findAndRead(source: string, pattern: string): string
   parseAndRead(source: string): string
   readNode(nodeId: number): string
-  render(node: Record<string, unknown>): string
+  render(node: any): string
   applyEdits(source: string, edits: Array<Edit>): string
   dispose(): void
 }

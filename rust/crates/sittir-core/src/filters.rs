@@ -234,6 +234,38 @@ impl ::askama::FastWritable for FieldView<'_> {
     }
 }
 
+/// Iterator over the `Renderable`s a `FieldView` exposes. `Missing` yields
+/// none, `One(r)` yields a single reference, `Many(view)` defers to the
+/// `ListView` iterator.
+pub enum FieldViewIter<'a> {
+    Missing,
+    One(std::option::IntoIter<&'a Renderable<'a>>),
+    Many(ListViewIter<'a>),
+}
+
+impl<'a> Iterator for FieldViewIter<'a> {
+    type Item = &'a Renderable<'a>;
+    fn next(&mut self) -> Option<Self::Item> {
+        match self {
+            Self::Missing => None,
+            Self::One(inner) => inner.next(),
+            Self::Many(inner) => inner.next(),
+        }
+    }
+}
+
+impl<'a> IntoIterator for &'a FieldView<'a> {
+    type Item = &'a Renderable<'a>;
+    type IntoIter = FieldViewIter<'a>;
+    fn into_iter(self) -> Self::IntoIter {
+        match self {
+            FieldView::Missing => FieldViewIter::Missing,
+            FieldView::One(r) => FieldViewIter::One(Some(r).into_iter()),
+            FieldView::Many(view) => FieldViewIter::Many(view.into_iter()),
+        }
+    }
+}
+
 /// Trait for types that can supply a slice of [`Renderable`]s for joining.
 ///
 /// Replaces the string-based `JoinSource` from Task 2 scaffolding.
