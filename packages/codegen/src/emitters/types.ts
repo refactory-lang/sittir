@@ -16,6 +16,38 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
+import {
+	collectKindEntries,
+	kindDiscriminantExpr,
+	kindIdMemberName,
+	type KindEnumEntry
+} from './kind-discriminant.ts';
+export {
+	collectKindEntries,
+	kindDiscriminantExpr,
+	kindIdMemberName,
+	type KindEnumEntry
+} from './kind-discriminant.ts';
+
+/**
+ * Return the discriminant expression for a kind, falling back to a JSON
+ * string literal when `kindEntries` is absent (legacy callers / tests
+ * that don't supply `generatedIdTables`). The primary path always uses
+ * `TSKindId.X` so generated grammar packages carry numeric discriminants.
+ */
+function kindDiscriminantOrLiteral(
+	kind: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	if (!kindEntries) return JSON.stringify(kind);
+	// TSGrammar-only kinds (inlined by the parser, never in kindEntries) fall
+	// back to string literal — they can't carry a runtime $type so the type
+	// annotation stays as a string literal instead of a TSKindId reference.
+	const hasEntry = kindEntries.some((e) => e.kind === kind);
+	if (!hasEntry) return JSON.stringify(kind);
+	return kindDiscriminantExpr(kind, nodeMap, kindEntries);
+}
 import type {
 	AssembledNode,
 	AssembledField,
@@ -206,7 +238,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 					ftn,
 					nodeMap,
 					lookupUnion,
-					kindDiscriminantExpr(node.kind, nodeMap, kindEntries)
+					kindDiscriminantOrLiteral(node.kind, nodeMap, kindEntries)
 				);
 			}
 			if (node.forms.length > 1) {
@@ -226,7 +258,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 				node,
 				nodeMap,
 				lookupUnion,
-				kindDiscriminantExpr(node.kind, nodeMap, kindEntries)
+				kindDiscriminantOrLiteral(node.kind, nodeMap, kindEntries)
 			);
 		}
 	}
@@ -946,71 +978,7 @@ function emitKindIdEnumAndLookups(
 	lines.push('');
 }
 
-interface KindEnumEntry {
-	readonly kind: string;
-	readonly member: string;
-	readonly id: number;
-}
 
-function collectKindEntries(
-	allKinds: readonly string[],
-	nodeMap: NodeMap,
-	generatedIdTables: GeneratedIdTables
-): KindEnumEntry[] {
-	const kindIds = toIdMap(generatedIdTables.kindIds);
-	const entries: KindEnumEntry[] = [];
-	const seenMembers = new Set<string>();
-	for (const kind of allKinds) {
-		const id = kindIds.get(kind);
-		if (id === undefined) {
-			// The kind exists in the codegen rule set but has no parser
-			// symbol — tree-sitter fully inlined it during parser
-			// compilation, so it never carries a `$type` on a parsed tree
-			// (TSGrammar without TSRuntime in the KindID symbol-catalog
-			// design, 2026-04-30). Skip emitting a TSKindId member for it;
-			// the kind's interface still gets a string-discriminant `$type`
-			// via `kindDiscriminantExpr`'s pre-kindEntries fallback path.
-			continue;
-		}
-		const member = kindIdMemberName(nodeMap, kind);
-		if (seenMembers.has(member)) continue;
-		seenMembers.add(member);
-		entries.push({ kind, member, id });
-	}
-	entries.sort((a, b) => a.id - b.id || a.kind.localeCompare(b.kind));
-	return entries;
-}
-
-function kindDiscriminantExpr(
-	kind: string,
-	nodeMap: NodeMap,
-	kindEntries?: readonly KindEnumEntry[]
-): string {
-	if (!kindEntries) return JSON.stringify(kind);
-	// A kind with no entry was skipped because tree-sitter inlined it (no
-	// parser symbol). Use the string discriminant so generated code stays
-	// consistent — the kind still has a string-shaped `$type`.
-	const hasEntry = kindEntries.some((e) => e.kind === kind);
-	if (!hasEntry) return JSON.stringify(kind);
-	return `TSKindId.${kindIdMemberName(nodeMap, kind)}`;
-}
-
-function toIdMap(
-	ids: GeneratedIdTables['kindIds']
-): Map<string, number> {
-	if (!ids) return new Map();
-	const entries = ids instanceof Map ? [...ids.entries()] : Object.entries(ids);
-	return new Map(
-		entries.map(([name, entry]) => [
-			name,
-			typeof entry === 'number' ? entry : entry.id
-		])
-	);
-}
-
-function kindIdMemberName(nodeMap: NodeMap, kind: string): string {
-	return nodeMap.nodes.get(kind)?.typeName ?? toPascal(kind);
-}
 
 // ---------------------------------------------------------------------------
 // LookupUnion factory

@@ -329,24 +329,25 @@ function collectIdEntries(
 		)
 		.sort(
 			(a, b) =>
-				a.entry.id - b.entry.id ||
+				(a.entry.id ?? -1) - (b.entry.id ?? -1) ||
 				a.key.localeCompare(b.key) ||
-				(a.entry.cName ?? '').localeCompare(b.entry.cName ?? '')
+				(a.entry.parser?.cSymbol ?? '').localeCompare(b.entry.parser?.cSymbol ?? '')
 		);
 
 	for (const { key, entry } of keyedEntries) {
+		const cSymbol = entry.parser?.cSymbol;
 		const baseName =
-			entry.cName && /^[A-Za-z_]\w*$/.test(entry.cName)
-				? treeSitterCNameMemberName(entry.cName)
+			cSymbol && /^[A-Za-z_]\w*$/.test(cSymbol)
+				? treeSitterCNameMemberName(cSymbol)
 				: treeSitterIdMemberName(key);
 		const existingKey = usedNames.get(baseName);
 		const memberName =
 			existingKey === undefined || existingKey === key
 				? baseName
-				: `${baseName}_${entry.id}`;
+				: `${baseName}_${entry.id ?? ''}`;
 		usedNames.set(memberName, key);
 		if (existingKey === undefined) usedNames.set(baseName, key);
-		result.push({ key, id: entry.id, cName: entry.cName, memberName });
+		result.push({ key, id: entry.id ?? -1, cName: cSymbol, memberName });
 	}
 
 	return result;

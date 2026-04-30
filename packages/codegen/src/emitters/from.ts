@@ -8,6 +8,12 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts';
+import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
+import {
+	collectKindEntries,
+	kindDiscriminantExpr,
+	type KindEnumEntry
+} from './kind-discriminant.ts';
 import type {
 	AssembledNode,
 	AssembledField,
@@ -38,6 +44,12 @@ import type { NodeOrTerminal } from '../compiler/node-map.ts';
 export interface EmitFromConfig {
 	grammar: string;
 	nodeMap: NodeMap;
+	/**
+	 * Parser-symbol ID tables for numeric $type comparison emission.
+	 * When present, from.ts emits `input.$type === TSKindId.X` checks.
+	 * When absent (legacy callers), falls back to string literal checks.
+	 */
+	generatedIdTables?: GeneratedIdTables;
 }
 
 // ---------------------------------------------------------------------------
@@ -134,9 +146,15 @@ function buildKindInterner(
  *
  * @param lines - Output lines array to push into.
  */
-function emitNamespaceImports(lines: string[]): void {
+function emitNamespaceImports(
+	lines: string[],
+	kindEntries: readonly KindEnumEntry[] | undefined
+): void {
 	lines.push(`import * as F from './factories.js';`);
 	lines.push(`import type * as T from './types.js';`);
+	if (kindEntries) {
+		lines.push(`import { TSKindId } from './types.js';`);
+	}
 	lines.push("import type { AnyNodeData, ConfigOf } from '@sittir/types';");
 	lines.push("import { isNodeData } from './utils.js';");
 	lines.push('');
@@ -192,13 +210,14 @@ function emitFromFieldInputType(lines: string[]): void {
  */
 function collectPerNodeFromBlocks(
 	nodeMap: NodeMap,
-	internKinds: KindInterner
+	internKinds: KindInterner,
+	kindEntries: readonly KindEnumEntry[] | undefined
 ): string[] {
 	const perNodeBlocks: string[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
 		if (kind.startsWith('_')) continue;
 		if (nodeMap.polymorphFormKinds.has(kind)) continue;
-		const source = renderFromForNode(node, nodeMap, internKinds);
+		const source = renderFromForNode(node, nodeMap, internKinds, kindEntries);
 		if (source === undefined) continue;
 		perNodeBlocks.push(source);
 	}
@@ -270,7 +289,13 @@ function emitInternedKindTable(
 }
 
 export function emitFrom(config: EmitFromConfig): string {
-	const { nodeMap } = config;
+	const { nodeMap, generatedIdTables } = config;
+
+	// Collect KindEnumEntry table for numeric $type comparisons in from() resolvers.
+	const allKinds = Array.from(nodeMap.nodes.keys());
+	const kindEntries = generatedIdTables
+		? collectKindEntries(allKinds, nodeMap, generatedIdTables)
+		: undefined;
 
 	const supertypeByKey = buildSupertypeByKey(nodeMap);
 	const kindTableIndex = new Map<string, number>();
@@ -288,7 +313,7 @@ export function emitFrom(config: EmitFromConfig): string {
 		''
 	];
 
-	emitNamespaceImports(lines);
+	emitNamespaceImports(lines, kindEntries);
 
 	// ------------------------------------------------------------------
 	// Shared input type for the resolver layer.
@@ -296,7 +321,7 @@ export function emitFrom(config: EmitFromConfig): string {
 	// ------------------------------------------------------------------
 	emitFromFieldInputType(lines);
 
-	const perNodeBlocks = collectPerNodeFromBlocks(nodeMap, internKinds);
+	const perNodeBlocks = collectPerNodeFromBlocks(nodeMap, internKinds, kindEntries);
 
 	emitFromMapDeclaration(lines, nodeMap);
 
@@ -321,7 +346,8 @@ export function emitFrom(config: EmitFromConfig): string {
 function renderFromForNode(
 	node: AssembledNode,
 	nodeMap: NodeMap,
-	intern: KindInterner
+	intern: KindInterner,
+	kindEntries: readonly KindEnumEntry[] | undefined
 ): string | undefined {
 	if (!node.rawFactoryName || !node.fromFunctionName) return undefined;
 	switch (node.modelType) {
@@ -339,7 +365,7 @@ function renderFromForNode(
 			}
 			return emitBranchFrom(node, nodeMap, intern);
 		case 'container':
-			return emitContainerFrom(node);
+			return emitContainerFrom(node, kindEntries, nodeMap);
 		case 'polymorph':
 			return emitPolymorphFrom(node, nodeMap, intern);
 		case 'leaf':
@@ -739,6 +765,32 @@ interface ContainerFromNode {
 }
 
 /**
+ * Returns the runtime expression used to compare `.$type` in container
+ * from() guards.
+ *
+ * @remarks
+ * When `kindEntries` is present (KindID pipeline), emits `TSKindId.X` — a
+ * numeric discriminant. When absent (legacy / unit-test path), falls back
+ * to `'<kind>'` string literal so callers without real grammar ID tables
+ * continue to compile.
+ *
+ * @param kind - The grammar kind string.
+ * @param kindEntries - Collected kind-enum entries, or `undefined` for fallback.
+ * @param nodeMap - The assembled node map (used for member-name derivation).
+ * @returns An expression string suitable for `input.$type === <expr>`.
+ */
+function containerTypeCheck(
+	kind: string,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap
+): string {
+	if (!kindEntries) return `'${kind}'`;
+	const hasEntry = kindEntries.some((e) => e.kind === kind);
+	if (!hasEntry) return `'${kind}'`;
+	return kindDiscriminantExpr(kind, nodeMap, kindEntries);
+}
+
+/**
  * Emits the repeated-children variant of a container from() function, using
  * rest-parameter spread syntax.
  *
@@ -758,6 +810,8 @@ interface ContainerFromNode {
  * @param childType - The `NonNullable<T.<TypeName>.Config['children']>` type string.
  * @param elementType - The `${childType}[number]` element type string.
  * @param kind - The grammar kind string for the self-NodeData check.
+ * @param kindEntries - Collected kind-enum entries for numeric $type comparison.
+ * @param nodeMap - The assembled node map (used for member-name derivation).
  * @returns The emitted function source string.
  */
 function emitRepeatedContainerFrom(
@@ -766,7 +820,9 @@ function emitRepeatedContainerFrom(
 	tName: string,
 	_childType: string,
 	elementType: string,
-	kind: string
+	kind: string,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap
 ): string {
 	// The accepted-input union allows callers to hand back an existing
 	// <kind> NodeData OR a flat list of element children. The single-arg
@@ -779,9 +835,10 @@ function emitRepeatedContainerFrom(
 	// `data.$children` is typed as `readonly NodeChildValue[]` (the loose
 	// generic shape on `AnyNodeData`); the same boundary cast funnels it
 	// into the factory's narrow children-element type.
+	const typeCheck = containerTypeCheck(kind, kindEntries, nodeMap);
 	return [
 		`export function ${fn}(...input: readonly (${elementType} | ${tName})[]) {`,
-		`  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === '${kind}') {`,
+		`  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === ${typeCheck}) {`,
 		`    const data = input[0];`,
 		`    return ${factory}(...((data.$children ?? []) as readonly ${elementType}[]));`,
 		`  }`,
@@ -811,6 +868,8 @@ function emitRepeatedContainerFrom(
  * @param childType - The `NonNullable<T.<TypeName>.Config['children']>` type string.
  * @param elementType - The `${childType}[number]` element type string.
  * @param kind - The grammar kind string for the self-NodeData check.
+ * @param kindEntries - Collected kind-enum entries for numeric $type comparison.
+ * @param nodeMap - The assembled node map (used for member-name derivation).
  * @returns The emitted function source string.
  */
 function emitSingularContainerFrom(
@@ -819,16 +878,19 @@ function emitSingularContainerFrom(
 	tName: string,
 	_childType: string,
 	elementType: string,
-	kind: string
+	kind: string,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap
 ): string {
 	// The factory's child parameter inferred type may be required or optional
 	// depending on grammar shape. Cast at the boundary funnels both shapes
 	// through one assertion so the emitter doesn't have to track which form
 	// each kind maps to. Runtime behaviour: required factories will throw
 	// on `undefined`, matching the unwrap path's "missing children" diagnostic.
+	const typeCheck = containerTypeCheck(kind, kindEntries, nodeMap);
 	return [
 		`export function ${fn}(input?: ${elementType} | ${tName}) {`,
-		`  if (isNodeData(input) && input.$type === '${kind}') {`,
+		`  if (isNodeData(input) && input.$type === ${typeCheck}) {`,
 		`    const data = input;`,
 		`    const child = data.$children ? data.$children[0] : undefined;`,
 		`    return ${factory}(child as Parameters<typeof ${factory}>[0]);`,
@@ -841,7 +903,11 @@ function emitSingularContainerFrom(
 	].join('\n');
 }
 
-function emitContainerFrom(node: ContainerFromNode): string {
+function emitContainerFrom(
+	node: ContainerFromNode,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap
+): string {
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	const tName = `T.${node.typeName}`;
@@ -855,7 +921,9 @@ function emitContainerFrom(node: ContainerFromNode): string {
 			tName,
 			childType,
 			elementType,
-			node.kind
+			node.kind,
+			kindEntries,
+			nodeMap
 		);
 	}
 	return emitSingularContainerFrom(
@@ -864,7 +932,9 @@ function emitContainerFrom(node: ContainerFromNode): string {
 		tName,
 		childType,
 		elementType,
-		node.kind
+		node.kind,
+		kindEntries,
+		nodeMap
 	);
 }
 

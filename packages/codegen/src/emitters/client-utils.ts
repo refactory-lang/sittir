@@ -43,6 +43,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 		"import type { AnyNodeData, AnyTreeNodeOf } from '@sittir/types';"
 	);
 	lines.push("import type { AnyTransport, NamespaceMap } from './types.js';");
+	lines.push("import { kindNameFromId } from './types.js';");
 	lines.push('');
 
 	// isNodeData
@@ -80,7 +81,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('export function isNodeData(v: unknown): v is AnyNodeData {');
 	lines.push("  if (v === null || typeof v !== 'object') return false;");
 	lines.push('  const o = v as Record<string, unknown>;');
-	lines.push("  if (typeof o['$type'] !== 'string') return false;");
+	lines.push("  if (typeof o['$type'] !== 'number') return false;");
 	lines.push(
 		"  return (o['$fields'] !== null && typeof o['$fields'] === 'object')"
 	);
@@ -126,7 +127,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('  v: unknown,');
 	lines.push('  kind: K,');
 	lines.push("): v is NamespaceMap[K]['Node'] {");
-	lines.push('  return isNodeData(v) && v.$type === kind;');
+	lines.push('  return isNodeData(v) && v.$type === kindIdFromName(kind);');
 	lines.push('}');
 	lines.push('');
 
@@ -179,13 +180,13 @@ function emitNativeTransportProjection(lines: string[], nodeMap: NodeMap): void 
 	lines.push('    return { $type: value, $text: value };');
 	lines.push('  }');
 	lines.push('  if (!isRecord(value)) return value;');
-	lines.push('  if (typeof value.$type !== "string") return value;');
+	lines.push('  if (typeof value.$type !== "number") return value;');
 	lines.push('');
 	lines.push('  const projected: Record<string, unknown> = {};');
 	lines.push('  for (const key of transportMetadataKeys) {');
 	lines.push('    if (key in value) projected[key] = value[key];');
 	lines.push('  }');
-	lines.push('  projected.$type = nativeTransportType(value.$type);');
+	lines.push('  projected.$type = nativeTransportType(kindNameFromId(value.$type as number));');
 	lines.push('');
 	lines.push('  const fields = value.$fields;');
 	lines.push('  if (isRecord(fields)) {');

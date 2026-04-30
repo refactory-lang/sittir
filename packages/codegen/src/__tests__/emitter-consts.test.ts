@@ -331,13 +331,13 @@ describe('emitConsts', () => {
 			nodeMap,
 			generatedIdTables: {
 				kindIds: {
-					source_file: { id: 1, cName: 'sym_source_file' },
-					';': { id: 2, cName: 'anon_sym_SEMI' },
-					missing: { id: 99, cName: 'sym_missing' }
+					source_file: { id: 1, parser: { cSymbol: 'sym_source_file', parserName: 'source_file', anon: false, aux: false, alias: false, hidden: false } },
+					';': { id: 2, parser: { cSymbol: 'anon_sym_SEMI', parserName: 'SEMI', anon: true, aux: false, alias: false, hidden: false } },
+					missing: { id: 99, parser: { cSymbol: 'sym_missing', parserName: 'missing', anon: false, aux: false, alias: false, hidden: false } }
 				},
 				fieldIds: {
-					item: { id: 7, cName: 'field_item' },
-					missing: { id: 99, cName: 'field_missing' }
+					item: { id: 7, parser: { cSymbol: 'field_item', parserName: 'item', anon: false, aux: false, alias: false, hidden: false } },
+					missing: { id: 99, parser: { cSymbol: 'field_missing', parserName: 'missing', anon: false, aux: false, alias: false, hidden: false } }
 				},
 				sourceArtifact: 'parser.wasm'
 			}

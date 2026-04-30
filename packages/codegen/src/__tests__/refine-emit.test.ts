@@ -180,9 +180,9 @@ function runPipeline(forms: RefineForm[]) {
 function makeGeneratedIdTables(): GeneratedIdTables {
 	return {
 		kindIds: {
-			iface_body: { id: 11, cName: 'sym_iface_body' },
-			iface_body_curly: { id: 17, cName: 'sym_iface_body_curly' },
-			iface_body_flow: { id: 23, cName: 'sym_iface_body_flow' }
+			iface_body: { id: 11, parser: { cSymbol: 'sym_iface_body', parserName: 'iface_body', anon: false, aux: false, alias: false, hidden: false } },
+			iface_body_curly: { id: 17, parser: { cSymbol: 'sym_iface_body_curly', parserName: 'iface_body_curly', anon: false, aux: false, alias: false, hidden: false } },
+			iface_body_flow: { id: 23, parser: { cSymbol: 'sym_iface_body_flow', parserName: 'iface_body_flow', anon: false, aux: false, alias: false, hidden: false } }
 		},
 		sourceArtifact: 'parser.wasm'
 	};

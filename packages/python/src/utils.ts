@@ -3,6 +3,7 @@
 
 import type { AnyNodeData, AnyTreeNodeOf } from '@sittir/types';
 import type { AnyTransport, NamespaceMap } from './types.js';
+import { kindNameFromId } from './types.js';
 
 /**
  * Type guard: returns true if `v` is a NodeData.
@@ -24,7 +25,7 @@ export function isNodeData(v: unknown): v is AnyNodeData;
 export function isNodeData(v: unknown): v is AnyNodeData {
   if (v === null || typeof v !== 'object') return false;
   const o = v as Record<string, unknown>;
-  if (typeof o['$type'] !== 'string') return false;
+  if (typeof o['$type'] !== 'number') return false;
   return (o['$fields'] !== null && typeof o['$fields'] === 'object')
     || typeof o['$text'] === 'string'
     || Array.isArray(o['$children'])
@@ -52,7 +53,7 @@ export function isNodeOfKind<K extends keyof NamespaceMap>(
   v: unknown,
   kind: K,
 ): v is NamespaceMap[K]['Node'] {
-  return isNodeData(v) && v.$type === kind;
+  return isNodeData(v) && v.$type === kindIdFromName(kind);
 }
 
 export function hasKindOf<K extends keyof NamespaceMap>(
@@ -268,13 +269,13 @@ function projectTransportValue(value: unknown, path: string): unknown {
     return { $type: value, $text: value };
   }
   if (!isRecord(value)) return value;
-  if (typeof value.$type !== "string") return value;
+  if (typeof value.$type !== "number") return value;
 
   const projected: Record<string, unknown> = {};
   for (const key of transportMetadataKeys) {
     if (key in value) projected[key] = value[key];
   }
-  projected.$type = nativeTransportType(value.$type);
+  projected.$type = nativeTransportType(kindNameFromId(value.$type as number));
 
   const fields = value.$fields;
   if (isRecord(fields)) {

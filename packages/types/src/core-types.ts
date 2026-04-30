@@ -52,7 +52,18 @@ export type NodeId = number & { readonly [nodeIdBrand]: true };
  * instead of structural `isNodeData` probing.
  */
 export interface AnyNodeData {
-	$type: string;
+	/**
+	 * Numeric runtime kind discriminant (`TSKindId.X` per generated grammar
+	 * package). Per the KindID runtime migration design (2026-04-30),
+	 * runtime objects carry the parser.c-derived numeric ID, not the kind
+	 * name. Boundary callers that have a string `$type` must normalize
+	 * once via the grammar package's `normalizeKindId(node)` before
+	 * internal access.
+	 *
+	 * The pre-migration string-shape (`$type: 'function_item'`) is a
+	 * shim accepted only at TS package public API entrypoints.
+	 */
+	$type: number;
 	/** Which producer emitted this node. */
 	$source?: 'ts' | 'sg' | 'factory';
 	/** Variant subtype name — set by factory, absent on readNode output. */

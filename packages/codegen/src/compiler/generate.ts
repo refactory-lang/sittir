@@ -162,17 +162,18 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		factories: emitFactories({
 			grammar: cfg.grammar,
 			nodeMap,
-			strict: cfg.strict
+			strict: cfg.strict,
+			generatedIdTables
 		}),
 		factoryMap: emitFactoryMap({ grammar: cfg.grammar, nodeMap }),
-		wrap: emitWrap({ grammar: cfg.grammar, nodeMap }),
+		wrap: emitWrap({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
 		utils: emitClientUtils({ nodeMap }),
-		from: emitFrom({ grammar: cfg.grammar, nodeMap }),
+		from: emitFrom({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
 		irNamespace: emitIr({ grammar: cfg.grammar, nodeMap }),
 		consts: emitConsts({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
 		index: emitIndex({ grammar: cfg.grammar, nodeMap }),
-		tests: emitTests({ grammar: cfg.grammar, nodeMap }),
-		typeTests: emitTypeTests({ nodeMap }),
+		tests: emitTests({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
+		typeTests: emitTypeTests({ nodeMap, generatedIdTables }),
 		config: emitConfig({ grammar: cfg.grammar }),
 		nodeModel: emitNodeModel({ grammar: cfg.grammar, nodeMap }),
 		suggested: emitSuggested({

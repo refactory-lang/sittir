@@ -14,6 +14,7 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts';
+import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type {
 	AssembledField,
 	AssembledChild,
@@ -25,14 +26,34 @@ import {
 	isValidIdent,
 	isMultiple
 } from './shared.ts';
+import {
+	collectKindEntries,
+	kindIdMemberName,
+	type KindEnumEntry
+} from './kind-discriminant.ts';
 
 export interface EmitWrapConfig {
 	grammar: string;
 	nodeMap: NodeMap;
+	/**
+	 * Parser-symbol ID tables (from `loadGeneratedIdTables`). When present,
+	 * per-kind wrap functions stamp `$type: TSKindId.X` to convert the string
+	 * from core's readNode to the numeric runtime discriminant. When absent,
+	 * $type is inherited from data (string passthrough — legacy mode).
+	 */
+	generatedIdTables?: GeneratedIdTables;
 }
 
 export function emitWrap(config: EmitWrapConfig): string {
-	const { nodeMap } = config;
+	const { nodeMap, generatedIdTables } = config;
+
+	// Collect KindEnumEntry table for numeric $type stamping when
+	// generatedIdTables is present (Phase A KindID migration). Undefined
+	// for legacy callers — per-kind wrap functions then inherit $type from data.
+	const allKinds = Array.from(nodeMap.nodes.keys());
+	const kindEntries = generatedIdTables
+		? collectKindEntries(allKinds, nodeMap, generatedIdTables)
+		: undefined;
 
 	const typeImports = collectTypeImports(nodeMap);
 	// Multi-line import for readability — see factories.ts.
@@ -54,7 +75,7 @@ export function emitWrap(config: EmitWrapConfig): string {
 	// ------------------------------------------------------------------
 	const bodyLines: string[] = [];
 	for (const [, node] of nodeMap.nodes) {
-		const source = renderWrapForNode(node);
+		const source = renderWrapForNode(node, kindEntries, nodeMap);
 		if (source === undefined) continue;
 		bodyLines.push(source);
 		bodyLines.push('');
@@ -77,6 +98,9 @@ export function emitWrap(config: EmitWrapConfig): string {
 		'// Spec 008 US4 — import _NodeData (== AnyNodeData) from @sittir/types',
 		'// instead of re-declaring locally. Single source of truth.',
 		"import type { AnyNodeData as _NodeData, WrappedNode, AnyNodeData, NodeId } from '@sittir/types';",
+		// When kindEntries is present, import TSKindId for per-kind $type stamping
+		// (Phase A KindID migration: wrap normalizes string $type from core to numeric).
+		...(kindEntries ? ["import { TSKindId } from './types.js';"] : []),
 		...(typeImportLine ? [typeImportLine] : []),
 		'',
 		'// Drill-in helpers — call back through `readTreeNode` so the same',
@@ -184,6 +208,10 @@ export function emitWrap(config: EmitWrapConfig): string {
 	lines.push(
 		'export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {'
 	);
+	lines.push('  // Phase A KindID bridge: core\'s readNode still returns string $type at runtime.');
+	lines.push('  // Cast to string for the string-keyed alias/dispatch tables before per-kind');
+	lines.push('  // wrap functions stamp the numeric TSKindId.$type on their output.');
+	lines.push('  const rawType = data.$type as unknown as string;');
 	lines.push('  // Canonical-hidden remap (Option Y): parser-output `$type`');
 	lines.push(
 		'  // is the visible alias target (e.g. `range_pattern_left_with_right`);'
@@ -192,11 +220,11 @@ export function emitWrap(config: EmitWrapConfig): string {
 		'  // remap to the hidden alias source (`_range_pattern_left_with_right`)'
 	);
 	lines.push('  // so dispatch + downstream consumers see the canonical form.');
-	lines.push('  const canonical = _aliasTargetToSource[data.$type];');
+	lines.push('  const canonical = _aliasTargetToSource[rawType];');
 	lines.push('  if (canonical !== undefined) {');
-	lines.push('    data = { ...data, $type: canonical };');
+	lines.push('    data = { ...data, $type: canonical as unknown as number };');
 	lines.push('  }');
-	lines.push('  const fn = _wrapTable[data.$type];');
+	lines.push('  const fn = _wrapTable[canonical ?? rawType];');
 	lines.push('  if (!fn) return data; // unknown kind — return as-is');
 	lines.push('  return fn(data, tree);');
 	lines.push('}');
@@ -255,8 +283,9 @@ export function emitWrap(config: EmitWrapConfig): string {
 	lines.push('  asType?: { from: string; to: string },');
 	lines.push('): unknown {');
 	lines.push('  let data = readNode(tree, nodeId);');
-	lines.push('  if (asType && data.$type === asType.from) {');
-	lines.push('    data = { ...data, $type: asType.to };');
+	lines.push('  // Phase A KindID bridge: core returns string $type; cast for string comparison.');
+	lines.push('  if (asType && (data.$type as unknown as string) === asType.from) {');
+	lines.push('    data = { ...data, $type: asType.to as unknown as number };');
 	lines.push('  }');
 	lines.push('  return wrapNode(data, tree);');
 	lines.push('}');
@@ -297,18 +326,22 @@ function collectTypeImports(nodeMap: NodeMap): Set<string> {
 // Per-node wrap dispatch
 // ---------------------------------------------------------------------------
 
-function renderWrapForNode(node: AssembledNode): string | undefined {
+function renderWrapForNode(
+	node: AssembledNode,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap
+): string | undefined {
 	if (!node.rawFactoryName) return undefined;
 
 	switch (node.modelType) {
 		case 'branch':
-			return emitFieldCarryingWrap(node, node.fields, node.children ?? []);
+			return emitFieldCarryingWrap(node, node.fields, node.children ?? [], kindEntries, nodeMap);
 		case 'container':
-			return emitFieldCarryingWrap(node, [], node.children);
+			return emitFieldCarryingWrap(node, [], node.children, kindEntries, nodeMap);
 		case 'polymorph': {
 			const { fields, children } =
 				mergePolymorphFormsIntoFieldsAndChildren(node);
-			return emitFieldCarryingWrap(node, fields, children);
+			return emitFieldCarryingWrap(node, fields, children, kindEntries, nodeMap);
 		}
 		default:
 			return undefined;
@@ -483,13 +516,23 @@ function emitWrappedNodeCast(lines: string[], typeName: string): void {
 function emitFieldCarryingWrap(
 	node: WrapNode,
 	fields: readonly AssembledField[],
-	children: readonly AssembledChild[]
+	children: readonly AssembledChild[],
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap
 ): string {
 	const fn = `wrap${node.typeName}`;
 	const lines: string[] = [];
 	emitWrapFunctionSignature(lines, fn, node.typeName);
 	lines.push('  return {');
 	lines.push('    ...data,');
+	// Phase A KindID migration: override $type with the numeric TSKindId.X
+	// discriminant to convert the string $type arriving from core's readNode.
+	if (kindEntries) {
+		const entry = kindEntries.find((e) => e.kind === node.kind);
+		if (entry) {
+			lines.push(`    $type: TSKindId.${kindIdMemberName(nodeMap, node.kind)},`);
+		}
+	}
 
 	for (const f of fields) {
 		// Avoid shadowing built-in property names on the returned view.

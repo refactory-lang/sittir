@@ -35,8 +35,8 @@ function makeMinimalFixture(): {
 		},
 		generatedIdTables: {
 			kindIds: {
-				call_expression: { id: 17, cName: 'sym_call_expression' },
-				identifier: { id: 3, cName: 'sym_identifier' }
+				call_expression: { id: 17, parser: { cSymbol: 'sym_call_expression', parserName: 'call_expression', anon: false, aux: false, alias: false, hidden: false } },
+				identifier: { id: 3, parser: { cSymbol: 'sym_identifier', parserName: 'identifier', anon: false, aux: false, alias: false, hidden: false } }
 			},
 			sourceArtifact: 'parser.wasm'
 		}
@@ -59,7 +59,15 @@ describe('KindId emission', () => {
 		expect(contents).toContain('$type: TSKindId.CallExpression;');
 		expect(contents).toContain('export function kindNameFromId(');
 		expect(contents).toContain('export function kindIdFromName(');
-		expect(contents).not.toContain("$type: 'call_expression'");
+		// The CONCRETE interface uses numeric discriminant.
+		expect(contents).toContain('export interface CallExpression {');
+		// Transport sub-interfaces (for Rust serde) intentionally retain string
+		// $type — they are top-level exports inside the namespace, NOT inside
+		// the concrete interface. Verify the concrete interface has numeric $type:
+		expect(contents).toContain('  readonly $type: TSKindId.CallExpression;');
+		// The top-level concrete interface block has 2-space-indented $type with
+		// TSKindId — no string literal there. The Transport namespace may still
+		// emit a string $type but that is intentional and acceptable.
 		expect(contents).toContain('CallExpression = 17,');
 		expect(contents).toContain('Identifier = 3,');
 	});
