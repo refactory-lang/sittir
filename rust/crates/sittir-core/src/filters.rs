@@ -38,6 +38,113 @@ pub fn lower(s: &str) -> Result<String, askama::Error> {
     Ok(s.to_lowercase())
 }
 
+/// Closed renderable family. Per-grammar generated render crates extend this
+/// via newtype wrappers; sittir-core itself only carries the grammar-agnostic
+/// variants. Keep the family closed and explicit (no trait objects at the
+/// public boundary).
+#[derive(Debug, Clone, Copy)]
+pub enum Renderable<'a> {
+    /// Final, render-ready text.
+    Text(&'a str),
+    /// Streaming join over a borrowed slice of `Renderable`s.
+    Joined(Joined<'a>),
+}
+
+impl std::fmt::Display for Renderable<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Text(s) => f.write_str(s),
+            Self::Joined(j) => std::fmt::Display::fmt(j, f),
+        }
+    }
+}
+
+impl ::askama::FastWritable for Renderable<'_> {
+    fn write_into<W: std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+        values: &dyn ::askama::Values,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            Self::Text(s) => dest.write_str(s).map_err(::askama::Error::from),
+            Self::Joined(j) => j.write_into(dest, values),
+        }
+    }
+}
+
+/// Streaming join wrapper. Borrows a slice of [`Renderable`]s and a separator,
+/// and streams them into any [`fmt::Write`] target without allocating an
+/// intermediate `String`. Returned (inside `askama::filters::Safe`) by
+/// `joinby` and the `joinWith*` filter family.
+#[derive(Debug, Clone, Copy)]
+pub struct Joined<'a> {
+    pub items: &'a [Renderable<'a>],
+    pub separator: &'a str,
+    pub leading: bool,
+    pub trailing: bool,
+}
+
+impl<'a> Joined<'a> {
+    pub fn new(
+        items: &'a [Renderable<'a>],
+        separator: &'a str,
+        leading: bool,
+        trailing: bool,
+    ) -> Self {
+        Self { items, separator, leading, trailing }
+    }
+}
+
+impl std::fmt::Display for Joined<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if self.items.is_empty() {
+            return Ok(());
+        }
+        if self.leading {
+            f.write_str(self.separator)?;
+        }
+        let mut first = true;
+        for item in self.items {
+            if !first {
+                f.write_str(self.separator)?;
+            }
+            std::fmt::Display::fmt(item, f)?;
+            first = false;
+        }
+        if self.trailing {
+            f.write_str(self.separator)?;
+        }
+        Ok(())
+    }
+}
+
+impl ::askama::FastWritable for Joined<'_> {
+    fn write_into<W: std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+        values: &dyn ::askama::Values,
+    ) -> Result<(), ::askama::Error> {
+        if self.items.is_empty() {
+            return Ok(());
+        }
+        if self.leading {
+            dest.write_str(self.separator).map_err(::askama::Error::from)?;
+        }
+        let mut first = true;
+        for item in self.items {
+            if !first {
+                dest.write_str(self.separator).map_err(::askama::Error::from)?;
+            }
+            item.write_into(dest, values)?;
+            first = false;
+        }
+        if self.trailing {
+            dest.write_str(self.separator).map_err(::askama::Error::from)?;
+        }
+        Ok(())
+    }
+}
+
 #[inline]
 fn string_as_str(s: &String) -> &str {
     s.as_str()
