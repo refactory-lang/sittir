@@ -213,6 +213,11 @@ interface EmittedField {
 	name: string; // raw grammar field name
 	view: EmittedFieldView;
 	required: boolean;
+	multiple: boolean; // true when the transport-side field is Vec<Box<AnyTransport>>
+	/** True when this slot has a corresponding field in the transport struct.
+	 *  Slots without transport fields (virtual presentation slots from the
+	 *  template walker) must be defaulted to "" in the typed dispatch path. */
+	hasTransportField: boolean;
 	hasLeading: boolean;
 	hasTrailing: boolean;
 }
@@ -222,6 +227,12 @@ interface EmittedStruct {
 	kind: string;
 	fields: EmittedField[];
 	hasChildren: boolean;
+	/** True when the transport struct actually has a `children` field (structuralChildren.length > 0).
+	 *  The template may reference `children` (hasChildren === true) without a transport field —
+	 *  in that case we emit an empty ListView instead of accessing node.children. */
+	transportHasChildren: boolean;
+	/** True when the transport struct's `children` field is `Vec<...>` (not `Option<Vec<...>>`). */
+	childrenRequired: boolean;
 	hasVariant: boolean;
 	hasText: boolean;
 }
@@ -232,13 +243,43 @@ function emitStruct(
 	surface: RenderTemplateSurface
 ): EmittedStruct {
 	const name = structNameFor(kind, node);
-	const fields: EmittedField[] = [...surface.slots];
+	// Build name→multiple and name→required lookups from the assembled node's
+	// structural fields so the typed dispatch emitter generates code consistent
+	// with what the transport struct emits (Vec<...> vs Option<Vec<...>>,
+	// Box<...> vs Option<Box<...>>). The surface slot's required flag is a
+	// template-rendering concern; the transport struct's required flag is the
+	// assembly-level `isRequired(assembledField)`. These can differ, so we
+	// override with the assembly-level flag.
+	const multipleByName = new Map<string, boolean>();
+	const requiredByName = new Map<string, boolean>();
+	if (node) {
+		for (const f of node.structuralFields) {
+			multipleByName.set(f.name, isMultiple(f));
+			requiredByName.set(f.name, isRequired(f));
+		}
+	}
+	const fields: EmittedField[] = surface.slots.map((slot) => ({
+		...slot,
+		multiple: multipleByName.get(slot.name) ?? false,
+		// Override required from assembly if available; fall back to surface.
+		required: requiredByName.has(slot.name)
+			? (requiredByName.get(slot.name) as boolean)
+			: slot.required,
+		// Mark whether this slot has a corresponding field in the transport struct.
+		// Virtual presentation slots (from the template walker) are not in the
+		// transport struct and must be defaulted to "" in the typed dispatch path.
+		hasTransportField: requiredByName.has(slot.name) || multipleByName.has(slot.name)
+	}));
 	fields.sort((a, b) => a.name.localeCompare(b.name));
 	return {
 		name,
 		kind,
 		fields,
 		hasChildren: surface.usesChildren,
+		transportHasChildren: node ? node.structuralChildren.length > 0 : false,
+		childrenRequired: node
+			? hasRequiredChild(node.structuralChildren)
+			: false,
 		hasVariant: surface.usesVariant,
 		hasText: surface.usesText
 	};
@@ -932,7 +973,543 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 }
 
 // ----------------------------------------------------------------------
-// lib.rs — expose render_dispatch
+// Typed transport dispatch — render_transport_dispatch + per-kind fns
+// ----------------------------------------------------------------------
+
+/**
+ * Emit per-kind `render_<kind>_transport` functions plus the top-level
+ * `render_transport_dispatch` that routes `&AnyTransport` to the right fn.
+ *
+ * Each per-kind fn builds the `*Template` struct directly from the typed
+ * transport fields (no `NodeData` round-trip) and calls `template.render()`.
+ * This is the direct render path introduced by Task 4 of the renderable-
+ * native-views plan.
+ *
+ * Legacy `render_dispatch(&NodeData)` / `transport_to_node` / etc. are
+ * retained as the inverse bridge for callers that still want `NodeData`.
+ */
+function renderTypedDispatch(
+	structs: EmittedStruct[],
+	nodes: readonly AssembledNode[],
+	literals: readonly TransportLiteral[],
+	meta: MetaData
+): string[] {
+	const structsByKind = new Map(structs.map((s) => [s.kind, s]));
+	const lines: string[] = [];
+
+	// ---- per-kind fns ----------------------------------------------------
+	for (const node of nodes) {
+		lines.push(...renderTypedKindFn(node, structsByKind, meta));
+	}
+
+	// ---- render_literal_transport ----------------------------------------
+	lines.push(
+		`fn render_literal_transport(_kind: &str, t: &LiteralTransport) -> Result<String, ::askama::Error> {`
+	);
+	lines.push(`    Ok(t.text.clone())`);
+	lines.push(`}`);
+	lines.push('');
+
+	// ---- render_transport_dispatch ---------------------------------------
+	lines.push(
+		`pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::askama::Error> {`
+	);
+	lines.push(`    match transport {`);
+	for (const node of nodes) {
+		const variant = rustTransportVariantName(node);
+		const fnName = rustTypedRenderFnName(node.typeName);
+		lines.push(
+			`        AnyTransport::${variant}(t) => ${fnName}(t),`
+		);
+	}
+	for (const [index, literal] of literals.entries()) {
+		const variant = rustLiteralTransportVariantName(literal, index);
+		lines.push(
+			`        AnyTransport::${variant}(t) => render_literal_transport(${JSON.stringify(literal.kind)}, t),`
+		);
+	}
+	lines.push(`    }`);
+	lines.push(`}`);
+	lines.push('');
+
+	return lines;
+}
+
+/** Rust function name for the typed render fn of a given typeName. */
+function rustTypedRenderFnName(typeName: string): string {
+	return `render_${rustSnakeIdent(typeName)}_transport`;
+}
+
+/**
+ * Emit the `render_<kind>_transport(t: &<Kind>Transport)` function for a
+ * single node. Dispatches based on modelType:
+ *
+ * - polymorph → match on enum variants, delegate to per-form fns
+ * - branch / container / group → build template struct from typed fields
+ * - leaf / keyword / token / enum → return `t.text.clone()`
+ */
+function renderTypedKindFn(
+	node: AssembledNode,
+	structsByKind: Map<string, EmittedStruct>,
+	meta: MetaData
+): string[] {
+	if (node.modelType === 'polymorph' && node.forms.length > 0) {
+		return renderTypedPolymorphFn(node, structsByKind, meta);
+	}
+
+	switch (node.modelType) {
+		case 'branch':
+		case 'container':
+		case 'group': {
+			const struct = structsByKind.get(node.kind);
+			if (struct === undefined) {
+				// No template for this kind — fall back to joining children/text.
+				return renderTypedBranchFallbackFn(node);
+			}
+			return renderTypedBranchFn(node, struct, meta);
+		}
+		case 'leaf':
+		case 'keyword':
+		case 'token':
+		case 'enum':
+			return renderTypedLeafFn(node);
+		default:
+			return [];
+	}
+}
+
+/**
+ * Emit a fallback typed render fn for branch/container/group nodes that
+ * have no template struct (no `.jinja` file). Renders children by joining
+ * their rendered text, or falls back to `transport_text` if there are no
+ * children.
+ */
+function renderTypedBranchFallbackFn(node: AssembledNode): string[] {
+	const fnName = rustTypedRenderFnName(node.typeName);
+	const structName = rustTransportStructName(node);
+	const hasChildren = hasRequiredChild(node.structuralChildren) || node.structuralChildren.length > 0;
+	const lines: string[] = [];
+	lines.push(`fn ${fnName}(node: &${structName}) -> Result<String, ::askama::Error> {`);
+	if (hasChildren) {
+		const childrenIsRequired = hasRequiredChild(node.structuralChildren);
+		if (childrenIsRequired) {
+			lines.push(`    let mut out = String::new();`);
+			lines.push(`    for child in node.children.iter() {`);
+			lines.push(`        out.push_str(&render_transport_dispatch(child.as_ref())?);`);
+			lines.push(`    }`);
+			lines.push(`    Ok(out)`);
+		} else {
+			lines.push(`    let mut out = String::new();`);
+			lines.push(`    if let Some(children) = &node.children {`);
+			lines.push(`        for child in children.iter() {`);
+			lines.push(`            out.push_str(&render_transport_dispatch(child.as_ref())?);`);
+			lines.push(`        }`);
+			lines.push(`    }`);
+			lines.push(`    Ok(out)`);
+		}
+	} else {
+		lines.push(`    Ok(node.transport_text.clone().unwrap_or_default())`);
+	}
+	lines.push(`}`);
+	lines.push('');
+	return lines;
+}
+
+/**
+ * Emit a simple leaf/keyword/token/enum typed render fn that returns the
+ * transport text field directly.
+ */
+function renderTypedLeafFn(node: AssembledNode): string[] {
+	const fnName = rustTypedRenderFnName(node.typeName);
+	const structName = rustTransportStructName(node);
+	return [
+		`fn ${fnName}(t: &${structName}) -> Result<String, ::askama::Error> {`,
+		`    Ok(t.text.clone())`,
+		`}`,
+		``
+	];
+}
+
+/**
+ * Emit a polymorph typed render fn that matches on the enum variant and
+ * delegates to per-form fns, then emits each per-form fn.
+ */
+function renderTypedPolymorphFn(
+	node: Extract<AssembledNode, { modelType: 'polymorph' }>,
+	structsByKind: Map<string, EmittedStruct>,
+	meta: MetaData
+): string[] {
+	const lines: string[] = [];
+	const fnName = rustTypedRenderFnName(node.typeName);
+	const structName = rustTransportStructName(node);
+
+	lines.push(`fn ${fnName}(t: &${structName}) -> Result<String, ::askama::Error> {`);
+	lines.push(`    match t {`);
+	for (const form of node.forms) {
+		const formVariant = rustTransportFormVariantName(form);
+		const formFn = rustTypedRenderFnName(form.typeName);
+		lines.push(`        ${structName}::${formVariant}(data) => ${formFn}(data),`);
+	}
+	lines.push(`    }`);
+	lines.push(`}`);
+	lines.push('');
+
+	// Per-form fns — look up the form's kind in structsByKind
+	for (const form of node.forms) {
+		const formStruct = structsByKind.get(node.kind) ?? undefined;
+		// Forms share the parent's template struct (same kind → same template)
+		// so we build using the form's fields against the parent struct.
+		lines.push(...renderTypedFormFn(node.kind, form, formStruct, meta));
+	}
+
+	return lines;
+}
+
+/**
+ * Emit a branch/container/group typed render fn that builds the template
+ * struct from the typed transport fields.
+ */
+function renderTypedBranchFn(
+	node: AssembledNode,
+	struct: EmittedStruct,
+	meta: MetaData
+): string[] {
+	const lines: string[] = [];
+	const fnName = rustTypedRenderFnName(node.typeName);
+	const structName = rustTransportStructName(node);
+	const separator = meta.separators.get(node.kind) ?? '';
+
+	lines.push(`fn ${fnName}(node: &${structName}) -> Result<String, ::askama::Error> {`);
+	lines.push(...buildTypedTemplateBody(struct, structName, separator));
+	lines.push(`}`);
+	lines.push('');
+
+	return lines;
+}
+
+/**
+ * Emit a polymorph-form typed render fn that builds the parent kind's
+ * template struct from the form's typed transport fields.
+ *
+ * Forms always render through the PARENT kind's jinja template (there is one
+ * `.jinja` file per kind, not per form). The `parentStruct` gives us the
+ * correct template struct name and surface (slots / hasChildren / etc.)
+ * for the instantiation; the form's fields populate the slots.
+ */
+function renderTypedFormFn(
+	parentKind: string,
+	form: AssembledForm,
+	parentStruct: EmittedStruct | undefined,
+	meta: MetaData
+): string[] {
+	const lines: string[] = [];
+	const fnName = rustTypedRenderFnName(form.typeName);
+	const structName = rustTransportFormStructName(form);
+	const separator = meta.separators.get(parentKind) ?? '';
+
+	if (parentStruct === undefined) {
+		// No template for this parent kind — fall back to returning empty string.
+		lines.push(`fn ${fnName}(node: &${structName}) -> Result<String, ::askama::Error> {`);
+		lines.push(`    // No template for parent kind ${JSON.stringify(parentKind)} — return empty.`);
+		lines.push(`    let _ = node;`);
+		lines.push(`    Ok(String::new())`);
+		lines.push(`}`);
+		lines.push('');
+		return lines;
+	}
+
+	// Build an EmittedStruct that uses the PARENT template struct name but the
+	// FORM's field list (so buildTypedTemplateBody instantiates the right struct
+	// with the fields actually present on the form's transport type).
+	//
+	// Strategy: start from ALL parent template slots (every slot the template
+	// struct requires must be populated). For each slot, check whether the FORM
+	// has a corresponding field in its structuralFields. If yes, use the form's
+	// `required` and `multiple` flags; if no, mark `hasTransportField: false` so
+	// the emitter defaults that slot to empty/Missing.
+	//
+	// The view for each slot always comes from the PARENT struct — that
+	// determines the Rust struct field type (&'a str vs FieldView vs ListView).
+	const formFieldByName = new Map(form.fields.map((f) => [f.name, f]));
+	const formEmittedStruct: EmittedStruct = {
+		name: parentStruct.name, // e.g. ClosureExpressionTemplate
+		kind: parentKind,
+		fields: parentStruct.fields.map((parentField) => {
+			const formField = formFieldByName.get(parentField.name);
+			if (formField !== undefined) {
+				return {
+					name: formField.name,
+					// Use the parent template's view — that determines the Rust struct type.
+					view: parentField.view,
+					required: isRequired(formField),
+					multiple: isMultiple(formField),
+					hasTransportField: true,
+					hasLeading: formField.hasLeading,
+					hasTrailing: formField.hasTrailing
+				};
+			}
+			// Slot present in parent template but not in this form — default it.
+			return {
+				name: parentField.name,
+				view: parentField.view,
+				required: false,
+				multiple: false,
+				hasTransportField: false,
+				hasLeading: false,
+				hasTrailing: false
+			};
+		}),
+		hasChildren: parentStruct.hasChildren,
+		transportHasChildren: form.children.length > 0,
+		childrenRequired: hasRequiredChild(form.children),
+		hasVariant: parentStruct.hasVariant,
+		hasText: parentStruct.hasText
+	};
+
+	lines.push(`fn ${fnName}(node: &${structName}) -> Result<String, ::askama::Error> {`);
+	lines.push(...buildTypedTemplateBody(formEmittedStruct, structName, separator));
+	lines.push(`}`);
+	lines.push('');
+
+	return lines;
+}
+
+/**
+ * Build the function body that constructs a template struct from typed
+ * transport fields and calls `template.render()`.
+ *
+ * Strategy: render each child / field transport to a `String` first, collect
+ * into a `Vec<String>`, then borrow those strings as `Renderable::Text` slices
+ * to feed `ListView` / `FieldView`. This avoids the type mismatch between the
+ * grammar-local `Renderable` (which carries `Node(&'a AnyTransport)`) and the
+ * `sittir_core::filters::ListView` item type (`sittir_core::filters::Renderable`
+ * which only has `Text` / `Joined` variants). Two allocations per list slot
+ * rather than one, but sound and simple.
+ *
+ * @param struct - the template struct description
+ * @param _structName - the transport struct type (unused in body, kept for docs)
+ * @param separator - the list/children separator for this kind
+ */
+function buildTypedTemplateBody(
+	struct: EmittedStruct,
+	_structName: string,
+	separator: string
+): string[] {
+	const lines: string[] = [];
+	const templateName = struct.name;
+	const sepLiteral = JSON.stringify(separator);
+
+	// Render children to Strings, then borrow as Renderable::Text slices.
+	// The transport struct has a `children` field only when transportHasChildren
+	// is true. When the template uses children but the transport has none (e.g.
+	// BoundedType), skip access and emit an empty buffer for the template slot.
+	if (struct.hasChildren) {
+		if (struct.transportHasChildren) {
+			if (struct.childrenRequired) {
+				lines.push(
+					`    let children_strings: Vec<String> = node.children.iter()`
+				);
+				lines.push(`        .map(|t| render_transport_dispatch(t.as_ref()))`);
+				lines.push(`        .collect::<Result<Vec<_>, _>>()?;`);
+			} else {
+				lines.push(
+					`    let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);`
+				);
+				lines.push(
+					`    let children_strings: Vec<String> = children_owned.iter()`
+				);
+				lines.push(`        .map(|t| render_transport_dispatch(t.as_ref()))`);
+				lines.push(`        .collect::<Result<Vec<_>, _>>()?;`);
+			}
+			lines.push(
+				`    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()`
+			);
+			lines.push(
+				`        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))`
+			);
+			lines.push(`        .collect();`);
+		} else {
+			// Template uses children but transport has no children field —
+			// emit an empty buffer so the ListView slot in the template is empty.
+			lines.push(`    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = Vec::new();`);
+		}
+	}
+
+	// Render list / multi-field slots to strings, then borrow as Renderable::Text.
+	// Only emit access code for slots backed by a transport struct field.
+	// Virtual presentation slots (hasTransportField === false) are skipped here
+	// and defaulted in the template construction block below.
+	for (const f of struct.fields) {
+		if (f.view === 'scalar') continue;
+		if (!f.hasTransportField) continue;
+		const rIdent = rustFieldIdent(f.name);
+		if (f.view === 'list' || (f.view === 'field' && f.multiple)) {
+			if (f.required) {
+				lines.push(
+					`    let ${rIdent}_strings: Vec<String> = node.${rIdent}.iter()`
+				);
+				lines.push(
+					`        .map(|t| render_transport_dispatch(t.as_ref()))`
+				);
+				lines.push(`        .collect::<Result<Vec<_>, _>>()?;`);
+			} else {
+				lines.push(
+					`    let ${rIdent}_owned: &[Box<AnyTransport>] = node.${rIdent}.as_deref().unwrap_or(&[]);`
+				);
+				lines.push(
+					`    let ${rIdent}_strings: Vec<String> = ${rIdent}_owned.iter()`
+				);
+				lines.push(
+					`        .map(|t| render_transport_dispatch(t.as_ref()))`
+				);
+				lines.push(`        .collect::<Result<Vec<_>, _>>()?;`);
+			}
+			lines.push(
+				`    let ${rIdent}_buf: Vec<::sittir_core::filters::Renderable<'_>> = ${rIdent}_strings.iter()`
+			);
+			lines.push(
+				`        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))`
+			);
+			lines.push(`        .collect();`);
+		}
+		// Single-valued 'field' view: rendered inline in template construction below.
+	}
+
+	// Render scalar fields to owned Strings (will be borrowed in the template literal).
+	for (const f of struct.fields) {
+		if (f.view !== 'scalar') continue;
+		if (!f.hasTransportField) continue;
+		const rIdent = rustFieldIdent(f.name);
+		if (f.required) {
+			lines.push(
+				`    let ${rIdent}_text = render_transport_dispatch(node.${rIdent}.as_ref())?;`
+			);
+		} else {
+			lines.push(
+				`    let ${rIdent}_text = if let Some(v) = &node.${rIdent} {`
+			);
+			lines.push(`        render_transport_dispatch(v.as_ref())?`);
+			lines.push(`    } else {`);
+			lines.push(`        String::new()`);
+			lines.push(`    };`);
+		}
+	}
+
+	// Render single-valued 'field' view fields to owned Strings.
+	for (const f of struct.fields) {
+		if (f.view !== 'field' || f.multiple) continue;
+		if (!f.hasTransportField) continue;
+		const rIdent = rustFieldIdent(f.name);
+		if (f.required) {
+			lines.push(
+				`    let ${rIdent}_rendered = render_transport_dispatch(node.${rIdent}.as_ref())?;`
+			);
+		} else {
+			lines.push(
+				`    let ${rIdent}_rendered = match &node.${rIdent} {`
+			);
+			lines.push(`        Some(v) => Some(render_transport_dispatch(v.as_ref())?),`);
+			lines.push(`        None => None,`);
+			lines.push(`    };`);
+		}
+	}
+
+	// Build template struct.
+	lines.push(`    let template = ${templateName} {`);
+
+	if (struct.hasChildren) {
+		lines.push(`        children: ::sittir_core::filters::ListView {`);
+		lines.push(`            items: children_buf.as_slice(),`);
+		lines.push(`            separator: ${sepLiteral},`);
+		lines.push(`            leading: false,`);
+		lines.push(`            trailing: false,`);
+		lines.push(`        },`);
+	}
+
+	if (struct.hasVariant) {
+		// Variant detection on typed transport is a known follow-up; default to "".
+		lines.push(`        variant: "",`);
+	}
+
+	if (struct.hasText) {
+		lines.push(`        text: node.transport_text.as_deref().unwrap_or(""),`);
+	}
+
+	for (const f of struct.fields) {
+		const rIdent = rustFieldIdent(f.name);
+		if (f.view === 'scalar') {
+			if (f.hasTransportField) {
+				lines.push(`        ${rIdent}: ${rIdent}_text.as_str(),`);
+			} else {
+				// Virtual presentation slot — no backing transport field; default to "".
+				lines.push(`        ${rIdent}: "",`);
+			}
+		} else if (f.view === 'list') {
+			if (f.hasTransportField) {
+				lines.push(`        ${rIdent}: ::sittir_core::filters::ListView {`);
+				lines.push(`            items: ${rIdent}_buf.as_slice(),`);
+				lines.push(`            separator: ${sepLiteral},`);
+				lines.push(`            leading: false,`);
+				lines.push(`            trailing: false,`);
+				lines.push(`        },`);
+			} else {
+				lines.push(`        ${rIdent}: ::sittir_core::filters::ListView {`);
+				lines.push(`            items: &[],`);
+				lines.push(`            separator: ${sepLiteral},`);
+				lines.push(`            leading: false,`);
+				lines.push(`            trailing: false,`);
+				lines.push(`        },`);
+			}
+		} else if (f.multiple) {
+			// view === 'field' && multiple — Many(ListView)
+			if (f.hasTransportField) {
+				lines.push(`        ${rIdent}: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {`);
+				lines.push(`            items: ${rIdent}_buf.as_slice(),`);
+				lines.push(`            separator: ${sepLiteral},`);
+				lines.push(`            leading: false,`);
+				lines.push(`            trailing: false,`);
+				lines.push(`        }),`);
+			} else {
+				lines.push(`        ${rIdent}: ::sittir_core::filters::FieldView::Missing,`);
+			}
+		} else if (f.required) {
+			// view === 'field', single, required — One(Renderable::Text)
+			if (f.hasTransportField) {
+				lines.push(
+					`        ${rIdent}: ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(${rIdent}_rendered.as_str())),`
+				);
+			} else {
+				lines.push(
+					`        ${rIdent}: ::sittir_core::filters::FieldView::Missing,`
+				);
+			}
+		} else {
+			// view === 'field', single, optional — One or Missing
+			if (f.hasTransportField) {
+				lines.push(`        ${rIdent}: match &${rIdent}_rendered {`);
+				lines.push(
+					`            Some(s) => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(s.as_str())),`
+				);
+				lines.push(
+					`            None => ::sittir_core::filters::FieldView::Missing,`
+				);
+				lines.push(`        },`);
+			} else {
+				lines.push(
+					`        ${rIdent}: ::sittir_core::filters::FieldView::Missing,`
+				);
+			}
+		}
+	}
+
+	lines.push(`    };`);
+	lines.push(`    template.render()`);
+
+	return lines;
+}
+
+// ----------------------------------------------------------------------
+// lib.rs — expose render_dispatch + render_transport_dispatch
 // ----------------------------------------------------------------------
 
 function libRsContents(lang: Grammar): string {
@@ -943,7 +1520,7 @@ pub mod hash;
 pub mod templates;
 
 pub use hash::TEMPLATE_BUNDLE_HASH;
-pub use templates::{render_dispatch, render_transport, render_transport_parts, AnyTransport};
+pub use templates::{render_dispatch, render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};
 `;
 }
 
@@ -1110,7 +1687,7 @@ export function emitRenderModule(
 		'    };',
 		'}',
 		'',
-		renderTransportSupport(nodeMap),
+		renderTransportSupport(nodeMap, structs, meta),
 		'',
 		renderStructDefs(structs),
 		renderDirectSupport(meta),
@@ -1133,7 +1710,11 @@ export function emitRenderModule(
 	};
 }
 
-function renderTransportSupport(nodeMap: NodeMap): string {
+function renderTransportSupport(
+	nodeMap: NodeMap,
+	structs: EmittedStruct[],
+	meta: MetaData
+): string {
 	const projection = collectTransportProjection(nodeMap);
 	const nodes = projection.nodes;
 	return [
@@ -1161,8 +1742,66 @@ function renderTransportSupport(nodeMap: NodeMap): string {
 		'',
 		...nodes.flatMap((node) => renderTransportStruct(node)),
 		'',
+		...renderGrammarRenderable(),
+		'',
+		// Typed dispatch: render_transport_dispatch + per-kind render_<kind>_transport fns.
+		// These are emitted AFTER renderGrammarRenderable() so Renderable::Node is in scope,
+		// and BEFORE renderTransportBridge() so render_transport can call render_transport_dispatch.
+		...renderTypedDispatch(structs, nodes, projection.literals, meta),
 		...renderTransportBridge(nodes, projection.literals)
 	].join('\n');
+}
+
+/**
+ * Per-grammar `Renderable` extension enum. Closed family: `Text` for
+ * already-final render-ready strings, `Joined` for streaming join
+ * wrappers, `Node` for borrowed transport refs that recurse via the
+ * typed dispatch path. Display + FastWritable dispatch on the variant.
+ *
+ * Single `Node` variant rather than one per kind because transport
+ * fields are uniformly typed `Box<AnyTransport>` — the disambiguation
+ * happens inside `render_transport_dispatch` based on the runtime
+ * AnyTransport variant.
+ */
+function renderGrammarRenderable(): string[] {
+	return [
+		'#[derive(Debug, Clone, Copy)]',
+		"pub enum Renderable<'a> {",
+		"    Text(&'a str),",
+		"    Joined(::sittir_core::filters::Joined<'a>),",
+		"    Node(&'a AnyTransport),",
+		'}',
+		'',
+		"impl ::std::fmt::Display for Renderable<'_> {",
+		"    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {",
+		'        match self {',
+		'            Self::Text(s) => f.write_str(s),',
+		'            Self::Joined(j) => ::std::fmt::Display::fmt(j, f),',
+		'            Self::Node(t) => {',
+		'                let s = render_transport_dispatch(t).map_err(|_| ::std::fmt::Error)?;',
+		'                f.write_str(&s)',
+		'            }',
+		'        }',
+		'    }',
+		'}',
+		'',
+		"impl ::askama::FastWritable for Renderable<'_> {",
+		'    fn write_into<W: ::std::fmt::Write + ?Sized>(',
+		'        &self,',
+		'        dest: &mut W,',
+		'        values: &dyn ::askama::Values,',
+		'    ) -> Result<(), ::askama::Error> {',
+		'        match self {',
+		'            Self::Text(s) => dest.write_str(s).map_err(::askama::Error::from),',
+		'            Self::Joined(j) => j.write_into(dest, values),',
+		'            Self::Node(t) => {',
+		'                let s = render_transport_dispatch(t)?;',
+		'                dest.write_str(&s).map_err(::askama::Error::from)',
+		'            }',
+		'        }',
+		'    }',
+		'}'
+	];
 }
 
 function renderTransportBridge(
@@ -1264,7 +1903,7 @@ function renderTransportBridge(
 		'}',
 		'',
 		'pub fn render_transport(transport: AnyTransport) -> Result<String, ::askama::Error> {',
-		'    from_transport(transport)',
+		'    render_transport_dispatch(&transport)',
 		'}'
 	];
 }

@@ -20,31 +20,64 @@
 pub mod filters {
     //! Askama resolves custom-filter names by searching for a
     //! sibling `filters` module at the derive-macro site. This
-    //! module just re-exports the canonical implementations
-    //! from `sittir_core::filters`.
+    //! module wraps the canonical sittir_core implementations with
+    //! the `#[askama::filter_fn]` attribute so Askama can call them
+    //! from templates.
+    use ::sittir_core::filters::{Joined, JoinSource};
+
     #[::askama::filter_fn]
-    pub fn joinby<T: ::sittir_core::filters::JoinSource + ?Sized>(
-        xs: &T,
+    pub fn joinby<'a, T: JoinSource<'a> + ?Sized>(
+        xs: &'a T,
         _values: &dyn ::askama::Values,
-        sep: &str,
+        sep: &'a str,
         leading: bool,
         trailing: bool,
-    ) -> Result<String, ::askama::Error> {
+    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {
         ::sittir_core::filters::joinby(xs, sep, leading, trailing)
     }
 
     #[::askama::filter_fn]
-    pub fn join<T: ::sittir_core::filters::JoinSource + ?Sized>(
-        xs: &T,
-        sep: &str,
-    ) -> Result<String, ::askama::Error> {
+    pub fn join<'a, T: JoinSource<'a> + ?Sized>(
+        xs: &'a T,
+        _values: &dyn ::askama::Values,
+        sep: &'a str,
+    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {
         ::sittir_core::filters::joinby(xs, sep, false, false)
+    }
+
+    #[::askama::filter_fn]
+    #[allow(non_snake_case)]
+    pub fn joinWithTrailing<'a, T: JoinSource<'a> + ?Sized>(
+        xs: &'a T,
+        values: &dyn ::askama::Values,
+        sep: &'a str,
+    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {
+        ::sittir_core::filters::joinWithTrailing(xs, values, sep)
+    }
+
+    #[::askama::filter_fn]
+    #[allow(non_snake_case)]
+    pub fn joinWithLeading<'a, T: JoinSource<'a> + ?Sized>(
+        xs: &'a T,
+        values: &dyn ::askama::Values,
+        sep: &'a str,
+    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {
+        ::sittir_core::filters::joinWithLeading(xs, values, sep)
+    }
+
+    #[::askama::filter_fn]
+    #[allow(non_snake_case)]
+    pub fn joinWithFlanks<'a, T: JoinSource<'a> + ?Sized>(
+        xs: &'a T,
+        values: &dyn ::askama::Values,
+        sep: &'a str,
+    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {
+        ::sittir_core::filters::joinWithFlanks(xs, values, sep)
     }
 
     pub use ::sittir_core::filters::{
         upper, lower,
         isBlank, isPresent,
-        joinWithTrailing, joinWithLeading, joinWithFlanks,
     };
 }
 
@@ -7267,6 +7300,5496 @@ pub struct YieldTransport {
     pub text: String,
 }
 
+
+#[derive(Debug, Clone, Copy)]
+pub enum Renderable<'a> {
+    Text(&'a str),
+    Joined(::sittir_core::filters::Joined<'a>),
+    Node(&'a AnyTransport),
+}
+
+impl ::std::fmt::Display for Renderable<'_> {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        match self {
+            Self::Text(s) => f.write_str(s),
+            Self::Joined(j) => ::std::fmt::Display::fmt(j, f),
+            Self::Node(t) => {
+                let s = render_transport_dispatch(t).map_err(|_| ::std::fmt::Error)?;
+                f.write_str(&s)
+            }
+        }
+    }
+}
+
+impl ::askama::FastWritable for Renderable<'_> {
+    fn write_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+        values: &dyn ::askama::Values,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            Self::Text(s) => dest.write_str(s).map_err(::askama::Error::from),
+            Self::Joined(j) => j.write_into(dest, values),
+            Self::Node(t) => {
+                let s = render_transport_dispatch(t)?;
+                dest.write_str(&s).map_err(::askama::Error::from)
+            }
+        }
+    }
+}
+
+fn render__arrow_function_ucall_signature_transport(node: &_ArrowFunctionUCallSignatureTransport) -> Result<String, ::askama::Error> {
+    let parameters_text = render_transport_dispatch(node.parameters.as_ref())?;
+    let return_type_text = if let Some(v) = &node.return_type {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let type_parameters_text = if let Some(v) = &node.type_parameters {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = _ArrowFunctionUCallSignatureTemplate {
+        parameters: parameters_text.as_str(),
+        return_type: return_type_text.as_str(),
+        type_parameters: type_parameters_text.as_str(),
+    };
+    template.render()
+}
+
+fn render__arrow_function_parameter_transport(node: &_ArrowFunctionParameterTransport) -> Result<String, ::askama::Error> {
+    let parameter_text = render_transport_dispatch(node.parameter.as_ref())?;
+    let template = _ArrowFunctionParameterTemplate {
+        parameter: parameter_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_call_expression_call_transport(node: &CallExpressionCallTransport) -> Result<String, ::askama::Error> {
+    let arguments_text = render_transport_dispatch(node.arguments.as_ref())?;
+    let function_text = render_transport_dispatch(node.function.as_ref())?;
+    let type_arguments_text = if let Some(v) = &node.type_arguments {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = CallExpressionCallTemplate {
+        arguments: arguments_text.as_str(),
+        function: function_text.as_str(),
+        type_arguments: type_arguments_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_call_expression_member_transport(node: &CallExpressionMemberTransport) -> Result<String, ::askama::Error> {
+    let arguments_text = render_transport_dispatch(node.arguments.as_ref())?;
+    let function_text = render_transport_dispatch(node.function.as_ref())?;
+    let type_arguments_text = if let Some(v) = &node.type_arguments {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = CallExpressionMemberTemplate {
+        arguments: arguments_text.as_str(),
+        function: function_text.as_str(),
+        type_arguments: type_arguments_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_call_expression_template_call_transport(node: &CallExpressionTemplateCallTransport) -> Result<String, ::askama::Error> {
+    let arguments_text = render_transport_dispatch(node.arguments.as_ref())?;
+    let function_text = render_transport_dispatch(node.function.as_ref())?;
+    let template = CallExpressionTemplateCallTemplate {
+        arguments: arguments_text.as_str(),
+        function: function_text.as_str(),
+    };
+    template.render()
+}
+
+fn render__call_signature_transport(node: &_CallSignatureTransport) -> Result<String, ::askama::Error> {
+    Ok(node.transport_text.clone().unwrap_or_default())
+}
+
+fn render_class_body_member_transport(node: &ClassBodyMemberTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ClassBodyMemberTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_class_body_method_transport(node: &ClassBodyMethodTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let decorator_strings: Vec<String> = node.decorator.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let decorator_buf: Vec<::sittir_core::filters::Renderable<'_>> = decorator_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ClassBodyMethodTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        decorator: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            items: decorator_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        }),
+    };
+    template.render()
+}
+
+fn render_class_body_method_sig_transport(node: &ClassBodyMethodSigTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ClassBodyMethodSigTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render__class_heritage_extends_clause_transport(node: &_ClassHeritageExtendsClauseTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = _ClassHeritageExtendsClauseTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render__class_heritage_implements_clause_transport(node: &_ClassHeritageImplementsClauseTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = _ClassHeritageImplementsClauseTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_export_statement_default_decl_arm_transport(node: &ExportStatementDefaultDeclArmTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let decorator_strings: Vec<String> = node.decorator.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let decorator_buf: Vec<::sittir_core::filters::Renderable<'_>> = decorator_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ExportStatementDefaultDeclArmTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        declaration: "",
+        decorator: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            items: decorator_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        }),
+    };
+    template.render()
+}
+
+fn render_export_statement_default_decl_arm_default_kw_transport(node: &ExportStatementDefaultDeclArmDefaultKwTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ExportStatementDefaultDeclArmDefaultKwTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        declaration: "",
+    };
+    template.render()
+}
+
+fn render_export_statement_default_decl_arm_default_kw_value_transport(node: &ExportStatementDefaultDeclArmDefaultKwValueTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let value_text = render_transport_dispatch(node.value.as_ref())?;
+    let template = ExportStatementDefaultDeclArmDefaultKwValueTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        value: value_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_export_statement_default_from_arm_transport(node: &ExportStatementDefaultFromArmTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ExportStatementDefaultFromArmTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_export_statement_default_from_arm_clause_from_transport(node: &ExportStatementDefaultFromArmClauseFromTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let source_text = render_transport_dispatch(node.source.as_ref())?;
+    let template = ExportStatementDefaultFromArmClauseFromTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        source: source_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_export_statement_default_from_arm_ns_from_transport(node: &ExportStatementDefaultFromArmNsFromTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let source_text = render_transport_dispatch(node.source.as_ref())?;
+    let template = ExportStatementDefaultFromArmNsFromTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        source: source_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_export_statement_default_from_arm_star_from_transport(node: &ExportStatementDefaultFromArmStarFromTransport) -> Result<String, ::askama::Error> {
+    let source_text = render_transport_dispatch(node.source.as_ref())?;
+    let template = ExportStatementDefaultFromArmStarFromTemplate {
+        source: source_text.as_str(),
+    };
+    template.render()
+}
+
+fn render__export_statement_equals_export_transport(node: &_ExportStatementEqualsExportTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = _ExportStatementEqualsExportTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render__export_statement_namespace_export_transport(node: &_ExportStatementNamespaceExportTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = _ExportStatementNamespaceExportTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render__export_statement_type_export_transport(node: &_ExportStatementTypeExportTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let source_text = if let Some(v) = &node.source {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = _ExportStatementTypeExportTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        source: source_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_extends_clause_single_transport(node: &ExtendsClauseSingleTransport) -> Result<String, ::askama::Error> {
+    Ok(node.transport_text.clone().unwrap_or_default())
+}
+
+fn render_for_header_transport(node: &ForHeaderTransport) -> Result<String, ::askama::Error> {
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&render_transport_dispatch(child.as_ref())?);
+    }
+    Ok(out)
+}
+
+fn render_for_header_let_const_kind_transport(node: &ForHeaderLetConstKindTransport) -> Result<String, ::askama::Error> {
+    let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
+    let children_strings: Vec<String> = children_owned.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let kind_text = render_transport_dispatch(node.kind.as_ref())?;
+    let left_text = render_transport_dispatch(node.left.as_ref())?;
+    let template = ForHeaderLetConstKindTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        kind: kind_text.as_str(),
+        left: left_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_for_header_lhs_transport(node: &ForHeaderLhsTransport) -> Result<String, ::askama::Error> {
+    let left_text = render_transport_dispatch(node.left.as_ref())?;
+    let template = ForHeaderLhsTemplate {
+        left: left_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_for_header_var_kind_transport(node: &ForHeaderVarKindTransport) -> Result<String, ::askama::Error> {
+    let kind_text = render_transport_dispatch(node.kind.as_ref())?;
+    let left_text = render_transport_dispatch(node.left.as_ref())?;
+    let template = ForHeaderVarKindTemplate {
+        kind: kind_text.as_str(),
+        left: left_text.as_str(),
+        value: "",
+    };
+    template.render()
+}
+
+fn render_from_clause_transport(node: &FromClauseTransport) -> Result<String, ::askama::Error> {
+    Ok(node.transport_text.clone().unwrap_or_default())
+}
+
+fn render__import_clause_default_import_transport(node: &_ImportClauseDefaultImportTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = _ImportClauseDefaultImportTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render__import_clause_named_imports_transport(node: &_ImportClauseNamedImportsTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = _ImportClauseNamedImportsTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render__import_clause_namespace_import_transport(node: &_ImportClauseNamespaceImportTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = _ImportClauseNamespaceImportTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_import_specifier_as_transport(node: &ImportSpecifierAsTransport) -> Result<String, ::askama::Error> {
+    let alias_text = render_transport_dispatch(node.alias.as_ref())?;
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let template = ImportSpecifierAsTemplate {
+        alias: alias_text.as_str(),
+        name: name_text.as_str(),
+    };
+    template.render()
+}
+
+fn render__import_specifier_name_transport(node: &_ImportSpecifierNameTransport) -> Result<String, ::askama::Error> {
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let template = _ImportSpecifierNameTemplate {
+        name: name_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_index_signature_colon_transport(node: &IndexSignatureColonTransport) -> Result<String, ::askama::Error> {
+    let index_type_text = render_transport_dispatch(node.index_type.as_ref())?;
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let template = IndexSignatureColonTemplate {
+        index_type: index_type_text.as_str(),
+        name: name_text.as_str(),
+    };
+    template.render()
+}
+
+fn render__index_signature_mapped_type_clause_transport(node: &_IndexSignatureMappedTypeClauseTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = _IndexSignatureMappedTypeClauseTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_initializer_transport(node: &InitializerTransport) -> Result<String, ::askama::Error> {
+    let value_text = render_transport_dispatch(node.value.as_ref())?;
+    let template = InitializerTemplate {
+        value: value_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_interface_body_transport(node: &InterfaceBodyTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = InterfaceBodyTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_jsx_start_opening_element_transport(node: &JsxStartOpeningElementTransport) -> Result<String, ::askama::Error> {
+    Ok(node.transport_text.clone().unwrap_or_default())
+}
+
+fn render_jsx_string_transport(node: &JsxStringTransport) -> Result<String, ::askama::Error> {
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&render_transport_dispatch(child.as_ref())?);
+    }
+    Ok(out)
+}
+
+fn render_kw_abstract_marker_transport(t: &KwAbstractMarkerTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_kw_async_marker_transport(t: &KwAsyncMarkerTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_kw_const_marker_transport(t: &KwConstMarkerTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_kw_optional_marker_transport(t: &KwOptionalMarkerTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_kw_readonly_marker_transport(t: &KwReadonlyMarkerTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_kw_static_marker_transport(t: &KwStaticMarkerTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_lhs_expression_transport(node: &LhsExpressionTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = LhsExpressionTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render__module_transport(node: &_ModuleTransport) -> Result<String, ::askama::Error> {
+    Ok(node.transport_text.clone().unwrap_or_default())
+}
+
+fn render__number_transport(node: &_NumberTransport) -> Result<String, ::askama::Error> {
+    let argument_text = render_transport_dispatch(node.argument.as_ref())?;
+    let operator_text = render_transport_dispatch(node.operator.as_ref())?;
+    let template = _NumberTemplate {
+        argument: argument_text.as_str(),
+        operator: operator_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_parameter_name_transport(node: &ParameterNameTransport) -> Result<String, ::askama::Error> {
+    let mut out = String::new();
+    if let Some(children) = &node.children {
+        for child in children.iter() {
+            out.push_str(&render_transport_dispatch(child.as_ref())?);
+        }
+    }
+    Ok(out)
+}
+
+fn render__parenthesized_expression_sequence_transport(node: &_ParenthesizedExpressionSequenceTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = _ParenthesizedExpressionSequenceTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_parenthesized_expression_typed_transport(node: &ParenthesizedExpressionTypedTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let r#type_text = if let Some(v) = &node.r#type {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = ParenthesizedExpressionTypedTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        r#type: r#type_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_property_identifier_transport(node: &PropertyIdentifierTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = PropertyIdentifierTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_public_field_definition_abstract_first_transport(node: &PublicFieldDefinitionAbstractFirstTransport) -> Result<String, ::askama::Error> {
+    let abstract_marker_text = render_transport_dispatch(node.abstract_marker.as_ref())?;
+    let readonly_marker_text = if let Some(v) = &node.readonly_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = PublicFieldDefinitionAbstractFirstTemplate {
+        abstract_marker: abstract_marker_text.as_str(),
+        readonly_marker: readonly_marker_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_public_field_definition_access_first_transport(node: &PublicFieldDefinitionAccessFirstTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let declare_marker_text = if let Some(v) = &node.declare_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = PublicFieldDefinitionAccessFirstTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        declare_marker: declare_marker_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_public_field_definition_accessor_opt_transport(node: &PublicFieldDefinitionAccessorOptTransport) -> Result<String, ::askama::Error> {
+    let accessor_marker_text = render_transport_dispatch(node.accessor_marker.as_ref())?;
+    let template = PublicFieldDefinitionAccessorOptTemplate {
+        accessor_marker: accessor_marker_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_public_field_definition_declare_first_transport(node: &PublicFieldDefinitionDeclareFirstTransport) -> Result<String, ::askama::Error> {
+    let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
+    let children_strings: Vec<String> = children_owned.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = PublicFieldDefinitionDeclareFirstTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_public_field_definition_readonly_first_transport(node: &PublicFieldDefinitionReadonlyFirstTransport) -> Result<String, ::askama::Error> {
+    let abstract_marker_text = if let Some(v) = &node.abstract_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let readonly_marker_text = render_transport_dispatch(node.readonly_marker.as_ref())?;
+    let template = PublicFieldDefinitionReadonlyFirstTemplate {
+        abstract_marker: abstract_marker_text.as_str(),
+        readonly_marker: readonly_marker_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_public_field_definition_static_mods_transport(node: &PublicFieldDefinitionStaticModsTransport) -> Result<String, ::askama::Error> {
+    let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
+    let children_strings: Vec<String> = children_owned.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let readonly_marker_text = if let Some(v) = &node.readonly_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let static_marker_text = render_transport_dispatch(node.static_marker.as_ref())?;
+    let template = PublicFieldDefinitionStaticModsTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        readonly_marker: readonly_marker_text.as_str(),
+        static_marker: static_marker_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_reserved_identifier_transport(t: &ReservedIdentifierTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_statement_identifier_transport(node: &StatementIdentifierTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = StatementIdentifierTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render__string_double_transport(node: &_StringDoubleTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = _StringDoubleTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_string_fragment_transport(node: &StringFragmentTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = StringFragmentTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render__string_single_transport(node: &_StringSingleTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = _StringSingleTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_this_type_transport(node: &ThisTypeTransport) -> Result<String, ::askama::Error> {
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&render_transport_dispatch(child.as_ref())?);
+    }
+    Ok(out)
+}
+
+fn render_type_identifier_transport(node: &TypeIdentifierTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = TypeIdentifierTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_type_query_call_expression_transport(node: &TypeQueryCallExpressionTransport) -> Result<String, ::askama::Error> {
+    let arguments_text = render_transport_dispatch(node.arguments.as_ref())?;
+    let function_text = render_transport_dispatch(node.function.as_ref())?;
+    let template = TypeQueryCallExpressionTemplate {
+        arguments: arguments_text.as_str(),
+        function: function_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_type_query_call_expression_in_type_annotation_transport(node: &TypeQueryCallExpressionInTypeAnnotationTransport) -> Result<String, ::askama::Error> {
+    let arguments_text = render_transport_dispatch(node.arguments.as_ref())?;
+    let function_text = render_transport_dispatch(node.function.as_ref())?;
+    let template = TypeQueryCallExpressionInTypeAnnotationTemplate {
+        arguments: arguments_text.as_str(),
+        function: function_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_type_query_instantiation_expression_transport(node: &TypeQueryInstantiationExpressionTransport) -> Result<String, ::askama::Error> {
+    let function_text = render_transport_dispatch(node.function.as_ref())?;
+    let type_arguments_text = render_transport_dispatch(node.type_arguments.as_ref())?;
+    let template = TypeQueryInstantiationExpressionTemplate {
+        function: function_text.as_str(),
+        type_arguments: type_arguments_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_type_query_member_expression_transport(node: &TypeQueryMemberExpressionTransport) -> Result<String, ::askama::Error> {
+    let object_text = render_transport_dispatch(node.object.as_ref())?;
+    let property_text = render_transport_dispatch(node.property.as_ref())?;
+    let template = TypeQueryMemberExpressionTemplate {
+        object: object_text.as_str(),
+        property: property_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_type_query_member_expression_in_type_annotation_transport(node: &TypeQueryMemberExpressionInTypeAnnotationTransport) -> Result<String, ::askama::Error> {
+    let object_text = render_transport_dispatch(node.object.as_ref())?;
+    let property_text = render_transport_dispatch(node.property.as_ref())?;
+    let template = TypeQueryMemberExpressionInTypeAnnotationTemplate {
+        object: object_text.as_str(),
+        property: property_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_type_query_subscript_expression_transport(node: &TypeQuerySubscriptExpressionTransport) -> Result<String, ::askama::Error> {
+    let index_text = render_transport_dispatch(node.index.as_ref())?;
+    let object_text = render_transport_dispatch(node.object.as_ref())?;
+    let template = TypeQuerySubscriptExpressionTemplate {
+        index: index_text.as_str(),
+        object: object_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_update_expression_postfix_transport(node: &UpdateExpressionPostfixTransport) -> Result<String, ::askama::Error> {
+    let argument_text = render_transport_dispatch(node.argument.as_ref())?;
+    let operator_text = render_transport_dispatch(node.operator.as_ref())?;
+    let template = UpdateExpressionPostfixTemplate {
+        argument: argument_text.as_str(),
+        operator: operator_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_update_expression_prefix_transport(node: &UpdateExpressionPrefixTransport) -> Result<String, ::askama::Error> {
+    let argument_text = render_transport_dispatch(node.argument.as_ref())?;
+    let operator_text = render_transport_dispatch(node.operator.as_ref())?;
+    let template = UpdateExpressionPrefixTemplate {
+        argument: argument_text.as_str(),
+        operator: operator_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_abstract_class_declaration_transport(node: &AbstractClassDeclarationTransport) -> Result<String, ::askama::Error> {
+    let decorator_strings: Vec<String> = node.decorator.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let decorator_buf: Vec<::sittir_core::filters::Renderable<'_>> = decorator_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let class_heritage_text = if let Some(v) = &node.class_heritage {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let type_parameters_text = if let Some(v) = &node.type_parameters {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = AbstractClassDeclarationTemplate {
+        body: body_text.as_str(),
+        class_heritage: class_heritage_text.as_str(),
+        decorator: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            items: decorator_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        }),
+        name: name_text.as_str(),
+        type_parameters: type_parameters_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_abstract_method_signature_transport(node: &AbstractMethodSignatureTransport) -> Result<String, ::askama::Error> {
+    let accessibility_modifier_text = if let Some(v) = &node.accessibility_modifier {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let accessor_kind_text = if let Some(v) = &node.accessor_kind {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let optional_marker_text = if let Some(v) = &node.optional_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let override_modifier_text = if let Some(v) = &node.override_modifier {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let parameters_text = render_transport_dispatch(node.parameters.as_ref())?;
+    let return_type_text = if let Some(v) = &node.return_type {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let type_parameters_text = if let Some(v) = &node.type_parameters {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = AbstractMethodSignatureTemplate {
+        accessibility_modifier: accessibility_modifier_text.as_str(),
+        accessor_kind: accessor_kind_text.as_str(),
+        name: name_text.as_str(),
+        optional_marker: optional_marker_text.as_str(),
+        override_modifier: override_modifier_text.as_str(),
+        parameters: parameters_text.as_str(),
+        return_type: return_type_text.as_str(),
+        type_parameters: type_parameters_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_accessibility_modifier_transport(t: &AccessibilityModifierTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_adding_type_annotation_transport(node: &AddingTypeAnnotationTransport) -> Result<String, ::askama::Error> {
+    let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
+    let template = AddingTypeAnnotationTemplate {
+        r#type: r#type_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_ambient_declaration_transport(node: &AmbientDeclarationTransport) -> Result<String, ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = Vec::new();
+    let declaration_rendered = render_transport_dispatch(node.declaration.as_ref())?;
+    let template = AmbientDeclarationTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        declaration: ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(declaration_rendered.as_str())),
+    };
+    template.render()
+}
+
+fn render_arguments_transport(node: &ArgumentsTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ArgumentsTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_array_transport(node: &ArrayTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ArrayTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_array_pattern_transport(node: &ArrayPatternTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ArrayPatternTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_array_type_transport(node: &ArrayTypeTransport) -> Result<String, ::askama::Error> {
+    let primary_type_text = render_transport_dispatch(node.primary_type.as_ref())?;
+    let template = ArrayTypeTemplate {
+        primary_type: primary_type_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_arrow_function_parameter_transport(node: &ArrowFunctionParameterTransport) -> Result<String, ::askama::Error> {
+    let parameter_text = render_transport_dispatch(node.parameter.as_ref())?;
+    let template = ArrowFunctionParameterTemplate {
+        parameter: parameter_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_arrow_function_ucall_signature_transport(node: &ArrowFunctionUCallSignatureTransport) -> Result<String, ::askama::Error> {
+    let parameters_text = render_transport_dispatch(node.parameters.as_ref())?;
+    let return_type_text = if let Some(v) = &node.return_type {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let type_parameters_text = if let Some(v) = &node.type_parameters {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = ArrowFunctionUCallSignatureTemplate {
+        parameters: parameters_text.as_str(),
+        return_type: return_type_text.as_str(),
+        type_parameters: type_parameters_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_arrow_function_transport(t: &ArrowFunctionTransport) -> Result<String, ::askama::Error> {
+    match t {
+        ArrowFunctionTransport::ArrowFunctionUFormParameter(data) => render_arrow_function_uform_parameter_transport(data),
+        ArrowFunctionTransport::ArrowFunctionUFormUCallSignature(data) => render_arrow_function_uform_ucall_signature_transport(data),
+    }
+}
+
+fn render_arrow_function_uform_parameter_transport(node: &ArrowFunctionUFormParameterTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let async_marker_text = if let Some(v) = &node.async_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let template = ArrowFunctionTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        async_marker: async_marker_text.as_str(),
+        body: body_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_arrow_function_uform_ucall_signature_transport(node: &ArrowFunctionUFormUCallSignatureTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let async_marker_text = if let Some(v) = &node.async_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let template = ArrowFunctionTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        async_marker: async_marker_text.as_str(),
+        body: body_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_as_expression_transport(node: &AsExpressionTransport) -> Result<String, ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = Vec::new();
+    let expression_text = render_transport_dispatch(node.expression.as_ref())?;
+    let type_annotation_text = render_transport_dispatch(node.type_annotation.as_ref())?;
+    let template = AsExpressionTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        expression: expression_text.as_str(),
+        type_annotation: type_annotation_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_asserts_transport(node: &AssertsTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = AssertsTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_asserts_annotation_transport(node: &AssertsAnnotationTransport) -> Result<String, ::askama::Error> {
+    let asserts_rendered = render_transport_dispatch(node.asserts.as_ref())?;
+    let template = AssertsAnnotationTemplate {
+        asserts: ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(asserts_rendered.as_str())),
+    };
+    template.render()
+}
+
+fn render_assignment_expression_transport(node: &AssignmentExpressionTransport) -> Result<String, ::askama::Error> {
+    let left_text = render_transport_dispatch(node.left.as_ref())?;
+    let right_text = render_transport_dispatch(node.right.as_ref())?;
+    let using_marker_text = if let Some(v) = &node.using_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = AssignmentExpressionTemplate {
+        left: left_text.as_str(),
+        right: right_text.as_str(),
+        using_marker: using_marker_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_assignment_pattern_transport(node: &AssignmentPatternTransport) -> Result<String, ::askama::Error> {
+    let left_text = render_transport_dispatch(node.left.as_ref())?;
+    let right_text = render_transport_dispatch(node.right.as_ref())?;
+    let template = AssignmentPatternTemplate {
+        left: left_text.as_str(),
+        right: right_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_augmented_assignment_expression_transport(node: &AugmentedAssignmentExpressionTransport) -> Result<String, ::askama::Error> {
+    let left_text = render_transport_dispatch(node.left.as_ref())?;
+    let operator_text = render_transport_dispatch(node.operator.as_ref())?;
+    let right_text = render_transport_dispatch(node.right.as_ref())?;
+    let template = AugmentedAssignmentExpressionTemplate {
+        left: left_text.as_str(),
+        operator: operator_text.as_str(),
+        right: right_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_await_expression_transport(node: &AwaitExpressionTransport) -> Result<String, ::askama::Error> {
+    let expression_text = render_transport_dispatch(node.expression.as_ref())?;
+    let template = AwaitExpressionTemplate {
+        expression: expression_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_binary_expression_transport(node: &BinaryExpressionTransport) -> Result<String, ::askama::Error> {
+    let left_text = render_transport_dispatch(node.left.as_ref())?;
+    let operator_text = render_transport_dispatch(node.operator.as_ref())?;
+    let right_text = render_transport_dispatch(node.right.as_ref())?;
+    let template = BinaryExpressionTemplate {
+        left: left_text.as_str(),
+        operator: operator_text.as_str(),
+        right: right_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_break_statement_transport(node: &BreakStatementTransport) -> Result<String, ::askama::Error> {
+    let label_text = if let Some(v) = &node.label {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let semicolon_text = render_transport_dispatch(node.semicolon.as_ref())?;
+    let template = BreakStatementTemplate {
+        label: label_text.as_str(),
+        semicolon: semicolon_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_call_expression_transport(t: &CallExpressionTransport) -> Result<String, ::askama::Error> {
+    match t {
+        CallExpressionTransport::CallExpressionUFormCall(data) => render_call_expression_uform_call_transport(data),
+        CallExpressionTransport::CallExpressionUFormTemplateCall(data) => render_call_expression_uform_template_call_transport(data),
+        CallExpressionTransport::CallExpressionUFormMember(data) => render_call_expression_uform_member_transport(data),
+    }
+}
+
+fn render_call_expression_uform_call_transport(node: &CallExpressionUFormCallTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = CallExpressionTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_call_expression_uform_template_call_transport(node: &CallExpressionUFormTemplateCallTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = CallExpressionTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_call_expression_uform_member_transport(node: &CallExpressionUFormMemberTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = CallExpressionTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_call_signature_transport(node: &CallSignatureTransport) -> Result<String, ::askama::Error> {
+    let parameters_text = render_transport_dispatch(node.parameters.as_ref())?;
+    let return_type_text = if let Some(v) = &node.return_type {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let type_parameters_text = if let Some(v) = &node.type_parameters {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = CallSignatureTemplate {
+        parameters: parameters_text.as_str(),
+        return_type: return_type_text.as_str(),
+        type_parameters: type_parameters_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_catch_clause_transport(node: &CatchClauseTransport) -> Result<String, ::askama::Error> {
+    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let parameter_text = if let Some(v) = &node.parameter {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let r#type_text = if let Some(v) = &node.r#type {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = CatchClauseTemplate {
+        body: body_text.as_str(),
+        parameter: parameter_text.as_str(),
+        r#type: r#type_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_class_transport(node: &ClassTransport) -> Result<String, ::askama::Error> {
+    let decorator_strings: Vec<String> = node.decorator.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let decorator_buf: Vec<::sittir_core::filters::Renderable<'_>> = decorator_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let class_heritage_text = if let Some(v) = &node.class_heritage {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let name_text = if let Some(v) = &node.name {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let type_parameters_text = if let Some(v) = &node.type_parameters {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = ClassTemplate {
+        body: body_text.as_str(),
+        class_heritage: class_heritage_text.as_str(),
+        decorator: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            items: decorator_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        }),
+        name: name_text.as_str(),
+        type_parameters: type_parameters_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_class_body_transport(node: &ClassBodyTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ClassBodyTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_class_declaration_transport(node: &ClassDeclarationTransport) -> Result<String, ::askama::Error> {
+    let decorator_strings: Vec<String> = node.decorator.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let decorator_buf: Vec<::sittir_core::filters::Renderable<'_>> = decorator_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let automatic_semicolon_text = if let Some(v) = &node.automatic_semicolon {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let class_heritage_text = if let Some(v) = &node.class_heritage {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let type_parameters_text = if let Some(v) = &node.type_parameters {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = ClassDeclarationTemplate {
+        automatic_semicolon: automatic_semicolon_text.as_str(),
+        body: body_text.as_str(),
+        class_heritage: class_heritage_text.as_str(),
+        decorator: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            items: decorator_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        }),
+        name: name_text.as_str(),
+        type_parameters: type_parameters_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_class_heritage_extends_clause_transport(node: &ClassHeritageExtendsClauseTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ClassHeritageExtendsClauseTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_class_heritage_implements_clause_transport(node: &ClassHeritageImplementsClauseTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ClassHeritageImplementsClauseTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_class_heritage_transport(t: &ClassHeritageTransport) -> Result<String, ::askama::Error> {
+    match t {
+        ClassHeritageTransport::ClassHeritageUFormExtendsClause(data) => render_class_heritage_uform_extends_clause_transport(data),
+        ClassHeritageTransport::ClassHeritageUFormImplementsClause(data) => render_class_heritage_uform_implements_clause_transport(data),
+    }
+}
+
+fn render_class_heritage_uform_extends_clause_transport(node: &ClassHeritageUFormExtendsClauseTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ClassHeritageTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_class_heritage_uform_implements_clause_transport(node: &ClassHeritageUFormImplementsClauseTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ClassHeritageTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_class_static_block_transport(node: &ClassStaticBlockTransport) -> Result<String, ::askama::Error> {
+    let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
+    let children_strings: Vec<String> = children_owned.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let template = ClassStaticBlockTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        body: body_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_comment_transport(t: &CommentTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_computed_property_name_transport(node: &ComputedPropertyNameTransport) -> Result<String, ::askama::Error> {
+    let expression_text = render_transport_dispatch(node.expression.as_ref())?;
+    let template = ComputedPropertyNameTemplate {
+        expression: expression_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_conditional_type_transport(node: &ConditionalTypeTransport) -> Result<String, ::askama::Error> {
+    let alternative_text = render_transport_dispatch(node.alternative.as_ref())?;
+    let consequence_text = render_transport_dispatch(node.consequence.as_ref())?;
+    let left_text = render_transport_dispatch(node.left.as_ref())?;
+    let right_text = render_transport_dispatch(node.right.as_ref())?;
+    let template = ConditionalTypeTemplate {
+        alternative: alternative_text.as_str(),
+        consequence: consequence_text.as_str(),
+        left: left_text.as_str(),
+        right: right_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_constraint_transport(node: &ConstraintTransport) -> Result<String, ::askama::Error> {
+    let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
+    let template = ConstraintTemplate {
+        r#type: r#type_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_construct_signature_transport(node: &ConstructSignatureTransport) -> Result<String, ::askama::Error> {
+    let abstract_marker_text = if let Some(v) = &node.abstract_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let parameters_text = render_transport_dispatch(node.parameters.as_ref())?;
+    let r#type_text = if let Some(v) = &node.r#type {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let type_parameters_text = if let Some(v) = &node.type_parameters {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = ConstructSignatureTemplate {
+        abstract_marker: abstract_marker_text.as_str(),
+        parameters: parameters_text.as_str(),
+        r#type: r#type_text.as_str(),
+        type_parameters: type_parameters_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_constructor_type_transport(node: &ConstructorTypeTransport) -> Result<String, ::askama::Error> {
+    let abstract_marker_text = if let Some(v) = &node.abstract_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let parameters_text = render_transport_dispatch(node.parameters.as_ref())?;
+    let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
+    let type_parameters_text = if let Some(v) = &node.type_parameters {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = ConstructorTypeTemplate {
+        abstract_marker: abstract_marker_text.as_str(),
+        parameters: parameters_text.as_str(),
+        r#type: r#type_text.as_str(),
+        type_parameters: type_parameters_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_continue_statement_transport(node: &ContinueStatementTransport) -> Result<String, ::askama::Error> {
+    let label_text = if let Some(v) = &node.label {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let semicolon_text = render_transport_dispatch(node.semicolon.as_ref())?;
+    let template = ContinueStatementTemplate {
+        label: label_text.as_str(),
+        semicolon: semicolon_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_debugger_statement_transport(node: &DebuggerStatementTransport) -> Result<String, ::askama::Error> {
+    let semicolon_text = render_transport_dispatch(node.semicolon.as_ref())?;
+    let template = DebuggerStatementTemplate {
+        semicolon: semicolon_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_decorator_transport(node: &DecoratorTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = DecoratorTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_decorator_call_expression_transport(node: &DecoratorCallExpressionTransport) -> Result<String, ::askama::Error> {
+    let arguments_text = render_transport_dispatch(node.arguments.as_ref())?;
+    let function_text = render_transport_dispatch(node.function.as_ref())?;
+    let type_arguments_text = if let Some(v) = &node.type_arguments {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = DecoratorCallExpressionTemplate {
+        arguments: arguments_text.as_str(),
+        function: function_text.as_str(),
+        type_arguments: type_arguments_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_decorator_member_expression_transport(node: &DecoratorMemberExpressionTransport) -> Result<String, ::askama::Error> {
+    let object_text = render_transport_dispatch(node.object.as_ref())?;
+    let property_text = render_transport_dispatch(node.property.as_ref())?;
+    let template = DecoratorMemberExpressionTemplate {
+        object: object_text.as_str(),
+        property: property_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_decorator_parenthesized_expression_transport(node: &DecoratorParenthesizedExpressionTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = DecoratorParenthesizedExpressionTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_default_type_transport(node: &DefaultTypeTransport) -> Result<String, ::askama::Error> {
+    let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
+    let template = DefaultTypeTemplate {
+        r#type: r#type_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_do_statement_transport(node: &DoStatementTransport) -> Result<String, ::askama::Error> {
+    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let condition_text = render_transport_dispatch(node.condition.as_ref())?;
+    let semicolon_text = if let Some(v) = &node.semicolon {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = DoStatementTemplate {
+        body: body_text.as_str(),
+        condition: condition_text.as_str(),
+        semicolon: semicolon_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_else_clause_transport(node: &ElseClauseTransport) -> Result<String, ::askama::Error> {
+    let statement_text = render_transport_dispatch(node.statement.as_ref())?;
+    let template = ElseClauseTemplate {
+        statement: statement_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_empty_statement_transport(t: &EmptyStatementTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_enum_assignment_transport(node: &EnumAssignmentTransport) -> Result<String, ::askama::Error> {
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let value_text = render_transport_dispatch(node.value.as_ref())?;
+    let template = EnumAssignmentTemplate {
+        name: name_text.as_str(),
+        value: value_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_enum_body_transport(node: &EnumBodyTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = EnumBodyTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        name: ::sittir_core::filters::ListView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_enum_declaration_transport(node: &EnumDeclarationTransport) -> Result<String, ::askama::Error> {
+    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let const_marker_text = if let Some(v) = &node.const_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let template = EnumDeclarationTemplate {
+        body: body_text.as_str(),
+        const_marker: const_marker_text.as_str(),
+        name: name_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_escape_sequence_transport(t: &EscapeSequenceTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_existential_type_transport(t: &ExistentialTypeTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_export_clause_transport(node: &ExportClauseTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ExportClauseTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_export_specifier_transport(node: &ExportSpecifierTransport) -> Result<String, ::askama::Error> {
+    let alias_text = if let Some(v) = &node.alias {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let export_kind_text = if let Some(v) = &node.export_kind {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let template = ExportSpecifierTemplate {
+        alias: alias_text.as_str(),
+        export_kind: export_kind_text.as_str(),
+        name: name_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_export_statement_type_export_transport(node: &ExportStatementTypeExportTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let source_text = if let Some(v) = &node.source {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = ExportStatementTypeExportTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        source: source_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_export_statement_equals_export_transport(node: &ExportStatementEqualsExportTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ExportStatementEqualsExportTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_export_statement_namespace_export_transport(node: &ExportStatementNamespaceExportTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ExportStatementNamespaceExportTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_export_statement_transport(t: &ExportStatementTransport) -> Result<String, ::askama::Error> {
+    match t {
+        ExportStatementTransport::ExportStatementUFormDefault(data) => render_export_statement_uform_default_transport(data),
+        ExportStatementTransport::ExportStatementUFormTypeExport(data) => render_export_statement_uform_type_export_transport(data),
+        ExportStatementTransport::ExportStatementUFormEqualsExport(data) => render_export_statement_uform_equals_export_transport(data),
+        ExportStatementTransport::ExportStatementUFormNamespaceExport(data) => render_export_statement_uform_namespace_export_transport(data),
+    }
+}
+
+fn render_export_statement_uform_default_transport(node: &ExportStatementUFormDefaultTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ExportStatementTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_export_statement_uform_type_export_transport(node: &ExportStatementUFormTypeExportTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ExportStatementTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_export_statement_uform_equals_export_transport(node: &ExportStatementUFormEqualsExportTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ExportStatementTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_export_statement_uform_namespace_export_transport(node: &ExportStatementUFormNamespaceExportTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ExportStatementTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_expression_statement_transport(node: &ExpressionStatementTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let semicolon_text = render_transport_dispatch(node.semicolon.as_ref())?;
+    let template = ExpressionStatementTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        semicolon: semicolon_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_extends_clause_transport(node: &ExtendsClauseTransport) -> Result<String, ::askama::Error> {
+    let value_strings: Vec<String> = node.value.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let value_buf: Vec<::sittir_core::filters::Renderable<'_>> = value_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let type_arguments_rendered = match &node.type_arguments {
+        Some(v) => Some(render_transport_dispatch(v.as_ref())?),
+        None => None,
+    };
+    let template = ExtendsClauseTemplate {
+        type_arguments: match &type_arguments_rendered {
+            Some(s) => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(s.as_str())),
+            None => ::sittir_core::filters::FieldView::Missing,
+        },
+        value: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            items: value_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        }),
+    };
+    template.render()
+}
+
+fn render_extends_type_clause_transport(node: &ExtendsTypeClauseTransport) -> Result<String, ::askama::Error> {
+    let r#type_strings: Vec<String> = node.r#type.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let r#type_buf: Vec<::sittir_core::filters::Renderable<'_>> = r#type_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ExtendsTypeClauseTemplate {
+        r#type: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            items: r#type_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        }),
+    };
+    template.render()
+}
+
+fn render_false_transport(t: &FalseTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_field_definition_transport(node: &FieldDefinitionTransport) -> Result<String, ::askama::Error> {
+    let decorator_strings: Vec<String> = node.decorator.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let decorator_buf: Vec<::sittir_core::filters::Renderable<'_>> = decorator_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let property_text = render_transport_dispatch(node.property.as_ref())?;
+    let static_marker_text = if let Some(v) = &node.static_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let value_text = if let Some(v) = &node.value {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = FieldDefinitionTemplate {
+        decorator: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            items: decorator_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        }),
+        property: property_text.as_str(),
+        static_marker: static_marker_text.as_str(),
+        value: value_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_finally_clause_transport(node: &FinallyClauseTransport) -> Result<String, ::askama::Error> {
+    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let template = FinallyClauseTemplate {
+        body: body_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_flow_maybe_type_transport(node: &FlowMaybeTypeTransport) -> Result<String, ::askama::Error> {
+    let primary_type_text = render_transport_dispatch(node.primary_type.as_ref())?;
+    let template = FlowMaybeTypeTemplate {
+        primary_type: primary_type_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_for_in_statement_transport(node: &ForInStatementTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let await_marker_text = if let Some(v) = &node.await_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let operator_text = render_transport_dispatch(node.operator.as_ref())?;
+    let right_text = render_transport_dispatch(node.right.as_ref())?;
+    let template = ForInStatementTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        await_marker: await_marker_text.as_str(),
+        body: body_text.as_str(),
+        operator: operator_text.as_str(),
+        right: right_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_for_statement_transport(node: &ForStatementTransport) -> Result<String, ::askama::Error> {
+    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let condition_text = render_transport_dispatch(node.condition.as_ref())?;
+    let increment_text = if let Some(v) = &node.increment {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let initializer_text = render_transport_dispatch(node.initializer.as_ref())?;
+    let template = ForStatementTemplate {
+        body: body_text.as_str(),
+        condition: condition_text.as_str(),
+        increment: increment_text.as_str(),
+        initializer: initializer_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_formal_parameters_transport(node: &FormalParametersTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = FormalParametersTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_function_declaration_transport(node: &FunctionDeclarationTransport) -> Result<String, ::askama::Error> {
+    let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
+    let children_strings: Vec<String> = children_owned.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let async_marker_text = if let Some(v) = &node.async_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let parameters_text = render_transport_dispatch(node.parameters.as_ref())?;
+    let return_type_text = if let Some(v) = &node.return_type {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let type_parameters_text = if let Some(v) = &node.type_parameters {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = FunctionDeclarationTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        async_marker: async_marker_text.as_str(),
+        body: body_text.as_str(),
+        name: name_text.as_str(),
+        parameters: parameters_text.as_str(),
+        return_type: return_type_text.as_str(),
+        type_parameters: type_parameters_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_function_expression_transport(node: &FunctionExpressionTransport) -> Result<String, ::askama::Error> {
+    let async_marker_text = if let Some(v) = &node.async_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let name_text = if let Some(v) = &node.name {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let parameters_text = render_transport_dispatch(node.parameters.as_ref())?;
+    let return_type_text = if let Some(v) = &node.return_type {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let type_parameters_text = if let Some(v) = &node.type_parameters {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = FunctionExpressionTemplate {
+        async_marker: async_marker_text.as_str(),
+        body: body_text.as_str(),
+        name: name_text.as_str(),
+        parameters: parameters_text.as_str(),
+        return_type: return_type_text.as_str(),
+        type_parameters: type_parameters_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_function_signature_transport(node: &FunctionSignatureTransport) -> Result<String, ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = Vec::new();
+    let async_marker_text = if let Some(v) = &node.async_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let parameters_text = render_transport_dispatch(node.parameters.as_ref())?;
+    let return_type_text = if let Some(v) = &node.return_type {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let semicolon_text = render_transport_dispatch(node.semicolon.as_ref())?;
+    let type_parameters_text = if let Some(v) = &node.type_parameters {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = FunctionSignatureTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        async_marker: async_marker_text.as_str(),
+        name: name_text.as_str(),
+        parameters: parameters_text.as_str(),
+        return_type: return_type_text.as_str(),
+        semicolon: semicolon_text.as_str(),
+        type_parameters: type_parameters_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_function_type_transport(node: &FunctionTypeTransport) -> Result<String, ::askama::Error> {
+    let parameters_text = render_transport_dispatch(node.parameters.as_ref())?;
+    let return_type_text = render_transport_dispatch(node.return_type.as_ref())?;
+    let type_parameters_text = if let Some(v) = &node.type_parameters {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = FunctionTypeTemplate {
+        parameters: parameters_text.as_str(),
+        return_type: return_type_text.as_str(),
+        type_parameters: type_parameters_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_generator_function_transport(node: &GeneratorFunctionTransport) -> Result<String, ::askama::Error> {
+    let async_marker_text = if let Some(v) = &node.async_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let name_text = if let Some(v) = &node.name {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let parameters_text = render_transport_dispatch(node.parameters.as_ref())?;
+    let return_type_text = if let Some(v) = &node.return_type {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let type_parameters_text = if let Some(v) = &node.type_parameters {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = GeneratorFunctionTemplate {
+        async_marker: async_marker_text.as_str(),
+        body: body_text.as_str(),
+        name: name_text.as_str(),
+        parameters: parameters_text.as_str(),
+        return_type: return_type_text.as_str(),
+        type_parameters: type_parameters_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_generator_function_declaration_transport(node: &GeneratorFunctionDeclarationTransport) -> Result<String, ::askama::Error> {
+    let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
+    let children_strings: Vec<String> = children_owned.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let async_marker_text = if let Some(v) = &node.async_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let parameters_text = render_transport_dispatch(node.parameters.as_ref())?;
+    let return_type_text = if let Some(v) = &node.return_type {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let type_parameters_text = if let Some(v) = &node.type_parameters {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = GeneratorFunctionDeclarationTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        async_marker: async_marker_text.as_str(),
+        body: body_text.as_str(),
+        name: name_text.as_str(),
+        parameters: parameters_text.as_str(),
+        return_type: return_type_text.as_str(),
+        type_parameters: type_parameters_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_generic_type_transport(node: &GenericTypeTransport) -> Result<String, ::askama::Error> {
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let type_arguments_text = render_transport_dispatch(node.type_arguments.as_ref())?;
+    let template = GenericTypeTemplate {
+        name: name_text.as_str(),
+        type_arguments: type_arguments_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_hash_bang_line_transport(t: &HashBangLineTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_html_character_reference_transport(t: &HtmlCharacterReferenceTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_identifier_transport(t: &IdentifierTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_if_statement_transport(node: &IfStatementTransport) -> Result<String, ::askama::Error> {
+    let alternative_text = if let Some(v) = &node.alternative {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let condition_text = render_transport_dispatch(node.condition.as_ref())?;
+    let consequence_text = render_transport_dispatch(node.consequence.as_ref())?;
+    let template = IfStatementTemplate {
+        alternative: alternative_text.as_str(),
+        condition: condition_text.as_str(),
+        consequence: consequence_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_implements_clause_transport(node: &ImplementsClauseTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ImplementsClauseTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_import_transport(t: &ImportTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_import_alias_transport(node: &ImportAliasTransport) -> Result<String, ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = Vec::new();
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let semicolon_text = render_transport_dispatch(node.semicolon.as_ref())?;
+    let value_text = render_transport_dispatch(node.value.as_ref())?;
+    let template = ImportAliasTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        name: name_text.as_str(),
+        semicolon: semicolon_text.as_str(),
+        value: value_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_import_attribute_transport(node: &ImportAttributeTransport) -> Result<String, ::askama::Error> {
+    let object_rendered = render_transport_dispatch(node.object.as_ref())?;
+    let template = ImportAttributeTemplate {
+        object: ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(object_rendered.as_str())),
+    };
+    template.render()
+}
+
+fn render_import_clause_namespace_import_transport(node: &ImportClauseNamespaceImportTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ImportClauseNamespaceImportTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_import_clause_named_imports_transport(node: &ImportClauseNamedImportsTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ImportClauseNamedImportsTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_import_clause_default_import_transport(node: &ImportClauseDefaultImportTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ImportClauseDefaultImportTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_import_clause_transport(t: &ImportClauseTransport) -> Result<String, ::askama::Error> {
+    match t {
+        ImportClauseTransport::ImportClauseUFormNamespaceImport(data) => render_import_clause_uform_namespace_import_transport(data),
+        ImportClauseTransport::ImportClauseUFormNamedImports(data) => render_import_clause_uform_named_imports_transport(data),
+        ImportClauseTransport::ImportClauseUFormDefaultImport(data) => render_import_clause_uform_default_import_transport(data),
+    }
+}
+
+fn render_import_clause_uform_namespace_import_transport(node: &ImportClauseUFormNamespaceImportTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ImportClauseTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_import_clause_uform_named_imports_transport(node: &ImportClauseUFormNamedImportsTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ImportClauseTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_import_clause_uform_default_import_transport(node: &ImportClauseUFormDefaultImportTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ImportClauseTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_import_require_clause_transport(node: &ImportRequireClauseTransport) -> Result<String, ::askama::Error> {
+    let identifier_text = render_transport_dispatch(node.identifier.as_ref())?;
+    let source_text = render_transport_dispatch(node.source.as_ref())?;
+    let template = ImportRequireClauseTemplate {
+        identifier: identifier_text.as_str(),
+        source: source_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_import_specifier_name_transport(node: &ImportSpecifierNameTransport) -> Result<String, ::askama::Error> {
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let template = ImportSpecifierNameTemplate {
+        name: name_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_import_specifier_transport(t: &ImportSpecifierTransport) -> Result<String, ::askama::Error> {
+    match t {
+        ImportSpecifierTransport::ImportSpecifierUFormName(data) => render_import_specifier_uform_name_transport(data),
+        ImportSpecifierTransport::ImportSpecifierUFormAs(data) => render_import_specifier_uform_as_transport(data),
+    }
+}
+
+fn render_import_specifier_uform_name_transport(node: &ImportSpecifierUFormNameTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let import_kind_text = if let Some(v) = &node.import_kind {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = ImportSpecifierTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        import_kind: import_kind_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_import_specifier_uform_as_transport(node: &ImportSpecifierUFormAsTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let import_kind_text = if let Some(v) = &node.import_kind {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = ImportSpecifierTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        import_kind: import_kind_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_import_statement_transport(node: &ImportStatementTransport) -> Result<String, ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = Vec::new();
+    let import_attribute_text = if let Some(v) = &node.import_attribute {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let import_clause_text = if let Some(v) = &node.import_clause {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let semicolon_text = render_transport_dispatch(node.semicolon.as_ref())?;
+    let template = ImportStatementTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        import_attribute: import_attribute_text.as_str(),
+        import_clause: import_clause_text.as_str(),
+        semicolon: semicolon_text.as_str(),
+        source: "",
+    };
+    template.render()
+}
+
+fn render_index_signature_mapped_type_clause_transport(node: &IndexSignatureMappedTypeClauseTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = IndexSignatureMappedTypeClauseTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_index_signature_transport(t: &IndexSignatureTransport) -> Result<String, ::askama::Error> {
+    match t {
+        IndexSignatureTransport::IndexSignatureUFormColon(data) => render_index_signature_uform_colon_transport(data),
+        IndexSignatureTransport::IndexSignatureUFormMappedTypeClause(data) => render_index_signature_uform_mapped_type_clause_transport(data),
+    }
+}
+
+fn render_index_signature_uform_colon_transport(node: &IndexSignatureUFormColonTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let sign_text = if let Some(v) = &node.sign {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
+    let template = IndexSignatureTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        sign: sign_text.as_str(),
+        r#type: r#type_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_index_signature_uform_mapped_type_clause_transport(node: &IndexSignatureUFormMappedTypeClauseTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let sign_text = if let Some(v) = &node.sign {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
+    let template = IndexSignatureTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        sign: sign_text.as_str(),
+        r#type: r#type_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_index_type_query_transport(node: &IndexTypeQueryTransport) -> Result<String, ::askama::Error> {
+    let primary_type_text = render_transport_dispatch(node.primary_type.as_ref())?;
+    let template = IndexTypeQueryTemplate {
+        primary_type: primary_type_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_infer_type_transport(node: &InferTypeTransport) -> Result<String, ::askama::Error> {
+    let r#type_text = if let Some(v) = &node.r#type {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let type_identifier_text = render_transport_dispatch(node.type_identifier.as_ref())?;
+    let template = InferTypeTemplate {
+        r#type: r#type_text.as_str(),
+        type_identifier: type_identifier_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_instantiation_expression_transport(node: &InstantiationExpressionTransport) -> Result<String, ::askama::Error> {
+    let expression_text = render_transport_dispatch(node.expression.as_ref())?;
+    let type_arguments_text = render_transport_dispatch(node.type_arguments.as_ref())?;
+    let template = InstantiationExpressionTemplate {
+        expression: expression_text.as_str(),
+        type_arguments: type_arguments_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_interface_declaration_transport(node: &InterfaceDeclarationTransport) -> Result<String, ::askama::Error> {
+    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let extends_type_clause_text = if let Some(v) = &node.extends_type_clause {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let type_parameters_text = if let Some(v) = &node.type_parameters {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = InterfaceDeclarationTemplate {
+        body: body_text.as_str(),
+        extends_type_clause: extends_type_clause_text.as_str(),
+        name: name_text.as_str(),
+        type_parameters: type_parameters_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_internal_module_transport(node: &InternalModuleTransport) -> Result<String, ::askama::Error> {
+    let body_text = if let Some(v) = &node.body {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let template = InternalModuleTemplate {
+        body: body_text.as_str(),
+        name: name_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_intersection_type_transport(node: &IntersectionTypeTransport) -> Result<String, ::askama::Error> {
+    let left_text = if let Some(v) = &node.left {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let right_text = render_transport_dispatch(node.right.as_ref())?;
+    let template = IntersectionTypeTemplate {
+        left: left_text.as_str(),
+        right: right_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_jsx_attribute_transport(node: &JsxAttributeTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = JsxAttributeTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_jsx_closing_element_transport(node: &JsxClosingElementTransport) -> Result<String, ::askama::Error> {
+    let name_text = if let Some(v) = &node.name {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = JsxClosingElementTemplate {
+        name: name_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_jsx_element_transport(node: &JsxElementTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let close_tag_text = render_transport_dispatch(node.close_tag.as_ref())?;
+    let open_tag_text = render_transport_dispatch(node.open_tag.as_ref())?;
+    let template = JsxElementTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        close_tag: close_tag_text.as_str(),
+        open_tag: open_tag_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_jsx_expression_transport(node: &JsxExpressionTransport) -> Result<String, ::askama::Error> {
+    let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
+    let children_strings: Vec<String> = children_owned.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = JsxExpressionTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_jsx_identifier_transport(t: &JsxIdentifierTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_jsx_namespace_name_transport(node: &JsxNamespaceNameTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = JsxNamespaceNameTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_jsx_opening_element_transport(node: &JsxOpeningElementTransport) -> Result<String, ::askama::Error> {
+    let attribute_strings: Vec<String> = node.attribute.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let attribute_buf: Vec<::sittir_core::filters::Renderable<'_>> = attribute_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let name_text = if let Some(v) = &node.name {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let type_arguments_text = if let Some(v) = &node.type_arguments {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = JsxOpeningElementTemplate {
+        attribute: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            items: attribute_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        }),
+        name: name_text.as_str(),
+        type_arguments: type_arguments_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_jsx_self_closing_element_transport(node: &JsxSelfClosingElementTransport) -> Result<String, ::askama::Error> {
+    let attribute_strings: Vec<String> = node.attribute.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let attribute_buf: Vec<::sittir_core::filters::Renderable<'_>> = attribute_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let name_text = if let Some(v) = &node.name {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let type_arguments_text = if let Some(v) = &node.type_arguments {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = JsxSelfClosingElementTemplate {
+        attribute: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            items: attribute_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        }),
+        name: name_text.as_str(),
+        type_arguments: type_arguments_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_labeled_statement_transport(node: &LabeledStatementTransport) -> Result<String, ::askama::Error> {
+    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let label_text = render_transport_dispatch(node.label.as_ref())?;
+    let template = LabeledStatementTemplate {
+        body: body_text.as_str(),
+        label: label_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_lexical_declaration_transport(node: &LexicalDeclarationTransport) -> Result<String, ::askama::Error> {
+    let declarators_strings: Vec<String> = node.declarators.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let declarators_buf: Vec<::sittir_core::filters::Renderable<'_>> = declarators_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let kind_text = render_transport_dispatch(node.kind.as_ref())?;
+    let semicolon_text = render_transport_dispatch(node.semicolon.as_ref())?;
+    let template = LexicalDeclarationTemplate {
+        declarators: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            items: declarators_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        }),
+        kind: kind_text.as_str(),
+        semicolon: semicolon_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_literal_type_transport(node: &LiteralTypeTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = LiteralTypeTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_lookup_type_transport(node: &LookupTypeTransport) -> Result<String, ::askama::Error> {
+    let index_type_text = render_transport_dispatch(node.index_type.as_ref())?;
+    let primary_type_text = render_transport_dispatch(node.primary_type.as_ref())?;
+    let template = LookupTypeTemplate {
+        index_type: index_type_text.as_str(),
+        primary_type: primary_type_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_mapped_type_clause_transport(node: &MappedTypeClauseTransport) -> Result<String, ::askama::Error> {
+    let alias_text = if let Some(v) = &node.alias {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
+    let template = MappedTypeClauseTemplate {
+        alias: alias_text.as_str(),
+        name: name_text.as_str(),
+        r#type: r#type_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_member_expression_transport(node: &MemberExpressionTransport) -> Result<String, ::askama::Error> {
+    let object_text = render_transport_dispatch(node.object.as_ref())?;
+    let property_text = render_transport_dispatch(node.property.as_ref())?;
+    let template = MemberExpressionTemplate {
+        object: object_text.as_str(),
+        optional_chain: "",
+        property: property_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_meta_property_transport(t: &MetaPropertyTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_method_definition_transport(node: &MethodDefinitionTransport) -> Result<String, ::askama::Error> {
+    let accessibility_modifier_text = if let Some(v) = &node.accessibility_modifier {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let accessor_kind_text = if let Some(v) = &node.accessor_kind {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let async_marker_text = if let Some(v) = &node.async_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let optional_marker_text = if let Some(v) = &node.optional_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let override_modifier_text = if let Some(v) = &node.override_modifier {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let parameters_text = render_transport_dispatch(node.parameters.as_ref())?;
+    let readonly_marker_text = if let Some(v) = &node.readonly_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let return_type_text = if let Some(v) = &node.return_type {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let static_marker_text = if let Some(v) = &node.static_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let type_parameters_text = if let Some(v) = &node.type_parameters {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = MethodDefinitionTemplate {
+        accessibility_modifier: accessibility_modifier_text.as_str(),
+        accessor_kind: accessor_kind_text.as_str(),
+        async_marker: async_marker_text.as_str(),
+        body: body_text.as_str(),
+        name: name_text.as_str(),
+        optional_marker: optional_marker_text.as_str(),
+        override_modifier: override_modifier_text.as_str(),
+        parameters: parameters_text.as_str(),
+        readonly_marker: readonly_marker_text.as_str(),
+        return_type: return_type_text.as_str(),
+        static_marker: static_marker_text.as_str(),
+        type_parameters: type_parameters_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_method_signature_transport(node: &MethodSignatureTransport) -> Result<String, ::askama::Error> {
+    let accessibility_modifier_text = if let Some(v) = &node.accessibility_modifier {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let accessor_kind_text = if let Some(v) = &node.accessor_kind {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let async_marker_text = if let Some(v) = &node.async_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let optional_marker_text = if let Some(v) = &node.optional_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let override_modifier_text = if let Some(v) = &node.override_modifier {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let parameters_text = render_transport_dispatch(node.parameters.as_ref())?;
+    let readonly_marker_text = if let Some(v) = &node.readonly_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let return_type_text = if let Some(v) = &node.return_type {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let static_marker_text = if let Some(v) = &node.static_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let type_parameters_text = if let Some(v) = &node.type_parameters {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = MethodSignatureTemplate {
+        accessibility_modifier: accessibility_modifier_text.as_str(),
+        accessor_kind: accessor_kind_text.as_str(),
+        async_marker: async_marker_text.as_str(),
+        name: name_text.as_str(),
+        optional_marker: optional_marker_text.as_str(),
+        override_modifier: override_modifier_text.as_str(),
+        parameters: parameters_text.as_str(),
+        readonly_marker: readonly_marker_text.as_str(),
+        return_type: return_type_text.as_str(),
+        static_marker: static_marker_text.as_str(),
+        type_parameters: type_parameters_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_module_transport(node: &ModuleTransport) -> Result<String, ::askama::Error> {
+    let body_text = if let Some(v) = &node.body {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let template = ModuleTemplate {
+        body: body_text.as_str(),
+        name: name_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_named_imports_transport(node: &NamedImportsTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = NamedImportsTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_namespace_export_transport(node: &NamespaceExportTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = NamespaceExportTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_namespace_import_transport(node: &NamespaceImportTransport) -> Result<String, ::askama::Error> {
+    let identifier_text = render_transport_dispatch(node.identifier.as_ref())?;
+    let template = NamespaceImportTemplate {
+        identifier: identifier_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_nested_identifier_transport(node: &NestedIdentifierTransport) -> Result<String, ::askama::Error> {
+    let object_text = render_transport_dispatch(node.object.as_ref())?;
+    let property_text = render_transport_dispatch(node.property.as_ref())?;
+    let template = NestedIdentifierTemplate {
+        object: object_text.as_str(),
+        property: property_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_nested_type_identifier_transport(node: &NestedTypeIdentifierTransport) -> Result<String, ::askama::Error> {
+    let module_text = render_transport_dispatch(node.module.as_ref())?;
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let template = NestedTypeIdentifierTemplate {
+        module: module_text.as_str(),
+        name: name_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_new_expression_transport(node: &NewExpressionTransport) -> Result<String, ::askama::Error> {
+    let arguments_text = if let Some(v) = &node.arguments {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let constructor_text = render_transport_dispatch(node.constructor.as_ref())?;
+    let type_arguments_text = if let Some(v) = &node.type_arguments {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = NewExpressionTemplate {
+        arguments: arguments_text.as_str(),
+        constructor: constructor_text.as_str(),
+        type_arguments: type_arguments_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_non_null_expression_transport(node: &NonNullExpressionTransport) -> Result<String, ::askama::Error> {
+    let expression_text = render_transport_dispatch(node.expression.as_ref())?;
+    let template = NonNullExpressionTemplate {
+        expression: expression_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_null_transport(t: &NullTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_number_transport(t: &NumberTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_object_transport(node: &ObjectTransport) -> Result<String, ::askama::Error> {
+    let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
+    let children_strings: Vec<String> = children_owned.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ObjectTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_object_assignment_pattern_transport(node: &ObjectAssignmentPatternTransport) -> Result<String, ::askama::Error> {
+    let left_text = render_transport_dispatch(node.left.as_ref())?;
+    let right_text = render_transport_dispatch(node.right.as_ref())?;
+    let template = ObjectAssignmentPatternTemplate {
+        left: left_text.as_str(),
+        right: right_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_object_pattern_transport(node: &ObjectPatternTransport) -> Result<String, ::askama::Error> {
+    let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
+    let children_strings: Vec<String> = children_owned.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ObjectPatternTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_object_type_transport(node: &ObjectTypeTransport) -> Result<String, ::askama::Error> {
+    let members_owned: &[Box<AnyTransport>] = node.members.as_deref().unwrap_or(&[]);
+    let members_strings: Vec<String> = members_owned.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let members_buf: Vec<::sittir_core::filters::Renderable<'_>> = members_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let closing_text = render_transport_dispatch(node.closing.as_ref())?;
+    let opening_text = render_transport_dispatch(node.opening.as_ref())?;
+    let template = ObjectTypeTemplate {
+        closing: closing_text.as_str(),
+        members: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            items: members_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        }),
+        opening: opening_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_omitting_type_annotation_transport(node: &OmittingTypeAnnotationTransport) -> Result<String, ::askama::Error> {
+    let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
+    let template = OmittingTypeAnnotationTemplate {
+        r#type: r#type_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_opting_type_annotation_transport(node: &OptingTypeAnnotationTransport) -> Result<String, ::askama::Error> {
+    let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
+    let template = OptingTypeAnnotationTemplate {
+        r#type: r#type_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_optional_chain_transport(t: &OptionalChainTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_optional_parameter_transport(node: &OptionalParameterTransport) -> Result<String, ::askama::Error> {
+    let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
+    let children_strings: Vec<String> = children_owned.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let decorator_strings: Vec<String> = node.decorator.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let decorator_buf: Vec<::sittir_core::filters::Renderable<'_>> = decorator_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let pattern_text = render_transport_dispatch(node.pattern.as_ref())?;
+    let readonly_marker_text = if let Some(v) = &node.readonly_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let r#type_text = if let Some(v) = &node.r#type {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let value_text = if let Some(v) = &node.value {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = OptionalParameterTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        decorator: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            items: decorator_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        }),
+        pattern: pattern_text.as_str(),
+        readonly_marker: readonly_marker_text.as_str(),
+        r#type: r#type_text.as_str(),
+        value: value_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_optional_tuple_parameter_transport(node: &OptionalTupleParameterTransport) -> Result<String, ::askama::Error> {
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
+    let template = OptionalTupleParameterTemplate {
+        name: name_text.as_str(),
+        r#type: r#type_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_optional_type_transport(node: &OptionalTypeTransport) -> Result<String, ::askama::Error> {
+    let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
+    let template = OptionalTypeTemplate {
+        r#type: r#type_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_override_modifier_transport(t: &OverrideModifierTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_pair_transport(node: &PairTransport) -> Result<String, ::askama::Error> {
+    let key_text = render_transport_dispatch(node.key.as_ref())?;
+    let value_text = render_transport_dispatch(node.value.as_ref())?;
+    let template = PairTemplate {
+        key: key_text.as_str(),
+        value: value_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_pair_pattern_transport(node: &PairPatternTransport) -> Result<String, ::askama::Error> {
+    let key_text = render_transport_dispatch(node.key.as_ref())?;
+    let value_text = render_transport_dispatch(node.value.as_ref())?;
+    let template = PairPatternTemplate {
+        key: key_text.as_str(),
+        value: value_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_parenthesized_expression_sequence_transport(node: &ParenthesizedExpressionSequenceTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ParenthesizedExpressionSequenceTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_parenthesized_expression_transport(t: &ParenthesizedExpressionTransport) -> Result<String, ::askama::Error> {
+    match t {
+        ParenthesizedExpressionTransport::ParenthesizedExpressionUFormTyped(data) => render_parenthesized_expression_uform_typed_transport(data),
+        ParenthesizedExpressionTransport::ParenthesizedExpressionUFormSequence(data) => render_parenthesized_expression_uform_sequence_transport(data),
+    }
+}
+
+fn render_parenthesized_expression_uform_typed_transport(node: &ParenthesizedExpressionUFormTypedTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ParenthesizedExpressionTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_parenthesized_expression_uform_sequence_transport(node: &ParenthesizedExpressionUFormSequenceTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = ParenthesizedExpressionTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_parenthesized_type_transport(node: &ParenthesizedTypeTransport) -> Result<String, ::askama::Error> {
+    let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
+    let template = ParenthesizedTypeTemplate {
+        r#type: r#type_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_predefined_type_transport(t: &PredefinedTypeTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_private_property_identifier_transport(t: &PrivatePropertyIdentifierTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_program_transport(node: &ProgramTransport) -> Result<String, ::askama::Error> {
+    let statements_strings: Vec<String> = node.statements.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let statements_buf: Vec<::sittir_core::filters::Renderable<'_>> = statements_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let hash_bang_line_text = if let Some(v) = &node.hash_bang_line {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = ProgramTemplate {
+        hash_bang_line: hash_bang_line_text.as_str(),
+        statements: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            items: statements_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        }),
+    };
+    template.render()
+}
+
+fn render_property_signature_transport(node: &PropertySignatureTransport) -> Result<String, ::askama::Error> {
+    let accessibility_modifier_text = if let Some(v) = &node.accessibility_modifier {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let optional_marker_text = if let Some(v) = &node.optional_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let override_modifier_text = if let Some(v) = &node.override_modifier {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let readonly_marker_text = if let Some(v) = &node.readonly_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let static_marker_text = if let Some(v) = &node.static_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let r#type_text = if let Some(v) = &node.r#type {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = PropertySignatureTemplate {
+        accessibility_modifier: accessibility_modifier_text.as_str(),
+        name: name_text.as_str(),
+        optional_marker: optional_marker_text.as_str(),
+        override_modifier: override_modifier_text.as_str(),
+        readonly_marker: readonly_marker_text.as_str(),
+        static_marker: static_marker_text.as_str(),
+        r#type: r#type_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_public_field_definition_transport(node: &PublicFieldDefinitionTransport) -> Result<String, ::askama::Error> {
+    let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
+    let children_strings: Vec<String> = children_owned.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let decorator_strings: Vec<String> = node.decorator.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let decorator_buf: Vec<::sittir_core::filters::Renderable<'_>> = decorator_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let optionality_marker_text = if let Some(v) = &node.optionality_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let r#type_text = if let Some(v) = &node.r#type {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let value_text = if let Some(v) = &node.value {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = PublicFieldDefinitionTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        decorator: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            items: decorator_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        }),
+        name: name_text.as_str(),
+        optionality_marker: optionality_marker_text.as_str(),
+        r#type: r#type_text.as_str(),
+        value: value_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_readonly_type_transport(node: &ReadonlyTypeTransport) -> Result<String, ::askama::Error> {
+    let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
+    let template = ReadonlyTypeTemplate {
+        r#type: r#type_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_regex_transport(node: &RegexTransport) -> Result<String, ::askama::Error> {
+    let flags_text = if let Some(v) = &node.flags {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let pattern_text = render_transport_dispatch(node.pattern.as_ref())?;
+    let template = RegexTemplate {
+        flags: flags_text.as_str(),
+        pattern: pattern_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_regex_flags_transport(t: &RegexFlagsTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_regex_pattern_transport(t: &RegexPatternTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_required_parameter_transport(node: &RequiredParameterTransport) -> Result<String, ::askama::Error> {
+    let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
+    let children_strings: Vec<String> = children_owned.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let decorator_strings: Vec<String> = node.decorator.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let decorator_buf: Vec<::sittir_core::filters::Renderable<'_>> = decorator_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let pattern_text = render_transport_dispatch(node.pattern.as_ref())?;
+    let readonly_marker_text = if let Some(v) = &node.readonly_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let r#type_text = if let Some(v) = &node.r#type {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let value_text = if let Some(v) = &node.value {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = RequiredParameterTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        decorator: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            items: decorator_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        }),
+        pattern: pattern_text.as_str(),
+        readonly_marker: readonly_marker_text.as_str(),
+        r#type: r#type_text.as_str(),
+        value: value_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_rest_pattern_transport(node: &RestPatternTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = RestPatternTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_rest_type_transport(node: &RestTypeTransport) -> Result<String, ::askama::Error> {
+    let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
+    let template = RestTypeTemplate {
+        r#type: r#type_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_return_statement_transport(node: &ReturnStatementTransport) -> Result<String, ::askama::Error> {
+    let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
+    let children_strings: Vec<String> = children_owned.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let semicolon_text = render_transport_dispatch(node.semicolon.as_ref())?;
+    let template = ReturnStatementTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        semicolon: semicolon_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_satisfies_expression_transport(node: &SatisfiesExpressionTransport) -> Result<String, ::askama::Error> {
+    let expression_text = render_transport_dispatch(node.expression.as_ref())?;
+    let type_annotation_text = render_transport_dispatch(node.type_annotation.as_ref())?;
+    let template = SatisfiesExpressionTemplate {
+        expression: expression_text.as_str(),
+        type_annotation: type_annotation_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_sequence_expression_transport(node: &SequenceExpressionTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = SequenceExpressionTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_spread_element_transport(node: &SpreadElementTransport) -> Result<String, ::askama::Error> {
+    let expression_text = render_transport_dispatch(node.expression.as_ref())?;
+    let template = SpreadElementTemplate {
+        expression: expression_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_statement_block_transport(node: &StatementBlockTransport) -> Result<String, ::askama::Error> {
+    let statements_strings: Vec<String> = node.statements.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let statements_buf: Vec<::sittir_core::filters::Renderable<'_>> = statements_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let automatic_semicolon_text = if let Some(v) = &node.automatic_semicolon {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = StatementBlockTemplate {
+        automatic_semicolon: automatic_semicolon_text.as_str(),
+        statements: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            items: statements_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        }),
+    };
+    template.render()
+}
+
+fn render_string_double_transport(node: &StringDoubleTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = StringDoubleTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_string_single_transport(node: &StringSingleTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = StringSingleTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_string_transport(t: &StringTransport) -> Result<String, ::askama::Error> {
+    match t {
+        StringTransport::StringUFormDouble(data) => render_string_uform_double_transport(data),
+        StringTransport::StringUFormSingle(data) => render_string_uform_single_transport(data),
+    }
+}
+
+fn render_string_uform_double_transport(node: &StringUFormDoubleTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = StringTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_string_uform_single_transport(node: &StringUFormSingleTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = StringTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_subscript_expression_transport(node: &SubscriptExpressionTransport) -> Result<String, ::askama::Error> {
+    let index_text = render_transport_dispatch(node.index.as_ref())?;
+    let object_text = render_transport_dispatch(node.object.as_ref())?;
+    let optional_chain_text = if let Some(v) = &node.optional_chain {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = SubscriptExpressionTemplate {
+        index: index_text.as_str(),
+        object: object_text.as_str(),
+        optional_chain: optional_chain_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_super_transport(t: &SuperTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_switch_body_transport(node: &SwitchBodyTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = SwitchBodyTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_switch_case_transport(node: &SwitchCaseTransport) -> Result<String, ::askama::Error> {
+    let body_strings: Vec<String> = node.body.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let body_buf: Vec<::sittir_core::filters::Renderable<'_>> = body_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let value_text = render_transport_dispatch(node.value.as_ref())?;
+    let template = SwitchCaseTemplate {
+        body: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            items: body_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        }),
+        value: value_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_switch_default_transport(node: &SwitchDefaultTransport) -> Result<String, ::askama::Error> {
+    let body_strings: Vec<String> = node.body.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let body_buf: Vec<::sittir_core::filters::Renderable<'_>> = body_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = SwitchDefaultTemplate {
+        body: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            items: body_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        }),
+    };
+    template.render()
+}
+
+fn render_switch_statement_transport(node: &SwitchStatementTransport) -> Result<String, ::askama::Error> {
+    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let value_text = render_transport_dispatch(node.value.as_ref())?;
+    let template = SwitchStatementTemplate {
+        body: body_text.as_str(),
+        value: value_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_template_literal_type_transport(node: &TemplateLiteralTypeTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = TemplateLiteralTypeTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_template_string_transport(node: &TemplateStringTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = TemplateStringTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_template_substitution_transport(node: &TemplateSubstitutionTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = TemplateSubstitutionTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_template_type_transport(node: &TemplateTypeTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = TemplateTypeTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_ternary_expression_transport(node: &TernaryExpressionTransport) -> Result<String, ::askama::Error> {
+    let alternative_text = render_transport_dispatch(node.alternative.as_ref())?;
+    let condition_text = render_transport_dispatch(node.condition.as_ref())?;
+    let consequence_text = render_transport_dispatch(node.consequence.as_ref())?;
+    let template = TernaryExpressionTemplate {
+        alternative: alternative_text.as_str(),
+        condition: condition_text.as_str(),
+        consequence: consequence_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_this_transport(t: &ThisTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_throw_statement_transport(node: &ThrowStatementTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let semicolon_text = render_transport_dispatch(node.semicolon.as_ref())?;
+    let template = ThrowStatementTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        semicolon: semicolon_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_true_transport(t: &TrueTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_try_statement_transport(node: &TryStatementTransport) -> Result<String, ::askama::Error> {
+    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let finalizer_text = if let Some(v) = &node.finalizer {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let handler_text = if let Some(v) = &node.handler {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = TryStatementTemplate {
+        body: body_text.as_str(),
+        finalizer: finalizer_text.as_str(),
+        handler: handler_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_tuple_parameter_transport(node: &TupleParameterTransport) -> Result<String, ::askama::Error> {
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
+    let template = TupleParameterTemplate {
+        name: name_text.as_str(),
+        r#type: r#type_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_tuple_type_transport(node: &TupleTypeTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = TupleTypeTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_type_alias_declaration_transport(node: &TypeAliasDeclarationTransport) -> Result<String, ::askama::Error> {
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let semicolon_text = render_transport_dispatch(node.semicolon.as_ref())?;
+    let type_parameters_text = if let Some(v) = &node.type_parameters {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let value_text = render_transport_dispatch(node.value.as_ref())?;
+    let template = TypeAliasDeclarationTemplate {
+        name: name_text.as_str(),
+        semicolon: semicolon_text.as_str(),
+        type_parameters: type_parameters_text.as_str(),
+        value: value_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_type_annotation_transport(node: &TypeAnnotationTransport) -> Result<String, ::askama::Error> {
+    let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
+    let template = TypeAnnotationTemplate {
+        r#type: r#type_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_type_arguments_transport(node: &TypeArgumentsTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = TypeArgumentsTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_type_assertion_transport(node: &TypeAssertionTransport) -> Result<String, ::askama::Error> {
+    let expression_text = render_transport_dispatch(node.expression.as_ref())?;
+    let type_arguments_text = render_transport_dispatch(node.type_arguments.as_ref())?;
+    let template = TypeAssertionTemplate {
+        expression: expression_text.as_str(),
+        type_arguments: type_arguments_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_type_parameter_transport(node: &TypeParameterTransport) -> Result<String, ::askama::Error> {
+    let const_marker_text = if let Some(v) = &node.const_marker {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let constraint_text = if let Some(v) = &node.constraint {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let value_text = if let Some(v) = &node.value {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = TypeParameterTemplate {
+        const_marker: const_marker_text.as_str(),
+        constraint: constraint_text.as_str(),
+        name: name_text.as_str(),
+        value: value_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_type_parameters_transport(node: &TypeParametersTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = TypeParametersTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_type_predicate_transport(node: &TypePredicateTransport) -> Result<String, ::askama::Error> {
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
+    let template = TypePredicateTemplate {
+        name: name_text.as_str(),
+        r#type: r#type_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_type_predicate_annotation_transport(node: &TypePredicateAnnotationTransport) -> Result<String, ::askama::Error> {
+    let type_predicate_rendered = render_transport_dispatch(node.type_predicate.as_ref())?;
+    let template = TypePredicateAnnotationTemplate {
+        type_predicate: ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(type_predicate_rendered.as_str())),
+    };
+    template.render()
+}
+
+fn render_type_query_transport(node: &TypeQueryTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = TypeQueryTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_unary_expression_transport(node: &UnaryExpressionTransport) -> Result<String, ::askama::Error> {
+    let argument_text = render_transport_dispatch(node.argument.as_ref())?;
+    let operator_text = render_transport_dispatch(node.operator.as_ref())?;
+    let template = UnaryExpressionTemplate {
+        argument: argument_text.as_str(),
+        operator: operator_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_undefined_transport(t: &UndefinedTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_unescaped_double_jsx_string_fragment_transport(t: &UnescapedDoubleJsxStringFragmentTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_unescaped_double_string_fragment_transport(t: &UnescapedDoubleStringFragmentTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_unescaped_single_jsx_string_fragment_transport(t: &UnescapedSingleJsxStringFragmentTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_unescaped_single_string_fragment_transport(t: &UnescapedSingleStringFragmentTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_union_type_transport(node: &UnionTypeTransport) -> Result<String, ::askama::Error> {
+    let left_text = if let Some(v) = &node.left {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let right_text = render_transport_dispatch(node.right.as_ref())?;
+    let template = UnionTypeTemplate {
+        left: left_text.as_str(),
+        right: right_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_update_expression_transport(t: &UpdateExpressionTransport) -> Result<String, ::askama::Error> {
+    match t {
+        UpdateExpressionTransport::UpdateExpressionUFormPostfix(data) => render_update_expression_uform_postfix_transport(data),
+        UpdateExpressionTransport::UpdateExpressionUFormPrefix(data) => render_update_expression_uform_prefix_transport(data),
+    }
+}
+
+fn render_update_expression_uform_postfix_transport(node: &UpdateExpressionUFormPostfixTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = UpdateExpressionTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_update_expression_uform_prefix_transport(node: &UpdateExpressionUFormPrefixTransport) -> Result<String, ::askama::Error> {
+    let children_strings: Vec<String> = node.children.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let template = UpdateExpressionTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
+}
+
+fn render_variable_declaration_transport(node: &VariableDeclarationTransport) -> Result<String, ::askama::Error> {
+    let declarators_strings: Vec<String> = node.declarators.iter()
+        .map(|t| render_transport_dispatch(t.as_ref()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let declarators_buf: Vec<::sittir_core::filters::Renderable<'_>> = declarators_strings.iter()
+        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+        .collect();
+    let semicolon_text = render_transport_dispatch(node.semicolon.as_ref())?;
+    let template = VariableDeclarationTemplate {
+        declarators: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            items: declarators_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        }),
+        semicolon: semicolon_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_variable_declarator_transport(node: &VariableDeclaratorTransport) -> Result<String, ::askama::Error> {
+    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let r#type_text = if let Some(v) = &node.r#type {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let value_text = if let Some(v) = &node.value {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = VariableDeclaratorTemplate {
+        name: name_text.as_str(),
+        r#type: r#type_text.as_str(),
+        value: value_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_while_statement_transport(node: &WhileStatementTransport) -> Result<String, ::askama::Error> {
+    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let condition_text = render_transport_dispatch(node.condition.as_ref())?;
+    let template = WhileStatementTemplate {
+        body: body_text.as_str(),
+        condition: condition_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_with_statement_transport(node: &WithStatementTransport) -> Result<String, ::askama::Error> {
+    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let object_text = render_transport_dispatch(node.object.as_ref())?;
+    let template = WithStatementTemplate {
+        body: body_text.as_str(),
+        object: object_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_yield_expression_transport(node: &YieldExpressionTransport) -> Result<String, ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = Vec::new();
+    let expression_text = if let Some(v) = &node.expression {
+        render_transport_dispatch(v.as_ref())?
+    } else {
+        String::new()
+    };
+    let template = YieldExpressionTemplate {
+        children: ::sittir_core::filters::ListView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        expression: expression_text.as_str(),
+    };
+    template.render()
+}
+
+fn render_automatic_semicolon_transport(t: &AutomaticSemicolonTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_template_chars_transport(t: &TemplateCharsTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_ternary_qmark_transport(t: &TernaryQmarkTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_html_comment_transport(t: &HtmlCommentTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_oror_transport(t: &OrorTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_jsx_text_transport(t: &JsxTextTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_function_signature_automatic_semicolon_transport(t: &FunctionSignatureAutomaticSemicolonTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_error_recovery_transport(t: &ErrorRecoveryTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_tok_qdot_transport(t: &TokQDotTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_comma_transport(t: &CommaTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_export_transport(t: &ExportTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_default_transport(t: &DefaultTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_star_transport(t: &StarTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_eq_transport(t: &EqTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_as_transport(t: &AsTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_namespace_transport(t: &NamespaceTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_paren_transport(t: &ParenTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_close_paren_transport(t: &CloseParenTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_var_transport(t: &VarTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_from_transport(t: &FromTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_colon_transport(t: &ColonTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_lt_transport(t: &LtTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_tok_dq_transport(t: &TokDqTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_tok_sq_transport(t: &TokSqTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_abstract_transport(t: &AbstractTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_async_transport(t: &AsyncTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_const_transport(t: &ConstTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_question_transport(t: &QuestionTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_readonly_transport(t: &ReadonlyTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_static_transport(t: &StaticTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_declare_transport(t: &DeclareTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_accessor_transport(t: &AccessorTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_dot_transport(t: &DotTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_bracket_transport(t: &BracketTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_close_bracket_transport(t: &CloseBracketTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_tok_plus_qcolon_transport(t: &TokPlusQColonTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_global_transport(t: &GlobalTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_using_transport(t: &UsingTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_await_transport(t: &AwaitTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_andand_transport(t: &AndandTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_shr_transport(t: &ShrTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_tok_gt_gt_gt_transport(t: &TokGtGtGtTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_shl_transport(t: &ShlTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_amp_transport(t: &AmpTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_caret_transport(t: &CaretTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_pipe_transport(t: &PipeTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_plus_transport(t: &PlusTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_minus_transport(t: &MinusTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_slash_transport(t: &SlashTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_percent_transport(t: &PercentTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_starstar_transport(t: &StarstarTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_le_transport(t: &LeTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_eqeq_transport(t: &EqeqTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_tok_eq_eq_eq_transport(t: &TokEqEqEqTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_neq_transport(t: &NeqTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_tok_bang_eq_eq_transport(t: &TokBangEqEqTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_ge_transport(t: &GeTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_gt_transport(t: &GtTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_tok_qq_transport(t: &TokQQTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_instanceof_transport(t: &InstanceofTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_in_transport(t: &InTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_break_transport(t: &BreakTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_catch_transport(t: &CatchTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_brace_transport(t: &BraceTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_semi_transport(t: &SemiTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_close_brace_transport(t: &CloseBraceTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_extends_transport(t: &ExtendsTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_new_transport(t: &NewTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_fat_arrow_transport(t: &FatArrowTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_continue_transport(t: &ContinueTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_debugger_transport(t: &DebuggerTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_at_transport(t: &AtTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_do_transport(t: &DoTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_while_transport(t: &WhileTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_else_transport(t: &ElseTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_enum_transport(t: &EnumTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_finally_transport(t: &FinallyTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_for_transport(t: &ForTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_function_transport(t: &FunctionTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_if_transport(t: &IfTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_implements_transport(t: &ImplementsTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_require_transport(t: &RequireTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_keyof_transport(t: &KeyofTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_infer_transport(t: &InferTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_interface_transport(t: &InterfaceTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_tok_lt_slash_transport(t: &TokLtSlashTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_tok_slash_gt_transport(t: &TokSlashGtTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_bang_transport(t: &BangTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_tok_minus_qcolon_transport(t: &TokMinusQColonTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_tok_qcolon_transport(t: &TokQColonTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_override_transport(t: &OverrideTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_ellipsis_transport(t: &EllipsisTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_return_transport(t: &ReturnTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_satisfies_transport(t: &SatisfiesTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_case_transport(t: &CaseTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_switch_transport(t: &SwitchTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_tok_bt_transport(t: &TokBtTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_tok_dollar_lbr_transport(t: &TokDollarLbrTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_throw_transport(t: &ThrowTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_try_transport(t: &TryTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_is_transport(t: &IsTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_typeof_transport(t: &TypeofTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_with_transport(t: &WithTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_yield_transport(t: &YieldTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_literal_transport(_kind: &str, t: &LiteralTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::askama::Error> {
+    match transport {
+        AnyTransport::_ArrowFunctionUCallSignature(t) => render__arrow_function_ucall_signature_transport(t),
+        AnyTransport::_ArrowFunctionParameter(t) => render__arrow_function_parameter_transport(t),
+        AnyTransport::CallExpressionCall(t) => render_call_expression_call_transport(t),
+        AnyTransport::CallExpressionMember(t) => render_call_expression_member_transport(t),
+        AnyTransport::CallExpressionTemplateCall(t) => render_call_expression_template_call_transport(t),
+        AnyTransport::_CallSignature(t) => render__call_signature_transport(t),
+        AnyTransport::ClassBodyMember(t) => render_class_body_member_transport(t),
+        AnyTransport::ClassBodyMethod(t) => render_class_body_method_transport(t),
+        AnyTransport::ClassBodyMethodSig(t) => render_class_body_method_sig_transport(t),
+        AnyTransport::_ClassHeritageExtendsClause(t) => render__class_heritage_extends_clause_transport(t),
+        AnyTransport::_ClassHeritageImplementsClause(t) => render__class_heritage_implements_clause_transport(t),
+        AnyTransport::ExportStatementDefaultDeclArm(t) => render_export_statement_default_decl_arm_transport(t),
+        AnyTransport::ExportStatementDefaultDeclArmDefaultKw(t) => render_export_statement_default_decl_arm_default_kw_transport(t),
+        AnyTransport::ExportStatementDefaultDeclArmDefaultKwValue(t) => render_export_statement_default_decl_arm_default_kw_value_transport(t),
+        AnyTransport::ExportStatementDefaultFromArm(t) => render_export_statement_default_from_arm_transport(t),
+        AnyTransport::ExportStatementDefaultFromArmClauseFrom(t) => render_export_statement_default_from_arm_clause_from_transport(t),
+        AnyTransport::ExportStatementDefaultFromArmNsFrom(t) => render_export_statement_default_from_arm_ns_from_transport(t),
+        AnyTransport::ExportStatementDefaultFromArmStarFrom(t) => render_export_statement_default_from_arm_star_from_transport(t),
+        AnyTransport::_ExportStatementEqualsExport(t) => render__export_statement_equals_export_transport(t),
+        AnyTransport::_ExportStatementNamespaceExport(t) => render__export_statement_namespace_export_transport(t),
+        AnyTransport::_ExportStatementTypeExport(t) => render__export_statement_type_export_transport(t),
+        AnyTransport::ExtendsClauseSingle(t) => render_extends_clause_single_transport(t),
+        AnyTransport::ForHeader(t) => render_for_header_transport(t),
+        AnyTransport::ForHeaderLetConstKind(t) => render_for_header_let_const_kind_transport(t),
+        AnyTransport::ForHeaderLhs(t) => render_for_header_lhs_transport(t),
+        AnyTransport::ForHeaderVarKind(t) => render_for_header_var_kind_transport(t),
+        AnyTransport::FromClause(t) => render_from_clause_transport(t),
+        AnyTransport::_ImportClauseDefaultImport(t) => render__import_clause_default_import_transport(t),
+        AnyTransport::_ImportClauseNamedImports(t) => render__import_clause_named_imports_transport(t),
+        AnyTransport::_ImportClauseNamespaceImport(t) => render__import_clause_namespace_import_transport(t),
+        AnyTransport::ImportSpecifierAs(t) => render_import_specifier_as_transport(t),
+        AnyTransport::_ImportSpecifierName(t) => render__import_specifier_name_transport(t),
+        AnyTransport::IndexSignatureColon(t) => render_index_signature_colon_transport(t),
+        AnyTransport::_IndexSignatureMappedTypeClause(t) => render__index_signature_mapped_type_clause_transport(t),
+        AnyTransport::Initializer(t) => render_initializer_transport(t),
+        AnyTransport::InterfaceBody(t) => render_interface_body_transport(t),
+        AnyTransport::JsxStartOpeningElement(t) => render_jsx_start_opening_element_transport(t),
+        AnyTransport::JsxString(t) => render_jsx_string_transport(t),
+        AnyTransport::KwAbstractMarker(t) => render_kw_abstract_marker_transport(t),
+        AnyTransport::KwAsyncMarker(t) => render_kw_async_marker_transport(t),
+        AnyTransport::KwConstMarker(t) => render_kw_const_marker_transport(t),
+        AnyTransport::KwOptionalMarker(t) => render_kw_optional_marker_transport(t),
+        AnyTransport::KwReadonlyMarker(t) => render_kw_readonly_marker_transport(t),
+        AnyTransport::KwStaticMarker(t) => render_kw_static_marker_transport(t),
+        AnyTransport::LhsExpression(t) => render_lhs_expression_transport(t),
+        AnyTransport::_Module(t) => render__module_transport(t),
+        AnyTransport::_Number(t) => render__number_transport(t),
+        AnyTransport::ParameterName(t) => render_parameter_name_transport(t),
+        AnyTransport::_ParenthesizedExpressionSequence(t) => render__parenthesized_expression_sequence_transport(t),
+        AnyTransport::ParenthesizedExpressionTyped(t) => render_parenthesized_expression_typed_transport(t),
+        AnyTransport::PropertyIdentifier(t) => render_property_identifier_transport(t),
+        AnyTransport::PublicFieldDefinitionAbstractFirst(t) => render_public_field_definition_abstract_first_transport(t),
+        AnyTransport::PublicFieldDefinitionAccessFirst(t) => render_public_field_definition_access_first_transport(t),
+        AnyTransport::PublicFieldDefinitionAccessorOpt(t) => render_public_field_definition_accessor_opt_transport(t),
+        AnyTransport::PublicFieldDefinitionDeclareFirst(t) => render_public_field_definition_declare_first_transport(t),
+        AnyTransport::PublicFieldDefinitionReadonlyFirst(t) => render_public_field_definition_readonly_first_transport(t),
+        AnyTransport::PublicFieldDefinitionStaticMods(t) => render_public_field_definition_static_mods_transport(t),
+        AnyTransport::ReservedIdentifier(t) => render_reserved_identifier_transport(t),
+        AnyTransport::StatementIdentifier(t) => render_statement_identifier_transport(t),
+        AnyTransport::_StringDouble(t) => render__string_double_transport(t),
+        AnyTransport::StringFragment(t) => render_string_fragment_transport(t),
+        AnyTransport::_StringSingle(t) => render__string_single_transport(t),
+        AnyTransport::ThisType(t) => render_this_type_transport(t),
+        AnyTransport::TypeIdentifier(t) => render_type_identifier_transport(t),
+        AnyTransport::TypeQueryCallExpression(t) => render_type_query_call_expression_transport(t),
+        AnyTransport::TypeQueryCallExpressionInTypeAnnotation(t) => render_type_query_call_expression_in_type_annotation_transport(t),
+        AnyTransport::TypeQueryInstantiationExpression(t) => render_type_query_instantiation_expression_transport(t),
+        AnyTransport::TypeQueryMemberExpression(t) => render_type_query_member_expression_transport(t),
+        AnyTransport::TypeQueryMemberExpressionInTypeAnnotation(t) => render_type_query_member_expression_in_type_annotation_transport(t),
+        AnyTransport::TypeQuerySubscriptExpression(t) => render_type_query_subscript_expression_transport(t),
+        AnyTransport::UpdateExpressionPostfix(t) => render_update_expression_postfix_transport(t),
+        AnyTransport::UpdateExpressionPrefix(t) => render_update_expression_prefix_transport(t),
+        AnyTransport::AbstractClassDeclaration(t) => render_abstract_class_declaration_transport(t),
+        AnyTransport::AbstractMethodSignature(t) => render_abstract_method_signature_transport(t),
+        AnyTransport::AccessibilityModifier(t) => render_accessibility_modifier_transport(t),
+        AnyTransport::AddingTypeAnnotation(t) => render_adding_type_annotation_transport(t),
+        AnyTransport::AmbientDeclaration(t) => render_ambient_declaration_transport(t),
+        AnyTransport::Arguments(t) => render_arguments_transport(t),
+        AnyTransport::Array(t) => render_array_transport(t),
+        AnyTransport::ArrayPattern(t) => render_array_pattern_transport(t),
+        AnyTransport::ArrayType(t) => render_array_type_transport(t),
+        AnyTransport::ArrowFunctionParameter(t) => render_arrow_function_parameter_transport(t),
+        AnyTransport::ArrowFunctionUCallSignature(t) => render_arrow_function_ucall_signature_transport(t),
+        AnyTransport::ArrowFunction(t) => render_arrow_function_transport(t),
+        AnyTransport::AsExpression(t) => render_as_expression_transport(t),
+        AnyTransport::Asserts(t) => render_asserts_transport(t),
+        AnyTransport::AssertsAnnotation(t) => render_asserts_annotation_transport(t),
+        AnyTransport::AssignmentExpression(t) => render_assignment_expression_transport(t),
+        AnyTransport::AssignmentPattern(t) => render_assignment_pattern_transport(t),
+        AnyTransport::AugmentedAssignmentExpression(t) => render_augmented_assignment_expression_transport(t),
+        AnyTransport::AwaitExpression(t) => render_await_expression_transport(t),
+        AnyTransport::BinaryExpression(t) => render_binary_expression_transport(t),
+        AnyTransport::BreakStatement(t) => render_break_statement_transport(t),
+        AnyTransport::CallExpression(t) => render_call_expression_transport(t),
+        AnyTransport::CallSignature(t) => render_call_signature_transport(t),
+        AnyTransport::CatchClause(t) => render_catch_clause_transport(t),
+        AnyTransport::Class(t) => render_class_transport(t),
+        AnyTransport::ClassBody(t) => render_class_body_transport(t),
+        AnyTransport::ClassDeclaration(t) => render_class_declaration_transport(t),
+        AnyTransport::ClassHeritageExtendsClause(t) => render_class_heritage_extends_clause_transport(t),
+        AnyTransport::ClassHeritageImplementsClause(t) => render_class_heritage_implements_clause_transport(t),
+        AnyTransport::ClassHeritage(t) => render_class_heritage_transport(t),
+        AnyTransport::ClassStaticBlock(t) => render_class_static_block_transport(t),
+        AnyTransport::Comment(t) => render_comment_transport(t),
+        AnyTransport::ComputedPropertyName(t) => render_computed_property_name_transport(t),
+        AnyTransport::ConditionalType(t) => render_conditional_type_transport(t),
+        AnyTransport::Constraint(t) => render_constraint_transport(t),
+        AnyTransport::ConstructSignature(t) => render_construct_signature_transport(t),
+        AnyTransport::ConstructorType(t) => render_constructor_type_transport(t),
+        AnyTransport::ContinueStatement(t) => render_continue_statement_transport(t),
+        AnyTransport::DebuggerStatement(t) => render_debugger_statement_transport(t),
+        AnyTransport::Decorator(t) => render_decorator_transport(t),
+        AnyTransport::DecoratorCallExpression(t) => render_decorator_call_expression_transport(t),
+        AnyTransport::DecoratorMemberExpression(t) => render_decorator_member_expression_transport(t),
+        AnyTransport::DecoratorParenthesizedExpression(t) => render_decorator_parenthesized_expression_transport(t),
+        AnyTransport::DefaultType(t) => render_default_type_transport(t),
+        AnyTransport::DoStatement(t) => render_do_statement_transport(t),
+        AnyTransport::ElseClause(t) => render_else_clause_transport(t),
+        AnyTransport::EmptyStatement(t) => render_empty_statement_transport(t),
+        AnyTransport::EnumAssignment(t) => render_enum_assignment_transport(t),
+        AnyTransport::EnumBody(t) => render_enum_body_transport(t),
+        AnyTransport::EnumDeclaration(t) => render_enum_declaration_transport(t),
+        AnyTransport::EscapeSequence(t) => render_escape_sequence_transport(t),
+        AnyTransport::ExistentialType(t) => render_existential_type_transport(t),
+        AnyTransport::ExportClause(t) => render_export_clause_transport(t),
+        AnyTransport::ExportSpecifier(t) => render_export_specifier_transport(t),
+        AnyTransport::ExportStatementTypeExport(t) => render_export_statement_type_export_transport(t),
+        AnyTransport::ExportStatementEqualsExport(t) => render_export_statement_equals_export_transport(t),
+        AnyTransport::ExportStatementNamespaceExport(t) => render_export_statement_namespace_export_transport(t),
+        AnyTransport::ExportStatement(t) => render_export_statement_transport(t),
+        AnyTransport::ExpressionStatement(t) => render_expression_statement_transport(t),
+        AnyTransport::ExtendsClause(t) => render_extends_clause_transport(t),
+        AnyTransport::ExtendsTypeClause(t) => render_extends_type_clause_transport(t),
+        AnyTransport::False(t) => render_false_transport(t),
+        AnyTransport::FieldDefinition(t) => render_field_definition_transport(t),
+        AnyTransport::FinallyClause(t) => render_finally_clause_transport(t),
+        AnyTransport::FlowMaybeType(t) => render_flow_maybe_type_transport(t),
+        AnyTransport::ForInStatement(t) => render_for_in_statement_transport(t),
+        AnyTransport::ForStatement(t) => render_for_statement_transport(t),
+        AnyTransport::FormalParameters(t) => render_formal_parameters_transport(t),
+        AnyTransport::FunctionDeclaration(t) => render_function_declaration_transport(t),
+        AnyTransport::FunctionExpression(t) => render_function_expression_transport(t),
+        AnyTransport::FunctionSignature(t) => render_function_signature_transport(t),
+        AnyTransport::FunctionType(t) => render_function_type_transport(t),
+        AnyTransport::GeneratorFunction(t) => render_generator_function_transport(t),
+        AnyTransport::GeneratorFunctionDeclaration(t) => render_generator_function_declaration_transport(t),
+        AnyTransport::GenericType(t) => render_generic_type_transport(t),
+        AnyTransport::HashBangLine(t) => render_hash_bang_line_transport(t),
+        AnyTransport::HtmlCharacterReference(t) => render_html_character_reference_transport(t),
+        AnyTransport::Identifier(t) => render_identifier_transport(t),
+        AnyTransport::IfStatement(t) => render_if_statement_transport(t),
+        AnyTransport::ImplementsClause(t) => render_implements_clause_transport(t),
+        AnyTransport::Import(t) => render_import_transport(t),
+        AnyTransport::ImportAlias(t) => render_import_alias_transport(t),
+        AnyTransport::ImportAttribute(t) => render_import_attribute_transport(t),
+        AnyTransport::ImportClauseNamespaceImport(t) => render_import_clause_namespace_import_transport(t),
+        AnyTransport::ImportClauseNamedImports(t) => render_import_clause_named_imports_transport(t),
+        AnyTransport::ImportClauseDefaultImport(t) => render_import_clause_default_import_transport(t),
+        AnyTransport::ImportClause(t) => render_import_clause_transport(t),
+        AnyTransport::ImportRequireClause(t) => render_import_require_clause_transport(t),
+        AnyTransport::ImportSpecifierName(t) => render_import_specifier_name_transport(t),
+        AnyTransport::ImportSpecifier(t) => render_import_specifier_transport(t),
+        AnyTransport::ImportStatement(t) => render_import_statement_transport(t),
+        AnyTransport::IndexSignatureMappedTypeClause(t) => render_index_signature_mapped_type_clause_transport(t),
+        AnyTransport::IndexSignature(t) => render_index_signature_transport(t),
+        AnyTransport::IndexTypeQuery(t) => render_index_type_query_transport(t),
+        AnyTransport::InferType(t) => render_infer_type_transport(t),
+        AnyTransport::InstantiationExpression(t) => render_instantiation_expression_transport(t),
+        AnyTransport::InterfaceDeclaration(t) => render_interface_declaration_transport(t),
+        AnyTransport::InternalModule(t) => render_internal_module_transport(t),
+        AnyTransport::IntersectionType(t) => render_intersection_type_transport(t),
+        AnyTransport::JsxAttribute(t) => render_jsx_attribute_transport(t),
+        AnyTransport::JsxClosingElement(t) => render_jsx_closing_element_transport(t),
+        AnyTransport::JsxElement(t) => render_jsx_element_transport(t),
+        AnyTransport::JsxExpression(t) => render_jsx_expression_transport(t),
+        AnyTransport::JsxIdentifier(t) => render_jsx_identifier_transport(t),
+        AnyTransport::JsxNamespaceName(t) => render_jsx_namespace_name_transport(t),
+        AnyTransport::JsxOpeningElement(t) => render_jsx_opening_element_transport(t),
+        AnyTransport::JsxSelfClosingElement(t) => render_jsx_self_closing_element_transport(t),
+        AnyTransport::LabeledStatement(t) => render_labeled_statement_transport(t),
+        AnyTransport::LexicalDeclaration(t) => render_lexical_declaration_transport(t),
+        AnyTransport::LiteralType(t) => render_literal_type_transport(t),
+        AnyTransport::LookupType(t) => render_lookup_type_transport(t),
+        AnyTransport::MappedTypeClause(t) => render_mapped_type_clause_transport(t),
+        AnyTransport::MemberExpression(t) => render_member_expression_transport(t),
+        AnyTransport::MetaProperty(t) => render_meta_property_transport(t),
+        AnyTransport::MethodDefinition(t) => render_method_definition_transport(t),
+        AnyTransport::MethodSignature(t) => render_method_signature_transport(t),
+        AnyTransport::Module(t) => render_module_transport(t),
+        AnyTransport::NamedImports(t) => render_named_imports_transport(t),
+        AnyTransport::NamespaceExport(t) => render_namespace_export_transport(t),
+        AnyTransport::NamespaceImport(t) => render_namespace_import_transport(t),
+        AnyTransport::NestedIdentifier(t) => render_nested_identifier_transport(t),
+        AnyTransport::NestedTypeIdentifier(t) => render_nested_type_identifier_transport(t),
+        AnyTransport::NewExpression(t) => render_new_expression_transport(t),
+        AnyTransport::NonNullExpression(t) => render_non_null_expression_transport(t),
+        AnyTransport::Null(t) => render_null_transport(t),
+        AnyTransport::Number(t) => render_number_transport(t),
+        AnyTransport::Object(t) => render_object_transport(t),
+        AnyTransport::ObjectAssignmentPattern(t) => render_object_assignment_pattern_transport(t),
+        AnyTransport::ObjectPattern(t) => render_object_pattern_transport(t),
+        AnyTransport::ObjectType(t) => render_object_type_transport(t),
+        AnyTransport::OmittingTypeAnnotation(t) => render_omitting_type_annotation_transport(t),
+        AnyTransport::OptingTypeAnnotation(t) => render_opting_type_annotation_transport(t),
+        AnyTransport::OptionalChain(t) => render_optional_chain_transport(t),
+        AnyTransport::OptionalParameter(t) => render_optional_parameter_transport(t),
+        AnyTransport::OptionalTupleParameter(t) => render_optional_tuple_parameter_transport(t),
+        AnyTransport::OptionalType(t) => render_optional_type_transport(t),
+        AnyTransport::OverrideModifier(t) => render_override_modifier_transport(t),
+        AnyTransport::Pair(t) => render_pair_transport(t),
+        AnyTransport::PairPattern(t) => render_pair_pattern_transport(t),
+        AnyTransport::ParenthesizedExpressionSequence(t) => render_parenthesized_expression_sequence_transport(t),
+        AnyTransport::ParenthesizedExpression(t) => render_parenthesized_expression_transport(t),
+        AnyTransport::ParenthesizedType(t) => render_parenthesized_type_transport(t),
+        AnyTransport::PredefinedType(t) => render_predefined_type_transport(t),
+        AnyTransport::PrivatePropertyIdentifier(t) => render_private_property_identifier_transport(t),
+        AnyTransport::Program(t) => render_program_transport(t),
+        AnyTransport::PropertySignature(t) => render_property_signature_transport(t),
+        AnyTransport::PublicFieldDefinition(t) => render_public_field_definition_transport(t),
+        AnyTransport::ReadonlyType(t) => render_readonly_type_transport(t),
+        AnyTransport::Regex(t) => render_regex_transport(t),
+        AnyTransport::RegexFlags(t) => render_regex_flags_transport(t),
+        AnyTransport::RegexPattern(t) => render_regex_pattern_transport(t),
+        AnyTransport::RequiredParameter(t) => render_required_parameter_transport(t),
+        AnyTransport::RestPattern(t) => render_rest_pattern_transport(t),
+        AnyTransport::RestType(t) => render_rest_type_transport(t),
+        AnyTransport::ReturnStatement(t) => render_return_statement_transport(t),
+        AnyTransport::SatisfiesExpression(t) => render_satisfies_expression_transport(t),
+        AnyTransport::SequenceExpression(t) => render_sequence_expression_transport(t),
+        AnyTransport::SpreadElement(t) => render_spread_element_transport(t),
+        AnyTransport::StatementBlock(t) => render_statement_block_transport(t),
+        AnyTransport::StringDouble(t) => render_string_double_transport(t),
+        AnyTransport::StringSingle(t) => render_string_single_transport(t),
+        AnyTransport::String(t) => render_string_transport(t),
+        AnyTransport::SubscriptExpression(t) => render_subscript_expression_transport(t),
+        AnyTransport::Super(t) => render_super_transport(t),
+        AnyTransport::SwitchBody(t) => render_switch_body_transport(t),
+        AnyTransport::SwitchCase(t) => render_switch_case_transport(t),
+        AnyTransport::SwitchDefault(t) => render_switch_default_transport(t),
+        AnyTransport::SwitchStatement(t) => render_switch_statement_transport(t),
+        AnyTransport::TemplateLiteralType(t) => render_template_literal_type_transport(t),
+        AnyTransport::TemplateString(t) => render_template_string_transport(t),
+        AnyTransport::TemplateSubstitution(t) => render_template_substitution_transport(t),
+        AnyTransport::TemplateType(t) => render_template_type_transport(t),
+        AnyTransport::TernaryExpression(t) => render_ternary_expression_transport(t),
+        AnyTransport::This(t) => render_this_transport(t),
+        AnyTransport::ThrowStatement(t) => render_throw_statement_transport(t),
+        AnyTransport::True(t) => render_true_transport(t),
+        AnyTransport::TryStatement(t) => render_try_statement_transport(t),
+        AnyTransport::TupleParameter(t) => render_tuple_parameter_transport(t),
+        AnyTransport::TupleType(t) => render_tuple_type_transport(t),
+        AnyTransport::TypeAliasDeclaration(t) => render_type_alias_declaration_transport(t),
+        AnyTransport::TypeAnnotation(t) => render_type_annotation_transport(t),
+        AnyTransport::TypeArguments(t) => render_type_arguments_transport(t),
+        AnyTransport::TypeAssertion(t) => render_type_assertion_transport(t),
+        AnyTransport::TypeParameter(t) => render_type_parameter_transport(t),
+        AnyTransport::TypeParameters(t) => render_type_parameters_transport(t),
+        AnyTransport::TypePredicate(t) => render_type_predicate_transport(t),
+        AnyTransport::TypePredicateAnnotation(t) => render_type_predicate_annotation_transport(t),
+        AnyTransport::TypeQuery(t) => render_type_query_transport(t),
+        AnyTransport::UnaryExpression(t) => render_unary_expression_transport(t),
+        AnyTransport::Undefined(t) => render_undefined_transport(t),
+        AnyTransport::UnescapedDoubleJsxStringFragment(t) => render_unescaped_double_jsx_string_fragment_transport(t),
+        AnyTransport::UnescapedDoubleStringFragment(t) => render_unescaped_double_string_fragment_transport(t),
+        AnyTransport::UnescapedSingleJsxStringFragment(t) => render_unescaped_single_jsx_string_fragment_transport(t),
+        AnyTransport::UnescapedSingleStringFragment(t) => render_unescaped_single_string_fragment_transport(t),
+        AnyTransport::UnionType(t) => render_union_type_transport(t),
+        AnyTransport::UpdateExpression(t) => render_update_expression_transport(t),
+        AnyTransport::VariableDeclaration(t) => render_variable_declaration_transport(t),
+        AnyTransport::VariableDeclarator(t) => render_variable_declarator_transport(t),
+        AnyTransport::WhileStatement(t) => render_while_statement_transport(t),
+        AnyTransport::WithStatement(t) => render_with_statement_transport(t),
+        AnyTransport::YieldExpression(t) => render_yield_expression_transport(t),
+        AnyTransport::AutomaticSemicolon(t) => render_automatic_semicolon_transport(t),
+        AnyTransport::TemplateChars(t) => render_template_chars_transport(t),
+        AnyTransport::TernaryQmark(t) => render_ternary_qmark_transport(t),
+        AnyTransport::HtmlComment(t) => render_html_comment_transport(t),
+        AnyTransport::Oror(t) => render_oror_transport(t),
+        AnyTransport::JsxText(t) => render_jsx_text_transport(t),
+        AnyTransport::FunctionSignatureAutomaticSemicolon(t) => render_function_signature_automatic_semicolon_transport(t),
+        AnyTransport::ErrorRecovery(t) => render_error_recovery_transport(t),
+        AnyTransport::TokQDot(t) => render_tok_qdot_transport(t),
+        AnyTransport::Comma(t) => render_comma_transport(t),
+        AnyTransport::Export(t) => render_export_transport(t),
+        AnyTransport::Default(t) => render_default_transport(t),
+        AnyTransport::Star(t) => render_star_transport(t),
+        AnyTransport::Eq(t) => render_eq_transport(t),
+        AnyTransport::As(t) => render_as_transport(t),
+        AnyTransport::Namespace(t) => render_namespace_transport(t),
+        AnyTransport::Paren(t) => render_paren_transport(t),
+        AnyTransport::CloseParen(t) => render_close_paren_transport(t),
+        AnyTransport::Var(t) => render_var_transport(t),
+        AnyTransport::From(t) => render_from_transport(t),
+        AnyTransport::Colon(t) => render_colon_transport(t),
+        AnyTransport::Lt(t) => render_lt_transport(t),
+        AnyTransport::TokDq(t) => render_tok_dq_transport(t),
+        AnyTransport::TokSq(t) => render_tok_sq_transport(t),
+        AnyTransport::Abstract(t) => render_abstract_transport(t),
+        AnyTransport::Async(t) => render_async_transport(t),
+        AnyTransport::Const(t) => render_const_transport(t),
+        AnyTransport::Question(t) => render_question_transport(t),
+        AnyTransport::Readonly(t) => render_readonly_transport(t),
+        AnyTransport::Static(t) => render_static_transport(t),
+        AnyTransport::Declare(t) => render_declare_transport(t),
+        AnyTransport::Accessor(t) => render_accessor_transport(t),
+        AnyTransport::Dot(t) => render_dot_transport(t),
+        AnyTransport::Bracket(t) => render_bracket_transport(t),
+        AnyTransport::CloseBracket(t) => render_close_bracket_transport(t),
+        AnyTransport::TokPlusQColon(t) => render_tok_plus_qcolon_transport(t),
+        AnyTransport::Global(t) => render_global_transport(t),
+        AnyTransport::Using(t) => render_using_transport(t),
+        AnyTransport::Await(t) => render_await_transport(t),
+        AnyTransport::Andand(t) => render_andand_transport(t),
+        AnyTransport::Shr(t) => render_shr_transport(t),
+        AnyTransport::TokGtGtGt(t) => render_tok_gt_gt_gt_transport(t),
+        AnyTransport::Shl(t) => render_shl_transport(t),
+        AnyTransport::Amp(t) => render_amp_transport(t),
+        AnyTransport::Caret(t) => render_caret_transport(t),
+        AnyTransport::Pipe(t) => render_pipe_transport(t),
+        AnyTransport::Plus(t) => render_plus_transport(t),
+        AnyTransport::Minus(t) => render_minus_transport(t),
+        AnyTransport::Slash(t) => render_slash_transport(t),
+        AnyTransport::Percent(t) => render_percent_transport(t),
+        AnyTransport::Starstar(t) => render_starstar_transport(t),
+        AnyTransport::Le(t) => render_le_transport(t),
+        AnyTransport::Eqeq(t) => render_eqeq_transport(t),
+        AnyTransport::TokEqEqEq(t) => render_tok_eq_eq_eq_transport(t),
+        AnyTransport::Neq(t) => render_neq_transport(t),
+        AnyTransport::TokBangEqEq(t) => render_tok_bang_eq_eq_transport(t),
+        AnyTransport::Ge(t) => render_ge_transport(t),
+        AnyTransport::Gt(t) => render_gt_transport(t),
+        AnyTransport::TokQQ(t) => render_tok_qq_transport(t),
+        AnyTransport::Instanceof(t) => render_instanceof_transport(t),
+        AnyTransport::In(t) => render_in_transport(t),
+        AnyTransport::Break(t) => render_break_transport(t),
+        AnyTransport::Catch(t) => render_catch_transport(t),
+        AnyTransport::Brace(t) => render_brace_transport(t),
+        AnyTransport::Semi(t) => render_semi_transport(t),
+        AnyTransport::CloseBrace(t) => render_close_brace_transport(t),
+        AnyTransport::Extends(t) => render_extends_transport(t),
+        AnyTransport::New(t) => render_new_transport(t),
+        AnyTransport::FatArrow(t) => render_fat_arrow_transport(t),
+        AnyTransport::Continue(t) => render_continue_transport(t),
+        AnyTransport::Debugger(t) => render_debugger_transport(t),
+        AnyTransport::At(t) => render_at_transport(t),
+        AnyTransport::Do(t) => render_do_transport(t),
+        AnyTransport::While(t) => render_while_transport(t),
+        AnyTransport::Else(t) => render_else_transport(t),
+        AnyTransport::Enum(t) => render_enum_transport(t),
+        AnyTransport::Finally(t) => render_finally_transport(t),
+        AnyTransport::For(t) => render_for_transport(t),
+        AnyTransport::Function(t) => render_function_transport(t),
+        AnyTransport::If(t) => render_if_transport(t),
+        AnyTransport::Implements(t) => render_implements_transport(t),
+        AnyTransport::Require(t) => render_require_transport(t),
+        AnyTransport::Keyof(t) => render_keyof_transport(t),
+        AnyTransport::Infer(t) => render_infer_transport(t),
+        AnyTransport::Interface(t) => render_interface_transport(t),
+        AnyTransport::TokLtSlash(t) => render_tok_lt_slash_transport(t),
+        AnyTransport::TokSlashGt(t) => render_tok_slash_gt_transport(t),
+        AnyTransport::Bang(t) => render_bang_transport(t),
+        AnyTransport::TokMinusQColon(t) => render_tok_minus_qcolon_transport(t),
+        AnyTransport::TokQColon(t) => render_tok_qcolon_transport(t),
+        AnyTransport::Override(t) => render_override_transport(t),
+        AnyTransport::Ellipsis(t) => render_ellipsis_transport(t),
+        AnyTransport::Return(t) => render_return_transport(t),
+        AnyTransport::Satisfies(t) => render_satisfies_transport(t),
+        AnyTransport::Case(t) => render_case_transport(t),
+        AnyTransport::Switch(t) => render_switch_transport(t),
+        AnyTransport::TokBt(t) => render_tok_bt_transport(t),
+        AnyTransport::TokDollarLbr(t) => render_tok_dollar_lbr_transport(t),
+        AnyTransport::Throw(t) => render_throw_transport(t),
+        AnyTransport::Try(t) => render_try_transport(t),
+        AnyTransport::Is(t) => render_is_transport(t),
+        AnyTransport::Typeof(t) => render_typeof_transport(t),
+        AnyTransport::With(t) => render_with_transport(t),
+        AnyTransport::Yield(t) => render_yield_transport(t),
+        AnyTransport::Literal0_6f_66(t) => render_literal_transport("of", t),
+        AnyTransport::Literal1_6c_65_74(t) => render_literal_transport("let", t),
+        AnyTransport::Literal2_2b_2b(t) => render_literal_transport("++", t),
+        AnyTransport::Literal3_2d_2d(t) => render_literal_transport("--", t),
+        AnyTransport::Literal4_67_65_74(t) => render_literal_transport("get", t),
+        AnyTransport::Literal5_73_65_74(t) => render_literal_transport("set", t),
+        AnyTransport::Literal6_2b_3d(t) => render_literal_transport("+=", t),
+        AnyTransport::Literal7_2d_3d(t) => render_literal_transport("-=", t),
+        AnyTransport::Literal8_2a_3d(t) => render_literal_transport("*=", t),
+        AnyTransport::Literal9_2f_3d(t) => render_literal_transport("/=", t),
+        AnyTransport::Literal10_25_3d(t) => render_literal_transport("%=", t),
+        AnyTransport::Literal11_5e_3d(t) => render_literal_transport("^=", t),
+        AnyTransport::Literal12_26_3d(t) => render_literal_transport("&=", t),
+        AnyTransport::Literal13_7c_3d(t) => render_literal_transport("|=", t),
+        AnyTransport::Literal14_3e_3e_3d(t) => render_literal_transport(">>=", t),
+        AnyTransport::Literal15_3e_3e_3e_3d(t) => render_literal_transport(">>>=", t),
+        AnyTransport::Literal16_3c_3c_3d(t) => render_literal_transport("<<=", t),
+        AnyTransport::Literal17_2a_2a_3d(t) => render_literal_transport("**=", t),
+        AnyTransport::Literal18_26_26_3d(t) => render_literal_transport("&&=", t),
+        AnyTransport::Literal19_7c_7c_3d(t) => render_literal_transport("||=", t),
+        AnyTransport::Literal20_3f_3f_3d(t) => render_literal_transport("??=", t),
+        AnyTransport::Literal21_74_79_70_65(t) => render_literal_transport("type", t),
+        AnyTransport::Literal22_61_73_73_65_72_74(t) => render_literal_transport("assert", t),
+        AnyTransport::Literal23_7b_7c(t) => render_literal_transport("{|", t),
+        AnyTransport::Literal24_7c_7d(t) => render_literal_transport("|}", t),
+        AnyTransport::Literal25_7e(t) => render_literal_transport("~", t),
+        AnyTransport::Literal26_76_6f_69_64(t) => render_literal_transport("void", t),
+        AnyTransport::Literal27_64_65_6c_65_74_65(t) => render_literal_transport("delete", t),
+    }
+}
 
 use ::sittir_core::types::{FieldValue as TransportFieldValue, NodeData as TransportNodeData, Source as TransportSource};
 use ::std::collections::HashMap as TransportHashMap;
@@ -14802,7 +20325,7 @@ pub fn from_transport(transport: AnyTransport) -> Result<String, ::askama::Error
 }
 
 pub fn render_transport(transport: AnyTransport) -> Result<String, ::askama::Error> {
-    from_transport(transport)
+    render_transport_dispatch(&transport)
 }
 
 #[derive(::askama::Template)]
@@ -16472,9 +21995,24 @@ impl ResolvedField {
     }
 
     fn from_items(items: Vec<String>, separator: &'static str, leading_sep: bool, trailing_sep: bool) -> Self {
+        let mut scalar = String::new();
+        if leading_sep && !items.is_empty() {
+            scalar.push_str(separator);
+        }
+        let mut first = true;
+        for item in &items {
+            if !first {
+                scalar.push_str(separator);
+            }
+            scalar.push_str(item);
+            first = false;
+        }
+        if trailing_sep && !items.is_empty() {
+            scalar.push_str(separator);
+        }
         Self {
             kind: ResolvedFieldKind::List,
-            scalar: ::sittir_core::filters::joinby(&items, separator, leading_sep, trailing_sep).unwrap_or_default(),
+            scalar,
             items,
             separator,
             leading_sep,
@@ -16486,21 +22024,8 @@ impl ResolvedField {
         self.scalar.as_str()
     }
 
-    fn as_list_view(&self) -> ::sittir_core::filters::ListView<'_> {
-        ::sittir_core::filters::ListView {
-            items: self.items.as_slice(),
-            separator: self.separator,
-            leading: self.leading_sep,
-            trailing: self.trailing_sep,
-        }
-    }
-
-    fn as_field_view(&self) -> ::sittir_core::filters::FieldView<'_> {
-        match self.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
-            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::Scalar(self.scalar.as_str()),
-            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::List(self.as_list_view()),
-        }
+    fn renderable_items(&self) -> Vec<::sittir_core::filters::Renderable<'_>> {
+        self.items.iter().map(|s| ::sittir_core::filters::Renderable::Text(s.as_str())).collect()
     }
 }
 
@@ -16922,42 +22447,82 @@ fn render_hidden_call_expression_template_call(node: &NodeData) -> Result<String
 
 fn render_hidden_class_body_member(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ClassBodyMemberTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_class_body_method_sig(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ClassBodyMethodSigTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_class_body_method(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["decorator"])?;
-    let field_0 = resolve_field(node, "decorator", false)?;
+    let field_0 = resolve_field(node, "decorator", true)?;
+    let children_renderables = children.renderable_items();
+    let field_0_renderables = field_0.renderable_items();
     let template = ClassBodyMethodTemplate {
-        children: children.as_list_view(),
-        decorator: field_0.as_field_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+        decorator: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_0_renderables.as_slice(),
+                separator: field_0.separator,
+                leading: field_0.leading_sep,
+                trailing: field_0.trailing_sep,
+            }),
+        },
     };
     template.render()
 }
 
 fn render_hidden_class_heritage_extends_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _ClassHeritageExtendsClauseTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_class_heritage_implements_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _ClassHeritageImplementsClauseTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -16965,8 +22530,14 @@ fn render_hidden_class_heritage_implements_clause(node: &NodeData) -> Result<Str
 fn render_hidden_export_statement_default_decl_arm_default_kw_value(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["value"])?;
     let field_0 = resolve_field(node, "value", true)?;
+    let children_renderables = children.renderable_items();
     let template = ExportStatementDefaultDeclArmDefaultKwValueTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         value: field_0.as_scalar(),
     };
     template.render()
@@ -16975,8 +22546,14 @@ fn render_hidden_export_statement_default_decl_arm_default_kw_value(node: &NodeD
 fn render_hidden_export_statement_default_decl_arm_default_kw(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["declaration"])?;
     let field_0 = resolve_field(node, "declaration", false)?;
+    let children_renderables = children.renderable_items();
     let template = ExportStatementDefaultDeclArmDefaultKwTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         declaration: field_0.as_scalar(),
     };
     template.render()
@@ -16985,11 +22562,27 @@ fn render_hidden_export_statement_default_decl_arm_default_kw(node: &NodeData) -
 fn render_hidden_export_statement_default_decl_arm(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["declaration", "decorator"])?;
     let field_0 = resolve_field(node, "declaration", false)?;
-    let field_1 = resolve_field(node, "decorator", false)?;
+    let field_1 = resolve_field(node, "decorator", true)?;
+    let children_renderables = children.renderable_items();
+    let field_1_renderables = field_1.renderable_items();
     let template = ExportStatementDefaultDeclArmTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         declaration: field_0.as_scalar(),
-        decorator: field_1.as_field_view(),
+        decorator: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_1_renderables.as_slice(),
+                separator: field_1.separator,
+                leading: field_1.leading_sep,
+                trailing: field_1.trailing_sep,
+            }),
+        },
     };
     template.render()
 }
@@ -16997,8 +22590,14 @@ fn render_hidden_export_statement_default_decl_arm(node: &NodeData) -> Result<St
 fn render_hidden_export_statement_default_from_arm_clause_from(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["source"])?;
     let field_0 = resolve_field(node, "source", true)?;
+    let children_renderables = children.renderable_items();
     let template = ExportStatementDefaultFromArmClauseFromTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         source: field_0.as_scalar(),
     };
     template.render()
@@ -17007,8 +22606,14 @@ fn render_hidden_export_statement_default_from_arm_clause_from(node: &NodeData) 
 fn render_hidden_export_statement_default_from_arm_ns_from(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["source"])?;
     let field_0 = resolve_field(node, "source", true)?;
+    let children_renderables = children.renderable_items();
     let template = ExportStatementDefaultFromArmNsFromTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         source: field_0.as_scalar(),
     };
     template.render()
@@ -17025,24 +22630,42 @@ fn render_hidden_export_statement_default_from_arm_star_from(node: &NodeData) ->
 
 fn render_hidden_export_statement_default_from_arm(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ExportStatementDefaultFromArmTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_export_statement_equals_export(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _ExportStatementEqualsExportTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_export_statement_namespace_export(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _ExportStatementNamespaceExportTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17050,8 +22673,14 @@ fn render_hidden_export_statement_namespace_export(node: &NodeData) -> Result<St
 fn render_hidden_export_statement_type_export(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["source"])?;
     let field_0 = resolve_field(node, "source", false)?;
+    let children_renderables = children.renderable_items();
     let template = _ExportStatementTypeExportTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         source: field_0.as_scalar(),
     };
     template.render()
@@ -17061,8 +22690,14 @@ fn render_hidden_for_header_let_const_kind(node: &NodeData) -> Result<String, ::
     let children = resolve_children(node, &["kind", "left"])?;
     let field_0 = resolve_field(node, "kind", true)?;
     let field_1 = resolve_field(node, "left", true)?;
+    let children_renderables = children.renderable_items();
     let template = ForHeaderLetConstKindTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         kind: field_0.as_scalar(),
         left: field_1.as_scalar(),
     };
@@ -17093,24 +22728,42 @@ fn render_hidden_for_header_var_kind(node: &NodeData) -> Result<String, ::askama
 
 fn render_hidden_import_clause_default_import(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _ImportClauseDefaultImportTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_import_clause_named_imports(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _ImportClauseNamedImportsTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_import_clause_namespace_import(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _ImportClauseNamespaceImportTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17148,8 +22801,14 @@ fn render_hidden_index_signature_colon(node: &NodeData) -> Result<String, ::aska
 
 fn render_hidden_index_signature_mapped_type_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _IndexSignatureMappedTypeClauseTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17165,16 +22824,28 @@ fn render_hidden_initializer(node: &NodeData) -> Result<String, ::askama::Error>
 
 fn render_hidden_interface_body(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = InterfaceBodyTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_lhs_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = LhsExpressionTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17192,8 +22863,14 @@ fn render_hidden_number(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_hidden_parenthesized_expression_sequence(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _ParenthesizedExpressionSequenceTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17201,8 +22878,14 @@ fn render_hidden_parenthesized_expression_sequence(node: &NodeData) -> Result<St
 fn render_hidden_parenthesized_expression_typed(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["type"])?;
     let field_0 = resolve_field(node, "type", false)?;
+    let children_renderables = children.renderable_items();
     let template = ParenthesizedExpressionTypedTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         r#type: field_0.as_scalar(),
     };
     template.render()
@@ -17210,8 +22893,14 @@ fn render_hidden_parenthesized_expression_typed(node: &NodeData) -> Result<Strin
 
 fn render_hidden_property_identifier(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = PropertyIdentifierTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17230,8 +22919,14 @@ fn render_hidden_public_field_definition_abstract_first(node: &NodeData) -> Resu
 fn render_hidden_public_field_definition_access_first(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["declare_marker"])?;
     let field_0 = resolve_field(node, "declare_marker", false)?;
+    let children_renderables = children.renderable_items();
     let template = PublicFieldDefinitionAccessFirstTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         declare_marker: field_0.as_scalar(),
     };
     template.render()
@@ -17248,8 +22943,14 @@ fn render_hidden_public_field_definition_accessor_opt(node: &NodeData) -> Result
 
 fn render_hidden_public_field_definition_declare_first(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = PublicFieldDefinitionDeclareFirstTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17269,8 +22970,14 @@ fn render_hidden_public_field_definition_static_mods(node: &NodeData) -> Result<
     let children = resolve_children(node, &["readonly_marker", "static_marker"])?;
     let field_0 = resolve_field(node, "readonly_marker", false)?;
     let field_1 = resolve_field(node, "static_marker", true)?;
+    let children_renderables = children.renderable_items();
     let template = PublicFieldDefinitionStaticModsTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         readonly_marker: field_0.as_scalar(),
         static_marker: field_1.as_scalar(),
     };
@@ -17279,40 +22986,70 @@ fn render_hidden_public_field_definition_static_mods(node: &NodeData) -> Result<
 
 fn render_hidden_statement_identifier(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = StatementIdentifierTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_string_double(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _StringDoubleTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_string_fragment(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = StringFragmentTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_string_single(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = _StringSingleTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_hidden_type_identifier(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TypeIdentifierTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17409,13 +23146,23 @@ fn render_abstract_class_declaration(node: &NodeData) -> Result<String, ::askama
     let children = resolve_children(node, &["body", "class_heritage", "decorator", "name", "type_parameters"])?;
     let field_0 = resolve_field(node, "body", true)?;
     let field_1 = resolve_field(node, "class_heritage", false)?;
-    let field_2 = resolve_field(node, "decorator", false)?;
+    let field_2 = resolve_field(node, "decorator", true)?;
     let field_3 = resolve_field(node, "name", true)?;
     let field_4 = resolve_field(node, "type_parameters", false)?;
+    let field_2_renderables = field_2.renderable_items();
     let template = AbstractClassDeclarationTemplate {
         body: field_0.as_scalar(),
         class_heritage: field_1.as_scalar(),
-        decorator: field_2.as_field_view(),
+        decorator: match field_2.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_2_renderables.as_slice(),
+                separator: field_2.separator,
+                leading: field_2.leading_sep,
+                trailing: field_2.trailing_sep,
+            }),
+        },
         name: field_3.as_scalar(),
         type_parameters: field_4.as_scalar(),
     };
@@ -17457,25 +23204,53 @@ fn render_adding_type_annotation(node: &NodeData) -> Result<String, ::askama::Er
 fn render_ambient_declaration(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["declaration"])?;
     let field_0 = resolve_field(node, "declaration", true)?;
+    let children_renderables = children.renderable_items();
+    let field_0_renderables = field_0.renderable_items();
     let template = AmbientDeclarationTemplate {
-        children: children.as_list_view(),
-        declaration: field_0.as_field_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+        declaration: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_0_renderables.as_slice(),
+                separator: field_0.separator,
+                leading: field_0.leading_sep,
+                trailing: field_0.trailing_sep,
+            }),
+        },
     };
     template.render()
 }
 
 fn render_arguments(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ArgumentsTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_array_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ArrayPatternTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17491,8 +23266,14 @@ fn render_array_type(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_array(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ArrayTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17523,8 +23304,14 @@ fn render_arrow_function(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["async_marker", "body"])?;
     let field_0 = resolve_field(node, "async_marker", false)?;
     let field_1 = resolve_field(node, "body", true)?;
+    let children_renderables = children.renderable_items();
     let template = ArrowFunctionTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         async_marker: field_0.as_scalar(),
         body: field_1.as_scalar(),
     };
@@ -17535,8 +23322,14 @@ fn render_as_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["expression", "type_annotation"])?;
     let field_0 = resolve_field(node, "expression", true)?;
     let field_1 = resolve_field(node, "type_annotation", true)?;
+    let children_renderables = children.renderable_items();
     let template = AsExpressionTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         expression: field_0.as_scalar(),
         type_annotation: field_1.as_scalar(),
     };
@@ -17546,16 +23339,32 @@ fn render_as_expression(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_asserts_annotation(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["asserts"])?;
     let field_0 = resolve_field(node, "asserts", true)?;
+    let field_0_renderables = field_0.renderable_items();
     let template = AssertsAnnotationTemplate {
-        asserts: field_0.as_field_view(),
+        asserts: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_0_renderables.as_slice(),
+                separator: field_0.separator,
+                leading: field_0.leading_sep,
+                trailing: field_0.trailing_sep,
+            }),
+        },
     };
     template.render()
 }
 
 fn render_asserts(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = AssertsTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17632,8 +23441,14 @@ fn render_break_statement(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_call_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = CallExpressionTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17666,8 +23481,14 @@ fn render_catch_clause(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_class_body(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ClassBodyTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17677,14 +23498,24 @@ fn render_class_declaration(node: &NodeData) -> Result<String, ::askama::Error> 
     let field_0 = resolve_field(node, "automatic_semicolon", false)?;
     let field_1 = resolve_field(node, "body", true)?;
     let field_2 = resolve_field(node, "class_heritage", false)?;
-    let field_3 = resolve_field(node, "decorator", false)?;
+    let field_3 = resolve_field(node, "decorator", true)?;
     let field_4 = resolve_field(node, "name", true)?;
     let field_5 = resolve_field(node, "type_parameters", false)?;
+    let field_3_renderables = field_3.renderable_items();
     let template = ClassDeclarationTemplate {
         automatic_semicolon: field_0.as_scalar(),
         body: field_1.as_scalar(),
         class_heritage: field_2.as_scalar(),
-        decorator: field_3.as_field_view(),
+        decorator: match field_3.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_3_renderables.as_slice(),
+                separator: field_3.separator,
+                leading: field_3.leading_sep,
+                trailing: field_3.trailing_sep,
+            }),
+        },
         name: field_4.as_scalar(),
         type_parameters: field_5.as_scalar(),
     };
@@ -17693,24 +23524,42 @@ fn render_class_declaration(node: &NodeData) -> Result<String, ::askama::Error> 
 
 fn render_class_heritage_extends_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ClassHeritageExtendsClauseTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_class_heritage_implements_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ClassHeritageImplementsClauseTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_class_heritage(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ClassHeritageTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17718,8 +23567,14 @@ fn render_class_heritage(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_class_static_block(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["body"])?;
     let field_0 = resolve_field(node, "body", true)?;
+    let children_renderables = children.renderable_items();
     let template = ClassStaticBlockTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         body: field_0.as_scalar(),
     };
     template.render()
@@ -17729,13 +23584,23 @@ fn render_class(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["body", "class_heritage", "decorator", "name", "type_parameters"])?;
     let field_0 = resolve_field(node, "body", true)?;
     let field_1 = resolve_field(node, "class_heritage", false)?;
-    let field_2 = resolve_field(node, "decorator", false)?;
+    let field_2 = resolve_field(node, "decorator", true)?;
     let field_3 = resolve_field(node, "name", false)?;
     let field_4 = resolve_field(node, "type_parameters", false)?;
+    let field_2_renderables = field_2.renderable_items();
     let template = ClassTemplate {
         body: field_0.as_scalar(),
         class_heritage: field_1.as_scalar(),
-        decorator: field_2.as_field_view(),
+        decorator: match field_2.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_2_renderables.as_slice(),
+                separator: field_2.separator,
+                leading: field_2.leading_sep,
+                trailing: field_2.trailing_sep,
+            }),
+        },
         name: field_3.as_scalar(),
         type_parameters: field_4.as_scalar(),
     };
@@ -17851,16 +23716,28 @@ fn render_decorator_member_expression(node: &NodeData) -> Result<String, ::askam
 
 fn render_decorator_parenthesized_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = DecoratorParenthesizedExpressionTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_decorator(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = DecoratorTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17910,9 +23787,21 @@ fn render_enum_assignment(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_enum_body(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["name"])?;
     let field_0 = resolve_field(node, "name", false)?;
+    let children_renderables = children.renderable_items();
+    let field_0_renderables = field_0.renderable_items();
     let template = EnumBodyTemplate {
-        children: children.as_list_view(),
-        name: field_0.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+        name: ::sittir_core::filters::ListView {
+            items: field_0_renderables.as_slice(),
+            separator: field_0.separator,
+            leading: field_0.leading_sep,
+            trailing: field_0.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17932,8 +23821,14 @@ fn render_enum_declaration(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_export_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ExportClauseTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17953,16 +23848,28 @@ fn render_export_specifier(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_export_statement_equals_export(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ExportStatementEqualsExportTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_export_statement_namespace_export(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ExportStatementNamespaceExportTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17970,8 +23877,14 @@ fn render_export_statement_namespace_export(node: &NodeData) -> Result<String, :
 fn render_export_statement_type_export(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["source"])?;
     let field_0 = resolve_field(node, "source", false)?;
+    let children_renderables = children.renderable_items();
     let template = ExportStatementTypeExportTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         source: field_0.as_scalar(),
     };
     template.render()
@@ -17979,8 +23892,14 @@ fn render_export_statement_type_export(node: &NodeData) -> Result<String, ::aska
 
 fn render_export_statement(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ExportStatementTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -17988,8 +23907,14 @@ fn render_export_statement(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_expression_statement(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["semicolon"])?;
     let field_0 = resolve_field(node, "semicolon", true)?;
+    let children_renderables = children.renderable_items();
     let template = ExpressionStatementTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         semicolon: field_0.as_scalar(),
     };
     template.render()
@@ -17999,9 +23924,29 @@ fn render_extends_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["type_arguments", "value"])?;
     let field_0 = resolve_field(node, "type_arguments", false)?;
     let field_1 = resolve_field(node, "value", true)?;
+    let field_0_renderables = field_0.renderable_items();
+    let field_1_renderables = field_1.renderable_items();
     let template = ExtendsClauseTemplate {
-        type_arguments: field_0.as_field_view(),
-        value: field_1.as_field_view(),
+        type_arguments: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_0_renderables.as_slice(),
+                separator: field_0.separator,
+                leading: field_0.leading_sep,
+                trailing: field_0.trailing_sep,
+            }),
+        },
+        value: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_1_renderables.as_slice(),
+                separator: field_1.separator,
+                leading: field_1.leading_sep,
+                trailing: field_1.trailing_sep,
+            }),
+        },
     };
     template.render()
 }
@@ -18009,20 +23954,40 @@ fn render_extends_clause(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_extends_type_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["type"])?;
     let field_0 = resolve_field(node, "type", true)?;
+    let field_0_renderables = field_0.renderable_items();
     let template = ExtendsTypeClauseTemplate {
-        r#type: field_0.as_field_view(),
+        r#type: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_0_renderables.as_slice(),
+                separator: field_0.separator,
+                leading: field_0.leading_sep,
+                trailing: field_0.trailing_sep,
+            }),
+        },
     };
     template.render()
 }
 
 fn render_field_definition(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["decorator", "property", "static_marker", "value"])?;
-    let field_0 = resolve_field(node, "decorator", false)?;
+    let field_0 = resolve_field(node, "decorator", true)?;
     let field_1 = resolve_field(node, "property", true)?;
     let field_2 = resolve_field(node, "static_marker", false)?;
     let field_3 = resolve_field(node, "value", false)?;
+    let field_0_renderables = field_0.renderable_items();
     let template = FieldDefinitionTemplate {
-        decorator: field_0.as_field_view(),
+        decorator: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_0_renderables.as_slice(),
+                separator: field_0.separator,
+                leading: field_0.leading_sep,
+                trailing: field_0.trailing_sep,
+            }),
+        },
         property: field_1.as_scalar(),
         static_marker: field_2.as_scalar(),
         value: field_3.as_scalar(),
@@ -18054,8 +24019,14 @@ fn render_for_in_statement(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "body", true)?;
     let field_2 = resolve_field(node, "operator", true)?;
     let field_3 = resolve_field(node, "right", true)?;
+    let children_renderables = children.renderable_items();
     let template = ForInStatementTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         await_marker: field_0.as_scalar(),
         body: field_1.as_scalar(),
         operator: field_2.as_scalar(),
@@ -18081,8 +24052,14 @@ fn render_for_statement(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_formal_parameters(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = FormalParametersTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -18095,8 +24072,14 @@ fn render_function_declaration(node: &NodeData) -> Result<String, ::askama::Erro
     let field_3 = resolve_field(node, "parameters", true)?;
     let field_4 = resolve_field(node, "return_type", false)?;
     let field_5 = resolve_field(node, "type_parameters", false)?;
+    let children_renderables = children.renderable_items();
     let template = FunctionDeclarationTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         async_marker: field_0.as_scalar(),
         body: field_1.as_scalar(),
         name: field_2.as_scalar(),
@@ -18134,8 +24117,14 @@ fn render_function_signature(node: &NodeData) -> Result<String, ::askama::Error>
     let field_3 = resolve_field(node, "return_type", false)?;
     let field_4 = resolve_field(node, "semicolon", true)?;
     let field_5 = resolve_field(node, "type_parameters", false)?;
+    let children_renderables = children.renderable_items();
     let template = FunctionSignatureTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         async_marker: field_0.as_scalar(),
         name: field_1.as_scalar(),
         parameters: field_2.as_scalar(),
@@ -18167,8 +24156,14 @@ fn render_generator_function_declaration(node: &NodeData) -> Result<String, ::as
     let field_3 = resolve_field(node, "parameters", true)?;
     let field_4 = resolve_field(node, "return_type", false)?;
     let field_5 = resolve_field(node, "type_parameters", false)?;
+    let children_renderables = children.renderable_items();
     let template = GeneratorFunctionDeclarationTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         async_marker: field_0.as_scalar(),
         body: field_1.as_scalar(),
         name: field_2.as_scalar(),
@@ -18224,8 +24219,14 @@ fn render_if_statement(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_implements_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ImplementsClauseTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -18235,8 +24236,14 @@ fn render_import_alias(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "name", true)?;
     let field_1 = resolve_field(node, "semicolon", true)?;
     let field_2 = resolve_field(node, "value", true)?;
+    let children_renderables = children.renderable_items();
     let template = ImportAliasTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         name: field_0.as_scalar(),
         semicolon: field_1.as_scalar(),
         value: field_2.as_scalar(),
@@ -18247,40 +24254,74 @@ fn render_import_alias(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_import_attribute(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["object"])?;
     let field_0 = resolve_field(node, "object", true)?;
+    let field_0_renderables = field_0.renderable_items();
     let template = ImportAttributeTemplate {
-        object: field_0.as_field_view(),
+        object: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_0_renderables.as_slice(),
+                separator: field_0.separator,
+                leading: field_0.leading_sep,
+                trailing: field_0.trailing_sep,
+            }),
+        },
     };
     template.render()
 }
 
 fn render_import_clause_default_import(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ImportClauseDefaultImportTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_import_clause_named_imports(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ImportClauseNamedImportsTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_import_clause_namespace_import(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ImportClauseNamespaceImportTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_import_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ImportClauseTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -18308,8 +24349,14 @@ fn render_import_specifier_name(node: &NodeData) -> Result<String, ::askama::Err
 fn render_import_specifier(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["import_kind"])?;
     let field_0 = resolve_field(node, "import_kind", false)?;
+    let children_renderables = children.renderable_items();
     let template = ImportSpecifierTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         import_kind: field_0.as_scalar(),
     };
     template.render()
@@ -18321,8 +24368,14 @@ fn render_import_statement(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "import_clause", false)?;
     let field_2 = resolve_field(node, "semicolon", true)?;
     let field_3 = resolve_field(node, "source", false)?;
+    let children_renderables = children.renderable_items();
     let template = ImportStatementTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         import_attribute: field_0.as_scalar(),
         import_clause: field_1.as_scalar(),
         semicolon: field_2.as_scalar(),
@@ -18333,8 +24386,14 @@ fn render_import_statement(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_index_signature_mapped_type_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = IndexSignatureMappedTypeClauseTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -18343,8 +24402,14 @@ fn render_index_signature(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["sign", "type"])?;
     let field_0 = resolve_field(node, "sign", false)?;
     let field_1 = resolve_field(node, "type", true)?;
+    let children_renderables = children.renderable_items();
     let template = IndexSignatureTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         sign: field_0.as_scalar(),
         r#type: field_1.as_scalar(),
     };
@@ -18421,8 +24486,14 @@ fn render_intersection_type(node: &NodeData) -> Result<String, ::askama::Error> 
 
 fn render_jsx_attribute(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = JsxAttributeTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -18440,8 +24511,14 @@ fn render_jsx_element(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["close_tag", "open_tag"])?;
     let field_0 = resolve_field(node, "close_tag", true)?;
     let field_1 = resolve_field(node, "open_tag", true)?;
+    let children_renderables = children.renderable_items();
     let template = JsxElementTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         close_tag: field_0.as_scalar(),
         open_tag: field_1.as_scalar(),
     };
@@ -18450,27 +24527,49 @@ fn render_jsx_element(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_jsx_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = JsxExpressionTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_jsx_namespace_name(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = JsxNamespaceNameTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_jsx_opening_element(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["attribute", "name", "type_arguments"])?;
-    let field_0 = resolve_field(node, "attribute", false)?;
+    let field_0 = resolve_field(node, "attribute", true)?;
     let field_1 = resolve_field(node, "name", false)?;
     let field_2 = resolve_field(node, "type_arguments", false)?;
+    let field_0_renderables = field_0.renderable_items();
     let template = JsxOpeningElementTemplate {
-        attribute: field_0.as_field_view(),
+        attribute: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_0_renderables.as_slice(),
+                separator: field_0.separator,
+                leading: field_0.leading_sep,
+                trailing: field_0.trailing_sep,
+            }),
+        },
         name: field_1.as_scalar(),
         type_arguments: field_2.as_scalar(),
     };
@@ -18479,11 +24578,21 @@ fn render_jsx_opening_element(node: &NodeData) -> Result<String, ::askama::Error
 
 fn render_jsx_self_closing_element(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["attribute", "name", "type_arguments"])?;
-    let field_0 = resolve_field(node, "attribute", false)?;
+    let field_0 = resolve_field(node, "attribute", true)?;
     let field_1 = resolve_field(node, "name", false)?;
     let field_2 = resolve_field(node, "type_arguments", false)?;
+    let field_0_renderables = field_0.renderable_items();
     let template = JsxSelfClosingElementTemplate {
-        attribute: field_0.as_field_view(),
+        attribute: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_0_renderables.as_slice(),
+                separator: field_0.separator,
+                leading: field_0.leading_sep,
+                trailing: field_0.trailing_sep,
+            }),
+        },
         name: field_1.as_scalar(),
         type_arguments: field_2.as_scalar(),
     };
@@ -18506,8 +24615,18 @@ fn render_lexical_declaration(node: &NodeData) -> Result<String, ::askama::Error
     let field_0 = resolve_field(node, "declarators", true)?;
     let field_1 = resolve_field(node, "kind", true)?;
     let field_2 = resolve_field(node, "semicolon", true)?;
+    let field_0_renderables = field_0.renderable_items();
     let template = LexicalDeclarationTemplate {
-        declarators: field_0.as_field_view(),
+        declarators: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_0_renderables.as_slice(),
+                separator: field_0.separator,
+                leading: field_0.leading_sep,
+                trailing: field_0.trailing_sep,
+            }),
+        },
         kind: field_1.as_scalar(),
         semicolon: field_2.as_scalar(),
     };
@@ -18516,8 +24635,14 @@ fn render_lexical_declaration(node: &NodeData) -> Result<String, ::askama::Error
 
 fn render_literal_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = LiteralTypeTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -18632,16 +24757,28 @@ fn render_module(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_named_imports(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = NamedImportsTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_namespace_export(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = NamespaceExportTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -18712,8 +24849,14 @@ fn render_object_assignment_pattern(node: &NodeData) -> Result<String, ::askama:
 
 fn render_object_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ObjectPatternTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -18723,9 +24866,19 @@ fn render_object_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "closing", true)?;
     let field_1 = resolve_field(node, "members", false)?;
     let field_2 = resolve_field(node, "opening", true)?;
+    let field_1_renderables = field_1.renderable_items();
     let template = ObjectTypeTemplate {
         closing: field_0.as_scalar(),
-        members: field_1.as_field_view(),
+        members: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_1_renderables.as_slice(),
+                separator: field_1.separator,
+                leading: field_1.leading_sep,
+                trailing: field_1.trailing_sep,
+            }),
+        },
         opening: field_2.as_scalar(),
     };
     template.render()
@@ -18733,8 +24886,14 @@ fn render_object_type(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_object(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ObjectTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -18759,14 +24918,30 @@ fn render_opting_type_annotation(node: &NodeData) -> Result<String, ::askama::Er
 
 fn render_optional_parameter(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["decorator", "pattern", "readonly_marker", "type", "value"])?;
-    let field_0 = resolve_field(node, "decorator", false)?;
+    let field_0 = resolve_field(node, "decorator", true)?;
     let field_1 = resolve_field(node, "pattern", true)?;
     let field_2 = resolve_field(node, "readonly_marker", false)?;
     let field_3 = resolve_field(node, "type", false)?;
     let field_4 = resolve_field(node, "value", false)?;
+    let children_renderables = children.renderable_items();
+    let field_0_renderables = field_0.renderable_items();
     let template = OptionalParameterTemplate {
-        children: children.as_list_view(),
-        decorator: field_0.as_field_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+        decorator: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_0_renderables.as_slice(),
+                separator: field_0.separator,
+                leading: field_0.leading_sep,
+                trailing: field_0.trailing_sep,
+            }),
+        },
         pattern: field_1.as_scalar(),
         readonly_marker: field_2.as_scalar(),
         r#type: field_3.as_scalar(),
@@ -18819,16 +24994,28 @@ fn render_pair(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_parenthesized_expression_sequence(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ParenthesizedExpressionSequenceTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_parenthesized_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = ParenthesizedExpressionTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -18845,10 +25032,20 @@ fn render_parenthesized_type(node: &NodeData) -> Result<String, ::askama::Error>
 fn render_program(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["hash_bang_line", "statements"])?;
     let field_0 = resolve_field(node, "hash_bang_line", false)?;
-    let field_1 = resolve_field(node, "statements", false)?;
+    let field_1 = resolve_field(node, "statements", true)?;
+    let field_1_renderables = field_1.renderable_items();
     let template = ProgramTemplate {
         hash_bang_line: field_0.as_scalar(),
-        statements: field_1.as_field_view(),
+        statements: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_1_renderables.as_slice(),
+                separator: field_1.separator,
+                leading: field_1.leading_sep,
+                trailing: field_1.trailing_sep,
+            }),
+        },
     };
     template.render()
 }
@@ -18876,14 +25073,30 @@ fn render_property_signature(node: &NodeData) -> Result<String, ::askama::Error>
 
 fn render_public_field_definition(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["decorator", "name", "optionality_marker", "type", "value"])?;
-    let field_0 = resolve_field(node, "decorator", false)?;
+    let field_0 = resolve_field(node, "decorator", true)?;
     let field_1 = resolve_field(node, "name", true)?;
     let field_2 = resolve_field(node, "optionality_marker", false)?;
     let field_3 = resolve_field(node, "type", false)?;
     let field_4 = resolve_field(node, "value", false)?;
+    let children_renderables = children.renderable_items();
+    let field_0_renderables = field_0.renderable_items();
     let template = PublicFieldDefinitionTemplate {
-        children: children.as_list_view(),
-        decorator: field_0.as_field_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+        decorator: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_0_renderables.as_slice(),
+                separator: field_0.separator,
+                leading: field_0.leading_sep,
+                trailing: field_0.trailing_sep,
+            }),
+        },
         name: field_1.as_scalar(),
         optionality_marker: field_2.as_scalar(),
         r#type: field_3.as_scalar(),
@@ -18914,14 +25127,30 @@ fn render_regex(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_required_parameter(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["decorator", "pattern", "readonly_marker", "type", "value"])?;
-    let field_0 = resolve_field(node, "decorator", false)?;
+    let field_0 = resolve_field(node, "decorator", true)?;
     let field_1 = resolve_field(node, "pattern", true)?;
     let field_2 = resolve_field(node, "readonly_marker", false)?;
     let field_3 = resolve_field(node, "type", false)?;
     let field_4 = resolve_field(node, "value", false)?;
+    let children_renderables = children.renderable_items();
+    let field_0_renderables = field_0.renderable_items();
     let template = RequiredParameterTemplate {
-        children: children.as_list_view(),
-        decorator: field_0.as_field_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+        decorator: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_0_renderables.as_slice(),
+                separator: field_0.separator,
+                leading: field_0.leading_sep,
+                trailing: field_0.trailing_sep,
+            }),
+        },
         pattern: field_1.as_scalar(),
         readonly_marker: field_2.as_scalar(),
         r#type: field_3.as_scalar(),
@@ -18932,8 +25161,14 @@ fn render_required_parameter(node: &NodeData) -> Result<String, ::askama::Error>
 
 fn render_rest_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = RestPatternTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -18950,8 +25185,14 @@ fn render_rest_type(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_return_statement(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["semicolon"])?;
     let field_0 = resolve_field(node, "semicolon", true)?;
+    let children_renderables = children.renderable_items();
     let template = ReturnStatementTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         semicolon: field_0.as_scalar(),
     };
     template.render()
@@ -18970,8 +25211,14 @@ fn render_satisfies_expression(node: &NodeData) -> Result<String, ::askama::Erro
 
 fn render_sequence_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = SequenceExpressionTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -18988,34 +25235,62 @@ fn render_spread_element(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_statement_block(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["automatic_semicolon", "statements"])?;
     let field_0 = resolve_field(node, "automatic_semicolon", false)?;
-    let field_1 = resolve_field(node, "statements", false)?;
+    let field_1 = resolve_field(node, "statements", true)?;
+    let field_1_renderables = field_1.renderable_items();
     let template = StatementBlockTemplate {
         automatic_semicolon: field_0.as_scalar(),
-        statements: field_1.as_field_view(),
+        statements: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_1_renderables.as_slice(),
+                separator: field_1.separator,
+                leading: field_1.leading_sep,
+                trailing: field_1.trailing_sep,
+            }),
+        },
     };
     template.render()
 }
 
 fn render_string_double(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = StringDoubleTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_string_single(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = StringSingleTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_string(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = StringTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -19035,18 +25310,34 @@ fn render_subscript_expression(node: &NodeData) -> Result<String, ::askama::Erro
 
 fn render_switch_body(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = SwitchBodyTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_switch_case(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["body", "value"])?;
-    let field_0 = resolve_field(node, "body", false)?;
+    let field_0 = resolve_field(node, "body", true)?;
     let field_1 = resolve_field(node, "value", true)?;
+    let field_0_renderables = field_0.renderable_items();
     let template = SwitchCaseTemplate {
-        body: field_0.as_field_view(),
+        body: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_0_renderables.as_slice(),
+                separator: field_0.separator,
+                leading: field_0.leading_sep,
+                trailing: field_0.trailing_sep,
+            }),
+        },
         value: field_1.as_scalar(),
     };
     template.render()
@@ -19054,9 +25345,19 @@ fn render_switch_case(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_switch_default(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["body"])?;
-    let field_0 = resolve_field(node, "body", false)?;
+    let field_0 = resolve_field(node, "body", true)?;
+    let field_0_renderables = field_0.renderable_items();
     let template = SwitchDefaultTemplate {
-        body: field_0.as_field_view(),
+        body: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_0_renderables.as_slice(),
+                separator: field_0.separator,
+                leading: field_0.leading_sep,
+                trailing: field_0.trailing_sep,
+            }),
+        },
     };
     template.render()
 }
@@ -19074,32 +25375,56 @@ fn render_switch_statement(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_template_literal_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TemplateLiteralTypeTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_template_string(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TemplateStringTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_template_substitution(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TemplateSubstitutionTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
 
 fn render_template_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TemplateTypeTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -19120,8 +25445,14 @@ fn render_ternary_expression(node: &NodeData) -> Result<String, ::askama::Error>
 fn render_throw_statement(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["semicolon"])?;
     let field_0 = resolve_field(node, "semicolon", true)?;
+    let children_renderables = children.renderable_items();
     let template = ThrowStatementTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         semicolon: field_0.as_scalar(),
     };
     template.render()
@@ -19153,8 +25484,14 @@ fn render_tuple_parameter(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_tuple_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TupleTypeTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -19185,8 +25522,14 @@ fn render_type_annotation(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_type_arguments(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TypeArgumentsTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -19219,8 +25562,14 @@ fn render_type_parameter(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_type_parameters(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TypeParametersTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -19228,8 +25577,18 @@ fn render_type_parameters(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_type_predicate_annotation(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["type_predicate"])?;
     let field_0 = resolve_field(node, "type_predicate", true)?;
+    let field_0_renderables = field_0.renderable_items();
     let template = TypePredicateAnnotationTemplate {
-        type_predicate: field_0.as_field_view(),
+        type_predicate: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_0_renderables.as_slice(),
+                separator: field_0.separator,
+                leading: field_0.leading_sep,
+                trailing: field_0.trailing_sep,
+            }),
+        },
     };
     template.render()
 }
@@ -19247,8 +25606,14 @@ fn render_type_predicate(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_type_query(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = TypeQueryTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -19277,8 +25642,14 @@ fn render_union_type(node: &NodeData) -> Result<String, ::askama::Error> {
 
 fn render_update_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
     let template = UpdateExpressionTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -19287,8 +25658,18 @@ fn render_variable_declaration(node: &NodeData) -> Result<String, ::askama::Erro
     let children = resolve_children(node, &["declarators", "semicolon"])?;
     let field_0 = resolve_field(node, "declarators", true)?;
     let field_1 = resolve_field(node, "semicolon", true)?;
+    let field_0_renderables = field_0.renderable_items();
     let template = VariableDeclarationTemplate {
-        declarators: field_0.as_field_view(),
+        declarators: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+                items: field_0_renderables.as_slice(),
+                separator: field_0.separator,
+                leading: field_0.leading_sep,
+                trailing: field_0.trailing_sep,
+            }),
+        },
         semicolon: field_1.as_scalar(),
     };
     template.render()
@@ -19332,8 +25713,14 @@ fn render_with_statement(node: &NodeData) -> Result<String, ::askama::Error> {
 fn render_yield_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["expression"])?;
     let field_0 = resolve_field(node, "expression", false)?;
+    let children_renderables = children.renderable_items();
     let template = YieldExpressionTemplate {
-        children: children.as_list_view(),
+        children: ::sittir_core::filters::ListView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         expression: field_0.as_scalar(),
     };
     template.render()
