@@ -17,7 +17,7 @@
 //!
 //! Task 3 (renderable-native-views): `joinby` now returns
 //! `Safe<Joined<'a>>` and `JoinSource` operates over `Renderable`-backed
-//! views. The string-slice impls are gone; all call sites use `ListView`
+//! views. The string-slice impls are gone; all call sites use `ListNonterminalView`
 //! constructed with `Renderable::Text(...)` items. The `joinWithTrailing`
 //! / `joinWithLeading` / `joinWithFlanks` filters are now Askama
 //! macro-generated structs called via the normal Askama call convention —
@@ -27,19 +27,19 @@
 //! Task 3 plan. The three view tests from that file now live at the
 //! bottom of this module.
 
-use sittir_core::filters::{joinby, lower, upper, FieldView, ListView, Renderable};
+use sittir_core::filters::{joinby, lower, upper, NonterminalView, ListNonterminalView, Renderable};
 
 // ---------------------------------------------------------------------------
-// Helpers — build a ListView from string literals for use in tests.
+// Helpers — build a ListNonterminalView from string literals for use in tests.
 // ---------------------------------------------------------------------------
 
-/// Build a stack-local `ListView` from a fixed array of `Renderable::Text`
+/// Build a stack-local `ListNonterminalView` from a fixed array of `Renderable::Text`
 /// items. The caller must keep `items` alive for the lifetime of the view;
 /// use this helper only inside a single test body.
 macro_rules! text_view {
     ($sep:expr, $leading:expr, $trailing:expr, $( $s:expr ),* $(,)?) => {{
         let items: &[Renderable<'_>] = &[$( Renderable::Text($s) ),*];
-        ListView { items, separator: $sep, leading: $leading, trailing: $trailing }
+        ListNonterminalView { items, separator: $sep, leading: $leading, trailing: $trailing }
     }};
 }
 
@@ -83,7 +83,7 @@ fn upper_lower_unicode_matches_ts() {
 #[test]
 fn joinby_empty_input_produces_empty_output() {
     // filters.rs:58 — was: joinby(&[&str; 0], ...)
-    // Now: ListView with empty items slice.
+    // Now: ListNonterminalView with empty items slice.
     let view = text_view!(", ", false, false,);
     assert_eq!(joinby(&view, ", ", false, false).unwrap().0.to_string(), "");
     // Flanks on empty input are suppressed — matches TS "flanks only
@@ -168,7 +168,7 @@ use sittir_core::filters::{joinWithFlanks, joinWithLeading, joinWithTrailing, Fl
 
 #[test]
 fn join_with_trailing_emits_flank_when_anon_text_matches_sep() {
-    // filters.rs:140 — updated: &["a", "b"] → ListView
+    // filters.rs:140 — updated: &["a", "b"] → ListNonterminalView
     let values = FlankValues {
         trailing_anon: Some(",".into()),
         ..FlankValues::default()
@@ -180,7 +180,7 @@ fn join_with_trailing_emits_flank_when_anon_text_matches_sep() {
 #[test]
 fn join_with_trailing_skips_flank_when_anon_text_differs() {
     // `;`-anon flanking a `,`-joined list contributes nothing.
-    // filters.rs:152 — updated: &["a", "b"] → ListView
+    // filters.rs:152 — updated: &["a", "b"] → ListNonterminalView
     let values = FlankValues {
         trailing_anon: Some(";".into()),
         ..FlankValues::default()
@@ -192,7 +192,7 @@ fn join_with_trailing_skips_flank_when_anon_text_differs() {
 #[test]
 fn join_with_trailing_skips_flank_when_anon_absent() {
     // Default ctx has trailing_anon: None — degrades to plain join.
-    // filters.rs:162 — updated: &["a", "b"] → ListView
+    // filters.rs:162 — updated: &["a", "b"] → ListNonterminalView
     let values = FlankValues::default();
     let view = text_view!(",", false, false, "a", "b");
     assert_eq!(joinWithTrailing(&view, &values, ",").unwrap().0.to_string(), "a,b");
@@ -200,7 +200,7 @@ fn join_with_trailing_skips_flank_when_anon_absent() {
 
 #[test]
 fn join_with_leading_mirrors_trailing_semantics() {
-    // filters.rs:169 — updated: &["a", "b"] → ListView
+    // filters.rs:169 — updated: &["a", "b"] → ListNonterminalView
     let values = FlankValues {
         leading_anon: Some(",".into()),
         ..FlankValues::default()
@@ -212,7 +212,7 @@ fn join_with_leading_mirrors_trailing_semantics() {
 #[test]
 fn join_with_flanks_independent_per_side() {
     // Only one flank set — only that side emits.
-    // filters.rs:179 — updated: &["a"] → ListView
+    // filters.rs:179 — updated: &["a"] → ListNonterminalView
     let values = FlankValues {
         trailing_anon: Some(",".into()),
         leading_anon: None,
@@ -223,7 +223,7 @@ fn join_with_flanks_independent_per_side() {
 
 #[test]
 fn join_with_flanks_both_sides_match() {
-    // filters.rs:189 — updated: &["a", "b"] → ListView
+    // filters.rs:189 — updated: &["a", "b"] → ListNonterminalView
     let values = FlankValues {
         trailing_anon: Some(",".into()),
         leading_anon: Some(",".into()),
@@ -239,7 +239,7 @@ fn join_with_flanks_both_sides_match() {
 #[test]
 fn joinby_returns_streaming_safe_joined() {
     let items = [Renderable::Text("a"), Renderable::Text("b"), Renderable::Text("c")];
-    let view = ListView { items: &items, separator: ", ", leading: false, trailing: false };
+    let view = ListNonterminalView { items: &items, separator: ", ", leading: false, trailing: false };
     let safe: askama::filters::Safe<sittir_core::filters::Joined<'_>> =
         joinby(&view, ", ", false, false).expect("joinby");
     assert_eq!(safe.0.to_string(), "a, b, c");
@@ -248,7 +248,7 @@ fn joinby_returns_streaming_safe_joined() {
 #[test]
 fn joinby_with_flanks_streams_through_safe() {
     let items = [Renderable::Text("x")];
-    let view = ListView { items: &items, separator: ";", leading: false, trailing: false };
+    let view = ListNonterminalView { items: &items, separator: ";", leading: false, trailing: false };
     let safe = joinby(&view, ";", true, true).expect("joinby");
     assert_eq!(safe.0.to_string(), ";x;");
 }
@@ -260,18 +260,18 @@ fn joinby_with_flanks_streams_through_safe() {
 #[test]
 fn listview_holds_renderables() {
     let items = [Renderable::Text("foo"), Renderable::Text("bar")];
-    let view = ListView { items: &items, separator: ", ", leading: false, trailing: false };
+    let view = ListNonterminalView { items: &items, separator: ", ", leading: false, trailing: false };
     assert_eq!(view.to_string(), "foo, bar");
 }
 
 #[test]
 fn fieldview_one_holds_renderable() {
-    let view = FieldView::One(Renderable::Text("hello"));
+    let view = NonterminalView::One(Renderable::Text("hello"));
     assert_eq!(view.to_string(), "hello");
 }
 
 #[test]
 fn fieldview_missing_renders_empty() {
-    let view: FieldView<'_> = FieldView::Missing;
+    let view: NonterminalView<'_> = NonterminalView::Missing;
     assert_eq!(view.to_string(), "");
 }

@@ -6827,19 +6827,19 @@ fn render_array_expression_list_transport(node: &ArrayExpressionListTransport) -
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = ArrayExpressionListTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
-        attributes: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+        attributes: ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
             items: attributes_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         }),
-        elements: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+        elements: ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
             items: elements_buf.as_slice(),
             separator: "",
             leading: false,
@@ -6859,7 +6859,7 @@ fn render_array_expression_semi_transport(node: &ArrayExpressionSemiTransport) -
     let elements_text = render_transport_dispatch(node.elements.as_ref())?;
     let length_text = render_transport_dispatch(node.length.as_ref())?;
     let template = ArrayExpressionSemiTemplate {
-        attributes: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+        attributes: ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
             items: attributes_buf.as_slice(),
             separator: "",
             leading: false,
@@ -6901,7 +6901,7 @@ fn render__delim_token_tree_brace_transport(node: &_DelimTokenTreeBraceTransport
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = _DelimTokenTreeBraceTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -6919,7 +6919,7 @@ fn render__delim_token_tree_bracket_transport(node: &_DelimTokenTreeBracketTrans
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = _DelimTokenTreeBracketTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -6937,7 +6937,7 @@ fn render__delim_token_tree_paren_transport(node: &_DelimTokenTreeParenTransport
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = _DelimTokenTreeParenTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -6959,7 +6959,7 @@ fn render__expression_statement_block_ending_transport(node: &_ExpressionStateme
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = _ExpressionStatementBlockEndingTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -6977,7 +6977,7 @@ fn render__expression_statement_with_semi_transport(node: &_ExpressionStatementW
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = _ExpressionStatementWithSemiTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -6995,7 +6995,7 @@ fn render_field_identifier_transport(node: &FieldIdentifierTransport) -> Result<
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = FieldIdentifierTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7044,7 +7044,7 @@ fn render_function_type_fn_form_transport(node: &FunctionTypeFnFormTransport) ->
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = FunctionTypeFnFormTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7114,7 +7114,7 @@ fn render_let_chain_transport(node: &LetChainTransport) -> Result<String, ::aska
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = LetChainTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7151,7 +7151,7 @@ fn render__macro_definition_brace_transport(node: &_MacroDefinitionBraceTranspor
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = _MacroDefinitionBraceTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7170,7 +7170,7 @@ fn render__macro_definition_bracket_transport(node: &_MacroDefinitionBracketTran
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = _MacroDefinitionBracketTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7189,7 +7189,7 @@ fn render__macro_definition_paren_transport(node: &_MacroDefinitionParenTranspor
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = _MacroDefinitionParenTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7269,7 +7269,7 @@ fn render__pointer_type_mut_transport(node: &_PointerTypeMutTransport) -> Result
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = _PointerTypeMutTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7355,7 +7355,7 @@ fn render_reference_expression_raw_mut_transport(node: &ReferenceExpressionRawMu
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = ReferenceExpressionRawMutTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7373,7 +7373,7 @@ fn render_reserved_identifier_transport(node: &ReservedIdentifierTransport) -> R
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = ReservedIdentifierTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7391,7 +7391,7 @@ fn render_shorthand_field_identifier_transport(node: &ShorthandFieldIdentifierTr
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = ShorthandFieldIdentifierTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7409,7 +7409,7 @@ fn render__string_content_transport(node: &_StringContentTransport) -> Result<St
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = _StringContentTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7429,7 +7429,7 @@ fn render_struct_item_brace_transport(node: &StructItemBraceTransport) -> Result
         .collect();
     let body_text = render_transport_dispatch(node.body.as_ref())?;
     let template = StructItemBraceTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7450,7 +7450,7 @@ fn render_struct_item_tuple_transport(node: &StructItemTupleTransport) -> Result
         .collect();
     let body_text = render_transport_dispatch(node.body.as_ref())?;
     let template = StructItemTupleTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7473,7 +7473,7 @@ fn render__token_tree_brace_transport(node: &_TokenTreeBraceTransport) -> Result
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = _TokenTreeBraceTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7491,7 +7491,7 @@ fn render__token_tree_bracket_transport(node: &_TokenTreeBracketTransport) -> Re
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = _TokenTreeBracketTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7509,7 +7509,7 @@ fn render__token_tree_paren_transport(node: &_TokenTreeParenTransport) -> Result
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = _TokenTreeParenTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7527,7 +7527,7 @@ fn render__token_tree_pattern_brace_transport(node: &_TokenTreePatternBraceTrans
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = _TokenTreePatternBraceTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7545,7 +7545,7 @@ fn render__token_tree_pattern_bracket_transport(node: &_TokenTreePatternBracketT
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = _TokenTreePatternBracketTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7563,7 +7563,7 @@ fn render__token_tree_pattern_paren_transport(node: &_TokenTreePatternParenTrans
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = _TokenTreePatternParenTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7581,7 +7581,7 @@ fn render_type_identifier_transport(node: &TypeIdentifierTransport) -> Result<St
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = TypeIdentifierTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7599,7 +7599,7 @@ fn render__visibility_modifier_crate_transport(node: &_VisibilityModifierCrateTr
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = _VisibilityModifierCrateTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7618,7 +7618,7 @@ fn render_visibility_modifier_in_path_transport(node: &VisibilityModifierInPathT
         .collect();
     let r#in_text = render_transport_dispatch(node.r#in.as_ref())?;
     let template = VisibilityModifierInPathTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7639,7 +7639,7 @@ fn render_visibility_modifier_pub_transport(node: &VisibilityModifierPubTranspor
         .collect();
     let r#pub_text = render_transport_dispatch(node.r#pub.as_ref())?;
     let template = VisibilityModifierPubTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7676,7 +7676,7 @@ fn render_arguments_transport(node: &ArgumentsTransport) -> Result<String, ::ask
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = ArgumentsTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -7701,7 +7701,7 @@ fn render_array_expression_uform_semi_transport(node: &ArrayExpressionUFormSemiT
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = ArrayExpressionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7719,7 +7719,7 @@ fn render_array_expression_uform_list_transport(node: &ArrayExpressionUFormListT
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = ArrayExpressionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7801,7 +7801,7 @@ fn render_attribute_transport(node: &AttributeTransport) -> Result<String, ::ask
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = AttributeTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7829,7 +7829,7 @@ fn render_await_expression_transport(node: &AwaitExpressionTransport) -> Result<
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = AwaitExpressionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7847,7 +7847,7 @@ fn render_base_field_initializer_transport(node: &BaseFieldInitializerTransport)
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = BaseFieldInitializerTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7882,7 +7882,7 @@ fn render_block_transport(node: &BlockTransport) -> Result<String, ::askama::Err
         String::new()
     };
     let template = BlockTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7916,7 +7916,7 @@ fn render_bounded_type_transport(node: &BoundedTypeTransport) -> Result<String, 
     let left_text = render_transport_dispatch(node.left.as_ref())?;
     let right_text = render_transport_dispatch(node.right.as_ref())?;
     let template = BoundedTypeTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7936,7 +7936,7 @@ fn render_bracketed_type_transport(node: &BracketedTypeTransport) -> Result<Stri
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = BracketedTypeTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7960,7 +7960,7 @@ fn render_break_expression_transport(node: &BreakExpressionTransport) -> Result<
         String::new()
     };
     let template = BreakExpressionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -7990,7 +7990,7 @@ fn render_captured_pattern_transport(node: &CapturedPatternTransport) -> Result<
         .collect();
     let identifier_text = render_transport_dispatch(node.identifier.as_ref())?;
     let template = CapturedPatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8044,7 +8044,7 @@ fn render_closure_expression_uform_block_transport(node: &ClosureExpressionUForm
         String::new()
     };
     let template = ClosureExpressionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8082,7 +8082,7 @@ fn render_closure_expression_uform_expr_transport(node: &ClosureExpressionUFormE
         String::new()
     };
     let template = ClosureExpressionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8104,7 +8104,7 @@ fn render_closure_parameters_transport(node: &ClosureParametersTransport) -> Res
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = ClosureParametersTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -8122,7 +8122,7 @@ fn render_comment_transport(node: &CommentTransport) -> Result<String, ::askama:
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = CommentTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8214,7 +8214,7 @@ fn render_declaration_list_transport(node: &DeclarationListTransport) -> Result<
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = DeclarationListTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8232,7 +8232,7 @@ fn render_delim_token_tree_paren_transport(node: &DelimTokenTreeParenTransport) 
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = DelimTokenTreeParenTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8250,7 +8250,7 @@ fn render_delim_token_tree_bracket_transport(node: &DelimTokenTreeBracketTranspo
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = DelimTokenTreeBracketTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8268,7 +8268,7 @@ fn render_delim_token_tree_brace_transport(node: &DelimTokenTreeBraceTransport) 
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = DelimTokenTreeBraceTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8294,7 +8294,7 @@ fn render_delim_token_tree_uform_paren_transport(node: &DelimTokenTreeUFormParen
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = DelimTokenTreeTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8312,7 +8312,7 @@ fn render_delim_token_tree_uform_bracket_transport(node: &DelimTokenTreeUFormBra
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = DelimTokenTreeTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8330,7 +8330,7 @@ fn render_delim_token_tree_uform_brace_transport(node: &DelimTokenTreeUFormBrace
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = DelimTokenTreeTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8356,7 +8356,7 @@ fn render_else_clause_transport(node: &ElseClauseTransport) -> Result<String, ::
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = ElseClauseTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8432,7 +8432,7 @@ fn render_enum_variant_list_transport(node: &EnumVariantListTransport) -> Result
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = EnumVariantListTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -8454,7 +8454,7 @@ fn render_expression_statement_with_semi_transport(node: &ExpressionStatementWit
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = ExpressionStatementWithSemiTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8472,7 +8472,7 @@ fn render_expression_statement_block_ending_transport(node: &ExpressionStatement
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = ExpressionStatementBlockEndingTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8497,7 +8497,7 @@ fn render_expression_statement_uform_with_semi_transport(node: &ExpressionStatem
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = ExpressionStatementTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8515,7 +8515,7 @@ fn render_expression_statement_uform_block_ending_transport(node: &ExpressionSta
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = ExpressionStatementTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8583,7 +8583,7 @@ fn render_field_declaration_list_transport(node: &FieldDeclarationListTransport)
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = FieldDeclarationListTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -8613,7 +8613,7 @@ fn render_field_initializer_transport(node: &FieldInitializerTransport) -> Resul
     let field_text = render_transport_dispatch(node.field.as_ref())?;
     let value_text = render_transport_dispatch(node.value.as_ref())?;
     let template = FieldInitializerTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8633,7 +8633,7 @@ fn render_field_initializer_list_transport(node: &FieldInitializerListTransport)
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = FieldInitializerListTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -8676,7 +8676,7 @@ fn render_field_pattern_uform_shorthand_transport(node: &FieldPatternUFormShorth
         String::new()
     };
     let template = FieldPatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8706,7 +8706,7 @@ fn render_field_pattern_uform_named_transport(node: &FieldPatternUFormNamedTrans
         String::new()
     };
     let template = FieldPatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8744,7 +8744,7 @@ fn render_for_lifetimes_transport(node: &ForLifetimesTransport) -> Result<String
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = ForLifetimesTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8783,7 +8783,7 @@ fn render_foreign_mod_item_uform_semi_transport(node: &ForeignModItemUFormSemiTr
         String::new()
     };
     let template = ForeignModItemTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8809,7 +8809,7 @@ fn render_foreign_mod_item_uform_body_transport(node: &ForeignModItemUFormBodyTr
         String::new()
     };
     let template = ForeignModItemTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8876,13 +8876,13 @@ fn render_function_modifiers_transport(node: &FunctionModifiersTransport) -> Res
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = FunctionModifiersTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
-        modifier: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+        modifier: ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
             items: modifier_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8951,7 +8951,7 @@ fn render_function_type_transport(node: &FunctionTypeTransport) -> Result<String
         String::new()
     };
     let template = FunctionTypeTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -8997,7 +8997,7 @@ fn render_generic_pattern_transport(node: &GenericPatternTransport) -> Result<St
         .collect();
     let type_arguments_text = render_transport_dispatch(node.type_arguments.as_ref())?;
     let template = GenericPatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9109,7 +9109,7 @@ fn render_impl_item_uform_body_transport(node: &ImplItemUFormBodyTransport) -> R
         String::new()
     };
     let template = ImplItemTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9159,7 +9159,7 @@ fn render_impl_item_uform_semi_transport(node: &ImplItemUFormSemiTransport) -> R
         String::new()
     };
     let template = ImplItemTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9215,7 +9215,7 @@ fn render_last_match_arm_transport(node: &LastMatchArmTransport) -> Result<Strin
     let pattern_text = render_transport_dispatch(node.pattern.as_ref())?;
     let value_text = render_transport_dispatch(node.value.as_ref())?;
     let template = LastMatchArmTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9307,7 +9307,7 @@ fn render_line_comment_uform_regular_dslash_transport(node: &LineCommentUFormReg
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = LineCommentTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9325,7 +9325,7 @@ fn render_line_comment_uform_doc_transport(node: &LineCommentUFormDocTransport) 
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = LineCommentTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9343,7 +9343,7 @@ fn render_line_comment_uform_content_transport(node: &LineCommentUFormContentTra
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = LineCommentTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9376,7 +9376,7 @@ fn render_macro_definition_paren_transport(node: &MacroDefinitionParenTransport)
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = MacroDefinitionParenTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9395,7 +9395,7 @@ fn render_macro_definition_bracket_transport(node: &MacroDefinitionBracketTransp
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = MacroDefinitionBracketTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9414,7 +9414,7 @@ fn render_macro_definition_brace_transport(node: &MacroDefinitionBraceTransport)
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = MacroDefinitionBraceTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9441,7 +9441,7 @@ fn render_macro_definition_uform_paren_transport(node: &MacroDefinitionUFormPare
         .collect();
     let name_text = render_transport_dispatch(node.name.as_ref())?;
     let template = MacroDefinitionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9461,7 +9461,7 @@ fn render_macro_definition_uform_bracket_transport(node: &MacroDefinitionUFormBr
         .collect();
     let name_text = render_transport_dispatch(node.name.as_ref())?;
     let template = MacroDefinitionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9481,7 +9481,7 @@ fn render_macro_definition_uform_brace_transport(node: &MacroDefinitionUFormBrac
         .collect();
     let name_text = render_transport_dispatch(node.name.as_ref())?;
     let template = MacroDefinitionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9536,7 +9536,7 @@ fn render_match_arm_uform_with_comma_transport(node: &MatchArmUFormWithCommaTran
         .collect();
     let pattern_text = render_transport_dispatch(node.pattern.as_ref())?;
     let template = MatchArmTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9556,7 +9556,7 @@ fn render_match_arm_uform_block_ending_transport(node: &MatchArmUFormBlockEnding
         .collect();
     let pattern_text = render_transport_dispatch(node.pattern.as_ref())?;
     let template = MatchArmTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9576,7 +9576,7 @@ fn render_match_block_transport(node: &MatchBlockTransport) -> Result<String, ::
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = MatchBlockTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9609,7 +9609,7 @@ fn render_match_pattern_transport(node: &MatchPatternTransport) -> Result<String
         String::new()
     };
     let template = MatchPatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9653,7 +9653,7 @@ fn render_mod_item_uform_external_transport(node: &ModItemUFormExternalTransport
         String::new()
     };
     let template = ModItemTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9679,7 +9679,7 @@ fn render_mod_item_uform_inline_transport(node: &ModItemUFormInlineTransport) ->
         String::new()
     };
     let template = ModItemTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9700,7 +9700,7 @@ fn render_mut_pattern_transport(node: &MutPatternTransport) -> Result<String, ::
         .collect();
     let mutable_specifier_text = render_transport_dispatch(node.mutable_specifier.as_ref())?;
     let template = MutPatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9719,7 +9719,7 @@ fn render_negative_literal_transport(node: &NegativeLiteralTransport) -> Result<
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = Vec::new();
     let value_text = render_transport_dispatch(node.value.as_ref())?;
     let template = NegativeLiteralTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9749,7 +9749,7 @@ fn render_or_pattern_uform_binary_transport(node: &OrPatternUFormBinaryTransport
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = OrPatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9767,7 +9767,7 @@ fn render_or_pattern_uform_prefix_transport(node: &OrPatternUFormPrefixTransport
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = OrPatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9786,13 +9786,13 @@ fn render_ordered_field_declaration_list_transport(node: &OrderedFieldDeclaratio
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = OrderedFieldDeclarationListTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
-        r#type: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+        r#type: ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
             items: r#type_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9826,7 +9826,7 @@ fn render_parameters_transport(node: &ParametersTransport) -> Result<String, ::a
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = ParametersTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -9844,7 +9844,7 @@ fn render_parenthesized_expression_transport(node: &ParenthesizedExpressionTrans
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = ParenthesizedExpressionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9862,7 +9862,7 @@ fn render_pointer_type_mut_transport(node: &PointerTypeMutTransport) -> Result<S
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = PointerTypeMutTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9888,7 +9888,7 @@ fn render_pointer_type_uform_const_transport(node: &PointerTypeUFormConstTranspo
         .collect();
     let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
     let template = PointerTypeTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9908,7 +9908,7 @@ fn render_pointer_type_uform_mut_transport(node: &PointerTypeUFormMutTransport) 
         .collect();
     let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
     let template = PointerTypeTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9954,7 +9954,7 @@ fn render_range_expression_uform_binary_transport(node: &RangeExpressionUFormBin
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = RangeExpressionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9972,7 +9972,7 @@ fn render_range_expression_uform_postfix_transport(node: &RangeExpressionUFormPo
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = RangeExpressionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -9990,7 +9990,7 @@ fn render_range_expression_uform_prefix_transport(node: &RangeExpressionUFormPre
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = RangeExpressionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10008,7 +10008,7 @@ fn render_range_expression_uform_bare_transport(node: &RangeExpressionUFormBareT
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = RangeExpressionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10035,7 +10035,7 @@ fn render_range_pattern_uform_left_with_right_transport(node: &RangePatternUForm
         .collect();
     let left_text = render_transport_dispatch(node.left.as_ref())?;
     let template = RangePatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10055,7 +10055,7 @@ fn render_range_pattern_uform_left_bare_transport(node: &RangePatternUFormLeftBa
         .collect();
     let left_text = render_transport_dispatch(node.left.as_ref())?;
     let template = RangePatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10074,7 +10074,7 @@ fn render_range_pattern_uform_prefix_transport(node: &RangePatternUFormPrefixTra
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = RangePatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10100,7 +10100,7 @@ fn render_ref_pattern_transport(node: &RefPatternTransport) -> Result<String, ::
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = RefPatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10119,7 +10119,7 @@ fn render_reference_expression_transport(node: &ReferenceExpressionTransport) ->
         .collect();
     let value_text = render_transport_dispatch(node.value.as_ref())?;
     let template = ReferenceExpressionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10176,7 +10176,7 @@ fn render_removed_trait_bound_transport(node: &RemovedTraitBoundTransport) -> Re
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = RemovedTraitBoundTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10195,7 +10195,7 @@ fn render_return_expression_transport(node: &ReturnExpressionTransport) -> Resul
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = ReturnExpressionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10304,7 +10304,7 @@ fn render_shorthand_field_initializer_transport(node: &ShorthandFieldInitializer
         .collect();
     let identifier_text = render_transport_dispatch(node.identifier.as_ref())?;
     let template = ShorthandFieldInitializerTemplate {
-        attributes: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+        attributes: ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
             items: attributes_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10323,7 +10323,7 @@ fn render_slice_pattern_transport(node: &SlicePatternTransport) -> Result<String
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = SlicePatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -10347,7 +10347,7 @@ fn render_source_file_transport(node: &SourceFileTransport) -> Result<String, ::
     };
     let template = SourceFileTemplate {
         shebang: shebang_text.as_str(),
-        statements: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+        statements: ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
             items: statements_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10394,7 +10394,7 @@ fn render_string_literal_transport(node: &StringLiteralTransport) -> Result<Stri
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = StringLiteralTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10441,7 +10441,7 @@ fn render_struct_item_uform_brace_transport(node: &StructItemUFormBraceTransport
         String::new()
     };
     let template = StructItemTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10473,7 +10473,7 @@ fn render_struct_item_uform_tuple_transport(node: &StructItemUFormTupleTransport
         String::new()
     };
     let template = StructItemTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10505,7 +10505,7 @@ fn render_struct_item_uform_unit_transport(node: &StructItemUFormUnitTransport) 
         String::new()
     };
     let template = StructItemTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10527,7 +10527,7 @@ fn render_struct_pattern_transport(node: &StructPatternTransport) -> Result<Stri
         .collect();
     let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
     let template = StructPatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10560,7 +10560,7 @@ fn render_token_repetition_transport(node: &TokenRepetitionTransport) -> Result<
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = TokenRepetitionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10578,7 +10578,7 @@ fn render_token_repetition_pattern_transport(node: &TokenRepetitionPatternTransp
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = TokenRepetitionPatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10596,7 +10596,7 @@ fn render_token_tree_paren_transport(node: &TokenTreeParenTransport) -> Result<S
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = TokenTreeParenTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10614,7 +10614,7 @@ fn render_token_tree_bracket_transport(node: &TokenTreeBracketTransport) -> Resu
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = TokenTreeBracketTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10632,7 +10632,7 @@ fn render_token_tree_brace_transport(node: &TokenTreeBraceTransport) -> Result<S
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = TokenTreeBraceTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10658,7 +10658,7 @@ fn render_token_tree_uform_paren_transport(node: &TokenTreeUFormParenTransport) 
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = TokenTreeTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10676,7 +10676,7 @@ fn render_token_tree_uform_bracket_transport(node: &TokenTreeUFormBracketTranspo
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = TokenTreeTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10694,7 +10694,7 @@ fn render_token_tree_uform_brace_transport(node: &TokenTreeUFormBraceTransport) 
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = TokenTreeTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10712,7 +10712,7 @@ fn render_token_tree_pattern_paren_transport(node: &TokenTreePatternParenTranspo
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = TokenTreePatternParenTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10730,7 +10730,7 @@ fn render_token_tree_pattern_bracket_transport(node: &TokenTreePatternBracketTra
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = TokenTreePatternBracketTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10748,7 +10748,7 @@ fn render_token_tree_pattern_brace_transport(node: &TokenTreePatternBraceTranspo
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = TokenTreePatternBraceTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10774,7 +10774,7 @@ fn render_token_tree_pattern_uform_paren_transport(node: &TokenTreePatternUFormP
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = TokenTreePatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10792,7 +10792,7 @@ fn render_token_tree_pattern_uform_bracket_transport(node: &TokenTreePatternUFor
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = TokenTreePatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10810,7 +10810,7 @@ fn render_token_tree_pattern_uform_brace_transport(node: &TokenTreePatternUFormB
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = TokenTreePatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10828,7 +10828,7 @@ fn render_trait_bounds_transport(node: &TraitBoundsTransport) -> Result<String, 
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = TraitBoundsTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "+",
             leading: false,
@@ -10909,13 +10909,13 @@ fn render_tuple_expression_transport(node: &TupleExpressionTransport) -> Result<
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = TupleExpressionTemplate {
-        attributes: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+        attributes: ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
             items: attributes_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         }),
-        elements: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+        elements: ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
             items: elements_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10933,7 +10933,7 @@ fn render_tuple_pattern_transport(node: &TuplePatternTransport) -> Result<String
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = TuplePatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -10952,7 +10952,7 @@ fn render_tuple_struct_pattern_transport(node: &TupleStructPatternTransport) -> 
         .collect();
     let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
     let template = TupleStructPatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -10971,7 +10971,7 @@ fn render_tuple_type_transport(node: &TupleTypeTransport) -> Result<String, ::as
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = TupleTypeTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -10989,7 +10989,7 @@ fn render_type_arguments_transport(node: &TypeArgumentsTransport) -> Result<Stri
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = TypeArgumentsTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -11087,7 +11087,7 @@ fn render_type_parameters_transport(node: &TypeParametersTransport) -> Result<St
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = TypeParametersTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -11169,7 +11169,7 @@ fn render_use_bounds_transport(node: &UseBoundsTransport) -> Result<String, ::as
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = UseBoundsTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -11201,7 +11201,7 @@ fn render_use_list_transport(node: &UseListTransport) -> Result<String, ::askama
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = UseListTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -11249,7 +11249,7 @@ fn render_visibility_modifier_crate_transport(node: &VisibilityModifierCrateTran
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = VisibilityModifierCrateTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -11275,7 +11275,7 @@ fn render_visibility_modifier_uform_in_path_transport(node: &VisibilityModifierU
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = VisibilityModifierTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -11293,7 +11293,7 @@ fn render_visibility_modifier_uform_crate_transport(node: &VisibilityModifierUFo
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = VisibilityModifierTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -11311,7 +11311,7 @@ fn render_visibility_modifier_uform_pub_transport(node: &VisibilityModifierUForm
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = VisibilityModifierTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -11329,7 +11329,7 @@ fn render_where_clause_transport(node: &WhereClauseTransport) -> Result<String, 
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = WhereClauseTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -11374,7 +11374,7 @@ fn render_yield_expression_transport(node: &YieldExpressionTransport) -> Result<
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let template = YieldExpressionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -18987,15 +18987,15 @@ pub fn render_transport(transport: AnyTransport) -> Result<String, ::askama::Err
 #[derive(::askama::Template)]
 #[template(path = "_array_expression_list.jinja", escape = "none")]
 pub struct ArrayExpressionListTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
-    pub attributes: ::sittir_core::filters::FieldView<'a>,
-    pub elements: ::sittir_core::filters::FieldView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub attributes: ::sittir_core::filters::NonterminalView<'a>,
+    pub elements: ::sittir_core::filters::NonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_array_expression_semi.jinja", escape = "none")]
 pub struct ArrayExpressionSemiTemplate<'a> {
-    pub attributes: ::sittir_core::filters::FieldView<'a>,
+    pub attributes: ::sittir_core::filters::NonterminalView<'a>,
     pub elements: &'a str,
     pub length: &'a str,
 }
@@ -19016,37 +19016,37 @@ pub struct _ClosureExpressionExprTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_delim_token_tree_brace.jinja", escape = "none")]
 pub struct _DelimTokenTreeBraceTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_delim_token_tree_bracket.jinja", escape = "none")]
 pub struct _DelimTokenTreeBracketTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_delim_token_tree_paren.jinja", escape = "none")]
 pub struct _DelimTokenTreeParenTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_expression_statement_block_ending.jinja", escape = "none")]
 pub struct _ExpressionStatementBlockEndingTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_expression_statement_with_semi.jinja", escape = "none")]
 pub struct _ExpressionStatementWithSemiTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_field_identifier.jinja", escape = "none")]
 pub struct FieldIdentifierTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19071,7 +19071,7 @@ pub struct _ForeignModItemBodyTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_function_type_fn_form.jinja", escape = "none")]
 pub struct FunctionTypeFnFormTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19089,7 +19089,7 @@ pub struct _ImplItemBodyTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_let_chain.jinja", escape = "none")]
 pub struct LetChainTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19103,19 +19103,19 @@ pub struct LineCommentDocTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_macro_definition_brace.jinja", escape = "none")]
 pub struct _MacroDefinitionBraceTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_macro_definition_bracket.jinja", escape = "none")]
 pub struct _MacroDefinitionBracketTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_macro_definition_paren.jinja", escape = "none")]
 pub struct _MacroDefinitionParenTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19152,7 +19152,7 @@ pub struct OrPatternPrefixTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_pointer_type_mut.jinja", escape = "none")]
 pub struct _PointerTypeMutTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19198,100 +19198,100 @@ pub struct RangePatternPrefixTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_reference_expression_raw_mut.jinja", escape = "none")]
 pub struct ReferenceExpressionRawMutTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_reserved_identifier.jinja", escape = "none")]
 pub struct ReservedIdentifierTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_shorthand_field_identifier.jinja", escape = "none")]
 pub struct ShorthandFieldIdentifierTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_string_content.jinja", escape = "none")]
 pub struct _StringContentTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_struct_item_brace.jinja", escape = "none")]
 pub struct StructItemBraceTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub body: &'a str,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_struct_item_tuple.jinja", escape = "none")]
 pub struct StructItemTupleTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub body: &'a str,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_token_tree_brace.jinja", escape = "none")]
 pub struct _TokenTreeBraceTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_token_tree_bracket.jinja", escape = "none")]
 pub struct _TokenTreeBracketTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_token_tree_paren.jinja", escape = "none")]
 pub struct _TokenTreeParenTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_token_tree_pattern_brace.jinja", escape = "none")]
 pub struct _TokenTreePatternBraceTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_token_tree_pattern_bracket.jinja", escape = "none")]
 pub struct _TokenTreePatternBracketTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_token_tree_pattern_paren.jinja", escape = "none")]
 pub struct _TokenTreePatternParenTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_type_identifier.jinja", escape = "none")]
 pub struct TypeIdentifierTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_visibility_modifier_crate.jinja", escape = "none")]
 pub struct _VisibilityModifierCrateTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_visibility_modifier_in_path.jinja", escape = "none")]
 pub struct VisibilityModifierInPathTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub r#in: &'a str,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_visibility_modifier_pub.jinja", escape = "none")]
 pub struct VisibilityModifierPubTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub r#pub: &'a str,
 }
 
@@ -19305,13 +19305,13 @@ pub struct AbstractTypeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "arguments.jinja", escape = "none")]
 pub struct ArgumentsTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "array_expression.jinja", escape = "none")]
 pub struct ArrayExpressionTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19353,7 +19353,7 @@ pub struct AttributeItemTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "attribute.jinja", escape = "none")]
 pub struct AttributeTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub arguments: &'a str,
     pub value: &'a str,
 }
@@ -19361,13 +19361,13 @@ pub struct AttributeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "await_expression.jinja", escape = "none")]
 pub struct AwaitExpressionTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "base_field_initializer.jinja", escape = "none")]
 pub struct BaseFieldInitializerTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19389,14 +19389,14 @@ pub struct BlockCommentTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "block.jinja", escape = "none")]
 pub struct BlockTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub label: &'a str,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "bounded_type.jinja", escape = "none")]
 pub struct BoundedTypeTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub left: &'a str,
     pub right: &'a str,
 }
@@ -19404,13 +19404,13 @@ pub struct BoundedTypeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "bracketed_type.jinja", escape = "none")]
 pub struct BracketedTypeTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "break_expression.jinja", escape = "none")]
 pub struct BreakExpressionTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub label: &'a str,
 }
 
@@ -19424,7 +19424,7 @@ pub struct CallExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "captured_pattern.jinja", escape = "none")]
 pub struct CapturedPatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub identifier: &'a str,
 }
 
@@ -19437,7 +19437,7 @@ pub struct ClosureExpressionExprTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "closure_expression.jinja", escape = "none")]
 pub struct ClosureExpressionTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub async_marker: &'a str,
     pub move_marker: &'a str,
     pub parameters: &'a str,
@@ -19447,13 +19447,13 @@ pub struct ClosureExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "closure_parameters.jinja", escape = "none")]
 pub struct ClosureParametersTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "comment.jinja", escape = "none")]
 pub struct CommentTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19496,31 +19496,31 @@ pub struct ContinueExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "declaration_list.jinja", escape = "none")]
 pub struct DeclarationListTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "delim_token_tree_brace.jinja", escape = "none")]
 pub struct DelimTokenTreeBraceTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "delim_token_tree_bracket.jinja", escape = "none")]
 pub struct DelimTokenTreeBracketTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "delim_token_tree_paren.jinja", escape = "none")]
 pub struct DelimTokenTreeParenTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "delim_token_tree.jinja", escape = "none")]
 pub struct DelimTokenTreeTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19532,7 +19532,7 @@ pub struct DynamicTypeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "else_clause.jinja", escape = "none")]
 pub struct ElseClauseTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19548,7 +19548,7 @@ pub struct EnumItemTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "enum_variant_list.jinja", escape = "none")]
 pub struct EnumVariantListTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19563,19 +19563,19 @@ pub struct EnumVariantTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "expression_statement_block_ending.jinja", escape = "none")]
 pub struct ExpressionStatementBlockEndingTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "expression_statement_with_semi.jinja", escape = "none")]
 pub struct ExpressionStatementWithSemiTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "expression_statement.jinja", escape = "none")]
 pub struct ExpressionStatementTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19596,7 +19596,7 @@ pub struct ExternModifierTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "field_declaration_list.jinja", escape = "none")]
 pub struct FieldDeclarationListTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19617,13 +19617,13 @@ pub struct FieldExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "field_initializer_list.jinja", escape = "none")]
 pub struct FieldInitializerListTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "field_initializer.jinja", escape = "none")]
 pub struct FieldInitializerTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub field: &'a str,
     pub value: &'a str,
 }
@@ -19637,7 +19637,7 @@ pub struct FieldPatternShorthandTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "field_pattern.jinja", escape = "none")]
 pub struct FieldPatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub mutable_specifier: &'a str,
     pub ref_marker: &'a str,
 }
@@ -19654,7 +19654,7 @@ pub struct ForExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "for_lifetimes.jinja", escape = "none")]
 pub struct ForLifetimesTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19666,7 +19666,7 @@ pub struct ForeignModItemBodyTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "foreign_mod_item.jinja", escape = "none")]
 pub struct ForeignModItemTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub extern_modifier: &'a str,
     pub visibility_modifier: &'a str,
 }
@@ -19687,8 +19687,8 @@ pub struct FunctionItemTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "function_modifiers.jinja", escape = "none")]
 pub struct FunctionModifiersTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
-    pub modifier: ::sittir_core::filters::FieldView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub modifier: ::sittir_core::filters::NonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19706,7 +19706,7 @@ pub struct FunctionSignatureItemTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "function_type.jinja", escape = "none")]
 pub struct FunctionTypeTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub for_lifetimes: &'a str,
     pub parameters: &'a str,
     pub return_type: &'a str,
@@ -19729,7 +19729,7 @@ pub struct GenericFunctionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "generic_pattern.jinja", escape = "none")]
 pub struct GenericPatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub type_arguments: &'a str,
 }
 
@@ -19772,7 +19772,7 @@ pub struct ImplItemBodyTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "impl_item.jinja", escape = "none")]
 pub struct ImplItemTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub negative: &'a str,
     pub r#trait: &'a str,
     pub r#type: &'a str,
@@ -19803,7 +19803,7 @@ pub struct LabelTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "last_match_arm.jinja", escape = "none")]
 pub struct LastMatchArmTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub pattern: &'a str,
     pub value: &'a str,
 }
@@ -19841,7 +19841,7 @@ pub struct LifetimeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "line_comment.jinja", escape = "none")]
 pub struct LineCommentTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19854,25 +19854,25 @@ pub struct LoopExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "macro_definition_brace.jinja", escape = "none")]
 pub struct MacroDefinitionBraceTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "macro_definition_bracket.jinja", escape = "none")]
 pub struct MacroDefinitionBracketTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "macro_definition_paren.jinja", escape = "none")]
 pub struct MacroDefinitionParenTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "macro_definition.jinja", escape = "none")]
 pub struct MacroDefinitionTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub name: &'a str,
 }
 
@@ -19899,14 +19899,14 @@ pub struct MatchArmBlockEndingTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "match_arm.jinja", escape = "none")]
 pub struct MatchArmTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub pattern: &'a str,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "match_block.jinja", escape = "none")]
 pub struct MatchBlockTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19919,7 +19919,7 @@ pub struct MatchExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "match_pattern.jinja", escape = "none")]
 pub struct MatchPatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub condition: &'a str,
 }
 
@@ -19932,7 +19932,7 @@ pub struct ModItemInlineTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "mod_item.jinja", escape = "none")]
 pub struct ModItemTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub name: &'a str,
     pub visibility_modifier: &'a str,
 }
@@ -19940,28 +19940,28 @@ pub struct ModItemTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "mut_pattern.jinja", escape = "none")]
 pub struct MutPatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub mutable_specifier: &'a str,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "negative_literal.jinja", escape = "none")]
 pub struct NegativeLiteralTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub value: &'a str,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "or_pattern.jinja", escape = "none")]
 pub struct OrPatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "ordered_field_declaration_list.jinja", escape = "none")]
 pub struct OrderedFieldDeclarationListTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
-    pub r#type: ::sittir_core::filters::FieldView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub r#type: ::sittir_core::filters::NonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -19975,25 +19975,25 @@ pub struct ParameterTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "parameters.jinja", escape = "none")]
 pub struct ParametersTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "parenthesized_expression.jinja", escape = "none")]
 pub struct ParenthesizedExpressionTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "pointer_type_mut.jinja", escape = "none")]
 pub struct PointerTypeMutTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "pointer_type.jinja", escape = "none")]
 pub struct PointerTypeTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub r#type: &'a str,
 }
 
@@ -20013,13 +20013,13 @@ pub struct RangeExpressionBareTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "range_expression.jinja", escape = "none")]
 pub struct RangeExpressionTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "range_pattern.jinja", escape = "none")]
 pub struct RangePatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub left: &'a str,
 }
 
@@ -20032,13 +20032,13 @@ pub struct RawStringLiteralTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "ref_pattern.jinja", escape = "none")]
 pub struct RefPatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "reference_expression.jinja", escape = "none")]
 pub struct ReferenceExpressionTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub value: &'a str,
 }
 
@@ -20060,13 +20060,13 @@ pub struct ReferenceTypeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "removed_trait_bound.jinja", escape = "none")]
 pub struct RemovedTraitBoundTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "return_expression.jinja", escape = "none")]
 pub struct ReturnExpressionTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20109,21 +20109,21 @@ pub struct SelfParameterTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "shorthand_field_initializer.jinja", escape = "none")]
 pub struct ShorthandFieldInitializerTemplate<'a> {
-    pub attributes: ::sittir_core::filters::FieldView<'a>,
+    pub attributes: ::sittir_core::filters::NonterminalView<'a>,
     pub identifier: &'a str,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "slice_pattern.jinja", escape = "none")]
 pub struct SlicePatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "source_file.jinja", escape = "none")]
 pub struct SourceFileTemplate<'a> {
     pub shebang: &'a str,
-    pub statements: ::sittir_core::filters::FieldView<'a>,
+    pub statements: ::sittir_core::filters::NonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20140,7 +20140,7 @@ pub struct StaticItemTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "string_literal.jinja", escape = "none")]
 pub struct StringLiteralTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20153,7 +20153,7 @@ pub struct StructExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "struct_item.jinja", escape = "none")]
 pub struct StructItemTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub name: &'a str,
     pub type_parameters: &'a str,
     pub visibility_modifier: &'a str,
@@ -20162,7 +20162,7 @@ pub struct StructItemTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "struct_pattern.jinja", escape = "none")]
 pub struct StructPatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub r#type: &'a str,
 }
 
@@ -20176,67 +20176,67 @@ pub struct TokenBindingPatternTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "token_repetition_pattern.jinja", escape = "none")]
 pub struct TokenRepetitionPatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "token_repetition.jinja", escape = "none")]
 pub struct TokenRepetitionTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "token_tree_brace.jinja", escape = "none")]
 pub struct TokenTreeBraceTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "token_tree_bracket.jinja", escape = "none")]
 pub struct TokenTreeBracketTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "token_tree_paren.jinja", escape = "none")]
 pub struct TokenTreeParenTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "token_tree_pattern_brace.jinja", escape = "none")]
 pub struct TokenTreePatternBraceTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "token_tree_pattern_bracket.jinja", escape = "none")]
 pub struct TokenTreePatternBracketTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "token_tree_pattern_paren.jinja", escape = "none")]
 pub struct TokenTreePatternParenTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "token_tree_pattern.jinja", escape = "none")]
 pub struct TokenTreePatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "token_tree.jinja", escape = "none")]
 pub struct TokenTreeTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "trait_bounds.jinja", escape = "none")]
 pub struct TraitBoundsTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20266,33 +20266,33 @@ pub struct TryExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "tuple_expression.jinja", escape = "none")]
 pub struct TupleExpressionTemplate<'a> {
-    pub attributes: ::sittir_core::filters::FieldView<'a>,
-    pub elements: ::sittir_core::filters::FieldView<'a>,
+    pub attributes: ::sittir_core::filters::NonterminalView<'a>,
+    pub elements: ::sittir_core::filters::NonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "tuple_pattern.jinja", escape = "none")]
 pub struct TuplePatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "tuple_struct_pattern.jinja", escape = "none")]
 pub struct TupleStructPatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub r#type: &'a str,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "tuple_type.jinja", escape = "none")]
 pub struct TupleTypeTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "type_arguments.jinja", escape = "none")]
 pub struct TypeArgumentsTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20332,7 +20332,7 @@ pub struct TypeParameterTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "type_parameters.jinja", escape = "none")]
 pub struct TypeParametersTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20368,7 +20368,7 @@ pub struct UseAsClauseTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "use_bounds.jinja", escape = "none")]
 pub struct UseBoundsTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20381,7 +20381,7 @@ pub struct UseDeclarationTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "use_list.jinja", escape = "none")]
 pub struct UseListTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20400,19 +20400,19 @@ pub struct VariadicParameterTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "visibility_modifier_crate.jinja", escape = "none")]
 pub struct VisibilityModifierCrateTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "visibility_modifier.jinja", escape = "none")]
 pub struct VisibilityModifierTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "where_clause.jinja", escape = "none")]
 pub struct WhereClauseTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20433,7 +20433,7 @@ pub struct WhileExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "yield_expression.jinja", escape = "none")]
 pub struct YieldExpressionTemplate<'a> {
-    pub children: ::sittir_core::filters::ListView<'a>,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 use ::askama::Template as _AskamaTemplate;
@@ -20921,16 +20921,16 @@ fn render_hidden_array_expression_list(node: &NodeData) -> Result<String, ::aska
     let field_0_renderables = field_0.renderable_items();
     let field_1_renderables = field_1.renderable_items();
     let template = ArrayExpressionListTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
         attributes: match field_0.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
-            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::NonterminalView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
                 items: field_0_renderables.as_slice(),
                 separator: field_0.separator,
                 leading: field_0.leading_sep,
@@ -20938,9 +20938,9 @@ fn render_hidden_array_expression_list(node: &NodeData) -> Result<String, ::aska
             }),
         },
         elements: match field_1.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
-            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::NonterminalView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
                 items: field_1_renderables.as_slice(),
                 separator: field_1.separator,
                 leading: field_1.leading_sep,
@@ -20959,9 +20959,9 @@ fn render_hidden_array_expression_semi(node: &NodeData) -> Result<String, ::aska
     let field_0_renderables = field_0.renderable_items();
     let template = ArrayExpressionSemiTemplate {
         attributes: match field_0.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
-            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::NonterminalView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
                 items: field_0_renderables.as_slice(),
                 separator: field_0.separator,
                 leading: field_0.leading_sep,
@@ -20998,7 +20998,7 @@ fn render_hidden_delim_token_tree_brace(node: &NodeData) -> Result<String, ::ask
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = _DelimTokenTreeBraceTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21012,7 +21012,7 @@ fn render_hidden_delim_token_tree_bracket(node: &NodeData) -> Result<String, ::a
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = _DelimTokenTreeBracketTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21026,7 +21026,7 @@ fn render_hidden_delim_token_tree_paren(node: &NodeData) -> Result<String, ::ask
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = _DelimTokenTreeParenTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21040,7 +21040,7 @@ fn render_hidden_expression_statement_block_ending(node: &NodeData) -> Result<St
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = _ExpressionStatementBlockEndingTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21054,7 +21054,7 @@ fn render_hidden_expression_statement_with_semi(node: &NodeData) -> Result<Strin
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = _ExpressionStatementWithSemiTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21068,7 +21068,7 @@ fn render_hidden_field_identifier(node: &NodeData) -> Result<String, ::askama::E
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = FieldIdentifierTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21111,7 +21111,7 @@ fn render_hidden_function_type_fn_form(node: &NodeData) -> Result<String, ::aska
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = FunctionTypeFnFormTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21143,7 +21143,7 @@ fn render_hidden_let_chain(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = LetChainTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21170,7 +21170,7 @@ fn render_hidden_macro_definition_brace(node: &NodeData) -> Result<String, ::ask
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = _MacroDefinitionBraceTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21184,7 +21184,7 @@ fn render_hidden_macro_definition_bracket(node: &NodeData) -> Result<String, ::a
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = _MacroDefinitionBracketTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21198,7 +21198,7 @@ fn render_hidden_macro_definition_paren(node: &NodeData) -> Result<String, ::ask
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = _MacroDefinitionParenTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21259,7 +21259,7 @@ fn render_hidden_pointer_type_mut(node: &NodeData) -> Result<String, ::askama::E
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = _PointerTypeMutTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21335,7 +21335,7 @@ fn render_hidden_reference_expression_raw_mut(node: &NodeData) -> Result<String,
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ReferenceExpressionRawMutTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21349,7 +21349,7 @@ fn render_hidden_reserved_identifier(node: &NodeData) -> Result<String, ::askama
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ReservedIdentifierTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21363,7 +21363,7 @@ fn render_hidden_shorthand_field_identifier(node: &NodeData) -> Result<String, :
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ShorthandFieldIdentifierTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21377,7 +21377,7 @@ fn render_hidden_string_content(node: &NodeData) -> Result<String, ::askama::Err
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = _StringContentTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21392,7 +21392,7 @@ fn render_hidden_struct_item_brace(node: &NodeData) -> Result<String, ::askama::
     let field_0 = resolve_field(node, "body", true)?;
     let children_renderables = children.renderable_items();
     let template = StructItemBraceTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21408,7 +21408,7 @@ fn render_hidden_struct_item_tuple(node: &NodeData) -> Result<String, ::askama::
     let field_0 = resolve_field(node, "body", true)?;
     let children_renderables = children.renderable_items();
     let template = StructItemTupleTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21423,7 +21423,7 @@ fn render_hidden_token_tree_brace(node: &NodeData) -> Result<String, ::askama::E
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = _TokenTreeBraceTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21437,7 +21437,7 @@ fn render_hidden_token_tree_bracket(node: &NodeData) -> Result<String, ::askama:
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = _TokenTreeBracketTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21451,7 +21451,7 @@ fn render_hidden_token_tree_paren(node: &NodeData) -> Result<String, ::askama::E
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = _TokenTreeParenTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21465,7 +21465,7 @@ fn render_hidden_token_tree_pattern_brace(node: &NodeData) -> Result<String, ::a
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = _TokenTreePatternBraceTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21479,7 +21479,7 @@ fn render_hidden_token_tree_pattern_bracket(node: &NodeData) -> Result<String, :
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = _TokenTreePatternBracketTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21493,7 +21493,7 @@ fn render_hidden_token_tree_pattern_paren(node: &NodeData) -> Result<String, ::a
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = _TokenTreePatternParenTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21507,7 +21507,7 @@ fn render_hidden_type_identifier(node: &NodeData) -> Result<String, ::askama::Er
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = TypeIdentifierTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21521,7 +21521,7 @@ fn render_hidden_visibility_modifier_crate(node: &NodeData) -> Result<String, ::
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = _VisibilityModifierCrateTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21536,7 +21536,7 @@ fn render_hidden_visibility_modifier_in_path(node: &NodeData) -> Result<String, 
     let field_0 = resolve_field(node, "in", true)?;
     let children_renderables = children.renderable_items();
     let template = VisibilityModifierInPathTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21552,7 +21552,7 @@ fn render_hidden_visibility_modifier_pub(node: &NodeData) -> Result<String, ::as
     let field_0 = resolve_field(node, "pub", true)?;
     let children_renderables = children.renderable_items();
     let template = VisibilityModifierPubTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21578,7 +21578,7 @@ fn render_arguments(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ArgumentsTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21592,7 +21592,7 @@ fn render_array_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ArrayExpressionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21665,7 +21665,7 @@ fn render_attribute(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "value", false)?;
     let children_renderables = children.renderable_items();
     let template = AttributeTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21681,7 +21681,7 @@ fn render_await_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = AwaitExpressionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21695,7 +21695,7 @@ fn render_base_field_initializer(node: &NodeData) -> Result<String, ::askama::Er
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = BaseFieldInitializerTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21736,7 +21736,7 @@ fn render_block(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "label", false)?;
     let children_renderables = children.renderable_items();
     let template = BlockTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21753,7 +21753,7 @@ fn render_bounded_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "right", true)?;
     let children_renderables = children.renderable_items();
     let template = BoundedTypeTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21769,7 +21769,7 @@ fn render_bracketed_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = BracketedTypeTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21784,7 +21784,7 @@ fn render_break_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "label", false)?;
     let children_renderables = children.renderable_items();
     let template = BreakExpressionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21811,7 +21811,7 @@ fn render_captured_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "identifier", true)?;
     let children_renderables = children.renderable_items();
     let template = CapturedPatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21839,7 +21839,7 @@ fn render_closure_expression(node: &NodeData) -> Result<String, ::askama::Error>
     let field_3 = resolve_field(node, "static_marker", false)?;
     let children_renderables = children.renderable_items();
     let template = ClosureExpressionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21857,7 +21857,7 @@ fn render_closure_parameters(node: &NodeData) -> Result<String, ::askama::Error>
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ClosureParametersTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21871,7 +21871,7 @@ fn render_comment(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = CommentTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21944,7 +21944,7 @@ fn render_declaration_list(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = DeclarationListTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21958,7 +21958,7 @@ fn render_delim_token_tree_brace(node: &NodeData) -> Result<String, ::askama::Er
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = DelimTokenTreeBraceTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21972,7 +21972,7 @@ fn render_delim_token_tree_bracket(node: &NodeData) -> Result<String, ::askama::
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = DelimTokenTreeBracketTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21986,7 +21986,7 @@ fn render_delim_token_tree_paren(node: &NodeData) -> Result<String, ::askama::Er
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = DelimTokenTreeParenTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22000,7 +22000,7 @@ fn render_delim_token_tree(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = DelimTokenTreeTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22023,7 +22023,7 @@ fn render_else_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ElseClauseTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22054,7 +22054,7 @@ fn render_enum_variant_list(node: &NodeData) -> Result<String, ::askama::Error> 
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = EnumVariantListTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22083,7 +22083,7 @@ fn render_expression_statement_block_ending(node: &NodeData) -> Result<String, :
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ExpressionStatementBlockEndingTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22097,7 +22097,7 @@ fn render_expression_statement_with_semi(node: &NodeData) -> Result<String, ::as
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ExpressionStatementWithSemiTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22111,7 +22111,7 @@ fn render_expression_statement(node: &NodeData) -> Result<String, ::askama::Erro
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ExpressionStatementTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22149,7 +22149,7 @@ fn render_field_declaration_list(node: &NodeData) -> Result<String, ::askama::Er
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = FieldDeclarationListTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22187,7 +22187,7 @@ fn render_field_initializer_list(node: &NodeData) -> Result<String, ::askama::Er
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = FieldInitializerListTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22203,7 +22203,7 @@ fn render_field_initializer(node: &NodeData) -> Result<String, ::askama::Error> 
     let field_1 = resolve_field(node, "value", true)?;
     let children_renderables = children.renderable_items();
     let template = FieldInitializerTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22230,7 +22230,7 @@ fn render_field_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "ref_marker", false)?;
     let children_renderables = children.renderable_items();
     let template = FieldPatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22261,7 +22261,7 @@ fn render_for_lifetimes(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ForLifetimesTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22286,7 +22286,7 @@ fn render_foreign_mod_item(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "visibility_modifier", false)?;
     let children_renderables = children.renderable_items();
     let template = ForeignModItemTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22327,16 +22327,16 @@ fn render_function_modifiers(node: &NodeData) -> Result<String, ::askama::Error>
     let children_renderables = children.renderable_items();
     let field_0_renderables = field_0.renderable_items();
     let template = FunctionModifiersTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
         modifier: match field_0.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
-            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::NonterminalView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
                 items: field_0_renderables.as_slice(),
                 separator: field_0.separator,
                 leading: field_0.leading_sep,
@@ -22375,7 +22375,7 @@ fn render_function_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_2 = resolve_field(node, "return_type", false)?;
     let children_renderables = children.renderable_items();
     let template = FunctionTypeTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22415,7 +22415,7 @@ fn render_generic_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "type_arguments", true)?;
     let children_renderables = children.renderable_items();
     let template = GenericPatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22493,7 +22493,7 @@ fn render_impl_item(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_5 = resolve_field(node, "where_clause", false)?;
     let children_renderables = children.renderable_items();
     let template = ImplItemTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22544,7 +22544,7 @@ fn render_last_match_arm(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "value", true)?;
     let children_renderables = children.renderable_items();
     let template = LastMatchArmTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22608,7 +22608,7 @@ fn render_line_comment(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = LineCommentTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22633,7 +22633,7 @@ fn render_macro_definition_brace(node: &NodeData) -> Result<String, ::askama::Er
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = MacroDefinitionBraceTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22647,7 +22647,7 @@ fn render_macro_definition_bracket(node: &NodeData) -> Result<String, ::askama::
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = MacroDefinitionBracketTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22661,7 +22661,7 @@ fn render_macro_definition_paren(node: &NodeData) -> Result<String, ::askama::Er
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = MacroDefinitionParenTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22676,7 +22676,7 @@ fn render_macro_definition(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "name", true)?;
     let children_renderables = children.renderable_items();
     let template = MacroDefinitionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22723,7 +22723,7 @@ fn render_match_arm(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "pattern", true)?;
     let children_renderables = children.renderable_items();
     let template = MatchArmTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22738,7 +22738,7 @@ fn render_match_block(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = MatchBlockTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22764,7 +22764,7 @@ fn render_match_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "condition", false)?;
     let children_renderables = children.renderable_items();
     let template = MatchPatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22790,7 +22790,7 @@ fn render_mod_item(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "visibility_modifier", false)?;
     let children_renderables = children.renderable_items();
     let template = ModItemTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22807,7 +22807,7 @@ fn render_mut_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "mutable_specifier", true)?;
     let children_renderables = children.renderable_items();
     let template = MutPatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22823,7 +22823,7 @@ fn render_negative_literal(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "value", true)?;
     let children_renderables = children.renderable_items();
     let template = NegativeLiteralTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22838,7 +22838,7 @@ fn render_or_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = OrPatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22854,16 +22854,16 @@ fn render_ordered_field_declaration_list(node: &NodeData) -> Result<String, ::as
     let children_renderables = children.renderable_items();
     let field_0_renderables = field_0.renderable_items();
     let template = OrderedFieldDeclarationListTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
         r#type: match field_0.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
-            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::NonterminalView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
                 items: field_0_renderables.as_slice(),
                 separator: field_0.separator,
                 leading: field_0.leading_sep,
@@ -22891,7 +22891,7 @@ fn render_parameters(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ParametersTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22905,7 +22905,7 @@ fn render_parenthesized_expression(node: &NodeData) -> Result<String, ::askama::
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ParenthesizedExpressionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22919,7 +22919,7 @@ fn render_pointer_type_mut(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = PointerTypeMutTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22934,7 +22934,7 @@ fn render_pointer_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "type", true)?;
     let children_renderables = children.renderable_items();
     let template = PointerTypeTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22969,7 +22969,7 @@ fn render_range_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = RangeExpressionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22984,7 +22984,7 @@ fn render_range_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "left", true)?;
     let children_renderables = children.renderable_items();
     let template = RangePatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23008,7 +23008,7 @@ fn render_ref_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = RefPatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23023,7 +23023,7 @@ fn render_reference_expression(node: &NodeData) -> Result<String, ::askama::Erro
     let field_0 = resolve_field(node, "value", true)?;
     let children_renderables = children.renderable_items();
     let template = ReferenceExpressionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23062,7 +23062,7 @@ fn render_removed_trait_bound(node: &NodeData) -> Result<String, ::askama::Error
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = RemovedTraitBoundTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23076,7 +23076,7 @@ fn render_return_expression(node: &NodeData) -> Result<String, ::askama::Error> 
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ReturnExpressionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23152,9 +23152,9 @@ fn render_shorthand_field_initializer(node: &NodeData) -> Result<String, ::askam
     let field_0_renderables = field_0.renderable_items();
     let template = ShorthandFieldInitializerTemplate {
         attributes: match field_0.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
-            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::NonterminalView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
                 items: field_0_renderables.as_slice(),
                 separator: field_0.separator,
                 leading: field_0.leading_sep,
@@ -23170,7 +23170,7 @@ fn render_slice_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = SlicePatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23188,9 +23188,9 @@ fn render_source_file(node: &NodeData) -> Result<String, ::askama::Error> {
     let template = SourceFileTemplate {
         shebang: field_0.as_scalar(),
         statements: match field_1.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
-            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::NonterminalView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
                 items: field_1_renderables.as_slice(),
                 separator: field_1.separator,
                 leading: field_1.leading_sep,
@@ -23224,7 +23224,7 @@ fn render_string_literal(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = StringLiteralTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23252,7 +23252,7 @@ fn render_struct_item(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_2 = resolve_field(node, "visibility_modifier", false)?;
     let children_renderables = children.renderable_items();
     let template = StructItemTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23270,7 +23270,7 @@ fn render_struct_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "type", true)?;
     let children_renderables = children.renderable_items();
     let template = StructPatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23296,7 +23296,7 @@ fn render_token_repetition_pattern(node: &NodeData) -> Result<String, ::askama::
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = TokenRepetitionPatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23310,7 +23310,7 @@ fn render_token_repetition(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = TokenRepetitionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23324,7 +23324,7 @@ fn render_token_tree_brace(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = TokenTreeBraceTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23338,7 +23338,7 @@ fn render_token_tree_bracket(node: &NodeData) -> Result<String, ::askama::Error>
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = TokenTreeBracketTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23352,7 +23352,7 @@ fn render_token_tree_paren(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = TokenTreeParenTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23366,7 +23366,7 @@ fn render_token_tree_pattern_brace(node: &NodeData) -> Result<String, ::askama::
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = TokenTreePatternBraceTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23380,7 +23380,7 @@ fn render_token_tree_pattern_bracket(node: &NodeData) -> Result<String, ::askama
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = TokenTreePatternBracketTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23394,7 +23394,7 @@ fn render_token_tree_pattern_paren(node: &NodeData) -> Result<String, ::askama::
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = TokenTreePatternParenTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23408,7 +23408,7 @@ fn render_token_tree_pattern(node: &NodeData) -> Result<String, ::askama::Error>
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = TokenTreePatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23422,7 +23422,7 @@ fn render_token_tree(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = TokenTreeTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23436,7 +23436,7 @@ fn render_trait_bounds(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = TraitBoundsTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23493,9 +23493,9 @@ fn render_tuple_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1_renderables = field_1.renderable_items();
     let template = TupleExpressionTemplate {
         attributes: match field_0.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
-            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::NonterminalView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
                 items: field_0_renderables.as_slice(),
                 separator: field_0.separator,
                 leading: field_0.leading_sep,
@@ -23503,9 +23503,9 @@ fn render_tuple_expression(node: &NodeData) -> Result<String, ::askama::Error> {
             }),
         },
         elements: match field_1.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,
-            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::NonterminalView::Missing,
+            ResolvedFieldKind::Scalar => ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+            ResolvedFieldKind::List => ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {
                 items: field_1_renderables.as_slice(),
                 separator: field_1.separator,
                 leading: field_1.leading_sep,
@@ -23520,7 +23520,7 @@ fn render_tuple_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = TuplePatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23535,7 +23535,7 @@ fn render_tuple_struct_pattern(node: &NodeData) -> Result<String, ::askama::Erro
     let field_0 = resolve_field(node, "type", true)?;
     let children_renderables = children.renderable_items();
     let template = TupleStructPatternTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23550,7 +23550,7 @@ fn render_tuple_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = TupleTypeTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23564,7 +23564,7 @@ fn render_type_arguments(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = TypeArgumentsTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23634,7 +23634,7 @@ fn render_type_parameters(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = TypeParametersTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23696,7 +23696,7 @@ fn render_use_bounds(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = UseBoundsTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23721,7 +23721,7 @@ fn render_use_list(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = UseListTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23755,7 +23755,7 @@ fn render_visibility_modifier_crate(node: &NodeData) -> Result<String, ::askama:
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = VisibilityModifierCrateTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23769,7 +23769,7 @@ fn render_visibility_modifier(node: &NodeData) -> Result<String, ::askama::Error
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = VisibilityModifierTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23783,7 +23783,7 @@ fn render_where_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = WhereClauseTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23821,7 +23821,7 @@ fn render_yield_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = YieldExpressionTemplate {
-        children: ::sittir_core::filters::ListView {
+        children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,

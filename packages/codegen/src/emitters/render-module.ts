@@ -102,7 +102,7 @@ function templatesRsHeader(lang: Grammar): string {
 // here, the codegen is out of sync: regenerate via the command above.`;
 }
 
-type EmittedFieldView = 'scalar' | 'list' | 'field';
+type EmittedNonterminalView = 'scalar' | 'list' | 'field';
 
 // ----------------------------------------------------------------------
 // Rust identifier safety
@@ -211,7 +211,7 @@ function pascal(s: string): string {
 
 interface EmittedField {
 	name: string; // raw grammar field name
-	view: EmittedFieldView;
+	view: EmittedNonterminalView;
 	required: boolean;
 	multiple: boolean; // true when the transport-side field is Vec<Box<AnyTransport>>
 	/** True when this slot has a corresponding field in the transport struct.
@@ -229,7 +229,7 @@ interface EmittedStruct {
 	hasChildren: boolean;
 	/** True when the transport struct actually has a `children` field (structuralChildren.length > 0).
 	 *  The template may reference `children` (hasChildren === true) without a transport field —
-	 *  in that case we emit an empty ListView instead of accessing node.children. */
+	 *  in that case we emit an empty ListNonterminalView instead of accessing node.children. */
 	transportHasChildren: boolean;
 	/** True when the transport struct's `children` field is `Vec<...>` (not `Option<Vec<...>>`). */
 	childrenRequired: boolean;
@@ -294,7 +294,7 @@ function renderStructDefs(structs: EmittedStruct[]): string {
 		);
 		lines.push(`pub struct ${s.name}<'a> {`);
 		if (s.hasChildren) {
-			lines.push(`    pub children: ::sittir_core::filters::ListView<'a>,`);
+			lines.push(`    pub children: ::sittir_core::filters::ListNonterminalView<'a>,`);
 		}
 		if (s.hasVariant) {
 			lines.push(`    pub variant: &'a str,`);
@@ -307,11 +307,11 @@ function renderStructDefs(structs: EmittedStruct[]): string {
 				lines.push(`    pub ${rustFieldIdent(f.name)}: &'a str,`);
 			} else if (f.view === 'list') {
 				lines.push(
-					`    pub ${rustFieldIdent(f.name)}: ::sittir_core::filters::ListView<'a>,`
+					`    pub ${rustFieldIdent(f.name)}: ::sittir_core::filters::ListNonterminalView<'a>,`
 				);
 			} else {
 				lines.push(
-					`    pub ${rustFieldIdent(f.name)}: ::sittir_core::filters::FieldView<'a>,`
+					`    pub ${rustFieldIdent(f.name)}: ::sittir_core::filters::NonterminalView<'a>,`
 				);
 			}
 		}
@@ -840,7 +840,7 @@ function renderPerKindFns(structs: EmittedStruct[]): string {
 		}
 		lines.push(`    let template = ${s.name} {`);
 		if (s.hasChildren) {
-			lines.push(`        children: ::sittir_core::filters::ListView {`);
+			lines.push(`        children: ::sittir_core::filters::ListNonterminalView {`);
 			lines.push(`            items: children_renderables.as_slice(),`);
 			lines.push(`            separator: children.separator,`);
 			lines.push(`            leading: children.leading_sep,`);
@@ -859,7 +859,7 @@ function renderPerKindFns(structs: EmittedStruct[]): string {
 					`        ${rustFieldIdent(f.name)}: field_${index}.as_scalar(),`
 				);
 			} else if (f.view === 'list') {
-				lines.push(`        ${rustFieldIdent(f.name)}: ::sittir_core::filters::ListView {`);
+				lines.push(`        ${rustFieldIdent(f.name)}: ::sittir_core::filters::ListNonterminalView {`);
 				lines.push(`            items: field_${index}_renderables.as_slice(),`);
 				lines.push(`            separator: field_${index}.separator,`);
 				lines.push(`            leading: field_${index}.leading_sep,`);
@@ -867,9 +867,9 @@ function renderPerKindFns(structs: EmittedStruct[]): string {
 				lines.push(`        },`);
 			} else {
 				lines.push(`        ${rustFieldIdent(f.name)}: match field_${index}.kind {`);
-				lines.push(`            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,`);
-				lines.push(`            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(field_${index}.as_scalar())),`);
-				lines.push(`            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {`);
+				lines.push(`            ResolvedFieldKind::Missing => ::sittir_core::filters::NonterminalView::Missing,`);
+				lines.push(`            ResolvedFieldKind::Scalar => ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(field_${index}.as_scalar())),`);
+				lines.push(`            ResolvedFieldKind::List => ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {`);
 				lines.push(`                items: field_${index}_renderables.as_slice(),`);
 				lines.push(`                separator: field_${index}.separator,`);
 				lines.push(`                leading: field_${index}.leading_sep,`);
@@ -1229,7 +1229,7 @@ function renderTypedFormFn(
 	// the emitter defaults that slot to empty/Missing.
 	//
 	// The view for each slot always comes from the PARENT struct — that
-	// determines the Rust struct field type (&'a str vs FieldView vs ListView).
+	// determines the Rust struct field type (&'a str vs NonterminalView vs ListNonterminalView).
 	const formFieldByName = new Map(form.fields.map((f) => [f.name, f]));
 	const formEmittedStruct: EmittedStruct = {
 		name: parentStruct.name, // e.g. ClosureExpressionTemplate
@@ -1280,9 +1280,9 @@ function renderTypedFormFn(
  *
  * Strategy: render each child / field transport to a `String` first, collect
  * into a `Vec<String>`, then borrow those strings as `Renderable::Text` slices
- * to feed `ListView` / `FieldView`. This avoids the type mismatch between the
+ * to feed `ListNonterminalView` / `NonterminalView`. This avoids the type mismatch between the
  * grammar-local `Renderable` (which carries `Node(&'a AnyTransport)`) and the
- * `sittir_core::filters::ListView` item type (`sittir_core::filters::Renderable`
+ * `sittir_core::filters::ListNonterminalView` item type (`sittir_core::filters::Renderable`
  * which only has `Text` / `Joined` variants). Two allocations per list slot
  * rather than one, but sound and simple.
  *
@@ -1330,7 +1330,7 @@ function buildTypedTemplateBody(
 			lines.push(`        .collect();`);
 		} else {
 			// Template uses children but transport has no children field —
-			// emit an empty buffer so the ListView slot in the template is empty.
+			// emit an empty buffer so the ListNonterminalView slot in the template is empty.
 			lines.push(`    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = Vec::new();`);
 		}
 	}
@@ -1418,7 +1418,7 @@ function buildTypedTemplateBody(
 	lines.push(`    let template = ${templateName} {`);
 
 	if (struct.hasChildren) {
-		lines.push(`        children: ::sittir_core::filters::ListView {`);
+		lines.push(`        children: ::sittir_core::filters::ListNonterminalView {`);
 		lines.push(`            items: children_buf.as_slice(),`);
 		lines.push(`            separator: ${sepLiteral},`);
 		lines.push(`            leading: false,`);
@@ -1446,14 +1446,14 @@ function buildTypedTemplateBody(
 			}
 		} else if (f.view === 'list') {
 			if (f.hasTransportField) {
-				lines.push(`        ${rIdent}: ::sittir_core::filters::ListView {`);
+				lines.push(`        ${rIdent}: ::sittir_core::filters::ListNonterminalView {`);
 				lines.push(`            items: ${rIdent}_buf.as_slice(),`);
 				lines.push(`            separator: ${sepLiteral},`);
 				lines.push(`            leading: false,`);
 				lines.push(`            trailing: false,`);
 				lines.push(`        },`);
 			} else {
-				lines.push(`        ${rIdent}: ::sittir_core::filters::ListView {`);
+				lines.push(`        ${rIdent}: ::sittir_core::filters::ListNonterminalView {`);
 				lines.push(`            items: &[],`);
 				lines.push(`            separator: ${sepLiteral},`);
 				lines.push(`            leading: false,`);
@@ -1461,26 +1461,26 @@ function buildTypedTemplateBody(
 				lines.push(`        },`);
 			}
 		} else if (f.multiple) {
-			// view === 'field' && multiple — Many(ListView)
+			// view === 'field' && multiple — Many(ListNonterminalView)
 			if (f.hasTransportField) {
-				lines.push(`        ${rIdent}: ::sittir_core::filters::FieldView::Many(::sittir_core::filters::ListView {`);
+				lines.push(`        ${rIdent}: ::sittir_core::filters::NonterminalView::Many(::sittir_core::filters::ListNonterminalView {`);
 				lines.push(`            items: ${rIdent}_buf.as_slice(),`);
 				lines.push(`            separator: ${sepLiteral},`);
 				lines.push(`            leading: false,`);
 				lines.push(`            trailing: false,`);
 				lines.push(`        }),`);
 			} else {
-				lines.push(`        ${rIdent}: ::sittir_core::filters::FieldView::Missing,`);
+				lines.push(`        ${rIdent}: ::sittir_core::filters::NonterminalView::Missing,`);
 			}
 		} else if (f.required) {
 			// view === 'field', single, required — One(Renderable::Text)
 			if (f.hasTransportField) {
 				lines.push(
-					`        ${rIdent}: ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(${rIdent}_rendered.as_str())),`
+					`        ${rIdent}: ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(${rIdent}_rendered.as_str())),`
 				);
 			} else {
 				lines.push(
-					`        ${rIdent}: ::sittir_core::filters::FieldView::Missing,`
+					`        ${rIdent}: ::sittir_core::filters::NonterminalView::Missing,`
 				);
 			}
 		} else {
@@ -1488,15 +1488,15 @@ function buildTypedTemplateBody(
 			if (f.hasTransportField) {
 				lines.push(`        ${rIdent}: match &${rIdent}_rendered {`);
 				lines.push(
-					`            Some(s) => ::sittir_core::filters::FieldView::One(::sittir_core::filters::Renderable::Text(s.as_str())),`
+					`            Some(s) => ::sittir_core::filters::NonterminalView::One(::sittir_core::filters::Renderable::Text(s.as_str())),`
 				);
 				lines.push(
-					`            None => ::sittir_core::filters::FieldView::Missing,`
+					`            None => ::sittir_core::filters::NonterminalView::Missing,`
 				);
 				lines.push(`        },`);
 			} else {
 				lines.push(
-					`        ${rIdent}: ::sittir_core::filters::FieldView::Missing,`
+					`        ${rIdent}: ::sittir_core::filters::NonterminalView::Missing,`
 				);
 			}
 		}

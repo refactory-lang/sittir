@@ -146,14 +146,14 @@ impl ::askama::FastWritable for Joined<'_> {
 }
 
 #[derive(Debug, Clone, Copy)]
-pub struct ListView<'a> {
+pub struct ListNonterminalView<'a> {
     pub items: &'a [Renderable<'a>],
     pub separator: &'a str,
     pub leading: bool,
     pub trailing: bool,
 }
 
-impl<'a> ListView<'a> {
+impl<'a> ListNonterminalView<'a> {
     pub fn is_empty(&self) -> bool {
         self.items.is_empty()
     }
@@ -168,13 +168,13 @@ impl<'a> ListView<'a> {
     }
 }
 
-impl fmt::Display for ListView<'_> {
+impl fmt::Display for ListNonterminalView<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Display::fmt(&self.as_joined(), f)
     }
 }
 
-impl ::askama::FastWritable for ListView<'_> {
+impl ::askama::FastWritable for ListNonterminalView<'_> {
     fn write_into<W: std::fmt::Write + ?Sized>(
         &self,
         dest: &mut W,
@@ -184,33 +184,33 @@ impl ::askama::FastWritable for ListView<'_> {
     }
 }
 
-pub struct ListViewIter<'a> {
+pub struct ListNonterminalViewIter<'a> {
     inner: std::slice::Iter<'a, Renderable<'a>>,
 }
 
-impl<'a> Iterator for ListViewIter<'a> {
+impl<'a> Iterator for ListNonterminalViewIter<'a> {
     type Item = &'a Renderable<'a>;
     fn next(&mut self) -> Option<Self::Item> {
         self.inner.next()
     }
 }
 
-impl<'a> IntoIterator for &'a ListView<'a> {
+impl<'a> IntoIterator for &'a ListNonterminalView<'a> {
     type Item = &'a Renderable<'a>;
-    type IntoIter = ListViewIter<'a>;
+    type IntoIter = ListNonterminalViewIter<'a>;
     fn into_iter(self) -> Self::IntoIter {
-        ListViewIter { inner: self.items.iter() }
+        ListNonterminalViewIter { inner: self.items.iter() }
     }
 }
 
 #[derive(Debug, Clone, Copy)]
-pub enum FieldView<'a> {
+pub enum NonterminalView<'a> {
     Missing,
     One(Renderable<'a>),
-    Many(ListView<'a>),
+    Many(ListNonterminalView<'a>),
 }
 
-impl fmt::Display for FieldView<'_> {
+impl fmt::Display for NonterminalView<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Missing => Ok(()),
@@ -220,7 +220,7 @@ impl fmt::Display for FieldView<'_> {
     }
 }
 
-impl ::askama::FastWritable for FieldView<'_> {
+impl ::askama::FastWritable for NonterminalView<'_> {
     fn write_into<W: std::fmt::Write + ?Sized>(
         &self,
         dest: &mut W,
@@ -234,16 +234,16 @@ impl ::askama::FastWritable for FieldView<'_> {
     }
 }
 
-/// Iterator over the `Renderable`s a `FieldView` exposes. `Missing` yields
+/// Iterator over the `Renderable`s a `NonterminalView` exposes. `Missing` yields
 /// none, `One(r)` yields a single reference, `Many(view)` defers to the
-/// `ListView` iterator.
-pub enum FieldViewIter<'a> {
+/// `ListNonterminalView` iterator.
+pub enum NonterminalViewIter<'a> {
     Missing,
     One(std::option::IntoIter<&'a Renderable<'a>>),
-    Many(ListViewIter<'a>),
+    Many(ListNonterminalViewIter<'a>),
 }
 
-impl<'a> Iterator for FieldViewIter<'a> {
+impl<'a> Iterator for NonterminalViewIter<'a> {
     type Item = &'a Renderable<'a>;
     fn next(&mut self) -> Option<Self::Item> {
         match self {
@@ -254,14 +254,14 @@ impl<'a> Iterator for FieldViewIter<'a> {
     }
 }
 
-impl<'a> IntoIterator for &'a FieldView<'a> {
+impl<'a> IntoIterator for &'a NonterminalView<'a> {
     type Item = &'a Renderable<'a>;
-    type IntoIter = FieldViewIter<'a>;
+    type IntoIter = NonterminalViewIter<'a>;
     fn into_iter(self) -> Self::IntoIter {
         match self {
-            FieldView::Missing => FieldViewIter::Missing,
-            FieldView::One(r) => FieldViewIter::One(Some(r).into_iter()),
-            FieldView::Many(view) => FieldViewIter::Many(view.into_iter()),
+            NonterminalView::Missing => NonterminalViewIter::Missing,
+            NonterminalView::One(r) => NonterminalViewIter::One(Some(r).into_iter()),
+            NonterminalView::Many(view) => NonterminalViewIter::Many(view.into_iter()),
         }
     }
 }
@@ -269,7 +269,7 @@ impl<'a> IntoIterator for &'a FieldView<'a> {
 /// Trait for types that can supply a slice of [`Renderable`]s for joining.
 ///
 /// Replaces the string-based `JoinSource` from Task 2 scaffolding.
-/// `ListView` and `FieldView` are the primary implementors; the old
+/// `ListNonterminalView` and `NonterminalView` are the primary implementors; the old
 /// string-slice impls (`[S]`, `Vec<S>`, `[S; N]`) are removed because
 /// the join filters now operate exclusively on `Renderable`-backed views.
 pub trait JoinSource<'a> {
@@ -283,7 +283,7 @@ pub trait JoinSource<'a> {
     }
 }
 
-impl<'a> JoinSource<'a> for ListView<'a> {
+impl<'a> JoinSource<'a> for ListNonterminalView<'a> {
     fn renderables(&self) -> &'a [Renderable<'a>] {
         self.items
     }
@@ -298,7 +298,7 @@ impl<'a> JoinSource<'a> for ListView<'a> {
     }
 }
 
-impl<'a> JoinSource<'a> for FieldView<'a> {
+impl<'a> JoinSource<'a> for NonterminalView<'a> {
     fn renderables(&self) -> &'a [Renderable<'a>] {
         match self {
             Self::Missing | Self::One(_) => &[],
@@ -418,13 +418,13 @@ impl PresenceCheck for &String {
     }
 }
 
-impl PresenceCheck for ListView<'_> {
+impl PresenceCheck for ListNonterminalView<'_> {
     fn is_present_check(&self) -> bool {
         !self.items.is_empty()
     }
 }
 
-impl PresenceCheck for FieldView<'_> {
+impl PresenceCheck for NonterminalView<'_> {
     fn is_present_check(&self) -> bool {
         match self {
             Self::Missing => false,
