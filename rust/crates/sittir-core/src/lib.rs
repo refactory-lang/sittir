@@ -18,3 +18,8 @@ pub mod format;
 pub mod read_node;
 pub mod splice;
 pub mod types;
+
+// Flat re-export for the runtime kind discriminant — per the KindID
+// runtime migration design, callers reach this as `sittir_core::KindId`
+// rather than the longer `sittir_core::types::KindId`.
+pub use types::KindId;

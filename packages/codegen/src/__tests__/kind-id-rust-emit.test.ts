@@ -216,10 +216,32 @@ describe('emitKindIdRust', () => {
 			generatedIdTables
 		});
 
-		// Visible kinds should be emitted; hidden kind should be filtered (not in nodeMap.nodes).
+		// Visible kinds should be emitted; hidden kind is filtered (not in nodeMap.nodes).
 		expect(out).toContain('pub const CALL_EXPRESSION: KindId = KindId(17);');
 		expect(out).toContain('pub const IDENTIFIER: KindId = KindId(3);');
 		// _field_identifier is NOT in nodeMap.nodes so it should not appear.
 		expect(out).not.toContain('_FIELD_IDENTIFIER');
+	});
+
+	it('preserves leading underscore in toScreamingSnakeCase conversion', async () => {
+		// Direct unit test of the underscore-preserving conversion. Verifies the
+		// constant-name logic without requiring a hidden kind to traverse the
+		// full assembly pipeline (hidden kinds are filtered out of nodeMap.nodes
+		// in the synth grammar fixtures used elsewhere in this file).
+		const { toScreamingSnakeCase } = await import('../emitters/kind-id-rust.ts');
+
+		// Visible kind: PascalCase member, no leading underscore on rawKind.
+		expect(toScreamingSnakeCase('CallExpression', 'call_expression')).toBe('CALL_EXPRESSION');
+		expect(toScreamingSnakeCase('Identifier', 'identifier')).toBe('IDENTIFIER');
+
+		// Hidden kind: PascalCase member (underscore stripped by typeName
+		// derivation), but rawKind retains its leading underscore. The
+		// conversion must reattach the prefix.
+		expect(toScreamingSnakeCase('FieldIdentifier', '_field_identifier')).toBe('_FIELD_IDENTIFIER');
+		expect(toScreamingSnakeCase('NonSpecialToken', '_non_special_token')).toBe('_NON_SPECIAL_TOKEN');
+
+		// Single-segment cases.
+		expect(toScreamingSnakeCase('Foo', 'foo')).toBe('FOO');
+		expect(toScreamingSnakeCase('Foo', '_foo')).toBe('_FOO');
 	});
 });

@@ -41,7 +41,7 @@ export interface EmitKindIdRustConfig {
  * @returns SCREAMING_SNAKE_CASE constant name, e.g. `'CALL_EXPRESSION'` or
  *   `'_FIELD_IDENTIFIER'`.
  */
-function toScreamingSnakeCase(memberName: string, rawKind: string): string {
+export function toScreamingSnakeCase(memberName: string, rawKind: string): string {
 	// Re-attach leading underscore when the original grammar kind is hidden
 	// (`_field_identifier` → member `FieldIdentifier` → const `_FIELD_IDENTIFIER`).
 	const prefix = rawKind.startsWith('_') ? '_' : '';
