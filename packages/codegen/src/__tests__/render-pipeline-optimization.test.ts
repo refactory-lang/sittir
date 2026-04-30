@@ -139,6 +139,9 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 
 		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap());
 
+		expect(emitted.templatesRs.contents).toContain(
+			'#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]'
+		);
 		expect(emitted.templatesRs.contents).toContain('fn resolve_leaf');
 		expect(emitted.templatesRs.contents).toContain('fn resolve_optional');
 		expect(emitted.templatesRs.contents).toContain('fn resolve_required');
@@ -162,7 +165,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 			'pub struct RustGrammarMeta'
 		);
 		expect(emitted.libRs.contents).toContain(
-			'pub use templates::{render_dispatch, render_transport, AnyTransport};'
+			'pub use templates::{render_dispatch, render_transport, render_transport_parts, AnyTransport};'
 		);
 		expect(emitted.libRs.contents).not.toContain('RustGrammarMeta');
 	});

@@ -370,6 +370,11 @@ describe('native transport emission', () => {
 			'export function toNativeRenderTransport(node: unknown): AnyTransport'
 		);
 		expect(contents).toContain('const fields = value.$fields;');
+		expect(contents).toContain('projectRawChildrenIntoFields(projected);');
+		expect(contents).toContain('inferNativeTransportVariant(projected);');
+		expect(contents).toContain('const nativeTransportAliasTargetToSource');
+		expect(contents).toContain('const nativeTransportRawChildFieldRules');
+		expect(contents).toContain('const nativeTransportVariantRules');
 		expect(contents).toContain(
 			'projected[key] = projectTransportValue(child, `${path}.${key}`);'
 		);
@@ -406,6 +411,10 @@ describe('native transport emission', () => {
 		);
 		expect(contents).toContain(
 			"key === 'render' || key === 'toEdit' || key === 'replace'"
+		);
+		expect(contents).toContain("key === '$format'");
+		expect(contents).toContain(
+			'$format is not supported by the native render boundary; pass format separately'
 		);
 		expect(contents).not.toContain('native-boundary');
 		expect(contents).not.toContain('assertNativeNodeData');
@@ -469,8 +478,18 @@ describe('native transport emission', () => {
 		);
 		expect(emitted.templatesRs.contents).toContain('from_transport');
 		expect(emitted.templatesRs.contents).toContain('pub fn render_transport');
+		expect(emitted.templatesRs.contents).toContain(
+			'pub fn render_transport_parts'
+		);
+		expect(emitted.templatesRs.contents).toContain(
+			'let node = node_data_from_transport(transport)?;'
+		);
+		expect(emitted.templatesRs.contents).toContain('render_dispatch(&node)');
+		expect(emitted.templatesRs.contents).not.toContain(
+			'renderable native transport bridge pending'
+		);
 		expect(emitted.libRs.contents).toContain(
-			'pub use templates::{render_dispatch, render_transport, AnyTransport};'
+			'pub use templates::{render_dispatch, render_transport, render_transport_parts, AnyTransport};'
 		);
 		expect(emitted.templatesRs.contents).not.toContain(
 			'AnyTransport::NodeData'
@@ -520,7 +539,9 @@ describe('native transport emission', () => {
 		expect(structBody).toContain(
 			'#[serde(rename = "$children")]\n    pub children: Vec<Box<AnyTransport>>,'
 		);
-		expect(structBody).not.toContain('default');
+		expect(structBody).not.toContain(
+			'#[serde(rename = "$children")]\n    #[serde(default)]'
+		);
 	});
 
 	it('emits Rust polymorph transport as a variant-tagged form enum', () => {

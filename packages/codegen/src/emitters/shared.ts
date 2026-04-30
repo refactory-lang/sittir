@@ -80,6 +80,30 @@ export function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 	return out;
 }
 
+/**
+ * Compute the alias-target -> alias-source map for canonical hidden remaps.
+ *
+ * Tree-sitter parses `alias($._x, $.x)` as the visible target kind `x`,
+ * while the generated Sittir surface treats the hidden source `_x` as
+ * canonical. Both the wrap layer and native transport projector use this
+ * single derivation so parser output is normalized consistently.
+ */
+export function collectAliasTargetToSourceMap(
+	nodeMap: NodeMap
+): Map<string, string> {
+	const out = new Map<string, string>();
+	for (const [kind, node] of nodeMap.nodes) {
+		if (!kind.startsWith('_')) continue;
+		if (!node.userFacing) continue;
+		if (node.modelType === 'token' || node.modelType === 'multi') continue;
+		const visible = kind.replace(/^_+/, '');
+		if (visible.length === 0) continue;
+		if (nodeMap.nodes.has(visible)) continue;
+		out.set(visible, kind);
+	}
+	return out;
+}
+
 export function referencedKinds(nodeMap: NodeMap): Set<string> {
 	const referenced = new Set<string>();
 	for (const [, node] of nodeMap.nodes) {

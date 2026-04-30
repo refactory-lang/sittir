@@ -20,7 +20,11 @@ import type {
 	AssembledNode,
 	AssembledPolymorph
 } from '../compiler/node-map.ts';
-import { isValidIdent, isMultiple } from './shared.ts';
+import {
+	collectAliasTargetToSourceMap,
+	isValidIdent,
+	isMultiple
+} from './shared.ts';
 
 export interface EmitWrapConfig {
 	grammar: string;
@@ -264,46 +268,6 @@ export function emitWrap(config: EmitWrapConfig): string {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-/**
- * Compute the alias-target → alias-source map for the canonical-hidden
- * remap (Option Y).
- *
- * @remarks
- * For every hidden alias-source kind (`_x` whose visible name `x` is
- * what tree-sitter parses to via `alias($._x, $.x)`), record the entry
- * `{ x: '_x' }`. The set of alias-source hidden kinds is identical to
- * the set computed in `markUserFacing` (assemble.ts) — kinds whose
- * `_`-prefixed name appears as a child reference in some other rule.
- * Re-derived here from `userFacing === true && kind.startsWith('_')`,
- * which `markUserFacing` already gates on the same predicate.
- *
- * Excludes kinds whose stripped name collides with an existing visible
- * kind in the NodeMap — the visible kind's `wrap${TypeName}` dispatch
- * must continue to handle the visible-typed parser output. (Polymorph
- * parents are always visible; their `_x` form children are excluded.)
- *
- * @param nodeMap - The fully assembled node map for the grammar.
- * @returns Map keyed on visible alias-target name; values are the
- *   canonical hidden alias-source name (with leading `_`).
- */
-function collectAliasTargetToSourceMap(nodeMap: NodeMap): Map<string, string> {
-	const out = new Map<string, string>();
-	for (const [kind, node] of nodeMap.nodes) {
-		if (!kind.startsWith('_')) continue;
-		if (!node.userFacing) continue;
-		// Polymorph parent kinds and tokens never participate in the
-		// alias-source rewrite — only field-carrying alias sources do.
-		if (node.modelType === 'token' || node.modelType === 'multi') continue;
-		const visible = kind.replace(/^_+/, '');
-		if (visible.length === 0) continue;
-		// Skip when the visible name belongs to a distinct kind in the
-		// NodeMap — that kind owns its own dispatch; we'd hijack it.
-		if (nodeMap.nodes.has(visible)) continue;
-		out.set(visible, kind);
-	}
-	return out;
-}
 
 /**
  * Collects the set of concrete interface type names that need to be imported

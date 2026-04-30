@@ -17,7 +17,11 @@ import {
 	isTerminalValue,
 	isUnresolvedRef
 } from '../compiler/node-map.ts';
-import { fieldTypeComponents, resolveHiddenKeywordLiteral } from './shared.ts';
+import {
+	collectAliasTargetToSourceMap,
+	fieldTypeComponents,
+	resolveHiddenKeywordLiteral
+} from './shared.ts';
 import {
 	collectTransportProjection,
 	resolveTransportReferenceKind
@@ -137,13 +141,13 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('}');
 	lines.push('');
 
-	emitNativeTransportProjection(lines);
+	emitNativeTransportProjection(lines, nodeMap);
 	emitNativeTransportAssertions(lines, nodeMap);
 
 	return lines.join('\n');
 }
 
-function emitNativeTransportProjection(lines: string[]): void {
+function emitNativeTransportProjection(lines: string[], nodeMap: NodeMap): void {
 	lines.push('/**');
 	lines.push(
 		' * Convert NodeData/factory output into the data-only native transport shape.'
@@ -160,6 +164,8 @@ function emitNativeTransportProjection(lines: string[]): void {
 	lines.push(
 		"const transportMetadataKeys = new Set(['$type', '$variant', '$source', '$named', '$text', '$span', '$nodeId']);"
 	);
+	lines.push('');
+	emitNativeTransportProjectionRules(lines, nodeMap);
 	lines.push('');
 	lines.push(
 		'function projectTransportValue(value: unknown, path: string): unknown {'
@@ -179,6 +185,7 @@ function emitNativeTransportProjection(lines: string[]): void {
 	lines.push('  for (const key of transportMetadataKeys) {');
 	lines.push('    if (key in value) projected[key] = value[key];');
 	lines.push('  }');
+	lines.push('  projected.$type = nativeTransportType(value.$type);');
 	lines.push('');
 	lines.push('  const fields = value.$fields;');
 	lines.push('  if (isRecord(fields)) {');
@@ -199,9 +206,275 @@ function emitNativeTransportProjection(lines: string[]): void {
 	lines.push('    projected[key] = projectTransportValue(child, `${path}.${key}`);');
 	lines.push('  }');
 	lines.push('');
+	lines.push('  projectRawChildrenIntoFields(projected);');
+	lines.push('  inferNativeTransportVariant(projected);');
+	lines.push('');
 	lines.push('  return projected;');
 	lines.push('}');
 	lines.push('');
+	lines.push(
+		'function nativeTransportType(kind: string): string {'
+	);
+	lines.push('  return nativeTransportAliasTargetToSource[kind] ?? kind;');
+	lines.push('}');
+	lines.push('');
+	lines.push(
+		'function projectRawChildrenIntoFields(projected: Record<string, unknown>): void {'
+	);
+	lines.push('  const kind = String(projected.$type);');
+	lines.push('  const rules = nativeTransportRawChildFieldRules[kind];');
+	lines.push('  const children = projected.$children;');
+	lines.push('  if (!rules || !Array.isArray(children)) return;');
+	lines.push('  const keep: unknown[] = [];');
+	lines.push('  const usedForField = new Set<number>();');
+	lines.push('  for (const field of rules.fields) {');
+	lines.push('    if (projected[field.name] !== undefined) continue;');
+	lines.push(
+		'    const matches = children.map((child, index) => ({ child, index })).filter(({ child }) => transportValueMatches(child, field.alternatives));'
+	);
+	lines.push('    if (field.multiple) {');
+	lines.push('      if (matches.length > 0 || field.required) {');
+	lines.push('        projected[field.name] = matches.map(({ child }) => child);');
+	lines.push('        for (const { index } of matches) usedForField.add(index);');
+	lines.push('      }');
+	lines.push('    } else if (matches.length === 1) {');
+	lines.push('      projected[field.name] = matches[0]!.child;');
+	lines.push('      usedForField.add(matches[0]!.index);');
+	lines.push('    }');
+	lines.push('  }');
+	lines.push('  for (let index = 0; index < children.length; index++) {');
+	lines.push('    const child = children[index];');
+	lines.push(
+		'    if (!usedForField.has(index) || transportValueMatches(child, rules.childAlternatives)) keep.push(child);'
+	);
+	lines.push('  }');
+	lines.push('  if (keep.length > 0 || rules.childrenRequired) {');
+	lines.push('    projected.$children = keep;');
+	lines.push('  } else {');
+	lines.push('    delete projected.$children;');
+	lines.push('  }');
+	lines.push('}');
+	lines.push('');
+	lines.push(
+		'function inferNativeTransportVariant(projected: Record<string, unknown>): void {'
+	);
+	lines.push('  if (typeof projected.$variant === "string") return;');
+	lines.push('  const rules = nativeTransportVariantRules[String(projected.$type)];');
+	lines.push('  if (!rules) return;');
+	lines.push('  const matches = rules.filter((rule) => transportVariantMatches(projected, rule));');
+	lines.push('  if (matches.length === 1) projected.$variant = matches[0]!.variant;');
+	lines.push('}');
+	lines.push('');
+	lines.push(
+		'function transportVariantMatches(node: Record<string, unknown>, rule: NativeTransportVariantRule): boolean {'
+	);
+	lines.push('  for (const field of rule.fields) {');
+	lines.push('    const value = node[field.name];');
+	lines.push('    if (value === undefined) {');
+	lines.push('      if (field.required) return false;');
+	lines.push('      continue;');
+	lines.push('    }');
+	lines.push(
+		'    const ok = field.multiple ? transportArrayMatches(value, field.alternatives) : transportValueMatches(value, field.alternatives);'
+	);
+	lines.push('    if (!ok) return false;');
+	lines.push('  }');
+	lines.push('  if (rule.children) {');
+	lines.push('    const children = node.$children;');
+	lines.push('    if (children === undefined) return !rule.children.required;');
+	lines.push('    return transportArrayMatches(children, rule.children.alternatives);');
+	lines.push('  }');
+	lines.push('  return true;');
+	lines.push('}');
+	lines.push('');
+	lines.push(
+		'function transportArrayMatches(value: unknown, alternatives: readonly NativeTransportAlternative[]): boolean {'
+	);
+	lines.push(
+		'  return Array.isArray(value) && value.every((item) => transportValueMatches(item, alternatives));'
+	);
+	lines.push('}');
+	lines.push('');
+	lines.push(
+		'function transportValueMatches(value: unknown, alternatives: readonly NativeTransportAlternative[]): boolean {'
+	);
+	lines.push('  if (!isRecord(value) || typeof value.$type !== "string") return false;');
+	lines.push('  return alternatives.some((candidate) => {');
+	lines.push('    if (value.$type !== candidate.type) return false;');
+	lines.push('    return candidate.text === undefined || value.$text === candidate.text;');
+	lines.push('  });');
+	lines.push('}');
+	lines.push('');
+}
+
+function emitNativeTransportProjectionRules(
+	lines: string[],
+	nodeMap: NodeMap
+): void {
+	lines.push(
+		'type NativeTransportAlternative = { readonly type: string; readonly text?: string };'
+	);
+	lines.push(
+		'type NativeTransportFieldRule = { readonly name: string; readonly multiple: boolean; readonly required: boolean; readonly alternatives: readonly NativeTransportAlternative[] };'
+	);
+	lines.push(
+		'type NativeTransportRawChildRule = { readonly childrenRequired: boolean; readonly childAlternatives: readonly NativeTransportAlternative[]; readonly fields: readonly NativeTransportFieldRule[] };'
+	);
+	lines.push(
+		'type NativeTransportVariantRule = { readonly variant: string; readonly fields: readonly NativeTransportFieldRule[]; readonly children?: { readonly required: boolean; readonly alternatives: readonly NativeTransportAlternative[] } };'
+	);
+	lines.push('');
+
+	const aliasMap = collectAliasTargetToSourceMap(nodeMap);
+	lines.push(
+		'const nativeTransportAliasTargetToSource: Record<string, string> = {'
+	);
+	for (const [target, source] of [...aliasMap.entries()].sort()) {
+		lines.push(`  ${JSON.stringify(target)}: ${JSON.stringify(source)},`);
+	}
+	lines.push('};');
+	lines.push('');
+
+	const rawChildRuleEntries = nativeTransportRawChildRuleEntries(nodeMap);
+	lines.push(
+		'const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildRule> = {'
+	);
+	for (const entry of rawChildRuleEntries) {
+		lines.push(`  ${JSON.stringify(entry.kind)}: {`);
+		lines.push(`    childrenRequired: ${entry.childrenRequired},`);
+		lines.push(
+			`    childAlternatives: ${transportAlternativesExpr(entry.childAlternatives)},`
+		);
+		lines.push('    fields: [');
+		for (const field of entry.fields) {
+			lines.push(
+				`      { name: ${JSON.stringify(field.name)}, multiple: ${field.multiple}, required: ${field.required}, alternatives: ${transportAlternativesExpr(field.alternatives)} },`
+			);
+		}
+		lines.push('    ],');
+		lines.push('  },');
+	}
+	lines.push('};');
+	lines.push('');
+
+	const variantRuleEntries = nativeTransportVariantRuleEntries(nodeMap);
+	lines.push(
+		'const nativeTransportVariantRules: Record<string, readonly NativeTransportVariantRule[]> = {'
+	);
+	for (const entry of variantRuleEntries) {
+		lines.push(`  ${JSON.stringify(entry.kind)}: [`);
+		for (const rule of entry.rules) {
+			lines.push('    {');
+			lines.push(`      variant: ${JSON.stringify(rule.variant)},`);
+			lines.push('      fields: [');
+			for (const field of rule.fields) {
+				lines.push(
+					`        { name: ${JSON.stringify(field.name)}, multiple: ${field.multiple}, required: ${field.required}, alternatives: ${transportAlternativesExpr(field.alternatives)} },`
+				);
+			}
+			lines.push('      ],');
+			if (rule.children !== undefined) {
+				lines.push(
+					`      children: { required: ${rule.children.required}, alternatives: ${transportAlternativesExpr(rule.children.alternatives)} },`
+				);
+			}
+			lines.push('    },');
+		}
+		lines.push('  ],');
+	}
+	lines.push('};');
+}
+
+interface NativeTransportRawChildRuleEntry {
+	readonly kind: string;
+	readonly childrenRequired: boolean;
+	readonly childAlternatives: readonly TransportAlternative[];
+	readonly fields: readonly {
+		readonly name: string;
+		readonly multiple: boolean;
+		readonly required: boolean;
+		readonly alternatives: readonly TransportAlternative[];
+	}[];
+}
+
+function nativeTransportRawChildRuleEntries(
+	nodeMap: NodeMap
+): NativeTransportRawChildRuleEntry[] {
+	const entries: NativeTransportRawChildRuleEntry[] = [];
+	for (const [, node] of nodeMap.nodes) {
+		const fields = node.structuralFields.filter((field) => isMultiple(field));
+		if (fields.length === 0) continue;
+		const children = node.structuralChildren;
+		entries.push({
+			kind: node.kind,
+			childrenRequired: children.some((child) => isRequired(child)),
+			childAlternatives: children.flatMap((child) =>
+				child.values.flatMap((value) =>
+					transportAlternativesForSlotValue(value, nodeMap)
+				)
+			),
+			fields: fields.map((field) => ({
+				name: field.name,
+				multiple: true,
+				required: isRequired(field),
+				alternatives: fieldTransportAlternatives(field, nodeMap)
+			}))
+		});
+	}
+	return entries.sort((a, b) => a.kind.localeCompare(b.kind));
+}
+
+interface NativeTransportVariantRuleEntry {
+	readonly kind: string;
+	readonly rules: readonly {
+		readonly variant: string;
+		readonly fields: readonly {
+			readonly name: string;
+			readonly multiple: boolean;
+			readonly required: boolean;
+			readonly alternatives: readonly TransportAlternative[];
+		}[];
+		readonly children?: {
+			readonly required: boolean;
+			readonly alternatives: readonly TransportAlternative[];
+		};
+	}[];
+}
+
+function nativeTransportVariantRuleEntries(
+	nodeMap: NodeMap
+): NativeTransportVariantRuleEntry[] {
+	const entries: NativeTransportVariantRuleEntry[] = [];
+	for (const [, node] of nodeMap.nodes) {
+		if (node.modelType !== 'polymorph') continue;
+		entries.push({
+			kind: node.kind,
+			rules: node.forms.map((form) => {
+				const children = form.structuralChildren;
+				return {
+					variant: form.name,
+					fields: form.structuralFields.map((field) => ({
+						name: field.name,
+						multiple: isMultiple(field),
+						required: isRequired(field),
+						alternatives: fieldTransportAlternatives(field, nodeMap)
+					})),
+					children:
+						children.length > 0
+							? {
+									required: children.some((child) => isRequired(child)),
+									alternatives: children.flatMap((child) =>
+										child.values.flatMap((value) =>
+											transportAlternativesForSlotValue(value, nodeMap)
+										)
+									)
+								}
+							: undefined
+				};
+			})
+		});
+	}
+	return entries.sort((a, b) => a.kind.localeCompare(b.kind));
 }
 
 function emitNativeTransportAssertions(
@@ -278,6 +551,11 @@ function emitNativeTransportAssertions(
 	lines.push('    return;');
 	lines.push('  }');
 	lines.push('  for (const [key, child] of Object.entries(value)) {');
+	lines.push("    if (key === '$format') {");
+	lines.push(
+		'      throw new TypeError(`${path}.$format is not supported by the native render boundary; pass format separately`);'
+	);
+	lines.push('    }');
 	lines.push(
 		"    if (key === 'render' || key === 'toEdit' || key === 'replace') {"
 	);

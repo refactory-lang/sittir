@@ -17,7 +17,7 @@ napi-bindings = ["dep:napi", "dep:napi-derive"]
 [dependencies]
 sittir-core = { path = "../sittir-core" }
 askama = { workspace = true }
-napi = { version = "3", default-features = false, features = ["napi4"], optional = true }
+napi = { version = "3", default-features = false, features = ["napi4", "serde-json"], optional = true }
 napi-derive = { version = "3", optional = true }
 serde = { workspace = true }
 serde_json = { workspace = true }

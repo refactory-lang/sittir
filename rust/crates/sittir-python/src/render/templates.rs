@@ -15,7 +15,7 @@
 // fields is caught at compile time (FR-008). If you see a build error
 // here, the codegen is out of sync: regenerate via the command above.
 
-#![allow(dead_code, unused_imports, non_snake_case)]
+#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]
 
 pub mod filters {
     //! Askama resolves custom-filter names by searching for a
@@ -46,6 +46,7851 @@ pub mod filters {
         isBlank, isPresent,
         joinWithTrailing, joinWithLeading, joinWithFlanks,
     };
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+#[serde(tag = "$type")]
+pub enum AnyTransport {
+    #[serde(rename = "_as_pattern")]
+    _AsPattern(_AsPatternTransport),
+    #[serde(rename = "_as_pattern_target")]
+    AsPatternTarget(AsPatternTargetTransport),
+    #[serde(rename = "_assignment_eq")]
+    AssignmentEq(AssignmentEqTransport),
+    #[serde(rename = "_assignment_type")]
+    AssignmentType(AssignmentTypeTransport),
+    #[serde(rename = "_assignment_typed")]
+    AssignmentTyped(AssignmentTypedTransport),
+    #[serde(rename = "_comprehension_clauses")]
+    ComprehensionClauses(ComprehensionClausesTransport),
+    #[serde(rename = "_format_expression")]
+    FormatExpression(FormatExpressionTransport),
+    #[serde(rename = "_import_list")]
+    ImportList(ImportListTransport),
+    #[serde(rename = "_is_not")]
+    IsNot(IsNotTransport),
+    #[serde(rename = "_key_value_pattern")]
+    KeyValuePattern(KeyValuePatternTransport),
+    #[serde(rename = "_kw_async_marker")]
+    KwAsyncMarker(KwAsyncMarkerTransport),
+    #[serde(rename = "_list_pattern")]
+    _ListPattern(_ListPatternTransport),
+    #[serde(rename = "_match_block")]
+    MatchBlock(MatchBlockTransport),
+    #[serde(rename = "_match_block_block")]
+    MatchBlockBlock(MatchBlockBlockTransport),
+    #[serde(rename = "_not_escape_sequence")]
+    NotEscapeSequence(NotEscapeSequenceTransport),
+    #[serde(rename = "_not_in")]
+    NotIn(NotInTransport),
+    #[serde(rename = "_simple_pattern_negative")]
+    SimplePatternNegative(SimplePatternNegativeTransport),
+    #[serde(rename = "_simple_statements")]
+    SimpleStatements(SimpleStatementsTransport),
+    #[serde(rename = "_suite")]
+    Suite(SuiteTransport),
+    #[serde(rename = "_tuple_pattern")]
+    _TuplePattern(_TuplePatternTransport),
+    #[serde(rename = "_with_clause_paren")]
+    _WithClauseParen(_WithClauseParenTransport),
+    #[serde(rename = "aliased_import")]
+    AliasedImport(AliasedImportTransport),
+    #[serde(rename = "argument_list")]
+    ArgumentList(ArgumentListTransport),
+    #[serde(rename = "as_pattern")]
+    AsPattern(AsPatternTransport),
+    #[serde(rename = "assert_statement")]
+    AssertStatement(AssertStatementTransport),
+    #[serde(rename = "assignment")]
+    Assignment(AssignmentTransport),
+    #[serde(rename = "attribute")]
+    Attribute(AttributeTransport),
+    #[serde(rename = "augmented_assignment")]
+    AugmentedAssignment(AugmentedAssignmentTransport),
+    #[serde(rename = "await")]
+    Await(AwaitTransport),
+    #[serde(rename = "binary_operator")]
+    BinaryOperator(BinaryOperatorTransport),
+    #[serde(rename = "block")]
+    Block(BlockTransport),
+    #[serde(rename = "boolean_operator")]
+    BooleanOperator(BooleanOperatorTransport),
+    #[serde(rename = "break_statement")]
+    BreakStatement(BreakStatementTransport),
+    #[serde(rename = "call")]
+    Call(CallTransport),
+    #[serde(rename = "case_clause")]
+    CaseClause(CaseClauseTransport),
+    #[serde(rename = "case_pattern")]
+    CasePattern(CasePatternTransport),
+    #[serde(rename = "chevron")]
+    Chevron(ChevronTransport),
+    #[serde(rename = "class_definition")]
+    ClassDefinition(ClassDefinitionTransport),
+    #[serde(rename = "class_pattern")]
+    ClassPattern(ClassPatternTransport),
+    #[serde(rename = "comment")]
+    Comment(CommentTransport),
+    #[serde(rename = "comparison_operator")]
+    ComparisonOperator(ComparisonOperatorTransport),
+    #[serde(rename = "complex_pattern")]
+    ComplexPattern(ComplexPatternTransport),
+    #[serde(rename = "concatenated_string")]
+    ConcatenatedString(ConcatenatedStringTransport),
+    #[serde(rename = "conditional_expression")]
+    ConditionalExpression(ConditionalExpressionTransport),
+    #[serde(rename = "constrained_type")]
+    ConstrainedType(ConstrainedTypeTransport),
+    #[serde(rename = "continue_statement")]
+    ContinueStatement(ContinueStatementTransport),
+    #[serde(rename = "decorated_definition")]
+    DecoratedDefinition(DecoratedDefinitionTransport),
+    #[serde(rename = "decorator")]
+    Decorator(DecoratorTransport),
+    #[serde(rename = "default_parameter")]
+    DefaultParameter(DefaultParameterTransport),
+    #[serde(rename = "delete_statement")]
+    DeleteStatement(DeleteStatementTransport),
+    #[serde(rename = "dict_pattern")]
+    DictPattern(DictPatternTransport),
+    #[serde(rename = "dictionary")]
+    Dictionary(DictionaryTransport),
+    #[serde(rename = "dictionary_comprehension")]
+    DictionaryComprehension(DictionaryComprehensionTransport),
+    #[serde(rename = "dictionary_splat")]
+    DictionarySplat(DictionarySplatTransport),
+    #[serde(rename = "dictionary_splat_pattern")]
+    DictionarySplatPattern(DictionarySplatPatternTransport),
+    #[serde(rename = "dotted_name")]
+    DottedName(DottedNameTransport),
+    #[serde(rename = "elif_clause")]
+    ElifClause(ElifClauseTransport),
+    #[serde(rename = "ellipsis")]
+    Ellipsis2(Ellipsis2Transport),
+    #[serde(rename = "else_clause")]
+    ElseClause(ElseClauseTransport),
+    #[serde(rename = "escape_sequence")]
+    EscapeSequence(EscapeSequenceTransport),
+    #[serde(rename = "except_clause")]
+    ExceptClause(ExceptClauseTransport),
+    #[serde(rename = "exec_statement")]
+    ExecStatement(ExecStatementTransport),
+    #[serde(rename = "expression_list")]
+    ExpressionList(ExpressionListTransport),
+    #[serde(rename = "expression_statement_tuple")]
+    ExpressionStatementTuple(ExpressionStatementTupleTransport),
+    #[serde(rename = "expression_statement")]
+    ExpressionStatement(ExpressionStatementTransport),
+    #[serde(rename = "false")]
+    False(FalseTransport),
+    #[serde(rename = "finally_clause")]
+    FinallyClause(FinallyClauseTransport),
+    #[serde(rename = "float")]
+    Float(FloatTransport),
+    #[serde(rename = "for_in_clause")]
+    ForInClause(ForInClauseTransport),
+    #[serde(rename = "for_statement")]
+    ForStatement(ForStatementTransport),
+    #[serde(rename = "format_specifier")]
+    FormatSpecifier(FormatSpecifierTransport),
+    #[serde(rename = "function_definition")]
+    FunctionDefinition(FunctionDefinitionTransport),
+    #[serde(rename = "future_import_statement")]
+    FutureImportStatement(FutureImportStatementTransport),
+    #[serde(rename = "generator_expression")]
+    GeneratorExpression(GeneratorExpressionTransport),
+    #[serde(rename = "generic_type")]
+    GenericType(GenericTypeTransport),
+    #[serde(rename = "global_statement")]
+    GlobalStatement(GlobalStatementTransport),
+    #[serde(rename = "identifier")]
+    Identifier(IdentifierTransport),
+    #[serde(rename = "if_clause")]
+    IfClause(IfClauseTransport),
+    #[serde(rename = "if_statement")]
+    IfStatement(IfStatementTransport),
+    #[serde(rename = "import_from_statement")]
+    ImportFromStatement(ImportFromStatementTransport),
+    #[serde(rename = "import_prefix")]
+    ImportPrefix(ImportPrefixTransport),
+    #[serde(rename = "import_statement")]
+    ImportStatement(ImportStatementTransport),
+    #[serde(rename = "integer")]
+    Integer(IntegerTransport),
+    #[serde(rename = "interpolation")]
+    Interpolation(InterpolationTransport),
+    #[serde(rename = "keyword_argument")]
+    KeywordArgument(KeywordArgumentTransport),
+    #[serde(rename = "keyword_pattern")]
+    KeywordPattern(KeywordPatternTransport),
+    #[serde(rename = "keyword_separator")]
+    KeywordSeparator(KeywordSeparatorTransport),
+    #[serde(rename = "lambda")]
+    Lambda(LambdaTransport),
+    #[serde(rename = "lambda_parameters")]
+    LambdaParameters(LambdaParametersTransport),
+    #[serde(rename = "lambda_within_for_in_clause")]
+    LambdaWithinForInClause(LambdaWithinForInClauseTransport),
+    #[serde(rename = "line_continuation")]
+    LineContinuation(LineContinuationTransport),
+    #[serde(rename = "list")]
+    List(ListTransport),
+    #[serde(rename = "list_comprehension")]
+    ListComprehension(ListComprehensionTransport),
+    #[serde(rename = "list_pattern")]
+    ListPattern(ListPatternTransport),
+    #[serde(rename = "list_splat")]
+    ListSplat(ListSplatTransport),
+    #[serde(rename = "list_splat_pattern")]
+    ListSplatPattern(ListSplatPatternTransport),
+    #[serde(rename = "match_statement")]
+    MatchStatement(MatchStatementTransport),
+    #[serde(rename = "member_type")]
+    MemberType(MemberTypeTransport),
+    #[serde(rename = "module")]
+    Module(ModuleTransport),
+    #[serde(rename = "named_expression")]
+    NamedExpression(NamedExpressionTransport),
+    #[serde(rename = "none")]
+    None(NoneTransport),
+    #[serde(rename = "nonlocal_statement")]
+    NonlocalStatement(NonlocalStatementTransport),
+    #[serde(rename = "not_operator")]
+    NotOperator(NotOperatorTransport),
+    #[serde(rename = "pair")]
+    Pair(PairTransport),
+    #[serde(rename = "parameters")]
+    Parameters(ParametersTransport),
+    #[serde(rename = "parenthesized_expression")]
+    ParenthesizedExpression(ParenthesizedExpressionTransport),
+    #[serde(rename = "parenthesized_list_splat")]
+    ParenthesizedListSplat(ParenthesizedListSplatTransport),
+    #[serde(rename = "pass_statement")]
+    PassStatement(PassStatementTransport),
+    #[serde(rename = "pattern_list")]
+    PatternList(PatternListTransport),
+    #[serde(rename = "positional_separator")]
+    PositionalSeparator(PositionalSeparatorTransport),
+    #[serde(rename = "print_statement")]
+    PrintStatement(PrintStatementTransport),
+    #[serde(rename = "raise_statement")]
+    RaiseStatement(RaiseStatementTransport),
+    #[serde(rename = "relative_import")]
+    RelativeImport(RelativeImportTransport),
+    #[serde(rename = "return_statement")]
+    ReturnStatement(ReturnStatementTransport),
+    #[serde(rename = "set")]
+    Set(SetTransport),
+    #[serde(rename = "set_comprehension")]
+    SetComprehension(SetComprehensionTransport),
+    #[serde(rename = "slice")]
+    Slice(SliceTransport),
+    #[serde(rename = "splat_pattern")]
+    SplatPattern(SplatPatternTransport),
+    #[serde(rename = "splat_type")]
+    SplatType(SplatTypeTransport),
+    #[serde(rename = "string")]
+    String(StringTransport),
+    #[serde(rename = "string_content")]
+    StringContent(StringContentTransport),
+    #[serde(rename = "subscript")]
+    Subscript(SubscriptTransport),
+    #[serde(rename = "true")]
+    True(TrueTransport),
+    #[serde(rename = "try_statement")]
+    TryStatement(TryStatementTransport),
+    #[serde(rename = "tuple")]
+    Tuple(TupleTransport),
+    #[serde(rename = "tuple_pattern")]
+    TuplePattern(TuplePatternTransport),
+    #[serde(rename = "type")]
+    Type(TypeTransport),
+    #[serde(rename = "type_alias_statement")]
+    TypeAliasStatement(TypeAliasStatementTransport),
+    #[serde(rename = "type_conversion")]
+    TypeConversion(TypeConversionTransport),
+    #[serde(rename = "type_parameter")]
+    TypeParameter(TypeParameterTransport),
+    #[serde(rename = "typed_default_parameter")]
+    TypedDefaultParameter(TypedDefaultParameterTransport),
+    #[serde(rename = "typed_parameter")]
+    TypedParameter(TypedParameterTransport),
+    #[serde(rename = "unary_operator")]
+    UnaryOperator(UnaryOperatorTransport),
+    #[serde(rename = "union_pattern")]
+    UnionPattern(UnionPatternTransport),
+    #[serde(rename = "union_type")]
+    UnionType(UnionTypeTransport),
+    #[serde(rename = "while_statement")]
+    WhileStatement(WhileStatementTransport),
+    #[serde(rename = "wildcard_import")]
+    WildcardImport(WildcardImportTransport),
+    #[serde(rename = "with_clause_bare")]
+    WithClauseBare(WithClauseBareTransport),
+    #[serde(rename = "with_clause_paren")]
+    WithClauseParen(WithClauseParenTransport),
+    #[serde(rename = "with_clause")]
+    WithClause(WithClauseTransport),
+    #[serde(rename = "with_item")]
+    WithItem(WithItemTransport),
+    #[serde(rename = "with_statement")]
+    WithStatement(WithStatementTransport),
+    #[serde(rename = "yield")]
+    Yield(YieldTransport),
+    #[serde(rename = "_newline")]
+    Newline(NewlineTransport),
+    #[serde(rename = "_indent")]
+    Indent(IndentTransport),
+    #[serde(rename = "_dedent")]
+    Dedent(DedentTransport),
+    #[serde(rename = "string_start")]
+    StringStart(StringStartTransport),
+    #[serde(rename = "_string_content")]
+    _StringContent(_StringContentTransport),
+    #[serde(rename = "escape_interpolation")]
+    EscapeInterpolation(EscapeInterpolationTransport),
+    #[serde(rename = "string_end")]
+    StringEnd(StringEndTransport),
+    #[serde(rename = "]")]
+    CloseBracket(CloseBracketTransport),
+    #[serde(rename = ")")]
+    CloseParen(CloseParenTransport),
+    #[serde(rename = "}")]
+    CloseBrace(CloseBraceTransport),
+    #[serde(rename = "except")]
+    Except(ExceptTransport),
+    #[serde(rename = "as")]
+    As(AsTransport),
+    #[serde(rename = "=")]
+    Eq(EqTransport),
+    #[serde(rename = ":")]
+    Colon(ColonTransport),
+    #[serde(rename = "async")]
+    Async(AsyncTransport),
+    #[serde(rename = "[")]
+    Bracket(BracketTransport),
+    #[serde(rename = "\\")]
+    TokBs(TokBsTransport),
+    #[serde(rename = "-")]
+    Minus(MinusTransport),
+    #[serde(rename = "(")]
+    Paren(ParenTransport),
+    #[serde(rename = ",")]
+    Comma(CommaTransport),
+    #[serde(rename = "assert")]
+    Assert(AssertTransport),
+    #[serde(rename = ".")]
+    Dot(DotTransport),
+    #[serde(rename = "+")]
+    Plus(PlusTransport),
+    #[serde(rename = "*")]
+    Star(StarTransport),
+    #[serde(rename = "@")]
+    At(AtTransport),
+    #[serde(rename = "/")]
+    Slash(SlashTransport),
+    #[serde(rename = "%")]
+    Percent(PercentTransport),
+    #[serde(rename = "//")]
+    Slashslash(SlashslashTransport),
+    #[serde(rename = "**")]
+    Starstar(StarstarTransport),
+    #[serde(rename = "|")]
+    Pipe(PipeTransport),
+    #[serde(rename = "&")]
+    Amp(AmpTransport),
+    #[serde(rename = "^")]
+    Caret(CaretTransport),
+    #[serde(rename = "<<")]
+    Shl(ShlTransport),
+    #[serde(rename = ">>")]
+    Shr(ShrTransport),
+    #[serde(rename = "and")]
+    And(AndTransport),
+    #[serde(rename = "or")]
+    Or(OrTransport),
+    #[serde(rename = "break")]
+    Break(BreakTransport),
+    #[serde(rename = "case")]
+    Case(CaseTransport),
+    #[serde(rename = "class")]
+    Class(ClassTransport),
+    #[serde(rename = "if")]
+    If(IfTransport),
+    #[serde(rename = "else")]
+    Else(ElseTransport),
+    #[serde(rename = "continue")]
+    Continue(ContinueTransport),
+    #[serde(rename = "del")]
+    Del(DelTransport),
+    #[serde(rename = "{")]
+    Brace(BraceTransport),
+    #[serde(rename = "elif")]
+    Elif(ElifTransport),
+    #[serde(rename = "...")]
+    Ellipsis(EllipsisTransport),
+    #[serde(rename = "exec")]
+    Exec(ExecTransport),
+    #[serde(rename = "in")]
+    In(InTransport),
+    #[serde(rename = "False")]
+    False2(False2Transport),
+    #[serde(rename = "finally")]
+    Finally(FinallyTransport),
+    #[serde(rename = "for")]
+    For(ForTransport),
+    #[serde(rename = "def")]
+    Def(DefTransport),
+    #[serde(rename = "->")]
+    Arrow(ArrowTransport),
+    #[serde(rename = "from")]
+    From(FromTransport),
+    #[serde(rename = "__future__")]
+    FutureU(FutureUTransport),
+    #[serde(rename = "import")]
+    Import(ImportTransport),
+    #[serde(rename = "global")]
+    Global(GlobalTransport),
+    #[serde(rename = "match")]
+    Match(MatchTransport),
+    #[serde(rename = ":=")]
+    Coloneq(ColoneqTransport),
+    #[serde(rename = "None")]
+    None2(None2Transport),
+    #[serde(rename = "nonlocal")]
+    Nonlocal(NonlocalTransport),
+    #[serde(rename = "not")]
+    Not(NotTransport),
+    #[serde(rename = "pass")]
+    Pass(PassTransport),
+    #[serde(rename = "print")]
+    Print(PrintTransport),
+    #[serde(rename = "raise")]
+    Raise(RaiseTransport),
+    #[serde(rename = "return")]
+    Return(ReturnTransport),
+    #[serde(rename = "_")]
+    Anonymous(AnonymousTransport),
+    #[serde(rename = "True")]
+    True2(True2Transport),
+    #[serde(rename = "try")]
+    Try(TryTransport),
+    #[serde(rename = "while")]
+    While(WhileTransport),
+    #[serde(rename = "with")]
+    With(WithTransport),
+    #[serde(rename = "+=")]
+    Literal0_2b_3d(LiteralTransport),
+    #[serde(rename = "-=")]
+    Literal1_2d_3d(LiteralTransport),
+    #[serde(rename = "*=")]
+    Literal2_2a_3d(LiteralTransport),
+    #[serde(rename = "/=")]
+    Literal3_2f_3d(LiteralTransport),
+    #[serde(rename = "@=")]
+    Literal4_40_3d(LiteralTransport),
+    #[serde(rename = "//=")]
+    Literal5_2f_2f_3d(LiteralTransport),
+    #[serde(rename = "%=")]
+    Literal6_25_3d(LiteralTransport),
+    #[serde(rename = "**=")]
+    Literal7_2a_2a_3d(LiteralTransport),
+    #[serde(rename = ">>=")]
+    Literal8_3e_3e_3d(LiteralTransport),
+    #[serde(rename = "<<=")]
+    Literal9_3c_3c_3d(LiteralTransport),
+    #[serde(rename = "&=")]
+    Literal10_26_3d(LiteralTransport),
+    #[serde(rename = "^=")]
+    Literal11_5e_3d(LiteralTransport),
+    #[serde(rename = "|=")]
+    Literal12_7c_3d(LiteralTransport),
+    #[serde(rename = "<")]
+    Literal13_3c(LiteralTransport),
+    #[serde(rename = "<=")]
+    Literal14_3c_3d(LiteralTransport),
+    #[serde(rename = "==")]
+    Literal15_3d_3d(LiteralTransport),
+    #[serde(rename = "!=")]
+    Literal16_21_3d(LiteralTransport),
+    #[serde(rename = ">=")]
+    Literal17_3e_3d(LiteralTransport),
+    #[serde(rename = ">")]
+    Literal18_3e(LiteralTransport),
+    #[serde(rename = "<>")]
+    Literal19_3c_3e(LiteralTransport),
+    #[serde(rename = "not in")]
+    Literal20_6e_6f_74_20_69_6e(LiteralTransport),
+    #[serde(rename = "is")]
+    Literal21_69_73(LiteralTransport),
+    #[serde(rename = "is not")]
+    Literal22_69_73_20_6e_6f_74(LiteralTransport),
+    #[serde(rename = "~")]
+    Literal23_7e(LiteralTransport),
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct LiteralTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct _AsPatternTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct AsPatternTargetTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct AssignmentEqTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub right: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct AssignmentTypeTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "type")]
+    pub r#type: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct AssignmentTypedTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "type")]
+    pub r#type: Box<AnyTransport>,
+    pub right: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ComprehensionClausesTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct FormatExpressionTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ImportListTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub name: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct IsNotTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct KeyValuePatternTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub key: Box<AnyTransport>,
+    pub value: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct KwAsyncMarkerTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct _ListPatternTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct MatchBlockTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct MatchBlockBlockTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub alternative: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct NotEscapeSequenceTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct NotInTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct SimplePatternNegativeTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct SimpleStatementsTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct SuiteTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct _TuplePatternTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct _WithClauseParenTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct AliasedImportTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub name: Box<AnyTransport>,
+    pub alias: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ArgumentListTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    #[serde(default)]
+    pub children: Option<Vec<Box<AnyTransport>>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct AsPatternTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub expression: Box<AnyTransport>,
+    pub alias: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct AssertStatementTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+#[serde(tag = "$variant")]
+pub enum AssignmentTransport {
+    #[serde(rename = "eq")]
+    AssignmentUFormEq(AssignmentUFormEqTransport),
+    #[serde(rename = "type")]
+    AssignmentUFormType(AssignmentUFormTypeTransport),
+    #[serde(rename = "typed")]
+    AssignmentUFormTyped(AssignmentUFormTypedTransport),
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct AssignmentUFormEqTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub left: Box<AnyTransport>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct AssignmentUFormTypeTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub left: Box<AnyTransport>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct AssignmentUFormTypedTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub left: Box<AnyTransport>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct AttributeTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub object: Box<AnyTransport>,
+    pub attribute: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct AugmentedAssignmentTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub left: Box<AnyTransport>,
+    pub operator: Box<AnyTransport>,
+    pub right: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct AwaitTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub primary_expression: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct BinaryOperatorTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub left: Box<AnyTransport>,
+    pub operator: Box<AnyTransport>,
+    pub right: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct BlockTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct BooleanOperatorTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub left: Box<AnyTransport>,
+    pub operator: Box<AnyTransport>,
+    pub right: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct BreakStatementTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct CallTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub function: Box<AnyTransport>,
+    pub arguments: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct CaseClauseTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(default)]
+    pub guard: Option<Box<AnyTransport>>,
+    pub consequence: Box<AnyTransport>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct CasePatternTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ChevronTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub expression: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ClassDefinitionTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub name: Box<AnyTransport>,
+    #[serde(default)]
+    pub type_parameters: Option<Box<AnyTransport>>,
+    #[serde(default)]
+    pub superclasses: Option<Box<AnyTransport>>,
+    pub body: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ClassPatternTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub dotted_name: Box<AnyTransport>,
+    pub arguments: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct CommentTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ComparisonOperatorTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub left: Box<AnyTransport>,
+    pub operators: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ComplexPatternTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(default)]
+    pub real: Option<Box<AnyTransport>>,
+    pub imaginary: Box<AnyTransport>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ConcatenatedStringTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ConditionalExpressionTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub body: Box<AnyTransport>,
+    pub condition: Box<AnyTransport>,
+    pub alternative: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ConstrainedTypeTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub base_type: Box<AnyTransport>,
+    pub constraint: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ContinueStatementTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct DecoratedDefinitionTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub definition: Box<AnyTransport>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct DecoratorTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub expression: Box<AnyTransport>,
+    #[serde(default)]
+    pub newline: Option<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct DefaultParameterTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub name: Box<AnyTransport>,
+    pub value: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct DeleteStatementTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct DictPatternTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct DictionaryTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct DictionaryComprehensionTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub body: Box<AnyTransport>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct DictionarySplatTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub expression: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct DictionarySplatPatternTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct DottedNameTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ElifClauseTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub condition: Box<AnyTransport>,
+    pub consequence: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct Ellipsis2Transport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ElseClauseTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub body: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct EscapeSequenceTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ExceptClauseTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(default)]
+    pub value: Option<Vec<Box<AnyTransport>>>,
+    #[serde(default)]
+    pub alias: Option<Box<AnyTransport>>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ExecStatementTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub code: Box<AnyTransport>,
+    #[serde(default)]
+    pub in_clause: Option<Vec<Box<AnyTransport>>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ExpressionListTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ExpressionStatementTupleTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+#[serde(tag = "$variant")]
+pub enum ExpressionStatementTransport {
+    #[serde(rename = "tuple")]
+    ExpressionStatementUFormTuple(ExpressionStatementUFormTupleTransport),
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ExpressionStatementUFormTupleTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct FalseTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct FinallyClauseTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub block: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct FloatTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ForInClauseTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(default)]
+    pub async_marker: Option<Box<AnyTransport>>,
+    pub left: Box<AnyTransport>,
+    pub right: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ForStatementTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(default)]
+    pub async_marker: Option<Box<AnyTransport>>,
+    pub left: Box<AnyTransport>,
+    pub right: Box<AnyTransport>,
+    pub body: Box<AnyTransport>,
+    #[serde(default)]
+    pub alternative: Option<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct FormatSpecifierTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct FunctionDefinitionTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(default)]
+    pub async_marker: Option<Box<AnyTransport>>,
+    pub name: Box<AnyTransport>,
+    #[serde(default)]
+    pub type_parameters: Option<Box<AnyTransport>>,
+    pub parameters: Box<AnyTransport>,
+    #[serde(default)]
+    pub return_type: Option<Box<AnyTransport>>,
+    pub body: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct FutureImportStatementTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub name: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct GeneratorExpressionTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub body: Box<AnyTransport>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct GenericTypeTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub identifier: Box<AnyTransport>,
+    pub type_parameter: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct GlobalStatementTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct IdentifierTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct IfClauseTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub expression: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct IfStatementTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub condition: Box<AnyTransport>,
+    pub consequence: Box<AnyTransport>,
+    #[serde(default)]
+    pub alternative: Option<Vec<Box<AnyTransport>>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ImportFromStatementTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub module_name: Box<AnyTransport>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ImportPrefixTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ImportStatementTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub name: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct IntegerTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct InterpolationTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub expression: Box<AnyTransport>,
+    #[serde(default)]
+    pub type_conversion: Option<Box<AnyTransport>>,
+    #[serde(default)]
+    pub format_specifier: Option<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct KeywordArgumentTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub name: Box<AnyTransport>,
+    pub value: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct KeywordPatternTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub identifier: Box<AnyTransport>,
+    pub simple_pattern: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct KeywordSeparatorTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct LambdaTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(default)]
+    pub parameters: Option<Box<AnyTransport>>,
+    pub body: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct LambdaParametersTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct LambdaWithinForInClauseTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(default)]
+    pub parameters: Option<Box<AnyTransport>>,
+    pub body: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct LineContinuationTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ListTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ListComprehensionTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub body: Box<AnyTransport>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ListPatternTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ListSplatTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub expression: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ListSplatPatternTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct MatchStatementTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub subject: Vec<Box<AnyTransport>>,
+    pub body: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct MemberTypeTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub base_type: Box<AnyTransport>,
+    pub identifier: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ModuleTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct NamedExpressionTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub name: Box<AnyTransport>,
+    pub value: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct NoneTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct NonlocalStatementTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct NotOperatorTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub argument: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct PairTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub key: Box<AnyTransport>,
+    pub value: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ParametersTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ParenthesizedExpressionTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ParenthesizedListSplatTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct PassStatementTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct PatternListTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct PositionalSeparatorTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct PrintStatementTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub argument: Vec<Box<AnyTransport>>,
+    #[serde(rename = "$children")]
+    #[serde(default)]
+    pub children: Option<Vec<Box<AnyTransport>>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct RaiseStatementTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(default)]
+    pub cause: Option<Box<AnyTransport>>,
+    #[serde(rename = "$children")]
+    #[serde(default)]
+    pub children: Option<Vec<Box<AnyTransport>>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct RelativeImportTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub import_prefix: Box<AnyTransport>,
+    #[serde(default)]
+    pub dotted_name: Option<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ReturnStatementTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    #[serde(default)]
+    pub children: Option<Vec<Box<AnyTransport>>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct SetTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct SetComprehensionTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub body: Box<AnyTransport>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct SliceTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(default)]
+    pub start: Option<Box<AnyTransport>>,
+    #[serde(default)]
+    pub stop: Option<Box<AnyTransport>>,
+    #[serde(default)]
+    pub step: Option<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct SplatPatternTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub identifier: Box<AnyTransport>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct SplatTypeTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub identifier: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct StringTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub string_start: Box<AnyTransport>,
+    pub content: Vec<Box<AnyTransport>>,
+    pub string_end: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct StringContentTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct SubscriptTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub value: Box<AnyTransport>,
+    pub subscript: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct TrueTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct TryStatementTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub body: Box<AnyTransport>,
+    pub except_clauses: Vec<Box<AnyTransport>>,
+    #[serde(default)]
+    pub else_clause: Option<Box<AnyTransport>>,
+    #[serde(default)]
+    pub finally_clause: Option<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct TupleTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct TuplePatternTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct TypeTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct TypeAliasStatementTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "type")]
+    pub r#type: Box<AnyTransport>,
+    pub left: Box<AnyTransport>,
+    pub right: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct TypeConversionTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct TypeParameterTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct TypedDefaultParameterTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub name: Box<AnyTransport>,
+    #[serde(rename = "type")]
+    pub r#type: Box<AnyTransport>,
+    pub value: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct TypedParameterTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "type")]
+    pub r#type: Box<AnyTransport>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct UnaryOperatorTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub operator: Box<AnyTransport>,
+    pub argument: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct UnionPatternTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct UnionTypeTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub left: Box<AnyTransport>,
+    pub right: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct WhileStatementTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub condition: Box<AnyTransport>,
+    pub body: Box<AnyTransport>,
+    #[serde(default)]
+    pub alternative: Option<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct WildcardImportTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct WithClauseBareTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct WithClauseParenTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+#[serde(tag = "$variant")]
+pub enum WithClauseTransport {
+    #[serde(rename = "bare")]
+    WithClauseUFormBare(WithClauseUFormBareTransport),
+    #[serde(rename = "paren")]
+    WithClauseUFormParen(WithClauseUFormParenTransport),
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct WithClauseUFormBareTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct WithClauseUFormParenTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct WithItemTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    pub value: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct WithStatementTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(default)]
+    pub async_marker: Option<Box<AnyTransport>>,
+    pub with_clause: Box<AnyTransport>,
+    pub body: Box<AnyTransport>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct YieldTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$text", default)]
+    pub transport_text: Option<String>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$children")]
+    pub children: Vec<Box<AnyTransport>>,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct NewlineTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct IndentTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct DedentTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct StringStartTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct _StringContentTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct EscapeInterpolationTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct StringEndTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct CloseBracketTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct CloseParenTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct CloseBraceTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ExceptTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct AsTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct EqTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ColonTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct AsyncTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct BracketTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct TokBsTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct MinusTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ParenTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct CommaTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct AssertTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct DotTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct PlusTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct StarTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct AtTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct SlashTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct PercentTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct SlashslashTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct StarstarTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct PipeTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct AmpTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct CaretTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ShlTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ShrTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct AndTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct OrTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct BreakTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct CaseTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ClassTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct IfTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ElseTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ContinueTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct DelTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct BraceTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ElifTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct EllipsisTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ExecTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct InTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct False2Transport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct FinallyTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ForTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct DefTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ArrowTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct FromTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct FutureUTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ImportTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct GlobalTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct MatchTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ColoneqTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct None2Transport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct NonlocalTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct NotTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct PassTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct PrintTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct RaiseTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct ReturnTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct AnonymousTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct True2Transport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct TryTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct WhileTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+#[derive(Debug, Clone, ::serde::Deserialize)]
+pub struct WithTransport {
+    #[serde(rename = "$source", default)]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[serde(rename = "$named", default)]
+    pub transport_named: Option<bool>,
+    #[serde(rename = "$span", default)]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[serde(rename = "$nodeId", default)]
+    pub transport_node_id: Option<u64>,
+    #[serde(rename = "$text")]
+    pub text: String,
+}
+
+
+use ::sittir_core::types::{FieldValue as TransportFieldValue, NodeData as TransportNodeData, Source as TransportSource};
+use ::std::collections::HashMap as TransportHashMap;
+
+fn transport_node_data(
+    kind: &str,
+    source: Option<TransportSource>,
+    named: Option<bool>,
+    default_named: bool,
+    text: Option<String>,
+    span: Option<::sittir_core::types::Span>,
+    node_id: Option<u64>,
+    fields: Option<TransportHashMap<String, TransportFieldValue>>,
+    children: Option<Vec<TransportNodeData>>,
+) -> TransportNodeData {
+    TransportNodeData {
+        type_: kind.to_string(),
+        source: source.unwrap_or(TransportSource::Factory),
+        named: named.unwrap_or(default_named),
+        fields,
+        children,
+        text,
+        span,
+        node_id,
+    }
+}
+
+fn transport_field_value(value: Box<AnyTransport>) -> Result<TransportFieldValue, ::askama::Error> {
+    let node = transport_to_node(*value)?;
+    if !node.named {
+        if let Some(text) = node.text.clone() {
+            return Ok(TransportFieldValue::Text(text));
+        }
+    }
+    Ok(TransportFieldValue::Single(Box::new(node)))
+}
+
+fn transport_field_values(values: Vec<Box<AnyTransport>>) -> Result<TransportFieldValue, ::askama::Error> {
+    let mut nodes = Vec::with_capacity(values.len());
+    for value in values {
+        nodes.push(transport_to_node(*value)?);
+    }
+    Ok(TransportFieldValue::Multiple(nodes))
+}
+
+fn transport_children(values: Vec<Box<AnyTransport>>) -> Result<Vec<TransportNodeData>, ::askama::Error> {
+    let mut nodes = Vec::with_capacity(values.len());
+    for value in values {
+        nodes.push(transport_to_node(*value)?);
+    }
+    Ok(nodes)
+}
+
+fn literal_transport_to_node(kind: &str, transport: LiteralTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        kind,
+        transport.transport_source,
+        transport.transport_named,
+        false,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::askama::Error> {
+    match transport {
+        AnyTransport::_AsPattern(data) => transport_to_node__as_pattern(data),
+        AnyTransport::AsPatternTarget(data) => transport_to_node_as_pattern_target(data),
+        AnyTransport::AssignmentEq(data) => transport_to_node_assignment_eq(data),
+        AnyTransport::AssignmentType(data) => transport_to_node_assignment_type(data),
+        AnyTransport::AssignmentTyped(data) => transport_to_node_assignment_typed(data),
+        AnyTransport::ComprehensionClauses(data) => transport_to_node_comprehension_clauses(data),
+        AnyTransport::FormatExpression(data) => transport_to_node_format_expression(data),
+        AnyTransport::ImportList(data) => transport_to_node_import_list(data),
+        AnyTransport::IsNot(data) => transport_to_node_is_not(data),
+        AnyTransport::KeyValuePattern(data) => transport_to_node_key_value_pattern(data),
+        AnyTransport::KwAsyncMarker(data) => transport_to_node_kw_async_marker(data),
+        AnyTransport::_ListPattern(data) => transport_to_node__list_pattern(data),
+        AnyTransport::MatchBlock(data) => transport_to_node_match_block(data),
+        AnyTransport::MatchBlockBlock(data) => transport_to_node_match_block_block(data),
+        AnyTransport::NotEscapeSequence(data) => transport_to_node_not_escape_sequence(data),
+        AnyTransport::NotIn(data) => transport_to_node_not_in(data),
+        AnyTransport::SimplePatternNegative(data) => transport_to_node_simple_pattern_negative(data),
+        AnyTransport::SimpleStatements(data) => transport_to_node_simple_statements(data),
+        AnyTransport::Suite(data) => transport_to_node_suite(data),
+        AnyTransport::_TuplePattern(data) => transport_to_node__tuple_pattern(data),
+        AnyTransport::_WithClauseParen(data) => transport_to_node__with_clause_paren(data),
+        AnyTransport::AliasedImport(data) => transport_to_node_aliased_import(data),
+        AnyTransport::ArgumentList(data) => transport_to_node_argument_list(data),
+        AnyTransport::AsPattern(data) => transport_to_node_as_pattern(data),
+        AnyTransport::AssertStatement(data) => transport_to_node_assert_statement(data),
+        AnyTransport::Assignment(data) => transport_to_node_assignment(data),
+        AnyTransport::Attribute(data) => transport_to_node_attribute(data),
+        AnyTransport::AugmentedAssignment(data) => transport_to_node_augmented_assignment(data),
+        AnyTransport::Await(data) => transport_to_node_await(data),
+        AnyTransport::BinaryOperator(data) => transport_to_node_binary_operator(data),
+        AnyTransport::Block(data) => transport_to_node_block(data),
+        AnyTransport::BooleanOperator(data) => transport_to_node_boolean_operator(data),
+        AnyTransport::BreakStatement(data) => transport_to_node_break_statement(data),
+        AnyTransport::Call(data) => transport_to_node_call(data),
+        AnyTransport::CaseClause(data) => transport_to_node_case_clause(data),
+        AnyTransport::CasePattern(data) => transport_to_node_case_pattern(data),
+        AnyTransport::Chevron(data) => transport_to_node_chevron(data),
+        AnyTransport::ClassDefinition(data) => transport_to_node_class_definition(data),
+        AnyTransport::ClassPattern(data) => transport_to_node_class_pattern(data),
+        AnyTransport::Comment(data) => transport_to_node_comment(data),
+        AnyTransport::ComparisonOperator(data) => transport_to_node_comparison_operator(data),
+        AnyTransport::ComplexPattern(data) => transport_to_node_complex_pattern(data),
+        AnyTransport::ConcatenatedString(data) => transport_to_node_concatenated_string(data),
+        AnyTransport::ConditionalExpression(data) => transport_to_node_conditional_expression(data),
+        AnyTransport::ConstrainedType(data) => transport_to_node_constrained_type(data),
+        AnyTransport::ContinueStatement(data) => transport_to_node_continue_statement(data),
+        AnyTransport::DecoratedDefinition(data) => transport_to_node_decorated_definition(data),
+        AnyTransport::Decorator(data) => transport_to_node_decorator(data),
+        AnyTransport::DefaultParameter(data) => transport_to_node_default_parameter(data),
+        AnyTransport::DeleteStatement(data) => transport_to_node_delete_statement(data),
+        AnyTransport::DictPattern(data) => transport_to_node_dict_pattern(data),
+        AnyTransport::Dictionary(data) => transport_to_node_dictionary(data),
+        AnyTransport::DictionaryComprehension(data) => transport_to_node_dictionary_comprehension(data),
+        AnyTransport::DictionarySplat(data) => transport_to_node_dictionary_splat(data),
+        AnyTransport::DictionarySplatPattern(data) => transport_to_node_dictionary_splat_pattern(data),
+        AnyTransport::DottedName(data) => transport_to_node_dotted_name(data),
+        AnyTransport::ElifClause(data) => transport_to_node_elif_clause(data),
+        AnyTransport::Ellipsis2(data) => transport_to_node_ellipsis2(data),
+        AnyTransport::ElseClause(data) => transport_to_node_else_clause(data),
+        AnyTransport::EscapeSequence(data) => transport_to_node_escape_sequence(data),
+        AnyTransport::ExceptClause(data) => transport_to_node_except_clause(data),
+        AnyTransport::ExecStatement(data) => transport_to_node_exec_statement(data),
+        AnyTransport::ExpressionList(data) => transport_to_node_expression_list(data),
+        AnyTransport::ExpressionStatementTuple(data) => transport_to_node_expression_statement_tuple(data),
+        AnyTransport::ExpressionStatement(data) => transport_to_node_expression_statement(data),
+        AnyTransport::False(data) => transport_to_node_false(data),
+        AnyTransport::FinallyClause(data) => transport_to_node_finally_clause(data),
+        AnyTransport::Float(data) => transport_to_node_float(data),
+        AnyTransport::ForInClause(data) => transport_to_node_for_in_clause(data),
+        AnyTransport::ForStatement(data) => transport_to_node_for_statement(data),
+        AnyTransport::FormatSpecifier(data) => transport_to_node_format_specifier(data),
+        AnyTransport::FunctionDefinition(data) => transport_to_node_function_definition(data),
+        AnyTransport::FutureImportStatement(data) => transport_to_node_future_import_statement(data),
+        AnyTransport::GeneratorExpression(data) => transport_to_node_generator_expression(data),
+        AnyTransport::GenericType(data) => transport_to_node_generic_type(data),
+        AnyTransport::GlobalStatement(data) => transport_to_node_global_statement(data),
+        AnyTransport::Identifier(data) => transport_to_node_identifier(data),
+        AnyTransport::IfClause(data) => transport_to_node_if_clause(data),
+        AnyTransport::IfStatement(data) => transport_to_node_if_statement(data),
+        AnyTransport::ImportFromStatement(data) => transport_to_node_import_from_statement(data),
+        AnyTransport::ImportPrefix(data) => transport_to_node_import_prefix(data),
+        AnyTransport::ImportStatement(data) => transport_to_node_import_statement(data),
+        AnyTransport::Integer(data) => transport_to_node_integer(data),
+        AnyTransport::Interpolation(data) => transport_to_node_interpolation(data),
+        AnyTransport::KeywordArgument(data) => transport_to_node_keyword_argument(data),
+        AnyTransport::KeywordPattern(data) => transport_to_node_keyword_pattern(data),
+        AnyTransport::KeywordSeparator(data) => transport_to_node_keyword_separator(data),
+        AnyTransport::Lambda(data) => transport_to_node_lambda(data),
+        AnyTransport::LambdaParameters(data) => transport_to_node_lambda_parameters(data),
+        AnyTransport::LambdaWithinForInClause(data) => transport_to_node_lambda_within_for_in_clause(data),
+        AnyTransport::LineContinuation(data) => transport_to_node_line_continuation(data),
+        AnyTransport::List(data) => transport_to_node_list(data),
+        AnyTransport::ListComprehension(data) => transport_to_node_list_comprehension(data),
+        AnyTransport::ListPattern(data) => transport_to_node_list_pattern(data),
+        AnyTransport::ListSplat(data) => transport_to_node_list_splat(data),
+        AnyTransport::ListSplatPattern(data) => transport_to_node_list_splat_pattern(data),
+        AnyTransport::MatchStatement(data) => transport_to_node_match_statement(data),
+        AnyTransport::MemberType(data) => transport_to_node_member_type(data),
+        AnyTransport::Module(data) => transport_to_node_module(data),
+        AnyTransport::NamedExpression(data) => transport_to_node_named_expression(data),
+        AnyTransport::None(data) => transport_to_node_none(data),
+        AnyTransport::NonlocalStatement(data) => transport_to_node_nonlocal_statement(data),
+        AnyTransport::NotOperator(data) => transport_to_node_not_operator(data),
+        AnyTransport::Pair(data) => transport_to_node_pair(data),
+        AnyTransport::Parameters(data) => transport_to_node_parameters(data),
+        AnyTransport::ParenthesizedExpression(data) => transport_to_node_parenthesized_expression(data),
+        AnyTransport::ParenthesizedListSplat(data) => transport_to_node_parenthesized_list_splat(data),
+        AnyTransport::PassStatement(data) => transport_to_node_pass_statement(data),
+        AnyTransport::PatternList(data) => transport_to_node_pattern_list(data),
+        AnyTransport::PositionalSeparator(data) => transport_to_node_positional_separator(data),
+        AnyTransport::PrintStatement(data) => transport_to_node_print_statement(data),
+        AnyTransport::RaiseStatement(data) => transport_to_node_raise_statement(data),
+        AnyTransport::RelativeImport(data) => transport_to_node_relative_import(data),
+        AnyTransport::ReturnStatement(data) => transport_to_node_return_statement(data),
+        AnyTransport::Set(data) => transport_to_node_set(data),
+        AnyTransport::SetComprehension(data) => transport_to_node_set_comprehension(data),
+        AnyTransport::Slice(data) => transport_to_node_slice(data),
+        AnyTransport::SplatPattern(data) => transport_to_node_splat_pattern(data),
+        AnyTransport::SplatType(data) => transport_to_node_splat_type(data),
+        AnyTransport::String(data) => transport_to_node_string(data),
+        AnyTransport::StringContent(data) => transport_to_node_string_content(data),
+        AnyTransport::Subscript(data) => transport_to_node_subscript(data),
+        AnyTransport::True(data) => transport_to_node_true(data),
+        AnyTransport::TryStatement(data) => transport_to_node_try_statement(data),
+        AnyTransport::Tuple(data) => transport_to_node_tuple(data),
+        AnyTransport::TuplePattern(data) => transport_to_node_tuple_pattern(data),
+        AnyTransport::Type(data) => transport_to_node_type(data),
+        AnyTransport::TypeAliasStatement(data) => transport_to_node_type_alias_statement(data),
+        AnyTransport::TypeConversion(data) => transport_to_node_type_conversion(data),
+        AnyTransport::TypeParameter(data) => transport_to_node_type_parameter(data),
+        AnyTransport::TypedDefaultParameter(data) => transport_to_node_typed_default_parameter(data),
+        AnyTransport::TypedParameter(data) => transport_to_node_typed_parameter(data),
+        AnyTransport::UnaryOperator(data) => transport_to_node_unary_operator(data),
+        AnyTransport::UnionPattern(data) => transport_to_node_union_pattern(data),
+        AnyTransport::UnionType(data) => transport_to_node_union_type(data),
+        AnyTransport::WhileStatement(data) => transport_to_node_while_statement(data),
+        AnyTransport::WildcardImport(data) => transport_to_node_wildcard_import(data),
+        AnyTransport::WithClauseBare(data) => transport_to_node_with_clause_bare(data),
+        AnyTransport::WithClauseParen(data) => transport_to_node_with_clause_paren(data),
+        AnyTransport::WithClause(data) => transport_to_node_with_clause(data),
+        AnyTransport::WithItem(data) => transport_to_node_with_item(data),
+        AnyTransport::WithStatement(data) => transport_to_node_with_statement(data),
+        AnyTransport::Yield(data) => transport_to_node_yield(data),
+        AnyTransport::Newline(data) => transport_to_node_newline(data),
+        AnyTransport::Indent(data) => transport_to_node_indent(data),
+        AnyTransport::Dedent(data) => transport_to_node_dedent(data),
+        AnyTransport::StringStart(data) => transport_to_node_string_start(data),
+        AnyTransport::_StringContent(data) => transport_to_node__string_content(data),
+        AnyTransport::EscapeInterpolation(data) => transport_to_node_escape_interpolation(data),
+        AnyTransport::StringEnd(data) => transport_to_node_string_end(data),
+        AnyTransport::CloseBracket(data) => transport_to_node_close_bracket(data),
+        AnyTransport::CloseParen(data) => transport_to_node_close_paren(data),
+        AnyTransport::CloseBrace(data) => transport_to_node_close_brace(data),
+        AnyTransport::Except(data) => transport_to_node_except(data),
+        AnyTransport::As(data) => transport_to_node_as(data),
+        AnyTransport::Eq(data) => transport_to_node_eq(data),
+        AnyTransport::Colon(data) => transport_to_node_colon(data),
+        AnyTransport::Async(data) => transport_to_node_async(data),
+        AnyTransport::Bracket(data) => transport_to_node_bracket(data),
+        AnyTransport::TokBs(data) => transport_to_node_tok_bs(data),
+        AnyTransport::Minus(data) => transport_to_node_minus(data),
+        AnyTransport::Paren(data) => transport_to_node_paren(data),
+        AnyTransport::Comma(data) => transport_to_node_comma(data),
+        AnyTransport::Assert(data) => transport_to_node_assert(data),
+        AnyTransport::Dot(data) => transport_to_node_dot(data),
+        AnyTransport::Plus(data) => transport_to_node_plus(data),
+        AnyTransport::Star(data) => transport_to_node_star(data),
+        AnyTransport::At(data) => transport_to_node_at(data),
+        AnyTransport::Slash(data) => transport_to_node_slash(data),
+        AnyTransport::Percent(data) => transport_to_node_percent(data),
+        AnyTransport::Slashslash(data) => transport_to_node_slashslash(data),
+        AnyTransport::Starstar(data) => transport_to_node_starstar(data),
+        AnyTransport::Pipe(data) => transport_to_node_pipe(data),
+        AnyTransport::Amp(data) => transport_to_node_amp(data),
+        AnyTransport::Caret(data) => transport_to_node_caret(data),
+        AnyTransport::Shl(data) => transport_to_node_shl(data),
+        AnyTransport::Shr(data) => transport_to_node_shr(data),
+        AnyTransport::And(data) => transport_to_node_and(data),
+        AnyTransport::Or(data) => transport_to_node_or(data),
+        AnyTransport::Break(data) => transport_to_node_break(data),
+        AnyTransport::Case(data) => transport_to_node_case(data),
+        AnyTransport::Class(data) => transport_to_node_class(data),
+        AnyTransport::If(data) => transport_to_node_if(data),
+        AnyTransport::Else(data) => transport_to_node_else(data),
+        AnyTransport::Continue(data) => transport_to_node_continue(data),
+        AnyTransport::Del(data) => transport_to_node_del(data),
+        AnyTransport::Brace(data) => transport_to_node_brace(data),
+        AnyTransport::Elif(data) => transport_to_node_elif(data),
+        AnyTransport::Ellipsis(data) => transport_to_node_ellipsis(data),
+        AnyTransport::Exec(data) => transport_to_node_exec(data),
+        AnyTransport::In(data) => transport_to_node_in(data),
+        AnyTransport::False2(data) => transport_to_node_false2(data),
+        AnyTransport::Finally(data) => transport_to_node_finally(data),
+        AnyTransport::For(data) => transport_to_node_for(data),
+        AnyTransport::Def(data) => transport_to_node_def(data),
+        AnyTransport::Arrow(data) => transport_to_node_arrow(data),
+        AnyTransport::From(data) => transport_to_node_from(data),
+        AnyTransport::FutureU(data) => transport_to_node_future_u(data),
+        AnyTransport::Import(data) => transport_to_node_import(data),
+        AnyTransport::Global(data) => transport_to_node_global(data),
+        AnyTransport::Match(data) => transport_to_node_match(data),
+        AnyTransport::Coloneq(data) => transport_to_node_coloneq(data),
+        AnyTransport::None2(data) => transport_to_node_none2(data),
+        AnyTransport::Nonlocal(data) => transport_to_node_nonlocal(data),
+        AnyTransport::Not(data) => transport_to_node_not(data),
+        AnyTransport::Pass(data) => transport_to_node_pass(data),
+        AnyTransport::Print(data) => transport_to_node_print(data),
+        AnyTransport::Raise(data) => transport_to_node_raise(data),
+        AnyTransport::Return(data) => transport_to_node_return(data),
+        AnyTransport::Anonymous(data) => transport_to_node_anonymous(data),
+        AnyTransport::True2(data) => transport_to_node_true2(data),
+        AnyTransport::Try(data) => transport_to_node_try(data),
+        AnyTransport::While(data) => transport_to_node_while(data),
+        AnyTransport::With(data) => transport_to_node_with(data),
+        AnyTransport::Literal0_2b_3d(data) => literal_transport_to_node("+=", data),
+        AnyTransport::Literal1_2d_3d(data) => literal_transport_to_node("-=", data),
+        AnyTransport::Literal2_2a_3d(data) => literal_transport_to_node("*=", data),
+        AnyTransport::Literal3_2f_3d(data) => literal_transport_to_node("/=", data),
+        AnyTransport::Literal4_40_3d(data) => literal_transport_to_node("@=", data),
+        AnyTransport::Literal5_2f_2f_3d(data) => literal_transport_to_node("//=", data),
+        AnyTransport::Literal6_25_3d(data) => literal_transport_to_node("%=", data),
+        AnyTransport::Literal7_2a_2a_3d(data) => literal_transport_to_node("**=", data),
+        AnyTransport::Literal8_3e_3e_3d(data) => literal_transport_to_node(">>=", data),
+        AnyTransport::Literal9_3c_3c_3d(data) => literal_transport_to_node("<<=", data),
+        AnyTransport::Literal10_26_3d(data) => literal_transport_to_node("&=", data),
+        AnyTransport::Literal11_5e_3d(data) => literal_transport_to_node("^=", data),
+        AnyTransport::Literal12_7c_3d(data) => literal_transport_to_node("|=", data),
+        AnyTransport::Literal13_3c(data) => literal_transport_to_node("<", data),
+        AnyTransport::Literal14_3c_3d(data) => literal_transport_to_node("<=", data),
+        AnyTransport::Literal15_3d_3d(data) => literal_transport_to_node("==", data),
+        AnyTransport::Literal16_21_3d(data) => literal_transport_to_node("!=", data),
+        AnyTransport::Literal17_3e_3d(data) => literal_transport_to_node(">=", data),
+        AnyTransport::Literal18_3e(data) => literal_transport_to_node(">", data),
+        AnyTransport::Literal19_3c_3e(data) => literal_transport_to_node("<>", data),
+        AnyTransport::Literal20_6e_6f_74_20_69_6e(data) => literal_transport_to_node("not in", data),
+        AnyTransport::Literal21_69_73(data) => literal_transport_to_node("is", data),
+        AnyTransport::Literal22_69_73_20_6e_6f_74(data) => literal_transport_to_node("is not", data),
+        AnyTransport::Literal23_7e(data) => literal_transport_to_node("~", data),
+    }
+}
+
+fn transport_to_node__as_pattern(transport: _AsPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "_as_pattern",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_as_pattern_target(transport: AsPatternTargetTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "_as_pattern_target",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_assignment_eq(transport: AssignmentEqTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("right".to_string(), transport_field_value(transport.right)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "_assignment_eq",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_assignment_type(transport: AssignmentTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("type".to_string(), transport_field_value(transport.r#type)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "_assignment_type",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_assignment_typed(transport: AssignmentTypedTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("type".to_string(), transport_field_value(transport.r#type)?);
+    fields.insert("right".to_string(), transport_field_value(transport.right)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "_assignment_typed",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_comprehension_clauses(transport: ComprehensionClausesTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "_comprehension_clauses",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_format_expression(transport: FormatExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "_format_expression",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_import_list(transport: ImportListTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("name".to_string(), transport_field_values(transport.name)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "_import_list",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_is_not(transport: IsNotTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "_is_not",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_key_value_pattern(transport: KeyValuePatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("key".to_string(), transport_field_value(transport.key)?);
+    fields.insert("value".to_string(), transport_field_value(transport.value)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "_key_value_pattern",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_kw_async_marker(transport: KwAsyncMarkerTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "_kw_async_marker",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node__list_pattern(transport: _ListPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "_list_pattern",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_match_block(transport: MatchBlockTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "_match_block",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_match_block_block(transport: MatchBlockBlockTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("alternative".to_string(), transport_field_values(transport.alternative)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "_match_block_block",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_not_escape_sequence(transport: NotEscapeSequenceTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "_not_escape_sequence",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_not_in(transport: NotInTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "_not_in",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_simple_pattern_negative(transport: SimplePatternNegativeTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "_simple_pattern_negative",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_simple_statements(transport: SimpleStatementsTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "_simple_statements",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_suite(transport: SuiteTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "_suite",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node__tuple_pattern(transport: _TuplePatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "_tuple_pattern",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node__with_clause_paren(transport: _WithClauseParenTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "_with_clause_paren",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_aliased_import(transport: AliasedImportTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("alias".to_string(), transport_field_value(transport.alias)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "aliased_import",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_argument_list(transport: ArgumentListTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = match transport.children {
+        Some(children) => Some(transport_children(children)?),
+        None => None,
+    };
+    Ok(transport_node_data(
+        "argument_list",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_as_pattern(transport: AsPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("expression".to_string(), transport_field_value(transport.expression)?);
+    fields.insert("alias".to_string(), transport_field_value(transport.alias)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "as_pattern",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_assert_statement(transport: AssertStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "assert_statement",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_assignment(transport: AssignmentTransport) -> Result<TransportNodeData, ::askama::Error> {
+    match transport {
+        AssignmentTransport::AssignmentUFormEq(data) => transport_to_node_assignment_uform_eq(data),
+        AssignmentTransport::AssignmentUFormType(data) => transport_to_node_assignment_uform_type(data),
+        AssignmentTransport::AssignmentUFormTyped(data) => transport_to_node_assignment_uform_typed(data),
+    }
+}
+
+fn transport_to_node_assignment_uform_eq(transport: AssignmentUFormEqTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("left".to_string(), transport_field_value(transport.left)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "assignment",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_assignment_uform_type(transport: AssignmentUFormTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("left".to_string(), transport_field_value(transport.left)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "assignment",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_assignment_uform_typed(transport: AssignmentUFormTypedTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("left".to_string(), transport_field_value(transport.left)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "assignment",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_attribute(transport: AttributeTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("object".to_string(), transport_field_value(transport.object)?);
+    fields.insert("attribute".to_string(), transport_field_value(transport.attribute)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "attribute",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_augmented_assignment(transport: AugmentedAssignmentTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("left".to_string(), transport_field_value(transport.left)?);
+    fields.insert("operator".to_string(), transport_field_value(transport.operator)?);
+    fields.insert("right".to_string(), transport_field_value(transport.right)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "augmented_assignment",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_await(transport: AwaitTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("primary_expression".to_string(), transport_field_value(transport.primary_expression)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "await",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_binary_operator(transport: BinaryOperatorTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("left".to_string(), transport_field_value(transport.left)?);
+    fields.insert("operator".to_string(), transport_field_value(transport.operator)?);
+    fields.insert("right".to_string(), transport_field_value(transport.right)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "binary_operator",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_block(transport: BlockTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "block",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_boolean_operator(transport: BooleanOperatorTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("left".to_string(), transport_field_value(transport.left)?);
+    fields.insert("operator".to_string(), transport_field_value(transport.operator)?);
+    fields.insert("right".to_string(), transport_field_value(transport.right)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "boolean_operator",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_break_statement(transport: BreakStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "break_statement",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_call(transport: CallTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("function".to_string(), transport_field_value(transport.function)?);
+    fields.insert("arguments".to_string(), transport_field_value(transport.arguments)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "call",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_case_clause(transport: CaseClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.guard {
+        fields.insert("guard".to_string(), transport_field_value(value)?);
+    }
+    fields.insert("consequence".to_string(), transport_field_value(transport.consequence)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "case_clause",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_case_pattern(transport: CasePatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "case_pattern",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_chevron(transport: ChevronTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("expression".to_string(), transport_field_value(transport.expression)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "chevron",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_class_definition(transport: ClassDefinitionTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    if let Some(value) = transport.type_parameters {
+        fields.insert("type_parameters".to_string(), transport_field_value(value)?);
+    }
+    if let Some(value) = transport.superclasses {
+        fields.insert("superclasses".to_string(), transport_field_value(value)?);
+    }
+    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "class_definition",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_class_pattern(transport: ClassPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("dotted_name".to_string(), transport_field_value(transport.dotted_name)?);
+    fields.insert("arguments".to_string(), transport_field_values(transport.arguments)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "class_pattern",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_comment(transport: CommentTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "comment",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_comparison_operator(transport: ComparisonOperatorTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("left".to_string(), transport_field_value(transport.left)?);
+    fields.insert("operators".to_string(), transport_field_values(transport.operators)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "comparison_operator",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_complex_pattern(transport: ComplexPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.real {
+        fields.insert("real".to_string(), transport_field_value(value)?);
+    }
+    fields.insert("imaginary".to_string(), transport_field_value(transport.imaginary)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "complex_pattern",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_concatenated_string(transport: ConcatenatedStringTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "concatenated_string",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_conditional_expression(transport: ConditionalExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    fields.insert("condition".to_string(), transport_field_value(transport.condition)?);
+    fields.insert("alternative".to_string(), transport_field_value(transport.alternative)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "conditional_expression",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_constrained_type(transport: ConstrainedTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("base_type".to_string(), transport_field_value(transport.base_type)?);
+    fields.insert("constraint".to_string(), transport_field_value(transport.constraint)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "constrained_type",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_continue_statement(transport: ContinueStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "continue_statement",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_decorated_definition(transport: DecoratedDefinitionTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("definition".to_string(), transport_field_value(transport.definition)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "decorated_definition",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_decorator(transport: DecoratorTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("expression".to_string(), transport_field_value(transport.expression)?);
+    if let Some(value) = transport.newline {
+        fields.insert("newline".to_string(), transport_field_value(value)?);
+    }
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "decorator",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_default_parameter(transport: DefaultParameterTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("value".to_string(), transport_field_value(transport.value)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "default_parameter",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_delete_statement(transport: DeleteStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "delete_statement",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_dict_pattern(transport: DictPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "dict_pattern",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_dictionary(transport: DictionaryTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "dictionary",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_dictionary_comprehension(transport: DictionaryComprehensionTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "dictionary_comprehension",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_dictionary_splat(transport: DictionarySplatTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("expression".to_string(), transport_field_value(transport.expression)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "dictionary_splat",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_dictionary_splat_pattern(transport: DictionarySplatPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "dictionary_splat_pattern",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_dotted_name(transport: DottedNameTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "dotted_name",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_elif_clause(transport: ElifClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("condition".to_string(), transport_field_value(transport.condition)?);
+    fields.insert("consequence".to_string(), transport_field_value(transport.consequence)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "elif_clause",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_ellipsis2(transport: Ellipsis2Transport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "ellipsis",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_else_clause(transport: ElseClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "else_clause",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_escape_sequence(transport: EscapeSequenceTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "escape_sequence",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_except_clause(transport: ExceptClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.value {
+        fields.insert("value".to_string(), transport_field_values(value)?);
+    }
+    if let Some(value) = transport.alias {
+        fields.insert("alias".to_string(), transport_field_value(value)?);
+    }
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "except_clause",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_exec_statement(transport: ExecStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("code".to_string(), transport_field_value(transport.code)?);
+    if let Some(value) = transport.in_clause {
+        fields.insert("in_clause".to_string(), transport_field_values(value)?);
+    }
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "exec_statement",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_expression_list(transport: ExpressionListTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "expression_list",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_expression_statement_tuple(transport: ExpressionStatementTupleTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "expression_statement_tuple",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_expression_statement(transport: ExpressionStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    match transport {
+        ExpressionStatementTransport::ExpressionStatementUFormTuple(data) => transport_to_node_expression_statement_uform_tuple(data),
+    }
+}
+
+fn transport_to_node_expression_statement_uform_tuple(transport: ExpressionStatementUFormTupleTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "expression_statement",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_false(transport: FalseTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "false",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_finally_clause(transport: FinallyClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("block".to_string(), transport_field_value(transport.block)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "finally_clause",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_float(transport: FloatTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "float",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_for_in_clause(transport: ForInClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.async_marker {
+        fields.insert("async_marker".to_string(), transport_field_value(value)?);
+    }
+    fields.insert("left".to_string(), transport_field_value(transport.left)?);
+    fields.insert("right".to_string(), transport_field_values(transport.right)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "for_in_clause",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_for_statement(transport: ForStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.async_marker {
+        fields.insert("async_marker".to_string(), transport_field_value(value)?);
+    }
+    fields.insert("left".to_string(), transport_field_value(transport.left)?);
+    fields.insert("right".to_string(), transport_field_value(transport.right)?);
+    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    if let Some(value) = transport.alternative {
+        fields.insert("alternative".to_string(), transport_field_value(value)?);
+    }
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "for_statement",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_format_specifier(transport: FormatSpecifierTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "format_specifier",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_function_definition(transport: FunctionDefinitionTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.async_marker {
+        fields.insert("async_marker".to_string(), transport_field_value(value)?);
+    }
+    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    if let Some(value) = transport.type_parameters {
+        fields.insert("type_parameters".to_string(), transport_field_value(value)?);
+    }
+    fields.insert("parameters".to_string(), transport_field_value(transport.parameters)?);
+    if let Some(value) = transport.return_type {
+        fields.insert("return_type".to_string(), transport_field_value(value)?);
+    }
+    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "function_definition",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_future_import_statement(transport: FutureImportStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("name".to_string(), transport_field_values(transport.name)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "future_import_statement",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_generator_expression(transport: GeneratorExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "generator_expression",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_generic_type(transport: GenericTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("identifier".to_string(), transport_field_value(transport.identifier)?);
+    fields.insert("type_parameter".to_string(), transport_field_value(transport.type_parameter)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "generic_type",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_global_statement(transport: GlobalStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "global_statement",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_identifier(transport: IdentifierTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "identifier",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_if_clause(transport: IfClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("expression".to_string(), transport_field_value(transport.expression)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "if_clause",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_if_statement(transport: IfStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("condition".to_string(), transport_field_value(transport.condition)?);
+    fields.insert("consequence".to_string(), transport_field_value(transport.consequence)?);
+    if let Some(value) = transport.alternative {
+        fields.insert("alternative".to_string(), transport_field_values(value)?);
+    }
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "if_statement",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_import_from_statement(transport: ImportFromStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("module_name".to_string(), transport_field_value(transport.module_name)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "import_from_statement",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_import_prefix(transport: ImportPrefixTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "import_prefix",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_import_statement(transport: ImportStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("name".to_string(), transport_field_values(transport.name)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "import_statement",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_integer(transport: IntegerTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "integer",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_interpolation(transport: InterpolationTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("expression".to_string(), transport_field_value(transport.expression)?);
+    if let Some(value) = transport.type_conversion {
+        fields.insert("type_conversion".to_string(), transport_field_value(value)?);
+    }
+    if let Some(value) = transport.format_specifier {
+        fields.insert("format_specifier".to_string(), transport_field_value(value)?);
+    }
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "interpolation",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_keyword_argument(transport: KeywordArgumentTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("value".to_string(), transport_field_value(transport.value)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "keyword_argument",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_keyword_pattern(transport: KeywordPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("identifier".to_string(), transport_field_value(transport.identifier)?);
+    fields.insert("simple_pattern".to_string(), transport_field_value(transport.simple_pattern)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "keyword_pattern",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_keyword_separator(transport: KeywordSeparatorTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "keyword_separator",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_lambda(transport: LambdaTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.parameters {
+        fields.insert("parameters".to_string(), transport_field_value(value)?);
+    }
+    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "lambda",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_lambda_parameters(transport: LambdaParametersTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "lambda_parameters",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_lambda_within_for_in_clause(transport: LambdaWithinForInClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.parameters {
+        fields.insert("parameters".to_string(), transport_field_value(value)?);
+    }
+    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "lambda_within_for_in_clause",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_line_continuation(transport: LineContinuationTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "line_continuation",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_list(transport: ListTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "list",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_list_comprehension(transport: ListComprehensionTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "list_comprehension",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_list_pattern(transport: ListPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "list_pattern",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_list_splat(transport: ListSplatTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("expression".to_string(), transport_field_value(transport.expression)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "list_splat",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_list_splat_pattern(transport: ListSplatPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "list_splat_pattern",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_match_statement(transport: MatchStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("subject".to_string(), transport_field_values(transport.subject)?);
+    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "match_statement",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_member_type(transport: MemberTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("base_type".to_string(), transport_field_value(transport.base_type)?);
+    fields.insert("identifier".to_string(), transport_field_value(transport.identifier)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "member_type",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_module(transport: ModuleTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "module",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_named_expression(transport: NamedExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("value".to_string(), transport_field_value(transport.value)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "named_expression",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_none(transport: NoneTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "none",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_nonlocal_statement(transport: NonlocalStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "nonlocal_statement",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_not_operator(transport: NotOperatorTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("argument".to_string(), transport_field_value(transport.argument)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "not_operator",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_pair(transport: PairTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("key".to_string(), transport_field_value(transport.key)?);
+    fields.insert("value".to_string(), transport_field_value(transport.value)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "pair",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_parameters(transport: ParametersTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "parameters",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_parenthesized_expression(transport: ParenthesizedExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "parenthesized_expression",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_parenthesized_list_splat(transport: ParenthesizedListSplatTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "parenthesized_list_splat",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_pass_statement(transport: PassStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "pass_statement",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_pattern_list(transport: PatternListTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "pattern_list",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_positional_separator(transport: PositionalSeparatorTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "positional_separator",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_print_statement(transport: PrintStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("argument".to_string(), transport_field_values(transport.argument)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = match transport.children {
+        Some(children) => Some(transport_children(children)?),
+        None => None,
+    };
+    Ok(transport_node_data(
+        "print_statement",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_raise_statement(transport: RaiseStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.cause {
+        fields.insert("cause".to_string(), transport_field_value(value)?);
+    }
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = match transport.children {
+        Some(children) => Some(transport_children(children)?),
+        None => None,
+    };
+    Ok(transport_node_data(
+        "raise_statement",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_relative_import(transport: RelativeImportTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("import_prefix".to_string(), transport_field_value(transport.import_prefix)?);
+    if let Some(value) = transport.dotted_name {
+        fields.insert("dotted_name".to_string(), transport_field_value(value)?);
+    }
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "relative_import",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_return_statement(transport: ReturnStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = match transport.children {
+        Some(children) => Some(transport_children(children)?),
+        None => None,
+    };
+    Ok(transport_node_data(
+        "return_statement",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_set(transport: SetTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "set",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_set_comprehension(transport: SetComprehensionTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "set_comprehension",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_slice(transport: SliceTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.start {
+        fields.insert("start".to_string(), transport_field_value(value)?);
+    }
+    if let Some(value) = transport.stop {
+        fields.insert("stop".to_string(), transport_field_value(value)?);
+    }
+    if let Some(value) = transport.step {
+        fields.insert("step".to_string(), transport_field_value(value)?);
+    }
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "slice",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_splat_pattern(transport: SplatPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("identifier".to_string(), transport_field_value(transport.identifier)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "splat_pattern",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_splat_type(transport: SplatTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("identifier".to_string(), transport_field_value(transport.identifier)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "splat_type",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_string(transport: StringTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("string_start".to_string(), transport_field_value(transport.string_start)?);
+    fields.insert("content".to_string(), transport_field_values(transport.content)?);
+    fields.insert("string_end".to_string(), transport_field_value(transport.string_end)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "string",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_string_content(transport: StringContentTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "string_content",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_subscript(transport: SubscriptTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("value".to_string(), transport_field_value(transport.value)?);
+    fields.insert("subscript".to_string(), transport_field_values(transport.subscript)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "subscript",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_true(transport: TrueTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "true",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_try_statement(transport: TryStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    fields.insert("except_clauses".to_string(), transport_field_values(transport.except_clauses)?);
+    if let Some(value) = transport.else_clause {
+        fields.insert("else_clause".to_string(), transport_field_value(value)?);
+    }
+    if let Some(value) = transport.finally_clause {
+        fields.insert("finally_clause".to_string(), transport_field_value(value)?);
+    }
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "try_statement",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_tuple(transport: TupleTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "tuple",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_tuple_pattern(transport: TuplePatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "tuple_pattern",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_type(transport: TypeTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "type",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_type_alias_statement(transport: TypeAliasStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("type".to_string(), transport_field_value(transport.r#type)?);
+    fields.insert("left".to_string(), transport_field_value(transport.left)?);
+    fields.insert("right".to_string(), transport_field_value(transport.right)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "type_alias_statement",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_type_conversion(transport: TypeConversionTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "type_conversion",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_type_parameter(transport: TypeParameterTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "type_parameter",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_typed_default_parameter(transport: TypedDefaultParameterTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("type".to_string(), transport_field_value(transport.r#type)?);
+    fields.insert("value".to_string(), transport_field_value(transport.value)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "typed_default_parameter",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_typed_parameter(transport: TypedParameterTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("type".to_string(), transport_field_value(transport.r#type)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "typed_parameter",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_unary_operator(transport: UnaryOperatorTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("operator".to_string(), transport_field_value(transport.operator)?);
+    fields.insert("argument".to_string(), transport_field_value(transport.argument)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "unary_operator",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_union_pattern(transport: UnionPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "union_pattern",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_union_type(transport: UnionTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("left".to_string(), transport_field_value(transport.left)?);
+    fields.insert("right".to_string(), transport_field_value(transport.right)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "union_type",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_while_statement(transport: WhileStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("condition".to_string(), transport_field_value(transport.condition)?);
+    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    if let Some(value) = transport.alternative {
+        fields.insert("alternative".to_string(), transport_field_value(value)?);
+    }
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "while_statement",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_wildcard_import(transport: WildcardImportTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "wildcard_import",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_with_clause_bare(transport: WithClauseBareTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "with_clause_bare",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_with_clause_paren(transport: WithClauseParenTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "with_clause_paren",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_with_clause(transport: WithClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
+    match transport {
+        WithClauseTransport::WithClauseUFormBare(data) => transport_to_node_with_clause_uform_bare(data),
+        WithClauseTransport::WithClauseUFormParen(data) => transport_to_node_with_clause_uform_paren(data),
+    }
+}
+
+fn transport_to_node_with_clause_uform_bare(transport: WithClauseUFormBareTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "with_clause",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_with_clause_uform_paren(transport: WithClauseUFormParenTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "with_clause",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_with_item(transport: WithItemTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("value".to_string(), transport_field_value(transport.value)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "with_item",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_with_statement(transport: WithStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.async_marker {
+        fields.insert("async_marker".to_string(), transport_field_value(value)?);
+    }
+    fields.insert("with_clause".to_string(), transport_field_value(transport.with_clause)?);
+    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    Ok(transport_node_data(
+        "with_statement",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_yield(transport: YieldTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children)?);
+    Ok(transport_node_data(
+        "yield",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_id,
+        fields,
+        children,
+    ))
+}
+
+fn transport_to_node_newline(transport: NewlineTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "_newline",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_indent(transport: IndentTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "_indent",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_dedent(transport: DedentTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "_dedent",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_string_start(transport: StringStartTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "string_start",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node__string_content(transport: _StringContentTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "_string_content",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_escape_interpolation(transport: EscapeInterpolationTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "escape_interpolation",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_string_end(transport: StringEndTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "string_end",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_close_bracket(transport: CloseBracketTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "]",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_close_paren(transport: CloseParenTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        ")",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_close_brace(transport: CloseBraceTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "}",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_except(transport: ExceptTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "except",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_as(transport: AsTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "as",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_eq(transport: EqTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "=",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_colon(transport: ColonTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        ":",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_async(transport: AsyncTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "async",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_bracket(transport: BracketTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "[",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_tok_bs(transport: TokBsTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "\\",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_minus(transport: MinusTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "-",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_paren(transport: ParenTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "(",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_comma(transport: CommaTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        ",",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_assert(transport: AssertTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "assert",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_dot(transport: DotTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        ".",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_plus(transport: PlusTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "+",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_star(transport: StarTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "*",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_at(transport: AtTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "@",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_slash(transport: SlashTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "/",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_percent(transport: PercentTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "%",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_slashslash(transport: SlashslashTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "//",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_starstar(transport: StarstarTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "**",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_pipe(transport: PipeTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "|",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_amp(transport: AmpTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "&",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_caret(transport: CaretTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "^",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_shl(transport: ShlTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "<<",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_shr(transport: ShrTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        ">>",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_and(transport: AndTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "and",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_or(transport: OrTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "or",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_break(transport: BreakTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "break",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_case(transport: CaseTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "case",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_class(transport: ClassTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "class",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_if(transport: IfTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "if",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_else(transport: ElseTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "else",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_continue(transport: ContinueTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "continue",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_del(transport: DelTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "del",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_brace(transport: BraceTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "{",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_elif(transport: ElifTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "elif",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_ellipsis(transport: EllipsisTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "...",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_exec(transport: ExecTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "exec",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_in(transport: InTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "in",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_false2(transport: False2Transport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "False",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_finally(transport: FinallyTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "finally",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_for(transport: ForTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "for",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_def(transport: DefTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "def",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_arrow(transport: ArrowTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "->",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_from(transport: FromTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "from",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_future_u(transport: FutureUTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "__future__",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_import(transport: ImportTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "import",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_global(transport: GlobalTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "global",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_match(transport: MatchTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "match",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_coloneq(transport: ColoneqTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        ":=",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_none2(transport: None2Transport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "None",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_nonlocal(transport: NonlocalTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "nonlocal",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_not(transport: NotTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "not",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_pass(transport: PassTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "pass",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_print(transport: PrintTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "print",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_raise(transport: RaiseTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "raise",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_return(transport: ReturnTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "return",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_anonymous(transport: AnonymousTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "_",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_true2(transport: True2Transport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "True",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_try(transport: TryTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "try",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_while(transport: WhileTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "while",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_with(transport: WithTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        "with",
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id,
+        None,
+        None,
+    ))
+}
+
+pub fn node_data_from_transport(transport: AnyTransport) -> Result<TransportNodeData, ::askama::Error> {
+    transport_to_node(transport)
+}
+
+pub fn render_transport_parts(transport: AnyTransport) -> Result<(TransportNodeData, String), ::askama::Error> {
+    let node = node_data_from_transport(transport)?;
+    let rendered = render_dispatch(&node)?;
+    Ok((node, rendered))
+}
+
+pub fn from_transport(transport: AnyTransport) -> Result<String, ::askama::Error> {
+    let (_node, rendered) = render_transport_parts(transport)?;
+    Ok(rendered)
+}
+
+pub fn render_transport(transport: AnyTransport) -> Result<String, ::askama::Error> {
+    from_transport(transport)
 }
 
 #[derive(::askama::Template)]

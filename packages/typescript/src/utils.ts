@@ -2,7 +2,7 @@
 // Shared client-side resolution utilities for .from() and factories
 
 import type { AnyNodeData, AnyTreeNodeOf } from '@sittir/types';
-import type { NamespaceMap } from './types.js';
+import type { AnyTransport, NamespaceMap } from './types.js';
 
 /**
  * Type guard: returns true if `v` is a NodeData.
@@ -60,4 +60,5570 @@ export function hasKindOf<K extends keyof NamespaceMap>(
   kind: K,
 ): v is { kind: K } & NamespaceMap[K]['Loose'] {
   return 'kind' in v && (v as Record<string, unknown>).kind === kind;
+}
+
+/**
+ * Convert NodeData/factory output into the data-only native transport shape.
+ */
+export function toNativeRenderTransport(node: unknown): AnyTransport {
+  const projected = projectTransportValue(node, 'node');
+  assertNativeRenderTransport(projected);
+  return projected;
+}
+
+const transportMetadataKeys = new Set(['$type', '$variant', '$source', '$named', '$text', '$span', '$nodeId']);
+
+type NativeTransportAlternative = { readonly type: string; readonly text?: string };
+type NativeTransportFieldRule = { readonly name: string; readonly multiple: boolean; readonly required: boolean; readonly alternatives: readonly NativeTransportAlternative[] };
+type NativeTransportRawChildRule = { readonly childrenRequired: boolean; readonly childAlternatives: readonly NativeTransportAlternative[]; readonly fields: readonly NativeTransportFieldRule[] };
+type NativeTransportVariantRule = { readonly variant: string; readonly fields: readonly NativeTransportFieldRule[]; readonly children?: { readonly required: boolean; readonly alternatives: readonly NativeTransportAlternative[] } };
+
+const nativeTransportAliasTargetToSource: Record<string, string> = {
+  "automatic_semicolon": "_automatic_semicolon",
+  "call_expression_call": "_call_expression_call",
+  "call_expression_member": "_call_expression_member",
+  "call_expression_template_call": "_call_expression_template_call",
+  "class_body_member": "_class_body_member",
+  "class_body_method": "_class_body_method",
+  "class_body_method_sig": "_class_body_method_sig",
+  "destructuring_pattern": "_destructuring_pattern",
+  "export_statement_default": "_export_statement_default",
+  "export_statement_default_decl_arm": "_export_statement_default_decl_arm",
+  "export_statement_default_decl_arm_default_kw": "_export_statement_default_decl_arm_default_kw",
+  "export_statement_default_decl_arm_default_kw_value": "_export_statement_default_decl_arm_default_kw_value",
+  "export_statement_default_from_arm": "_export_statement_default_from_arm",
+  "export_statement_default_from_arm_clause_from": "_export_statement_default_from_arm_clause_from",
+  "export_statement_default_from_arm_ns_from": "_export_statement_default_from_arm_ns_from",
+  "export_statement_default_from_arm_star_from": "_export_statement_default_from_arm_star_from",
+  "expressions": "_expressions",
+  "for_header_let_const_kind": "_for_header_let_const_kind",
+  "for_header_lhs": "_for_header_lhs",
+  "for_header_var_kind": "_for_header_var_kind",
+  "formal_parameter": "_formal_parameter",
+  "function_signature_automatic_semicolon": "_function_signature_automatic_semicolon",
+  "import_identifier": "_import_identifier",
+  "import_specifier_as": "_import_specifier_as",
+  "index_signature_colon": "_index_signature_colon",
+  "initializer": "_initializer",
+  "interface_body": "_interface_body",
+  "jsx_attribute_name": "_jsx_attribute_name",
+  "jsx_attribute_value": "_jsx_attribute_value",
+  "jsx_child": "_jsx_child",
+  "jsx_element_name": "_jsx_element_name",
+  "kw_abstract_marker": "_kw_abstract_marker",
+  "kw_async_marker": "_kw_async_marker",
+  "kw_const_marker": "_kw_const_marker",
+  "kw_readonly_marker": "_kw_readonly_marker",
+  "kw_static_marker": "_kw_static_marker",
+  "lhs_expression": "_lhs_expression",
+  "module_export_name": "_module_export_name",
+  "parenthesized_expression_typed": "_parenthesized_expression_typed",
+  "property_identifier": "_property_identifier",
+  "property_name": "_property_name",
+  "public_field_definition_abstract_first": "_public_field_definition_abstract_first",
+  "public_field_definition_access_first": "_public_field_definition_access_first",
+  "public_field_definition_accessor_opt": "_public_field_definition_accessor_opt",
+  "public_field_definition_declare_first": "_public_field_definition_declare_first",
+  "public_field_definition_readonly_first": "_public_field_definition_readonly_first",
+  "public_field_definition_static_mods": "_public_field_definition_static_mods",
+  "reserved_identifier": "_reserved_identifier",
+  "semicolon": "_semicolon",
+  "shorthand_property_identifier": "_shorthand_property_identifier",
+  "shorthand_property_identifier_pattern": "_shorthand_property_identifier_pattern",
+  "statement_identifier": "_statement_identifier",
+  "string_fragment": "_string_fragment",
+  "tuple_type_member": "_tuple_type_member",
+  "type_identifier": "_type_identifier",
+  "type_query_call_expression": "_type_query_call_expression",
+  "type_query_call_expression_in_type_annotation": "_type_query_call_expression_in_type_annotation",
+  "type_query_instantiation_expression": "_type_query_instantiation_expression",
+  "type_query_member_expression": "_type_query_member_expression",
+  "type_query_member_expression_in_type_annotation": "_type_query_member_expression_in_type_annotation",
+  "type_query_subscript_expression": "_type_query_subscript_expression",
+  "update_expression_postfix": "_update_expression_postfix",
+  "update_expression_prefix": "_update_expression_prefix",
+};
+
+const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildRule> = {
+  "_class_body_method": {
+    childrenRequired: true,
+    childAlternatives: [{"type":"method_definition"},{"type":"_automatic_semicolon"}] as const,
+    fields: [
+      { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
+    ],
+  },
+  "_export_statement_default_decl_arm": {
+    childrenRequired: true,
+    childAlternatives: [{"type":"_export_statement_default_decl_arm_default_kw"}] as const,
+    fields: [
+      { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
+    ],
+  },
+  "_jsx_start_opening_element": {
+    childrenRequired: false,
+    childAlternatives: [] as const,
+    fields: [
+      { name: "attribute", multiple: true, required: true, alternatives: [{"type":"jsx_attribute"}] as const },
+    ],
+  },
+  "_parameter_name": {
+    childrenRequired: false,
+    childAlternatives: [{"type":"accessibility_modifier","text":"public"},{"type":"accessibility_modifier","text":"private"},{"type":"accessibility_modifier","text":"protected"},{"type":"override_modifier","text":"override"}] as const,
+    fields: [
+      { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
+    ],
+  },
+  "abstract_class_declaration": {
+    childrenRequired: false,
+    childAlternatives: [] as const,
+    fields: [
+      { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
+    ],
+  },
+  "class": {
+    childrenRequired: false,
+    childAlternatives: [] as const,
+    fields: [
+      { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
+    ],
+  },
+  "class_declaration": {
+    childrenRequired: false,
+    childAlternatives: [] as const,
+    fields: [
+      { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
+    ],
+  },
+  "extends_clause": {
+    childrenRequired: false,
+    childAlternatives: [] as const,
+    fields: [
+      { name: "value", multiple: true, required: true, alternatives: [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const },
+    ],
+  },
+  "extends_type_clause": {
+    childrenRequired: false,
+    childAlternatives: [] as const,
+    fields: [
+      { name: "type", multiple: true, required: true, alternatives: [{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"}] as const },
+    ],
+  },
+  "field_definition": {
+    childrenRequired: false,
+    childAlternatives: [] as const,
+    fields: [
+      { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
+    ],
+  },
+  "jsx_opening_element": {
+    childrenRequired: false,
+    childAlternatives: [] as const,
+    fields: [
+      { name: "attribute", multiple: true, required: true, alternatives: [{"type":"jsx_attribute"}] as const },
+    ],
+  },
+  "jsx_self_closing_element": {
+    childrenRequired: false,
+    childAlternatives: [] as const,
+    fields: [
+      { name: "attribute", multiple: true, required: true, alternatives: [{"type":"jsx_attribute"}] as const },
+    ],
+  },
+  "lexical_declaration": {
+    childrenRequired: false,
+    childAlternatives: [] as const,
+    fields: [
+      { name: "declarators", multiple: true, required: true, alternatives: [{"type":"variable_declarator"}] as const },
+    ],
+  },
+  "object_type": {
+    childrenRequired: false,
+    childAlternatives: [] as const,
+    fields: [
+      { name: "members", multiple: true, required: false, alternatives: [{"type":",","text":","},{"type":";","text":";"},{"type":"export_statement"},{"type":"property_signature"},{"type":"call_signature"},{"type":"construct_signature"},{"type":"index_signature"},{"type":"method_signature"},{"type":"_automatic_semicolon"}] as const },
+    ],
+  },
+  "optional_parameter": {
+    childrenRequired: false,
+    childAlternatives: [{"type":"accessibility_modifier","text":"public"},{"type":"accessibility_modifier","text":"private"},{"type":"accessibility_modifier","text":"protected"},{"type":"override_modifier","text":"override"}] as const,
+    fields: [
+      { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
+    ],
+  },
+  "program": {
+    childrenRequired: false,
+    childAlternatives: [] as const,
+    fields: [
+      { name: "statements", multiple: true, required: true, alternatives: [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const },
+    ],
+  },
+  "public_field_definition": {
+    childrenRequired: false,
+    childAlternatives: [{"type":"_public_field_definition_declare_first"},{"type":"_public_field_definition_access_first"},{"type":"_public_field_definition_static_mods"},{"type":"_public_field_definition_abstract_first"},{"type":"_public_field_definition_readonly_first"},{"type":"_public_field_definition_accessor_opt"}] as const,
+    fields: [
+      { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
+    ],
+  },
+  "required_parameter": {
+    childrenRequired: false,
+    childAlternatives: [{"type":"accessibility_modifier","text":"public"},{"type":"accessibility_modifier","text":"private"},{"type":"accessibility_modifier","text":"protected"},{"type":"override_modifier","text":"override"}] as const,
+    fields: [
+      { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
+    ],
+  },
+  "statement_block": {
+    childrenRequired: false,
+    childAlternatives: [] as const,
+    fields: [
+      { name: "statements", multiple: true, required: true, alternatives: [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const },
+    ],
+  },
+  "switch_case": {
+    childrenRequired: false,
+    childAlternatives: [] as const,
+    fields: [
+      { name: "body", multiple: true, required: true, alternatives: [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const },
+    ],
+  },
+  "switch_default": {
+    childrenRequired: false,
+    childAlternatives: [] as const,
+    fields: [
+      { name: "body", multiple: true, required: true, alternatives: [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const },
+    ],
+  },
+  "variable_declaration": {
+    childrenRequired: false,
+    childAlternatives: [] as const,
+    fields: [
+      { name: "declarators", multiple: true, required: true, alternatives: [{"type":"variable_declarator"}] as const },
+    ],
+  },
+};
+
+const nativeTransportVariantRules: Record<string, readonly NativeTransportVariantRule[]> = {
+  "arrow_function": [
+    {
+      variant: "parameter",
+      fields: [
+        { name: "async_marker", multiple: false, required: false, alternatives: [{"type":"async","text":"async"}] as const },
+        { name: "body", multiple: false, required: true, alternatives: [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"statement_block"}] as const },
+      ],
+      children: { required: true, alternatives: [{"type":"_arrow_function_parameter"}] as const },
+    },
+    {
+      variant: "_call_signature",
+      fields: [
+        { name: "async_marker", multiple: false, required: false, alternatives: [{"type":"async","text":"async"}] as const },
+        { name: "body", multiple: false, required: true, alternatives: [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"statement_block"}] as const },
+      ],
+      children: { required: true, alternatives: [{"type":"_arrow_function__call_signature"}] as const },
+    },
+  ],
+  "call_expression": [
+    {
+      variant: "call",
+      fields: [
+      ],
+      children: { required: true, alternatives: [{"type":"_call_expression_call"}] as const },
+    },
+    {
+      variant: "template_call",
+      fields: [
+      ],
+      children: { required: true, alternatives: [{"type":"_call_expression_template_call"}] as const },
+    },
+    {
+      variant: "member",
+      fields: [
+      ],
+      children: { required: true, alternatives: [{"type":"_call_expression_member"}] as const },
+    },
+  ],
+  "class_heritage": [
+    {
+      variant: "extends_clause",
+      fields: [
+      ],
+      children: { required: true, alternatives: [{"type":"_class_heritage_extends_clause"}] as const },
+    },
+    {
+      variant: "implements_clause",
+      fields: [
+      ],
+      children: { required: true, alternatives: [{"type":"_class_heritage_implements_clause"}] as const },
+    },
+  ],
+  "export_statement": [
+    {
+      variant: "default",
+      fields: [
+      ],
+      children: { required: true, alternatives: [{"type":"_export_statement_default_from_arm"},{"type":"_export_statement_default_decl_arm"}] as const },
+    },
+    {
+      variant: "type_export",
+      fields: [
+      ],
+      children: { required: true, alternatives: [{"type":"_export_statement_type_export"}] as const },
+    },
+    {
+      variant: "equals_export",
+      fields: [
+      ],
+      children: { required: true, alternatives: [{"type":"_export_statement_equals_export"}] as const },
+    },
+    {
+      variant: "namespace_export",
+      fields: [
+      ],
+      children: { required: true, alternatives: [{"type":"_export_statement_namespace_export"}] as const },
+    },
+  ],
+  "import_clause": [
+    {
+      variant: "namespace_import",
+      fields: [
+      ],
+      children: { required: true, alternatives: [{"type":"_import_clause_namespace_import"}] as const },
+    },
+    {
+      variant: "named_imports",
+      fields: [
+      ],
+      children: { required: true, alternatives: [{"type":"_import_clause_named_imports"}] as const },
+    },
+    {
+      variant: "default_import",
+      fields: [
+      ],
+      children: { required: true, alternatives: [{"type":"_import_clause_default_import"}] as const },
+    },
+  ],
+  "import_specifier": [
+    {
+      variant: "name",
+      fields: [
+        { name: "import_kind", multiple: false, required: false, alternatives: [{"type":"type","text":"type"},{"type":"typeof","text":"typeof"}] as const },
+      ],
+      children: { required: true, alternatives: [{"type":"_import_specifier_name"}] as const },
+    },
+    {
+      variant: "as",
+      fields: [
+        { name: "import_kind", multiple: false, required: false, alternatives: [{"type":"type","text":"type"},{"type":"typeof","text":"typeof"}] as const },
+      ],
+      children: { required: true, alternatives: [{"type":"_import_specifier_as"}] as const },
+    },
+  ],
+  "index_signature": [
+    {
+      variant: "colon",
+      fields: [
+        { name: "sign", multiple: false, required: false, alternatives: [{"type":"-","text":"-"},{"type":"+","text":"+"}] as const },
+        { name: "type", multiple: false, required: true, alternatives: [{"type":"type_annotation"},{"type":"omitting_type_annotation"},{"type":"adding_type_annotation"},{"type":"opting_type_annotation"}] as const },
+      ],
+      children: { required: true, alternatives: [{"type":"_index_signature_colon"}] as const },
+    },
+    {
+      variant: "mapped_type_clause",
+      fields: [
+        { name: "sign", multiple: false, required: false, alternatives: [{"type":"-","text":"-"},{"type":"+","text":"+"}] as const },
+        { name: "type", multiple: false, required: true, alternatives: [{"type":"type_annotation"},{"type":"omitting_type_annotation"},{"type":"adding_type_annotation"},{"type":"opting_type_annotation"}] as const },
+      ],
+      children: { required: true, alternatives: [{"type":"_index_signature_mapped_type_clause"}] as const },
+    },
+  ],
+  "parenthesized_expression": [
+    {
+      variant: "typed",
+      fields: [
+      ],
+      children: { required: true, alternatives: [{"type":"_parenthesized_expression_typed"}] as const },
+    },
+    {
+      variant: "sequence",
+      fields: [
+      ],
+      children: { required: true, alternatives: [{"type":"_parenthesized_expression_sequence"}] as const },
+    },
+  ],
+  "string": [
+    {
+      variant: "double",
+      fields: [
+      ],
+      children: { required: true, alternatives: [{"type":"_string_double"}] as const },
+    },
+    {
+      variant: "single",
+      fields: [
+      ],
+      children: { required: true, alternatives: [{"type":"_string_single"}] as const },
+    },
+  ],
+  "update_expression": [
+    {
+      variant: "postfix",
+      fields: [
+      ],
+      children: { required: true, alternatives: [{"type":"_update_expression_postfix"}] as const },
+    },
+    {
+      variant: "prefix",
+      fields: [
+      ],
+      children: { required: true, alternatives: [{"type":"_update_expression_prefix"}] as const },
+    },
+  ],
+};
+
+function projectTransportValue(value: unknown, path: string): unknown {
+  if (Array.isArray(value)) {
+    return value.map((item, index) => projectTransportValue(item, `${path}[${index}]`));
+  }
+  if (typeof value === 'string') {
+    return { $type: value, $text: value };
+  }
+  if (!isRecord(value)) return value;
+  if (typeof value.$type !== "string") return value;
+
+  const projected: Record<string, unknown> = {};
+  for (const key of transportMetadataKeys) {
+    if (key in value) projected[key] = value[key];
+  }
+  projected.$type = nativeTransportType(value.$type);
+
+  const fields = value.$fields;
+  if (isRecord(fields)) {
+    for (const [key, child] of Object.entries(fields)) {
+      projected[key] = projectTransportValue(child, `${path}.${key}`);
+    }
+  }
+
+  for (const [key, child] of Object.entries(value)) {
+    if (transportMetadataKeys.has(key) || key === "$fields") continue;
+    if (key === 'render' || key === 'toEdit' || key === 'replace') continue;
+    if (typeof child === "function") continue;
+    if (key in projected) continue;
+    projected[key] = projectTransportValue(child, `${path}.${key}`);
+  }
+
+  projectRawChildrenIntoFields(projected);
+  inferNativeTransportVariant(projected);
+
+  return projected;
+}
+
+function nativeTransportType(kind: string): string {
+  return nativeTransportAliasTargetToSource[kind] ?? kind;
+}
+
+function projectRawChildrenIntoFields(projected: Record<string, unknown>): void {
+  const kind = String(projected.$type);
+  const rules = nativeTransportRawChildFieldRules[kind];
+  const children = projected.$children;
+  if (!rules || !Array.isArray(children)) return;
+  const keep: unknown[] = [];
+  const usedForField = new Set<number>();
+  for (const field of rules.fields) {
+    if (projected[field.name] !== undefined) continue;
+    const matches = children.map((child, index) => ({ child, index })).filter(({ child }) => transportValueMatches(child, field.alternatives));
+    if (field.multiple) {
+      if (matches.length > 0 || field.required) {
+        projected[field.name] = matches.map(({ child }) => child);
+        for (const { index } of matches) usedForField.add(index);
+      }
+    } else if (matches.length === 1) {
+      projected[field.name] = matches[0]!.child;
+      usedForField.add(matches[0]!.index);
+    }
+  }
+  for (let index = 0; index < children.length; index++) {
+    const child = children[index];
+    if (!usedForField.has(index) || transportValueMatches(child, rules.childAlternatives)) keep.push(child);
+  }
+  if (keep.length > 0 || rules.childrenRequired) {
+    projected.$children = keep;
+  } else {
+    delete projected.$children;
+  }
+}
+
+function inferNativeTransportVariant(projected: Record<string, unknown>): void {
+  if (typeof projected.$variant === "string") return;
+  const rules = nativeTransportVariantRules[String(projected.$type)];
+  if (!rules) return;
+  const matches = rules.filter((rule) => transportVariantMatches(projected, rule));
+  if (matches.length === 1) projected.$variant = matches[0]!.variant;
+}
+
+function transportVariantMatches(node: Record<string, unknown>, rule: NativeTransportVariantRule): boolean {
+  for (const field of rule.fields) {
+    const value = node[field.name];
+    if (value === undefined) {
+      if (field.required) return false;
+      continue;
+    }
+    const ok = field.multiple ? transportArrayMatches(value, field.alternatives) : transportValueMatches(value, field.alternatives);
+    if (!ok) return false;
+  }
+  if (rule.children) {
+    const children = node.$children;
+    if (children === undefined) return !rule.children.required;
+    return transportArrayMatches(children, rule.children.alternatives);
+  }
+  return true;
+}
+
+function transportArrayMatches(value: unknown, alternatives: readonly NativeTransportAlternative[]): boolean {
+  return Array.isArray(value) && value.every((item) => transportValueMatches(item, alternatives));
+}
+
+function transportValueMatches(value: unknown, alternatives: readonly NativeTransportAlternative[]): boolean {
+  if (!isRecord(value) || typeof value.$type !== "string") return false;
+  return alternatives.some((candidate) => {
+    if (value.$type !== candidate.type) return false;
+    return candidate.text === undefined || value.$text === candidate.text;
+  });
+}
+
+/**
+ * Assert that a value is a grammar-local native render transport object.
+ *
+ * This intentionally validates the generated transport shape here instead of
+ * routing through the generic @sittir/core NativeNodeData validator.
+ */
+export function assertNativeRenderTransport(node: unknown): asserts node is AnyTransport {
+  if (!isRecord(node)) throw new TypeError('node must be an object');
+  if (typeof node.$type !== 'string') throw new TypeError('node.$type must be a string');
+  assertDataOnlyObject(node, 'node');
+  switch (node.$type) {
+    case "_arrow_function__call_signature":
+      assert_ArrowFunctionUCallSignatureTransport(node, 'node');
+      return;
+    case "_arrow_function_parameter":
+      assert_ArrowFunctionParameterTransport(node, 'node');
+      return;
+    case "_call_expression_call":
+      assertCallExpressionCallTransport(node, 'node');
+      return;
+    case "_call_expression_member":
+      assertCallExpressionMemberTransport(node, 'node');
+      return;
+    case "_call_expression_template_call":
+      assertCallExpressionTemplateCallTransport(node, 'node');
+      return;
+    case "_call_signature":
+      assert_CallSignatureTransport(node, 'node');
+      return;
+    case "_class_body_member":
+      assertClassBodyMemberTransport(node, 'node');
+      return;
+    case "_class_body_method":
+      assertClassBodyMethodTransport(node, 'node');
+      return;
+    case "_class_body_method_sig":
+      assertClassBodyMethodSigTransport(node, 'node');
+      return;
+    case "_class_heritage_extends_clause":
+      assert_ClassHeritageExtendsClauseTransport(node, 'node');
+      return;
+    case "_class_heritage_implements_clause":
+      assert_ClassHeritageImplementsClauseTransport(node, 'node');
+      return;
+    case "_export_statement_default_decl_arm":
+      assertExportStatementDefaultDeclArmTransport(node, 'node');
+      return;
+    case "_export_statement_default_decl_arm_default_kw":
+      assertExportStatementDefaultDeclArmDefaultKwTransport(node, 'node');
+      return;
+    case "_export_statement_default_decl_arm_default_kw_value":
+      assertExportStatementDefaultDeclArmDefaultKwValueTransport(node, 'node');
+      return;
+    case "_export_statement_default_from_arm":
+      assertExportStatementDefaultFromArmTransport(node, 'node');
+      return;
+    case "_export_statement_default_from_arm_clause_from":
+      assertExportStatementDefaultFromArmClauseFromTransport(node, 'node');
+      return;
+    case "_export_statement_default_from_arm_ns_from":
+      assertExportStatementDefaultFromArmNsFromTransport(node, 'node');
+      return;
+    case "_export_statement_default_from_arm_star_from":
+      assertExportStatementDefaultFromArmStarFromTransport(node, 'node');
+      return;
+    case "_export_statement_equals_export":
+      assert_ExportStatementEqualsExportTransport(node, 'node');
+      return;
+    case "_export_statement_namespace_export":
+      assert_ExportStatementNamespaceExportTransport(node, 'node');
+      return;
+    case "_export_statement_type_export":
+      assert_ExportStatementTypeExportTransport(node, 'node');
+      return;
+    case "_extends_clause_single":
+      assertExtendsClauseSingleTransport(node, 'node');
+      return;
+    case "_for_header":
+      assertForHeaderTransport(node, 'node');
+      return;
+    case "_for_header_let_const_kind":
+      assertForHeaderLetConstKindTransport(node, 'node');
+      return;
+    case "_for_header_lhs":
+      assertForHeaderLhsTransport(node, 'node');
+      return;
+    case "_for_header_var_kind":
+      assertForHeaderVarKindTransport(node, 'node');
+      return;
+    case "_from_clause":
+      assertFromClauseTransport(node, 'node');
+      return;
+    case "_import_clause_default_import":
+      assert_ImportClauseDefaultImportTransport(node, 'node');
+      return;
+    case "_import_clause_named_imports":
+      assert_ImportClauseNamedImportsTransport(node, 'node');
+      return;
+    case "_import_clause_namespace_import":
+      assert_ImportClauseNamespaceImportTransport(node, 'node');
+      return;
+    case "_import_specifier_as":
+      assertImportSpecifierAsTransport(node, 'node');
+      return;
+    case "_import_specifier_name":
+      assert_ImportSpecifierNameTransport(node, 'node');
+      return;
+    case "_index_signature_colon":
+      assertIndexSignatureColonTransport(node, 'node');
+      return;
+    case "_index_signature_mapped_type_clause":
+      assert_IndexSignatureMappedTypeClauseTransport(node, 'node');
+      return;
+    case "_initializer":
+      assertInitializerTransport(node, 'node');
+      return;
+    case "_interface_body":
+      assertInterfaceBodyTransport(node, 'node');
+      return;
+    case "_jsx_start_opening_element":
+      assertJsxStartOpeningElementTransport(node, 'node');
+      return;
+    case "_jsx_string":
+      assertJsxStringTransport(node, 'node');
+      return;
+    case "_kw_abstract_marker":
+      assertKwAbstractMarkerTransport(node, 'node');
+      return;
+    case "_kw_async_marker":
+      assertKwAsyncMarkerTransport(node, 'node');
+      return;
+    case "_kw_const_marker":
+      assertKwConstMarkerTransport(node, 'node');
+      return;
+    case "_kw_optional_marker":
+      assertKwOptionalMarkerTransport(node, 'node');
+      return;
+    case "_kw_readonly_marker":
+      assertKwReadonlyMarkerTransport(node, 'node');
+      return;
+    case "_kw_static_marker":
+      assertKwStaticMarkerTransport(node, 'node');
+      return;
+    case "_lhs_expression":
+      assertLhsExpressionTransport(node, 'node');
+      return;
+    case "_module":
+      assert_ModuleTransport(node, 'node');
+      return;
+    case "_number":
+      assert_NumberTransport(node, 'node');
+      return;
+    case "_parameter_name":
+      assertParameterNameTransport(node, 'node');
+      return;
+    case "_parenthesized_expression_sequence":
+      assert_ParenthesizedExpressionSequenceTransport(node, 'node');
+      return;
+    case "_parenthesized_expression_typed":
+      assertParenthesizedExpressionTypedTransport(node, 'node');
+      return;
+    case "_property_identifier":
+      assertPropertyIdentifierTransport(node, 'node');
+      return;
+    case "_public_field_definition_abstract_first":
+      assertPublicFieldDefinitionAbstractFirstTransport(node, 'node');
+      return;
+    case "_public_field_definition_access_first":
+      assertPublicFieldDefinitionAccessFirstTransport(node, 'node');
+      return;
+    case "_public_field_definition_accessor_opt":
+      assertPublicFieldDefinitionAccessorOptTransport(node, 'node');
+      return;
+    case "_public_field_definition_declare_first":
+      assertPublicFieldDefinitionDeclareFirstTransport(node, 'node');
+      return;
+    case "_public_field_definition_readonly_first":
+      assertPublicFieldDefinitionReadonlyFirstTransport(node, 'node');
+      return;
+    case "_public_field_definition_static_mods":
+      assertPublicFieldDefinitionStaticModsTransport(node, 'node');
+      return;
+    case "_reserved_identifier":
+      assertReservedIdentifierTransport(node, 'node');
+      return;
+    case "_statement_identifier":
+      assertStatementIdentifierTransport(node, 'node');
+      return;
+    case "_string_double":
+      assert_StringDoubleTransport(node, 'node');
+      return;
+    case "_string_fragment":
+      assertStringFragmentTransport(node, 'node');
+      return;
+    case "_string_single":
+      assert_StringSingleTransport(node, 'node');
+      return;
+    case "_this_type":
+      assertThisTypeTransport(node, 'node');
+      return;
+    case "_type_identifier":
+      assertTypeIdentifierTransport(node, 'node');
+      return;
+    case "_type_query_call_expression":
+      assertTypeQueryCallExpressionTransport(node, 'node');
+      return;
+    case "_type_query_call_expression_in_type_annotation":
+      assertTypeQueryCallExpressionInTypeAnnotationTransport(node, 'node');
+      return;
+    case "_type_query_instantiation_expression":
+      assertTypeQueryInstantiationExpressionTransport(node, 'node');
+      return;
+    case "_type_query_member_expression":
+      assertTypeQueryMemberExpressionTransport(node, 'node');
+      return;
+    case "_type_query_member_expression_in_type_annotation":
+      assertTypeQueryMemberExpressionInTypeAnnotationTransport(node, 'node');
+      return;
+    case "_type_query_subscript_expression":
+      assertTypeQuerySubscriptExpressionTransport(node, 'node');
+      return;
+    case "_update_expression_postfix":
+      assertUpdateExpressionPostfixTransport(node, 'node');
+      return;
+    case "_update_expression_prefix":
+      assertUpdateExpressionPrefixTransport(node, 'node');
+      return;
+    case "abstract_class_declaration":
+      assertAbstractClassDeclarationTransport(node, 'node');
+      return;
+    case "abstract_method_signature":
+      assertAbstractMethodSignatureTransport(node, 'node');
+      return;
+    case "accessibility_modifier":
+      assertAccessibilityModifierTransport(node, 'node');
+      return;
+    case "adding_type_annotation":
+      assertAddingTypeAnnotationTransport(node, 'node');
+      return;
+    case "ambient_declaration":
+      assertAmbientDeclarationTransport(node, 'node');
+      return;
+    case "arguments":
+      assertArgumentsTransport(node, 'node');
+      return;
+    case "array":
+      assertArrayTransport(node, 'node');
+      return;
+    case "array_pattern":
+      assertArrayPatternTransport(node, 'node');
+      return;
+    case "array_type":
+      assertArrayTypeTransport(node, 'node');
+      return;
+    case "arrow_function_parameter":
+      assertArrowFunctionParameterTransport(node, 'node');
+      return;
+    case "arrow_function__call_signature":
+      assertArrowFunctionUCallSignatureTransport(node, 'node');
+      return;
+    case "arrow_function":
+      assertArrowFunctionTransport(node, 'node');
+      return;
+    case "as_expression":
+      assertAsExpressionTransport(node, 'node');
+      return;
+    case "asserts":
+      assertAssertsTransport(node, 'node');
+      return;
+    case "asserts_annotation":
+      assertAssertsAnnotationTransport(node, 'node');
+      return;
+    case "assignment_expression":
+      assertAssignmentExpressionTransport(node, 'node');
+      return;
+    case "assignment_pattern":
+      assertAssignmentPatternTransport(node, 'node');
+      return;
+    case "augmented_assignment_expression":
+      assertAugmentedAssignmentExpressionTransport(node, 'node');
+      return;
+    case "await_expression":
+      assertAwaitExpressionTransport(node, 'node');
+      return;
+    case "binary_expression":
+      assertBinaryExpressionTransport(node, 'node');
+      return;
+    case "break_statement":
+      assertBreakStatementTransport(node, 'node');
+      return;
+    case "call_expression":
+      assertCallExpressionTransport(node, 'node');
+      return;
+    case "call_signature":
+      assertCallSignatureTransport(node, 'node');
+      return;
+    case "catch_clause":
+      assertCatchClauseTransport(node, 'node');
+      return;
+    case "class":
+      assertClassTransport(node, 'node');
+      return;
+    case "class_body":
+      assertClassBodyTransport(node, 'node');
+      return;
+    case "class_declaration":
+      assertClassDeclarationTransport(node, 'node');
+      return;
+    case "class_heritage_extends_clause":
+      assertClassHeritageExtendsClauseTransport(node, 'node');
+      return;
+    case "class_heritage_implements_clause":
+      assertClassHeritageImplementsClauseTransport(node, 'node');
+      return;
+    case "class_heritage":
+      assertClassHeritageTransport(node, 'node');
+      return;
+    case "class_static_block":
+      assertClassStaticBlockTransport(node, 'node');
+      return;
+    case "comment":
+      assertCommentTransport(node, 'node');
+      return;
+    case "computed_property_name":
+      assertComputedPropertyNameTransport(node, 'node');
+      return;
+    case "conditional_type":
+      assertConditionalTypeTransport(node, 'node');
+      return;
+    case "constraint":
+      assertConstraintTransport(node, 'node');
+      return;
+    case "construct_signature":
+      assertConstructSignatureTransport(node, 'node');
+      return;
+    case "constructor_type":
+      assertConstructorTypeTransport(node, 'node');
+      return;
+    case "continue_statement":
+      assertContinueStatementTransport(node, 'node');
+      return;
+    case "debugger_statement":
+      assertDebuggerStatementTransport(node, 'node');
+      return;
+    case "decorator":
+      assertDecoratorTransport(node, 'node');
+      return;
+    case "decorator_call_expression":
+      assertDecoratorCallExpressionTransport(node, 'node');
+      return;
+    case "decorator_member_expression":
+      assertDecoratorMemberExpressionTransport(node, 'node');
+      return;
+    case "decorator_parenthesized_expression":
+      assertDecoratorParenthesizedExpressionTransport(node, 'node');
+      return;
+    case "default_type":
+      assertDefaultTypeTransport(node, 'node');
+      return;
+    case "do_statement":
+      assertDoStatementTransport(node, 'node');
+      return;
+    case "else_clause":
+      assertElseClauseTransport(node, 'node');
+      return;
+    case "empty_statement":
+      assertEmptyStatementTransport(node, 'node');
+      return;
+    case "enum_assignment":
+      assertEnumAssignmentTransport(node, 'node');
+      return;
+    case "enum_body":
+      assertEnumBodyTransport(node, 'node');
+      return;
+    case "enum_declaration":
+      assertEnumDeclarationTransport(node, 'node');
+      return;
+    case "escape_sequence":
+      assertEscapeSequenceTransport(node, 'node');
+      return;
+    case "existential_type":
+      assertExistentialTypeTransport(node, 'node');
+      return;
+    case "export_clause":
+      assertExportClauseTransport(node, 'node');
+      return;
+    case "export_specifier":
+      assertExportSpecifierTransport(node, 'node');
+      return;
+    case "export_statement_type_export":
+      assertExportStatementTypeExportTransport(node, 'node');
+      return;
+    case "export_statement_equals_export":
+      assertExportStatementEqualsExportTransport(node, 'node');
+      return;
+    case "export_statement_namespace_export":
+      assertExportStatementNamespaceExportTransport(node, 'node');
+      return;
+    case "export_statement":
+      assertExportStatementTransport(node, 'node');
+      return;
+    case "expression_statement":
+      assertExpressionStatementTransport(node, 'node');
+      return;
+    case "extends_clause":
+      assertExtendsClauseTransport(node, 'node');
+      return;
+    case "extends_type_clause":
+      assertExtendsTypeClauseTransport(node, 'node');
+      return;
+    case "false":
+      assertFalseTransport(node, 'node');
+      return;
+    case "field_definition":
+      assertFieldDefinitionTransport(node, 'node');
+      return;
+    case "finally_clause":
+      assertFinallyClauseTransport(node, 'node');
+      return;
+    case "flow_maybe_type":
+      assertFlowMaybeTypeTransport(node, 'node');
+      return;
+    case "for_in_statement":
+      assertForInStatementTransport(node, 'node');
+      return;
+    case "for_statement":
+      assertForStatementTransport(node, 'node');
+      return;
+    case "formal_parameters":
+      assertFormalParametersTransport(node, 'node');
+      return;
+    case "function_declaration":
+      assertFunctionDeclarationTransport(node, 'node');
+      return;
+    case "function_expression":
+      assertFunctionExpressionTransport(node, 'node');
+      return;
+    case "function_signature":
+      assertFunctionSignatureTransport(node, 'node');
+      return;
+    case "function_type":
+      assertFunctionTypeTransport(node, 'node');
+      return;
+    case "generator_function":
+      assertGeneratorFunctionTransport(node, 'node');
+      return;
+    case "generator_function_declaration":
+      assertGeneratorFunctionDeclarationTransport(node, 'node');
+      return;
+    case "generic_type":
+      assertGenericTypeTransport(node, 'node');
+      return;
+    case "hash_bang_line":
+      assertHashBangLineTransport(node, 'node');
+      return;
+    case "html_character_reference":
+      assertHtmlCharacterReferenceTransport(node, 'node');
+      return;
+    case "identifier":
+      assertIdentifierTransport(node, 'node');
+      return;
+    case "if_statement":
+      assertIfStatementTransport(node, 'node');
+      return;
+    case "implements_clause":
+      assertImplementsClauseTransport(node, 'node');
+      return;
+    case "import":
+      assertImportTransport(node, 'node');
+      return;
+    case "import_alias":
+      assertImportAliasTransport(node, 'node');
+      return;
+    case "import_attribute":
+      assertImportAttributeTransport(node, 'node');
+      return;
+    case "import_clause_namespace_import":
+      assertImportClauseNamespaceImportTransport(node, 'node');
+      return;
+    case "import_clause_named_imports":
+      assertImportClauseNamedImportsTransport(node, 'node');
+      return;
+    case "import_clause_default_import":
+      assertImportClauseDefaultImportTransport(node, 'node');
+      return;
+    case "import_clause":
+      assertImportClauseTransport(node, 'node');
+      return;
+    case "import_require_clause":
+      assertImportRequireClauseTransport(node, 'node');
+      return;
+    case "import_specifier_name":
+      assertImportSpecifierNameTransport(node, 'node');
+      return;
+    case "import_specifier":
+      assertImportSpecifierTransport(node, 'node');
+      return;
+    case "import_statement":
+      assertImportStatementTransport(node, 'node');
+      return;
+    case "index_signature_mapped_type_clause":
+      assertIndexSignatureMappedTypeClauseTransport(node, 'node');
+      return;
+    case "index_signature":
+      assertIndexSignatureTransport(node, 'node');
+      return;
+    case "index_type_query":
+      assertIndexTypeQueryTransport(node, 'node');
+      return;
+    case "infer_type":
+      assertInferTypeTransport(node, 'node');
+      return;
+    case "instantiation_expression":
+      assertInstantiationExpressionTransport(node, 'node');
+      return;
+    case "interface_declaration":
+      assertInterfaceDeclarationTransport(node, 'node');
+      return;
+    case "internal_module":
+      assertInternalModuleTransport(node, 'node');
+      return;
+    case "intersection_type":
+      assertIntersectionTypeTransport(node, 'node');
+      return;
+    case "jsx_attribute":
+      assertJsxAttributeTransport(node, 'node');
+      return;
+    case "jsx_closing_element":
+      assertJsxClosingElementTransport(node, 'node');
+      return;
+    case "jsx_element":
+      assertJsxElementTransport(node, 'node');
+      return;
+    case "jsx_expression":
+      assertJsxExpressionTransport(node, 'node');
+      return;
+    case "jsx_identifier":
+      assertJsxIdentifierTransport(node, 'node');
+      return;
+    case "jsx_namespace_name":
+      assertJsxNamespaceNameTransport(node, 'node');
+      return;
+    case "jsx_opening_element":
+      assertJsxOpeningElementTransport(node, 'node');
+      return;
+    case "jsx_self_closing_element":
+      assertJsxSelfClosingElementTransport(node, 'node');
+      return;
+    case "labeled_statement":
+      assertLabeledStatementTransport(node, 'node');
+      return;
+    case "lexical_declaration":
+      assertLexicalDeclarationTransport(node, 'node');
+      return;
+    case "literal_type":
+      assertLiteralTypeTransport(node, 'node');
+      return;
+    case "lookup_type":
+      assertLookupTypeTransport(node, 'node');
+      return;
+    case "mapped_type_clause":
+      assertMappedTypeClauseTransport(node, 'node');
+      return;
+    case "member_expression":
+      assertMemberExpressionTransport(node, 'node');
+      return;
+    case "meta_property":
+      assertMetaPropertyTransport(node, 'node');
+      return;
+    case "method_definition":
+      assertMethodDefinitionTransport(node, 'node');
+      return;
+    case "method_signature":
+      assertMethodSignatureTransport(node, 'node');
+      return;
+    case "module":
+      assertModuleTransport(node, 'node');
+      return;
+    case "named_imports":
+      assertNamedImportsTransport(node, 'node');
+      return;
+    case "namespace_export":
+      assertNamespaceExportTransport(node, 'node');
+      return;
+    case "namespace_import":
+      assertNamespaceImportTransport(node, 'node');
+      return;
+    case "nested_identifier":
+      assertNestedIdentifierTransport(node, 'node');
+      return;
+    case "nested_type_identifier":
+      assertNestedTypeIdentifierTransport(node, 'node');
+      return;
+    case "new_expression":
+      assertNewExpressionTransport(node, 'node');
+      return;
+    case "non_null_expression":
+      assertNonNullExpressionTransport(node, 'node');
+      return;
+    case "null":
+      assertNullTransport(node, 'node');
+      return;
+    case "number":
+      assertNumberTransport(node, 'node');
+      return;
+    case "object":
+      assertObjectTransport(node, 'node');
+      return;
+    case "object_assignment_pattern":
+      assertObjectAssignmentPatternTransport(node, 'node');
+      return;
+    case "object_pattern":
+      assertObjectPatternTransport(node, 'node');
+      return;
+    case "object_type":
+      assertObjectTypeTransport(node, 'node');
+      return;
+    case "omitting_type_annotation":
+      assertOmittingTypeAnnotationTransport(node, 'node');
+      return;
+    case "opting_type_annotation":
+      assertOptingTypeAnnotationTransport(node, 'node');
+      return;
+    case "optional_chain":
+      assertOptionalChainTransport(node, 'node');
+      return;
+    case "optional_parameter":
+      assertOptionalParameterTransport(node, 'node');
+      return;
+    case "optional_tuple_parameter":
+      assertOptionalTupleParameterTransport(node, 'node');
+      return;
+    case "optional_type":
+      assertOptionalTypeTransport(node, 'node');
+      return;
+    case "override_modifier":
+      assertOverrideModifierTransport(node, 'node');
+      return;
+    case "pair":
+      assertPairTransport(node, 'node');
+      return;
+    case "pair_pattern":
+      assertPairPatternTransport(node, 'node');
+      return;
+    case "parenthesized_expression_sequence":
+      assertParenthesizedExpressionSequenceTransport(node, 'node');
+      return;
+    case "parenthesized_expression":
+      assertParenthesizedExpressionTransport(node, 'node');
+      return;
+    case "parenthesized_type":
+      assertParenthesizedTypeTransport(node, 'node');
+      return;
+    case "predefined_type":
+      assertPredefinedTypeTransport(node, 'node');
+      return;
+    case "private_property_identifier":
+      assertPrivatePropertyIdentifierTransport(node, 'node');
+      return;
+    case "program":
+      assertProgramTransport(node, 'node');
+      return;
+    case "property_signature":
+      assertPropertySignatureTransport(node, 'node');
+      return;
+    case "public_field_definition":
+      assertPublicFieldDefinitionTransport(node, 'node');
+      return;
+    case "readonly_type":
+      assertReadonlyTypeTransport(node, 'node');
+      return;
+    case "regex":
+      assertRegexTransport(node, 'node');
+      return;
+    case "regex_flags":
+      assertRegexFlagsTransport(node, 'node');
+      return;
+    case "regex_pattern":
+      assertRegexPatternTransport(node, 'node');
+      return;
+    case "required_parameter":
+      assertRequiredParameterTransport(node, 'node');
+      return;
+    case "rest_pattern":
+      assertRestPatternTransport(node, 'node');
+      return;
+    case "rest_type":
+      assertRestTypeTransport(node, 'node');
+      return;
+    case "return_statement":
+      assertReturnStatementTransport(node, 'node');
+      return;
+    case "satisfies_expression":
+      assertSatisfiesExpressionTransport(node, 'node');
+      return;
+    case "sequence_expression":
+      assertSequenceExpressionTransport(node, 'node');
+      return;
+    case "spread_element":
+      assertSpreadElementTransport(node, 'node');
+      return;
+    case "statement_block":
+      assertStatementBlockTransport(node, 'node');
+      return;
+    case "string_double":
+      assertStringDoubleTransport(node, 'node');
+      return;
+    case "string_single":
+      assertStringSingleTransport(node, 'node');
+      return;
+    case "string":
+      assertStringTransport(node, 'node');
+      return;
+    case "subscript_expression":
+      assertSubscriptExpressionTransport(node, 'node');
+      return;
+    case "super":
+      assertSuperTransport(node, 'node');
+      return;
+    case "switch_body":
+      assertSwitchBodyTransport(node, 'node');
+      return;
+    case "switch_case":
+      assertSwitchCaseTransport(node, 'node');
+      return;
+    case "switch_default":
+      assertSwitchDefaultTransport(node, 'node');
+      return;
+    case "switch_statement":
+      assertSwitchStatementTransport(node, 'node');
+      return;
+    case "template_literal_type":
+      assertTemplateLiteralTypeTransport(node, 'node');
+      return;
+    case "template_string":
+      assertTemplateStringTransport(node, 'node');
+      return;
+    case "template_substitution":
+      assertTemplateSubstitutionTransport(node, 'node');
+      return;
+    case "template_type":
+      assertTemplateTypeTransport(node, 'node');
+      return;
+    case "ternary_expression":
+      assertTernaryExpressionTransport(node, 'node');
+      return;
+    case "this":
+      assertThisTransport(node, 'node');
+      return;
+    case "throw_statement":
+      assertThrowStatementTransport(node, 'node');
+      return;
+    case "true":
+      assertTrueTransport(node, 'node');
+      return;
+    case "try_statement":
+      assertTryStatementTransport(node, 'node');
+      return;
+    case "tuple_parameter":
+      assertTupleParameterTransport(node, 'node');
+      return;
+    case "tuple_type":
+      assertTupleTypeTransport(node, 'node');
+      return;
+    case "type_alias_declaration":
+      assertTypeAliasDeclarationTransport(node, 'node');
+      return;
+    case "type_annotation":
+      assertTypeAnnotationTransport(node, 'node');
+      return;
+    case "type_arguments":
+      assertTypeArgumentsTransport(node, 'node');
+      return;
+    case "type_assertion":
+      assertTypeAssertionTransport(node, 'node');
+      return;
+    case "type_parameter":
+      assertTypeParameterTransport(node, 'node');
+      return;
+    case "type_parameters":
+      assertTypeParametersTransport(node, 'node');
+      return;
+    case "type_predicate":
+      assertTypePredicateTransport(node, 'node');
+      return;
+    case "type_predicate_annotation":
+      assertTypePredicateAnnotationTransport(node, 'node');
+      return;
+    case "type_query":
+      assertTypeQueryTransport(node, 'node');
+      return;
+    case "unary_expression":
+      assertUnaryExpressionTransport(node, 'node');
+      return;
+    case "undefined":
+      assertUndefinedTransport(node, 'node');
+      return;
+    case "unescaped_double_jsx_string_fragment":
+      assertUnescapedDoubleJsxStringFragmentTransport(node, 'node');
+      return;
+    case "unescaped_double_string_fragment":
+      assertUnescapedDoubleStringFragmentTransport(node, 'node');
+      return;
+    case "unescaped_single_jsx_string_fragment":
+      assertUnescapedSingleJsxStringFragmentTransport(node, 'node');
+      return;
+    case "unescaped_single_string_fragment":
+      assertUnescapedSingleStringFragmentTransport(node, 'node');
+      return;
+    case "union_type":
+      assertUnionTypeTransport(node, 'node');
+      return;
+    case "update_expression":
+      assertUpdateExpressionTransport(node, 'node');
+      return;
+    case "variable_declaration":
+      assertVariableDeclarationTransport(node, 'node');
+      return;
+    case "variable_declarator":
+      assertVariableDeclaratorTransport(node, 'node');
+      return;
+    case "while_statement":
+      assertWhileStatementTransport(node, 'node');
+      return;
+    case "with_statement":
+      assertWithStatementTransport(node, 'node');
+      return;
+    case "yield_expression":
+      assertYieldExpressionTransport(node, 'node');
+      return;
+    case "_automatic_semicolon":
+      assertAutomaticSemicolonTransport(node, 'node');
+      return;
+    case "_template_chars":
+      assertTemplateCharsTransport(node, 'node');
+      return;
+    case "_ternary_qmark":
+      assertTernaryQmarkTransport(node, 'node');
+      return;
+    case "html_comment":
+      assertHtmlCommentTransport(node, 'node');
+      return;
+    case "||":
+      assertOrorTransport(node, 'node');
+      return;
+    case "jsx_text":
+      assertJsxTextTransport(node, 'node');
+      return;
+    case "_function_signature_automatic_semicolon":
+      assertFunctionSignatureAutomaticSemicolonTransport(node, 'node');
+      return;
+    case "__error_recovery":
+      assertErrorRecoveryTransport(node, 'node');
+      return;
+    case "?.":
+      assertTokQDotTransport(node, 'node');
+      return;
+    case ",":
+      assertCommaTransport(node, 'node');
+      return;
+    case "export":
+      assertExportTransport(node, 'node');
+      return;
+    case "default":
+      assertDefaultTransport(node, 'node');
+      return;
+    case "*":
+      assertStarTransport(node, 'node');
+      return;
+    case "=":
+      assertEqTransport(node, 'node');
+      return;
+    case "as":
+      assertAsTransport(node, 'node');
+      return;
+    case "namespace":
+      assertNamespaceTransport(node, 'node');
+      return;
+    case "(":
+      assertParenTransport(node, 'node');
+      return;
+    case ")":
+      assertCloseParenTransport(node, 'node');
+      return;
+    case "var":
+      assertVarTransport(node, 'node');
+      return;
+    case "from":
+      assertFromTransport(node, 'node');
+      return;
+    case ":":
+      assertColonTransport(node, 'node');
+      return;
+    case "<":
+      assertLtTransport(node, 'node');
+      return;
+    case "\"":
+      assertTokDqTransport(node, 'node');
+      return;
+    case "'":
+      assertTokSqTransport(node, 'node');
+      return;
+    case "abstract":
+      assertAbstractTransport(node, 'node');
+      return;
+    case "async":
+      assertAsyncTransport(node, 'node');
+      return;
+    case "const":
+      assertConstTransport(node, 'node');
+      return;
+    case "?":
+      assertQuestionTransport(node, 'node');
+      return;
+    case "readonly":
+      assertReadonlyTransport(node, 'node');
+      return;
+    case "static":
+      assertStaticTransport(node, 'node');
+      return;
+    case "declare":
+      assertDeclareTransport(node, 'node');
+      return;
+    case "accessor":
+      assertAccessorTransport(node, 'node');
+      return;
+    case ".":
+      assertDotTransport(node, 'node');
+      return;
+    case "[":
+      assertBracketTransport(node, 'node');
+      return;
+    case "]":
+      assertCloseBracketTransport(node, 'node');
+      return;
+    case "+?:":
+      assertTokPlusQColonTransport(node, 'node');
+      return;
+    case "global":
+      assertGlobalTransport(node, 'node');
+      return;
+    case "using":
+      assertUsingTransport(node, 'node');
+      return;
+    case "await":
+      assertAwaitTransport(node, 'node');
+      return;
+    case "&&":
+      assertAndandTransport(node, 'node');
+      return;
+    case ">>":
+      assertShrTransport(node, 'node');
+      return;
+    case ">>>":
+      assertTokGtGtGtTransport(node, 'node');
+      return;
+    case "<<":
+      assertShlTransport(node, 'node');
+      return;
+    case "&":
+      assertAmpTransport(node, 'node');
+      return;
+    case "^":
+      assertCaretTransport(node, 'node');
+      return;
+    case "|":
+      assertPipeTransport(node, 'node');
+      return;
+    case "+":
+      assertPlusTransport(node, 'node');
+      return;
+    case "-":
+      assertMinusTransport(node, 'node');
+      return;
+    case "/":
+      assertSlashTransport(node, 'node');
+      return;
+    case "%":
+      assertPercentTransport(node, 'node');
+      return;
+    case "**":
+      assertStarstarTransport(node, 'node');
+      return;
+    case "<=":
+      assertLeTransport(node, 'node');
+      return;
+    case "==":
+      assertEqeqTransport(node, 'node');
+      return;
+    case "===":
+      assertTokEqEqEqTransport(node, 'node');
+      return;
+    case "!=":
+      assertNeqTransport(node, 'node');
+      return;
+    case "!==":
+      assertTokBangEqEqTransport(node, 'node');
+      return;
+    case ">=":
+      assertGeTransport(node, 'node');
+      return;
+    case ">":
+      assertGtTransport(node, 'node');
+      return;
+    case "??":
+      assertTokQQTransport(node, 'node');
+      return;
+    case "instanceof":
+      assertInstanceofTransport(node, 'node');
+      return;
+    case "in":
+      assertInTransport(node, 'node');
+      return;
+    case "break":
+      assertBreakTransport(node, 'node');
+      return;
+    case "catch":
+      assertCatchTransport(node, 'node');
+      return;
+    case "{":
+      assertBraceTransport(node, 'node');
+      return;
+    case ";":
+      assertSemiTransport(node, 'node');
+      return;
+    case "}":
+      assertCloseBraceTransport(node, 'node');
+      return;
+    case "extends":
+      assertExtendsTransport(node, 'node');
+      return;
+    case "new":
+      assertNewTransport(node, 'node');
+      return;
+    case "=>":
+      assertFatArrowTransport(node, 'node');
+      return;
+    case "continue":
+      assertContinueTransport(node, 'node');
+      return;
+    case "debugger":
+      assertDebuggerTransport(node, 'node');
+      return;
+    case "@":
+      assertAtTransport(node, 'node');
+      return;
+    case "do":
+      assertDoTransport(node, 'node');
+      return;
+    case "while":
+      assertWhileTransport(node, 'node');
+      return;
+    case "else":
+      assertElseTransport(node, 'node');
+      return;
+    case "enum":
+      assertEnumTransport(node, 'node');
+      return;
+    case "finally":
+      assertFinallyTransport(node, 'node');
+      return;
+    case "for":
+      assertForTransport(node, 'node');
+      return;
+    case "function":
+      assertFunctionTransport(node, 'node');
+      return;
+    case "if":
+      assertIfTransport(node, 'node');
+      return;
+    case "implements":
+      assertImplementsTransport(node, 'node');
+      return;
+    case "require":
+      assertRequireTransport(node, 'node');
+      return;
+    case "keyof":
+      assertKeyofTransport(node, 'node');
+      return;
+    case "infer":
+      assertInferTransport(node, 'node');
+      return;
+    case "interface":
+      assertInterfaceTransport(node, 'node');
+      return;
+    case "</":
+      assertTokLtSlashTransport(node, 'node');
+      return;
+    case "/>":
+      assertTokSlashGtTransport(node, 'node');
+      return;
+    case "!":
+      assertBangTransport(node, 'node');
+      return;
+    case "-?:":
+      assertTokMinusQColonTransport(node, 'node');
+      return;
+    case "?:":
+      assertTokQColonTransport(node, 'node');
+      return;
+    case "override":
+      assertOverrideTransport(node, 'node');
+      return;
+    case "...":
+      assertEllipsisTransport(node, 'node');
+      return;
+    case "return":
+      assertReturnTransport(node, 'node');
+      return;
+    case "satisfies":
+      assertSatisfiesTransport(node, 'node');
+      return;
+    case "case":
+      assertCaseTransport(node, 'node');
+      return;
+    case "switch":
+      assertSwitchTransport(node, 'node');
+      return;
+    case "`":
+      assertTokBtTransport(node, 'node');
+      return;
+    case "${":
+      assertTokDollarLbrTransport(node, 'node');
+      return;
+    case "throw":
+      assertThrowTransport(node, 'node');
+      return;
+    case "try":
+      assertTryTransport(node, 'node');
+      return;
+    case "is":
+      assertIsTransport(node, 'node');
+      return;
+    case "typeof":
+      assertTypeofTransport(node, 'node');
+      return;
+    case "with":
+      assertWithTransport(node, 'node');
+      return;
+    case "yield":
+      assertYieldTransport(node, 'node');
+      return;
+    case "of":
+      assertLiteralTransport(node, 'node', "of", "of");
+      return;
+    case "let":
+      assertLiteralTransport(node, 'node', "let", "let");
+      return;
+    case "++":
+      assertLiteralTransport(node, 'node', "++", "++");
+      return;
+    case "--":
+      assertLiteralTransport(node, 'node', "--", "--");
+      return;
+    case "get":
+      assertLiteralTransport(node, 'node', "get", "get");
+      return;
+    case "set":
+      assertLiteralTransport(node, 'node', "set", "set");
+      return;
+    case "+=":
+      assertLiteralTransport(node, 'node', "+=", "+=");
+      return;
+    case "-=":
+      assertLiteralTransport(node, 'node', "-=", "-=");
+      return;
+    case "*=":
+      assertLiteralTransport(node, 'node', "*=", "*=");
+      return;
+    case "/=":
+      assertLiteralTransport(node, 'node', "/=", "/=");
+      return;
+    case "%=":
+      assertLiteralTransport(node, 'node', "%=", "%=");
+      return;
+    case "^=":
+      assertLiteralTransport(node, 'node', "^=", "^=");
+      return;
+    case "&=":
+      assertLiteralTransport(node, 'node', "&=", "&=");
+      return;
+    case "|=":
+      assertLiteralTransport(node, 'node', "|=", "|=");
+      return;
+    case ">>=":
+      assertLiteralTransport(node, 'node', ">>=", ">>=");
+      return;
+    case ">>>=":
+      assertLiteralTransport(node, 'node', ">>>=", ">>>=");
+      return;
+    case "<<=":
+      assertLiteralTransport(node, 'node', "<<=", "<<=");
+      return;
+    case "**=":
+      assertLiteralTransport(node, 'node', "**=", "**=");
+      return;
+    case "&&=":
+      assertLiteralTransport(node, 'node', "&&=", "&&=");
+      return;
+    case "||=":
+      assertLiteralTransport(node, 'node', "||=", "||=");
+      return;
+    case "??=":
+      assertLiteralTransport(node, 'node', "??=", "??=");
+      return;
+    case "type":
+      assertLiteralTransport(node, 'node', "type", "type");
+      return;
+    case "assert":
+      assertLiteralTransport(node, 'node', "assert", "assert");
+      return;
+    case "{|":
+      assertLiteralTransport(node, 'node', "{|", "{|");
+      return;
+    case "|}":
+      assertLiteralTransport(node, 'node', "|}", "|}");
+      return;
+    case "~":
+      assertLiteralTransport(node, 'node', "~", "~");
+      return;
+    case "void":
+      assertLiteralTransport(node, 'node', "void", "void");
+      return;
+    case "delete":
+      assertLiteralTransport(node, 'node', "delete", "delete");
+      return;
+    default:
+      throw new TypeError(`unsupported native transport kind: ${String(node.$type)}`);
+  }
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+function assertDataOnlyObject(value: unknown, path: string): void {
+  if (typeof value === 'function') {
+    throw new TypeError(`${path} must be data-only; found function`);
+  }
+  if (value === null || typeof value !== "object") return;
+  if (Array.isArray(value)) {
+    for (let i = 0; i < value.length; i++) {
+      assertDataOnlyObject(value[i], `${path}[${i}]`);
+    }
+    return;
+  }
+  for (const [key, child] of Object.entries(value)) {
+    if (key === '$format') {
+      throw new TypeError(`${path}.$format is not supported by the native render boundary; pass format separately`);
+    }
+    if (key === 'render' || key === 'toEdit' || key === 'replace') {
+      throw new TypeError(`${path}.${key} is not allowed on native render transport`);
+    }
+    if (typeof child === "function") {
+      throw new TypeError(`${path}.${key} must be data-only; found function`);
+    }
+    assertDataOnlyObject(child, `${path}.${key}`);
+  }
+}
+
+function assertTransportKind(node: Record<string, unknown>, path: string, kind: string): void {
+  if (node.$type !== kind) {
+    throw new TypeError(`${path}.$type must be ${JSON.stringify(kind)}`);
+  }
+}
+
+function assertTransportVariant(node: Record<string, unknown>, path: string, variant: string): void {
+  if (node.$variant !== variant) {
+    throw new TypeError(`${path}.$variant must be ${JSON.stringify(variant)}`);
+  }
+}
+
+function assertLiteralTransport(node: Record<string, unknown>, path: string, kind: string, text: string): void {
+  assertTransportKind(node, path, kind);
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, [text] as const);
+}
+
+function assertOptionalString(value: unknown, path: string): void {
+  if (value !== undefined && typeof value !== 'string') throw new TypeError(`${path} must be a string`);
+}
+
+function assertOptionalBoolean(value: unknown, path: string): void {
+  if (value !== undefined && typeof value !== 'boolean') throw new TypeError(`${path} must be a boolean`);
+}
+
+function assertOptionalSpan(value: unknown, path: string): void {
+  if (value === undefined) return;
+  if (!isRecord(value)) throw new TypeError(`${path} must be an object`);
+  if (typeof value.start !== 'number') throw new TypeError(`${path}.start must be a number`);
+  if (typeof value.end !== 'number') throw new TypeError(`${path}.end must be a number`);
+}
+
+function assertOptionalMetadata(node: Record<string, unknown>, path: string): void {
+  const source = node.$source;
+  if (source !== undefined && source !== 'ts' && source !== 'sg' && source !== 'factory') {
+    throw new TypeError(`${path}.$source must be ts, sg, or factory`);
+  }
+  assertOptionalBoolean(node.$named, `${path}.$named`);
+  assertOptionalString(node.$text, `${path}.$text`);
+  assertOptionalSpan(node.$span, `${path}.$span`);
+  if (node.$nodeId !== undefined && typeof node.$nodeId !== 'number') {
+    throw new TypeError(`${path}.$nodeId must be a number`);
+  }
+}
+
+function assertTransportValue(value: unknown, path: string, alternatives: readonly { readonly type: string; readonly text?: string }[]): void {
+  if (!isRecord(value)) throw new TypeError(`${path} must be a transport node or terminal value`);
+  if (typeof value.$type !== 'string') throw new TypeError(`${path}.$type must be a string`);
+  const accepted = alternatives.some((candidate) => {
+    if (value.$type !== candidate.type) return false;
+    return candidate.text === undefined || value.$text === candidate.text;
+  });
+  if (!accepted) {
+    const allowed = alternatives.map((candidate) => candidate.text === undefined ? candidate.type : `${candidate.type}:${candidate.text}`).join(", ");
+    throw new TypeError(`${path} must be one of: ${allowed}`);
+  }
+  assertNativeRenderTransport(value);
+}
+
+function assertTransportArray(value: unknown, path: string, alternatives: readonly { readonly type: string; readonly text?: string }[]): void {
+  if (!Array.isArray(value)) throw new TypeError(`${path} must be an array`);
+  for (let i = 0; i < value.length; i++) {
+    assertTransportValue(value[i], `${path}[${i}]`, alternatives);
+  }
+}
+
+function assertTextIn(value: unknown, path: string, accepted: readonly string[]): void {
+  if (typeof value !== 'string') throw new TypeError(`${path} must be a string`);
+  if (!accepted.includes(value)) {
+    throw new TypeError(`${path} must be one of: ${accepted.join(", ")}`);
+  }
+}
+
+function assert_ArrowFunctionUCallSignatureTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_arrow_function__call_signature");
+  assertOptionalMetadata(node, path);
+  if (node["type_parameters"] !== undefined) assertTransportValue(node["type_parameters"], `${path}.type_parameters`, [{"type":"type_parameters"}] as const);
+  if (node["parameters"] === undefined) throw new TypeError(`${path}.parameters` + ' is required');
+  if (node["parameters"] !== undefined) assertTransportValue(node["parameters"], `${path}.parameters`, [{"type":"formal_parameters"}] as const);
+  if (node["return_type"] !== undefined) assertTransportValue(node["return_type"], `${path}.return_type`, [{"type":"type_annotation"},{"type":"asserts_annotation"},{"type":"type_predicate_annotation"}] as const);
+}
+
+function assert_ArrowFunctionParameterTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_arrow_function_parameter");
+  assertOptionalMetadata(node, path);
+  if (node["parameter"] === undefined) throw new TypeError(`${path}.parameter` + ' is required');
+  if (node["parameter"] !== undefined) assertTransportValue(node["parameter"], `${path}.parameter`, [{"type":"_reserved_identifier"}] as const);
+}
+
+function assertCallExpressionCallTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_call_expression_call");
+  assertOptionalMetadata(node, path);
+  if (node["function"] === undefined) throw new TypeError(`${path}.function` + ' is required');
+  if (node["function"] !== undefined) assertTransportValue(node["function"], `${path}.function`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"import","text":"import"}] as const);
+  if (node["type_arguments"] !== undefined) assertTransportValue(node["type_arguments"], `${path}.type_arguments`, [{"type":"type_arguments"}] as const);
+  if (node["arguments"] === undefined) throw new TypeError(`${path}.arguments` + ' is required');
+  if (node["arguments"] !== undefined) assertTransportValue(node["arguments"], `${path}.arguments`, [{"type":"arguments"}] as const);
+}
+
+function assertCallExpressionMemberTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_call_expression_member");
+  assertOptionalMetadata(node, path);
+  if (node["function"] === undefined) throw new TypeError(`${path}.function` + ' is required');
+  if (node["function"] !== undefined) assertTransportValue(node["function"], `${path}.function`, [{"type":"non_null_expression"}] as const);
+  if (node["type_arguments"] !== undefined) assertTransportValue(node["type_arguments"], `${path}.type_arguments`, [{"type":"type_arguments"}] as const);
+  if (node["arguments"] === undefined) throw new TypeError(`${path}.arguments` + ' is required');
+  if (node["arguments"] !== undefined) assertTransportValue(node["arguments"], `${path}.arguments`, [{"type":"arguments"}] as const);
+}
+
+function assertCallExpressionTemplateCallTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_call_expression_template_call");
+  assertOptionalMetadata(node, path);
+  if (node["function"] === undefined) throw new TypeError(`${path}.function` + ' is required');
+  if (node["function"] !== undefined) assertTransportValue(node["function"], `${path}.function`, [{"type":"non_null_expression"},{"type":"new_expression"}] as const);
+  if (node["arguments"] === undefined) throw new TypeError(`${path}.arguments` + ' is required');
+  if (node["arguments"] !== undefined) assertTransportValue(node["arguments"], `${path}.arguments`, [{"type":"template_string"}] as const);
+}
+
+function assert_CallSignatureTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_call_signature");
+  assertOptionalMetadata(node, path);
+  if (node["type_parameters"] !== undefined) assertTransportValue(node["type_parameters"], `${path}.type_parameters`, [{"type":"type_parameters"}] as const);
+  if (node["parameters"] === undefined) throw new TypeError(`${path}.parameters` + ' is required');
+  if (node["parameters"] !== undefined) assertTransportValue(node["parameters"], `${path}.parameters`, [{"type":"formal_parameters"}] as const);
+  if (node["return_type"] !== undefined) assertTransportValue(node["return_type"], `${path}.return_type`, [{"type":"type_annotation"},{"type":"asserts_annotation"},{"type":"type_predicate_annotation"}] as const);
+}
+
+function assertClassBodyMemberTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_class_body_member");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"abstract_method_signature"},{"type":"index_signature"},{"type":"method_signature"},{"type":"public_field_definition"},{"type":"_automatic_semicolon"}] as const);
+    }
+  }
+}
+
+function assertClassBodyMethodTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_class_body_method");
+  assertOptionalMetadata(node, path);
+  if (node["decorator"] === undefined) throw new TypeError(`${path}.decorator` + ' is required');
+  if (node["decorator"] !== undefined) assertTransportArray(node["decorator"], `${path}.decorator`, [{"type":"decorator"}] as const);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"method_definition"},{"type":"_automatic_semicolon"}] as const);
+    }
+  }
+}
+
+function assertClassBodyMethodSigTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_class_body_method_sig");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"method_signature"},{"type":"_function_signature_automatic_semicolon"}] as const);
+    }
+  }
+}
+
+function assert_ClassHeritageExtendsClauseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_class_heritage_extends_clause");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"extends_clause"},{"type":"implements_clause"}] as const);
+    }
+  }
+}
+
+function assert_ClassHeritageImplementsClauseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_class_heritage_implements_clause");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"implements_clause"}] as const);
+    }
+  }
+}
+
+function assertExportStatementDefaultDeclArmTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_export_statement_default_decl_arm");
+  assertOptionalMetadata(node, path);
+  if (node["decorator"] === undefined) throw new TypeError(`${path}.decorator` + ' is required');
+  if (node["decorator"] !== undefined) assertTransportArray(node["decorator"], `${path}.decorator`, [{"type":"decorator"}] as const);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_export_statement_default_decl_arm_default_kw"}] as const);
+    }
+  }
+}
+
+function assertExportStatementDefaultDeclArmDefaultKwTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_export_statement_default_decl_arm_default_kw");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_export_statement_default_decl_arm_default_kw_value"}] as const);
+    }
+  }
+}
+
+function assertExportStatementDefaultDeclArmDefaultKwValueTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_export_statement_default_decl_arm_default_kw_value");
+  assertOptionalMetadata(node, path);
+  if (node["value"] === undefined) throw new TypeError(`${path}.value` + ' is required');
+  if (node["value"] !== undefined) assertTransportValue(node["value"], `${path}.value`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_automatic_semicolon"}] as const);
+    }
+  }
+}
+
+function assertExportStatementDefaultFromArmTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_export_statement_default_from_arm");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_export_statement_default_from_arm_star_from"},{"type":"_export_statement_default_from_arm_ns_from"},{"type":"_export_statement_default_from_arm_clause_from"},{"type":"export_clause"},{"type":"_automatic_semicolon"}] as const);
+    }
+  }
+}
+
+function assertExportStatementDefaultFromArmClauseFromTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_export_statement_default_from_arm_clause_from");
+  assertOptionalMetadata(node, path);
+  if (node["source"] === undefined) throw new TypeError(`${path}.source` + ' is required');
+  if (node["source"] !== undefined) assertTransportValue(node["source"], `${path}.source`, [{"type":"string"}] as const);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"export_clause"}] as const);
+    }
+  }
+}
+
+function assertExportStatementDefaultFromArmNsFromTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_export_statement_default_from_arm_ns_from");
+  assertOptionalMetadata(node, path);
+  if (node["source"] === undefined) throw new TypeError(`${path}.source` + ' is required');
+  if (node["source"] !== undefined) assertTransportValue(node["source"], `${path}.source`, [{"type":"string"}] as const);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"namespace_export"}] as const);
+    }
+  }
+}
+
+function assertExportStatementDefaultFromArmStarFromTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_export_statement_default_from_arm_star_from");
+  assertOptionalMetadata(node, path);
+  if (node["source"] === undefined) throw new TypeError(`${path}.source` + ' is required');
+  if (node["source"] !== undefined) assertTransportValue(node["source"], `${path}.source`, [{"type":"string"}] as const);
+}
+
+function assert_ExportStatementEqualsExportTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_export_statement_equals_export");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"_automatic_semicolon"}] as const);
+    }
+  }
+}
+
+function assert_ExportStatementNamespaceExportTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_export_statement_namespace_export");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"identifier"},{"type":"_automatic_semicolon"}] as const);
+    }
+  }
+}
+
+function assert_ExportStatementTypeExportTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_export_statement_type_export");
+  assertOptionalMetadata(node, path);
+  if (node["source"] !== undefined) assertTransportValue(node["source"], `${path}.source`, [{"type":"string"}] as const);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"export_clause"},{"type":"_automatic_semicolon"}] as const);
+    }
+  }
+}
+
+function assertExtendsClauseSingleTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_extends_clause_single");
+  assertOptionalMetadata(node, path);
+  if (node["value"] === undefined) throw new TypeError(`${path}.value` + ' is required');
+  if (node["value"] !== undefined) assertTransportValue(node["value"], `${path}.value`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+  if (node["type_arguments"] !== undefined) assertTransportValue(node["type_arguments"], `${path}.type_arguments`, [{"type":"type_arguments"}] as const);
+}
+
+function assertForHeaderTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_for_header");
+  assertOptionalMetadata(node, path);
+  if (node["operator"] === undefined) throw new TypeError(`${path}.operator` + ' is required');
+  if (node["operator"] !== undefined) assertTransportValue(node["operator"], `${path}.operator`, [{"type":"in","text":"in"},{"type":"of","text":"of"}] as const);
+  if (node["right"] === undefined) throw new TypeError(`${path}.right` + ' is required');
+  if (node["right"] !== undefined) assertTransportValue(node["right"], `${path}.right`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"sequence_expression"}] as const);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_for_header_lhs"},{"type":"_for_header_var_kind"},{"type":"_for_header_let_const_kind"}] as const);
+    }
+  }
+}
+
+function assertForHeaderLetConstKindTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_for_header_let_const_kind");
+  assertOptionalMetadata(node, path);
+  if (node["kind"] === undefined) throw new TypeError(`${path}.kind` + ' is required');
+  if (node["kind"] !== undefined) assertTransportValue(node["kind"], `${path}.kind`, [{"type":"let","text":"let"},{"type":"const","text":"const"}] as const);
+  if (node["left"] === undefined) throw new TypeError(`${path}.left` + ' is required');
+  if (node["left"] !== undefined) assertTransportValue(node["left"], `${path}.left`, [{"type":"identifier"},{"type":"object_pattern"},{"type":"array_pattern"}] as const);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_automatic_semicolon"}] as const);
+    }
+  }
+}
+
+function assertForHeaderLhsTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_for_header_lhs");
+  assertOptionalMetadata(node, path);
+  if (node["left"] === undefined) throw new TypeError(`${path}.left` + ' is required');
+  if (node["left"] !== undefined) assertTransportValue(node["left"], `${path}.left`, [{"type":"_lhs_expression"},{"type":"parenthesized_expression"}] as const);
+}
+
+function assertForHeaderVarKindTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_for_header_var_kind");
+  assertOptionalMetadata(node, path);
+  if (node["kind"] === undefined) throw new TypeError(`${path}.kind` + ' is required');
+  if (node["kind"] !== undefined) assertTransportValue(node["kind"], `${path}.kind`, [{"type":"var","text":"var"}] as const);
+  if (node["left"] === undefined) throw new TypeError(`${path}.left` + ' is required');
+  if (node["left"] !== undefined) assertTransportValue(node["left"], `${path}.left`, [{"type":"identifier"},{"type":"object_pattern"},{"type":"array_pattern"}] as const);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_initializer"}] as const);
+    }
+  }
+}
+
+function assertFromClauseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_from_clause");
+  assertOptionalMetadata(node, path);
+  if (node["source"] === undefined) throw new TypeError(`${path}.source` + ' is required');
+  if (node["source"] !== undefined) assertTransportValue(node["source"], `${path}.source`, [{"type":"string"}] as const);
+}
+
+function assert_ImportClauseDefaultImportTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_import_clause_default_import");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"identifier"},{"type":"namespace_import"},{"type":"named_imports"}] as const);
+    }
+  }
+}
+
+function assert_ImportClauseNamedImportsTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_import_clause_named_imports");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"named_imports"}] as const);
+    }
+  }
+}
+
+function assert_ImportClauseNamespaceImportTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_import_clause_namespace_import");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"namespace_import"}] as const);
+    }
+  }
+}
+
+function assertImportSpecifierAsTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_import_specifier_as");
+  assertOptionalMetadata(node, path);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"},{"type":"string"}] as const);
+  if (node["alias"] === undefined) throw new TypeError(`${path}.alias` + ' is required');
+  if (node["alias"] !== undefined) assertTransportValue(node["alias"], `${path}.alias`, [{"type":"identifier"}] as const);
+}
+
+function assert_ImportSpecifierNameTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_import_specifier_name");
+  assertOptionalMetadata(node, path);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"}] as const);
+}
+
+function assertIndexSignatureColonTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_index_signature_colon");
+  assertOptionalMetadata(node, path);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"_reserved_identifier"}] as const);
+  if (node["index_type"] === undefined) throw new TypeError(`${path}.index_type` + ' is required');
+  if (node["index_type"] !== undefined) assertTransportValue(node["index_type"], `${path}.index_type`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+}
+
+function assert_IndexSignatureMappedTypeClauseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_index_signature_mapped_type_clause");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"mapped_type_clause"}] as const);
+    }
+  }
+}
+
+function assertInitializerTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_initializer");
+  assertOptionalMetadata(node, path);
+  if (node["value"] === undefined) throw new TypeError(`${path}.value` + ' is required');
+  if (node["value"] !== undefined) assertTransportValue(node["value"], `${path}.value`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+}
+
+function assertInterfaceBodyTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_interface_body");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"object_type"}] as const);
+    }
+  }
+}
+
+function assertJsxStartOpeningElementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_jsx_start_opening_element");
+  assertOptionalMetadata(node, path);
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"jsx_identifier"},{"type":"jsx_namespace_name"},{"type":"identifier"},{"type":"nested_identifier"}] as const);
+  if (node["type_arguments"] !== undefined) assertTransportValue(node["type_arguments"], `${path}.type_arguments`, [{"type":"type_arguments"}] as const);
+  if (node["attribute"] === undefined) throw new TypeError(`${path}.attribute` + ' is required');
+  if (node["attribute"] !== undefined) assertTransportArray(node["attribute"], `${path}.attribute`, [{"type":"jsx_attribute"}] as const);
+}
+
+function assertJsxStringTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_jsx_string");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_string_fragment"},{"type":"html_character_reference"}] as const);
+    }
+  }
+}
+
+function assertKwAbstractMarkerTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_kw_abstract_marker");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["abstract"] as const);
+}
+
+function assertKwAsyncMarkerTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_kw_async_marker");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["async"] as const);
+}
+
+function assertKwConstMarkerTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_kw_const_marker");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["const"] as const);
+}
+
+function assertKwOptionalMarkerTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_kw_optional_marker");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["?"] as const);
+}
+
+function assertKwReadonlyMarkerTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_kw_readonly_marker");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["readonly"] as const);
+}
+
+function assertKwStaticMarkerTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_kw_static_marker");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["static"] as const);
+}
+
+function assertLhsExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_lhs_expression");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"member_expression"},{"type":"subscript_expression"},{"type":"identifier"},{"type":"_reserved_identifier"},{"type":"object_pattern"},{"type":"array_pattern"},{"type":"non_null_expression"}] as const);
+    }
+  }
+}
+
+function assert_ModuleTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_module");
+  assertOptionalMetadata(node, path);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"string"},{"type":"identifier"},{"type":"nested_identifier"}] as const);
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"statement_block"}] as const);
+}
+
+function assert_NumberTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_number");
+  assertOptionalMetadata(node, path);
+  if (node["operator"] === undefined) throw new TypeError(`${path}.operator` + ' is required');
+  if (node["operator"] !== undefined) assertTransportValue(node["operator"], `${path}.operator`, [{"type":"-","text":"-"},{"type":"+","text":"+"}] as const);
+  if (node["argument"] === undefined) throw new TypeError(`${path}.argument` + ' is required');
+  if (node["argument"] !== undefined) assertTransportValue(node["argument"], `${path}.argument`, [{"type":"number"}] as const);
+}
+
+function assertParameterNameTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_parameter_name");
+  assertOptionalMetadata(node, path);
+  if (node["decorator"] === undefined) throw new TypeError(`${path}.decorator` + ' is required');
+  if (node["decorator"] !== undefined) assertTransportArray(node["decorator"], `${path}.decorator`, [{"type":"decorator"}] as const);
+  if (node["readonly_marker"] !== undefined) assertTransportValue(node["readonly_marker"], `${path}.readonly_marker`, [{"type":"readonly","text":"readonly"}] as const);
+  if (node["pattern"] === undefined) throw new TypeError(`${path}.pattern` + ' is required');
+  if (node["pattern"] !== undefined) assertTransportValue(node["pattern"], `${path}.pattern`, [{"type":"member_expression"},{"type":"subscript_expression"},{"type":"undefined","text":"undefined"},{"type":"identifier"},{"type":"object_pattern"},{"type":"array_pattern"},{"type":"non_null_expression"},{"type":"rest_pattern"},{"type":"this","text":"this"}] as const);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"accessibility_modifier","text":"public"},{"type":"accessibility_modifier","text":"private"},{"type":"accessibility_modifier","text":"protected"},{"type":"override_modifier","text":"override"}] as const);
+    }
+  }
+}
+
+function assert_ParenthesizedExpressionSequenceTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_parenthesized_expression_sequence");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"sequence_expression"}] as const);
+    }
+  }
+}
+
+function assertParenthesizedExpressionTypedTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_parenthesized_expression_typed");
+  assertOptionalMetadata(node, path);
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"type_annotation"}] as const);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+    }
+  }
+}
+
+function assertPropertyIdentifierTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_property_identifier");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"identifier"}] as const);
+    }
+  }
+}
+
+function assertPublicFieldDefinitionAbstractFirstTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_public_field_definition_abstract_first");
+  assertOptionalMetadata(node, path);
+  if (node["abstract_marker"] === undefined) throw new TypeError(`${path}.abstract_marker` + ' is required');
+  if (node["abstract_marker"] !== undefined) assertTransportValue(node["abstract_marker"], `${path}.abstract_marker`, [{"type":"abstract","text":"abstract"}] as const);
+  if (node["readonly_marker"] !== undefined) assertTransportValue(node["readonly_marker"], `${path}.readonly_marker`, [{"type":"readonly","text":"readonly"}] as const);
+}
+
+function assertPublicFieldDefinitionAccessFirstTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_public_field_definition_access_first");
+  assertOptionalMetadata(node, path);
+  if (node["declare_marker"] !== undefined) assertTransportValue(node["declare_marker"], `${path}.declare_marker`, [{"type":"declare","text":"declare"}] as const);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"accessibility_modifier","text":"public"},{"type":"accessibility_modifier","text":"private"},{"type":"accessibility_modifier","text":"protected"}] as const);
+    }
+  }
+}
+
+function assertPublicFieldDefinitionAccessorOptTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_public_field_definition_accessor_opt");
+  assertOptionalMetadata(node, path);
+  if (node["accessor_marker"] === undefined) throw new TypeError(`${path}.accessor_marker` + ' is required');
+  if (node["accessor_marker"] !== undefined) assertTransportValue(node["accessor_marker"], `${path}.accessor_marker`, [{"type":"accessor","text":"accessor"}] as const);
+}
+
+function assertPublicFieldDefinitionDeclareFirstTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_public_field_definition_declare_first");
+  assertOptionalMetadata(node, path);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"accessibility_modifier","text":"public"},{"type":"accessibility_modifier","text":"private"},{"type":"accessibility_modifier","text":"protected"}] as const);
+    }
+  }
+}
+
+function assertPublicFieldDefinitionReadonlyFirstTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_public_field_definition_readonly_first");
+  assertOptionalMetadata(node, path);
+  if (node["readonly_marker"] === undefined) throw new TypeError(`${path}.readonly_marker` + ' is required');
+  if (node["readonly_marker"] !== undefined) assertTransportValue(node["readonly_marker"], `${path}.readonly_marker`, [{"type":"readonly","text":"readonly"}] as const);
+  if (node["abstract_marker"] !== undefined) assertTransportValue(node["abstract_marker"], `${path}.abstract_marker`, [{"type":"abstract","text":"abstract"}] as const);
+}
+
+function assertPublicFieldDefinitionStaticModsTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_public_field_definition_static_mods");
+  assertOptionalMetadata(node, path);
+  if (node["static_marker"] === undefined) throw new TypeError(`${path}.static_marker` + ' is required');
+  if (node["static_marker"] !== undefined) assertTransportValue(node["static_marker"], `${path}.static_marker`, [{"type":"static","text":"static"}] as const);
+  if (node["readonly_marker"] !== undefined) assertTransportValue(node["readonly_marker"], `${path}.readonly_marker`, [{"type":"readonly","text":"readonly"}] as const);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"override_modifier","text":"override"}] as const);
+    }
+  }
+}
+
+function assertReservedIdentifierTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_reserved_identifier");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertStatementIdentifierTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_statement_identifier");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"identifier"}] as const);
+    }
+  }
+}
+
+function assert_StringDoubleTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_string_double");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_string_fragment"},{"type":"escape_sequence"}] as const);
+    }
+  }
+}
+
+function assertStringFragmentTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_string_fragment");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"unescaped_double_jsx_string_fragment"}] as const);
+    }
+  }
+}
+
+function assert_StringSingleTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_string_single");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_string_fragment"},{"type":"escape_sequence"}] as const);
+    }
+  }
+}
+
+function assertThisTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_this_type");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"this","text":"this"}] as const);
+    }
+  }
+}
+
+function assertTypeIdentifierTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_type_identifier");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_type_identifier"}] as const);
+    }
+  }
+}
+
+function assertTypeQueryCallExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_type_query_call_expression");
+  assertOptionalMetadata(node, path);
+  if (node["function"] === undefined) throw new TypeError(`${path}.function` + ' is required');
+  if (node["function"] !== undefined) assertTransportValue(node["function"], `${path}.function`, [{"type":"import","text":"import"},{"type":"identifier"},{"type":"_type_query_member_expression"},{"type":"_type_query_subscript_expression"}] as const);
+  if (node["arguments"] === undefined) throw new TypeError(`${path}.arguments` + ' is required');
+  if (node["arguments"] !== undefined) assertTransportValue(node["arguments"], `${path}.arguments`, [{"type":"arguments"}] as const);
+}
+
+function assertTypeQueryCallExpressionInTypeAnnotationTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_type_query_call_expression_in_type_annotation");
+  assertOptionalMetadata(node, path);
+  if (node["function"] === undefined) throw new TypeError(`${path}.function` + ' is required');
+  if (node["function"] !== undefined) assertTransportValue(node["function"], `${path}.function`, [{"type":"import","text":"import"},{"type":"_type_query_member_expression_in_type_annotation"}] as const);
+  if (node["arguments"] === undefined) throw new TypeError(`${path}.arguments` + ' is required');
+  if (node["arguments"] !== undefined) assertTransportValue(node["arguments"], `${path}.arguments`, [{"type":"arguments"}] as const);
+}
+
+function assertTypeQueryInstantiationExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_type_query_instantiation_expression");
+  assertOptionalMetadata(node, path);
+  if (node["function"] === undefined) throw new TypeError(`${path}.function` + ' is required');
+  if (node["function"] !== undefined) assertTransportValue(node["function"], `${path}.function`, [{"type":"import","text":"import"},{"type":"identifier"},{"type":"_type_query_member_expression"},{"type":"_type_query_subscript_expression"}] as const);
+  if (node["type_arguments"] === undefined) throw new TypeError(`${path}.type_arguments` + ' is required');
+  if (node["type_arguments"] !== undefined) assertTransportValue(node["type_arguments"], `${path}.type_arguments`, [{"type":"type_arguments"}] as const);
+}
+
+function assertTypeQueryMemberExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_type_query_member_expression");
+  assertOptionalMetadata(node, path);
+  if (node["object"] === undefined) throw new TypeError(`${path}.object` + ' is required');
+  if (node["object"] !== undefined) assertTransportValue(node["object"], `${path}.object`, [{"type":"identifier"},{"type":"this","text":"this"},{"type":"_type_query_subscript_expression"},{"type":"_type_query_member_expression"},{"type":"_type_query_call_expression"}] as const);
+  if (node["property"] === undefined) throw new TypeError(`${path}.property` + ' is required');
+  if (node["property"] !== undefined) assertTransportValue(node["property"], `${path}.property`, [{"type":"private_property_identifier"},{"type":"_property_identifier"}] as const);
+}
+
+function assertTypeQueryMemberExpressionInTypeAnnotationTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_type_query_member_expression_in_type_annotation");
+  assertOptionalMetadata(node, path);
+  if (node["object"] === undefined) throw new TypeError(`${path}.object` + ' is required');
+  if (node["object"] !== undefined) assertTransportValue(node["object"], `${path}.object`, [{"type":"import","text":"import"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+  if (node["property"] === undefined) throw new TypeError(`${path}.property` + ' is required');
+  if (node["property"] !== undefined) assertTransportValue(node["property"], `${path}.property`, [{"type":"private_property_identifier"},{"type":"_property_identifier"}] as const);
+}
+
+function assertTypeQuerySubscriptExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_type_query_subscript_expression");
+  assertOptionalMetadata(node, path);
+  if (node["object"] === undefined) throw new TypeError(`${path}.object` + ' is required');
+  if (node["object"] !== undefined) assertTransportValue(node["object"], `${path}.object`, [{"type":"identifier"},{"type":"this","text":"this"},{"type":"_type_query_subscript_expression"},{"type":"_type_query_member_expression"},{"type":"_type_query_call_expression"}] as const);
+  if (node["index"] === undefined) throw new TypeError(`${path}.index` + ' is required');
+  if (node["index"] !== undefined) assertTransportValue(node["index"], `${path}.index`, [{"type":"predefined_type"},{"type":"string"},{"type":"number"}] as const);
+}
+
+function assertUpdateExpressionPostfixTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_update_expression_postfix");
+  assertOptionalMetadata(node, path);
+  if (node["argument"] === undefined) throw new TypeError(`${path}.argument` + ' is required');
+  if (node["argument"] !== undefined) assertTransportValue(node["argument"], `${path}.argument`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+  if (node["operator"] === undefined) throw new TypeError(`${path}.operator` + ' is required');
+  if (node["operator"] !== undefined) assertTransportValue(node["operator"], `${path}.operator`, [{"type":"++","text":"++"},{"type":"--","text":"--"}] as const);
+}
+
+function assertUpdateExpressionPrefixTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_update_expression_prefix");
+  assertOptionalMetadata(node, path);
+  if (node["operator"] === undefined) throw new TypeError(`${path}.operator` + ' is required');
+  if (node["operator"] !== undefined) assertTransportValue(node["operator"], `${path}.operator`, [{"type":"++","text":"++"},{"type":"--","text":"--"}] as const);
+  if (node["argument"] === undefined) throw new TypeError(`${path}.argument` + ' is required');
+  if (node["argument"] !== undefined) assertTransportValue(node["argument"], `${path}.argument`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+}
+
+function assertAbstractClassDeclarationTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "abstract_class_declaration");
+  assertOptionalMetadata(node, path);
+  if (node["decorator"] === undefined) throw new TypeError(`${path}.decorator` + ' is required');
+  if (node["decorator"] !== undefined) assertTransportArray(node["decorator"], `${path}.decorator`, [{"type":"decorator"}] as const);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"_type_identifier"}] as const);
+  if (node["type_parameters"] !== undefined) assertTransportValue(node["type_parameters"], `${path}.type_parameters`, [{"type":"type_parameters"}] as const);
+  if (node["class_heritage"] !== undefined) assertTransportValue(node["class_heritage"], `${path}.class_heritage`, [{"type":"class_heritage"}] as const);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"class_body"}] as const);
+}
+
+function assertAbstractMethodSignatureTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "abstract_method_signature");
+  assertOptionalMetadata(node, path);
+  if (node["accessibility_modifier"] !== undefined) assertTransportValue(node["accessibility_modifier"], `${path}.accessibility_modifier`, [{"type":"accessibility_modifier","text":"public"},{"type":"accessibility_modifier","text":"private"},{"type":"accessibility_modifier","text":"protected"}] as const);
+  if (node["override_modifier"] !== undefined) assertTransportValue(node["override_modifier"], `${path}.override_modifier`, [{"type":"override_modifier","text":"override"}] as const);
+  if (node["accessor_kind"] !== undefined) assertTransportValue(node["accessor_kind"], `${path}.accessor_kind`, [{"type":"get","text":"get"},{"type":"set","text":"set"},{"type":"*","text":"*"}] as const);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"},{"type":"private_property_identifier"},{"type":"string"},{"type":"number"},{"type":"computed_property_name"}] as const);
+  if (node["optional_marker"] !== undefined) assertTransportValue(node["optional_marker"], `${path}.optional_marker`, [{"type":"?","text":"?"}] as const);
+  if (node["type_parameters"] !== undefined) assertTransportValue(node["type_parameters"], `${path}.type_parameters`, [{"type":"type_parameters"}] as const);
+  if (node["parameters"] === undefined) throw new TypeError(`${path}.parameters` + ' is required');
+  if (node["parameters"] !== undefined) assertTransportValue(node["parameters"], `${path}.parameters`, [{"type":"formal_parameters"}] as const);
+  if (node["return_type"] !== undefined) assertTransportValue(node["return_type"], `${path}.return_type`, [{"type":"type_annotation"},{"type":"asserts_annotation"},{"type":"type_predicate_annotation"}] as const);
+}
+
+function assertAccessibilityModifierTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "accessibility_modifier");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["public","private","protected"] as const);
+}
+
+function assertAddingTypeAnnotationTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "adding_type_annotation");
+  assertOptionalMetadata(node, path);
+  if (node["type"] === undefined) throw new TypeError(`${path}.type` + ' is required');
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+}
+
+function assertAmbientDeclarationTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "ambient_declaration");
+  assertOptionalMetadata(node, path);
+  if (node["declaration"] === undefined) throw new TypeError(`${path}.declaration` + ' is required');
+  if (node["declaration"] !== undefined) assertTransportValue(node["declaration"], `${path}.declaration`, [{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"global","text":"global"},{"type":"statement_block"},{"type":"module","text":"module"},{"type":"_property_identifier"},{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"},{"type":"_automatic_semicolon"}] as const);
+}
+
+function assertArgumentsTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "arguments");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"spread_element"}] as const);
+    }
+  }
+}
+
+function assertArrayTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "array");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"spread_element"}] as const);
+    }
+  }
+}
+
+function assertArrayPatternTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "array_pattern");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"member_expression"},{"type":"subscript_expression"},{"type":"undefined","text":"undefined"},{"type":"identifier"},{"type":"object_pattern"},{"type":"array_pattern"},{"type":"non_null_expression"},{"type":"rest_pattern"},{"type":"assignment_pattern"}] as const);
+    }
+  }
+}
+
+function assertArrayTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "array_type");
+  assertOptionalMetadata(node, path);
+  if (node["primary_type"] === undefined) throw new TypeError(`${path}.primary_type` + ' is required');
+  if (node["primary_type"] !== undefined) assertTransportValue(node["primary_type"], `${path}.primary_type`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"}] as const);
+}
+
+function assertArrowFunctionParameterTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "arrow_function_parameter");
+  assertOptionalMetadata(node, path);
+  if (node["parameter"] === undefined) throw new TypeError(`${path}.parameter` + ' is required');
+  if (node["parameter"] !== undefined) assertTransportValue(node["parameter"], `${path}.parameter`, [{"type":"_reserved_identifier"}] as const);
+}
+
+function assertArrowFunctionUCallSignatureTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "arrow_function__call_signature");
+  assertOptionalMetadata(node, path);
+  if (node["type_parameters"] !== undefined) assertTransportValue(node["type_parameters"], `${path}.type_parameters`, [{"type":"type_parameters"}] as const);
+  if (node["parameters"] === undefined) throw new TypeError(`${path}.parameters` + ' is required');
+  if (node["parameters"] !== undefined) assertTransportValue(node["parameters"], `${path}.parameters`, [{"type":"formal_parameters"}] as const);
+  if (node["return_type"] !== undefined) assertTransportValue(node["return_type"], `${path}.return_type`, [{"type":"type_annotation"},{"type":"asserts_annotation"},{"type":"type_predicate_annotation"}] as const);
+}
+
+function assertArrowFunctionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "arrow_function");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$variant !== 'string') {
+    throw new TypeError(`${path}.$variant must be a string`);
+  }
+  switch (node.$variant) {
+    case "parameter":
+      assertArrowFunctionUFormParameterTransport(node, path);
+      return;
+    case "_call_signature":
+      assertArrowFunctionUFormUCallSignatureTransport(node, path);
+      return;
+    default:
+      throw new TypeError(`unsupported native transport variant for ${path}: ${String(node.$variant)}`);
+  }
+}
+
+function assertArrowFunctionUFormParameterTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "parameter");
+  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"async","text":"async"}] as const);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"statement_block"}] as const);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_arrow_function_parameter"}] as const);
+    }
+  }
+}
+
+function assertArrowFunctionUFormUCallSignatureTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "_call_signature");
+  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"async","text":"async"}] as const);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"statement_block"}] as const);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_arrow_function__call_signature"}] as const);
+    }
+  }
+}
+
+function assertAsExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "as_expression");
+  assertOptionalMetadata(node, path);
+  if (node["expression"] === undefined) throw new TypeError(`${path}.expression` + ' is required');
+  if (node["expression"] !== undefined) assertTransportValue(node["expression"], `${path}.expression`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+  if (node["type_annotation"] === undefined) throw new TypeError(`${path}.type_annotation` + ' is required');
+  if (node["type_annotation"] !== undefined) assertTransportValue(node["type_annotation"], `${path}.type_annotation`, [{"type":"const","text":"const"},{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+}
+
+function assertAssertsTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "asserts");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"type_predicate"},{"type":"identifier"},{"type":"this","text":"this"}] as const);
+    }
+  }
+}
+
+function assertAssertsAnnotationTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "asserts_annotation");
+  assertOptionalMetadata(node, path);
+  if (node["asserts"] === undefined) throw new TypeError(`${path}.asserts` + ' is required');
+  if (node["asserts"] !== undefined) assertTransportValue(node["asserts"], `${path}.asserts`, [{"type":":","text":":"},{"type":"asserts"}] as const);
+}
+
+function assertAssignmentExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "assignment_expression");
+  assertOptionalMetadata(node, path);
+  if (node["using_marker"] !== undefined) assertTransportValue(node["using_marker"], `${path}.using_marker`, [{"type":"using","text":"using"}] as const);
+  if (node["left"] === undefined) throw new TypeError(`${path}.left` + ' is required');
+  if (node["left"] !== undefined) assertTransportValue(node["left"], `${path}.left`, [{"type":"parenthesized_expression"},{"type":"_lhs_expression"}] as const);
+  if (node["right"] === undefined) throw new TypeError(`${path}.right` + ' is required');
+  if (node["right"] !== undefined) assertTransportValue(node["right"], `${path}.right`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+}
+
+function assertAssignmentPatternTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "assignment_pattern");
+  assertOptionalMetadata(node, path);
+  if (node["left"] === undefined) throw new TypeError(`${path}.left` + ' is required');
+  if (node["left"] !== undefined) assertTransportValue(node["left"], `${path}.left`, [{"type":"member_expression"},{"type":"subscript_expression"},{"type":"undefined","text":"undefined"},{"type":"identifier"},{"type":"object_pattern"},{"type":"array_pattern"},{"type":"non_null_expression"},{"type":"rest_pattern"}] as const);
+  if (node["right"] === undefined) throw new TypeError(`${path}.right` + ' is required');
+  if (node["right"] !== undefined) assertTransportValue(node["right"], `${path}.right`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+}
+
+function assertAugmentedAssignmentExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "augmented_assignment_expression");
+  assertOptionalMetadata(node, path);
+  if (node["left"] === undefined) throw new TypeError(`${path}.left` + ' is required');
+  if (node["left"] !== undefined) assertTransportValue(node["left"], `${path}.left`, [{"type":"member_expression"},{"type":"subscript_expression"},{"type":"_reserved_identifier"},{"type":"parenthesized_expression"},{"type":"non_null_expression"}] as const);
+  if (node["operator"] === undefined) throw new TypeError(`${path}.operator` + ' is required');
+  if (node["operator"] !== undefined) assertTransportValue(node["operator"], `${path}.operator`, [{"type":"+=","text":"+="},{"type":"-=","text":"-="},{"type":"*=","text":"*="},{"type":"/=","text":"/="},{"type":"%=","text":"%="},{"type":"^=","text":"^="},{"type":"&=","text":"&="},{"type":"|=","text":"|="},{"type":">>=","text":">>="},{"type":">>>=","text":">>>="},{"type":"<<=","text":"<<="},{"type":"**=","text":"**="},{"type":"&&=","text":"&&="},{"type":"||=","text":"||="},{"type":"??=","text":"??="}] as const);
+  if (node["right"] === undefined) throw new TypeError(`${path}.right` + ' is required');
+  if (node["right"] !== undefined) assertTransportValue(node["right"], `${path}.right`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+}
+
+function assertAwaitExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "await_expression");
+  assertOptionalMetadata(node, path);
+  if (node["expression"] === undefined) throw new TypeError(`${path}.expression` + ' is required');
+  if (node["expression"] !== undefined) assertTransportValue(node["expression"], `${path}.expression`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+}
+
+function assertBinaryExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "binary_expression");
+  assertOptionalMetadata(node, path);
+  if (node["left"] === undefined) throw new TypeError(`${path}.left` + ' is required');
+  if (node["left"] !== undefined) assertTransportValue(node["left"], `${path}.left`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"private_property_identifier"}] as const);
+  if (node["operator"] === undefined) throw new TypeError(`${path}.operator` + ' is required');
+  if (node["operator"] !== undefined) assertTransportValue(node["operator"], `${path}.operator`, [{"type":"&&","text":"&&"},{"type":"||","text":"||"},{"type":">>","text":">>"},{"type":">>>","text":">>>"},{"type":"<<","text":"<<"},{"type":"&","text":"&"},{"type":"^","text":"^"},{"type":"|","text":"|"},{"type":"+","text":"+"},{"type":"-","text":"-"},{"type":"*","text":"*"},{"type":"/","text":"/"},{"type":"%","text":"%"},{"type":"**","text":"**"},{"type":"<","text":"<"},{"type":"<=","text":"<="},{"type":"==","text":"=="},{"type":"===","text":"==="},{"type":"!=","text":"!="},{"type":"!==","text":"!=="},{"type":">=","text":">="},{"type":">","text":">"},{"type":"??","text":"??"},{"type":"instanceof","text":"instanceof"},{"type":"in","text":"in"}] as const);
+  if (node["right"] === undefined) throw new TypeError(`${path}.right` + ' is required');
+  if (node["right"] !== undefined) assertTransportValue(node["right"], `${path}.right`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+}
+
+function assertBreakStatementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "break_statement");
+  assertOptionalMetadata(node, path);
+  if (node["label"] !== undefined) assertTransportValue(node["label"], `${path}.label`, [{"type":"_statement_identifier"}] as const);
+  if (node["semicolon"] === undefined) throw new TypeError(`${path}.semicolon` + ' is required');
+  if (node["semicolon"] !== undefined) assertTransportValue(node["semicolon"], `${path}.semicolon`, [{"type":"_automatic_semicolon"}] as const);
+}
+
+function assertCallExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "call_expression");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$variant !== 'string') {
+    throw new TypeError(`${path}.$variant must be a string`);
+  }
+  switch (node.$variant) {
+    case "call":
+      assertCallExpressionUFormCallTransport(node, path);
+      return;
+    case "template_call":
+      assertCallExpressionUFormTemplateCallTransport(node, path);
+      return;
+    case "member":
+      assertCallExpressionUFormMemberTransport(node, path);
+      return;
+    default:
+      throw new TypeError(`unsupported native transport variant for ${path}: ${String(node.$variant)}`);
+  }
+}
+
+function assertCallExpressionUFormCallTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "call");
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_call_expression_call"}] as const);
+    }
+  }
+}
+
+function assertCallExpressionUFormTemplateCallTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "template_call");
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_call_expression_template_call"}] as const);
+    }
+  }
+}
+
+function assertCallExpressionUFormMemberTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "member");
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_call_expression_member"}] as const);
+    }
+  }
+}
+
+function assertCallSignatureTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "call_signature");
+  assertOptionalMetadata(node, path);
+  if (node["type_parameters"] !== undefined) assertTransportValue(node["type_parameters"], `${path}.type_parameters`, [{"type":"type_parameters"}] as const);
+  if (node["parameters"] === undefined) throw new TypeError(`${path}.parameters` + ' is required');
+  if (node["parameters"] !== undefined) assertTransportValue(node["parameters"], `${path}.parameters`, [{"type":"formal_parameters"}] as const);
+  if (node["return_type"] !== undefined) assertTransportValue(node["return_type"], `${path}.return_type`, [{"type":"type_annotation"},{"type":"asserts_annotation"},{"type":"type_predicate_annotation"}] as const);
+}
+
+function assertCatchClauseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "catch_clause");
+  assertOptionalMetadata(node, path);
+  if (node["parameter"] !== undefined) assertTransportValue(node["parameter"], `${path}.parameter`, [{"type":"identifier"},{"type":"object_pattern"},{"type":"array_pattern"}] as const);
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"type_annotation"}] as const);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"statement_block"}] as const);
+}
+
+function assertClassTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "class");
+  assertOptionalMetadata(node, path);
+  if (node["decorator"] === undefined) throw new TypeError(`${path}.decorator` + ' is required');
+  if (node["decorator"] !== undefined) assertTransportArray(node["decorator"], `${path}.decorator`, [{"type":"decorator"}] as const);
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"_type_identifier"}] as const);
+  if (node["type_parameters"] !== undefined) assertTransportValue(node["type_parameters"], `${path}.type_parameters`, [{"type":"type_parameters"}] as const);
+  if (node["class_heritage"] !== undefined) assertTransportValue(node["class_heritage"], `${path}.class_heritage`, [{"type":"class_heritage"}] as const);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"class_body"}] as const);
+}
+
+function assertClassBodyTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "class_body");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_class_body_method"},{"type":"_class_body_method_sig"},{"type":"class_static_block"},{"type":"_class_body_member"}] as const);
+    }
+  }
+}
+
+function assertClassDeclarationTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "class_declaration");
+  assertOptionalMetadata(node, path);
+  if (node["decorator"] === undefined) throw new TypeError(`${path}.decorator` + ' is required');
+  if (node["decorator"] !== undefined) assertTransportArray(node["decorator"], `${path}.decorator`, [{"type":"decorator"}] as const);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"_type_identifier"}] as const);
+  if (node["type_parameters"] !== undefined) assertTransportValue(node["type_parameters"], `${path}.type_parameters`, [{"type":"type_parameters"}] as const);
+  if (node["class_heritage"] !== undefined) assertTransportValue(node["class_heritage"], `${path}.class_heritage`, [{"type":"class_heritage"}] as const);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"class_body"}] as const);
+  if (node["automatic_semicolon"] !== undefined) assertTransportValue(node["automatic_semicolon"], `${path}.automatic_semicolon`, [{"type":"_automatic_semicolon"}] as const);
+}
+
+function assertClassHeritageExtendsClauseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "class_heritage_extends_clause");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"extends_clause"},{"type":"implements_clause"}] as const);
+    }
+  }
+}
+
+function assertClassHeritageImplementsClauseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "class_heritage_implements_clause");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"implements_clause"}] as const);
+    }
+  }
+}
+
+function assertClassHeritageTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "class_heritage");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$variant !== 'string') {
+    throw new TypeError(`${path}.$variant must be a string`);
+  }
+  switch (node.$variant) {
+    case "extends_clause":
+      assertClassHeritageUFormExtendsClauseTransport(node, path);
+      return;
+    case "implements_clause":
+      assertClassHeritageUFormImplementsClauseTransport(node, path);
+      return;
+    default:
+      throw new TypeError(`unsupported native transport variant for ${path}: ${String(node.$variant)}`);
+  }
+}
+
+function assertClassHeritageUFormExtendsClauseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "extends_clause");
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_class_heritage_extends_clause"}] as const);
+    }
+  }
+}
+
+function assertClassHeritageUFormImplementsClauseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "implements_clause");
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_class_heritage_implements_clause"}] as const);
+    }
+  }
+}
+
+function assertClassStaticBlockTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "class_static_block");
+  assertOptionalMetadata(node, path);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"statement_block"}] as const);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_automatic_semicolon"}] as const);
+    }
+  }
+}
+
+function assertCommentTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "comment");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertComputedPropertyNameTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "computed_property_name");
+  assertOptionalMetadata(node, path);
+  if (node["expression"] === undefined) throw new TypeError(`${path}.expression` + ' is required');
+  if (node["expression"] !== undefined) assertTransportValue(node["expression"], `${path}.expression`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+}
+
+function assertConditionalTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "conditional_type");
+  assertOptionalMetadata(node, path);
+  if (node["left"] === undefined) throw new TypeError(`${path}.left` + ' is required');
+  if (node["left"] !== undefined) assertTransportValue(node["left"], `${path}.left`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+  if (node["right"] === undefined) throw new TypeError(`${path}.right` + ' is required');
+  if (node["right"] !== undefined) assertTransportValue(node["right"], `${path}.right`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+  if (node["consequence"] === undefined) throw new TypeError(`${path}.consequence` + ' is required');
+  if (node["consequence"] !== undefined) assertTransportValue(node["consequence"], `${path}.consequence`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+  if (node["alternative"] === undefined) throw new TypeError(`${path}.alternative` + ' is required');
+  if (node["alternative"] !== undefined) assertTransportValue(node["alternative"], `${path}.alternative`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+}
+
+function assertConstraintTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "constraint");
+  assertOptionalMetadata(node, path);
+  if (node["type"] === undefined) throw new TypeError(`${path}.type` + ' is required');
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+}
+
+function assertConstructSignatureTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "construct_signature");
+  assertOptionalMetadata(node, path);
+  if (node["abstract_marker"] !== undefined) assertTransportValue(node["abstract_marker"], `${path}.abstract_marker`, [{"type":"abstract","text":"abstract"}] as const);
+  if (node["type_parameters"] !== undefined) assertTransportValue(node["type_parameters"], `${path}.type_parameters`, [{"type":"type_parameters"}] as const);
+  if (node["parameters"] === undefined) throw new TypeError(`${path}.parameters` + ' is required');
+  if (node["parameters"] !== undefined) assertTransportValue(node["parameters"], `${path}.parameters`, [{"type":"formal_parameters"}] as const);
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"type_annotation"}] as const);
+}
+
+function assertConstructorTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "constructor_type");
+  assertOptionalMetadata(node, path);
+  if (node["abstract_marker"] !== undefined) assertTransportValue(node["abstract_marker"], `${path}.abstract_marker`, [{"type":"abstract","text":"abstract"}] as const);
+  if (node["type_parameters"] !== undefined) assertTransportValue(node["type_parameters"], `${path}.type_parameters`, [{"type":"type_parameters"}] as const);
+  if (node["parameters"] === undefined) throw new TypeError(`${path}.parameters` + ' is required');
+  if (node["parameters"] !== undefined) assertTransportValue(node["parameters"], `${path}.parameters`, [{"type":"formal_parameters"}] as const);
+  if (node["type"] === undefined) throw new TypeError(`${path}.type` + ' is required');
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+}
+
+function assertContinueStatementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "continue_statement");
+  assertOptionalMetadata(node, path);
+  if (node["label"] !== undefined) assertTransportValue(node["label"], `${path}.label`, [{"type":"_statement_identifier"}] as const);
+  if (node["semicolon"] === undefined) throw new TypeError(`${path}.semicolon` + ' is required');
+  if (node["semicolon"] !== undefined) assertTransportValue(node["semicolon"], `${path}.semicolon`, [{"type":"_automatic_semicolon"}] as const);
+}
+
+function assertDebuggerStatementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "debugger_statement");
+  assertOptionalMetadata(node, path);
+  if (node["semicolon"] === undefined) throw new TypeError(`${path}.semicolon` + ' is required');
+  if (node["semicolon"] !== undefined) assertTransportValue(node["semicolon"], `${path}.semicolon`, [{"type":"_automatic_semicolon"}] as const);
+}
+
+function assertDecoratorTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "decorator");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"identifier"},{"type":"decorator_member_expression"},{"type":"decorator_call_expression"},{"type":"decorator_parenthesized_expression"}] as const);
+    }
+  }
+}
+
+function assertDecoratorCallExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "decorator_call_expression");
+  assertOptionalMetadata(node, path);
+  if (node["function"] === undefined) throw new TypeError(`${path}.function` + ' is required');
+  if (node["function"] !== undefined) assertTransportValue(node["function"], `${path}.function`, [{"type":"identifier"},{"type":"decorator_member_expression"}] as const);
+  if (node["type_arguments"] !== undefined) assertTransportValue(node["type_arguments"], `${path}.type_arguments`, [{"type":"type_arguments"}] as const);
+  if (node["arguments"] === undefined) throw new TypeError(`${path}.arguments` + ' is required');
+  if (node["arguments"] !== undefined) assertTransportValue(node["arguments"], `${path}.arguments`, [{"type":"arguments"}] as const);
+}
+
+function assertDecoratorMemberExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "decorator_member_expression");
+  assertOptionalMetadata(node, path);
+  if (node["object"] === undefined) throw new TypeError(`${path}.object` + ' is required');
+  if (node["object"] !== undefined) assertTransportValue(node["object"], `${path}.object`, [{"type":"identifier"},{"type":"decorator_member_expression"}] as const);
+  if (node["property"] === undefined) throw new TypeError(`${path}.property` + ' is required');
+  if (node["property"] !== undefined) assertTransportValue(node["property"], `${path}.property`, [{"type":"_property_identifier"}] as const);
+}
+
+function assertDecoratorParenthesizedExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "decorator_parenthesized_expression");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"identifier"},{"type":"decorator_member_expression"},{"type":"decorator_call_expression"}] as const);
+    }
+  }
+}
+
+function assertDefaultTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "default_type");
+  assertOptionalMetadata(node, path);
+  if (node["type"] === undefined) throw new TypeError(`${path}.type` + ' is required');
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+}
+
+function assertDoStatementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "do_statement");
+  assertOptionalMetadata(node, path);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const);
+  if (node["condition"] === undefined) throw new TypeError(`${path}.condition` + ' is required');
+  if (node["condition"] !== undefined) assertTransportValue(node["condition"], `${path}.condition`, [{"type":"parenthesized_expression"}] as const);
+  if (node["semicolon"] !== undefined) assertTransportValue(node["semicolon"], `${path}.semicolon`, [{"type":"_automatic_semicolon"}] as const);
+}
+
+function assertElseClauseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "else_clause");
+  assertOptionalMetadata(node, path);
+  if (node["statement"] === undefined) throw new TypeError(`${path}.statement` + ' is required');
+  if (node["statement"] !== undefined) assertTransportValue(node["statement"], `${path}.statement`, [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const);
+}
+
+function assertEmptyStatementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "empty_statement");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, [";"] as const);
+}
+
+function assertEnumAssignmentTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "enum_assignment");
+  assertOptionalMetadata(node, path);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"},{"type":"private_property_identifier"},{"type":"string"},{"type":"number"},{"type":"computed_property_name"}] as const);
+  if (node["value"] === undefined) throw new TypeError(`${path}.value` + ' is required');
+  if (node["value"] !== undefined) assertTransportValue(node["value"], `${path}.value`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+}
+
+function assertEnumBodyTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "enum_body");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"enum_assignment"}] as const);
+    }
+  }
+}
+
+function assertEnumDeclarationTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "enum_declaration");
+  assertOptionalMetadata(node, path);
+  if (node["const_marker"] !== undefined) assertTransportValue(node["const_marker"], `${path}.const_marker`, [{"type":"const","text":"const"}] as const);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"}] as const);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"enum_body"}] as const);
+}
+
+function assertEscapeSequenceTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "escape_sequence");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertExistentialTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "existential_type");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["*"] as const);
+}
+
+function assertExportClauseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "export_clause");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"export_specifier"}] as const);
+    }
+  }
+}
+
+function assertExportSpecifierTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "export_specifier");
+  assertOptionalMetadata(node, path);
+  if (node["export_kind"] !== undefined) assertTransportValue(node["export_kind"], `${path}.export_kind`, [{"type":"type","text":"type"},{"type":"typeof","text":"typeof"}] as const);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"},{"type":"string"}] as const);
+  if (node["alias"] !== undefined) assertTransportValue(node["alias"], `${path}.alias`, [{"type":"identifier"},{"type":"string"}] as const);
+}
+
+function assertExportStatementTypeExportTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "export_statement_type_export");
+  assertOptionalMetadata(node, path);
+  if (node["source"] !== undefined) assertTransportValue(node["source"], `${path}.source`, [{"type":"string"}] as const);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"export_clause"},{"type":"_automatic_semicolon"}] as const);
+    }
+  }
+}
+
+function assertExportStatementEqualsExportTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "export_statement_equals_export");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"_automatic_semicolon"}] as const);
+    }
+  }
+}
+
+function assertExportStatementNamespaceExportTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "export_statement_namespace_export");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"identifier"},{"type":"_automatic_semicolon"}] as const);
+    }
+  }
+}
+
+function assertExportStatementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "export_statement");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$variant !== 'string') {
+    throw new TypeError(`${path}.$variant must be a string`);
+  }
+  switch (node.$variant) {
+    case "default":
+      assertExportStatementUFormDefaultTransport(node, path);
+      return;
+    case "type_export":
+      assertExportStatementUFormTypeExportTransport(node, path);
+      return;
+    case "equals_export":
+      assertExportStatementUFormEqualsExportTransport(node, path);
+      return;
+    case "namespace_export":
+      assertExportStatementUFormNamespaceExportTransport(node, path);
+      return;
+    default:
+      throw new TypeError(`unsupported native transport variant for ${path}: ${String(node.$variant)}`);
+  }
+}
+
+function assertExportStatementUFormDefaultTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "default");
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_export_statement_default_from_arm"},{"type":"_export_statement_default_decl_arm"}] as const);
+    }
+  }
+}
+
+function assertExportStatementUFormTypeExportTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "type_export");
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_export_statement_type_export"}] as const);
+    }
+  }
+}
+
+function assertExportStatementUFormEqualsExportTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "equals_export");
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_export_statement_equals_export"}] as const);
+    }
+  }
+}
+
+function assertExportStatementUFormNamespaceExportTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "namespace_export");
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_export_statement_namespace_export"}] as const);
+    }
+  }
+}
+
+function assertExpressionStatementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "expression_statement");
+  assertOptionalMetadata(node, path);
+  if (node["semicolon"] === undefined) throw new TypeError(`${path}.semicolon` + ' is required');
+  if (node["semicolon"] !== undefined) assertTransportValue(node["semicolon"], `${path}.semicolon`, [{"type":"_automatic_semicolon"}] as const);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"sequence_expression"}] as const);
+    }
+  }
+}
+
+function assertExtendsClauseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "extends_clause");
+  assertOptionalMetadata(node, path);
+  if (node["value"] === undefined) throw new TypeError(`${path}.value` + ' is required');
+  if (node["value"] !== undefined) assertTransportArray(node["value"], `${path}.value`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+  if (node["type_arguments"] !== undefined) assertTransportValue(node["type_arguments"], `${path}.type_arguments`, [{"type":"type_arguments"}] as const);
+}
+
+function assertExtendsTypeClauseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "extends_type_clause");
+  assertOptionalMetadata(node, path);
+  if (node["type"] === undefined) throw new TypeError(`${path}.type` + ' is required');
+  if (node["type"] !== undefined) assertTransportArray(node["type"], `${path}.type`, [{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"}] as const);
+}
+
+function assertFalseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "false");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["false"] as const);
+}
+
+function assertFieldDefinitionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "field_definition");
+  assertOptionalMetadata(node, path);
+  if (node["decorator"] === undefined) throw new TypeError(`${path}.decorator` + ' is required');
+  if (node["decorator"] !== undefined) assertTransportArray(node["decorator"], `${path}.decorator`, [{"type":"decorator"}] as const);
+  if (node["static_marker"] !== undefined) assertTransportValue(node["static_marker"], `${path}.static_marker`, [{"type":"static","text":"static"}] as const);
+  if (node["property"] === undefined) throw new TypeError(`${path}.property` + ' is required');
+  if (node["property"] !== undefined) assertTransportValue(node["property"], `${path}.property`, [{"type":"identifier"},{"type":"private_property_identifier"},{"type":"string"},{"type":"number"},{"type":"computed_property_name"}] as const);
+  if (node["value"] !== undefined) assertTransportValue(node["value"], `${path}.value`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+}
+
+function assertFinallyClauseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "finally_clause");
+  assertOptionalMetadata(node, path);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"statement_block"}] as const);
+}
+
+function assertFlowMaybeTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "flow_maybe_type");
+  assertOptionalMetadata(node, path);
+  if (node["primary_type"] === undefined) throw new TypeError(`${path}.primary_type` + ' is required');
+  if (node["primary_type"] !== undefined) assertTransportValue(node["primary_type"], `${path}.primary_type`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"}] as const);
+}
+
+function assertForInStatementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "for_in_statement");
+  assertOptionalMetadata(node, path);
+  if (node["await_marker"] !== undefined) assertTransportValue(node["await_marker"], `${path}.await_marker`, [{"type":"await","text":"await"}] as const);
+  if (node["operator"] === undefined) throw new TypeError(`${path}.operator` + ' is required');
+  if (node["operator"] !== undefined) assertTransportValue(node["operator"], `${path}.operator`, [{"type":"in","text":"in"},{"type":"of","text":"of"}] as const);
+  if (node["right"] === undefined) throw new TypeError(`${path}.right` + ' is required');
+  if (node["right"] !== undefined) assertTransportValue(node["right"], `${path}.right`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"sequence_expression"}] as const);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_for_header_lhs"},{"type":"_for_header_var_kind"},{"type":"_for_header_let_const_kind"}] as const);
+    }
+  }
+}
+
+function assertForStatementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "for_statement");
+  assertOptionalMetadata(node, path);
+  if (node["initializer"] === undefined) throw new TypeError(`${path}.initializer` + ' is required');
+  if (node["initializer"] !== undefined) assertTransportValue(node["initializer"], `${path}.initializer`, [{"type":"lexical_declaration"},{"type":"variable_declaration"},{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"sequence_expression"},{"type":"empty_statement","text":";"}] as const);
+  if (node["condition"] === undefined) throw new TypeError(`${path}.condition` + ' is required');
+  if (node["condition"] !== undefined) assertTransportValue(node["condition"], `${path}.condition`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"sequence_expression"},{"type":"empty_statement","text":";"}] as const);
+  if (node["increment"] !== undefined) assertTransportValue(node["increment"], `${path}.increment`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"sequence_expression"}] as const);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const);
+}
+
+function assertFormalParametersTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "formal_parameters");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"required_parameter"},{"type":"optional_parameter"}] as const);
+    }
+  }
+}
+
+function assertFunctionDeclarationTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "function_declaration");
+  assertOptionalMetadata(node, path);
+  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"async","text":"async"}] as const);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"}] as const);
+  if (node["type_parameters"] !== undefined) assertTransportValue(node["type_parameters"], `${path}.type_parameters`, [{"type":"type_parameters"}] as const);
+  if (node["parameters"] === undefined) throw new TypeError(`${path}.parameters` + ' is required');
+  if (node["parameters"] !== undefined) assertTransportValue(node["parameters"], `${path}.parameters`, [{"type":"formal_parameters"}] as const);
+  if (node["return_type"] !== undefined) assertTransportValue(node["return_type"], `${path}.return_type`, [{"type":"type_annotation"},{"type":"asserts_annotation"},{"type":"type_predicate_annotation"}] as const);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"statement_block"}] as const);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_automatic_semicolon"}] as const);
+    }
+  }
+}
+
+function assertFunctionExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "function_expression");
+  assertOptionalMetadata(node, path);
+  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"async","text":"async"}] as const);
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"}] as const);
+  if (node["type_parameters"] !== undefined) assertTransportValue(node["type_parameters"], `${path}.type_parameters`, [{"type":"type_parameters"}] as const);
+  if (node["parameters"] === undefined) throw new TypeError(`${path}.parameters` + ' is required');
+  if (node["parameters"] !== undefined) assertTransportValue(node["parameters"], `${path}.parameters`, [{"type":"formal_parameters"}] as const);
+  if (node["return_type"] !== undefined) assertTransportValue(node["return_type"], `${path}.return_type`, [{"type":"type_annotation"},{"type":"asserts_annotation"},{"type":"type_predicate_annotation"}] as const);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"statement_block"}] as const);
+}
+
+function assertFunctionSignatureTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "function_signature");
+  assertOptionalMetadata(node, path);
+  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"async","text":"async"}] as const);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"}] as const);
+  if (node["type_parameters"] !== undefined) assertTransportValue(node["type_parameters"], `${path}.type_parameters`, [{"type":"type_parameters"}] as const);
+  if (node["parameters"] === undefined) throw new TypeError(`${path}.parameters` + ' is required');
+  if (node["parameters"] !== undefined) assertTransportValue(node["parameters"], `${path}.parameters`, [{"type":"formal_parameters"}] as const);
+  if (node["return_type"] !== undefined) assertTransportValue(node["return_type"], `${path}.return_type`, [{"type":"type_annotation"},{"type":"asserts_annotation"},{"type":"type_predicate_annotation"}] as const);
+  if (node["semicolon"] === undefined) throw new TypeError(`${path}.semicolon` + ' is required');
+  if (node["semicolon"] !== undefined) assertTransportValue(node["semicolon"], `${path}.semicolon`, [{"type":"_automatic_semicolon"},{"type":"_function_signature_automatic_semicolon"}] as const);
+}
+
+function assertFunctionTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "function_type");
+  assertOptionalMetadata(node, path);
+  if (node["type_parameters"] !== undefined) assertTransportValue(node["type_parameters"], `${path}.type_parameters`, [{"type":"type_parameters"}] as const);
+  if (node["parameters"] === undefined) throw new TypeError(`${path}.parameters` + ' is required');
+  if (node["parameters"] !== undefined) assertTransportValue(node["parameters"], `${path}.parameters`, [{"type":"formal_parameters"}] as const);
+  if (node["return_type"] === undefined) throw new TypeError(`${path}.return_type` + ' is required');
+  if (node["return_type"] !== undefined) assertTransportValue(node["return_type"], `${path}.return_type`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"},{"type":"asserts"},{"type":"type_predicate"}] as const);
+}
+
+function assertGeneratorFunctionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "generator_function");
+  assertOptionalMetadata(node, path);
+  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"async","text":"async"}] as const);
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"}] as const);
+  if (node["type_parameters"] !== undefined) assertTransportValue(node["type_parameters"], `${path}.type_parameters`, [{"type":"type_parameters"}] as const);
+  if (node["parameters"] === undefined) throw new TypeError(`${path}.parameters` + ' is required');
+  if (node["parameters"] !== undefined) assertTransportValue(node["parameters"], `${path}.parameters`, [{"type":"formal_parameters"}] as const);
+  if (node["return_type"] !== undefined) assertTransportValue(node["return_type"], `${path}.return_type`, [{"type":"type_annotation"},{"type":"asserts_annotation"},{"type":"type_predicate_annotation"}] as const);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"statement_block"}] as const);
+}
+
+function assertGeneratorFunctionDeclarationTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "generator_function_declaration");
+  assertOptionalMetadata(node, path);
+  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"async","text":"async"}] as const);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"}] as const);
+  if (node["type_parameters"] !== undefined) assertTransportValue(node["type_parameters"], `${path}.type_parameters`, [{"type":"type_parameters"}] as const);
+  if (node["parameters"] === undefined) throw new TypeError(`${path}.parameters` + ' is required');
+  if (node["parameters"] !== undefined) assertTransportValue(node["parameters"], `${path}.parameters`, [{"type":"formal_parameters"}] as const);
+  if (node["return_type"] !== undefined) assertTransportValue(node["return_type"], `${path}.return_type`, [{"type":"type_annotation"},{"type":"asserts_annotation"},{"type":"type_predicate_annotation"}] as const);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"statement_block"}] as const);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_automatic_semicolon"}] as const);
+    }
+  }
+}
+
+function assertGenericTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "generic_type");
+  assertOptionalMetadata(node, path);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"_type_identifier"},{"type":"nested_type_identifier"}] as const);
+  if (node["type_arguments"] === undefined) throw new TypeError(`${path}.type_arguments` + ' is required');
+  if (node["type_arguments"] !== undefined) assertTransportValue(node["type_arguments"], `${path}.type_arguments`, [{"type":"type_arguments"}] as const);
+}
+
+function assertHashBangLineTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "hash_bang_line");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertHtmlCharacterReferenceTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "html_character_reference");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertIdentifierTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "identifier");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertIfStatementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "if_statement");
+  assertOptionalMetadata(node, path);
+  if (node["condition"] === undefined) throw new TypeError(`${path}.condition` + ' is required');
+  if (node["condition"] !== undefined) assertTransportValue(node["condition"], `${path}.condition`, [{"type":"parenthesized_expression"}] as const);
+  if (node["consequence"] === undefined) throw new TypeError(`${path}.consequence` + ' is required');
+  if (node["consequence"] !== undefined) assertTransportValue(node["consequence"], `${path}.consequence`, [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const);
+  if (node["alternative"] !== undefined) assertTransportValue(node["alternative"], `${path}.alternative`, [{"type":"else_clause"}] as const);
+}
+
+function assertImplementsClauseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "implements_clause");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+    }
+  }
+}
+
+function assertImportTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "import");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["import"] as const);
+}
+
+function assertImportAliasTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "import_alias");
+  assertOptionalMetadata(node, path);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"}] as const);
+  if (node["value"] === undefined) throw new TypeError(`${path}.value` + ' is required');
+  if (node["value"] !== undefined) assertTransportValue(node["value"], `${path}.value`, [{"type":"identifier"},{"type":"nested_identifier"}] as const);
+  if (node["semicolon"] === undefined) throw new TypeError(`${path}.semicolon` + ' is required');
+  if (node["semicolon"] !== undefined) assertTransportValue(node["semicolon"], `${path}.semicolon`, [{"type":"_automatic_semicolon"}] as const);
+}
+
+function assertImportAttributeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "import_attribute");
+  assertOptionalMetadata(node, path);
+  if (node["object"] === undefined) throw new TypeError(`${path}.object` + ' is required');
+  if (node["object"] !== undefined) assertTransportValue(node["object"], `${path}.object`, [{"type":"with","text":"with"},{"type":"assert","text":"assert"},{"type":"object"}] as const);
+}
+
+function assertImportClauseNamespaceImportTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "import_clause_namespace_import");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"namespace_import"}] as const);
+    }
+  }
+}
+
+function assertImportClauseNamedImportsTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "import_clause_named_imports");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"named_imports"}] as const);
+    }
+  }
+}
+
+function assertImportClauseDefaultImportTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "import_clause_default_import");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"identifier"},{"type":"namespace_import"},{"type":"named_imports"}] as const);
+    }
+  }
+}
+
+function assertImportClauseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "import_clause");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$variant !== 'string') {
+    throw new TypeError(`${path}.$variant must be a string`);
+  }
+  switch (node.$variant) {
+    case "namespace_import":
+      assertImportClauseUFormNamespaceImportTransport(node, path);
+      return;
+    case "named_imports":
+      assertImportClauseUFormNamedImportsTransport(node, path);
+      return;
+    case "default_import":
+      assertImportClauseUFormDefaultImportTransport(node, path);
+      return;
+    default:
+      throw new TypeError(`unsupported native transport variant for ${path}: ${String(node.$variant)}`);
+  }
+}
+
+function assertImportClauseUFormNamespaceImportTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "namespace_import");
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_import_clause_namespace_import"}] as const);
+    }
+  }
+}
+
+function assertImportClauseUFormNamedImportsTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "named_imports");
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_import_clause_named_imports"}] as const);
+    }
+  }
+}
+
+function assertImportClauseUFormDefaultImportTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "default_import");
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_import_clause_default_import"}] as const);
+    }
+  }
+}
+
+function assertImportRequireClauseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "import_require_clause");
+  assertOptionalMetadata(node, path);
+  if (node["identifier"] === undefined) throw new TypeError(`${path}.identifier` + ' is required');
+  if (node["identifier"] !== undefined) assertTransportValue(node["identifier"], `${path}.identifier`, [{"type":"identifier"}] as const);
+  if (node["source"] === undefined) throw new TypeError(`${path}.source` + ' is required');
+  if (node["source"] !== undefined) assertTransportValue(node["source"], `${path}.source`, [{"type":"string"}] as const);
+}
+
+function assertImportSpecifierNameTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "import_specifier_name");
+  assertOptionalMetadata(node, path);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"}] as const);
+}
+
+function assertImportSpecifierTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "import_specifier");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$variant !== 'string') {
+    throw new TypeError(`${path}.$variant must be a string`);
+  }
+  switch (node.$variant) {
+    case "name":
+      assertImportSpecifierUFormNameTransport(node, path);
+      return;
+    case "as":
+      assertImportSpecifierUFormAsTransport(node, path);
+      return;
+    default:
+      throw new TypeError(`unsupported native transport variant for ${path}: ${String(node.$variant)}`);
+  }
+}
+
+function assertImportSpecifierUFormNameTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "name");
+  if (node["import_kind"] !== undefined) assertTransportValue(node["import_kind"], `${path}.import_kind`, [{"type":"type","text":"type"},{"type":"typeof","text":"typeof"}] as const);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_import_specifier_name"}] as const);
+    }
+  }
+}
+
+function assertImportSpecifierUFormAsTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "as");
+  if (node["import_kind"] !== undefined) assertTransportValue(node["import_kind"], `${path}.import_kind`, [{"type":"type","text":"type"},{"type":"typeof","text":"typeof"}] as const);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_import_specifier_as"}] as const);
+    }
+  }
+}
+
+function assertImportStatementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "import_statement");
+  assertOptionalMetadata(node, path);
+  if (node["import_clause"] !== undefined) assertTransportValue(node["import_clause"], `${path}.import_clause`, [{"type":"type","text":"type"},{"type":"typeof","text":"typeof"}] as const);
+  if (node["from_clause"] === undefined) throw new TypeError(`${path}.from_clause` + ' is required');
+  if (node["from_clause"] !== undefined) assertTransportValue(node["from_clause"], `${path}.from_clause`, [{"type":"import_clause"},{"type":"from","text":"from"},{"type":"string"},{"type":"import_require_clause"}] as const);
+  if (node["import_attribute"] !== undefined) assertTransportValue(node["import_attribute"], `${path}.import_attribute`, [{"type":"import_attribute"}] as const);
+  if (node["semicolon"] === undefined) throw new TypeError(`${path}.semicolon` + ' is required');
+  if (node["semicolon"] !== undefined) assertTransportValue(node["semicolon"], `${path}.semicolon`, [{"type":"_automatic_semicolon"}] as const);
+}
+
+function assertIndexSignatureMappedTypeClauseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "index_signature_mapped_type_clause");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"mapped_type_clause"}] as const);
+    }
+  }
+}
+
+function assertIndexSignatureTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "index_signature");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$variant !== 'string') {
+    throw new TypeError(`${path}.$variant must be a string`);
+  }
+  switch (node.$variant) {
+    case "colon":
+      assertIndexSignatureUFormColonTransport(node, path);
+      return;
+    case "mapped_type_clause":
+      assertIndexSignatureUFormMappedTypeClauseTransport(node, path);
+      return;
+    default:
+      throw new TypeError(`unsupported native transport variant for ${path}: ${String(node.$variant)}`);
+  }
+}
+
+function assertIndexSignatureUFormColonTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "colon");
+  if (node["sign"] !== undefined) assertTransportValue(node["sign"], `${path}.sign`, [{"type":"-","text":"-"},{"type":"+","text":"+"}] as const);
+  if (node["type"] === undefined) throw new TypeError(`${path}.type` + ' is required');
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"type_annotation"},{"type":"omitting_type_annotation"},{"type":"adding_type_annotation"},{"type":"opting_type_annotation"}] as const);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_index_signature_colon"}] as const);
+    }
+  }
+}
+
+function assertIndexSignatureUFormMappedTypeClauseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "mapped_type_clause");
+  if (node["sign"] !== undefined) assertTransportValue(node["sign"], `${path}.sign`, [{"type":"-","text":"-"},{"type":"+","text":"+"}] as const);
+  if (node["type"] === undefined) throw new TypeError(`${path}.type` + ' is required');
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"type_annotation"},{"type":"omitting_type_annotation"},{"type":"adding_type_annotation"},{"type":"opting_type_annotation"}] as const);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_index_signature_mapped_type_clause"}] as const);
+    }
+  }
+}
+
+function assertIndexTypeQueryTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "index_type_query");
+  assertOptionalMetadata(node, path);
+  if (node["primary_type"] === undefined) throw new TypeError(`${path}.primary_type` + ' is required');
+  if (node["primary_type"] !== undefined) assertTransportValue(node["primary_type"], `${path}.primary_type`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"}] as const);
+}
+
+function assertInferTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "infer_type");
+  assertOptionalMetadata(node, path);
+  if (node["type_identifier"] === undefined) throw new TypeError(`${path}.type_identifier` + ' is required');
+  if (node["type_identifier"] !== undefined) assertTransportValue(node["type_identifier"], `${path}.type_identifier`, [{"type":"_type_identifier"}] as const);
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+}
+
+function assertInstantiationExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "instantiation_expression");
+  assertOptionalMetadata(node, path);
+  if (node["expression"] === undefined) throw new TypeError(`${path}.expression` + ' is required');
+  if (node["expression"] !== undefined) assertTransportValue(node["expression"], `${path}.expression`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+  if (node["type_arguments"] === undefined) throw new TypeError(`${path}.type_arguments` + ' is required');
+  if (node["type_arguments"] !== undefined) assertTransportValue(node["type_arguments"], `${path}.type_arguments`, [{"type":"type_arguments"}] as const);
+}
+
+function assertInterfaceDeclarationTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "interface_declaration");
+  assertOptionalMetadata(node, path);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"_type_identifier"}] as const);
+  if (node["type_parameters"] !== undefined) assertTransportValue(node["type_parameters"], `${path}.type_parameters`, [{"type":"type_parameters"}] as const);
+  if (node["extends_type_clause"] !== undefined) assertTransportValue(node["extends_type_clause"], `${path}.extends_type_clause`, [{"type":"extends_type_clause"}] as const);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"_interface_body"}] as const);
+}
+
+function assertInternalModuleTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "internal_module");
+  assertOptionalMetadata(node, path);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"string"},{"type":"identifier"},{"type":"nested_identifier"}] as const);
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"statement_block"}] as const);
+}
+
+function assertIntersectionTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "intersection_type");
+  assertOptionalMetadata(node, path);
+  if (node["left"] !== undefined) assertTransportValue(node["left"], `${path}.left`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+  if (node["right"] === undefined) throw new TypeError(`${path}.right` + ' is required');
+  if (node["right"] !== undefined) assertTransportValue(node["right"], `${path}.right`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+}
+
+function assertJsxAttributeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "jsx_attribute");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"identifier"},{"type":"jsx_namespace_name"},{"type":"_jsx_string"},{"type":"jsx_expression"},{"type":"jsx_element"},{"type":"jsx_self_closing_element"}] as const);
+    }
+  }
+}
+
+function assertJsxClosingElementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "jsx_closing_element");
+  assertOptionalMetadata(node, path);
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"jsx_identifier"},{"type":"identifier"},{"type":"nested_identifier"},{"type":"jsx_namespace_name"}] as const);
+}
+
+function assertJsxElementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "jsx_element");
+  assertOptionalMetadata(node, path);
+  if (node["open_tag"] === undefined) throw new TypeError(`${path}.open_tag` + ' is required');
+  if (node["open_tag"] !== undefined) assertTransportValue(node["open_tag"], `${path}.open_tag`, [{"type":"jsx_opening_element"}] as const);
+  if (node["close_tag"] === undefined) throw new TypeError(`${path}.close_tag` + ' is required');
+  if (node["close_tag"] !== undefined) assertTransportValue(node["close_tag"], `${path}.close_tag`, [{"type":"jsx_closing_element"}] as const);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"jsx_text"},{"type":"html_character_reference"},{"type":"jsx_element"},{"type":"jsx_self_closing_element"},{"type":"jsx_expression"}] as const);
+    }
+  }
+}
+
+function assertJsxExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "jsx_expression");
+  assertOptionalMetadata(node, path);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"sequence_expression"},{"type":"spread_element"}] as const);
+    }
+  }
+}
+
+function assertJsxIdentifierTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "jsx_identifier");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertJsxNamespaceNameTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "jsx_namespace_name");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"jsx_identifier"}] as const);
+    }
+  }
+}
+
+function assertJsxOpeningElementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "jsx_opening_element");
+  assertOptionalMetadata(node, path);
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"jsx_identifier"},{"type":"jsx_namespace_name"},{"type":"identifier"},{"type":"nested_identifier"}] as const);
+  if (node["type_arguments"] !== undefined) assertTransportValue(node["type_arguments"], `${path}.type_arguments`, [{"type":"type_arguments"}] as const);
+  if (node["attribute"] === undefined) throw new TypeError(`${path}.attribute` + ' is required');
+  if (node["attribute"] !== undefined) assertTransportArray(node["attribute"], `${path}.attribute`, [{"type":"jsx_attribute"}] as const);
+}
+
+function assertJsxSelfClosingElementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "jsx_self_closing_element");
+  assertOptionalMetadata(node, path);
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"jsx_identifier"},{"type":"jsx_namespace_name"},{"type":"identifier"},{"type":"nested_identifier"}] as const);
+  if (node["type_arguments"] !== undefined) assertTransportValue(node["type_arguments"], `${path}.type_arguments`, [{"type":"type_arguments"}] as const);
+  if (node["attribute"] === undefined) throw new TypeError(`${path}.attribute` + ' is required');
+  if (node["attribute"] !== undefined) assertTransportArray(node["attribute"], `${path}.attribute`, [{"type":"jsx_attribute"}] as const);
+}
+
+function assertLabeledStatementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "labeled_statement");
+  assertOptionalMetadata(node, path);
+  if (node["label"] === undefined) throw new TypeError(`${path}.label` + ' is required');
+  if (node["label"] !== undefined) assertTransportValue(node["label"], `${path}.label`, [{"type":"_statement_identifier"}] as const);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const);
+}
+
+function assertLexicalDeclarationTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "lexical_declaration");
+  assertOptionalMetadata(node, path);
+  if (node["kind"] === undefined) throw new TypeError(`${path}.kind` + ' is required');
+  if (node["kind"] !== undefined) assertTransportValue(node["kind"], `${path}.kind`, [{"type":"let","text":"let"},{"type":"const","text":"const"}] as const);
+  if (node["declarators"] === undefined) throw new TypeError(`${path}.declarators` + ' is required');
+  if (node["declarators"] !== undefined) assertTransportArray(node["declarators"], `${path}.declarators`, [{"type":"variable_declarator"}] as const);
+  if (node["semicolon"] === undefined) throw new TypeError(`${path}.semicolon` + ' is required');
+  if (node["semicolon"] !== undefined) assertTransportValue(node["semicolon"], `${path}.semicolon`, [{"type":"_automatic_semicolon"}] as const);
+}
+
+function assertLiteralTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "literal_type");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_number"},{"type":"number"},{"type":"string"},{"type":"true","text":"true"},{"type":"false","text":"false"},{"type":"null","text":"null"},{"type":"undefined","text":"undefined"}] as const);
+    }
+  }
+}
+
+function assertLookupTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "lookup_type");
+  assertOptionalMetadata(node, path);
+  if (node["primary_type"] === undefined) throw new TypeError(`${path}.primary_type` + ' is required');
+  if (node["primary_type"] !== undefined) assertTransportValue(node["primary_type"], `${path}.primary_type`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"}] as const);
+  if (node["index_type"] === undefined) throw new TypeError(`${path}.index_type` + ' is required');
+  if (node["index_type"] !== undefined) assertTransportValue(node["index_type"], `${path}.index_type`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+}
+
+function assertMappedTypeClauseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "mapped_type_clause");
+  assertOptionalMetadata(node, path);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"_type_identifier"}] as const);
+  if (node["type"] === undefined) throw new TypeError(`${path}.type` + ' is required');
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+  if (node["alias"] !== undefined) assertTransportValue(node["alias"], `${path}.alias`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+}
+
+function assertMemberExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "member_expression");
+  assertOptionalMetadata(node, path);
+  if (node["object"] === undefined) throw new TypeError(`${path}.object` + ' is required');
+  if (node["object"] !== undefined) assertTransportValue(node["object"], `${path}.object`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"import","text":"import"}] as const);
+  if (node["property"] === undefined) throw new TypeError(`${path}.property` + ' is required');
+  if (node["property"] !== undefined) assertTransportValue(node["property"], `${path}.property`, [{"type":"private_property_identifier"},{"type":"_property_identifier"}] as const);
+}
+
+function assertMetaPropertyTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "meta_property");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertMethodDefinitionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "method_definition");
+  assertOptionalMetadata(node, path);
+  if (node["accessibility_modifier"] !== undefined) assertTransportValue(node["accessibility_modifier"], `${path}.accessibility_modifier`, [{"type":"accessibility_modifier","text":"public"},{"type":"accessibility_modifier","text":"private"},{"type":"accessibility_modifier","text":"protected"}] as const);
+  if (node["static_marker"] !== undefined) assertTransportValue(node["static_marker"], `${path}.static_marker`, [{"type":"static","text":"static"}] as const);
+  if (node["override_modifier"] !== undefined) assertTransportValue(node["override_modifier"], `${path}.override_modifier`, [{"type":"override_modifier","text":"override"}] as const);
+  if (node["readonly_marker"] !== undefined) assertTransportValue(node["readonly_marker"], `${path}.readonly_marker`, [{"type":"readonly","text":"readonly"}] as const);
+  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"async","text":"async"}] as const);
+  if (node["accessor_kind"] !== undefined) assertTransportValue(node["accessor_kind"], `${path}.accessor_kind`, [{"type":"get","text":"get"},{"type":"set","text":"set"},{"type":"*","text":"*"}] as const);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"},{"type":"private_property_identifier"},{"type":"string"},{"type":"number"},{"type":"computed_property_name"}] as const);
+  if (node["optional_marker"] !== undefined) assertTransportValue(node["optional_marker"], `${path}.optional_marker`, [{"type":"?","text":"?"}] as const);
+  if (node["type_parameters"] !== undefined) assertTransportValue(node["type_parameters"], `${path}.type_parameters`, [{"type":"type_parameters"}] as const);
+  if (node["parameters"] === undefined) throw new TypeError(`${path}.parameters` + ' is required');
+  if (node["parameters"] !== undefined) assertTransportValue(node["parameters"], `${path}.parameters`, [{"type":"formal_parameters"}] as const);
+  if (node["return_type"] !== undefined) assertTransportValue(node["return_type"], `${path}.return_type`, [{"type":"type_annotation"},{"type":"asserts_annotation"},{"type":"type_predicate_annotation"}] as const);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"statement_block"}] as const);
+}
+
+function assertMethodSignatureTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "method_signature");
+  assertOptionalMetadata(node, path);
+  if (node["accessibility_modifier"] !== undefined) assertTransportValue(node["accessibility_modifier"], `${path}.accessibility_modifier`, [{"type":"accessibility_modifier","text":"public"},{"type":"accessibility_modifier","text":"private"},{"type":"accessibility_modifier","text":"protected"}] as const);
+  if (node["static_marker"] !== undefined) assertTransportValue(node["static_marker"], `${path}.static_marker`, [{"type":"static","text":"static"}] as const);
+  if (node["override_modifier"] !== undefined) assertTransportValue(node["override_modifier"], `${path}.override_modifier`, [{"type":"override_modifier","text":"override"}] as const);
+  if (node["readonly_marker"] !== undefined) assertTransportValue(node["readonly_marker"], `${path}.readonly_marker`, [{"type":"readonly","text":"readonly"}] as const);
+  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"async","text":"async"}] as const);
+  if (node["accessor_kind"] !== undefined) assertTransportValue(node["accessor_kind"], `${path}.accessor_kind`, [{"type":"get","text":"get"},{"type":"set","text":"set"},{"type":"*","text":"*"}] as const);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"},{"type":"private_property_identifier"},{"type":"string"},{"type":"number"},{"type":"computed_property_name"}] as const);
+  if (node["optional_marker"] !== undefined) assertTransportValue(node["optional_marker"], `${path}.optional_marker`, [{"type":"?","text":"?"}] as const);
+  if (node["type_parameters"] !== undefined) assertTransportValue(node["type_parameters"], `${path}.type_parameters`, [{"type":"type_parameters"}] as const);
+  if (node["parameters"] === undefined) throw new TypeError(`${path}.parameters` + ' is required');
+  if (node["parameters"] !== undefined) assertTransportValue(node["parameters"], `${path}.parameters`, [{"type":"formal_parameters"}] as const);
+  if (node["return_type"] !== undefined) assertTransportValue(node["return_type"], `${path}.return_type`, [{"type":"type_annotation"},{"type":"asserts_annotation"},{"type":"type_predicate_annotation"}] as const);
+}
+
+function assertModuleTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "module");
+  assertOptionalMetadata(node, path);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"string"},{"type":"identifier"},{"type":"nested_identifier"}] as const);
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"statement_block"}] as const);
+}
+
+function assertNamedImportsTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "named_imports");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"import_specifier"}] as const);
+    }
+  }
+}
+
+function assertNamespaceExportTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "namespace_export");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"identifier"},{"type":"string"}] as const);
+    }
+  }
+}
+
+function assertNamespaceImportTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "namespace_import");
+  assertOptionalMetadata(node, path);
+  if (node["identifier"] === undefined) throw new TypeError(`${path}.identifier` + ' is required');
+  if (node["identifier"] !== undefined) assertTransportValue(node["identifier"], `${path}.identifier`, [{"type":"identifier"}] as const);
+}
+
+function assertNestedIdentifierTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "nested_identifier");
+  assertOptionalMetadata(node, path);
+  if (node["object"] === undefined) throw new TypeError(`${path}.object` + ' is required');
+  if (node["object"] !== undefined) assertTransportValue(node["object"], `${path}.object`, [{"type":"identifier"},{"type":"nested_identifier"}] as const);
+  if (node["property"] === undefined) throw new TypeError(`${path}.property` + ' is required');
+  if (node["property"] !== undefined) assertTransportValue(node["property"], `${path}.property`, [{"type":"_property_identifier"}] as const);
+}
+
+function assertNestedTypeIdentifierTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "nested_type_identifier");
+  assertOptionalMetadata(node, path);
+  if (node["module"] === undefined) throw new TypeError(`${path}.module` + ' is required');
+  if (node["module"] !== undefined) assertTransportValue(node["module"], `${path}.module`, [{"type":"identifier"},{"type":"nested_identifier"}] as const);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"_type_identifier"}] as const);
+}
+
+function assertNewExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "new_expression");
+  assertOptionalMetadata(node, path);
+  if (node["constructor"] === undefined) throw new TypeError(`${path}.constructor` + ' is required');
+  if (node["constructor"] !== undefined) assertTransportValue(node["constructor"], `${path}.constructor`, [{"type":"non_null_expression"}] as const);
+  if (node["type_arguments"] !== undefined) assertTransportValue(node["type_arguments"], `${path}.type_arguments`, [{"type":"type_arguments"}] as const);
+  if (node["arguments"] !== undefined) assertTransportValue(node["arguments"], `${path}.arguments`, [{"type":"arguments"}] as const);
+}
+
+function assertNonNullExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "non_null_expression");
+  assertOptionalMetadata(node, path);
+  if (node["expression"] === undefined) throw new TypeError(`${path}.expression` + ' is required');
+  if (node["expression"] !== undefined) assertTransportValue(node["expression"], `${path}.expression`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+}
+
+function assertNullTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "null");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["null"] as const);
+}
+
+function assertNumberTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "number");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertObjectTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "object");
+  assertOptionalMetadata(node, path);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"pair"},{"type":"spread_element"},{"type":"method_definition"},{"type":"identifier"},{"type":"_reserved_identifier"}] as const);
+    }
+  }
+}
+
+function assertObjectAssignmentPatternTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "object_assignment_pattern");
+  assertOptionalMetadata(node, path);
+  if (node["left"] === undefined) throw new TypeError(`${path}.left` + ' is required');
+  if (node["left"] !== undefined) assertTransportValue(node["left"], `${path}.left`, [{"type":"identifier"},{"type":"_reserved_identifier"},{"type":"object_pattern"},{"type":"array_pattern"}] as const);
+  if (node["right"] === undefined) throw new TypeError(`${path}.right` + ' is required');
+  if (node["right"] !== undefined) assertTransportValue(node["right"], `${path}.right`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+}
+
+function assertObjectPatternTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "object_pattern");
+  assertOptionalMetadata(node, path);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"pair_pattern"},{"type":"rest_pattern"},{"type":"object_assignment_pattern"},{"type":"identifier"},{"type":"_reserved_identifier"}] as const);
+    }
+  }
+}
+
+function assertObjectTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "object_type");
+  assertOptionalMetadata(node, path);
+  if (node["opening"] === undefined) throw new TypeError(`${path}.opening` + ' is required');
+  if (node["opening"] !== undefined) assertTransportValue(node["opening"], `${path}.opening`, [{"type":"{","text":"{"},{"type":"{|","text":"{|"}] as const);
+  if (node["members"] !== undefined) assertTransportArray(node["members"], `${path}.members`, [{"type":",","text":","},{"type":";","text":";"},{"type":"export_statement"},{"type":"property_signature"},{"type":"call_signature"},{"type":"construct_signature"},{"type":"index_signature"},{"type":"method_signature"},{"type":"_automatic_semicolon"}] as const);
+  if (node["closing"] === undefined) throw new TypeError(`${path}.closing` + ' is required');
+  if (node["closing"] !== undefined) assertTransportValue(node["closing"], `${path}.closing`, [{"type":"}","text":"}"},{"type":"|}","text":"|}"}] as const);
+}
+
+function assertOmittingTypeAnnotationTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "omitting_type_annotation");
+  assertOptionalMetadata(node, path);
+  if (node["type"] === undefined) throw new TypeError(`${path}.type` + ' is required');
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+}
+
+function assertOptingTypeAnnotationTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "opting_type_annotation");
+  assertOptionalMetadata(node, path);
+  if (node["type"] === undefined) throw new TypeError(`${path}.type` + ' is required');
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+}
+
+function assertOptionalChainTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "optional_chain");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["?."] as const);
+}
+
+function assertOptionalParameterTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "optional_parameter");
+  assertOptionalMetadata(node, path);
+  if (node["decorator"] === undefined) throw new TypeError(`${path}.decorator` + ' is required');
+  if (node["decorator"] !== undefined) assertTransportArray(node["decorator"], `${path}.decorator`, [{"type":"decorator"}] as const);
+  if (node["readonly_marker"] !== undefined) assertTransportValue(node["readonly_marker"], `${path}.readonly_marker`, [{"type":"readonly","text":"readonly"}] as const);
+  if (node["pattern"] === undefined) throw new TypeError(`${path}.pattern` + ' is required');
+  if (node["pattern"] !== undefined) assertTransportValue(node["pattern"], `${path}.pattern`, [{"type":"member_expression"},{"type":"subscript_expression"},{"type":"undefined","text":"undefined"},{"type":"identifier"},{"type":"object_pattern"},{"type":"array_pattern"},{"type":"non_null_expression"},{"type":"rest_pattern"},{"type":"this","text":"this"}] as const);
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"type_annotation"}] as const);
+  if (node["value"] !== undefined) assertTransportValue(node["value"], `${path}.value`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"accessibility_modifier","text":"public"},{"type":"accessibility_modifier","text":"private"},{"type":"accessibility_modifier","text":"protected"},{"type":"override_modifier","text":"override"}] as const);
+    }
+  }
+}
+
+function assertOptionalTupleParameterTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "optional_tuple_parameter");
+  assertOptionalMetadata(node, path);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"}] as const);
+  if (node["type"] === undefined) throw new TypeError(`${path}.type` + ' is required');
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"type_annotation"}] as const);
+}
+
+function assertOptionalTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "optional_type");
+  assertOptionalMetadata(node, path);
+  if (node["type"] === undefined) throw new TypeError(`${path}.type` + ' is required');
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+}
+
+function assertOverrideModifierTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "override_modifier");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["override"] as const);
+}
+
+function assertPairTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "pair");
+  assertOptionalMetadata(node, path);
+  if (node["key"] === undefined) throw new TypeError(`${path}.key` + ' is required');
+  if (node["key"] !== undefined) assertTransportValue(node["key"], `${path}.key`, [{"type":"identifier"},{"type":"private_property_identifier"},{"type":"string"},{"type":"number"},{"type":"computed_property_name"}] as const);
+  if (node["value"] === undefined) throw new TypeError(`${path}.value` + ' is required');
+  if (node["value"] !== undefined) assertTransportValue(node["value"], `${path}.value`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+}
+
+function assertPairPatternTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "pair_pattern");
+  assertOptionalMetadata(node, path);
+  if (node["key"] === undefined) throw new TypeError(`${path}.key` + ' is required');
+  if (node["key"] !== undefined) assertTransportValue(node["key"], `${path}.key`, [{"type":"identifier"},{"type":"private_property_identifier"},{"type":"string"},{"type":"number"},{"type":"computed_property_name"}] as const);
+  if (node["value"] === undefined) throw new TypeError(`${path}.value` + ' is required');
+  if (node["value"] !== undefined) assertTransportValue(node["value"], `${path}.value`, [{"type":"member_expression"},{"type":"subscript_expression"},{"type":"undefined","text":"undefined"},{"type":"identifier"},{"type":"object_pattern"},{"type":"array_pattern"},{"type":"non_null_expression"},{"type":"rest_pattern"},{"type":"assignment_pattern"}] as const);
+}
+
+function assertParenthesizedExpressionSequenceTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "parenthesized_expression_sequence");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"sequence_expression"}] as const);
+    }
+  }
+}
+
+function assertParenthesizedExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "parenthesized_expression");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$variant !== 'string') {
+    throw new TypeError(`${path}.$variant must be a string`);
+  }
+  switch (node.$variant) {
+    case "typed":
+      assertParenthesizedExpressionUFormTypedTransport(node, path);
+      return;
+    case "sequence":
+      assertParenthesizedExpressionUFormSequenceTransport(node, path);
+      return;
+    default:
+      throw new TypeError(`unsupported native transport variant for ${path}: ${String(node.$variant)}`);
+  }
+}
+
+function assertParenthesizedExpressionUFormTypedTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "typed");
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_parenthesized_expression_typed"}] as const);
+    }
+  }
+}
+
+function assertParenthesizedExpressionUFormSequenceTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "sequence");
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_parenthesized_expression_sequence"}] as const);
+    }
+  }
+}
+
+function assertParenthesizedTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "parenthesized_type");
+  assertOptionalMetadata(node, path);
+  if (node["type"] === undefined) throw new TypeError(`${path}.type` + ' is required');
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+}
+
+function assertPredefinedTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "predefined_type");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertPrivatePropertyIdentifierTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "private_property_identifier");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertProgramTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "program");
+  assertOptionalMetadata(node, path);
+  if (node["hash_bang_line"] !== undefined) assertTransportValue(node["hash_bang_line"], `${path}.hash_bang_line`, [{"type":"hash_bang_line"}] as const);
+  if (node["statements"] === undefined) throw new TypeError(`${path}.statements` + ' is required');
+  if (node["statements"] !== undefined) assertTransportArray(node["statements"], `${path}.statements`, [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const);
+}
+
+function assertPropertySignatureTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "property_signature");
+  assertOptionalMetadata(node, path);
+  if (node["accessibility_modifier"] !== undefined) assertTransportValue(node["accessibility_modifier"], `${path}.accessibility_modifier`, [{"type":"accessibility_modifier","text":"public"},{"type":"accessibility_modifier","text":"private"},{"type":"accessibility_modifier","text":"protected"}] as const);
+  if (node["static_marker"] !== undefined) assertTransportValue(node["static_marker"], `${path}.static_marker`, [{"type":"static","text":"static"}] as const);
+  if (node["override_modifier"] !== undefined) assertTransportValue(node["override_modifier"], `${path}.override_modifier`, [{"type":"override_modifier","text":"override"}] as const);
+  if (node["readonly_marker"] !== undefined) assertTransportValue(node["readonly_marker"], `${path}.readonly_marker`, [{"type":"readonly","text":"readonly"}] as const);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"},{"type":"private_property_identifier"},{"type":"string"},{"type":"number"},{"type":"computed_property_name"}] as const);
+  if (node["optional_marker"] !== undefined) assertTransportValue(node["optional_marker"], `${path}.optional_marker`, [{"type":"?","text":"?"}] as const);
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"type_annotation"}] as const);
+}
+
+function assertPublicFieldDefinitionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "public_field_definition");
+  assertOptionalMetadata(node, path);
+  if (node["decorator"] === undefined) throw new TypeError(`${path}.decorator` + ' is required');
+  if (node["decorator"] !== undefined) assertTransportArray(node["decorator"], `${path}.decorator`, [{"type":"decorator"}] as const);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"},{"type":"private_property_identifier"},{"type":"string"},{"type":"number"},{"type":"computed_property_name"}] as const);
+  if (node["optionality_marker"] !== undefined) assertTransportValue(node["optionality_marker"], `${path}.optionality_marker`, [{"type":"?","text":"?"},{"type":"!","text":"!"}] as const);
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"type_annotation"}] as const);
+  if (node["value"] !== undefined) assertTransportValue(node["value"], `${path}.value`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_public_field_definition_declare_first"},{"type":"_public_field_definition_access_first"},{"type":"_public_field_definition_static_mods"},{"type":"_public_field_definition_abstract_first"},{"type":"_public_field_definition_readonly_first"},{"type":"_public_field_definition_accessor_opt"}] as const);
+    }
+  }
+}
+
+function assertReadonlyTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "readonly_type");
+  assertOptionalMetadata(node, path);
+  if (node["type"] === undefined) throw new TypeError(`${path}.type` + ' is required');
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+}
+
+function assertRegexTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "regex");
+  assertOptionalMetadata(node, path);
+  if (node["pattern"] === undefined) throw new TypeError(`${path}.pattern` + ' is required');
+  if (node["pattern"] !== undefined) assertTransportValue(node["pattern"], `${path}.pattern`, [{"type":"regex_pattern"}] as const);
+  if (node["flags"] !== undefined) assertTransportValue(node["flags"], `${path}.flags`, [{"type":"regex_flags"}] as const);
+}
+
+function assertRegexFlagsTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "regex_flags");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertRegexPatternTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "regex_pattern");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertRequiredParameterTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "required_parameter");
+  assertOptionalMetadata(node, path);
+  if (node["decorator"] === undefined) throw new TypeError(`${path}.decorator` + ' is required');
+  if (node["decorator"] !== undefined) assertTransportArray(node["decorator"], `${path}.decorator`, [{"type":"decorator"}] as const);
+  if (node["readonly_marker"] !== undefined) assertTransportValue(node["readonly_marker"], `${path}.readonly_marker`, [{"type":"readonly","text":"readonly"}] as const);
+  if (node["pattern"] === undefined) throw new TypeError(`${path}.pattern` + ' is required');
+  if (node["pattern"] !== undefined) assertTransportValue(node["pattern"], `${path}.pattern`, [{"type":"member_expression"},{"type":"subscript_expression"},{"type":"undefined","text":"undefined"},{"type":"identifier"},{"type":"object_pattern"},{"type":"array_pattern"},{"type":"non_null_expression"},{"type":"rest_pattern"},{"type":"this","text":"this"}] as const);
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"type_annotation"}] as const);
+  if (node["value"] !== undefined) assertTransportValue(node["value"], `${path}.value`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"accessibility_modifier","text":"public"},{"type":"accessibility_modifier","text":"private"},{"type":"accessibility_modifier","text":"protected"},{"type":"override_modifier","text":"override"}] as const);
+    }
+  }
+}
+
+function assertRestPatternTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "rest_pattern");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_lhs_expression"}] as const);
+    }
+  }
+}
+
+function assertRestTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "rest_type");
+  assertOptionalMetadata(node, path);
+  if (node["type"] === undefined) throw new TypeError(`${path}.type` + ' is required');
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+}
+
+function assertReturnStatementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "return_statement");
+  assertOptionalMetadata(node, path);
+  if (node["semicolon"] === undefined) throw new TypeError(`${path}.semicolon` + ' is required');
+  if (node["semicolon"] !== undefined) assertTransportValue(node["semicolon"], `${path}.semicolon`, [{"type":"_automatic_semicolon"}] as const);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"sequence_expression"}] as const);
+    }
+  }
+}
+
+function assertSatisfiesExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "satisfies_expression");
+  assertOptionalMetadata(node, path);
+  if (node["expression"] === undefined) throw new TypeError(`${path}.expression` + ' is required');
+  if (node["expression"] !== undefined) assertTransportValue(node["expression"], `${path}.expression`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+  if (node["type_annotation"] === undefined) throw new TypeError(`${path}.type_annotation` + ' is required');
+  if (node["type_annotation"] !== undefined) assertTransportValue(node["type_annotation"], `${path}.type_annotation`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+}
+
+function assertSequenceExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "sequence_expression");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+    }
+  }
+}
+
+function assertSpreadElementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "spread_element");
+  assertOptionalMetadata(node, path);
+  if (node["expression"] === undefined) throw new TypeError(`${path}.expression` + ' is required');
+  if (node["expression"] !== undefined) assertTransportValue(node["expression"], `${path}.expression`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+}
+
+function assertStatementBlockTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "statement_block");
+  assertOptionalMetadata(node, path);
+  if (node["statements"] === undefined) throw new TypeError(`${path}.statements` + ' is required');
+  if (node["statements"] !== undefined) assertTransportArray(node["statements"], `${path}.statements`, [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const);
+  if (node["automatic_semicolon"] !== undefined) assertTransportValue(node["automatic_semicolon"], `${path}.automatic_semicolon`, [{"type":"_automatic_semicolon"}] as const);
+}
+
+function assertStringDoubleTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "string_double");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_string_fragment"},{"type":"escape_sequence"}] as const);
+    }
+  }
+}
+
+function assertStringSingleTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "string_single");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_string_fragment"},{"type":"escape_sequence"}] as const);
+    }
+  }
+}
+
+function assertStringTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "string");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$variant !== 'string') {
+    throw new TypeError(`${path}.$variant must be a string`);
+  }
+  switch (node.$variant) {
+    case "double":
+      assertStringUFormDoubleTransport(node, path);
+      return;
+    case "single":
+      assertStringUFormSingleTransport(node, path);
+      return;
+    default:
+      throw new TypeError(`unsupported native transport variant for ${path}: ${String(node.$variant)}`);
+  }
+}
+
+function assertStringUFormDoubleTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "double");
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_string_double"}] as const);
+    }
+  }
+}
+
+function assertStringUFormSingleTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "single");
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_string_single"}] as const);
+    }
+  }
+}
+
+function assertSubscriptExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "subscript_expression");
+  assertOptionalMetadata(node, path);
+  if (node["object"] === undefined) throw new TypeError(`${path}.object` + ' is required');
+  if (node["object"] !== undefined) assertTransportValue(node["object"], `${path}.object`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+  if (node["optional_chain"] !== undefined) assertTransportValue(node["optional_chain"], `${path}.optional_chain`, [{"type":"optional_chain","text":"?."}] as const);
+  if (node["index"] === undefined) throw new TypeError(`${path}.index` + ' is required');
+  if (node["index"] !== undefined) assertTransportValue(node["index"], `${path}.index`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"sequence_expression"}] as const);
+}
+
+function assertSuperTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "super");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["super"] as const);
+}
+
+function assertSwitchBodyTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "switch_body");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"switch_case"},{"type":"switch_default"}] as const);
+    }
+  }
+}
+
+function assertSwitchCaseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "switch_case");
+  assertOptionalMetadata(node, path);
+  if (node["value"] === undefined) throw new TypeError(`${path}.value` + ' is required');
+  if (node["value"] !== undefined) assertTransportValue(node["value"], `${path}.value`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"sequence_expression"}] as const);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportArray(node["body"], `${path}.body`, [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const);
+}
+
+function assertSwitchDefaultTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "switch_default");
+  assertOptionalMetadata(node, path);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportArray(node["body"], `${path}.body`, [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const);
+}
+
+function assertSwitchStatementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "switch_statement");
+  assertOptionalMetadata(node, path);
+  if (node["value"] === undefined) throw new TypeError(`${path}.value` + ' is required');
+  if (node["value"] !== undefined) assertTransportValue(node["value"], `${path}.value`, [{"type":"parenthesized_expression"}] as const);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"switch_body"}] as const);
+}
+
+function assertTemplateLiteralTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "template_literal_type");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_string_fragment"},{"type":"template_type"}] as const);
+    }
+  }
+}
+
+function assertTemplateStringTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "template_string");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_string_fragment"},{"type":"escape_sequence"},{"type":"template_substitution"}] as const);
+    }
+  }
+}
+
+function assertTemplateSubstitutionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "template_substitution");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"sequence_expression"}] as const);
+    }
+  }
+}
+
+function assertTemplateTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "template_type");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"infer_type"}] as const);
+    }
+  }
+}
+
+function assertTernaryExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "ternary_expression");
+  assertOptionalMetadata(node, path);
+  if (node["condition"] === undefined) throw new TypeError(`${path}.condition` + ' is required');
+  if (node["condition"] !== undefined) assertTransportValue(node["condition"], `${path}.condition`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+  if (node["consequence"] === undefined) throw new TypeError(`${path}.consequence` + ' is required');
+  if (node["consequence"] !== undefined) assertTransportValue(node["consequence"], `${path}.consequence`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+  if (node["alternative"] === undefined) throw new TypeError(`${path}.alternative` + ' is required');
+  if (node["alternative"] !== undefined) assertTransportValue(node["alternative"], `${path}.alternative`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+}
+
+function assertThisTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "this");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["this"] as const);
+}
+
+function assertThrowStatementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "throw_statement");
+  assertOptionalMetadata(node, path);
+  if (node["semicolon"] === undefined) throw new TypeError(`${path}.semicolon` + ' is required');
+  if (node["semicolon"] !== undefined) assertTransportValue(node["semicolon"], `${path}.semicolon`, [{"type":"_automatic_semicolon"}] as const);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"sequence_expression"}] as const);
+    }
+  }
+}
+
+function assertTrueTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "true");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["true"] as const);
+}
+
+function assertTryStatementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "try_statement");
+  assertOptionalMetadata(node, path);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"statement_block"}] as const);
+  if (node["handler"] !== undefined) assertTransportValue(node["handler"], `${path}.handler`, [{"type":"catch_clause"}] as const);
+  if (node["finalizer"] !== undefined) assertTransportValue(node["finalizer"], `${path}.finalizer`, [{"type":"finally_clause"}] as const);
+}
+
+function assertTupleParameterTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "tuple_parameter");
+  assertOptionalMetadata(node, path);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"},{"type":"rest_pattern"}] as const);
+  if (node["type"] === undefined) throw new TypeError(`${path}.type` + ' is required');
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"type_annotation"}] as const);
+}
+
+function assertTupleTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "tuple_type");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"tuple_parameter"},{"type":"optional_tuple_parameter"},{"type":"optional_type"},{"type":"rest_type"},{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+    }
+  }
+}
+
+function assertTypeAliasDeclarationTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "type_alias_declaration");
+  assertOptionalMetadata(node, path);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"_type_identifier"}] as const);
+  if (node["type_parameters"] !== undefined) assertTransportValue(node["type_parameters"], `${path}.type_parameters`, [{"type":"type_parameters"}] as const);
+  if (node["value"] === undefined) throw new TypeError(`${path}.value` + ' is required');
+  if (node["value"] !== undefined) assertTransportValue(node["value"], `${path}.value`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+  if (node["semicolon"] === undefined) throw new TypeError(`${path}.semicolon` + ' is required');
+  if (node["semicolon"] !== undefined) assertTransportValue(node["semicolon"], `${path}.semicolon`, [{"type":"_automatic_semicolon"}] as const);
+}
+
+function assertTypeAnnotationTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "type_annotation");
+  assertOptionalMetadata(node, path);
+  if (node["type"] === undefined) throw new TypeError(`${path}.type` + ' is required');
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+}
+
+function assertTypeArgumentsTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "type_arguments");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+    }
+  }
+}
+
+function assertTypeAssertionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "type_assertion");
+  assertOptionalMetadata(node, path);
+  if (node["type_arguments"] === undefined) throw new TypeError(`${path}.type_arguments` + ' is required');
+  if (node["type_arguments"] !== undefined) assertTransportValue(node["type_arguments"], `${path}.type_arguments`, [{"type":"type_arguments"}] as const);
+  if (node["expression"] === undefined) throw new TypeError(`${path}.expression` + ' is required');
+  if (node["expression"] !== undefined) assertTransportValue(node["expression"], `${path}.expression`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+}
+
+function assertTypeParameterTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "type_parameter");
+  assertOptionalMetadata(node, path);
+  if (node["const_marker"] !== undefined) assertTransportValue(node["const_marker"], `${path}.const_marker`, [{"type":"const","text":"const"}] as const);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"_type_identifier"}] as const);
+  if (node["constraint"] !== undefined) assertTransportValue(node["constraint"], `${path}.constraint`, [{"type":"constraint"}] as const);
+  if (node["value"] !== undefined) assertTransportValue(node["value"], `${path}.value`, [{"type":"default_type"}] as const);
+}
+
+function assertTypeParametersTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "type_parameters");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"type_parameter"}] as const);
+    }
+  }
+}
+
+function assertTypePredicateTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "type_predicate");
+  assertOptionalMetadata(node, path);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"predefined_type"},{"type":"this","text":"this"}] as const);
+  if (node["type"] === undefined) throw new TypeError(`${path}.type` + ' is required');
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+}
+
+function assertTypePredicateAnnotationTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "type_predicate_annotation");
+  assertOptionalMetadata(node, path);
+  if (node["type_predicate"] === undefined) throw new TypeError(`${path}.type_predicate` + ' is required');
+  if (node["type_predicate"] !== undefined) assertTransportValue(node["type_predicate"], `${path}.type_predicate`, [{"type":":","text":":"},{"type":"type_predicate"}] as const);
+}
+
+function assertTypeQueryTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "type_query");
+  assertOptionalMetadata(node, path);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_type_query_subscript_expression"},{"type":"_type_query_member_expression"},{"type":"_type_query_call_expression"},{"type":"_type_query_instantiation_expression"},{"type":"identifier"},{"type":"this","text":"this"}] as const);
+    }
+  }
+}
+
+function assertUnaryExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "unary_expression");
+  assertOptionalMetadata(node, path);
+  if (node["operator"] === undefined) throw new TypeError(`${path}.operator` + ' is required');
+  if (node["operator"] !== undefined) assertTransportValue(node["operator"], `${path}.operator`, [{"type":"!","text":"!"},{"type":"~","text":"~"},{"type":"-","text":"-"},{"type":"+","text":"+"},{"type":"typeof","text":"typeof"},{"type":"void","text":"void"},{"type":"delete","text":"delete"}] as const);
+  if (node["argument"] === undefined) throw new TypeError(`${path}.argument` + ' is required');
+  if (node["argument"] !== undefined) assertTransportValue(node["argument"], `${path}.argument`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+}
+
+function assertUndefinedTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "undefined");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["undefined"] as const);
+}
+
+function assertUnescapedDoubleJsxStringFragmentTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "unescaped_double_jsx_string_fragment");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertUnescapedDoubleStringFragmentTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "unescaped_double_string_fragment");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertUnescapedSingleJsxStringFragmentTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "unescaped_single_jsx_string_fragment");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertUnescapedSingleStringFragmentTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "unescaped_single_string_fragment");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertUnionTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "union_type");
+  assertOptionalMetadata(node, path);
+  if (node["left"] !== undefined) assertTransportValue(node["left"], `${path}.left`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+  if (node["right"] === undefined) throw new TypeError(`${path}.right` + ' is required');
+  if (node["right"] !== undefined) assertTransportValue(node["right"], `${path}.right`, [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const);
+}
+
+function assertUpdateExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "update_expression");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$variant !== 'string') {
+    throw new TypeError(`${path}.$variant must be a string`);
+  }
+  switch (node.$variant) {
+    case "postfix":
+      assertUpdateExpressionUFormPostfixTransport(node, path);
+      return;
+    case "prefix":
+      assertUpdateExpressionUFormPrefixTransport(node, path);
+      return;
+    default:
+      throw new TypeError(`unsupported native transport variant for ${path}: ${String(node.$variant)}`);
+  }
+}
+
+function assertUpdateExpressionUFormPostfixTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "postfix");
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_update_expression_postfix"}] as const);
+    }
+  }
+}
+
+function assertUpdateExpressionUFormPrefixTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportVariant(node, path, "prefix");
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_update_expression_prefix"}] as const);
+    }
+  }
+}
+
+function assertVariableDeclarationTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "variable_declaration");
+  assertOptionalMetadata(node, path);
+  if (node["declarators"] === undefined) throw new TypeError(`${path}.declarators` + ' is required');
+  if (node["declarators"] !== undefined) assertTransportArray(node["declarators"], `${path}.declarators`, [{"type":"variable_declarator"}] as const);
+  if (node["semicolon"] === undefined) throw new TypeError(`${path}.semicolon` + ' is required');
+  if (node["semicolon"] !== undefined) assertTransportValue(node["semicolon"], `${path}.semicolon`, [{"type":"_automatic_semicolon"}] as const);
+}
+
+function assertVariableDeclaratorTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "variable_declarator");
+  assertOptionalMetadata(node, path);
+  if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"},{"type":"object_pattern"},{"type":"array_pattern"}] as const);
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"type_annotation"}] as const);
+  if (node["value"] !== undefined) assertTransportValue(node["value"], `${path}.value`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+}
+
+function assertWhileStatementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "while_statement");
+  assertOptionalMetadata(node, path);
+  if (node["condition"] === undefined) throw new TypeError(`${path}.condition` + ' is required');
+  if (node["condition"] !== undefined) assertTransportValue(node["condition"], `${path}.condition`, [{"type":"parenthesized_expression"}] as const);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const);
+}
+
+function assertWithStatementTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "with_statement");
+  assertOptionalMetadata(node, path);
+  if (node["object"] === undefined) throw new TypeError(`${path}.object` + ' is required');
+  if (node["object"] !== undefined) assertTransportValue(node["object"], `${path}.object`, [{"type":"parenthesized_expression"}] as const);
+  if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
+  if (node["body"] !== undefined) assertTransportValue(node["body"], `${path}.body`, [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const);
+}
+
+function assertYieldExpressionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "yield_expression");
+  assertOptionalMetadata(node, path);
+  if (node["expression"] !== undefined) assertTransportValue(node["expression"], `${path}.expression`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const);
+}
+
+function assertAutomaticSemicolonTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_automatic_semicolon");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertTemplateCharsTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_template_chars");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertTernaryQmarkTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_ternary_qmark");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertHtmlCommentTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "html_comment");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertOrorTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "||");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertJsxTextTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "jsx_text");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertFunctionSignatureAutomaticSemicolonTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_function_signature_automatic_semicolon");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertErrorRecoveryTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "__error_recovery");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertTokQDotTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "?.");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["?."] as const);
+}
+
+function assertCommaTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, ",");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, [","] as const);
+}
+
+function assertExportTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "export");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["export"] as const);
+}
+
+function assertDefaultTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "default");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["default"] as const);
+}
+
+function assertStarTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "*");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["*"] as const);
+}
+
+function assertEqTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "=");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["="] as const);
+}
+
+function assertAsTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "as");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["as"] as const);
+}
+
+function assertNamespaceTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "namespace");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["namespace"] as const);
+}
+
+function assertParenTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "(");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["("] as const);
+}
+
+function assertCloseParenTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, ")");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, [")"] as const);
+}
+
+function assertVarTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "var");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["var"] as const);
+}
+
+function assertFromTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "from");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["from"] as const);
+}
+
+function assertColonTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, ":");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, [":"] as const);
+}
+
+function assertLtTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "<");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["<"] as const);
+}
+
+function assertTokDqTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "\"");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["\""] as const);
+}
+
+function assertTokSqTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "'");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["'"] as const);
+}
+
+function assertAbstractTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "abstract");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["abstract"] as const);
+}
+
+function assertAsyncTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "async");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["async"] as const);
+}
+
+function assertConstTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "const");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["const"] as const);
+}
+
+function assertQuestionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "?");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["?"] as const);
+}
+
+function assertReadonlyTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "readonly");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["readonly"] as const);
+}
+
+function assertStaticTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "static");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["static"] as const);
+}
+
+function assertDeclareTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "declare");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["declare"] as const);
+}
+
+function assertAccessorTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "accessor");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["accessor"] as const);
+}
+
+function assertDotTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, ".");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["."] as const);
+}
+
+function assertBracketTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "[");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["["] as const);
+}
+
+function assertCloseBracketTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "]");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["]"] as const);
+}
+
+function assertTokPlusQColonTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "+?:");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["+?:"] as const);
+}
+
+function assertGlobalTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "global");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["global"] as const);
+}
+
+function assertUsingTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "using");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["using"] as const);
+}
+
+function assertAwaitTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "await");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["await"] as const);
+}
+
+function assertAndandTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "&&");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["&&"] as const);
+}
+
+function assertShrTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, ">>");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, [">>"] as const);
+}
+
+function assertTokGtGtGtTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, ">>>");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, [">>>"] as const);
+}
+
+function assertShlTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "<<");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["<<"] as const);
+}
+
+function assertAmpTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "&");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["&"] as const);
+}
+
+function assertCaretTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "^");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["^"] as const);
+}
+
+function assertPipeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "|");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["|"] as const);
+}
+
+function assertPlusTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "+");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["+"] as const);
+}
+
+function assertMinusTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "-");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["-"] as const);
+}
+
+function assertSlashTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "/");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["/"] as const);
+}
+
+function assertPercentTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "%");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["%"] as const);
+}
+
+function assertStarstarTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "**");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["**"] as const);
+}
+
+function assertLeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "<=");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["<="] as const);
+}
+
+function assertEqeqTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "==");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["=="] as const);
+}
+
+function assertTokEqEqEqTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "===");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["==="] as const);
+}
+
+function assertNeqTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "!=");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["!="] as const);
+}
+
+function assertTokBangEqEqTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "!==");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["!=="] as const);
+}
+
+function assertGeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, ">=");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, [">="] as const);
+}
+
+function assertGtTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, ">");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, [">"] as const);
+}
+
+function assertTokQQTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "??");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["??"] as const);
+}
+
+function assertInstanceofTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "instanceof");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["instanceof"] as const);
+}
+
+function assertInTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "in");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["in"] as const);
+}
+
+function assertBreakTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "break");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["break"] as const);
+}
+
+function assertCatchTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "catch");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["catch"] as const);
+}
+
+function assertBraceTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "{");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["{"] as const);
+}
+
+function assertSemiTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, ";");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, [";"] as const);
+}
+
+function assertCloseBraceTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "}");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["}"] as const);
+}
+
+function assertExtendsTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "extends");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["extends"] as const);
+}
+
+function assertNewTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "new");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["new"] as const);
+}
+
+function assertFatArrowTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "=>");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["=>"] as const);
+}
+
+function assertContinueTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "continue");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["continue"] as const);
+}
+
+function assertDebuggerTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "debugger");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["debugger"] as const);
+}
+
+function assertAtTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "@");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["@"] as const);
+}
+
+function assertDoTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "do");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["do"] as const);
+}
+
+function assertWhileTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "while");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["while"] as const);
+}
+
+function assertElseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "else");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["else"] as const);
+}
+
+function assertEnumTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "enum");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["enum"] as const);
+}
+
+function assertFinallyTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "finally");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["finally"] as const);
+}
+
+function assertForTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "for");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["for"] as const);
+}
+
+function assertFunctionTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "function");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["function"] as const);
+}
+
+function assertIfTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "if");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["if"] as const);
+}
+
+function assertImplementsTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "implements");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["implements"] as const);
+}
+
+function assertRequireTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "require");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["require"] as const);
+}
+
+function assertKeyofTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "keyof");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["keyof"] as const);
+}
+
+function assertInferTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "infer");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["infer"] as const);
+}
+
+function assertInterfaceTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "interface");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["interface"] as const);
+}
+
+function assertTokLtSlashTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "</");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["</"] as const);
+}
+
+function assertTokSlashGtTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "/>");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["/>"] as const);
+}
+
+function assertBangTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "!");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["!"] as const);
+}
+
+function assertTokMinusQColonTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "-?:");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["-?:"] as const);
+}
+
+function assertTokQColonTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "?:");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["?:"] as const);
+}
+
+function assertOverrideTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "override");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["override"] as const);
+}
+
+function assertEllipsisTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "...");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["..."] as const);
+}
+
+function assertReturnTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "return");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["return"] as const);
+}
+
+function assertSatisfiesTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "satisfies");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["satisfies"] as const);
+}
+
+function assertCaseTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "case");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["case"] as const);
+}
+
+function assertSwitchTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "switch");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["switch"] as const);
+}
+
+function assertTokBtTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "`");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["`"] as const);
+}
+
+function assertTokDollarLbrTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "${");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["${"] as const);
+}
+
+function assertThrowTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "throw");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["throw"] as const);
+}
+
+function assertTryTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "try");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["try"] as const);
+}
+
+function assertIsTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "is");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["is"] as const);
+}
+
+function assertTypeofTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "typeof");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["typeof"] as const);
+}
+
+function assertWithTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "with");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["with"] as const);
+}
+
+function assertYieldTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "yield");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["yield"] as const);
 }

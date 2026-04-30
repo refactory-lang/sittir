@@ -17,10 +17,11 @@ export interface Edit {
 export declare class SittirEngine {
   constructor(options?: EngineOptions | undefined | null)
   get templateBundleHash(): string
+  get nativeRenderTransportAbi(): number
   findAndRead(source: string, pattern: string): string
   parseAndRead(source: string): string
   readNode(nodeId: number): string
-  render(nodeJson: string): string
+  render(node: Record<string, unknown>): string
   applyEdits(source: string, edits: Array<Edit>): string
   dispose(): void
 }
