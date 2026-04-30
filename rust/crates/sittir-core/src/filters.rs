@@ -145,99 +145,91 @@ impl ::askama::FastWritable for Joined<'_> {
     }
 }
 
-#[inline]
-fn string_as_str(s: &String) -> &str {
-    s.as_str()
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 pub struct ListView<'a> {
-    pub items: &'a [String],
-    pub separator: &'static str,
+    pub items: &'a [Renderable<'a>],
+    pub separator: &'a str,
     pub leading: bool,
     pub trailing: bool,
 }
 
-impl ListView<'_> {
+impl<'a> ListView<'a> {
     pub fn is_empty(&self) -> bool {
         self.items.is_empty()
     }
-}
 
-pub struct ListViewIter<'a> {
-    inner: std::iter::Map<std::slice::Iter<'a, String>, fn(&'a String) -> &'a str>,
-}
-
-impl<'a> Iterator for ListViewIter<'a> {
-    type Item = &'a str;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        self.inner.next()
-    }
-}
-
-impl<'a> IntoIterator for &'a ListView<'a> {
-    type Item = &'a str;
-    type IntoIter = ListViewIter<'a>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        ListViewIter {
-            inner: self.items.iter().map(string_as_str as fn(&'a String) -> &'a str),
+    pub fn as_joined(&self) -> Joined<'a> {
+        Joined {
+            items: self.items,
+            separator: self.separator,
+            leading: self.leading,
+            trailing: self.trailing,
         }
     }
 }
 
 impl fmt::Display for ListView<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let rendered =
-            joinby(self, self.separator, self.leading, self.trailing).map_err(|_| fmt::Error)?;
-        f.write_str(&rendered)
+        fmt::Display::fmt(&self.as_joined(), f)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+impl ::askama::FastWritable for ListView<'_> {
+    fn write_into<W: std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+        values: &dyn ::askama::Values,
+    ) -> Result<(), ::askama::Error> {
+        self.as_joined().write_into(dest, values)
+    }
+}
+
+pub struct ListViewIter<'a> {
+    inner: std::slice::Iter<'a, Renderable<'a>>,
+}
+
+impl<'a> Iterator for ListViewIter<'a> {
+    type Item = &'a Renderable<'a>;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.inner.next()
+    }
+}
+
+impl<'a> IntoIterator for &'a ListView<'a> {
+    type Item = &'a Renderable<'a>;
+    type IntoIter = ListViewIter<'a>;
+    fn into_iter(self) -> Self::IntoIter {
+        ListViewIter { inner: self.items.iter() }
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
 pub enum FieldView<'a> {
     Missing,
-    Scalar(&'a str),
-    List(ListView<'a>),
-}
-
-pub enum FieldViewIter<'a> {
-    Missing(std::option::IntoIter<&'a str>),
-    Scalar(std::option::IntoIter<&'a str>),
-    List(ListViewIter<'a>),
-}
-
-impl<'a> Iterator for FieldViewIter<'a> {
-    type Item = &'a str;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        match self {
-            Self::Missing(inner) | Self::Scalar(inner) => inner.next(),
-            Self::List(inner) => inner.next(),
-        }
-    }
-}
-
-impl<'a> IntoIterator for &'a FieldView<'a> {
-    type Item = &'a str;
-    type IntoIter = FieldViewIter<'a>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        match self {
-            FieldView::Missing => FieldViewIter::Missing(None.into_iter()),
-            FieldView::Scalar(text) => FieldViewIter::Scalar(Some(*text).into_iter()),
-            FieldView::List(view) => FieldViewIter::List(view.into_iter()),
-        }
-    }
+    One(Renderable<'a>),
+    Many(ListView<'a>),
 }
 
 impl fmt::Display for FieldView<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Missing => Ok(()),
-            Self::Scalar(text) => f.write_str(text),
-            Self::List(view) => fmt::Display::fmt(view, f),
+            Self::One(r) => fmt::Display::fmt(r, f),
+            Self::Many(view) => fmt::Display::fmt(view, f),
+        }
+    }
+}
+
+impl ::askama::FastWritable for FieldView<'_> {
+    fn write_into<W: std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+        values: &dyn ::askama::Values,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            Self::Missing => Ok(()),
+            Self::One(r) => r.write_into(dest, values),
+            Self::Many(v) => v.write_into(dest, values),
         }
     }
 }
@@ -285,13 +277,15 @@ impl<S: AsRef<str>, const N: usize> JoinSource for [S; N] {
     }
 }
 
+// TEMPORARY — Task 3 replaces JoinSource wholesale with a Renderable-based
+// trait; these stubs exist only to make Task 2 compile. Delete in Task 3.
 impl JoinSource for ListView<'_> {
     fn len(&self) -> usize {
         self.items.len()
     }
 
-    fn item(&self, index: usize) -> &str {
-        self.items[index].as_str()
+    fn item(&self, _index: usize) -> &str {
+        unimplemented!("removed in Task 3 — JoinSource::item not valid on Renderable-backed ListView")
     }
 
     fn leading_sep_for(&self, sep: &str) -> bool {
@@ -303,32 +297,27 @@ impl JoinSource for ListView<'_> {
     }
 }
 
+// TEMPORARY — Task 3 replaces JoinSource wholesale with a Renderable-based
+// trait; these stubs exist only to make Task 2 compile. Delete in Task 3.
 impl JoinSource for FieldView<'_> {
     fn len(&self) -> usize {
         match self {
             Self::Missing => 0,
-            Self::Scalar(text) => usize::from(!text.is_empty()),
-            Self::List(view) => view.len(),
+            Self::One(_) => 1,
+            Self::Many(view) => view.len(),
         }
     }
 
-    fn item(&self, index: usize) -> &str {
-        match self {
-            Self::Missing => panic!("FieldView::Missing has no join items"),
-            Self::Scalar(text) => {
-                debug_assert_eq!(index, 0);
-                text
-            }
-            Self::List(view) => view.item(index),
-        }
+    fn item(&self, _index: usize) -> &str {
+        unimplemented!("removed in Task 3 — JoinSource::item not valid on Renderable-backed FieldView")
     }
 
     fn leading_sep_for(&self, sep: &str) -> bool {
-        matches!(self, Self::List(view) if view.leading_sep_for(sep))
+        matches!(self, Self::Many(view) if view.leading_sep_for(sep))
     }
 
     fn trailing_sep_for(&self, sep: &str) -> bool {
-        matches!(self, Self::List(view) if view.trailing_sep_for(sep))
+        matches!(self, Self::Many(view) if view.trailing_sep_for(sep))
     }
 }
 
@@ -479,8 +468,8 @@ impl PresenceCheck for FieldView<'_> {
     fn is_present_check(&self) -> bool {
         match self {
             Self::Missing => false,
-            Self::Scalar(text) => !text.trim().is_empty(),
-            Self::List(view) => view.is_present_check(),
+            Self::One(_) => true,
+            Self::Many(view) => view.is_present_check(),
         }
     }
 }

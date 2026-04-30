@@ -196,3 +196,25 @@ fn join_with_flanks_both_sides_match() {
     let xs = ["a", "b"];
     assert_eq!(joinWithFlanks(&xs, &values, ",").unwrap(), ",a,b,");
 }
+
+#[test]
+fn listview_holds_renderables() {
+    use sittir_core::filters::{ListView, Renderable};
+    let items = [Renderable::Text("foo"), Renderable::Text("bar")];
+    let view = ListView { items: &items, separator: ", ", leading: false, trailing: false };
+    assert_eq!(view.to_string(), "foo, bar");
+}
+
+#[test]
+fn fieldview_one_holds_renderable() {
+    use sittir_core::filters::{FieldView, Renderable};
+    let view = FieldView::One(Renderable::Text("hello"));
+    assert_eq!(view.to_string(), "hello");
+}
+
+#[test]
+fn fieldview_missing_renders_empty() {
+    use sittir_core::filters::FieldView;
+    let view: FieldView<'_> = FieldView::Missing;
+    assert_eq!(view.to_string(), "");
+}
