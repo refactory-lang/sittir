@@ -1,9 +1,11 @@
-//! Primitive `NodeData` + `FieldValue` + `Span` + `Source` + `Edit` —
-//! the 8-`$`-field boundary shape that crosses JS↔Rust. See
+//! Primitive `NodeData` + `FieldValue` + `Span` + `Source` + `Edit` +
+//! `KindId` — the 8-`$`-field boundary shape that crosses JS↔Rust, plus
+//! the numeric kind discriminant for the KindID runtime migration. See
 //! data-model.md §1 for the authoritative contract.
 //!
 //! Spec 012 tasks T009 + T010. Serde rename + skip-if-none invariants
 //! tested in `tests/boundary_roundtrip.rs` (T011).
+//! `KindId` serde/conversion tests in `tests/kind_id.rs`.
 //!
 //! Invariants (enforced by struct + serde attributes):
 //! - `$type`, `$source`, `$named` are required on the wire.
@@ -26,6 +28,50 @@
 use napi_derive::napi;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+
+/// Numeric runtime kind discriminant. The wire shape (`$type` on
+/// `AnyTransport` JSON) uses this directly. Per the KindID runtime
+/// migration design (2026-04-30): u16 is wide enough for any
+/// tree-sitter grammar's parser symbol space (rust grammar ≈ 411
+/// symbols, well under u16 max = 65535).
+///
+/// `KindId` is a transparent newtype so `serde` decodes JSON numeric
+/// `$type` directly into it without an enum variant table — per-
+/// grammar `AnyTransport` enums dispatch on the inner u16.
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash,
+    ::serde::Serialize, ::serde::Deserialize,
+)]
+#[serde(transparent)]
+#[repr(transparent)]
+pub struct KindId(pub u16);
+
+impl KindId {
+    pub const fn new(id: u16) -> Self {
+        Self(id)
+    }
+    pub const fn get(self) -> u16 {
+        self.0
+    }
+}
+
+impl ::std::fmt::Display for KindId {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::std::fmt::Display::fmt(&self.0, f)
+    }
+}
+
+impl From<u16> for KindId {
+    fn from(id: u16) -> Self {
+        Self(id)
+    }
+}
+
+impl From<KindId> for u16 {
+    fn from(id: KindId) -> u16 {
+        id.0
+    }
+}
 
 /// Primitive NodeData — the wire shape. Exactly eight `$`-prefixed
 /// top-level fields. Enrichment (`$variant`, etc.) is TS-side only.
