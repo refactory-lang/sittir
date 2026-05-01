@@ -8519,11 +8519,8 @@ fn render__list_pattern_transport(node: &_ListPatternTransport) -> Result<String
 }
 
 fn render_match_block_transport(node: &MatchBlockTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_match_block_block_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = MatchBlockTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -8537,11 +8534,8 @@ fn render_match_block_transport(node: &MatchBlockTransport) -> Result<String, ::
 }
 
 fn render_match_block_block_transport(node: &MatchBlockBlockTransport) -> Result<String, ::askama::Error> {
-    let alternative_strings: Vec<String> = node.alternative.iter()
-        .map(|t| render_case_clause_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let alternative_buf: Vec<::sittir_core::filters::Renderable<'_>> = alternative_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let alternative_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.alternative.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = MatchBlockBlockTemplate {
         alternative: ::sittir_core::filters::ListNonterminalView {
@@ -8570,11 +8564,8 @@ fn render_simple_pattern_negative_transport(node: &SimplePatternNegativeTranspor
 }
 
 fn render_simple_statements_transport(node: &SimpleStatementsTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_simple_statement_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = SimpleStatementsTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -8619,11 +8610,9 @@ fn render__with_clause_paren_transport(node: &_WithClauseParenTransport) -> Resu
 }
 
 fn render_aliased_import_transport(node: &AliasedImportTransport) -> Result<String, ::askama::Error> {
-    let alias_text = render_identifier_transport(&node.alias)?;
-    let name_text = render_dotted_name_transport(&node.name)?;
     let template = AliasedImportTemplate {
-        alias: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(alias_text.as_str())),
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        alias: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.alias as &dyn ::sittir_core::types::RenderableTransport)),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
@@ -8645,20 +8634,16 @@ fn render_argument_list_transport(node: &ArgumentListTransport) -> Result<String
 }
 
 fn render_as_pattern_transport(node: &AsPatternTransport) -> Result<String, ::askama::Error> {
-    let expression_text = render_expression_transport(&node.expression)?;
     let template = AsPatternTemplate {
         alias: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.alias.as_ref())),
-        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(expression_text.as_str())),
+        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_assert_statement_transport(node: &AssertStatementTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_expression_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = AssertStatementTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -8680,13 +8665,9 @@ fn render_assignment_transport(t: &AssignmentTransport) -> Result<String, ::aska
 }
 
 fn render_assignment_uform_eq_transport(node: &AssignmentUFormEqTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_assignment_eq_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
-    let left_text = render_left_hand_side_transport(&node.left)?;
     let template = AssignmentTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -8694,19 +8675,15 @@ fn render_assignment_uform_eq_transport(node: &AssignmentUFormEqTransport) -> Re
             leading: false,
             trailing: false,
         },
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_assignment_uform_type_transport(node: &AssignmentUFormTypeTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_assignment_type_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
-    let left_text = render_left_hand_side_transport(&node.left)?;
     let template = AssignmentTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -8714,19 +8691,15 @@ fn render_assignment_uform_type_transport(node: &AssignmentUFormTypeTransport) -
             leading: false,
             trailing: false,
         },
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_assignment_uform_typed_transport(node: &AssignmentUFormTypedTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_assignment_typed_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
-    let left_text = render_left_hand_side_transport(&node.left)?;
     let template = AssignmentTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -8734,57 +8707,47 @@ fn render_assignment_uform_typed_transport(node: &AssignmentUFormTypedTransport)
             leading: false,
             trailing: false,
         },
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_attribute_transport(node: &AttributeTransport) -> Result<String, ::askama::Error> {
-    let attribute_text = render_identifier_transport(&node.attribute)?;
-    let object_text = render_primary_expression_transport(&node.object)?;
     let template = AttributeTemplate {
-        attribute: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(attribute_text.as_str())),
-        object: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(object_text.as_str())),
+        attribute: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.attribute as &dyn ::sittir_core::types::RenderableTransport)),
+        object: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.object as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_augmented_assignment_transport(node: &AugmentedAssignmentTransport) -> Result<String, ::askama::Error> {
-    let left_text = render_left_hand_side_transport(&node.left)?;
-    let right_text = render_right_hand_side_transport(&node.right)?;
     let template = AugmentedAssignmentTemplate {
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left as &dyn ::sittir_core::types::RenderableTransport)),
         operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.operator.as_ref())),
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(right_text.as_str())),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_await_transport(node: &AwaitTransport) -> Result<String, ::askama::Error> {
-    let primary_expression_text = render_primary_expression_transport(&node.primary_expression)?;
     let template = AwaitTemplate {
-        primary_expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(primary_expression_text.as_str())),
+        primary_expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.primary_expression as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_binary_operator_transport(node: &BinaryOperatorTransport) -> Result<String, ::askama::Error> {
-    let left_text = render_primary_expression_transport(&node.left)?;
-    let right_text = render_primary_expression_transport(&node.right)?;
     let template = BinaryOperatorTemplate {
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left as &dyn ::sittir_core::types::RenderableTransport)),
         operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.operator.as_ref())),
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(right_text.as_str())),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_block_transport(node: &BlockTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_statement_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = BlockTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -8798,12 +8761,10 @@ fn render_block_transport(node: &BlockTransport) -> Result<String, ::askama::Err
 }
 
 fn render_boolean_operator_transport(node: &BooleanOperatorTransport) -> Result<String, ::askama::Error> {
-    let left_text = render_expression_transport(&node.left)?;
-    let right_text = render_expression_transport(&node.right)?;
     let template = BooleanOperatorTemplate {
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left as &dyn ::sittir_core::types::RenderableTransport)),
         operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.operator.as_ref())),
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(right_text.as_str())),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
@@ -8813,23 +8774,17 @@ fn render_break_statement_transport(t: &BreakStatementTransport) -> Result<Strin
 }
 
 fn render_call_transport(node: &CallTransport) -> Result<String, ::askama::Error> {
-    let function_text = render_primary_expression_transport(&node.function)?;
     let template = CallTemplate {
         arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.arguments.as_ref())),
-        function: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(function_text.as_str())),
+        function: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.function as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_case_clause_transport(node: &CaseClauseTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_case_pattern_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
-    let consequence_text = render_suite_transport(&node.consequence)?;
-    let guard_text = node.guard.as_ref().map(|v| render_if_clause_transport(v)).transpose()?;
     let template = CaseClauseTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -8837,9 +8792,9 @@ fn render_case_clause_transport(node: &CaseClauseTransport) -> Result<String, ::
             leading: false,
             trailing: false,
         },
-        consequence: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(consequence_text.as_str())),
-        guard: match &guard_text {
-            Some(s) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(s.as_str())),
+        consequence: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.consequence as &dyn ::sittir_core::types::RenderableTransport)),
+        guard: match &node.guard {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
     };
@@ -8862,27 +8817,22 @@ fn render_case_pattern_transport(node: &CasePatternTransport) -> Result<String, 
 }
 
 fn render_chevron_transport(node: &ChevronTransport) -> Result<String, ::askama::Error> {
-    let expression_text = render_expression_transport(&node.expression)?;
     let template = ChevronTemplate {
-        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(expression_text.as_str())),
+        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_class_definition_transport(node: &ClassDefinitionTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_suite_transport(&node.body)?;
-    let name_text = render_identifier_transport(&node.name)?;
-    let superclasses_text = node.superclasses.as_ref().map(|v| render_argument_list_transport(v)).transpose()?;
-    let type_parameters_text = node.type_parameters.as_ref().map(|v| render_type_parameter_transport(v)).transpose()?;
     let template = ClassDefinitionTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
-        superclasses: match &superclasses_text {
-            Some(s) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(s.as_str())),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body as &dyn ::sittir_core::types::RenderableTransport)),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name as &dyn ::sittir_core::types::RenderableTransport)),
+        superclasses: match &node.superclasses {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        type_parameters: match &type_parameters_text {
-            Some(s) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(s.as_str())),
+        type_parameters: match &node.type_parameters {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
     };
@@ -8890,13 +8840,9 @@ fn render_class_definition_transport(node: &ClassDefinitionTransport) -> Result<
 }
 
 fn render_class_pattern_transport(node: &ClassPatternTransport) -> Result<String, ::askama::Error> {
-    let arguments_strings: Vec<String> = node.arguments.iter()
-        .map(|t| render_case_pattern_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let arguments_buf: Vec<::sittir_core::filters::Renderable<'_>> = arguments_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let arguments_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.arguments.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
-    let dotted_name_text = render_dotted_name_transport(&node.dotted_name)?;
     let template = ClassPatternTemplate {
         arguments: ::sittir_core::filters::ListNonterminalView {
             items: arguments_buf.as_slice(),
@@ -8904,7 +8850,7 @@ fn render_class_pattern_transport(node: &ClassPatternTransport) -> Result<String
             leading: false,
             trailing: false,
         },
-        dotted_name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(dotted_name_text.as_str())),
+        dotted_name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.dotted_name as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
@@ -8918,7 +8864,6 @@ fn render_comparison_operator_transport(node: &ComparisonOperatorTransport) -> R
     let operators_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.operators.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
-    let left_text = render_primary_expression_transport(&node.left)?;
     let template = ComparisonOperatorTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -8926,7 +8871,7 @@ fn render_comparison_operator_transport(node: &ComparisonOperatorTransport) -> R
             leading: false,
             trailing: false,
         },
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left as &dyn ::sittir_core::types::RenderableTransport)),
         operators: ::sittir_core::filters::ListNonterminalView {
             items: operators_buf.as_slice(),
             separator: "",
@@ -8938,13 +8883,9 @@ fn render_comparison_operator_transport(node: &ComparisonOperatorTransport) -> R
 }
 
 fn render_complex_pattern_transport(node: &ComplexPatternTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_primary_expression_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
-    let imaginary_text = render_primary_expression_transport(&node.imaginary)?;
     let template = ComplexPatternTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -8952,7 +8893,7 @@ fn render_complex_pattern_transport(node: &ComplexPatternTransport) -> Result<St
             leading: false,
             trailing: false,
         },
-        imaginary: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(imaginary_text.as_str())),
+        imaginary: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.imaginary as &dyn ::sittir_core::types::RenderableTransport)),
         real: match &node.real {
             Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
@@ -8962,11 +8903,8 @@ fn render_complex_pattern_transport(node: &ComplexPatternTransport) -> Result<St
 }
 
 fn render_concatenated_string_transport(node: &ConcatenatedStringTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_string_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = ConcatenatedStringTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -8980,23 +8918,18 @@ fn render_concatenated_string_transport(node: &ConcatenatedStringTransport) -> R
 }
 
 fn render_conditional_expression_transport(node: &ConditionalExpressionTransport) -> Result<String, ::askama::Error> {
-    let alternative_text = render_expression_transport(&node.alternative)?;
-    let body_text = render_expression_transport(&node.body)?;
-    let condition_text = render_expression_transport(&node.condition)?;
     let template = ConditionalExpressionTemplate {
-        alternative: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(alternative_text.as_str())),
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
-        condition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(condition_text.as_str())),
+        alternative: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.alternative as &dyn ::sittir_core::types::RenderableTransport)),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body as &dyn ::sittir_core::types::RenderableTransport)),
+        condition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_constrained_type_transport(node: &ConstrainedTypeTransport) -> Result<String, ::askama::Error> {
-    let base_type_text = render_type_transport(&node.base_type)?;
-    let constraint_text = render_type_transport(&node.constraint)?;
     let template = ConstrainedTypeTemplate {
-        base_type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(base_type_text.as_str())),
-        constraint: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(constraint_text.as_str())),
+        base_type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.base_type as &dyn ::sittir_core::types::RenderableTransport)),
+        constraint: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.constraint as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
@@ -9006,13 +8939,9 @@ fn render_continue_statement_transport(t: &ContinueStatementTransport) -> Result
 }
 
 fn render_decorated_definition_transport(node: &DecoratedDefinitionTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_decorator_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
-    let definition_text = render_compound_statement_transport(&node.definition)?;
     let template = DecoratedDefinitionTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -9020,15 +8949,14 @@ fn render_decorated_definition_transport(node: &DecoratedDefinitionTransport) ->
             leading: false,
             trailing: false,
         },
-        definition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(definition_text.as_str())),
+        definition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.definition as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_decorator_transport(node: &DecoratorTransport) -> Result<String, ::askama::Error> {
-    let expression_text = render_expression_transport(&node.expression)?;
     let template = DecoratorTemplate {
-        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(expression_text.as_str())),
+        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression as &dyn ::sittir_core::types::RenderableTransport)),
         newline: match &node.newline {
             Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
@@ -9038,21 +8966,16 @@ fn render_decorator_transport(node: &DecoratorTransport) -> Result<String, ::ask
 }
 
 fn render_default_parameter_transport(node: &DefaultParameterTransport) -> Result<String, ::askama::Error> {
-    let name_text = render_pattern_transport(&node.name)?;
-    let value_text = render_expression_transport(&node.value)?;
     let template = DefaultParameterTemplate {
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name as &dyn ::sittir_core::types::RenderableTransport)),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_delete_statement_transport(node: &DeleteStatementTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_expressions_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = DeleteStatementTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -9066,11 +8989,8 @@ fn render_delete_statement_transport(node: &DeleteStatementTransport) -> Result<
 }
 
 fn render_dict_pattern_transport(node: &DictPatternTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_dict_pattern_kv_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = DictPatternTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -9099,13 +9019,9 @@ fn render_dictionary_transport(node: &DictionaryTransport) -> Result<String, ::a
 }
 
 fn render_dictionary_comprehension_transport(node: &DictionaryComprehensionTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_comprehension_clauses_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
-    let body_text = render_pair_transport(&node.body)?;
     let template = DictionaryComprehensionTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -9113,25 +9029,21 @@ fn render_dictionary_comprehension_transport(node: &DictionaryComprehensionTrans
             leading: false,
             trailing: false,
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_dictionary_splat_transport(node: &DictionarySplatTransport) -> Result<String, ::askama::Error> {
-    let expression_text = render_expression_transport(&node.expression)?;
     let template = DictionarySplatTemplate {
-        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(expression_text.as_str())),
+        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_dictionary_splat_pattern_transport(node: &DictionarySplatPatternTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_pattern_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = DictionarySplatPatternTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -9145,11 +9057,8 @@ fn render_dictionary_splat_pattern_transport(node: &DictionarySplatPatternTransp
 }
 
 fn render_dotted_name_transport(node: &DottedNameTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_identifier_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = DottedNameTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -9163,11 +9072,9 @@ fn render_dotted_name_transport(node: &DottedNameTransport) -> Result<String, ::
 }
 
 fn render_elif_clause_transport(node: &ElifClauseTransport) -> Result<String, ::askama::Error> {
-    let condition_text = render_expression_transport(&node.condition)?;
-    let consequence_text = render_suite_transport(&node.consequence)?;
     let template = ElifClauseTemplate {
-        condition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(condition_text.as_str())),
-        consequence: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(consequence_text.as_str())),
+        condition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition as &dyn ::sittir_core::types::RenderableTransport)),
+        consequence: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.consequence as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
@@ -9177,9 +9084,8 @@ fn render_ellipsis2_transport(t: &Ellipsis2Transport) -> Result<String, ::askama
 }
 
 fn render_else_clause_transport(node: &ElseClauseTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_suite_transport(&node.body)?;
     let template = ElseClauseTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
@@ -9189,20 +9095,13 @@ fn render_escape_sequence_transport(t: &EscapeSequenceTransport) -> Result<Strin
 }
 
 fn render_except_clause_transport(node: &ExceptClauseTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_suite_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let value_owned = node.value.as_deref().unwrap_or(&[]);
-    let value_strings: Vec<String> = value_owned.iter()
-        .map(|t| render_expression_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let value_buf: Vec<::sittir_core::filters::Renderable<'_>> = value_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let value_buf: Vec<::sittir_core::filters::Renderable<'_>> = value_owned.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
-    let alias_text = node.alias.as_ref().map(|v| render_expression_transport(v)).transpose()?;
     let template = ExceptClauseTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -9210,8 +9109,8 @@ fn render_except_clause_transport(node: &ExceptClauseTransport) -> Result<String
             leading: false,
             trailing: false,
         },
-        alias: match &alias_text {
-            Some(s) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(s.as_str())),
+        alias: match &node.alias {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
         value: ::sittir_core::filters::ListNonterminalView {
@@ -9226,15 +9125,11 @@ fn render_except_clause_transport(node: &ExceptClauseTransport) -> Result<String
 
 fn render_exec_statement_transport(node: &ExecStatementTransport) -> Result<String, ::askama::Error> {
     let in_clause_owned = node.in_clause.as_deref().unwrap_or(&[]);
-    let in_clause_strings: Vec<String> = in_clause_owned.iter()
-        .map(|t| render_expression_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let in_clause_buf: Vec<::sittir_core::filters::Renderable<'_>> = in_clause_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let in_clause_buf: Vec<::sittir_core::filters::Renderable<'_>> = in_clause_owned.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
-    let code_text = render_primary_expression_transport(&node.code)?;
     let template = ExecStatementTemplate {
-        code: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(code_text.as_str())),
+        code: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.code as &dyn ::sittir_core::types::RenderableTransport)),
         in_clause: ::sittir_core::filters::ListNonterminalView {
             items: in_clause_buf.as_slice(),
             separator: "",
@@ -9246,11 +9141,8 @@ fn render_exec_statement_transport(node: &ExecStatementTransport) -> Result<Stri
 }
 
 fn render_expression_list_transport(node: &ExpressionListTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_expression_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = ExpressionListTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -9264,11 +9156,8 @@ fn render_expression_list_transport(node: &ExpressionListTransport) -> Result<St
 }
 
 fn render_expression_statement_tuple_transport(node: &ExpressionStatementTupleTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_expression_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = ExpressionStatementTupleTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -9308,9 +9197,8 @@ fn render_false_transport(t: &FalseTransport) -> Result<String, ::askama::Error>
 }
 
 fn render_finally_clause_transport(node: &FinallyClauseTransport) -> Result<String, ::askama::Error> {
-    let block_text = render_suite_transport(&node.block)?;
     let template = FinallyClauseTemplate {
-        block: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(block_text.as_str())),
+        block: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.block as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
@@ -9320,20 +9208,15 @@ fn render_float_transport(t: &FloatTransport) -> Result<String, ::askama::Error>
 }
 
 fn render_for_in_clause_transport(node: &ForInClauseTransport) -> Result<String, ::askama::Error> {
-    let right_strings: Vec<String> = node.right.iter()
-        .map(|t| render_expression_within_for_in_clause_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let right_buf: Vec<::sittir_core::filters::Renderable<'_>> = right_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let right_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.right.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
-    let async_marker_text = node.async_marker.as_ref().map(|v| render_kw_async_marker_transport(v)).transpose()?;
-    let left_text = render_left_hand_side_transport(&node.left)?;
     let template = ForInClauseTemplate {
-        async_marker: match &async_marker_text {
-            Some(s) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(s.as_str())),
+        async_marker: match &node.async_marker {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left as &dyn ::sittir_core::types::RenderableTransport)),
         right: ::sittir_core::filters::ListNonterminalView {
             items: right_buf.as_slice(),
             separator: "",
@@ -9345,33 +9228,25 @@ fn render_for_in_clause_transport(node: &ForInClauseTransport) -> Result<String,
 }
 
 fn render_for_statement_transport(node: &ForStatementTransport) -> Result<String, ::askama::Error> {
-    let alternative_text = node.alternative.as_ref().map(|v| render_else_clause_transport(v)).transpose()?;
-    let async_marker_text = node.async_marker.as_ref().map(|v| render_kw_async_marker_transport(v)).transpose()?;
-    let body_text = render_suite_transport(&node.body)?;
-    let left_text = render_left_hand_side_transport(&node.left)?;
-    let right_text = render_expressions_transport(&node.right)?;
     let template = ForStatementTemplate {
-        alternative: match &alternative_text {
-            Some(s) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(s.as_str())),
+        alternative: match &node.alternative {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        async_marker: match &async_marker_text {
-            Some(s) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(s.as_str())),
+        async_marker: match &node.async_marker {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(right_text.as_str())),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body as &dyn ::sittir_core::types::RenderableTransport)),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left as &dyn ::sittir_core::types::RenderableTransport)),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_format_specifier_transport(node: &FormatSpecifierTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_interpolation_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = FormatSpecifierTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -9385,26 +9260,20 @@ fn render_format_specifier_transport(node: &FormatSpecifierTransport) -> Result<
 }
 
 fn render_function_definition_transport(node: &FunctionDefinitionTransport) -> Result<String, ::askama::Error> {
-    let async_marker_text = node.async_marker.as_ref().map(|v| render_kw_async_marker_transport(v)).transpose()?;
-    let body_text = render_suite_transport(&node.body)?;
-    let name_text = render_identifier_transport(&node.name)?;
-    let parameters_text = render_parameters_transport(&node.parameters)?;
-    let return_type_text = node.return_type.as_ref().map(|v| render_type_transport(v)).transpose()?;
-    let type_parameters_text = node.type_parameters.as_ref().map(|v| render_type_parameter_transport(v)).transpose()?;
     let template = FunctionDefinitionTemplate {
-        async_marker: match &async_marker_text {
-            Some(s) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(s.as_str())),
+        async_marker: match &node.async_marker {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
-        parameters: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(parameters_text.as_str())),
-        return_type: match &return_type_text {
-            Some(s) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(s.as_str())),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body as &dyn ::sittir_core::types::RenderableTransport)),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name as &dyn ::sittir_core::types::RenderableTransport)),
+        parameters: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.parameters as &dyn ::sittir_core::types::RenderableTransport)),
+        return_type: match &node.return_type {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        type_parameters: match &type_parameters_text {
-            Some(s) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(s.as_str())),
+        type_parameters: match &node.type_parameters {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
     };
@@ -9427,13 +9296,9 @@ fn render_future_import_statement_transport(node: &FutureImportStatementTranspor
 }
 
 fn render_generator_expression_transport(node: &GeneratorExpressionTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_comprehension_clauses_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
-    let body_text = render_expression_transport(&node.body)?;
     let template = GeneratorExpressionTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -9441,27 +9306,22 @@ fn render_generator_expression_transport(node: &GeneratorExpressionTransport) ->
             leading: false,
             trailing: false,
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_generic_type_transport(node: &GenericTypeTransport) -> Result<String, ::askama::Error> {
-    let identifier_text = render_identifier_transport(&node.identifier)?;
-    let type_parameter_text = render_type_parameter_transport(&node.type_parameter)?;
     let template = GenericTypeTemplate {
-        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(identifier_text.as_str())),
-        type_parameter: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(type_parameter_text.as_str())),
+        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier as &dyn ::sittir_core::types::RenderableTransport)),
+        type_parameter: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_parameter as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_global_statement_transport(node: &GlobalStatementTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_identifier_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = GlobalStatementTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -9479,9 +9339,8 @@ fn render_identifier_transport(t: &IdentifierTransport) -> Result<String, ::aska
 }
 
 fn render_if_clause_transport(node: &IfClauseTransport) -> Result<String, ::askama::Error> {
-    let expression_text = render_expression_transport(&node.expression)?;
     let template = IfClauseTemplate {
-        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(expression_text.as_str())),
+        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
@@ -9491,8 +9350,6 @@ fn render_if_statement_transport(node: &IfStatementTransport) -> Result<String, 
     let alternative_buf: Vec<::sittir_core::filters::Renderable<'_>> = alternative_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
-    let condition_text = render_expression_transport(&node.condition)?;
-    let consequence_text = render_suite_transport(&node.consequence)?;
     let template = IfStatementTemplate {
         alternative: ::sittir_core::filters::ListNonterminalView {
             items: alternative_buf.as_slice(),
@@ -9500,18 +9357,15 @@ fn render_if_statement_transport(node: &IfStatementTransport) -> Result<String, 
             leading: false,
             trailing: false,
         },
-        condition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(condition_text.as_str())),
-        consequence: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(consequence_text.as_str())),
+        condition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition as &dyn ::sittir_core::types::RenderableTransport)),
+        consequence: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.consequence as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_import_from_statement_transport(node: &ImportFromStatementTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_wildcard_import_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = ImportFromStatementTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -9555,17 +9409,14 @@ fn render_integer_transport(t: &IntegerTransport) -> Result<String, ::askama::Er
 }
 
 fn render_interpolation_transport(node: &InterpolationTransport) -> Result<String, ::askama::Error> {
-    let expression_text = render_fexpression_transport(&node.expression)?;
-    let format_specifier_text = node.format_specifier.as_ref().map(|v| render_format_specifier_transport(v)).transpose()?;
-    let type_conversion_text = node.type_conversion.as_ref().map(|v| render_type_conversion_transport(v)).transpose()?;
     let template = InterpolationTemplate {
-        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(expression_text.as_str())),
-        format_specifier: match &format_specifier_text {
-            Some(s) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(s.as_str())),
+        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression as &dyn ::sittir_core::types::RenderableTransport)),
+        format_specifier: match &node.format_specifier {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        type_conversion: match &type_conversion_text {
-            Some(s) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(s.as_str())),
+        type_conversion: match &node.type_conversion {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
     };
@@ -9573,21 +9424,17 @@ fn render_interpolation_transport(node: &InterpolationTransport) -> Result<Strin
 }
 
 fn render_keyword_argument_transport(node: &KeywordArgumentTransport) -> Result<String, ::askama::Error> {
-    let name_text = render_named_expression_lhs_transport(&node.name)?;
-    let value_text = render_expression_transport(&node.value)?;
     let template = KeywordArgumentTemplate {
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name as &dyn ::sittir_core::types::RenderableTransport)),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_keyword_pattern_transport(node: &KeywordPatternTransport) -> Result<String, ::askama::Error> {
-    let identifier_text = render_identifier_transport(&node.identifier)?;
-    let simple_pattern_text = render_simple_pattern_transport(&node.simple_pattern)?;
     let template = KeywordPatternTemplate {
-        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(identifier_text.as_str())),
-        simple_pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(simple_pattern_text.as_str())),
+        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier as &dyn ::sittir_core::types::RenderableTransport)),
+        simple_pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.simple_pattern as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
@@ -9597,12 +9444,10 @@ fn render_keyword_separator_transport(t: &KeywordSeparatorTransport) -> Result<S
 }
 
 fn render_lambda_transport(node: &LambdaTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_expression_transport(&node.body)?;
-    let parameters_text = node.parameters.as_ref().map(|v| render_lambda_parameters_transport(v)).transpose()?;
     let template = LambdaTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
-        parameters: match &parameters_text {
-            Some(s) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(s.as_str())),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body as &dyn ::sittir_core::types::RenderableTransport)),
+        parameters: match &node.parameters {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
     };
@@ -9610,11 +9455,8 @@ fn render_lambda_transport(node: &LambdaTransport) -> Result<String, ::askama::E
 }
 
 fn render_lambda_parameters_transport(node: &LambdaParametersTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_parameter_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = LambdaParametersTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -9628,12 +9470,10 @@ fn render_lambda_parameters_transport(node: &LambdaParametersTransport) -> Resul
 }
 
 fn render_lambda_within_for_in_clause_transport(node: &LambdaWithinForInClauseTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_expression_within_for_in_clause_transport(&node.body)?;
-    let parameters_text = node.parameters.as_ref().map(|v| render_lambda_parameters_transport(v)).transpose()?;
     let template = LambdaWithinForInClauseTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
-        parameters: match &parameters_text {
-            Some(s) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(s.as_str())),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body as &dyn ::sittir_core::types::RenderableTransport)),
+        parameters: match &node.parameters {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
     };
@@ -9660,13 +9500,9 @@ fn render_list_transport(node: &ListTransport) -> Result<String, ::askama::Error
 }
 
 fn render_list_comprehension_transport(node: &ListComprehensionTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_comprehension_clauses_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
-    let body_text = render_expression_transport(&node.body)?;
     let template = ListComprehensionTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -9674,17 +9510,14 @@ fn render_list_comprehension_transport(node: &ListComprehensionTransport) -> Res
             leading: false,
             trailing: false,
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_list_pattern_transport(node: &ListPatternTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_pattern_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = ListPatternTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -9698,19 +9531,15 @@ fn render_list_pattern_transport(node: &ListPatternTransport) -> Result<String, 
 }
 
 fn render_list_splat_transport(node: &ListSplatTransport) -> Result<String, ::askama::Error> {
-    let expression_text = render_expression_transport(&node.expression)?;
     let template = ListSplatTemplate {
-        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(expression_text.as_str())),
+        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_list_splat_pattern_transport(node: &ListSplatPatternTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_pattern_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = ListSplatPatternTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -9724,15 +9553,11 @@ fn render_list_splat_pattern_transport(node: &ListSplatPatternTransport) -> Resu
 }
 
 fn render_match_statement_transport(node: &MatchStatementTransport) -> Result<String, ::askama::Error> {
-    let subject_strings: Vec<String> = node.subject.iter()
-        .map(|t| render_expression_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let subject_buf: Vec<::sittir_core::filters::Renderable<'_>> = subject_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let subject_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.subject.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
-    let body_text = render_match_block_transport(&node.body)?;
     let template = MatchStatementTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body as &dyn ::sittir_core::types::RenderableTransport)),
         subject: ::sittir_core::filters::ListNonterminalView {
             items: subject_buf.as_slice(),
             separator: "",
@@ -9744,21 +9569,16 @@ fn render_match_statement_transport(node: &MatchStatementTransport) -> Result<St
 }
 
 fn render_member_type_transport(node: &MemberTypeTransport) -> Result<String, ::askama::Error> {
-    let base_type_text = render_type_transport(&node.base_type)?;
-    let identifier_text = render_identifier_transport(&node.identifier)?;
     let template = MemberTypeTemplate {
-        base_type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(base_type_text.as_str())),
-        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(identifier_text.as_str())),
+        base_type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.base_type as &dyn ::sittir_core::types::RenderableTransport)),
+        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_module_transport(node: &ModuleTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_statement_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = ModuleTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -9772,11 +9592,9 @@ fn render_module_transport(node: &ModuleTransport) -> Result<String, ::askama::E
 }
 
 fn render_named_expression_transport(node: &NamedExpressionTransport) -> Result<String, ::askama::Error> {
-    let name_text = render_named_expression_lhs_transport(&node.name)?;
-    let value_text = render_expression_transport(&node.value)?;
     let template = NamedExpressionTemplate {
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name as &dyn ::sittir_core::types::RenderableTransport)),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
@@ -9786,11 +9604,8 @@ fn render_none_transport(t: &NoneTransport) -> Result<String, ::askama::Error> {
 }
 
 fn render_nonlocal_statement_transport(node: &NonlocalStatementTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_identifier_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = NonlocalStatementTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -9804,29 +9619,23 @@ fn render_nonlocal_statement_transport(node: &NonlocalStatementTransport) -> Res
 }
 
 fn render_not_operator_transport(node: &NotOperatorTransport) -> Result<String, ::askama::Error> {
-    let argument_text = render_expression_transport(&node.argument)?;
     let template = NotOperatorTemplate {
-        argument: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(argument_text.as_str())),
+        argument: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.argument as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_pair_transport(node: &PairTransport) -> Result<String, ::askama::Error> {
-    let key_text = render_expression_transport(&node.key)?;
-    let value_text = render_expression_transport(&node.value)?;
     let template = PairTemplate {
-        key: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(key_text.as_str())),
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
+        key: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.key as &dyn ::sittir_core::types::RenderableTransport)),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_parameters_transport(node: &ParametersTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_parameter_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = ParametersTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -9840,11 +9649,8 @@ fn render_parameters_transport(node: &ParametersTransport) -> Result<String, ::a
 }
 
 fn render_parenthesized_expression_transport(node: &ParenthesizedExpressionTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_fexpression_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = ParenthesizedExpressionTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -9877,11 +9683,8 @@ fn render_pass_statement_transport(t: &PassStatementTransport) -> Result<String,
 }
 
 fn render_pattern_list_transport(node: &PatternListTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_pattern_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = PatternListTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -9900,17 +9703,11 @@ fn render_positional_separator_transport(t: &PositionalSeparatorTransport) -> Re
 
 fn render_print_statement_transport(node: &PrintStatementTransport) -> Result<String, ::askama::Error> {
     let children_owned = node.children.as_deref().unwrap_or(&[]);
-    let children_strings: Vec<String> = children_owned.iter()
-        .map(|t| render_chevron_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_owned.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
-    let argument_strings: Vec<String> = node.argument.iter()
-        .map(|t| render_expression_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let argument_buf: Vec<::sittir_core::filters::Renderable<'_>> = argument_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let argument_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.argument.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = PrintStatementTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -9931,13 +9728,9 @@ fn render_print_statement_transport(node: &PrintStatementTransport) -> Result<St
 
 fn render_raise_statement_transport(node: &RaiseStatementTransport) -> Result<String, ::askama::Error> {
     let children_owned = node.children.as_deref().unwrap_or(&[]);
-    let children_strings: Vec<String> = children_owned.iter()
-        .map(|t| render_expressions_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_owned.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
-    let cause_text = node.cause.as_ref().map(|v| render_expression_transport(v)).transpose()?;
     let template = RaiseStatementTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -9945,8 +9738,8 @@ fn render_raise_statement_transport(node: &RaiseStatementTransport) -> Result<St
             leading: false,
             trailing: false,
         },
-        cause: match &cause_text {
-            Some(s) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(s.as_str())),
+        cause: match &node.cause {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
     };
@@ -9954,25 +9747,20 @@ fn render_raise_statement_transport(node: &RaiseStatementTransport) -> Result<St
 }
 
 fn render_relative_import_transport(node: &RelativeImportTransport) -> Result<String, ::askama::Error> {
-    let dotted_name_text = node.dotted_name.as_ref().map(|v| render_dotted_name_transport(v)).transpose()?;
-    let import_prefix_text = render_import_prefix_transport(&node.import_prefix)?;
     let template = RelativeImportTemplate {
-        dotted_name: match &dotted_name_text {
-            Some(s) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(s.as_str())),
+        dotted_name: match &node.dotted_name {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        import_prefix: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(import_prefix_text.as_str())),
+        import_prefix: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.import_prefix as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_return_statement_transport(node: &ReturnStatementTransport) -> Result<String, ::askama::Error> {
     let children_owned = node.children.as_deref().unwrap_or(&[]);
-    let children_strings: Vec<String> = children_owned.iter()
-        .map(|t| render_expressions_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_owned.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = ReturnStatementTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -10001,13 +9789,9 @@ fn render_set_transport(node: &SetTransport) -> Result<String, ::askama::Error> 
 }
 
 fn render_set_comprehension_transport(node: &SetComprehensionTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_comprehension_clauses_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
-    let body_text = render_expression_transport(&node.body)?;
     let template = SetComprehensionTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -10015,26 +9799,23 @@ fn render_set_comprehension_transport(node: &SetComprehensionTransport) -> Resul
             leading: false,
             trailing: false,
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_slice_transport(node: &SliceTransport) -> Result<String, ::askama::Error> {
-    let start_text = node.start.as_ref().map(|v| render_expression_transport(v)).transpose()?;
-    let step_text = node.step.as_ref().map(|v| render_expression_transport(v)).transpose()?;
-    let stop_text = node.stop.as_ref().map(|v| render_expression_transport(v)).transpose()?;
     let template = SliceTemplate {
-        start: match &start_text {
-            Some(s) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(s.as_str())),
+        start: match &node.start {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        step: match &step_text {
-            Some(s) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(s.as_str())),
+        step: match &node.step {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        stop: match &stop_text {
-            Some(s) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(s.as_str())),
+        stop: match &node.stop {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
     };
@@ -10042,11 +9823,8 @@ fn render_slice_transport(node: &SliceTransport) -> Result<String, ::askama::Err
 }
 
 fn render_splat_pattern_transport(node: &SplatPatternTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_identifier_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = SplatPatternTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -10061,9 +9839,8 @@ fn render_splat_pattern_transport(node: &SplatPatternTransport) -> Result<String
 }
 
 fn render_splat_type_transport(node: &SplatTypeTransport) -> Result<String, ::askama::Error> {
-    let identifier_rendered = render_identifier_transport(&node.identifier)?;
     let template = SplatTypeTemplate {
-        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(identifier_rendered.as_str())),
+        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
@@ -10094,7 +9871,6 @@ fn render_subscript_transport(node: &SubscriptTransport) -> Result<String, ::ask
     let subscript_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.subscript.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
-    let value_text = render_primary_expression_transport(&node.value)?;
     let template = SubscriptTemplate {
         subscript: ::sittir_core::filters::ListNonterminalView {
             items: subscript_buf.as_slice(),
@@ -10102,7 +9878,7 @@ fn render_subscript_transport(node: &SubscriptTransport) -> Result<String, ::ask
             leading: false,
             trailing: false,
         },
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
@@ -10112,19 +9888,13 @@ fn render_true_transport(t: &TrueTransport) -> Result<String, ::askama::Error> {
 }
 
 fn render_try_statement_transport(node: &TryStatementTransport) -> Result<String, ::askama::Error> {
-    let except_clauses_strings: Vec<String> = node.except_clauses.iter()
-        .map(|t| render_except_clause_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let except_clauses_buf: Vec<::sittir_core::filters::Renderable<'_>> = except_clauses_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let except_clauses_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.except_clauses.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
-    let body_text = render_suite_transport(&node.body)?;
-    let else_clause_text = node.else_clause.as_ref().map(|v| render_else_clause_transport(v)).transpose()?;
-    let finally_clause_text = node.finally_clause.as_ref().map(|v| render_finally_clause_transport(v)).transpose()?;
     let template = TryStatementTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
-        else_clause: match &else_clause_text {
-            Some(s) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(s.as_str())),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body as &dyn ::sittir_core::types::RenderableTransport)),
+        else_clause: match &node.else_clause {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
         except_clauses: ::sittir_core::filters::ListNonterminalView {
@@ -10133,8 +9903,8 @@ fn render_try_statement_transport(node: &TryStatementTransport) -> Result<String
             leading: false,
             trailing: false,
         },
-        finally_clause: match &finally_clause_text {
-            Some(s) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(s.as_str())),
+        finally_clause: match &node.finally_clause {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
     };
@@ -10157,11 +9927,8 @@ fn render_tuple_transport(node: &TupleTransport) -> Result<String, ::askama::Err
 }
 
 fn render_tuple_pattern_transport(node: &TuplePatternTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_pattern_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = TuplePatternTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -10190,11 +9957,9 @@ fn render_type_transport(node: &TypeTransport) -> Result<String, ::askama::Error
 }
 
 fn render_type_alias_statement_transport(node: &TypeAliasStatementTransport) -> Result<String, ::askama::Error> {
-    let left_text = render_type_transport(&node.left)?;
-    let right_text = render_type_transport(&node.right)?;
     let template = TypeAliasStatementTemplate {
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(right_text.as_str())),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left as &dyn ::sittir_core::types::RenderableTransport)),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right as &dyn ::sittir_core::types::RenderableTransport)),
         r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.r#type.as_ref())),
     };
     template.render()
@@ -10205,11 +9970,8 @@ fn render_type_conversion_transport(t: &TypeConversionTransport) -> Result<Strin
 }
 
 fn render_type_parameter_transport(node: &TypeParameterTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_type_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = TypeParameterTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -10223,25 +9985,18 @@ fn render_type_parameter_transport(node: &TypeParameterTransport) -> Result<Stri
 }
 
 fn render_typed_default_parameter_transport(node: &TypedDefaultParameterTransport) -> Result<String, ::askama::Error> {
-    let name_text = render_identifier_transport(&node.name)?;
-    let r#type_text = render_type_transport(&node.r#type)?;
-    let value_text = render_expression_transport(&node.value)?;
     let template = TypedDefaultParameterTemplate {
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
-        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name as &dyn ::sittir_core::types::RenderableTransport)),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.r#type as &dyn ::sittir_core::types::RenderableTransport)),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_typed_parameter_transport(node: &TypedParameterTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_parameter_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
-    let r#type_text = render_type_transport(&node.r#type)?;
     let template = TypedParameterTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -10249,26 +10004,22 @@ fn render_typed_parameter_transport(node: &TypedParameterTransport) -> Result<St
             leading: false,
             trailing: false,
         },
-        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.r#type as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_unary_operator_transport(node: &UnaryOperatorTransport) -> Result<String, ::askama::Error> {
-    let argument_text = render_primary_expression_transport(&node.argument)?;
     let template = UnaryOperatorTemplate {
-        argument: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(argument_text.as_str())),
+        argument: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.argument as &dyn ::sittir_core::types::RenderableTransport)),
         operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.operator.as_ref())),
     };
     template.render()
 }
 
 fn render_union_pattern_transport(node: &UnionPatternTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_simple_pattern_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = UnionPatternTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -10282,26 +10033,21 @@ fn render_union_pattern_transport(node: &UnionPatternTransport) -> Result<String
 }
 
 fn render_union_type_transport(node: &UnionTypeTransport) -> Result<String, ::askama::Error> {
-    let left_text = render_type_transport(&node.left)?;
-    let right_text = render_type_transport(&node.right)?;
     let template = UnionTypeTemplate {
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(right_text.as_str())),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left as &dyn ::sittir_core::types::RenderableTransport)),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_while_statement_transport(node: &WhileStatementTransport) -> Result<String, ::askama::Error> {
-    let alternative_text = node.alternative.as_ref().map(|v| render_else_clause_transport(v)).transpose()?;
-    let body_text = render_suite_transport(&node.body)?;
-    let condition_text = render_expression_transport(&node.condition)?;
     let template = WhileStatementTemplate {
-        alternative: match &alternative_text {
-            Some(s) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(s.as_str())),
+        alternative: match &node.alternative {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
-        condition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(condition_text.as_str())),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body as &dyn ::sittir_core::types::RenderableTransport)),
+        condition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
@@ -10311,11 +10057,8 @@ fn render_wildcard_import_transport(t: &WildcardImportTransport) -> Result<Strin
 }
 
 fn render_with_clause_bare_transport(node: &WithClauseBareTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_with_item_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = WithClauseBareTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -10329,11 +10072,8 @@ fn render_with_clause_bare_transport(node: &WithClauseBareTransport) -> Result<S
 }
 
 fn render_with_clause_paren_transport(node: &WithClauseParenTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_with_item_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = WithClauseParenTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -10369,11 +10109,8 @@ fn render_with_clause_uform_bare_transport(node: &WithClauseUFormBareTransport) 
 }
 
 fn render_with_clause_uform_paren_transport(node: &WithClauseUFormParenTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render__with_clause_paren_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = WithClauseTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -10387,22 +10124,19 @@ fn render_with_clause_uform_paren_transport(node: &WithClauseUFormParenTransport
 }
 
 fn render_with_item_transport(node: &WithItemTransport) -> Result<String, ::askama::Error> {
-    let value_text = render_expression_transport(&node.value)?;
     let template = WithItemTemplate {
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_with_statement_transport(node: &WithStatementTransport) -> Result<String, ::askama::Error> {
-    let async_marker_text = node.async_marker.as_ref().map(|v| render_kw_async_marker_transport(v)).transpose()?;
-    let body_text = render_suite_transport(&node.body)?;
     let template = WithStatementTemplate {
-        async_marker: match &async_marker_text {
-            Some(s) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(s.as_str())),
+        async_marker: match &node.async_marker {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body as &dyn ::sittir_core::types::RenderableTransport)),
         with_clause: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.with_clause.as_ref())),
     };
     template.render()

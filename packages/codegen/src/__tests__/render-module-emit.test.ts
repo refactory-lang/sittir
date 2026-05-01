@@ -232,24 +232,23 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 		expect(nameLine).toContain('PathTransport');
 	});
 
-	it('render_const_item_transport calls render_identifier_transport for name', async () => {
+	it('render_const_item_transport uses Renderable::Transport for name (zero-alloc)', async () => {
 		const src = await getRustTemplatesRs();
 		const fnBody = extractFnBody(src, 'render_const_item_transport');
 		expect(fnBody).not.toBe('');
-		// name is single-kind → uses typed render call
-		expect(fnBody).toContain('render_identifier_transport');
-		// name render should NOT use dispatch
-		const nameLineInFn = fnBody
-			.split('\n')
-			.find((l) => l.includes('name') && l.includes('render_'));
-		expect(nameLineInFn).not.toContain('render_transport_dispatch');
+		// name is single-kind (IdentifierTransport) → zero-alloc Transport coercion,
+		// no intermediate String allocation via render_identifier_transport.
+		expect(fnBody).toContain('Renderable::Transport(&node.name');
+		expect(fnBody).not.toContain('render_identifier_transport');
 	});
 
-	it('render_const_item_transport calls render_block_transport for body', async () => {
+	it('render_function_item_transport uses Renderable::Transport for body (zero-alloc)', async () => {
 		const src = await getRustTemplatesRs();
 		const fnBody = extractFnBody(src, 'render_function_item_transport');
 		expect(fnBody).not.toBe('');
-		// body is single-kind "block" → uses typed render call
-		expect(fnBody).toContain('render_block_transport');
+		// body is single-kind (BlockTransport) → zero-alloc Transport coercion,
+		// no intermediate String allocation via render_block_transport.
+		expect(fnBody).toContain('Renderable::Transport(&node.body');
+		expect(fnBody).not.toContain('render_block_transport');
 	});
 });

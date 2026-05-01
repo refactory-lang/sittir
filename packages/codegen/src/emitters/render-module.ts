@@ -1664,21 +1664,20 @@ function renderTypedFormFn(
  * Emit the Rust boilerplate that converts a list-shaped transport slot into a
  * `*_buf: Vec<Renderable>` ready for `ListNonterminalView`.
  *
- * For **concrete / supertype** slots: renders each element to a `String` first,
- * then borrows as `Renderable::Text`. Two allocations per list item but fully
- * sound for typed transport references.
+ * For **concrete / supertype** slots: emits `Renderable::Transport(t as &dyn
+ * RenderableTransport)` directly — zero intermediate String allocation. Every
+ * concrete transport struct and supertype enum implements `RenderableTransport`,
+ * so the unsized coercion is always valid.
  *
  * For **heterogeneous** slots (`Box<AnyTransport>`): emits
- * `Renderable::Transport(t.as_ref())` directly — zero intermediate String
- * allocation. The `Renderable::Transport` variant streams into any
- * `FastWritable` destination via `RenderableTransport::render_into`.
+ * `Renderable::Transport(t.as_ref())` directly — same zero-allocation path,
+ * using `Box::as_ref()` to obtain `&dyn RenderableTransport`.
  *
  * @param ident - Rust identifier base (e.g. `"children"`, `"parameters"`).
  * @param required - When `true`, the slot is a required Vec; when `false`
  *   it is `Option<Vec<...>>` and needs `as_deref()`.
  * @param cls - slot classification from `classifySlot`; controls element
- *   type and render call. Defaults to `heterogeneous` for callers that
- *   don't have classification info (legacy path).
+ *   type and the coercion expression. Defaults to `heterogeneous`.
  * @returns Lines to splice into the parent function body.
  */
 function emitListSlotBuffer(
@@ -1704,22 +1703,20 @@ function emitListSlotBuffer(
 		return lines;
 	}
 
-	// Concrete / supertype path: render to String, then borrow as Text.
-	const itemExpr = 't';
-	const renderCall = buildSlotRenderCall(cls, itemExpr);
+	// Concrete / supertype path: zero-allocation Transport path.
+	// The coercion `t as &dyn RenderableTransport` is always valid because every
+	// concrete transport struct and supertype enum implements the trait.
+	const RT = '::sittir_core::types::RenderableTransport';
 	if (required) {
-		lines.push(`    let ${ident}_strings: Vec<String> = node.${ident}.iter()`);
-		lines.push(`        .map(|t| ${renderCall})`);
-		lines.push(`        .collect::<Result<Vec<_>, _>>()?;`);
+		lines.push(`    let ${ident}_buf: Vec<${C}Renderable<'_>> = node.${ident}.iter()`);
+		lines.push(`        .map(|t| ${C}Renderable::Transport(t as &dyn ${RT}))`);
+		lines.push(`        .collect();`);
 	} else {
 		lines.push(`    let ${ident}_owned = node.${ident}.as_deref().unwrap_or(&[]);`);
-		lines.push(`    let ${ident}_strings: Vec<String> = ${ident}_owned.iter()`);
-		lines.push(`        .map(|t| ${renderCall})`);
-		lines.push(`        .collect::<Result<Vec<_>, _>>()?;`);
+		lines.push(`    let ${ident}_buf: Vec<${C}Renderable<'_>> = ${ident}_owned.iter()`);
+		lines.push(`        .map(|t| ${C}Renderable::Transport(t as &dyn ${RT}))`);
+		lines.push(`        .collect();`);
 	}
-	lines.push(`    let ${ident}_buf: Vec<${C}Renderable<'_>> = ${ident}_strings.iter()`);
-	lines.push(`        .map(|s| ${C}Renderable::Text(s.as_str()))`);
-	lines.push(`        .collect();`);
 	return lines;
 }
 
@@ -1727,13 +1724,19 @@ function emitListSlotBuffer(
  * Build the function body that constructs a template struct from typed
  * transport fields and calls `template.render()`.
  *
- * Strategy: render each child / field transport to a `String` first, collect
- * into a `Vec<String>`, then borrow those strings as `Renderable::Text` slices
- * to feed `ListNonterminalView` / `NonterminalView`. This avoids the type mismatch between the
- * grammar-local `Renderable` (which carries `Node(&'a AnyTransport)`) and the
- * `sittir_core::filters::ListNonterminalView` item type (`sittir_core::filters::Renderable`
- * which only has `Text` / `Joined` variants). Two allocations per list slot
- * rather than one, but sound and simple.
+ * Strategy: for every field and children slot, stream directly via
+ * `Renderable::Transport(&node.field as &dyn RenderableTransport)`.  This
+ * avoids the intermediate `String` allocation that the old path incurred
+ * (render_*_transport → String → borrow as &str → Renderable::Text).  Every
+ * concrete transport struct and supertype enum implements `RenderableTransport`,
+ * so the unsized coercion is always valid.
+ *
+ * Heterogeneous (Box<AnyTransport>) fields follow the same pattern using
+ * `node.field.as_ref()` (Box::as_ref → &dyn RenderableTransport) — unchanged
+ * from the previous Task 21 work.
+ *
+ * The only remaining `String` allocation is the final `template.render()` call
+ * that writes the complete output string.
  *
  * @param struct - the template struct description
  * @param separator - the list/children separator for this kind
@@ -1753,30 +1756,27 @@ function buildTypedTemplateBody(
 	const lines: string[] = [];
 	const templateName = struct.name;
 	const sepLiteral = JSON.stringify(separator);
+	const C = '::sittir_core::filters::';
+	const RT = '::sittir_core::types::RenderableTransport';
 
 	// Classify helper — use classifySlotForEmit when nodeMap is available so
 	// that supertype/multi single-kind slots fall back to heterogeneous (Phase 1).
 	const classify = (kinds: readonly string[]): SlotClass =>
 		nodeMap !== undefined ? classifySlotForEmit(kinds, nodeMap) : classifySlot(kinds);
 
-	// Render children to Strings, then borrow as Renderable::Text slices.
-	// The transport struct has a `children` field only when transportHasChildren
-	// is true. When the template uses children but the transport has none (e.g.
-	// BoundedType), skip access and emit an empty buffer for the template slot.
+	// Emit list-slot buffers (children and list/multi-field slots).
+	// All paths now go through emitListSlotBuffer which uses Renderable::Transport
+	// for both heterogeneous and concrete/supertype slots.
 	if (struct.hasChildren) {
 		if (struct.transportHasChildren) {
 			lines.push(...emitListSlotBuffer('children', struct.childrenRequired, childrenCls));
 		} else {
 			// Template uses children but transport has no children field —
 			// emit an empty buffer so the ListNonterminalView slot in the template is empty.
-			lines.push(`    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = Vec::new();`);
+			lines.push(`    let children_buf: Vec<${C}Renderable<'_>> = Vec::new();`);
 		}
 	}
 
-	// Render list / multi-field slots to strings, then borrow as Renderable::Text.
-	// Only emit access code for slots backed by a transport struct field.
-	// Virtual presentation slots (hasTransportField === false) are skipped here
-	// and defaulted in the template construction block below.
 	for (const f of struct.fields) {
 		if (f.view === 'scalar') continue;
 		if (!f.hasTransportField) continue;
@@ -1786,62 +1786,16 @@ function buildTypedTemplateBody(
 			const cls = classify(kinds);
 			lines.push(...emitListSlotBuffer(rIdent, f.required, cls));
 		}
-		// Single-valued 'field' view: rendered inline in template construction below.
 	}
 
-	// Pre-render pass: only for non-heterogeneous single-value fields.
-	// Heterogeneous (Box<AnyTransport>) fields are handled inline in the template
-	// construction block via Renderable::Transport — no intermediate String needed.
+	// No pre-render pass needed: concrete/supertype single-value fields are now
+	// handled inline in the template construction block below via Transport coercion.
 
-	// Render scalar fields to owned Strings (will be borrowed in the template literal).
-	for (const f of struct.fields) {
-		if (f.view !== 'scalar') continue;
-		if (!f.hasTransportField) continue;
-		const rIdent = rustFieldIdent(f.name);
-		const kinds = fieldKindsByName.get(f.name) ?? [];
-		const cls = classify(kinds);
-		if (cls.tag === 'heterogeneous') continue; // handled inline via Transport variant
-		if (f.required) {
-			lines.push(
-				`    let ${rIdent}_text = ${buildSlotRenderCall(cls, `&node.${rIdent}`)}?;`
-			);
-		} else {
-			// Use Option<String> so the None arm never allocates — same pattern as
-			// the 'field' view below.  Template construction uses `match` on this
-			// value; the `String::new()` allocation is dead code there anyway.
-			lines.push(
-				`    let ${rIdent}_text = node.${rIdent}.as_ref().map(|v| ${buildSlotRenderCall(cls, 'v')}).transpose()?;`
-			);
-		}
-	}
-
-	// Render single-valued 'field' view fields to owned Strings.
-	for (const f of struct.fields) {
-		if (f.view !== 'field' || f.multiple) continue;
-		if (!f.hasTransportField) continue;
-		const rIdent = rustFieldIdent(f.name);
-		const kinds = fieldKindsByName.get(f.name) ?? [];
-		const cls = classify(kinds);
-		if (cls.tag === 'heterogeneous') continue; // handled inline via Transport variant
-		if (f.required) {
-			lines.push(
-				`    let ${rIdent}_rendered = ${buildSlotRenderCall(cls, `&node.${rIdent}`)}?;`
-			);
-		} else {
-			lines.push(
-				`    let ${rIdent}_rendered = match &node.${rIdent} {`
-			);
-			lines.push(`        Some(v) => Some(${buildSlotRenderCall(cls, 'v')}?),`);
-			lines.push(`        None => None,`);
-			lines.push(`    };`);
-		}
-	}
-
-	// Build template struct.
+	// Build template struct — all single-value fields use Renderable::Transport.
 	lines.push(`    let template = ${templateName} {`);
 
 	if (struct.hasChildren) {
-		lines.push(`        children: ::sittir_core::filters::ListNonterminalView {`);
+		lines.push(`        children: ${C}ListNonterminalView {`);
 		lines.push(`            items: children_buf.as_slice(),`);
 		lines.push(`            separator: ${sepLiteral},`);
 		lines.push(`            leading: false,`);
@@ -1860,7 +1814,6 @@ function buildTypedTemplateBody(
 
 	for (const f of struct.fields) {
 		const rIdent = rustFieldIdent(f.name);
-		const C = '::sittir_core::filters::';
 		const kinds = fieldKindsByName.get(f.name) ?? [];
 		const cls = classify(kinds);
 		const isErased = cls.tag === 'heterogeneous';
@@ -1885,14 +1838,10 @@ function buildTypedTemplateBody(
 				lines.push(
 					`        ${rIdent}: ${C}SingleNonterminalView(${C}Renderable::Transport(node.${rIdent}.as_ref())),`
 				);
-			} else if (f.view === 'scalar') {
-				lines.push(
-					`        ${rIdent}: ${C}SingleNonterminalView(${C}Renderable::Text(${rIdent}_text.as_str())),`
-				);
 			} else {
-				// view='field' single required — pre-rendered to String.
+				// Concrete or supertype — coerce directly to &dyn RenderableTransport.
 				lines.push(
-					`        ${rIdent}: ${C}SingleNonterminalView(${C}Renderable::Text(${rIdent}_rendered.as_str())),`
+					`        ${rIdent}: ${C}SingleNonterminalView(${C}Renderable::Transport(&node.${rIdent} as &dyn ${RT})),`
 				);
 			}
 		} else {
@@ -1911,22 +1860,11 @@ function buildTypedTemplateBody(
 					`            None => ${C}OptionalNonterminalView::Missing,`
 				);
 				lines.push(`        },`);
-			} else if (f.view === 'scalar') {
-				// Optional scalar — pre-rendered to Option<String>; match avoids a
-				// redundant is_some() check and the now-defunct String::new() None arm.
-				lines.push(`        ${rIdent}: match &${rIdent}_text {`);
-				lines.push(
-					`            Some(s) => ${C}OptionalNonterminalView::Present(${C}Renderable::Text(s.as_str())),`
-				);
-				lines.push(
-					`            None => ${C}OptionalNonterminalView::Missing,`
-				);
-				lines.push(`        },`);
 			} else {
-				// view='field' single optional — pre-rendered to Option<String>.
-				lines.push(`        ${rIdent}: match &${rIdent}_rendered {`);
+				// Concrete or supertype — inline Transport coercion; no pre-render.
+				lines.push(`        ${rIdent}: match &node.${rIdent} {`);
 				lines.push(
-					`            Some(s) => ${C}OptionalNonterminalView::Present(${C}Renderable::Text(s.as_str())),`
+					`            Some(v) => ${C}OptionalNonterminalView::Present(${C}Renderable::Transport(v as &dyn ${RT})),`
 				);
 				lines.push(
 					`            None => ${C}OptionalNonterminalView::Missing,`
