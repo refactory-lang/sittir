@@ -598,9 +598,18 @@ function emitNativeTransportAssertions(
 	lines.push(
 		"  if (!isRecord(node)) throw new TypeError('node must be an object');"
 	);
-	// Phase D: $type is always numeric.
+	// Phase D: $type is numeric for kinds with a parser symbol. Some
+	// codegen-only kinds (e.g. TSGrammar-only inlined hidden rules like
+	// `_doc_comment`) lack a TSKindId entry; their factories still stamp
+	// the string kind name. Accept either shape here — the per-kind
+	// switch below dispatches on both numeric and string case labels and
+	// the `default:` arm rejects anything not registered. This keeps the
+	// root assertion consistent with the switch's coverage instead of
+	// rejecting valid string-fallback kinds before they reach dispatch.
 	lines.push(
-		"  if (typeof node.$type !== 'number') throw new TypeError('node.$type must be a KindId (number)');"
+		"  if (typeof node.$type !== 'number' && typeof node.$type !== 'string') {",
+		"    throw new TypeError('node.$type must be a KindId (number) or kind name (string)');",
+		"  }"
 	);
 	lines.push("  assertDataOnlyObject(node, 'node');");
 

@@ -412,11 +412,13 @@ function transportValueMatches(value: unknown, alternatives: readonly NativeTran
  * Assert that a value is a grammar-local native render transport object.
  *
  * This intentionally validates the generated transport shape here instead of
- * routing through the generic @sittir/core NativeNodeData validator.
+ * routing through the generic @sittir/core assertRenderableNodeData validator.
  */
 export function assertNativeRenderTransport(node: unknown): asserts node is AnyTransport {
   if (!isRecord(node)) throw new TypeError('node must be an object');
-  if (typeof node.$type !== 'number') throw new TypeError('node.$type must be a KindId (number)');
+  if (typeof node.$type !== 'number' && typeof node.$type !== 'string') {
+    throw new TypeError('node.$type must be a KindId (number) or kind name (string)');
+  }
   assertDataOnlyObject(node, 'node');
   switch ((node.$type as number | string)) {
     case 165: // _as_pattern
