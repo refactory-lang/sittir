@@ -357,17 +357,17 @@ export const enum SyntaxKind {
 
 export const enum TSKindId {
   Identifier = 1,
-  SEMI = 2,
-  MacroRulesBANG = 3,
-  EQGT = 4,
-  COLON = 5,
-  DOLLAR = 6,
-  LPAREN = 7,
-  RPAREN = 8,
+  Semi = 2,
+  MacroRulesBang = 3,
+  EqGt = 4,
+  Colon = 5,
+  Dollar = 6,
+  Lparen = 7,
+  Rparen = 8,
   TokenRepetitionPatternToken1 = 9,
-  PLUS = 10,
-  STAR = 11,
-  QMARK = 12,
+  Plus = 10,
+  Star = 11,
+  Qmark = 12,
   Expr = 14,
   Expr2021 = 15,
   Ident = 16,
@@ -398,45 +398,45 @@ export const enum TSKindId {
   Bool = 42,
   Str = 43,
   Char = 44,
-  DASH = 45,
-  SLASH = 46,
-  PERCENT = 47,
-  CARET = 48,
-  BANG = 49,
-  AMP = 50,
-  PIPE = 51,
-  AMPAMP = 52,
-  PIPEPIPE = 53,
-  LTLT = 54,
-  GTGT = 55,
-  PLUSEQ = 56,
-  DASHEQ = 57,
-  STAREQ = 58,
-  SLASHEQ = 59,
-  PERCENTEQ = 60,
-  CARETEQ = 61,
-  AMPEQ = 62,
-  PIPEEQ = 63,
-  LTLTEQ = 64,
-  GTGTEQ = 65,
-  EQ = 66,
-  EQEQ = 67,
-  BANGEQ = 68,
-  GT = 69,
-  LT = 70,
-  GTEQ = 71,
-  LTEQ = 72,
-  AT = 73,
+  Dash = 45,
+  Slash = 46,
+  Percent = 47,
+  Caret = 48,
+  Bang = 49,
+  Amp = 50,
+  Pipe = 51,
+  AmpAmp = 52,
+  PipePipe = 53,
+  LtLt = 54,
+  GtGt = 55,
+  PlusEq = 56,
+  DashEq = 57,
+  StarEq = 58,
+  SlashEq = 59,
+  PercentEq = 60,
+  CaretEq = 61,
+  AmpEq = 62,
+  PipeEq = 63,
+  LtLtEq = 64,
+  GtGtEq = 65,
+  Eq = 66,
+  EqEq = 67,
+  BangEq = 68,
+  Gt = 69,
+  Lt = 70,
+  GtEq = 71,
+  LtEq = 72,
+  At = 73,
   Anonymous = 74,
-  DOT = 75,
-  DOTDOT = 76,
-  DOTDOTDOT = 77,
-  DOTDOTEQ = 78,
-  COMMA = 79,
-  COLONCOLON = 80,
-  DASHGT = 81,
-  POUND = 82,
-  SQUOTE = 83,
+  Dot = 75,
+  DotDot = 76,
+  DotDotDot = 77,
+  DotDotEq = 78,
+  Comma = 79,
+  ColonColon = 80,
+  DashGt = 81,
+  Pound = 82,
+  Squote = 83,
   As = 84,
   Async = 85,
   Await = 86,
@@ -465,13 +465,13 @@ export const enum TSKindId {
   Use = 109,
   Where = 110,
   While = 111,
-  LBRACK = 112,
-  RBRACK = 113,
-  LBRACE = 114,
-  RBRACE = 115,
+  Lbrack = 112,
+  Rbrack = 113,
+  Lbrace = 114,
+  Rbrace = 115,
   Extern = 116,
   Else = 117,
-  LT2 = 118,
+  Lt2 = 118,
   Dyn = 119,
   MutableSpecifier = 120,
   Raw = 121,
@@ -481,16 +481,16 @@ export const enum TSKindId {
   Ref = 125,
   IntegerLiteral = 126,
   StringLiteralToken1 = 127,
-  DQUOTE = 128,
+  Dquote = 128,
   CharLiteral = 129,
   EscapeSequence = 130,
   True = 131,
   False = 132,
-  SLASHSLASH = 133,
-  BANG2 = 134,
-  SLASH2 = 135,
-  SLASHSTAR = 136,
-  STARSLASH = 137,
+  SlashSlash = 133,
+  Bang2 = 134,
+  Slash2 = 135,
+  SlashStar = 136,
+  StarSlash = 137,
   Shebang = 138,
   Self = 139,
   Super = 140,
@@ -774,17 +774,17 @@ export const enum TSKindId {
 export function kindNameFromId(kindId: TSKindId): string {
   switch (kindId) {
     case TSKindId.Identifier: return "identifier";
-    case TSKindId.SEMI: return "SEMI";
-    case TSKindId.MacroRulesBANG: return "macro_rules_BANG";
-    case TSKindId.EQGT: return "EQ_GT";
-    case TSKindId.COLON: return "COLON";
-    case TSKindId.DOLLAR: return "DOLLAR";
-    case TSKindId.LPAREN: return "LPAREN";
-    case TSKindId.RPAREN: return "RPAREN";
+    case TSKindId.Semi: return "semi";
+    case TSKindId.MacroRulesBang: return "macro_rules_bang";
+    case TSKindId.EqGt: return "eq_gt";
+    case TSKindId.Colon: return "colon";
+    case TSKindId.Dollar: return "dollar";
+    case TSKindId.Lparen: return "lparen";
+    case TSKindId.Rparen: return "rparen";
     case TSKindId.TokenRepetitionPatternToken1: return "token_repetition_pattern_token1";
-    case TSKindId.PLUS: return "PLUS";
-    case TSKindId.STAR: return "STAR";
-    case TSKindId.QMARK: return "QMARK";
+    case TSKindId.Plus: return "plus";
+    case TSKindId.Star: return "star";
+    case TSKindId.Qmark: return "qmark";
     case TSKindId.Expr: return "expr";
     case TSKindId.Expr2021: return "expr_2021";
     case TSKindId.Ident: return "ident";
@@ -815,45 +815,45 @@ export function kindNameFromId(kindId: TSKindId): string {
     case TSKindId.Bool: return "bool";
     case TSKindId.Str: return "str";
     case TSKindId.Char: return "char";
-    case TSKindId.DASH: return "DASH";
-    case TSKindId.SLASH: return "SLASH";
-    case TSKindId.PERCENT: return "PERCENT";
-    case TSKindId.CARET: return "CARET";
-    case TSKindId.BANG: return "BANG";
-    case TSKindId.AMP: return "AMP";
-    case TSKindId.PIPE: return "PIPE";
-    case TSKindId.AMPAMP: return "AMP_AMP";
-    case TSKindId.PIPEPIPE: return "PIPE_PIPE";
-    case TSKindId.LTLT: return "LT_LT";
-    case TSKindId.GTGT: return "GT_GT";
-    case TSKindId.PLUSEQ: return "PLUS_EQ";
-    case TSKindId.DASHEQ: return "DASH_EQ";
-    case TSKindId.STAREQ: return "STAR_EQ";
-    case TSKindId.SLASHEQ: return "SLASH_EQ";
-    case TSKindId.PERCENTEQ: return "PERCENT_EQ";
-    case TSKindId.CARETEQ: return "CARET_EQ";
-    case TSKindId.AMPEQ: return "AMP_EQ";
-    case TSKindId.PIPEEQ: return "PIPE_EQ";
-    case TSKindId.LTLTEQ: return "LT_LT_EQ";
-    case TSKindId.GTGTEQ: return "GT_GT_EQ";
-    case TSKindId.EQ: return "EQ";
-    case TSKindId.EQEQ: return "EQ_EQ";
-    case TSKindId.BANGEQ: return "BANG_EQ";
-    case TSKindId.GT: return "GT";
-    case TSKindId.LT: return "LT";
-    case TSKindId.GTEQ: return "GT_EQ";
-    case TSKindId.LTEQ: return "LT_EQ";
-    case TSKindId.AT: return "AT";
+    case TSKindId.Dash: return "dash";
+    case TSKindId.Slash: return "slash";
+    case TSKindId.Percent: return "percent";
+    case TSKindId.Caret: return "caret";
+    case TSKindId.Bang: return "bang";
+    case TSKindId.Amp: return "amp";
+    case TSKindId.Pipe: return "pipe";
+    case TSKindId.AmpAmp: return "amp_amp";
+    case TSKindId.PipePipe: return "pipe_pipe";
+    case TSKindId.LtLt: return "lt_lt";
+    case TSKindId.GtGt: return "gt_gt";
+    case TSKindId.PlusEq: return "plus_eq";
+    case TSKindId.DashEq: return "dash_eq";
+    case TSKindId.StarEq: return "star_eq";
+    case TSKindId.SlashEq: return "slash_eq";
+    case TSKindId.PercentEq: return "percent_eq";
+    case TSKindId.CaretEq: return "caret_eq";
+    case TSKindId.AmpEq: return "amp_eq";
+    case TSKindId.PipeEq: return "pipe_eq";
+    case TSKindId.LtLtEq: return "lt_lt_eq";
+    case TSKindId.GtGtEq: return "gt_gt_eq";
+    case TSKindId.Eq: return "eq";
+    case TSKindId.EqEq: return "eq_eq";
+    case TSKindId.BangEq: return "bang_eq";
+    case TSKindId.Gt: return "gt";
+    case TSKindId.Lt: return "lt";
+    case TSKindId.GtEq: return "gt_eq";
+    case TSKindId.LtEq: return "lt_eq";
+    case TSKindId.At: return "at";
     case TSKindId.Anonymous: return "_";
-    case TSKindId.DOT: return "DOT";
-    case TSKindId.DOTDOT: return "DOT_DOT";
-    case TSKindId.DOTDOTDOT: return "DOT_DOT_DOT";
-    case TSKindId.DOTDOTEQ: return "DOT_DOT_EQ";
-    case TSKindId.COMMA: return "COMMA";
-    case TSKindId.COLONCOLON: return "COLON_COLON";
-    case TSKindId.DASHGT: return "DASH_GT";
-    case TSKindId.POUND: return "POUND";
-    case TSKindId.SQUOTE: return "SQUOTE";
+    case TSKindId.Dot: return "dot";
+    case TSKindId.DotDot: return "dot_dot";
+    case TSKindId.DotDotDot: return "dot_dot_dot";
+    case TSKindId.DotDotEq: return "dot_dot_eq";
+    case TSKindId.Comma: return "comma";
+    case TSKindId.ColonColon: return "colon_colon";
+    case TSKindId.DashGt: return "dash_gt";
+    case TSKindId.Pound: return "pound";
+    case TSKindId.Squote: return "squote";
     case TSKindId.As: return "as";
     case TSKindId.Async: return "async";
     case TSKindId.Await: return "await";
@@ -882,13 +882,13 @@ export function kindNameFromId(kindId: TSKindId): string {
     case TSKindId.Use: return "use";
     case TSKindId.Where: return "where";
     case TSKindId.While: return "while";
-    case TSKindId.LBRACK: return "LBRACK";
-    case TSKindId.RBRACK: return "RBRACK";
-    case TSKindId.LBRACE: return "LBRACE";
-    case TSKindId.RBRACE: return "RBRACE";
+    case TSKindId.Lbrack: return "lbrack";
+    case TSKindId.Rbrack: return "rbrack";
+    case TSKindId.Lbrace: return "lbrace";
+    case TSKindId.Rbrace: return "rbrace";
     case TSKindId.Extern: return "extern";
     case TSKindId.Else: return "else";
-    case TSKindId.LT2: return "LT2";
+    case TSKindId.Lt2: return "lt2";
     case TSKindId.Dyn: return "dyn";
     case TSKindId.MutableSpecifier: return "mutable_specifier";
     case TSKindId.Raw: return "raw";
@@ -898,16 +898,16 @@ export function kindNameFromId(kindId: TSKindId): string {
     case TSKindId.Ref: return "ref";
     case TSKindId.IntegerLiteral: return "integer_literal";
     case TSKindId.StringLiteralToken1: return "string_literal_token1";
-    case TSKindId.DQUOTE: return "DQUOTE";
+    case TSKindId.Dquote: return "dquote";
     case TSKindId.CharLiteral: return "char_literal";
     case TSKindId.EscapeSequence: return "escape_sequence";
     case TSKindId.True: return "true";
     case TSKindId.False: return "false";
-    case TSKindId.SLASHSLASH: return "SLASH_SLASH";
-    case TSKindId.BANG2: return "BANG2";
-    case TSKindId.SLASH2: return "SLASH2";
-    case TSKindId.SLASHSTAR: return "SLASH_STAR";
-    case TSKindId.STARSLASH: return "STAR_SLASH";
+    case TSKindId.SlashSlash: return "slash_slash";
+    case TSKindId.Bang2: return "bang2";
+    case TSKindId.Slash2: return "slash2";
+    case TSKindId.SlashStar: return "slash_star";
+    case TSKindId.StarSlash: return "star_slash";
     case TSKindId.Shebang: return "shebang";
     case TSKindId.Self: return "self";
     case TSKindId.Super: return "super";
@@ -1193,27 +1193,27 @@ export function kindNameFromId(kindId: TSKindId): string {
 export function kindIdFromName(kindName: string): TSKindId {
   switch (kindName) {
     case "identifier": return TSKindId.Identifier;
-    case "SEMI": return TSKindId.SEMI;
-    case ";": return TSKindId.SEMI;
-    case "macro_rules_BANG": return TSKindId.MacroRulesBANG;
-    case "macro_rules!": return TSKindId.MacroRulesBANG;
-    case "EQ_GT": return TSKindId.EQGT;
-    case "=>": return TSKindId.EQGT;
-    case "COLON": return TSKindId.COLON;
-    case ":": return TSKindId.COLON;
-    case "DOLLAR": return TSKindId.DOLLAR;
-    case "$": return TSKindId.DOLLAR;
-    case "LPAREN": return TSKindId.LPAREN;
-    case "(": return TSKindId.LPAREN;
-    case "RPAREN": return TSKindId.RPAREN;
-    case ")": return TSKindId.RPAREN;
+    case "semi": return TSKindId.Semi;
+    case ";": return TSKindId.Semi;
+    case "macro_rules_bang": return TSKindId.MacroRulesBang;
+    case "macro_rules!": return TSKindId.MacroRulesBang;
+    case "eq_gt": return TSKindId.EqGt;
+    case "=>": return TSKindId.EqGt;
+    case "colon": return TSKindId.Colon;
+    case ":": return TSKindId.Colon;
+    case "dollar": return TSKindId.Dollar;
+    case "$": return TSKindId.Dollar;
+    case "lparen": return TSKindId.Lparen;
+    case "(": return TSKindId.Lparen;
+    case "rparen": return TSKindId.Rparen;
+    case ")": return TSKindId.Rparen;
     case "token_repetition_pattern_token1": return TSKindId.TokenRepetitionPatternToken1;
-    case "PLUS": return TSKindId.PLUS;
-    case "+": return TSKindId.PLUS;
-    case "STAR": return TSKindId.STAR;
-    case "*": return TSKindId.STAR;
-    case "QMARK": return TSKindId.QMARK;
-    case "?": return TSKindId.QMARK;
+    case "plus": return TSKindId.Plus;
+    case "+": return TSKindId.Plus;
+    case "star": return TSKindId.Star;
+    case "*": return TSKindId.Star;
+    case "qmark": return TSKindId.Qmark;
+    case "?": return TSKindId.Qmark;
     case "expr": return TSKindId.Expr;
     case "expr_2021": return TSKindId.Expr2021;
     case "ident": return TSKindId.Ident;
@@ -1245,83 +1245,83 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "bool": return TSKindId.Bool;
     case "str": return TSKindId.Str;
     case "char": return TSKindId.Char;
-    case "DASH": return TSKindId.DASH;
-    case "-": return TSKindId.DASH;
-    case "SLASH": return TSKindId.SLASH;
-    case "/": return TSKindId.SLASH;
-    case "PERCENT": return TSKindId.PERCENT;
-    case "%": return TSKindId.PERCENT;
-    case "CARET": return TSKindId.CARET;
-    case "^": return TSKindId.CARET;
-    case "BANG": return TSKindId.BANG;
-    case "!": return TSKindId.BANG;
-    case "AMP": return TSKindId.AMP;
-    case "&": return TSKindId.AMP;
-    case "PIPE": return TSKindId.PIPE;
-    case "|": return TSKindId.PIPE;
-    case "AMP_AMP": return TSKindId.AMPAMP;
-    case "&&": return TSKindId.AMPAMP;
-    case "PIPE_PIPE": return TSKindId.PIPEPIPE;
-    case "||": return TSKindId.PIPEPIPE;
-    case "LT_LT": return TSKindId.LTLT;
-    case "<<": return TSKindId.LTLT;
-    case "GT_GT": return TSKindId.GTGT;
-    case ">>": return TSKindId.GTGT;
-    case "PLUS_EQ": return TSKindId.PLUSEQ;
-    case "+=": return TSKindId.PLUSEQ;
-    case "DASH_EQ": return TSKindId.DASHEQ;
-    case "-=": return TSKindId.DASHEQ;
-    case "STAR_EQ": return TSKindId.STAREQ;
-    case "*=": return TSKindId.STAREQ;
-    case "SLASH_EQ": return TSKindId.SLASHEQ;
-    case "/=": return TSKindId.SLASHEQ;
-    case "PERCENT_EQ": return TSKindId.PERCENTEQ;
-    case "%=": return TSKindId.PERCENTEQ;
-    case "CARET_EQ": return TSKindId.CARETEQ;
-    case "^=": return TSKindId.CARETEQ;
-    case "AMP_EQ": return TSKindId.AMPEQ;
-    case "&=": return TSKindId.AMPEQ;
-    case "PIPE_EQ": return TSKindId.PIPEEQ;
-    case "|=": return TSKindId.PIPEEQ;
-    case "LT_LT_EQ": return TSKindId.LTLTEQ;
-    case "<<=": return TSKindId.LTLTEQ;
-    case "GT_GT_EQ": return TSKindId.GTGTEQ;
-    case ">>=": return TSKindId.GTGTEQ;
-    case "EQ": return TSKindId.EQ;
-    case "=": return TSKindId.EQ;
-    case "EQ_EQ": return TSKindId.EQEQ;
-    case "==": return TSKindId.EQEQ;
-    case "BANG_EQ": return TSKindId.BANGEQ;
-    case "!=": return TSKindId.BANGEQ;
-    case "GT": return TSKindId.GT;
-    case ">": return TSKindId.GT;
-    case "LT": return TSKindId.LT;
-    case "<": return TSKindId.LT;
-    case "GT_EQ": return TSKindId.GTEQ;
-    case ">=": return TSKindId.GTEQ;
-    case "LT_EQ": return TSKindId.LTEQ;
-    case "<=": return TSKindId.LTEQ;
-    case "AT": return TSKindId.AT;
-    case "@": return TSKindId.AT;
+    case "dash": return TSKindId.Dash;
+    case "-": return TSKindId.Dash;
+    case "slash": return TSKindId.Slash;
+    case "/": return TSKindId.Slash;
+    case "percent": return TSKindId.Percent;
+    case "%": return TSKindId.Percent;
+    case "caret": return TSKindId.Caret;
+    case "^": return TSKindId.Caret;
+    case "bang": return TSKindId.Bang;
+    case "!": return TSKindId.Bang;
+    case "amp": return TSKindId.Amp;
+    case "&": return TSKindId.Amp;
+    case "pipe": return TSKindId.Pipe;
+    case "|": return TSKindId.Pipe;
+    case "amp_amp": return TSKindId.AmpAmp;
+    case "&&": return TSKindId.AmpAmp;
+    case "pipe_pipe": return TSKindId.PipePipe;
+    case "||": return TSKindId.PipePipe;
+    case "lt_lt": return TSKindId.LtLt;
+    case "<<": return TSKindId.LtLt;
+    case "gt_gt": return TSKindId.GtGt;
+    case ">>": return TSKindId.GtGt;
+    case "plus_eq": return TSKindId.PlusEq;
+    case "+=": return TSKindId.PlusEq;
+    case "dash_eq": return TSKindId.DashEq;
+    case "-=": return TSKindId.DashEq;
+    case "star_eq": return TSKindId.StarEq;
+    case "*=": return TSKindId.StarEq;
+    case "slash_eq": return TSKindId.SlashEq;
+    case "/=": return TSKindId.SlashEq;
+    case "percent_eq": return TSKindId.PercentEq;
+    case "%=": return TSKindId.PercentEq;
+    case "caret_eq": return TSKindId.CaretEq;
+    case "^=": return TSKindId.CaretEq;
+    case "amp_eq": return TSKindId.AmpEq;
+    case "&=": return TSKindId.AmpEq;
+    case "pipe_eq": return TSKindId.PipeEq;
+    case "|=": return TSKindId.PipeEq;
+    case "lt_lt_eq": return TSKindId.LtLtEq;
+    case "<<=": return TSKindId.LtLtEq;
+    case "gt_gt_eq": return TSKindId.GtGtEq;
+    case ">>=": return TSKindId.GtGtEq;
+    case "eq": return TSKindId.Eq;
+    case "=": return TSKindId.Eq;
+    case "eq_eq": return TSKindId.EqEq;
+    case "==": return TSKindId.EqEq;
+    case "bang_eq": return TSKindId.BangEq;
+    case "!=": return TSKindId.BangEq;
+    case "gt": return TSKindId.Gt;
+    case ">": return TSKindId.Gt;
+    case "lt": return TSKindId.Lt;
+    case "<": return TSKindId.Lt;
+    case "gt_eq": return TSKindId.GtEq;
+    case ">=": return TSKindId.GtEq;
+    case "lt_eq": return TSKindId.LtEq;
+    case "<=": return TSKindId.LtEq;
+    case "at": return TSKindId.At;
+    case "@": return TSKindId.At;
     case "_": return TSKindId.Anonymous;
-    case "DOT": return TSKindId.DOT;
-    case ".": return TSKindId.DOT;
-    case "DOT_DOT": return TSKindId.DOTDOT;
-    case "..": return TSKindId.DOTDOT;
-    case "DOT_DOT_DOT": return TSKindId.DOTDOTDOT;
-    case "...": return TSKindId.DOTDOTDOT;
-    case "DOT_DOT_EQ": return TSKindId.DOTDOTEQ;
-    case "..=": return TSKindId.DOTDOTEQ;
-    case "COMMA": return TSKindId.COMMA;
-    case ",": return TSKindId.COMMA;
-    case "COLON_COLON": return TSKindId.COLONCOLON;
-    case "::": return TSKindId.COLONCOLON;
-    case "DASH_GT": return TSKindId.DASHGT;
-    case "->": return TSKindId.DASHGT;
-    case "POUND": return TSKindId.POUND;
-    case "#": return TSKindId.POUND;
-    case "SQUOTE": return TSKindId.SQUOTE;
-    case "'": return TSKindId.SQUOTE;
+    case "dot": return TSKindId.Dot;
+    case ".": return TSKindId.Dot;
+    case "dot_dot": return TSKindId.DotDot;
+    case "..": return TSKindId.DotDot;
+    case "dot_dot_dot": return TSKindId.DotDotDot;
+    case "...": return TSKindId.DotDotDot;
+    case "dot_dot_eq": return TSKindId.DotDotEq;
+    case "..=": return TSKindId.DotDotEq;
+    case "comma": return TSKindId.Comma;
+    case ",": return TSKindId.Comma;
+    case "colon_colon": return TSKindId.ColonColon;
+    case "::": return TSKindId.ColonColon;
+    case "dash_gt": return TSKindId.DashGt;
+    case "->": return TSKindId.DashGt;
+    case "pound": return TSKindId.Pound;
+    case "#": return TSKindId.Pound;
+    case "squote": return TSKindId.Squote;
+    case "'": return TSKindId.Squote;
     case "as": return TSKindId.As;
     case "async": return TSKindId.Async;
     case "await": return TSKindId.Await;
@@ -1350,17 +1350,17 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "use": return TSKindId.Use;
     case "where": return TSKindId.Where;
     case "while": return TSKindId.While;
-    case "LBRACK": return TSKindId.LBRACK;
-    case "[": return TSKindId.LBRACK;
-    case "RBRACK": return TSKindId.RBRACK;
-    case "]": return TSKindId.RBRACK;
-    case "LBRACE": return TSKindId.LBRACE;
-    case "{": return TSKindId.LBRACE;
-    case "RBRACE": return TSKindId.RBRACE;
-    case "}": return TSKindId.RBRACE;
+    case "lbrack": return TSKindId.Lbrack;
+    case "[": return TSKindId.Lbrack;
+    case "rbrack": return TSKindId.Rbrack;
+    case "]": return TSKindId.Rbrack;
+    case "lbrace": return TSKindId.Lbrace;
+    case "{": return TSKindId.Lbrace;
+    case "rbrace": return TSKindId.Rbrace;
+    case "}": return TSKindId.Rbrace;
     case "extern": return TSKindId.Extern;
     case "else": return TSKindId.Else;
-    case "LT2": return TSKindId.LT2;
+    case "lt2": return TSKindId.Lt2;
     case "dyn": return TSKindId.Dyn;
     case "mutable_specifier": return TSKindId.MutableSpecifier;
     case "raw": return TSKindId.Raw;
@@ -1371,19 +1371,19 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "integer_literal": return TSKindId.IntegerLiteral;
     case "string_literal_token1": return TSKindId.StringLiteralToken1;
     case "\"": return TSKindId.StringLiteralToken1;
-    case "DQUOTE": return TSKindId.DQUOTE;
+    case "dquote": return TSKindId.Dquote;
     case "char_literal": return TSKindId.CharLiteral;
     case "escape_sequence": return TSKindId.EscapeSequence;
     case "true": return TSKindId.True;
     case "false": return TSKindId.False;
-    case "SLASH_SLASH": return TSKindId.SLASHSLASH;
-    case "//": return TSKindId.SLASHSLASH;
-    case "BANG2": return TSKindId.BANG2;
-    case "SLASH2": return TSKindId.SLASH2;
-    case "SLASH_STAR": return TSKindId.SLASHSTAR;
-    case "/*": return TSKindId.SLASHSTAR;
-    case "STAR_SLASH": return TSKindId.STARSLASH;
-    case "*/": return TSKindId.STARSLASH;
+    case "slash_slash": return TSKindId.SlashSlash;
+    case "//": return TSKindId.SlashSlash;
+    case "bang2": return TSKindId.Bang2;
+    case "slash2": return TSKindId.Slash2;
+    case "slash_star": return TSKindId.SlashStar;
+    case "/*": return TSKindId.SlashStar;
+    case "star_slash": return TSKindId.StarSlash;
+    case "*/": return TSKindId.StarSlash;
     case "shebang": return TSKindId.Shebang;
     case "self": return TSKindId.Self;
     case "super": return TSKindId.Super;
@@ -3413,7 +3413,7 @@ export interface ScopedIdentifier {
 }
 
 export interface ScopedTypeIdentifier {
-  readonly $type: TSKindId.ScopedTypeIdentifier;
+  readonly $type: TSKindId.ScopedTypeIdentifierInExpressionPosition;
   readonly $fields: {
     readonly path?: Path | GenericTypeWithTurbofish | BracketedType;
     readonly name: TypeIdentifier;
@@ -9572,7 +9572,7 @@ export namespace ScopedIdentifier {
 
 export namespace ScopedTypeIdentifier {
   export interface Transport {
-    readonly $type: TSKindId.ScopedTypeIdentifier;
+    readonly $type: TSKindId.ScopedTypeIdentifierInExpressionPosition;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;

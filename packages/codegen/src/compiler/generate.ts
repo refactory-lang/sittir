@@ -176,7 +176,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		wrap: emitWrap({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
 		utils: emitClientUtils({ nodeMap, generatedIdTables }),
 		from: emitFrom({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
-		irNamespace: emitIr({ grammar: cfg.grammar, nodeMap }),
+		irNamespace: emitIr({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
 		consts: emitConsts({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
 		index: emitIndex({ grammar: cfg.grammar, nodeMap }),
 		tests: emitTests({ grammar: cfg.grammar, nodeMap, generatedIdTables }),

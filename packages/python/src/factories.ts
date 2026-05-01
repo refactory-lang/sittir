@@ -310,22 +310,6 @@ export function simpleStatements(...children: T.SimpleStatement[]) {
   };
 }
 
-export function suite(child: (T.SimpleStatements | T.Block | T.Newline)) {
-  const children = [child];
-  return {
-    $type: '_suite' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.SuiteTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
 export function _tuplePattern(...children: T.CasePattern[]) {
   return {
     $type: TSKindId._TuplePattern as number,
@@ -399,7 +383,7 @@ export function asPattern(config: ConfigOf<T.AsPattern>) {
     alias: config.alias,
   };
   return {
-    $type: TSKindId.AsPattern as number,
+    $type: TSKindId._AsPattern as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
@@ -621,7 +605,7 @@ export function binaryOperator(config: ConfigOf<T.BinaryOperator>) {
 
 export function block(...children: T.Statement[]) {
   return {
-    $type: TSKindId.Block as number,
+    $type: TSKindId.MatchBlock as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -1242,7 +1226,7 @@ export function expressionList(...children: T.Expression[]) {
 export function expressionStatementTuple(...children: T.Expression[]) {
   _assertNonEmpty(children, 'expression_statement_tuple.children');
   return {
-    $type: 'expression_statement_tuple' as const,
+    $type: TSKindId._ExpressionStatementTuple as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -1789,7 +1773,7 @@ export function listComprehension(config: ConfigOf<T.ListComprehension>) {
 
 export function listPattern(...children: T.Pattern[]) {
   return {
-    $type: TSKindId.ListPattern as number,
+    $type: TSKindId._ListPattern as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -2356,7 +2340,7 @@ export function tuple(...children: (T.Expression | T.Yield | T.ListSplat | T.Par
 
 export function tuplePattern(...children: T.Pattern[]) {
   return {
-    $type: TSKindId.TuplePattern as number,
+    $type: TSKindId._TuplePattern as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -2569,7 +2553,7 @@ export function whileStatement(config: ConfigOf<T.WhileStatement>) {
 export function withClauseBare(...children: T.WithItem[]) {
   _assertNonEmpty(children, 'with_clause_bare.children');
   return {
-    $type: 'with_clause_bare' as const,
+    $type: TSKindId._WithClauseBare as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -2585,7 +2569,7 @@ export function withClauseBare(...children: T.WithItem[]) {
 export function withClauseParen(...children: T.WithItem[]) {
   _assertNonEmpty(children, 'with_clause_paren.children');
   return {
-    $type: 'with_clause_paren' as const,
+    $type: TSKindId._WithClauseParen as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -2791,7 +2775,7 @@ export function stringEnd(text: string) {
 export function closeBracket(text: string) {
   if (text.length === 0) throw new Error(`]: text must be non-empty`);
   return {
-    $type: ']' as const,
+    $type: TSKindId.Rbrack as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -2804,7 +2788,7 @@ export function closeBracket(text: string) {
 export function closeParen(text: string) {
   if (text.length === 0) throw new Error(`): text must be non-empty`);
   return {
-    $type: ')' as const,
+    $type: TSKindId.Rparen as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -2817,7 +2801,7 @@ export function closeParen(text: string) {
 export function closeBrace(text: string) {
   if (text.length === 0) throw new Error(`}: text must be non-empty`);
   return {
-    $type: '}' as const,
+    $type: TSKindId.Rbrace as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -2857,7 +2841,6 @@ export type FluentKindMap = {
   "_not_in": T.NotIn;
   "_simple_pattern_negative": FluentNode<"_simple_pattern_negative", T.SimplePatternNegative.Config>;
   "_simple_statements": FluentNode<"_simple_statements", T.SimpleStatements.Config>;
-  "_suite": FluentNode<"_suite", T.Suite.Config>;
   "_tuple_pattern": FluentNode<"_tuple_pattern", T._TuplePattern.Config>;
   "_with_clause_paren": FluentNode<"_with_clause_paren", T._WithClauseParen.Config>;
   "aliased_import": FluentNode<"aliased_import", T.AliasedImport.Config>;
@@ -3008,7 +2991,6 @@ export const _factoryMap = {
   "_not_in": notIn,
   "_simple_pattern_negative": simplePatternNegative,
   "_simple_statements": simpleStatements,
-  "_suite": suite,
   "_tuple_pattern": _tuplePattern,
   "_with_clause_paren": _withClauseParen,
   "aliased_import": aliasedImport,

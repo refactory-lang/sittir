@@ -104,6 +104,43 @@ export function collectKindEntries(
 }
 
 /**
+ * Find the catalog entry for a given kind name, matching on either
+ * `entry.kind` (the catalog key, e.g. `_expression_statement_tuple`) or
+ * `entry.displayName` (the display name, e.g. `expression_statement_tuple`).
+ *
+ * Some grammar kinds appear in node-types.json under their display name
+ * (no leading underscore) while the parser.c symbol has a hidden prefix
+ * (`sym__expression_statement_tuple` → catalog key `_expression_statement_tuple`,
+ * display name `expression_statement_tuple`). Anonymous tokens are similar:
+ * catalog key `RPAREN`, display name `)`. Both spellings must resolve to the
+ * same catalog entry so emission-point guards can match the nodeMap kind name.
+ *
+ * @param kindEntries - The catalog entries from `collectKindEntries`.
+ * @param kind - The nodeMap kind name to look up.
+ * @returns The matching entry, or `undefined` if the kind has no parser symbol.
+ */
+export function findKindEntry(
+	kindEntries: readonly KindEnumEntry[],
+	kind: string
+): KindEnumEntry | undefined {
+	return kindEntries.find((e) => e.kind === kind || e.displayName === kind);
+}
+
+/**
+ * Return true when a kind has a parser symbol in the catalog — matches on
+ * either the catalog key or the display name (see `findKindEntry`).
+ *
+ * @param kindEntries - The catalog entries from `collectKindEntries`.
+ * @param kind - The nodeMap kind name to check.
+ */
+export function hasCatalogEntry(
+	kindEntries: readonly KindEnumEntry[],
+	kind: string
+): boolean {
+	return findKindEntry(kindEntries, kind) !== undefined;
+}
+
+/**
  * Render the runtime discriminant expression for a given kind: always
  * `TSKindId.<Member>`. Throws at codegen time when the kind has no
  * parser symbol — kinds without runtime presence (TSGrammar-only,
@@ -111,6 +148,11 @@ export function collectKindEntries(
  * user's direction (2026-04-30): if there is a TSKindId, it should
  * always resolve; the inverse is a loud error, not a silent string
  * fallback.
+ *
+ * Matches the kind against both the catalog key and the display name
+ * (via `findKindEntry`) so nodeMap kinds that use the display spelling
+ * (e.g. `expression_statement_tuple`) resolve to the same entry as
+ * the catalog key (`_expression_statement_tuple`).
  *
  * Used by `types.ts` for interface `$type` declarations and by
  * `factories.ts` for factory body `$type` values, so both surfaces
@@ -127,15 +169,15 @@ export function kindDiscriminantExpr(
 				`Pass loadGeneratedIdTables(...) into the emitter so TSKindId can be emitted from real metadata.`
 		);
 	}
-	const hasEntry = kindEntries.some((e) => e.kind === kind);
-	if (!hasEntry) {
+	const entry = findKindEntry(kindEntries, kind);
+	if (!entry) {
 		throw new Error(
 			`kindDiscriminantExpr: kind '${kind}' has no parser symbol (TSGrammar-only). ` +
 				`Tree-sitter inlined this rule during parser compilation; it can never carry a runtime $type. ` +
 				`Either remove the codegen surface that references it, or add a synthetic parser-symbol entry to the catalog.`
 		);
 	}
-	return `TSKindId.${kindIdMemberName(nodeMap, kind)}`;
+	return `TSKindId.${entry.member}`;
 }
 
 /**

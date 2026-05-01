@@ -437,7 +437,7 @@ export function binaryOperatorFrom(input: T.BinaryOperator.Loose): ReturnType<ty
 }
 
 export function blockFrom(...input: readonly (NonNullable<T.Block.Config['children']>[number] | T.Block)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Block) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.MatchBlock) {
     const data = input[0];
     return F.block(...((data.$children ?? []) as readonly NonNullable<T.Block.Config['children']>[number][]));
   }
@@ -919,7 +919,7 @@ export function listComprehensionFrom(input: T.ListComprehension.Loose): ReturnT
 }
 
 export function listPatternFrom(...input: readonly (NonNullable<T.ListPattern.Config['children']>[number] | T.ListPattern)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ListPattern) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId._ListPattern) {
     const data = input[0];
     return F.listPattern(...((data.$children ?? []) as readonly NonNullable<T.ListPattern.Config['children']>[number][]));
   }
@@ -1163,7 +1163,7 @@ export function tupleFrom(...input: readonly (NonNullable<T.Tuple.Config['childr
 }
 
 export function tuplePatternFrom(...input: readonly (NonNullable<T.TuplePattern.Config['children']>[number] | T.TuplePattern)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TuplePattern) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId._TuplePattern) {
     const data = input[0];
     return F.tuplePattern(...((data.$children ?? []) as readonly NonNullable<T.TuplePattern.Config['children']>[number][]));
   }

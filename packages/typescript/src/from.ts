@@ -78,7 +78,6 @@ export const _fromMap = {
   "extends_clause": extendsClauseFrom,
   "extends_type_clause": extendsTypeClauseFrom,
   "false": false_From,
-  "field_definition": fieldDefinitionFrom,
   "finally_clause": finallyClauseFrom,
   "flow_maybe_type": flowMaybeTypeFrom,
   "for_in_statement": forInStatementFrom,
@@ -92,7 +91,6 @@ export const _fromMap = {
   "generator_function_declaration": generatorFunctionDeclarationFrom,
   "generic_type": genericTypeFrom,
   "hash_bang_line": hashBangLineFrom,
-  "html_character_reference": htmlCharacterReferenceFrom,
   "identifier": identifierFrom,
   "if_statement": ifStatementFrom,
   "implements_clause": implementsClauseFrom,
@@ -115,14 +113,6 @@ export const _fromMap = {
   "interface_declaration": interfaceDeclarationFrom,
   "internal_module": internalModuleFrom,
   "intersection_type": intersectionTypeFrom,
-  "jsx_attribute": jsxAttributeFrom,
-  "jsx_closing_element": jsxClosingElementFrom,
-  "jsx_element": jsxElementFrom,
-  "jsx_expression": jsxExpressionFrom,
-  "jsx_identifier": jsxIdentifierFrom,
-  "jsx_namespace_name": jsxNamespaceNameFrom,
-  "jsx_opening_element": jsxOpeningElementFrom,
-  "jsx_self_closing_element": jsxSelfClosingElementFrom,
   "labeled_statement": labeledStatementFrom,
   "lexical_declaration": lexicalDeclarationFrom,
   "literal_type": literalTypeFrom,
@@ -205,9 +195,7 @@ export const _fromMap = {
   "type_query": typeQueryFrom,
   "unary_expression": unaryExpressionFrom,
   "undefined": undefined_From,
-  "unescaped_double_jsx_string_fragment": unescapedDoubleJsxStringFragmentFrom,
   "unescaped_double_string_fragment": unescapedDoubleStringFragmentFrom,
-  "unescaped_single_jsx_string_fragment": unescapedSingleJsxStringFragmentFrom,
   "unescaped_single_string_fragment": unescapedSingleStringFragmentFrom,
   "union_type": unionTypeFrom,
   "update_expression": updateExpressionFrom,
@@ -234,10 +222,8 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
   "escape_sequence": { factory: F.escapeSequence },
   "false": { values: ["false"], factory: () => F.false_() },
   "hash_bang_line": { factory: F.hashBangLine },
-  "html_character_reference": { factory: F.htmlCharacterReference },
   "identifier": { factory: F.identifier },
   "import": { values: ["import"], factory: () => F.import_() },
-  "jsx_identifier": { factory: F.jsxIdentifier },
   "meta_property": { factory: F.metaProperty },
   "null": { values: ["null"], factory: () => F.null_() },
   "number": { factory: F.number },
@@ -250,9 +236,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
   "this": { values: ["this"], factory: () => F.this_() },
   "true": { values: ["true"], factory: () => F.true_() },
   "undefined": { values: ["undefined"], factory: () => F.undefined_() },
-  "unescaped_double_jsx_string_fragment": { factory: F.unescapedDoubleJsxStringFragment },
   "unescaped_double_string_fragment": { factory: F.unescapedDoubleStringFragment },
-  "unescaped_single_jsx_string_fragment": { factory: F.unescapedSingleJsxStringFragment },
   "unescaped_single_string_fragment": { factory: F.unescapedSingleStringFragment },
   "html_comment": { factory: F.htmlComment },
   "||": { factory: F.oror },
@@ -403,8 +387,6 @@ const _super_identifier: readonly string[] = ["undefined","identifier"];
 const _super_import_identifier: readonly string[] = ["identifier"];
 const _super_destructuring_pattern: readonly string[] = ["object_pattern","array_pattern"];
 const _super_expressions: readonly string[] = ["expression","sequence_expression"];
-const _super_jsx_identifier: readonly string[] = ["jsx_identifier","identifier"];
-const _super_jsx_attribute: readonly string[] = ["jsx_attribute","jsx_expression"];
 const _K0: readonly string[] = [];
 const _K1: readonly string[] = ["identifier","private_property_identifier","number"];
 const _K2: readonly string[] = ["string","computed_property_name"];
@@ -433,19 +415,15 @@ const _K24: readonly string[] = ["nested_identifier"];
 const _K25: readonly string[] = ["import_clause","string","import_require_clause"];
 const _K26: readonly string[] = ["type_annotation","omitting_type_annotation","adding_type_annotation","opting_type_annotation"];
 const _K27: readonly string[] = ["string","nested_identifier"];
-const _K28: readonly string[] = ["nested_identifier","jsx_namespace_name"];
-const _K29: readonly string[] = ["jsx_text","html_character_reference"];
-const _K30: readonly string[] = ["jsx_element","jsx_self_closing_element","jsx_expression"];
-const _K31: readonly string[] = ["jsx_namespace_name","nested_identifier"];
-const _K32: readonly string[] = ["as_expression","satisfies_expression","instantiation_expression","internal_module","type_assertion","primary_expression","assignment_expression","augmented_assignment_expression","await_expression","unary_expression","binary_expression","ternary_expression","update_expression","new_expression","yield_expression","non_null_expression"];
-const _K33: readonly string[] = ["_property_identifier"];
-const _K34: readonly string[] = ["export_statement","property_signature","call_signature","construct_signature","index_signature","method_signature"];
-const _K35: readonly string[] = ["undefined","identifier","this"];
-const _K36: readonly string[] = ["accessibility_modifier","override_modifier"];
-const _K37: readonly string[] = ["member_expression","subscript_expression","object_pattern","array_pattern","non_null_expression","rest_pattern","assignment_pattern"];
-const _K38: readonly string[] = ["_public_field_definition_declare_first","_public_field_definition_access_first","_public_field_definition_static_mods","_public_field_definition_abstract_first","_public_field_definition_readonly_first","_public_field_definition_accessor_opt"];
-const _K39: readonly string[] = ["rest_pattern"];
-const _K40: readonly string[] = ["identifier","this","predefined_type"];
+const _K28: readonly string[] = ["as_expression","satisfies_expression","instantiation_expression","internal_module","type_assertion","primary_expression","assignment_expression","augmented_assignment_expression","await_expression","unary_expression","binary_expression","ternary_expression","update_expression","new_expression","yield_expression","non_null_expression"];
+const _K29: readonly string[] = ["_property_identifier"];
+const _K30: readonly string[] = ["export_statement","property_signature","call_signature","construct_signature","index_signature","method_signature"];
+const _K31: readonly string[] = ["undefined","identifier","this"];
+const _K32: readonly string[] = ["accessibility_modifier","override_modifier"];
+const _K33: readonly string[] = ["member_expression","subscript_expression","object_pattern","array_pattern","non_null_expression","rest_pattern","assignment_pattern"];
+const _K34: readonly string[] = ["_public_field_definition_declare_first","_public_field_definition_access_first","_public_field_definition_static_mods","_public_field_definition_abstract_first","_public_field_definition_readonly_first","_public_field_definition_accessor_opt"];
+const _K35: readonly string[] = ["rest_pattern"];
+const _K36: readonly string[] = ["identifier","this","predefined_type"];
 
 export function abstractClassDeclarationFrom(input: T.AbstractClassDeclaration.Loose): ReturnType<typeof F.abstractClassDeclaration> | T.AbstractClassDeclaration {
   if (isNodeData(input)) return input;
@@ -977,16 +955,6 @@ export function false_From(input?: T.False) {
   return F.false_();
 }
 
-export function fieldDefinitionFrom(input: T.FieldDefinition.Loose): ReturnType<typeof F.fieldDefinition> | T.FieldDefinition {
-  if (isNodeData(input)) return input;
-  return F.fieldDefinition({
-    decorator: _resolveManyBranch<T.Decorator>(input.decorator, "decorator"),
-    staticMarker: _resolveBooleanKeyword(input.staticMarker),
-    property: _resolveOne<T.PropertyName>(input.property, _K1, _K2),
-    value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
-  });
-}
-
 export function finallyClauseFrom(input: T.FinallyClause.Loose): ReturnType<typeof F.finallyClause> | T.FinallyClause {
   if (isNodeData(input)) return input;
   return F.finallyClause({
@@ -1112,11 +1080,6 @@ export function genericTypeFrom(input: T.GenericType.Loose): ReturnType<typeof F
 export function hashBangLineFrom(input: string | T.HashBangLine) {
   if (typeof input !== 'string') return input;
   return F.hashBangLine(input as Parameters<typeof F.hashBangLine>[0]);
-}
-
-export function htmlCharacterReferenceFrom(input: string | T.HtmlCharacterReference) {
-  if (typeof input !== 'string') return input;
-  return F.htmlCharacterReference(input as Parameters<typeof F.htmlCharacterReference>[0]);
 }
 
 export function identifierFrom(input: string | T.Identifier) {
@@ -1310,57 +1273,6 @@ export function intersectionTypeFrom(input: T.IntersectionType.Loose): ReturnTyp
   });
 }
 
-export function jsxAttributeFrom(input?: NonNullable<T.JsxAttribute.Config['children']>[number] | T.JsxAttribute) {
-  return F.jsxAttribute(input as Parameters<typeof F.jsxAttribute>[0]);
-}
-
-export function jsxClosingElementFrom(input?: T.JsxClosingElement.Loose): ReturnType<typeof F.jsxClosingElement> | T.JsxClosingElement {
-  if (input !== undefined && isNodeData(input)) return input;
-  return F.jsxClosingElement({
-    name: _resolveOne<T.JsxElementName>(input?.name, _super_jsx_identifier, _K28),
-  });
-}
-
-export function jsxElementFrom(input: T.JsxElement.Loose): ReturnType<typeof F.jsxElement> | T.JsxElement {
-  if (isNodeData(input)) return input;
-  return F.jsxElement({
-    openTag: _resolveOneBranch<T.JsxOpeningElement>(input.openTag, "jsx_opening_element"),
-    closeTag: _resolveOneBranch<T.JsxClosingElement>(input.closeTag, "jsx_closing_element"),
-    children: _resolveMany(input.children, _K29, _K30),
-  });
-}
-
-export function jsxExpressionFrom(input?: NonNullable<T.JsxExpression.Config['children']>[number] | T.JsxExpression) {
-  return F.jsxExpression(input as Parameters<typeof F.jsxExpression>[0]);
-}
-
-export function jsxIdentifierFrom(input: string | T.JsxIdentifier) {
-  if (typeof input !== 'string') return input;
-  return F.jsxIdentifier(input as Parameters<typeof F.jsxIdentifier>[0]);
-}
-
-export function jsxNamespaceNameFrom(...input: readonly (NonNullable<T.JsxNamespaceName.Config['children']>[number] | T.JsxNamespaceName)[]) {
-  return F.jsxNamespaceName(...(input as readonly NonNullable<T.JsxNamespaceName.Config['children']>[number][]));
-}
-
-export function jsxOpeningElementFrom(input: T.JsxOpeningElement.Loose): ReturnType<typeof F.jsxOpeningElement> | T.JsxOpeningElement {
-  if (isNodeData(input)) return input;
-  return F.jsxOpeningElement({
-    name: _resolveOne<T._JsxIdentifier | T.JsxNamespaceName | T.Identifier | T.NestedIdentifier>(input.name, _super_jsx_identifier, _K31),
-    typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments"),
-    attribute: _resolveMany<T._JsxAttribute>(input.attribute, _K0, _super_jsx_attribute),
-  });
-}
-
-export function jsxSelfClosingElementFrom(input: T.JsxSelfClosingElement.Loose): ReturnType<typeof F.jsxSelfClosingElement> | T.JsxSelfClosingElement {
-  if (isNodeData(input)) return input;
-  return F.jsxSelfClosingElement({
-    name: _resolveOne<T._JsxIdentifier | T.JsxNamespaceName | T.Identifier | T.NestedIdentifier>(input.name, _super_jsx_identifier, _K31),
-    typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments"),
-    attribute: _resolveMany<T._JsxAttribute>(input.attribute, _K0, _super_jsx_attribute),
-  });
-}
-
 export function labeledStatementFrom(input: T.LabeledStatement.Loose): ReturnType<typeof F.labeledStatement> | T.LabeledStatement {
   if (isNodeData(input)) return input;
   return F.labeledStatement({
@@ -1409,8 +1321,8 @@ export function mappedTypeClauseFrom(input: T.MappedTypeClause.Loose): ReturnTyp
 export function memberExpressionFrom(input: T.MemberExpression.Loose): ReturnType<typeof F.memberExpression> | T.MemberExpression {
   if (isNodeData(input)) return input;
   return F.memberExpression({
-    object: _resolveOne<T.Expression | T.PrimaryExpression | T.Import>(input.object, _K12, _K32),
-    property: _resolveOne<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(input.property, _K11, _K33),
+    object: _resolveOne<T.Expression | T.PrimaryExpression | T.Import>(input.object, _K12, _K28),
+    property: _resolveOne<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(input.property, _K11, _K29),
   });
 }
 
@@ -1554,7 +1466,7 @@ export function objectPatternFrom(...input: readonly (NonNullable<T.ObjectPatter
 
 export function objectTypeFrom(input: T.ObjectType.Loose): ReturnType<typeof F.objectType> | T.ObjectType {
   if (isNodeData(input)) return input;
-  const _ne_members = _resolveMany<"," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon>(input.members, _super_semicolon, _K34);
+  const _ne_members = _resolveMany<"," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon>(input.members, _super_semicolon, _K30);
   _assertNonEmpty(_ne_members, 'object_type.members');
   return F.objectType({
     opening: _resolveOne<"{" | "{|">(input.opening, _K0, _K0),
@@ -1582,10 +1494,10 @@ export function optionalParameterFrom(input: T.OptionalParameter.Loose): ReturnT
   return F.optionalParameter({
     decorator: _resolveManyBranch<T.Decorator>(input.decorator, "decorator"),
     readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
-    pattern: _resolveOne<T.Pattern | T.This>(input.pattern, _K35, _K9),
+    pattern: _resolveOne<T.Pattern | T.This>(input.pattern, _K31, _K9),
     type: _resolveOneBranch<T.TypeAnnotation>(input.type, "type_annotation"),
     value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
-    children: _resolveOne(input.children, _K36, _K0),
+    children: _resolveOne(input.children, _K32, _K0),
   });
 }
 
@@ -1621,7 +1533,7 @@ export function pairPatternFrom(input: T.PairPattern.Loose): ReturnType<typeof F
   if (isNodeData(input)) return input;
   return F.pairPattern({
     key: _resolveOne<T.PropertyName>(input.key, _K1, _K2),
-    value: _resolveOne<T.Pattern | T.AssignmentPattern>(input.value, _super_identifier, _K37),
+    value: _resolveOne<T.Pattern | T.AssignmentPattern>(input.value, _super_identifier, _K33),
   });
 }
 
@@ -1690,7 +1602,7 @@ export function publicFieldDefinitionFrom(input: T.PublicFieldDefinition.Loose):
     optionalityMarker: _resolveOne<"?" | "!">(input.optionalityMarker, _K0, _K0),
     type: _resolveOneBranch<T.TypeAnnotation>(input.type, "type_annotation"),
     value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
-    children: _resolveOne(input.children, _K0, _K38),
+    children: _resolveOne(input.children, _K0, _K34),
   });
 }
 
@@ -1724,10 +1636,10 @@ export function requiredParameterFrom(input: T.RequiredParameter.Loose): ReturnT
   return F.requiredParameter({
     decorator: _resolveManyBranch<T.Decorator>(input.decorator, "decorator"),
     readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
-    pattern: _resolveOne<T.Pattern | T.This>(input.pattern, _K35, _K9),
+    pattern: _resolveOne<T.Pattern | T.This>(input.pattern, _K31, _K9),
     type: _resolveOneBranch<T.TypeAnnotation>(input.type, "type_annotation"),
     value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
-    children: _resolveOne(input.children, _K36, _K0),
+    children: _resolveOne(input.children, _K32, _K0),
   });
 }
 
@@ -1810,7 +1722,7 @@ export function stringUFormSingleFrom(input: Omit<ConfigOf<T.StringUFormSingle>,
 export function subscriptExpressionFrom(input: T.SubscriptExpression.Loose): ReturnType<typeof F.subscriptExpression> | T.SubscriptExpression {
   if (isNodeData(input)) return input;
   return F.subscriptExpression({
-    object: _resolveOne<T.Expression | T.PrimaryExpression>(input.object, _K0, _K32),
+    object: _resolveOne<T.Expression | T.PrimaryExpression>(input.object, _K0, _K28),
     optionalChain: _resolveBooleanKeyword(input.optionalChain),
     index: _resolveOne<T.Expressions>(input.index, _K0, _super_expressions),
   });
@@ -1925,7 +1837,7 @@ export function tryStatementFrom(input: T.TryStatement.Loose): ReturnType<typeof
 export function tupleParameterFrom(input: T.TupleParameter.Loose): ReturnType<typeof F.tupleParameter> | T.TupleParameter {
   if (isNodeData(input)) return input;
   return F.tupleParameter({
-    name: _resolveOne<T.Identifier | T.RestPattern>(input.name, _super_import_identifier, _K39),
+    name: _resolveOne<T.Identifier | T.RestPattern>(input.name, _super_import_identifier, _K35),
     type: _resolveOneBranch<T.TypeAnnotation>(input.type, "type_annotation"),
   });
 }
@@ -1992,7 +1904,7 @@ export function typeParametersFrom(...input: readonly (NonNullable<T.TypeParamet
 export function typePredicateFrom(input: T.TypePredicate.Loose): ReturnType<typeof F.typePredicate> | T.TypePredicate {
   if (isNodeData(input)) return input;
   return F.typePredicate({
-    name: _resolveOne<T.PredefinedType | T.This>(input.name, _K40, _K0),
+    name: _resolveOne<T.PredefinedType | T.This>(input.name, _K36, _K0),
     type: _resolveOne<T.Type>(input.type, _K0, _super_type),
   });
 }
@@ -2026,19 +1938,9 @@ export function undefined_From(input?: T.Undefined) {
   return F.undefined_();
 }
 
-export function unescapedDoubleJsxStringFragmentFrom(input: string | T.UnescapedDoubleJsxStringFragment) {
-  if (typeof input !== 'string') return input;
-  return F.unescapedDoubleJsxStringFragment(input as Parameters<typeof F.unescapedDoubleJsxStringFragment>[0]);
-}
-
 export function unescapedDoubleStringFragmentFrom(input: string | T.UnescapedDoubleStringFragment) {
   if (typeof input !== 'string') return input;
   return F.unescapedDoubleStringFragment(input as Parameters<typeof F.unescapedDoubleStringFragment>[0]);
-}
-
-export function unescapedSingleJsxStringFragmentFrom(input: string | T.UnescapedSingleJsxStringFragment) {
-  if (typeof input !== 'string') return input;
-  return F.unescapedSingleJsxStringFragment(input as Parameters<typeof F.unescapedSingleJsxStringFragment>[0]);
 }
 
 export function unescapedSingleStringFragmentFrom(input: string | T.UnescapedSingleStringFragment) {

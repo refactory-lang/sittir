@@ -392,7 +392,6 @@ export const ir = {
   closureExpressionExpr: _attach(F.closureExpressionExpr, { from: FR.closureExpressionExprFrom }),
   closure: _attach(F.closureExpression, { from: FR.closureExpressionFrom, "block": _attach(F.closureExpressionUFormBlock, { from: FR.closureExpressionUFormBlockFrom }), "expr": _attach(F.closureExpressionUFormExpr, { from: FR.closureExpressionUFormExprFrom }) }),
   closureParameters: _attach(F.closureParameters, { from: FR.closureParametersFrom }),
-  comment: _attach(F.comment, { from: FR.commentFrom }),
   compoundAssignmentExpr: _attach(F.compoundAssignmentExpr, { from: FR.compoundAssignmentExprFrom }),
   constBlock: _attach(F.constBlock, { from: FR.constBlockFrom }),
   constItem: _attach(F.constItem, { from: FR.constItemFrom }),

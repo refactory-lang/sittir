@@ -463,27 +463,27 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             323 => Ok(AnyTransport::ClosureExpressionBlock(
                 ClosureExpressionBlockTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _closure_expression_expr (__CLOSURE_EXPRESSION_EXPR)
+            // kind: _closure_expression_expr (_CLOSURE_EXPRESSION_EXPR)
             324 => Ok(AnyTransport::_ClosureExpressionExpr(
                 _ClosureExpressionExprTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _delim_token_tree_brace (__DELIM_TOKEN_TREE_BRACE)
+            // kind: _delim_token_tree_brace (_DELIM_TOKEN_TREE_BRACE)
             381 => Ok(AnyTransport::_DelimTokenTreeBrace(
                 _DelimTokenTreeBraceTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _delim_token_tree_bracket (__DELIM_TOKEN_TREE_BRACKET)
+            // kind: _delim_token_tree_bracket (_DELIM_TOKEN_TREE_BRACKET)
             380 => Ok(AnyTransport::_DelimTokenTreeBracket(
                 _DelimTokenTreeBracketTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _delim_token_tree_paren (__DELIM_TOKEN_TREE_PAREN)
+            // kind: _delim_token_tree_paren (_DELIM_TOKEN_TREE_PAREN)
             379 => Ok(AnyTransport::_DelimTokenTreeParen(
                 _DelimTokenTreeParenTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _expression_statement_block_ending (__EXPRESSION_STATEMENT_BLOCK_ENDING)
+            // kind: _expression_statement_block_ending (_EXPRESSION_STATEMENT_BLOCK_ENDING)
             366 => Ok(AnyTransport::_ExpressionStatementBlockEnding(
                 _ExpressionStatementBlockEndingTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _expression_statement_with_semi (__EXPRESSION_STATEMENT_WITH_SEMI)
+            // kind: _expression_statement_with_semi (_EXPRESSION_STATEMENT_WITH_SEMI)
             365 => Ok(AnyTransport::_ExpressionStatementWithSemi(
                 _ExpressionStatementWithSemiTransport::from_napi_value(env, napi_val)?
             )),
@@ -495,11 +495,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             326 => Ok(AnyTransport::FieldPatternNamed(
                 FieldPatternNamedTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _field_pattern_shorthand (__FIELD_PATTERN_SHORTHAND)
+            // kind: _field_pattern_shorthand (_FIELD_PATTERN_SHORTHAND)
             325 => Ok(AnyTransport::_FieldPatternShorthand(
                 _FieldPatternShorthandTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _foreign_mod_item_body (__FOREIGN_MOD_ITEM_BODY)
+            // kind: _foreign_mod_item_body (_FOREIGN_MOD_ITEM_BODY)
             368 => Ok(AnyTransport::_ForeignModItemBody(
                 _ForeignModItemBodyTransport::from_napi_value(env, napi_val)?
             )),
@@ -515,7 +515,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             327 => Ok(AnyTransport::FunctionTypeTraitForm(
                 FunctionTypeTraitFormTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _impl_item_body (__IMPL_ITEM_BODY)
+            // kind: _impl_item_body (_IMPL_ITEM_BODY)
             329 => Ok(AnyTransport::_ImplItemBody(
                 _ImplItemBodyTransport::from_napi_value(env, napi_val)?
             )),
@@ -559,19 +559,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             371 => Ok(AnyTransport::LineCommentRegularDslash(
                 LineCommentRegularDslashTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _macro_definition_brace (__MACRO_DEFINITION_BRACE)
+            // kind: _macro_definition_brace (_MACRO_DEFINITION_BRACE)
             333 => Ok(AnyTransport::_MacroDefinitionBrace(
                 _MacroDefinitionBraceTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _macro_definition_bracket (__MACRO_DEFINITION_BRACKET)
+            // kind: _macro_definition_bracket (_MACRO_DEFINITION_BRACKET)
             332 => Ok(AnyTransport::_MacroDefinitionBracket(
                 _MacroDefinitionBracketTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _macro_definition_paren (__MACRO_DEFINITION_PAREN)
+            // kind: _macro_definition_paren (_MACRO_DEFINITION_PAREN)
             331 => Ok(AnyTransport::_MacroDefinitionParen(
                 _MacroDefinitionParenTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _match_arm_block_ending (__MATCH_ARM_BLOCK_ENDING)
+            // kind: _match_arm_block_ending (_MATCH_ARM_BLOCK_ENDING)
             370 => Ok(AnyTransport::_MatchArmBlockEnding(
                 _MatchArmBlockEndingTransport::from_napi_value(env, napi_val)?
             )),
@@ -583,7 +583,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             334 => Ok(AnyTransport::ModItemExternal(
                 ModItemExternalTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _mod_item_inline (__MOD_ITEM_INLINE)
+            // kind: _mod_item_inline (_MOD_ITEM_INLINE)
             335 => Ok(AnyTransport::_ModItemInline(
                 _ModItemInlineTransport::from_napi_value(env, napi_val)?
             )),
@@ -599,11 +599,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             358 => Ok(AnyTransport::PointerTypeConst(
                 PointerTypeConstTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _pointer_type_mut (__POINTER_TYPE_MUT)
+            // kind: _pointer_type_mut (_POINTER_TYPE_MUT)
             359 => Ok(AnyTransport::_PointerTypeMut(
                 _PointerTypeMutTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _range_expression_bare (__RANGE_EXPRESSION_BARE)
+            // kind: _range_expression_bare (_RANGE_EXPRESSION_BARE)
             341 => Ok(AnyTransport::_RangeExpressionBare(
                 _RangeExpressionBareTransport::from_napi_value(env, napi_val)?
             )),
@@ -655,27 +655,27 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             347 => Ok(AnyTransport::StructItemUnit(
                 StructItemUnitTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _token_tree_brace (__TOKEN_TREE_BRACE)
+            // kind: _token_tree_brace (_TOKEN_TREE_BRACE)
             378 => Ok(AnyTransport::_TokenTreeBrace(
                 _TokenTreeBraceTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _token_tree_bracket (__TOKEN_TREE_BRACKET)
+            // kind: _token_tree_bracket (_TOKEN_TREE_BRACKET)
             377 => Ok(AnyTransport::_TokenTreeBracket(
                 _TokenTreeBracketTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _token_tree_paren (__TOKEN_TREE_PAREN)
+            // kind: _token_tree_paren (_TOKEN_TREE_PAREN)
             376 => Ok(AnyTransport::_TokenTreeParen(
                 _TokenTreeParenTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _token_tree_pattern_brace (__TOKEN_TREE_PATTERN_BRACE)
+            // kind: _token_tree_pattern_brace (_TOKEN_TREE_PATTERN_BRACE)
             375 => Ok(AnyTransport::_TokenTreePatternBrace(
                 _TokenTreePatternBraceTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _token_tree_pattern_bracket (__TOKEN_TREE_PATTERN_BRACKET)
+            // kind: _token_tree_pattern_bracket (_TOKEN_TREE_PATTERN_BRACKET)
             374 => Ok(AnyTransport::_TokenTreePatternBracket(
                 _TokenTreePatternBracketTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _token_tree_pattern_paren (__TOKEN_TREE_PATTERN_PAREN)
+            // kind: _token_tree_pattern_paren (_TOKEN_TREE_PATTERN_PAREN)
             373 => Ok(AnyTransport::_TokenTreePatternParen(
                 _TokenTreePatternParenTransport::from_napi_value(env, napi_val)?
             )),
@@ -683,7 +683,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             417 => Ok(AnyTransport::TypeIdentifier(
                 TypeIdentifierTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _visibility_modifier_crate (__VISIBILITY_MODIFIER_CRATE)
+            // kind: _visibility_modifier_crate (_VISIBILITY_MODIFIER_CRATE)
             348 => Ok(AnyTransport::_VisibilityModifierCrate(
                 _VisibilityModifierCrateTransport::from_napi_value(env, napi_val)?
             )),

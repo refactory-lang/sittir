@@ -172,19 +172,6 @@ export function _delimTokenTreeParen(...children: T.DelimTokens[]) {
   };
 }
 
-export function docComment(text: string) {
-  if (text.length === 0) throw new Error(`_doc_comment: text must be non-empty`);
-  return {
-    $type: '_doc_comment' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.DocCommentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
 export function _expressionStatementBlockEnding(child: T.ExpressionEndingWithBlock) {
   const children = [child];
   return {
@@ -509,22 +496,6 @@ export function _modItemInline(config: ConfigOf<T._ModItemInline>) {
   };
 }
 
-export function nonSpecialToken(child: (T.Literal | T.Identifier | T.MutableSpecifier | T.Self | T.Super | T.Crate | T.PrimitiveType)) {
-  const children = [child];
-  return {
-    $type: '_non_special_token' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.NonSpecialTokenTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
 export function _orPatternBinary(config: ConfigOf<T.OrPatternBinary>) {
   const fields = {
     left: config.left,
@@ -578,18 +549,6 @@ export function _pointerTypeMut(child: T.MutableSpecifier) {
       return toEdit(this, startOrRange);
     },
     replace(this: AnyNodeData, target: T._PointerTypeMutTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function primitiveType(text: 'u8' | 'i8' | 'u16' | 'i16' | 'u32' | 'i32' | 'u64' | 'i64' | 'u128' | 'i128' | 'isize' | 'usize' | 'f32' | 'f64' | 'bool' | 'str' | 'char') {
-  return {
-    $type: '_primitive_type' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.PrimitiveTypeTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
@@ -744,22 +703,6 @@ export function referenceExpressionRawMut(child: T.MutableSpecifier) {
   };
 }
 
-export function reservedIdentifier(child: T.Identifier) {
-  const children = [child];
-  return {
-    $type: '_reserved_identifier' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ReservedIdentifierTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
 export function shorthandFieldIdentifier(child: T.Identifier) {
   const children = [child];
   return {
@@ -773,22 +716,6 @@ export function shorthandFieldIdentifier(child: T.Identifier) {
       return toEdit(this, startOrRange);
     },
     replace(this: AnyNodeData, target: T.ShorthandFieldIdentifierTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function _stringContent(child: T.RawStringLiteralContent) {
-  const children = [child];
-  return {
-    $type: '_string_content' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T._StringContentTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1469,7 +1396,7 @@ export function closureExpressionExpr(config: ConfigOf<T.ClosureExpressionExpr>)
     body: config.body,
   };
   return {
-    $type: 'closure_expression_expr' as const,
+    $type: TSKindId._ClosureExpressionExpr as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
@@ -1597,22 +1524,6 @@ export function closureParameters(...children: (T.Pattern | T.Parameter)[]) {
       return toEdit(this, startOrRange);
     },
     replace(this: AnyNodeData, target: T.ClosureParametersTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function comment(child: (T.LineComment | T.BlockComment)) {
-  const children = [child];
-  return {
-    $type: 'comment' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.CommentTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1754,7 +1665,7 @@ export function declarationList(...children: T.DeclarationStatement[]) {
 
 export function delimTokenTreeParen(...children: T.DelimTokens[]) {
   return {
-    $type: 'delim_token_tree_paren' as const,
+    $type: TSKindId._DelimTokenTreeParen as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -1769,7 +1680,7 @@ export function delimTokenTreeParen(...children: T.DelimTokens[]) {
 
 export function delimTokenTreeBracket(...children: T.DelimTokens[]) {
   return {
-    $type: 'delim_token_tree_bracket' as const,
+    $type: TSKindId._DelimTokenTreeBracket as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -1784,7 +1695,7 @@ export function delimTokenTreeBracket(...children: T.DelimTokens[]) {
 
 export function delimTokenTreeBrace(...children: T.DelimTokens[]) {
   return {
-    $type: 'delim_token_tree_brace' as const,
+    $type: TSKindId._DelimTokenTreeBrace as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -1978,7 +1889,7 @@ export function escapeSequence(text: string) {
 export function expressionStatementWithSemi(child: T.Expression) {
   const children = [child];
   return {
-    $type: 'expression_statement_with_semi' as const,
+    $type: TSKindId._ExpressionStatementWithSemi as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -1994,7 +1905,7 @@ export function expressionStatementWithSemi(child: T.Expression) {
 export function expressionStatementBlockEnding(child: T.ExpressionEndingWithBlock) {
   const children = [child];
   return {
-    $type: 'expression_statement_block_ending' as const,
+    $type: TSKindId._ExpressionStatementBlockEnding as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -2201,7 +2112,7 @@ export function fieldPatternShorthand(config: ConfigOf<T.FieldPatternShorthand>)
     name: config.name,
   };
   return {
-    $type: 'field_pattern_shorthand' as const,
+    $type: TSKindId._FieldPatternShorthand as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
@@ -2343,7 +2254,7 @@ export function foreignModItemBody(config: ConfigOf<T.ForeignModItemBody>) {
     body: config.body,
   };
   return {
-    $type: 'foreign_mod_item_body' as const,
+    $type: TSKindId._ForeignModItemBody as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
@@ -2719,7 +2630,7 @@ export function implItemBody(config: ConfigOf<T.ImplItemBody>) {
     body: config.body,
   };
   return {
-    $type: 'impl_item_body' as const,
+    $type: TSKindId._ImplItemBody as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
@@ -3109,7 +3020,7 @@ export function loopExpression(config: ConfigOf<T.LoopExpression>) {
 
 export function macroDefinitionParen(...children: T.MacroRule[]) {
   return {
-    $type: 'macro_definition_paren' as const,
+    $type: TSKindId._MacroDefinitionParen as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -3124,7 +3035,7 @@ export function macroDefinitionParen(...children: T.MacroRule[]) {
 
 export function macroDefinitionBracket(...children: T.MacroRule[]) {
   return {
-    $type: 'macro_definition_bracket' as const,
+    $type: TSKindId._MacroDefinitionBracket as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -3139,7 +3050,7 @@ export function macroDefinitionBracket(...children: T.MacroRule[]) {
 
 export function macroDefinitionBrace(...children: T.MacroRule[]) {
   return {
-    $type: 'macro_definition_brace' as const,
+    $type: TSKindId._MacroDefinitionBrace as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -3286,7 +3197,7 @@ export function matchArmBlockEnding(config: ConfigOf<T.MatchArmBlockEnding>) {
     value: config.value,
   };
   return {
-    $type: 'match_arm_block_ending' as const,
+    $type: TSKindId._MatchArmBlockEnding as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
@@ -3439,7 +3350,7 @@ export function modItemInline(config: ConfigOf<T.ModItemInline>) {
     body: config.body,
   };
   return {
-    $type: 'mod_item_inline' as const,
+    $type: TSKindId._ModItemInline as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
@@ -3706,7 +3617,7 @@ export function parenthesizedExpression(child: T.Expression) {
 export function pointerTypeMut(child: T.MutableSpecifier) {
   const children = [child];
   return {
-    $type: 'pointer_type_mut' as const,
+    $type: TSKindId._PointerTypeMut as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -3799,7 +3710,7 @@ export function rangeExpressionBare(_config?: ConfigOf<T.RangeExpressionBare>) {
     operator: ".." as const,
   };
   return {
-    $type: 'range_expression_bare' as const,
+    $type: TSKindId._RangeExpressionBare as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
@@ -4155,7 +4066,7 @@ export function scopedTypeIdentifier(config: ConfigOf<T.ScopedTypeIdentifier>) {
     name: config.name,
   };
   return {
-    $type: TSKindId.ScopedTypeIdentifier as number,
+    $type: TSKindId.ScopedTypeIdentifierInExpressionPosition as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
@@ -4585,7 +4496,7 @@ export function tokenRepetitionPattern(...children: T.TokenPattern[]) {
 
 export function tokenTreeParen(...children: T.Tokens[]) {
   return {
-    $type: 'token_tree_paren' as const,
+    $type: TSKindId._TokenTreeParen as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -4600,7 +4511,7 @@ export function tokenTreeParen(...children: T.Tokens[]) {
 
 export function tokenTreeBracket(...children: T.Tokens[]) {
   return {
-    $type: 'token_tree_bracket' as const,
+    $type: TSKindId._TokenTreeBracket as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -4615,7 +4526,7 @@ export function tokenTreeBracket(...children: T.Tokens[]) {
 
 export function tokenTreeBrace(...children: T.Tokens[]) {
   return {
-    $type: 'token_tree_brace' as const,
+    $type: TSKindId._TokenTreeBrace as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -4693,7 +4604,7 @@ export function tokenTreeUFormBrace(config?: Omit<ConfigOf<T.TokenTreeUFormBrace
 
 export function tokenTreePatternParen(...children: T.TokenPattern[]) {
   return {
-    $type: 'token_tree_pattern_paren' as const,
+    $type: TSKindId._TokenTreePatternParen as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -4708,7 +4619,7 @@ export function tokenTreePatternParen(...children: T.TokenPattern[]) {
 
 export function tokenTreePatternBracket(...children: T.TokenPattern[]) {
   return {
-    $type: 'token_tree_pattern_bracket' as const,
+    $type: TSKindId._TokenTreePatternBracket as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -4723,7 +4634,7 @@ export function tokenTreePatternBracket(...children: T.TokenPattern[]) {
 
 export function tokenTreePatternBrace(...children: T.TokenPattern[]) {
   return {
-    $type: 'token_tree_pattern_brace' as const,
+    $type: TSKindId._TokenTreePatternBrace as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -5297,7 +5208,7 @@ export function variadicParameter(config?: ConfigOf<T.VariadicParameter>) {
 export function visibilityModifierCrate(child: T.Crate) {
   const children = [child];
   return {
-    $type: 'visibility_modifier_crate' as const,
+    $type: TSKindId._VisibilityModifierCrate as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -5536,7 +5447,6 @@ export type FluentKindMap = {
   "_delim_token_tree_brace": FluentNode<"_delim_token_tree_brace", T._DelimTokenTreeBrace.Config>;
   "_delim_token_tree_bracket": FluentNode<"_delim_token_tree_bracket", T._DelimTokenTreeBracket.Config>;
   "_delim_token_tree_paren": FluentNode<"_delim_token_tree_paren", T._DelimTokenTreeParen.Config>;
-  "_doc_comment": T.DocComment;
   "_expression_statement_block_ending": FluentNode<"_expression_statement_block_ending", T._ExpressionStatementBlockEnding.Config>;
   "_expression_statement_with_semi": FluentNode<"_expression_statement_with_semi", T._ExpressionStatementWithSemi.Config>;
   "_field_identifier": FluentNode<"_field_identifier", T.FieldIdentifier.Config>;
@@ -5556,11 +5466,9 @@ export type FluentKindMap = {
   "_match_arm_block_ending": FluentNode<"_match_arm_block_ending", T._MatchArmBlockEnding.Config>;
   "_match_arm_with_comma": T.MatchArmWithComma;
   "_mod_item_inline": FluentNode<"_mod_item_inline", T._ModItemInline.Config>;
-  "_non_special_token": FluentNode<"_non_special_token", T.NonSpecialToken.Config>;
   "_or_pattern_binary": T.OrPatternBinary;
   "_or_pattern_prefix": T.OrPatternPrefix;
   "_pointer_type_mut": FluentNode<"_pointer_type_mut", T._PointerTypeMut.Config>;
-  "_primitive_type": T.PrimitiveType;
   "_range_expression_bare": FluentNode<"_range_expression_bare", T._RangeExpressionBare.Config>;
   "_range_expression_binary": T.RangeExpressionBinary;
   "_range_expression_postfix": T.RangeExpressionPostfix;
@@ -5569,9 +5477,7 @@ export type FluentKindMap = {
   "_range_pattern_prefix": T.RangePatternPrefix;
   "_reference_expression_raw_const": T.ReferenceExpressionRawConst;
   "_reference_expression_raw_mut": FluentNode<"_reference_expression_raw_mut", T.ReferenceExpressionRawMut.Config>;
-  "_reserved_identifier": FluentNode<"_reserved_identifier", T.ReservedIdentifier.Config>;
   "_shorthand_field_identifier": FluentNode<"_shorthand_field_identifier", T.ShorthandFieldIdentifier.Config>;
-  "_string_content": FluentNode<"_string_content", T._StringContent.Config>;
   "_struct_item_brace": T.StructItemBrace;
   "_struct_item_tuple": T.StructItemTuple;
   "_token_tree_brace": FluentNode<"_token_tree_brace", T._TokenTreeBrace.Config>;
@@ -5608,7 +5514,6 @@ export type FluentKindMap = {
   "closure_expression_expr": FluentNode<"closure_expression_expr", T.ClosureExpressionExpr.Config>;
   "closure_expression": FluentNode<"closure_expression", T.ClosureExpression.Config>;
   "closure_parameters": FluentNode<"closure_parameters", T.ClosureParameters.Config>;
-  "comment": FluentNode<"comment", T.Comment.Config>;
   "compound_assignment_expr": FluentNode<"compound_assignment_expr", T.CompoundAssignmentExpr.Config>;
   "const_block": FluentNode<"const_block", T.ConstBlock.Config>;
   "const_item": FluentNode<"const_item", T.ConstItem.Config>;
@@ -5777,7 +5682,6 @@ export const _factoryMap = {
   "_delim_token_tree_brace": _delimTokenTreeBrace,
   "_delim_token_tree_bracket": _delimTokenTreeBracket,
   "_delim_token_tree_paren": _delimTokenTreeParen,
-  "_doc_comment": docComment,
   "_expression_statement_block_ending": _expressionStatementBlockEnding,
   "_expression_statement_with_semi": _expressionStatementWithSemi,
   "_field_identifier": fieldIdentifier,
@@ -5797,11 +5701,9 @@ export const _factoryMap = {
   "_match_arm_block_ending": _matchArmBlockEnding,
   "_match_arm_with_comma": _matchArmWithComma,
   "_mod_item_inline": _modItemInline,
-  "_non_special_token": nonSpecialToken,
   "_or_pattern_binary": _orPatternBinary,
   "_or_pattern_prefix": _orPatternPrefix,
   "_pointer_type_mut": _pointerTypeMut,
-  "_primitive_type": primitiveType,
   "_range_expression_bare": _rangeExpressionBare,
   "_range_expression_binary": _rangeExpressionBinary,
   "_range_expression_postfix": _rangeExpressionPostfix,
@@ -5810,9 +5712,7 @@ export const _factoryMap = {
   "_range_pattern_prefix": _rangePatternPrefix,
   "_reference_expression_raw_const": referenceExpressionRawConst,
   "_reference_expression_raw_mut": referenceExpressionRawMut,
-  "_reserved_identifier": reservedIdentifier,
   "_shorthand_field_identifier": shorthandFieldIdentifier,
-  "_string_content": _stringContent,
   "_struct_item_brace": _structItemBrace,
   "_struct_item_tuple": _structItemTuple,
   "_token_tree_brace": _tokenTreeBrace,
@@ -5849,7 +5749,6 @@ export const _factoryMap = {
   "closure_expression_expr": closureExpressionExpr,
   "closure_expression": closureExpression,
   "closure_parameters": closureParameters,
-  "comment": comment,
   "compound_assignment_expr": compoundAssignmentExpr,
   "const_block": constBlock,
   "const_item": constItem,

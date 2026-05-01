@@ -774,60 +774,6 @@ export function interfaceBody(child: T.ObjectType) {
   };
 }
 
-export function _jsxStartOpeningElement(config: ConfigOf<T.JsxStartOpeningElement>) {
-  const fields = {
-    name: config.name,
-    type_arguments: config.typeArguments,
-    attribute: config.attribute,
-  };
-  return {
-    $type: '_jsx_start_opening_element' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    name(value?: T._JsxIdentifier | T.JsxNamespaceName | T.Identifier | T.NestedIdentifier | undefined) { return _fs(config, _jsxStartOpeningElement, 'name', value, config?.name); },
-    typeArguments(value?: T.TypeArguments | undefined) { return _fs(config, _jsxStartOpeningElement, 'typeArguments', value, config?.typeArguments); },
-    attribute(...values: T._JsxAttribute[]) { return _fsm(config, _jsxStartOpeningElement, 'attribute', values, config?.attribute); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.JsxStartOpeningElementTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function jsxString(...children: (T.StringFragment | T.HtmlCharacterReference)[]) {
-  return {
-    $type: '_jsx_string' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.JsxStringTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function lhsExpression(child: (T.MemberExpression | T.SubscriptExpression | T._Identifier | T.ReservedIdentifier | T.DestructuringPattern | T.NonNullExpression)) {
-  const children = [child];
-  return {
-    $type: '_lhs_expression' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.LhsExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
 export function _module(config: ConfigOf<T._Module>) {
   const fields = {
     name: config.name,
@@ -1085,19 +1031,6 @@ export function _publicFieldDefinitionStaticMods(config?: ConfigOf<T.PublicField
   };
 }
 
-export function reservedIdentifier(text: string) {
-  if (text.length === 0) throw new Error(`_reserved_identifier: text must be non-empty`);
-  return {
-    $type: '_reserved_identifier' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.ReservedIdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
 export function statementIdentifier(child: T.Identifier) {
   const children = [child];
   return {
@@ -1126,22 +1059,6 @@ export function _stringDouble(...children: (T.StringFragment | T.EscapeSequence)
       return toEdit(this, startOrRange);
     },
     replace(this: AnyNodeData, target: T._StringDoubleTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function stringFragment(child: T.UnescapedDoubleJsxStringFragment) {
-  const children = [child];
-  return {
-    $type: '_string_fragment' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.StringFragmentTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1539,7 +1456,7 @@ export function arrowFunctionParameter(config: ConfigOf<T.ArrowFunctionParameter
     parameter: config.parameter,
   };
   return {
-    $type: 'arrow_function_parameter' as const,
+    $type: TSKindId._ArrowFunctionParameter as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
@@ -1560,7 +1477,7 @@ export function arrowFunctionUCallSignature(config: ConfigOf<T.ArrowFunctionUCal
     return_type: config.returnType,
   };
   return {
-    $type: 'arrow_function__call_signature' as const,
+    $type: TSKindId._ArrowFunctionUCallSignature as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
@@ -2063,7 +1980,7 @@ export function classDeclaration(config: ConfigOf<T.ClassDeclaration>) {
 export function classHeritageExtendsClause(child: (T.ExtendsClause | T.ImplementsClause)) {
   const children = [child];
   return {
-    $type: 'class_heritage_extends_clause' as const,
+    $type: TSKindId._ClassHeritageExtendsClause as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -2079,7 +1996,7 @@ export function classHeritageExtendsClause(child: (T.ExtendsClause | T.Implement
 export function classHeritageImplementsClause(child: T.ImplementsClause) {
   const children = [child];
   return {
-    $type: 'class_heritage_implements_clause' as const,
+    $type: TSKindId._ClassHeritageImplementsClause as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -2585,7 +2502,7 @@ export function exportStatementTypeExport(config: ConfigOf<T.ExportStatementType
   };
   const children = config.children ?? [];
   return {
-    $type: 'export_statement_type_export' as const,
+    $type: TSKindId._ExportStatementTypeExport as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
@@ -2607,7 +2524,7 @@ export function exportStatementTypeExport(config: ConfigOf<T.ExportStatementType
 export function exportStatementEqualsExport(child: (T.Expression | T.Semicolon)) {
   const children = [child];
   return {
-    $type: 'export_statement_equals_export' as const,
+    $type: TSKindId._ExportStatementEqualsExport as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -2623,7 +2540,7 @@ export function exportStatementEqualsExport(child: (T.Expression | T.Semicolon))
 export function exportStatementNamespaceExport(child: (T.Identifier | T.Semicolon)) {
   const children = [child];
   return {
-    $type: 'export_statement_namespace_export' as const,
+    $type: TSKindId._ExportStatementNamespaceExport as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -2799,31 +2716,6 @@ export function false_() {
     render: () => 'false' as const,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'false' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'false' as const },
     replace: (t: T.FalseTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'false' as const }; },
-  };
-}
-
-export function fieldDefinition(config: ConfigOf<T.FieldDefinition>) {
-  const fields = {
-    decorator: config.decorator,
-    static_marker: config.staticMarker ? "static" as const : undefined,
-    property: config.property,
-    value: config.value,
-  };
-  return {
-    $type: 'field_definition' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    decorator(...values: T.Decorator[]) { return _fsm(config, fieldDefinition, 'decorator', values, config?.decorator); },
-    staticMarker(value?: "static" | undefined) { return _fs(config, fieldDefinition, 'staticMarker', value, config?.staticMarker); },
-    property(value?: T.PropertyName) { return _fs(config, fieldDefinition, 'property', value, config?.property); },
-    value(value?: T.Expression | undefined) { return _fs(config, fieldDefinition, 'value', value, config?.value); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.FieldDefinitionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3150,19 +3042,6 @@ export function hashBangLine(text: string) {
   };
 }
 
-export function htmlCharacterReference(text: string) {
-  if (text.length === 0) throw new Error(`html_character_reference: text must be non-empty`); if (!_leafRe_htmlCharacterReference.test(text)) throw new Error(`html_character_reference: text does not match pattern: ${text}`);
-  return {
-    $type: 'html_character_reference' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.HtmlCharacterReferenceTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
 export function identifier(text: string) {
   if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
   return {
@@ -3272,7 +3151,7 @@ export function importAttribute(config: ConfigOf<T.ImportAttribute>) {
 export function importClauseNamespaceImport(child: T.NamespaceImport) {
   const children = [child];
   return {
-    $type: 'import_clause_namespace_import' as const,
+    $type: TSKindId._ImportClauseNamespaceImport as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -3288,7 +3167,7 @@ export function importClauseNamespaceImport(child: T.NamespaceImport) {
 export function importClauseNamedImports(child: T.NamedImports) {
   const children = [child];
   return {
-    $type: 'import_clause_named_imports' as const,
+    $type: TSKindId._ImportClauseNamedImports as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -3304,7 +3183,7 @@ export function importClauseNamedImports(child: T.NamedImports) {
 export function importClauseDefaultImport(child: (T.ImportIdentifier | T.NamespaceImport | T.NamedImports)) {
   const children = [child];
   return {
-    $type: 'import_clause_default_import' as const,
+    $type: TSKindId._ImportClauseDefaultImport as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -3406,7 +3285,7 @@ export function importSpecifierName(config: ConfigOf<T.ImportSpecifierName>) {
     name: config.name,
   };
   return {
-    $type: 'import_specifier_name' as const,
+    $type: TSKindId._ImportSpecifierName as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
@@ -3520,7 +3399,7 @@ export function importStatement(config: ConfigOf<T.ImportStatement>) {
 export function indexSignatureMappedTypeClause(child: T.MappedTypeClause) {
   const children = [child];
   return {
-    $type: 'index_signature_mapped_type_clause' as const,
+    $type: TSKindId._IndexSignatureMappedTypeClause as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -3736,158 +3615,6 @@ export function intersectionType(config: ConfigOf<T.IntersectionType>) {
       return toEdit(this, startOrRange);
     },
     replace(this: AnyNodeData, target: T.IntersectionTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function jsxAttribute(child: (T.JsxAttributeName | T.JsxAttributeValue)) {
-  const children = [child];
-  return {
-    $type: 'jsx_attribute' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.JsxAttributeTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function jsxClosingElement(config?: ConfigOf<T.JsxClosingElement>) {
-  const fields = {
-    name: config?.name,
-  };
-  return {
-    $type: 'jsx_closing_element' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    name(value?: T.JsxElementName | undefined) { return _fs(config, jsxClosingElement, 'name', value, config?.name); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.JsxClosingElementTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function jsxElement(config: ConfigOf<T.JsxElement>) {
-  const fields = {
-    open_tag: config.openTag,
-    close_tag: config.closeTag,
-  };
-  const children = config.children ?? [];
-  return {
-    $type: 'jsx_element' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    $children: children,
-    openTag(value?: T.JsxOpeningElement) { return _fs(config, jsxElement, 'openTag', value, config?.openTag); },
-    closeTag(value?: T.JsxClosingElement) { return _fs(config, jsxElement, 'closeTag', value, config?.closeTag); },
-    children(...items: T.JsxChild[]) {
-      if (items.length === 0) return children;
-      return jsxElement({ ...config, children: items });
-    },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.JsxElementTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function jsxExpression(child?: (T.Expression | T.SequenceExpression | T.SpreadElement)) {
-  const children = child != null ? [child] : [];
-  return {
-    $type: 'jsx_expression' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.JsxExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function jsxIdentifier(text: string) {
-  if (text.length === 0) throw new Error(`jsx_identifier: text must be non-empty`); if (!_leafRe_jsxIdentifier.test(text)) throw new Error(`jsx_identifier: text does not match pattern: ${text}`);
-  return {
-    $type: 'jsx_identifier' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.JsxIdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
-export function jsxNamespaceName(...children: T._JsxIdentifier[]) {
-  return {
-    $type: 'jsx_namespace_name' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.JsxNamespaceNameTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function jsxOpeningElement(config: ConfigOf<T.JsxOpeningElement>) {
-  const fields = {
-    name: config.name,
-    type_arguments: config.typeArguments,
-    attribute: config.attribute,
-  };
-  return {
-    $type: 'jsx_opening_element' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    name(value?: T._JsxIdentifier | T.JsxNamespaceName | T.Identifier | T.NestedIdentifier | undefined) { return _fs(config, jsxOpeningElement, 'name', value, config?.name); },
-    typeArguments(value?: T.TypeArguments | undefined) { return _fs(config, jsxOpeningElement, 'typeArguments', value, config?.typeArguments); },
-    attribute(...values: T._JsxAttribute[]) { return _fsm(config, jsxOpeningElement, 'attribute', values, config?.attribute); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.JsxOpeningElementTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function jsxSelfClosingElement(config: ConfigOf<T.JsxSelfClosingElement>) {
-  const fields = {
-    name: config.name,
-    type_arguments: config.typeArguments,
-    attribute: config.attribute,
-  };
-  return {
-    $type: 'jsx_self_closing_element' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    name(value?: T._JsxIdentifier | T.JsxNamespaceName | T.Identifier | T.NestedIdentifier | undefined) { return _fs(config, jsxSelfClosingElement, 'name', value, config?.name); },
-    typeArguments(value?: T.TypeArguments | undefined) { return _fs(config, jsxSelfClosingElement, 'typeArguments', value, config?.typeArguments); },
-    attribute(...values: T._JsxAttribute[]) { return _fsm(config, jsxSelfClosingElement, 'attribute', values, config?.attribute); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.JsxSelfClosingElementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4571,7 +4298,7 @@ export function pairPattern(config: ConfigOf<T.PairPattern>) {
 export function parenthesizedExpressionSequence(child: T.SequenceExpression) {
   const children = [child];
   return {
-    $type: 'parenthesized_expression_sequence' as const,
+    $type: TSKindId._ParenthesizedExpressionSequence as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -5000,7 +4727,7 @@ export function statementBlock(config: ConfigOf<T.StatementBlock>) {
 
 export function stringDouble(...children: (T.StringFragment | T.EscapeSequence)[]) {
   return {
-    $type: 'string_double' as const,
+    $type: TSKindId._StringDouble as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -5015,7 +4742,7 @@ export function stringDouble(...children: (T.StringFragment | T.EscapeSequence)[
 
 export function stringSingle(...children: (T.StringFragment | T.EscapeSequence)[]) {
   return {
-    $type: 'string_single' as const,
+    $type: TSKindId._StringSingle as number,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -5587,19 +5314,6 @@ export function undefined_() {
   };
 }
 
-export function unescapedDoubleJsxStringFragment(text: string) {
-  if (text.length === 0) throw new Error(`unescaped_double_jsx_string_fragment: text must be non-empty`); if (!_leafRe_unescapedDoubleJsxStringFragment.test(text)) throw new Error(`unescaped_double_jsx_string_fragment: text does not match pattern: ${text}`);
-  return {
-    $type: 'unescaped_double_jsx_string_fragment' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.UnescapedDoubleJsxStringFragmentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
 export function unescapedDoubleStringFragment(text: string) {
   if (text.length === 0) throw new Error(`unescaped_double_string_fragment: text must be non-empty`); if (!_leafRe_unescapedDoubleStringFragment.test(text)) throw new Error(`unescaped_double_string_fragment: text does not match pattern: ${text}`);
   return {
@@ -5610,19 +5324,6 @@ export function unescapedDoubleStringFragment(text: string) {
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.UnescapedDoubleStringFragmentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
-export function unescapedSingleJsxStringFragment(text: string) {
-  if (text.length === 0) throw new Error(`unescaped_single_jsx_string_fragment: text must be non-empty`); if (!_leafRe_unescapedSingleJsxStringFragment.test(text)) throw new Error(`unescaped_single_jsx_string_fragment: text does not match pattern: ${text}`);
-  return {
-    $type: 'unescaped_single_jsx_string_fragment' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.UnescapedSingleJsxStringFragmentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
@@ -5880,7 +5581,7 @@ export function htmlComment(text: string) {
 export function oror(text: string) {
   if (text.length === 0) throw new Error(`||: text must be non-empty`);
   return {
-    $type: '||' as const,
+    $type: TSKindId.PipePipe as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -5966,9 +5667,6 @@ export type FluentKindMap = {
   "_index_signature_mapped_type_clause": FluentNode<"_index_signature_mapped_type_clause", T._IndexSignatureMappedTypeClause.Config>;
   "_initializer": T.Initializer;
   "_interface_body": FluentNode<"_interface_body", T.InterfaceBody.Config>;
-  "_jsx_start_opening_element": T.JsxStartOpeningElement;
-  "_jsx_string": FluentNode<"_jsx_string", T.JsxString.Config>;
-  "_lhs_expression": FluentNode<"_lhs_expression", T.LhsExpression.Config>;
   "_module": T._Module;
   "_number": T._Number;
   "_parameter_name": T.ParameterName;
@@ -5981,10 +5679,8 @@ export type FluentKindMap = {
   "_public_field_definition_declare_first": FluentNode<"_public_field_definition_declare_first", T.PublicFieldDefinitionDeclareFirst.Config>;
   "_public_field_definition_readonly_first": T.PublicFieldDefinitionReadonlyFirst;
   "_public_field_definition_static_mods": T.PublicFieldDefinitionStaticMods;
-  "_reserved_identifier": T.ReservedIdentifier;
   "_statement_identifier": FluentNode<"_statement_identifier", T.StatementIdentifier.Config>;
   "_string_double": FluentNode<"_string_double", T._StringDouble.Config>;
-  "_string_fragment": FluentNode<"_string_fragment", T.StringFragment.Config>;
   "_string_single": FluentNode<"_string_single", T._StringSingle.Config>;
   "_this_type": FluentNode<"_this_type", T.ThisType.Config>;
   "_type_identifier": FluentNode<"_type_identifier", T.TypeIdentifier.Config>;
@@ -6056,7 +5752,6 @@ export type FluentKindMap = {
   "extends_clause": FluentNode<"extends_clause", T.ExtendsClause.Config>;
   "extends_type_clause": FluentNode<"extends_type_clause", T.ExtendsTypeClause.Config>;
   "false": T.False;
-  "field_definition": FluentNode<"field_definition", T.FieldDefinition.Config>;
   "finally_clause": FluentNode<"finally_clause", T.FinallyClause.Config>;
   "flow_maybe_type": FluentNode<"flow_maybe_type", T.FlowMaybeType.Config>;
   "for_in_statement": FluentNode<"for_in_statement", T.ForInStatement.Config>;
@@ -6070,7 +5765,6 @@ export type FluentKindMap = {
   "generator_function_declaration": FluentNode<"generator_function_declaration", T.GeneratorFunctionDeclaration.Config>;
   "generic_type": FluentNode<"generic_type", T.GenericType.Config>;
   "hash_bang_line": T.HashBangLine;
-  "html_character_reference": T.HtmlCharacterReference;
   "identifier": T.Identifier;
   "if_statement": FluentNode<"if_statement", T.IfStatement.Config>;
   "implements_clause": FluentNode<"implements_clause", T.ImplementsClause.Config>;
@@ -6093,14 +5787,6 @@ export type FluentKindMap = {
   "interface_declaration": FluentNode<"interface_declaration", T.InterfaceDeclaration.Config>;
   "internal_module": FluentNode<"internal_module", T.InternalModule.Config>;
   "intersection_type": FluentNode<"intersection_type", T.IntersectionType.Config>;
-  "jsx_attribute": FluentNode<"jsx_attribute", T.JsxAttribute.Config>;
-  "jsx_closing_element": FluentNode<"jsx_closing_element", T.JsxClosingElement.Config>;
-  "jsx_element": FluentNode<"jsx_element", T.JsxElement.Config>;
-  "jsx_expression": FluentNode<"jsx_expression", T.JsxExpression.Config>;
-  "jsx_identifier": T.JsxIdentifier;
-  "jsx_namespace_name": FluentNode<"jsx_namespace_name", T.JsxNamespaceName.Config>;
-  "jsx_opening_element": FluentNode<"jsx_opening_element", T.JsxOpeningElement.Config>;
-  "jsx_self_closing_element": FluentNode<"jsx_self_closing_element", T.JsxSelfClosingElement.Config>;
   "labeled_statement": FluentNode<"labeled_statement", T.LabeledStatement.Config>;
   "lexical_declaration": FluentNode<"lexical_declaration", T.LexicalDeclaration.Config>;
   "literal_type": FluentNode<"literal_type", T.LiteralType.Config>;
@@ -6183,9 +5869,7 @@ export type FluentKindMap = {
   "type_query": FluentNode<"type_query", T.TypeQuery.Config>;
   "unary_expression": FluentNode<"unary_expression", T.UnaryExpression.Config>;
   "undefined": T.Undefined;
-  "unescaped_double_jsx_string_fragment": T.UnescapedDoubleJsxStringFragment;
   "unescaped_double_string_fragment": T.UnescapedDoubleStringFragment;
-  "unescaped_single_jsx_string_fragment": T.UnescapedSingleJsxStringFragment;
   "unescaped_single_string_fragment": T.UnescapedSingleStringFragment;
   "union_type": FluentNode<"union_type", T.UnionType.Config>;
   "update_expression": FluentNode<"update_expression", T.UpdateExpression.Config>;
@@ -6241,9 +5925,6 @@ export const _factoryMap = {
   "_index_signature_mapped_type_clause": _indexSignatureMappedTypeClause,
   "_initializer": _initializer,
   "_interface_body": interfaceBody,
-  "_jsx_start_opening_element": _jsxStartOpeningElement,
-  "_jsx_string": jsxString,
-  "_lhs_expression": lhsExpression,
   "_module": _module,
   "_number": _number,
   "_parameter_name": _parameterName,
@@ -6256,10 +5937,8 @@ export const _factoryMap = {
   "_public_field_definition_declare_first": publicFieldDefinitionDeclareFirst,
   "_public_field_definition_readonly_first": _publicFieldDefinitionReadonlyFirst,
   "_public_field_definition_static_mods": _publicFieldDefinitionStaticMods,
-  "_reserved_identifier": reservedIdentifier,
   "_statement_identifier": statementIdentifier,
   "_string_double": _stringDouble,
-  "_string_fragment": stringFragment,
   "_string_single": _stringSingle,
   "_this_type": thisType,
   "_type_identifier": typeIdentifier,
@@ -6331,7 +6010,6 @@ export const _factoryMap = {
   "extends_clause": extendsClause,
   "extends_type_clause": extendsTypeClause,
   "false": false_,
-  "field_definition": fieldDefinition,
   "finally_clause": finallyClause,
   "flow_maybe_type": flowMaybeType,
   "for_in_statement": forInStatement,
@@ -6345,7 +6023,6 @@ export const _factoryMap = {
   "generator_function_declaration": generatorFunctionDeclaration,
   "generic_type": genericType,
   "hash_bang_line": hashBangLine,
-  "html_character_reference": htmlCharacterReference,
   "identifier": identifier,
   "if_statement": ifStatement,
   "implements_clause": implementsClause,
@@ -6368,14 +6045,6 @@ export const _factoryMap = {
   "interface_declaration": interfaceDeclaration,
   "internal_module": internalModule,
   "intersection_type": intersectionType,
-  "jsx_attribute": jsxAttribute,
-  "jsx_closing_element": jsxClosingElement,
-  "jsx_element": jsxElement,
-  "jsx_expression": jsxExpression,
-  "jsx_identifier": jsxIdentifier,
-  "jsx_namespace_name": jsxNamespaceName,
-  "jsx_opening_element": jsxOpeningElement,
-  "jsx_self_closing_element": jsxSelfClosingElement,
   "labeled_statement": labeledStatement,
   "lexical_declaration": lexicalDeclaration,
   "literal_type": literalType,
@@ -6458,9 +6127,7 @@ export const _factoryMap = {
   "type_query": typeQuery,
   "unary_expression": unaryExpression,
   "undefined": undefined_,
-  "unescaped_double_jsx_string_fragment": unescapedDoubleJsxStringFragment,
   "unescaped_double_string_fragment": unescapedDoubleStringFragment,
-  "unescaped_single_jsx_string_fragment": unescapedSingleJsxStringFragment,
   "unescaped_single_string_fragment": unescapedSingleStringFragment,
   "union_type": unionType,
   "update_expression": updateExpression,

@@ -339,7 +339,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
         let kind_id: u16 = obj.get("$type")?
             .ok_or_else(|| ::napi::Error::from_reason("$type property missing in AnyTransport"))?;
         match kind_id {
-            // kind: _as_pattern (__AS_PATTERN)
+            // kind: _as_pattern (_AS_PATTERN)
             165 => Ok(AnyTransport::_AsPattern(
                 _AsPatternTransport::from_napi_value(env, napi_val)?
             )),
@@ -383,7 +383,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             250 => Ok(AnyTransport::KwAsyncMarker(
                 KwAsyncMarkerTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _list_pattern (__LIST_PATTERN)
+            // kind: _list_pattern (_LIST_PATTERN)
             167 => Ok(AnyTransport::_ListPattern(
                 _ListPatternTransport::from_napi_value(env, napi_val)?
             )),
@@ -411,11 +411,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             110 => Ok(AnyTransport::SimpleStatements(
                 SimpleStatementsTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _tuple_pattern (__TUPLE_PATTERN)
+            // kind: _tuple_pattern (_TUPLE_PATTERN)
             168 => Ok(AnyTransport::_TuplePattern(
                 _TuplePatternTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _with_clause_paren (__WITH_CLAUSE_PAREN)
+            // kind: _with_clause_paren (_WITH_CLAUSE_PAREN)
             245 => Ok(AnyTransport::_WithClauseParen(
                 _WithClauseParenTransport::from_napi_value(env, napi_val)?
             )),
@@ -923,7 +923,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             104 => Ok(AnyTransport::StringStart(
                 StringStartTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _string_content (__STRING_CONTENT)
+            // kind: _string_content (_STRING_CONTENT)
             105 => Ok(AnyTransport::_StringContent(
                 _StringContentTransport::from_napi_value(env, napi_val)?
             )),
@@ -1115,7 +1115,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             5 => Ok(AnyTransport::From(
                 FromTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: __future__ (_FUTURE_U)
+            // kind: __future__ (__FUTURE_U)
             6 => Ok(AnyTransport::FutureU(
                 FutureUTransport::from_napi_value(env, napi_val)?
             )),

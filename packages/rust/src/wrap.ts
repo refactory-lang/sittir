@@ -388,13 +388,6 @@ export function wrap_ModItemInline(data: _NodeData, tree: TreeHandle): WrappedNo
   } as unknown as WrappedNode<_ModItemInline>;
 }
 
-export function wrapNonSpecialToken(data: _NodeData, tree: TreeHandle): WrappedNode<NonSpecialToken> {
-  return {
-    ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<NonSpecialToken>;
-}
-
 export function wrap_PointerTypeMut(data: _NodeData, tree: TreeHandle): WrappedNode<_PointerTypeMut> {
   return {
     ...data,
@@ -420,26 +413,12 @@ export function wrapReferenceExpressionRawMut(data: _NodeData, tree: TreeHandle)
   } as unknown as WrappedNode<ReferenceExpressionRawMut>;
 }
 
-export function wrapReservedIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<ReservedIdentifier> {
-  return {
-    ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<ReservedIdentifier>;
-}
-
 export function wrapShorthandFieldIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<ShorthandFieldIdentifier> {
   return {
     ...data,
     $type: TSKindId.ShorthandFieldIdentifier as number,
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ShorthandFieldIdentifier>;
-}
-
-export function wrap_StringContent(data: _NodeData, tree: TreeHandle): WrappedNode<_StringContent> {
-  return {
-    ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<_StringContent>;
 }
 
 export function wrap_TokenTreeBrace(data: _NodeData, tree: TreeHandle): WrappedNode<_TokenTreeBrace> {
@@ -708,13 +687,6 @@ export function wrapClosureParameters(data: _NodeData, tree: TreeHandle): Wrappe
     $type: TSKindId.ClosureParameters as number,
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ClosureParameters>;
-}
-
-export function wrapComment(data: _NodeData, tree: TreeHandle): WrappedNode<Comment> {
-  return {
-    ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<Comment>;
 }
 
 export function wrapCompoundAssignmentExpr(data: _NodeData, tree: TreeHandle): WrappedNode<CompoundAssignmentExpr> {
@@ -2031,7 +2003,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_delim_token_tree_brace': (d, t) => wrap_DelimTokenTreeBrace(d, t),
   '_delim_token_tree_bracket': (d, t) => wrap_DelimTokenTreeBracket(d, t),
   '_delim_token_tree_paren': (d, t) => wrap_DelimTokenTreeParen(d, t),
-  '_doc_comment': (d) => d,
   '_expression_statement_block_ending': (d, t) => wrap_ExpressionStatementBlockEnding(d, t),
   '_expression_statement_with_semi': (d, t) => wrap_ExpressionStatementWithSemi(d, t),
   '_field_identifier': (d, t) => wrapFieldIdentifier(d, t),
@@ -2040,9 +2011,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_function_type_fn_form': (d, t) => wrapFunctionTypeFnForm(d, t),
   '_function_type_trait_form': (d, t) => wrapFunctionTypeTraitForm(d, t),
   '_impl_item_body': (d, t) => wrap_ImplItemBody(d, t),
-  '_kw_async_marker': (d) => d,
   '_kw_move_marker': (d) => ({ ...d, $type: TSKindId.KwMoveMarker as number }),
-  '_kw_ref_marker': (d) => d,
   '_kw_static_marker': (d) => ({ ...d, $type: TSKindId.KwStaticMarker as number }),
   '_kw_unsafe_marker': (d) => ({ ...d, $type: TSKindId.KwUnsafeMarker as number }),
   '_let_chain': (d, t) => wrapLetChain(d, t),
@@ -2053,16 +2022,12 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_macro_definition_paren': (d, t) => wrap_MacroDefinitionParen(d, t),
   '_match_arm_block_ending': (d, t) => wrap_MatchArmBlockEnding(d, t),
   '_mod_item_inline': (d, t) => wrap_ModItemInline(d, t),
-  '_non_special_token': (d, t) => wrapNonSpecialToken(d, t),
   '_pointer_type_const': (d) => ({ ...d, $type: TSKindId.PointerTypeConst as number }),
   '_pointer_type_mut': (d, t) => wrap_PointerTypeMut(d, t),
-  '_primitive_type': (d) => d,
   '_range_expression_bare': (d, t) => wrap_RangeExpressionBare(d, t),
   '_reference_expression_raw_const': (d) => ({ ...d, $type: TSKindId.ReferenceExpressionRawConst as number }),
   '_reference_expression_raw_mut': (d, t) => wrapReferenceExpressionRawMut(d, t),
-  '_reserved_identifier': (d, t) => wrapReservedIdentifier(d, t),
   '_shorthand_field_identifier': (d, t) => wrapShorthandFieldIdentifier(d, t),
-  '_string_content': (d, t) => wrap_StringContent(d, t),
   '_token_tree_brace': (d, t) => wrap_TokenTreeBrace(d, t),
   '_token_tree_bracket': (d, t) => wrap_TokenTreeBracket(d, t),
   '_token_tree_paren': (d, t) => wrap_TokenTreeParen(d, t),
@@ -2096,7 +2061,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'closure_expression_expr': (d, t) => wrapClosureExpressionExpr(d, t),
   'closure_expression': (d, t) => wrapClosureExpression(d, t),
   'closure_parameters': (d, t) => wrapClosureParameters(d, t),
-  'comment': (d, t) => wrapComment(d, t),
   'compound_assignment_expr': (d, t) => wrapCompoundAssignmentExpr(d, t),
   'const_block': (d, t) => wrapConstBlock(d, t),
   'const_item': (d, t) => wrapConstItem(d, t),

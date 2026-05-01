@@ -8,7 +8,9 @@ import type { AssembledNode, AssembledField } from '../compiler/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	collectKindEntries,
+	collectCatalogKinds,
 	kindDiscriminantExpr,
+	hasCatalogEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import {
@@ -52,14 +54,18 @@ function testTypeDiscriminant(
 	nodeMap: NodeMap
 ): string {
 	if (!kindEntries) return `'${kind}'`;
-	const hasEntry = kindEntries.some((e) => e.kind === kind);
-	if (!hasEntry) return `'${kind}'`;
+	if (!hasCatalogEntry(kindEntries, kind)) return `'${kind}'`;
 	return kindDiscriminantExpr(kind, nodeMap, kindEntries);
 }
 
 export function emitTests(config: EmitTestsConfig): string {
 	const { nodeMap } = config;
-	const allKinds = Array.from(nodeMap.nodes.keys());
+	// Use catalog kinds (parser-symbol universe) as the basis for kindEntries.
+	// TSGrammar-only kinds (no parser symbol) are excluded from the catalog
+	// and therefore have no factory to test.
+	const allKinds = config.generatedIdTables
+		? collectCatalogKinds(config.generatedIdTables)
+		: Array.from(nodeMap.nodes.keys());
 	const kindEntries = config.generatedIdTables
 		? collectKindEntries(allKinds, nodeMap, config.generatedIdTables)
 		: undefined;
@@ -78,6 +84,9 @@ export function emitTests(config: EmitTestsConfig): string {
 	for (const [kind, node] of nodeMap.nodes) {
 		if (kind.startsWith('_')) continue;
 		if (!node.factoryName) continue;
+		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
+		// never appear at runtime; no factory was emitted for them, so no test.
+		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const key = node.irKey;
 		if (!key) continue; // synthesised group or skipped kind
 		// Skip kinds whose irKey isn't a valid JS identifier — those are
@@ -148,7 +157,7 @@ function emitBranchTest(
 	const typeConfigParts: string[] = [];
 	for (const f of node.fields) {
 		if (isRequired(f) && !isAutoStampField(f, nodeMap)) {
-			typeConfigParts.push(`${f.propertyName}: ${dummyValue(f, nodeMap)}`);
+			typeConfigParts.push(`${f.propertyName}: ${dummyValue(f, nodeMap, kindEntries)}`);
 		}
 	}
 	if (node.children && node.children.length > 0) {
@@ -157,8 +166,10 @@ function emitBranchTest(
 		);
 		if (hasNonAutoStampRequired) {
 			const firstKind = slotKindNames(node.children[0]!)[0];
-			const dummy = firstKind
-				? `{ $type: '${firstKind}', $text: 'test', $source: 'factory', $named: true } as any`
+			const concrete = firstKind ? resolveConcreteKind(firstKind, nodeMap, kindEntries) : undefined;
+			const dummyText = concrete ? dummyTextForKind(concrete, nodeMap) : 'test';
+			const dummy = concrete
+				? `{ $type: '${concrete}', $text: '${dummyText}', $source: 'factory', $named: true } as any`
 				: `'test' as any`;
 			typeConfigParts.push(`children: [${dummy}] as any`);
 		}
@@ -170,8 +181,10 @@ function emitBranchTest(
 		!renderConfigParts.some((p) => p.startsWith('children'))
 	) {
 		const firstKind = slotKindNames(node.children[0]!)[0];
-		const dummy = firstKind
-			? `{ $type: '${firstKind}', $text: 'test', $source: 'factory', $named: true } as any`
+		const concrete = firstKind ? resolveConcreteKind(firstKind, nodeMap, kindEntries) : undefined;
+		const dummyText = concrete ? dummyTextForKind(concrete, nodeMap) : 'test';
+		const dummy = concrete
+			? `{ $type: '${concrete}', $text: '${dummyText}', $source: 'factory', $named: true } as any`
 			: `'test' as any`;
 		renderConfigParts.push(`children: [${dummy}] as any`);
 	}
@@ -285,13 +298,15 @@ function emitPolymorphTest(
 		if (hoist) allFields.push(...hoist.innerFields);
 		const configParts = allFields
 			.filter((f) => isRequired(f) && !isAutoStampField(f, nodeMap))
-			.map((f) => `${f.propertyName}: ${dummyValue(f, nodeMap)}`);
+			.map((f) => `${f.propertyName}: ${dummyValue(f, nodeMap, kindEntries)}`);
 		// Container-shaped hoist targets: inner factory accepts `...children`
 		// via the form's `children` surface. The inner container may assert
 		// non-empty so supply a single dummy child of the slot's first kind.
 		if (hoist && hoist.innerFields.length === 0) {
 			const innerChildNonEmpty = resolveInnerContainerNonEmptyChild(
-				hoist.innerNode
+				hoist.innerNode,
+				nodeMap,
+				kindEntries
 			);
 			if (innerChildNonEmpty)
 				configParts.push(`children: [${innerChildNonEmpty}]`);
@@ -453,6 +468,90 @@ function emitEnumTest(
 }
 
 /**
+ * Resolve a slot kind name to the first concrete (parser-symbol-bearing)
+ * kind, expanding supertypes recursively.
+ *
+ * @remarks
+ * Test stubs that construct `{ $type: '<kind>', ... }` children need the
+ * kind to have a numeric TSKindId so `assertTransportValue` can match it.
+ * Supertype kinds (e.g. `_expression`) and TSGrammar-only inlined rules
+ * have no parser symbol — passing them as `$type` strings will fail the
+ * transport validator. This function descends into subtypes until it
+ * finds a concrete kind that has a factory and (when kindEntries is
+ * provided) a parser symbol. Falls back to the input kind when no
+ * concrete descendant is found.
+ *
+ * @param kind - Starting kind name (may be a supertype or TSGrammar-only kind).
+ * @param nodeMap - Assembled node map for subtype lookup.
+ * @param kindEntries - Parser-symbol catalog; when provided, skips kinds
+ *   that lack a parser symbol.
+ * @returns A concrete kind name suitable for use as a `$type` string in
+ *   a test dummy node, or the input kind if no concrete alternative exists.
+ */
+/**
+ * Resolve a slot kind to a safe leaf stub kind for test dummy nodes.
+ *
+ * @remarks
+ * Transport validators recurse into child stubs via `assertNativeRenderTransport`.
+ * Branch stubs (e.g. `unary_expression`) must satisfy all required fields/children
+ * or the recursive validator throws. Only leaf/keyword/enum/token kinds accept a
+ * plain `{ $type, $text, $source }` stub without further structure.
+ *
+ * Priority (BFS over supertype subtypes):
+ * 1. A leaf/keyword/enum/token that has a parser symbol — safe as `$text`-only stub.
+ * 2. A branch/container/polymorph with a parser symbol and NO required fields/children —
+ *    safe with an empty `$fields: {}` stub (not currently used, but future-proof).
+ * 3. If the kind itself is concrete and has no parser symbol (TSGrammar-only virtual
+ *    supertype like `comment`), fall back to the grammar-level safe leaf kind
+ *    (`identifier` if present, else the input kind).
+ *
+ * Falls back to `identifier` when no suitable leaf is reachable from the kind.
+ * `identifier` is present in every grammar and has a transport validator that
+ * only requires `$text`.
+ */
+function resolveConcreteKind(
+	kind: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	const seen = new Set<string>();
+	const nonLeafCandidates: string[] = [];
+	const queue = [kind];
+	while (queue.length > 0) {
+		const current = queue.shift()!;
+		if (seen.has(current)) continue;
+		seen.add(current);
+		const node = nodeMap.nodes.get(current);
+		if (!node) continue;
+		// Supertypes: expand to subtypes.
+		if (node.modelType === 'supertype') {
+			queue.push(...node.subtypes);
+			continue;
+		}
+		// TSGrammar-only: skip when kindEntries present and this kind has no parser symbol.
+		if (kindEntries && !hasCatalogEntry(kindEntries, current)) continue;
+		// Prefer text-only-compatible kinds — safe as `$text`-only stubs.
+		if (
+			node.modelType === 'leaf' ||
+			node.modelType === 'keyword' ||
+			node.modelType === 'enum' ||
+			node.modelType === 'token'
+		) {
+			return current;
+		}
+		nonLeafCandidates.push(current);
+	}
+	// Use a known-safe fallback: `identifier` only requires `$text` in the
+	// transport validator and is present in every tree-sitter grammar. When
+	// `identifier` is not in the nodeMap (unusual), use the first non-leaf
+	// concrete kind we found; as a last resort return the input.
+	if (nodeMap.nodes.has('identifier') && (!kindEntries || hasCatalogEntry(kindEntries, 'identifier'))) {
+		return 'identifier';
+	}
+	return nonLeafCandidates[0] ?? kind;
+}
+
+/**
  * Synthesize a dummy-child expression for a container-shaped hoisted
  * polymorph-form inner node whose first child slot is required and
  * non-empty, so the auto-generated polymorph form test doesn't fail
@@ -467,7 +566,9 @@ function emitEnumTest(
  * kind is available.
  */
 function resolveInnerContainerNonEmptyChild(
-	innerNode: AssembledNode
+	innerNode: AssembledNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
 ): string | null {
 	// Only container-shaped inners go through this path — others surface
 	// their data via fields.
@@ -478,10 +579,16 @@ function resolveInnerContainerNonEmptyChild(
 	if (!firstRequired) return null;
 	const kinds = slotKindNames(firstRequired);
 	if (kinds.length === 0) return null;
-	return `{ $type: '${kinds[0]}', $text: 'test', $source: 'factory', $named: true } as any`;
+	const concrete = resolveConcreteKind(kinds[0]!, nodeMap, kindEntries);
+	const dummyText = dummyTextForKind(concrete, nodeMap);
+	return `{ $type: '${concrete}', $text: '${dummyText}', $source: 'factory', $named: true } as any`;
 }
 
-function dummyValue(field: AssembledField, nodeMap?: NodeMap): string {
+function dummyValue(
+	field: AssembledField,
+	nodeMap?: NodeMap,
+	kindEntries?: readonly KindEnumEntry[]
+): string {
 	// Keyword-presence brands (boolean / bitflag) take a number / scalar at
 	// the Config surface, not a NodeData / array. Pre-empt the generic
 	// structural fallback below.
@@ -497,13 +604,39 @@ function dummyValue(field: AssembledField, nodeMap?: NodeMap): string {
 	const kinds = slotKindNames(field);
 	if (isMultiple(field)) {
 		if (kinds.length > 0) {
-			return `[{ $type: '${kinds[0]}', $text: 'test', $source: 'factory', $named: true } as any]`;
+			const concrete = nodeMap
+				? resolveConcreteKind(kinds[0]!, nodeMap, kindEntries)
+				: kinds[0]!;
+			const dummyText = nodeMap ? dummyTextForKind(concrete, nodeMap) : 'test';
+			return `[{ $type: '${concrete}', $text: '${dummyText}', $source: 'factory', $named: true } as any]`;
 		}
 		return `['test' as any]`;
 	}
 	if (kinds.length > 0) {
-		// Use first content type to generate a dummy
-		return `{ $type: '${kinds[0]}', $text: 'test', $source: 'factory', $named: true } as any`;
+		const concrete = nodeMap
+			? resolveConcreteKind(kinds[0]!, nodeMap, kindEntries)
+			: kinds[0]!;
+		const dummyText = nodeMap ? dummyTextForKind(concrete, nodeMap) : 'test';
+		return `{ $type: '${concrete}', $text: '${dummyText}', $source: 'factory', $named: true } as any`;
 	}
 	return "'test' as any";
+}
+
+/**
+ * Returns a safe `$text` value for a stub node of the given kind.
+ *
+ * @remarks
+ * Keyword kinds have a fixed text (e.g. `type`, `fn`, `async`) — using
+ * a keyword stub with `$text: 'test'` fails transport validation because
+ * `assertTextIn` enforces the exact keyword string. For non-keyword kinds
+ * (leaves, enums, branches), `'test'` is accepted since their validators
+ * either have no text constraint or accept arbitrary strings.
+ */
+function dummyTextForKind(kind: string, nodeMap: NodeMap): string {
+	const node = nodeMap.nodes.get(kind);
+	if (!node) return 'test';
+	if (node.modelType === 'keyword') return node.text;
+	if (node.modelType === 'enum' && node.values.length > 0) return node.values[0]!;
+	if (node.modelType === 'token' && node.text !== undefined) return node.text;
+	return 'test';
 }

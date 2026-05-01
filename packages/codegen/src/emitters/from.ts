@@ -13,6 +13,7 @@ import {
 	collectKindEntries,
 	collectCatalogKinds,
 	kindDiscriminantExpr,
+	hasCatalogEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import type {
@@ -218,6 +219,9 @@ function collectPerNodeFromBlocks(
 	for (const [kind, node] of nodeMap.nodes) {
 		if (kind.startsWith('_')) continue;
 		if (nodeMap.polymorphFormKinds.has(kind)) continue;
+		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
+		// never appear at runtime; from() resolvers for them are dead code.
+		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const source = renderFromForNode(node, nodeMap, internKinds, kindEntries);
 		if (source === undefined) continue;
 		perNodeBlocks.push(source);
@@ -244,7 +248,11 @@ function collectPerNodeFromBlocks(
  * @param lines - Output lines array to push into.
  * @param nodeMap - The assembled node map.
  */
-function emitFromMapDeclaration(lines: string[], nodeMap: NodeMap): void {
+function emitFromMapDeclaration(
+	lines: string[],
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): void {
 	lines.push('export const _fromMap = {');
 	for (const [kind, node] of nodeMap.nodes) {
 		if (kind.startsWith('_')) continue;
@@ -256,6 +264,9 @@ function emitFromMapDeclaration(lines: string[], nodeMap: NodeMap): void {
 		)
 			continue;
 		if (!node.fromFunctionName) continue;
+		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
+		// never appear at runtime; no from() was emitted for them.
+		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		lines.push(`  ${JSON.stringify(kind)}: ${node.fromFunctionName},`);
 	}
 	lines.push('} as const;');
@@ -329,11 +340,11 @@ export function emitFrom(config: EmitFromConfig): string {
 
 	const perNodeBlocks = collectPerNodeFromBlocks(nodeMap, internKinds, kindEntries);
 
-	emitFromMapDeclaration(lines, nodeMap);
+	emitFromMapDeclaration(lines, nodeMap, kindEntries);
 
 	// Loose-input resolver scaffolding — references `_fromMap` /
 	// `_FromMap` above and every per-kind `fromX` defined below.
-	emitResolverHelpers(lines, nodeMap);
+	emitResolverHelpers(lines, nodeMap, kindEntries);
 	lines.push('');
 
 	emitInternedKindTable(lines, namedEntries, kindTableLiterals);
@@ -791,8 +802,7 @@ function containerTypeCheck(
 	nodeMap: NodeMap
 ): string {
 	if (!kindEntries) return `'${kind}'`;
-	const hasEntry = kindEntries.some((e) => e.kind === kind);
-	if (!hasEntry) return `'${kind}'`;
+	if (!hasCatalogEntry(kindEntries, kind)) return `'${kind}'`;
 	return kindDiscriminantExpr(kind, nodeMap, kindEntries);
 }
 
@@ -1599,11 +1609,17 @@ function keywordPresenceResolverCall(
  * @param nodeMap - The assembled node map.
  * @returns Array of registry entry source strings to push into the `_leafRegistry` literal.
  */
-function buildLeafRegistryEntries(nodeMap: NodeMap): string[] {
+function buildLeafRegistryEntries(
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string[] {
 	const registryEntries: string[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
 		if (kind.startsWith('_')) continue;
 		if (!node.rawFactoryName) continue;
+		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
+		// never appear at runtime; no factory was emitted for them.
+		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const factory = `F.${node.rawFactoryName}`;
 		if (node.modelType === 'enum') {
 			const values = node.values.map((v) => JSON.stringify(v)).join(', ');
@@ -1765,8 +1781,12 @@ function emitAssertNonEmptyHelper(lines: string[]): void {
 	lines.push('}');
 }
 
-function emitResolverHelpers(lines: string[], nodeMap: NodeMap): void {
-	const registryEntries = buildLeafRegistryEntries(nodeMap);
+function emitResolverHelpers(
+	lines: string[],
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): void {
+	const registryEntries = buildLeafRegistryEntries(nodeMap, kindEntries);
 
 	lines.push('// --- Loose-input resolver helpers (see C6-prereq) ---');
 	lines.push('interface _LeafEntry {');

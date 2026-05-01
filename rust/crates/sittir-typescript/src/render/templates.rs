@@ -506,11 +506,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
         let kind_id: u16 = obj.get("$type")?
             .ok_or_else(|| ::napi::Error::from_reason("$type property missing in AnyTransport"))?;
         match kind_id {
-            // kind: _arrow_function__call_signature (__ARROW_FUNCTION_U_CALL_SIGNATURE)
+            // kind: _arrow_function__call_signature (_ARROW_FUNCTION_U_CALL_SIGNATURE)
             357 => Ok(AnyTransport::_ArrowFunctionUCallSignature(
                 _ArrowFunctionUCallSignatureTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _arrow_function_parameter (__ARROW_FUNCTION_PARAMETER)
+            // kind: _arrow_function_parameter (_ARROW_FUNCTION_PARAMETER)
             356 => Ok(AnyTransport::_ArrowFunctionParameter(
                 _ArrowFunctionParameterTransport::from_napi_value(env, napi_val)?
             )),
@@ -526,7 +526,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             388 => Ok(AnyTransport::CallExpressionTemplateCall(
                 CallExpressionTemplateCallTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _call_signature (__CALL_SIGNATURE)
+            // kind: _call_signature (_CALL_SIGNATURE)
             228 => Ok(AnyTransport::_CallSignature(
                 _CallSignatureTransport::from_napi_value(env, napi_val)?
             )),
@@ -542,11 +542,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             372 => Ok(AnyTransport::ClassBodyMethodSig(
                 ClassBodyMethodSigTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _class_heritage_extends_clause (__CLASS_HERITAGE_EXTENDS_CLAUSE)
+            // kind: _class_heritage_extends_clause (_CLASS_HERITAGE_EXTENDS_CLAUSE)
             358 => Ok(AnyTransport::_ClassHeritageExtendsClause(
                 _ClassHeritageExtendsClauseTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _class_heritage_implements_clause (__CLASS_HERITAGE_IMPLEMENTS_CLAUSE)
+            // kind: _class_heritage_implements_clause (_CLASS_HERITAGE_IMPLEMENTS_CLAUSE)
             359 => Ok(AnyTransport::_ClassHeritageImplementsClause(
                 _ClassHeritageImplementsClauseTransport::from_napi_value(env, napi_val)?
             )),
@@ -578,15 +578,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             367 => Ok(AnyTransport::ExportStatementDefaultFromArmStarFrom(
                 ExportStatementDefaultFromArmStarFromTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _export_statement_equals_export (__EXPORT_STATEMENT_EQUALS_EXPORT)
+            // kind: _export_statement_equals_export (_EXPORT_STATEMENT_EQUALS_EXPORT)
             385 => Ok(AnyTransport::_ExportStatementEqualsExport(
                 _ExportStatementEqualsExportTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _export_statement_namespace_export (__EXPORT_STATEMENT_NAMESPACE_EXPORT)
+            // kind: _export_statement_namespace_export (_EXPORT_STATEMENT_NAMESPACE_EXPORT)
             386 => Ok(AnyTransport::_ExportStatementNamespaceExport(
                 _ExportStatementNamespaceExportTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _export_statement_type_export (__EXPORT_STATEMENT_TYPE_EXPORT)
+            // kind: _export_statement_type_export (_EXPORT_STATEMENT_TYPE_EXPORT)
             384 => Ok(AnyTransport::_ExportStatementTypeExport(
                 _ExportStatementTypeExportTransport::from_napi_value(env, napi_val)?
             )),
@@ -614,15 +614,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             176 => Ok(AnyTransport::FromClause(
                 FromClauseTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _import_clause_default_import (__IMPORT_CLAUSE_DEFAULT_IMPORT)
+            // kind: _import_clause_default_import (_IMPORT_CLAUSE_DEFAULT_IMPORT)
             362 => Ok(AnyTransport::_ImportClauseDefaultImport(
                 _ImportClauseDefaultImportTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _import_clause_named_imports (__IMPORT_CLAUSE_NAMED_IMPORTS)
+            // kind: _import_clause_named_imports (_IMPORT_CLAUSE_NAMED_IMPORTS)
             361 => Ok(AnyTransport::_ImportClauseNamedImports(
                 _ImportClauseNamedImportsTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _import_clause_namespace_import (__IMPORT_CLAUSE_NAMESPACE_IMPORT)
+            // kind: _import_clause_namespace_import (_IMPORT_CLAUSE_NAMESPACE_IMPORT)
             360 => Ok(AnyTransport::_ImportClauseNamespaceImport(
                 _ImportClauseNamespaceImportTransport::from_napi_value(env, napi_val)?
             )),
@@ -630,7 +630,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             364 => Ok(AnyTransport::ImportSpecifierAs(
                 ImportSpecifierAsTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _import_specifier_name (__IMPORT_SPECIFIER_NAME)
+            // kind: _import_specifier_name (_IMPORT_SPECIFIER_NAME)
             363 => Ok(AnyTransport::_ImportSpecifierName(
                 _ImportSpecifierNameTransport::from_napi_value(env, napi_val)?
             )),
@@ -638,7 +638,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             365 => Ok(AnyTransport::IndexSignatureColon(
                 IndexSignatureColonTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _index_signature_mapped_type_clause (__INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE)
+            // kind: _index_signature_mapped_type_clause (_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE)
             366 => Ok(AnyTransport::_IndexSignatureMappedTypeClause(
                 _IndexSignatureMappedTypeClauseTransport::from_napi_value(env, napi_val)?
             )),
@@ -666,11 +666,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             378 => Ok(AnyTransport::KwStaticMarker(
                 KwStaticMarkerTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _module (__MODULE)
+            // kind: _module (_MODULE)
             285 => Ok(AnyTransport::_Module(
                 _ModuleTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _number (__NUMBER)
+            // kind: _number (_NUMBER)
             331 => Ok(AnyTransport::_Number(
                 _NumberTransport::from_napi_value(env, napi_val)?
             )),
@@ -678,7 +678,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             298 => Ok(AnyTransport::ParameterName(
                 ParameterNameTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _parenthesized_expression_sequence (__PARENTHESIZED_EXPRESSION_SEQUENCE)
+            // kind: _parenthesized_expression_sequence (_PARENTHESIZED_EXPRESSION_SEQUENCE)
             383 => Ok(AnyTransport::_ParenthesizedExpressionSequence(
                 _ParenthesizedExpressionSequenceTransport::from_napi_value(env, napi_val)?
             )),
@@ -718,11 +718,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             428 => Ok(AnyTransport::StatementIdentifier(
                 StatementIdentifierTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _string_double (__STRING_DOUBLE)
+            // kind: _string_double (_STRING_DOUBLE)
             390 => Ok(AnyTransport::_StringDouble(
                 _StringDoubleTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _string_single (__STRING_SINGLE)
+            // kind: _string_single (_STRING_SINGLE)
             391 => Ok(AnyTransport::_StringSingle(
                 _StringSingleTransport::from_napi_value(env, napi_val)?
             )),
@@ -1550,7 +1550,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             164 => Ok(AnyTransport::FunctionSignatureAutomaticSemicolon(
                 FunctionSignatureAutomaticSemicolonTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: __error_recovery (_ERROR_RECOVERY)
+            // kind: __error_recovery (__ERROR_RECOVERY)
             165 => Ok(AnyTransport::ErrorRecovery(
                 ErrorRecoveryTransport::from_napi_value(env, napi_val)?
             )),

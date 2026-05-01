@@ -14,6 +14,7 @@ import {
 	collectCatalogKinds,
 	kindDiscriminantExpr,
 	kindIdMemberName,
+	hasCatalogEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import {
@@ -127,7 +128,7 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	const aliasSourceKinds = collectAliasSourceKinds(nodeMap);
 	emitPerNodeFactories(nodeMap, strict, aliasSourceKinds, leafReConsts, kindEntries, lines);
 
-	const mapEntries = buildFactoryMapEntries(nodeMap, aliasSourceKinds);
+	const mapEntries = buildFactoryMapEntries(nodeMap, aliasSourceKinds, kindEntries);
 
 	lines.push(...emitFluentKindMap(mapEntries));
 	lines.push('');
@@ -488,10 +489,16 @@ function factoryTypeDiscriminant(
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
 	if (!kindEntries) return `'${kind}' as const`;
-	// TSGrammar-only kinds (inlined by the parser, never in kindEntries) fall
-	// back to string literal — they can't carry a runtime TSKindId.
-	const hasEntry = kindEntries.some((e) => e.kind === kind);
-	if (!hasEntry) return `'${kind}' as const`;
+	// All factory-emitting kinds must have a parser symbol. If kindEntries is
+	// present and this kind is absent, it's a TSGrammar-only kind that should
+	// have been filtered before reaching here — throw loudly so the emitter
+	// bug is surfaced at codegen time rather than producing a string $type.
+	if (!hasCatalogEntry(kindEntries, kind)) {
+		throw new Error(
+			`factoryTypeDiscriminant: kind '${kind}' has no parser symbol (TSGrammar-only). ` +
+				`Filter this kind at the emitter entry point before calling factoryTypeDiscriminant.`
+		);
+	}
 	// Cast to number: TypeScript infers const-enum members as the enum type
 	// (e.g. `TSKindId`), not as `number`. The factory return object literal
 	// needs `$type: number` for compatibility with `AnyNodeData.$type: number`
@@ -541,6 +548,10 @@ function emitPerNodeFactories(
 		// also skips emitting those aliases). Lockstep with
 		// `buildFactoryMapEntries` and `emitLeafTerminalAliases`.
 		if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) continue;
+		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined this rule
+		// during parser compilation) can never appear at runtime. Skip factory
+		// emission entirely — factories / wrap / validators for them are dead code.
+		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const source = renderFactoryForNode(node, strict, nodeMap, leafReConsts, kindEntries);
 		if (source === undefined) continue;
 		lines.push(source);
@@ -577,7 +588,8 @@ function emitPerNodeFactories(
  */
 function buildFactoryMapEntries(
 	nodeMap: NodeMap,
-	_aliasSourceKinds: Set<string>
+	_aliasSourceKinds: Set<string>,
+	kindEntries?: readonly KindEnumEntry[]
 ): MapEntry[] {
 	const mapEntries: MapEntry[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
@@ -599,6 +611,10 @@ function buildFactoryMapEntries(
 		// after types.ts skipped emitting those aliases. Lockstep with
 		// `emitLeafTerminalAliases` / `emitTreeInterfaceDeclarations`.
 		if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) continue;
+		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
+		// never appear at runtime; no factory was emitted for them, so no map
+		// entry either. Lockstep with emitPerNodeFactories.
+		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const fluent =
 			node.modelType === 'branch' ||
 			node.modelType === 'container' ||

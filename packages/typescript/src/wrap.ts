@@ -416,20 +416,6 @@ export function wrapInterfaceBody(data: _NodeData, tree: TreeHandle): WrappedNod
   } as unknown as WrappedNode<InterfaceBody>;
 }
 
-export function wrapJsxString(data: _NodeData, tree: TreeHandle): WrappedNode<JsxString> {
-  return {
-    ...data,
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<JsxString>;
-}
-
-export function wrapLhsExpression(data: _NodeData, tree: TreeHandle): WrappedNode<LhsExpression> {
-  return {
-    ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<LhsExpression>;
-}
-
 export function wrap_ParenthesizedExpressionSequence(data: _NodeData, tree: TreeHandle): WrappedNode<_ParenthesizedExpressionSequence> {
   return {
     ...data,
@@ -477,13 +463,6 @@ export function wrap_StringDouble(data: _NodeData, tree: TreeHandle): WrappedNod
     $type: TSKindId._StringDouble as number,
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<_StringDouble>;
-}
-
-export function wrapStringFragment(data: _NodeData, tree: TreeHandle): WrappedNode<StringFragment> {
-  return {
-    ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<StringFragment>;
 }
 
 export function wrap_StringSingle(data: _NodeData, tree: TreeHandle): WrappedNode<_StringSingle> {
@@ -1048,17 +1027,6 @@ export function wrapExtendsTypeClause(data: _NodeData, tree: TreeHandle): Wrappe
   } as unknown as WrappedNode<ExtendsTypeClause>;
 }
 
-export function wrapFieldDefinition(data: _NodeData, tree: TreeHandle): WrappedNode<FieldDefinition> {
-  return {
-    ...data,
-    get decorator() { return drillInAll(data.$fields?.['decorator'], tree); },
-    get staticMarker() { return drillIn(data.$fields?.['static_marker'], tree); },
-    get property() { return drillIn(data.$fields?.['property'], tree); },
-    get value() { return drillIn(data.$fields?.['value'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<FieldDefinition>;
-}
-
 export function wrapFinallyClause(data: _NodeData, tree: TreeHandle): WrappedNode<FinallyClause> {
   return {
     ...data,
@@ -1383,64 +1351,6 @@ export function wrapIntersectionType(data: _NodeData, tree: TreeHandle): Wrapped
     get right() { return drillIn(data.$fields?.['right'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<IntersectionType>;
-}
-
-export function wrapJsxAttribute(data: _NodeData, tree: TreeHandle): WrappedNode<JsxAttribute> {
-  return {
-    ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<JsxAttribute>;
-}
-
-export function wrapJsxClosingElement(data: _NodeData, tree: TreeHandle): WrappedNode<JsxClosingElement> {
-  return {
-    ...data,
-    get name() { return drillIn(data.$fields?.['name'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<JsxClosingElement>;
-}
-
-export function wrapJsxElement(data: _NodeData, tree: TreeHandle): WrappedNode<JsxElement> {
-  return {
-    ...data,
-    get openTag() { return drillIn(data.$fields?.['open_tag'], tree); },
-    get closeTag() { return drillIn(data.$fields?.['close_tag'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<JsxElement>;
-}
-
-export function wrapJsxExpression(data: _NodeData, tree: TreeHandle): WrappedNode<JsxExpression> {
-  return {
-    ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<JsxExpression>;
-}
-
-export function wrapJsxNamespaceName(data: _NodeData, tree: TreeHandle): WrappedNode<JsxNamespaceName> {
-  return {
-    ...data,
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<JsxNamespaceName>;
-}
-
-export function wrapJsxOpeningElement(data: _NodeData, tree: TreeHandle): WrappedNode<JsxOpeningElement> {
-  return {
-    ...data,
-    get name() { return drillAs(data.$fields?.['name'], tree, "member_expression", "nested_identifier"); },
-    get typeArguments() { return drillIn(data.$fields?.['type_arguments'], tree); },
-    get attribute() { return drillInAll(data.$fields?.['attribute'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<JsxOpeningElement>;
-}
-
-export function wrapJsxSelfClosingElement(data: _NodeData, tree: TreeHandle): WrappedNode<JsxSelfClosingElement> {
-  return {
-    ...data,
-    get name() { return drillAs(data.$fields?.['name'], tree, "member_expression", "nested_identifier"); },
-    get typeArguments() { return drillIn(data.$fields?.['type_arguments'], tree); },
-    get attribute() { return drillInAll(data.$fields?.['attribute'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<JsxSelfClosingElement>;
 }
 
 export function wrapLabeledStatement(data: _NodeData, tree: TreeHandle): WrappedNode<LabeledStatement> {
@@ -2217,21 +2127,15 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_import_specifier_name': (d, t) => wrap_ImportSpecifierName(d, t),
   '_index_signature_mapped_type_clause': (d, t) => wrap_IndexSignatureMappedTypeClause(d, t),
   '_interface_body': (d, t) => wrapInterfaceBody(d, t),
-  '_jsx_string': (d, t) => wrapJsxString(d, t),
   '_kw_abstract_marker': (d) => ({ ...d, $type: TSKindId.KwAbstractMarker as number }),
-  '_kw_async_marker': (d) => d,
   '_kw_const_marker': (d) => ({ ...d, $type: TSKindId.KwConstMarker as number }),
-  '_kw_readonly_marker': (d) => d,
   '_kw_static_marker': (d) => ({ ...d, $type: TSKindId.KwStaticMarker as number }),
-  '_lhs_expression': (d, t) => wrapLhsExpression(d, t),
   '_parenthesized_expression_sequence': (d, t) => wrap_ParenthesizedExpressionSequence(d, t),
   '_property_identifier': (d, t) => wrapPropertyIdentifier(d, t),
   '_public_field_definition_accessor_opt': (d, t) => wrapPublicFieldDefinitionAccessorOpt(d, t),
   '_public_field_definition_declare_first': (d, t) => wrapPublicFieldDefinitionDeclareFirst(d, t),
-  '_reserved_identifier': (d) => d,
   '_statement_identifier': (d, t) => wrapStatementIdentifier(d, t),
   '_string_double': (d, t) => wrap_StringDouble(d, t),
-  '_string_fragment': (d, t) => wrapStringFragment(d, t),
   '_string_single': (d, t) => wrap_StringSingle(d, t),
   '_this_type': (d, t) => wrapThisType(d, t),
   '_type_identifier': (d, t) => wrapTypeIdentifier(d, t),
@@ -2295,7 +2199,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'extends_clause': (d, t) => wrapExtendsClause(d, t),
   'extends_type_clause': (d, t) => wrapExtendsTypeClause(d, t),
   'false': (d) => ({ ...d, $type: TSKindId.False as number }),
-  'field_definition': (d, t) => wrapFieldDefinition(d, t),
   'finally_clause': (d, t) => wrapFinallyClause(d, t),
   'flow_maybe_type': (d, t) => wrapFlowMaybeType(d, t),
   'for_in_statement': (d, t) => wrapForInStatement(d, t),
@@ -2309,7 +2212,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'generator_function_declaration': (d, t) => wrapGeneratorFunctionDeclaration(d, t),
   'generic_type': (d, t) => wrapGenericType(d, t),
   'hash_bang_line': (d) => ({ ...d, $type: TSKindId.HashBangLine as number }),
-  'html_character_reference': (d) => d,
   'identifier': (d) => ({ ...d, $type: TSKindId.Identifier as number }),
   'if_statement': (d, t) => wrapIfStatement(d, t),
   'implements_clause': (d, t) => wrapImplementsClause(d, t),
@@ -2332,14 +2234,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'interface_declaration': (d, t) => wrapInterfaceDeclaration(d, t),
   'internal_module': (d, t) => wrapInternalModule(d, t),
   'intersection_type': (d, t) => wrapIntersectionType(d, t),
-  'jsx_attribute': (d, t) => wrapJsxAttribute(d, t),
-  'jsx_closing_element': (d, t) => wrapJsxClosingElement(d, t),
-  'jsx_element': (d, t) => wrapJsxElement(d, t),
-  'jsx_expression': (d, t) => wrapJsxExpression(d, t),
-  'jsx_identifier': (d) => d,
-  'jsx_namespace_name': (d, t) => wrapJsxNamespaceName(d, t),
-  'jsx_opening_element': (d, t) => wrapJsxOpeningElement(d, t),
-  'jsx_self_closing_element': (d, t) => wrapJsxSelfClosingElement(d, t),
   'labeled_statement': (d, t) => wrapLabeledStatement(d, t),
   'lexical_declaration': (d, t) => wrapLexicalDeclaration(d, t),
   'literal_type': (d, t) => wrapLiteralType(d, t),
@@ -2422,9 +2316,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'type_query': (d, t) => wrapTypeQuery(d, t),
   'unary_expression': (d, t) => wrapUnaryExpression(d, t),
   'undefined': (d) => ({ ...d, $type: TSKindId.Undefined as number }),
-  'unescaped_double_jsx_string_fragment': (d) => d,
   'unescaped_double_string_fragment': (d) => ({ ...d, $type: TSKindId.UnescapedDoubleStringFragment as number }),
-  'unescaped_single_jsx_string_fragment': (d) => d,
   'unescaped_single_string_fragment': (d) => ({ ...d, $type: TSKindId.UnescapedSingleStringFragment as number }),
   'union_type': (d, t) => wrapUnionType(d, t),
   'update_expression': (d, t) => wrapUpdateExpression(d, t),
@@ -2437,7 +2329,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_template_chars': (d) => ({ ...d, $type: TSKindId.TemplateChars as number }),
   '_ternary_qmark': (d) => ({ ...d, $type: TSKindId.TernaryQmark as number }),
   'html_comment': (d) => ({ ...d, $type: TSKindId.HtmlComment as number }),
-  '||': (d) => d,
   'jsx_text': (d) => ({ ...d, $type: TSKindId.JsxText as number }),
   '_function_signature_automatic_semicolon': (d) => ({ ...d, $type: TSKindId.FunctionSignatureAutomaticSemicolon as number }),
   '__error_recovery': (d) => ({ ...d, $type: TSKindId.ErrorRecovery as number }),

@@ -576,8 +576,18 @@ function emitNativeTransportAssertions(
 	const validators = projection.nodes;
 
 	// Build kind→id lookup for numeric switch when kindEntries available.
+	// Includes both the catalog key (e.g. `_expression_statement_tuple`)
+	// and the display name (e.g. `expression_statement_tuple`) so nodeMap
+	// kinds that use the display spelling resolve correctly.
 	const kindIdByKind = kindEntries
-		? new Map<string, number>(kindEntries.map((e) => [e.kind, e.id]))
+		? (() => {
+				const m = new Map<string, number>();
+				for (const e of kindEntries) {
+					m.set(e.kind, e.id);
+					if (e.displayName !== undefined) m.set(e.displayName, e.id);
+				}
+				return m;
+			})()
 		: undefined;
 
 	lines.push('/**');
@@ -598,30 +608,27 @@ function emitNativeTransportAssertions(
 	lines.push(
 		"  if (!isRecord(node)) throw new TypeError('node must be an object');"
 	);
-	// Phase D: $type is numeric for kinds with a parser symbol. Some
-	// codegen-only kinds (e.g. TSGrammar-only inlined hidden rules like
-	// `_doc_comment`) lack a TSKindId entry; their factories still stamp
-	// the string kind name. Accept either shape here — the per-kind
-	// switch below dispatches on both numeric and string case labels and
-	// the `default:` arm rejects anything not registered. This keeps the
-	// root assertion consistent with the switch's coverage instead of
-	// rejecting valid string-fallback kinds before they reach dispatch.
+	// $type must be numeric — TSGrammar-only kinds (inlined by tree-sitter,
+	// no parser symbol) are filtered out at emission time and can never reach
+	// the wire. Hard-throw on any non-numeric $type.
 	lines.push(
-		"  if (typeof node.$type !== 'number' && typeof node.$type !== 'string') {",
-		"    throw new TypeError('node.$type must be a KindId (number) or kind name (string)');",
+		"  if (typeof node.$type !== 'number') {",
+		"    throw new TypeError('node.$type must be a KindId (number)');",
 		"  }"
 	);
 	lines.push("  assertDataOnlyObject(node, 'node');");
 
-	// Build case expressions. All case IDs should be numeric in Phase D; any kind
-	// without a parser ID (TSGrammar-only inlined rule) cannot reach the wire, so
-	// we assert — if a case has no numeric ID, fall back to the string as a sentinel
-	// so the generated code still compiles (it will hit the default throw at runtime).
+	// Build case expressions. Only kinds with a numeric parser ID are emitted.
+	// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) are skipped:
+	// they can never reach the wire, so validator switch arms for them are dead code.
 	const nodeCaseEntries: Array<{ caseExpr: string; kind: string; typeName: string }> = [];
 	for (const node of validators) {
 		const id = kindIdByKind?.get(node.kind);
-		const caseExpr = id !== undefined ? String(id) : JSON.stringify(node.kind);
-		nodeCaseEntries.push({ caseExpr, kind: node.kind, typeName: node.typeName });
+		if (id === undefined) {
+			// TSGrammar-only kind — cannot reach the wire. Skip emission.
+			continue;
+		}
+		nodeCaseEntries.push({ caseExpr: String(id), kind: node.kind, typeName: node.typeName });
 	}
 	const literalCaseEntries: Array<{ caseExpr: string; kind: string; text: string }> = [];
 	for (const literal of projection.literals) {
@@ -629,17 +636,14 @@ function emitNativeTransportAssertions(
 		// lookup (for anonymous-token literals like ">>=", "not in" whose
 		// literal.kind is the display text rather than a grammar rule name).
 		const id = kindIdByKind?.get(literal.kind) ?? displayNameToId?.get(literal.kind);
-		const caseExpr = id !== undefined ? String(id) : JSON.stringify(literal.kind);
-		literalCaseEntries.push({ caseExpr, kind: literal.kind, text: literal.text });
+		if (id === undefined) {
+			// TSGrammar-only kind — cannot reach the wire. Skip emission.
+			continue;
+		}
+		literalCaseEntries.push({ caseExpr: String(id), kind: literal.kind, text: literal.text });
 	}
 
-	// If any entry still has a string case expression (TSGrammar-only sentinel),
-	// cast the discriminant to avoid TS2678 — these are unreachable at runtime.
-	const hasStringFallback =
-		[...nodeCaseEntries, ...literalCaseEntries].some((e) => e.caseExpr.startsWith('"'));
-	const switchExpr = hasStringFallback ? '(node.$type as number | string)' : 'node.$type';
-
-	lines.push(`  switch (${switchExpr}) {`);
+	lines.push(`  switch (node.$type) {`);
 	for (const { caseExpr, kind, typeName } of nodeCaseEntries) {
 		lines.push(`    case ${caseExpr}: // ${kind}`);
 		lines.push(`      assert${typeName}Transport(node, 'node');`);

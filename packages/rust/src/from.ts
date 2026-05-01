@@ -42,7 +42,6 @@ export const _fromMap = {
   "closure_expression_expr": closureExpressionExprFrom,
   "closure_expression": closureExpressionFrom,
   "closure_parameters": closureParametersFrom,
-  "comment": commentFrom,
   "compound_assignment_expr": compoundAssignmentExprFrom,
   "const_block": constBlockFrom,
   "const_item": constItemFrom,
@@ -637,10 +636,6 @@ export function closureParametersFrom(...input: readonly (NonNullable<T.ClosureP
     return F.closureParameters(...((data.$children ?? []) as readonly NonNullable<T.ClosureParameters.Config['children']>[number][]));
   }
   return F.closureParameters(...(input as readonly NonNullable<T.ClosureParameters.Config['children']>[number][]));
-}
-
-export function commentFrom(input?: NonNullable<T.Comment.Config['children']>[number] | T.Comment) {
-  return F.comment(input as Parameters<typeof F.comment>[0]);
 }
 
 export function compoundAssignmentExprFrom(input: T.CompoundAssignmentExpr.Loose): ReturnType<typeof F.compoundAssignmentExpr> | T.CompoundAssignmentExpr {

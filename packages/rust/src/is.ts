@@ -809,7 +809,7 @@ export const is = {
     removedTraitBound: _g(TSKindId.RemovedTraitBound),
     returnExpression: _g(TSKindId.ReturnExpression),
     scopedIdentifier: _g(TSKindId.ScopedIdentifier),
-    scopedTypeIdentifier: _g(TSKindId.ScopedTypeIdentifier),
+    scopedTypeIdentifier: _g(TSKindId.ScopedTypeIdentifierInExpressionPosition),
     scopedTypeIdentifierInExpressionPosition: _g(TSKindId.ScopedTypeIdentifierInExpressionPosition),
     scopedUseList: _g(TSKindId.ScopedUseList),
     selfParameter: _g(TSKindId.SelfParameter),

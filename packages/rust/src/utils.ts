@@ -720,11 +720,11 @@ function transportValueMatches(value: unknown, alternatives: readonly NativeTran
  */
 export function assertNativeRenderTransport(node: unknown): asserts node is AnyTransport {
   if (!isRecord(node)) throw new TypeError('node must be an object');
-  if (typeof node.$type !== 'number' && typeof node.$type !== 'string') {
-    throw new TypeError('node.$type must be a KindId (number) or kind name (string)');
+  if (typeof node.$type !== 'number') {
+    throw new TypeError('node.$type must be a KindId (number)');
   }
   assertDataOnlyObject(node, 'node');
-  switch ((node.$type as number | string)) {
+  switch (node.$type) {
     case 322: // _array_expression_list
       assertArrayExpressionListTransport(node, 'node');
       return;
@@ -745,9 +745,6 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
       return;
     case 379: // _delim_token_tree_paren
       assert_DelimTokenTreeParenTransport(node, 'node');
-      return;
-    case "_doc_comment": // _doc_comment
-      assertDocCommentTransport(node, 'node');
       return;
     case 366: // _expression_statement_block_ending
       assert_ExpressionStatementBlockEndingTransport(node, 'node');
@@ -782,12 +779,6 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 330: // _impl_item_semi
       assertImplItemSemiTransport(node, 'node');
       return;
-    case "_inner_doc_comment_marker": // _inner_doc_comment_marker
-      assertInnerDocCommentMarkerTransport(node, 'node');
-      return;
-    case "_kw_async_marker": // _kw_async_marker
-      assertKwAsyncMarkerTransport(node, 'node');
-      return;
     case 351: // _kw_move_marker
       assertKwMoveMarkerTransport(node, 'node');
       return;
@@ -796,9 +787,6 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
       return;
     case 360: // _kw_operator
       assertKwOperatorTransport(node, 'node');
-      return;
-    case "_kw_ref_marker": // _kw_ref_marker
-      assertKwRefMarkerTransport(node, 'node');
       return;
     case 352: // _kw_static_marker
       assertKwStaticMarkerTransport(node, 'node');
@@ -839,26 +827,17 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 335: // _mod_item_inline
       assert_ModItemInlineTransport(node, 'node');
       return;
-    case "_non_special_token": // _non_special_token
-      assertNonSpecialTokenTransport(node, 'node');
-      return;
     case 336: // _or_pattern_binary
       assertOrPatternBinaryTransport(node, 'node');
       return;
     case 337: // _or_pattern_prefix
       assertOrPatternPrefixTransport(node, 'node');
       return;
-    case "_outer_doc_comment_marker": // _outer_doc_comment_marker
-      assertOuterDocCommentMarkerTransport(node, 'node');
-      return;
     case 358: // _pointer_type_const
       assertPointerTypeConstTransport(node, 'node');
       return;
     case 359: // _pointer_type_mut
       assert_PointerTypeMutTransport(node, 'node');
-      return;
-    case "_primitive_type": // _primitive_type
-      assertPrimitiveTypeTransport(node, 'node');
       return;
     case 341: // _range_expression_bare
       assert_RangeExpressionBareTransport(node, 'node');
@@ -887,14 +866,8 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 362: // _reference_expression_raw_mut
       assertReferenceExpressionRawMutTransport(node, 'node');
       return;
-    case "_reserved_identifier": // _reserved_identifier
-      assertReservedIdentifierTransport(node, 'node');
-      return;
     case 416: // _shorthand_field_identifier
       assertShorthandFieldIdentifierTransport(node, 'node');
-      return;
-    case "_string_content": // _string_content
-      assert_StringContentTransport(node, 'node');
       return;
     case 345: // _struct_item_brace
       assertStructItemBraceTransport(node, 'node');
@@ -1001,7 +974,7 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 129: // char_literal
       assertCharLiteralTransport(node, 'node');
       return;
-    case "closure_expression_expr": // closure_expression_expr
+    case 324: // closure_expression_expr
       assertClosureExpressionExprTransport(node, 'node');
       return;
     case 281: // closure_expression
@@ -1009,9 +982,6 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
       return;
     case 282: // closure_parameters
       assertClosureParametersTransport(node, 'node');
-      return;
-    case "comment": // comment
-      assertCommentTransport(node, 'node');
       return;
     case 252: // compound_assignment_expr
       assertCompoundAssignmentExprTransport(node, 'node');
@@ -1034,13 +1004,13 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 175: // declaration_list
       assertDeclarationListTransport(node, 'node');
       return;
-    case "delim_token_tree_paren": // delim_token_tree_paren
+    case 379: // delim_token_tree_paren
       assertDelimTokenTreeParenTransport(node, 'node');
       return;
-    case "delim_token_tree_bracket": // delim_token_tree_bracket
+    case 380: // delim_token_tree_bracket
       assertDelimTokenTreeBracketTransport(node, 'node');
       return;
-    case "delim_token_tree_brace": // delim_token_tree_brace
+    case 381: // delim_token_tree_brace
       assertDelimTokenTreeBraceTransport(node, 'node');
       return;
     case 240: // delim_token_tree
@@ -1067,10 +1037,10 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 130: // escape_sequence
       assertEscapeSequenceTransport(node, 'node');
       return;
-    case "expression_statement_with_semi": // expression_statement_with_semi
+    case 365: // expression_statement_with_semi
       assertExpressionStatementWithSemiTransport(node, 'node');
       return;
-    case "expression_statement_block_ending": // expression_statement_block_ending
+    case 366: // expression_statement_block_ending
       assertExpressionStatementBlockEndingTransport(node, 'node');
       return;
     case 160: // expression_statement
@@ -1097,7 +1067,7 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 263: // field_initializer_list
       assertFieldInitializerListTransport(node, 'node');
       return;
-    case "field_pattern_shorthand": // field_pattern_shorthand
+    case 325: // field_pattern_shorthand
       assertFieldPatternShorthandTransport(node, 'node');
       return;
     case 300: // field_pattern
@@ -1109,7 +1079,7 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 221: // for_lifetimes
       assertForLifetimesTransport(node, 'node');
       return;
-    case "foreign_mod_item_body": // foreign_mod_item_body
+    case 368: // foreign_mod_item_body
       assertForeignModItemBodyTransport(node, 'node');
       return;
     case 174: // foreign_mod_item
@@ -1154,7 +1124,7 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 267: // if_expression
       assertIfExpressionTransport(node, 'node');
       return;
-    case "impl_item_body": // impl_item_body
+    case 329: // impl_item_body
       assertImplItemBodyTransport(node, 'node');
       return;
     case 193: // impl_item
@@ -1193,13 +1163,13 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 278: // loop_expression
       assertLoopExpressionTransport(node, 'node');
       return;
-    case "macro_definition_paren": // macro_definition_paren
+    case 331: // macro_definition_paren
       assertMacroDefinitionParenTransport(node, 'node');
       return;
-    case "macro_definition_bracket": // macro_definition_bracket
+    case 332: // macro_definition_bracket
       assertMacroDefinitionBracketTransport(node, 'node');
       return;
-    case "macro_definition_brace": // macro_definition_brace
+    case 333: // macro_definition_brace
       assertMacroDefinitionBraceTransport(node, 'node');
       return;
     case 161: // macro_definition
@@ -1211,10 +1181,10 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 162: // macro_rule
       assertMacroRuleTransport(node, 'node');
       return;
-    case "match_arm_block_ending": // match_arm_block_ending
+    case 370: // match_arm_block_ending
       assertMatchArmBlockEndingTransport(node, 'node');
       return;
-    case 274: // match_arm
+    case 275: // match_arm
       assertMatchArmTransport(node, 'node');
       return;
     case 273: // match_block
@@ -1229,7 +1199,7 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 142: // metavariable
       assertMetavariableTransport(node, 'node');
       return;
-    case "mod_item_inline": // mod_item_inline
+    case 335: // mod_item_inline
       assertModItemInlineTransport(node, 'node');
       return;
     case 173: // mod_item
@@ -1262,7 +1232,7 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 259: // parenthesized_expression
       assertParenthesizedExpressionTransport(node, 'node');
       return;
-    case "pointer_type_mut": // pointer_type_mut
+    case 359: // pointer_type_mut
       assertPointerTypeMutTransport(node, 'node');
       return;
     case 233: // pointer_type
@@ -1271,7 +1241,7 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 218: // qualified_type
       assertQualifiedTypeTransport(node, 'node');
       return;
-    case "range_expression_bare": // range_expression_bare
+    case 341: // range_expression_bare
       assertRangeExpressionBareTransport(node, 'node');
       return;
     case 246: // range_expression
@@ -1361,25 +1331,25 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 166: // token_repetition_pattern
       assertTokenRepetitionPatternTransport(node, 'node');
       return;
-    case "token_tree_paren": // token_tree_paren
+    case 376: // token_tree_paren
       assertTokenTreeParenTransport(node, 'node');
       return;
-    case "token_tree_bracket": // token_tree_bracket
+    case 377: // token_tree_bracket
       assertTokenTreeBracketTransport(node, 'node');
       return;
-    case "token_tree_brace": // token_tree_brace
+    case 378: // token_tree_brace
       assertTokenTreeBraceTransport(node, 'node');
       return;
-    case 168: // token_tree
+    case 240: // token_tree
       assertTokenTreeTransport(node, 'node');
       return;
-    case "token_tree_pattern_paren": // token_tree_pattern_paren
+    case 373: // token_tree_pattern_paren
       assertTokenTreePatternParenTransport(node, 'node');
       return;
-    case "token_tree_pattern_bracket": // token_tree_pattern_bracket
+    case 374: // token_tree_pattern_bracket
       assertTokenTreePatternBracketTransport(node, 'node');
       return;
-    case "token_tree_pattern_brace": // token_tree_pattern_brace
+    case 375: // token_tree_pattern_brace
       assertTokenTreePatternBraceTransport(node, 'node');
       return;
     case 164: // token_tree_pattern
@@ -1460,7 +1430,7 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 212: // variadic_parameter
       assertVariadicParameterTransport(node, 'node');
       return;
-    case "visibility_modifier_crate": // visibility_modifier_crate
+    case 348: // visibility_modifier_crate
       assertVisibilityModifierCrateTransport(node, 'node');
       return;
     case 215: // visibility_modifier
@@ -1478,7 +1448,7 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 255: // yield_expression
       assertYieldExpressionTransport(node, 'node');
       return;
-    case 147: // string_content
+    case 149: // string_content
       assertStringContentTransport(node, 'node');
       return;
     case 149: // raw_string_literal_content
@@ -1496,40 +1466,40 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 156: // _error_sentinel
       assertErrorSentinelTransport(node, 'node');
       return;
-    case "[": // [
+    case 112: // [
       assertBracketTransport(node, 'node');
       return;
-    case "]": // ]
+    case 113: // ]
       assertCloseBracketTransport(node, 'node');
       return;
-    case ";": // ;
+    case 2: // ;
       assertSemiTransport(node, 'node');
       return;
-    case "->": // ->
+    case 81: // ->
       assertArrowTransport(node, 'node');
       return;
     case 74: // _
       assertAnonymousTransport(node, 'node');
       return;
-    case "{": // {
+    case 114: // {
       assertBraceTransport(node, 'node');
       return;
-    case "}": // }
+    case 115: // }
       assertCloseBraceTransport(node, 'node');
       return;
-    case "(": // (
+    case 7: // (
       assertParenTransport(node, 'node');
       return;
-    case ")": // )
+    case 8: // )
       assertCloseParenTransport(node, 'node');
       return;
-    case ":": // :
+    case 5: // :
       assertColonTransport(node, 'node');
       return;
     case 92: // fn
       assertFnTransport(node, 'node');
       return;
-    case "!": // !
+    case 134: // !
       assertBangTransport(node, 'node');
       return;
     case 85: // async
@@ -1538,7 +1508,7 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 143: // move
       assertMoveTransport(node, 'node');
       return;
-    case "..": // ..
+    case 76: // ..
       assertDotdotTransport(node, 'node');
       return;
     case 125: // ref
@@ -1550,13 +1520,13 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 108: // unsafe
       assertUnsafeTransport(node, 'node');
       return;
-    case "&&": // &&
+    case 52: // &&
       assertAndandTransport(node, 'node');
       return;
-    case ",": // ,
+    case 79: // ,
       assertCommaTransport(node, 'node');
       return;
-    case "'": // '
+    case 83: // '
       assertTokSqTransport(node, 'node');
       return;
     case 84: // as
@@ -1631,10 +1601,10 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 111: // while
       assertWhileTransport(node, 'node');
       return;
-    case "|": // |
+    case 51: // |
       assertPipeTransport(node, 'node');
       return;
-    case "/": // /
+    case 135: // /
       assertSlashTransport(node, 'node');
       return;
     case 121: // raw
@@ -1643,40 +1613,40 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 123: // in
       assertInTransport(node, 'node');
       return;
-    case "=": // =
+    case 66: // =
       assertEqTransport(node, 'node');
       return;
-    case "#": // #
+    case 82: // #
       assertHashTransport(node, 'node');
       return;
-    case ".": // .
+    case 75: // .
       assertDotTransport(node, 'node');
       return;
-    case "||": // ||
+    case 53: // ||
       assertOrorTransport(node, 'node');
       return;
-    case "&": // &
+    case 50: // &
       assertAmpTransport(node, 'node');
       return;
-    case "^": // ^
+    case 48: // ^
       assertCaretTransport(node, 'node');
       return;
-    case "/*": // /*
+    case 136: // /*
       assertTokSlashStarTransport(node, 'node');
       return;
-    case "*/": // */
+    case 137: // */
       assertTokStarSlashTransport(node, 'node');
       return;
-    case "+": // +
+    case 10: // +
       assertPlusTransport(node, 'node');
       return;
-    case "<": // <
+    case 118: // <
       assertLtTransport(node, 'node');
       return;
-    case ">": // >
+    case 69: // >
       assertGtTransport(node, 'node');
       return;
-    case "@": // @
+    case 73: // @
       assertAtTransport(node, 'node');
       return;
     case 119: // dyn
@@ -1688,31 +1658,28 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 116: // extern
       assertExternTransport(node, 'node');
       return;
-    case "=>": // =>
+    case 4: // =>
       assertFatArrowTransport(node, 'node');
       return;
-    case "mut": // mut
-      assertMutTransport(node, 'node');
-      return;
-    case "-": // -
+    case 45: // -
       assertMinusTransport(node, 'node');
       return;
-    case "?": // ?
+    case 12: // ?
       assertQuestionTransport(node, 'node');
       return;
-    case "\"": // "
+    case 128: // "
       assertTokDqTransport(node, 'node');
       return;
-    case "$": // $
+    case 6: // $
       assertTokDollarTransport(node, 'node');
       return;
     case 124: // try
       assertTryTransport(node, 'node');
       return;
-    case "*": // *
+    case 11: // *
       assertStarTransport(node, 'node');
       return;
-    case "...": // ...
+    case 77: // ...
       assertEllipsisTransport(node, 'node');
       return;
     case 122: // yield

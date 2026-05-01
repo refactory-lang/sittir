@@ -46,40 +46,20 @@ export const importIdentifier = {
   identifier: F.identifier,
 } as const;
 
-export const jsxAttribute = {
-  jsx: _attach(F.jsxAttribute, { from: FR.jsxAttributeFrom }),
-} as const;
-
 export const jsxAttributeName = {
   identifier: F.identifier,
-  jsxNamespace: _attach(F.jsxNamespaceName, { from: FR.jsxNamespaceNameFrom }),
-} as const;
-
-export const jsxAttributeValue = {
-  jsx: _attach(F.jsxExpression, { from: FR.jsxExpressionFrom }),
-  jsxSelfClosing: _attach(F.jsxSelfClosingElement, { from: FR.jsxSelfClosingElementFrom }),
 } as const;
 
 export const jsxChild = {
   jsx: F.jsxText,
-  htmlCharacter: F.htmlCharacterReference,
-  jsxSelfClosing: _attach(F.jsxSelfClosingElement, { from: FR.jsxSelfClosingElementFrom }),
-} as const;
-
-export const jsxElement = {
-  jsx: _attach(F.jsxElement, { from: FR.jsxElementFrom }),
-  jsxSelfClosing: _attach(F.jsxSelfClosingElement, { from: FR.jsxSelfClosingElementFrom }),
 } as const;
 
 export const jsxElementName = {
-  jsx: F.jsxIdentifier,
   identifier: F.identifier,
   nested: _attach(F.nestedIdentifier, { from: FR.nestedIdentifierFrom }),
-  jsxNamespace: _attach(F.jsxNamespaceName, { from: FR.jsxNamespaceNameFrom }),
 } as const;
 
 export const jsxIdentifier = {
-  jsx: F.jsxIdentifier,
   identifier: F.identifier,
 } as const;
 
@@ -261,7 +241,6 @@ export const ir = {
   expressionStatement: _attach(F.expressionStatement, { from: FR.expressionStatementFrom }),
   extendsClause: _attach(F.extendsClause, { from: FR.extendsClauseFrom }),
   extendsTypeClause: _attach(F.extendsTypeClause, { from: FR.extendsTypeClauseFrom }),
-  field: _attach(F.fieldDefinition, { from: FR.fieldDefinitionFrom }),
   finallyClause: _attach(F.finallyClause, { from: FR.finallyClauseFrom }),
   flowMaybeType: _attach(F.flowMaybeType, { from: FR.flowMaybeTypeFrom }),
   forIn: _attach(F.forInStatement, { from: FR.forInStatementFrom }),
@@ -294,13 +273,6 @@ export const ir = {
   interface: _attach(F.interfaceDeclaration, { from: FR.interfaceDeclarationFrom }),
   internalModule: _attach(F.internalModule, { from: FR.internalModuleFrom }),
   intersectionType: _attach(F.intersectionType, { from: FR.intersectionTypeFrom }),
-  jsxAttribute2: _attach(F.jsxAttribute, { from: FR.jsxAttributeFrom }),
-  jsxClosingElement: _attach(F.jsxClosingElement, { from: FR.jsxClosingElementFrom }),
-  jsxElement2: _attach(F.jsxElement, { from: FR.jsxElementFrom }),
-  jsx: _attach(F.jsxExpression, { from: FR.jsxExpressionFrom }),
-  jsxNamespaceName: _attach(F.jsxNamespaceName, { from: FR.jsxNamespaceNameFrom }),
-  jsxOpeningElement: _attach(F.jsxOpeningElement, { from: FR.jsxOpeningElementFrom }),
-  jsxSelfClosingElement: _attach(F.jsxSelfClosingElement, { from: FR.jsxSelfClosingElementFrom }),
   labeled: _attach(F.labeledStatement, { from: FR.labeledStatementFrom }),
   lexical: _attach(F.lexicalDeclaration, { from: FR.lexicalDeclarationFrom }),
   literalType: _attach(F.literalType, { from: FR.literalTypeFrom }),
@@ -394,18 +366,14 @@ export const ir = {
   comment: F.comment,
   escapeSequence: F.escapeSequence,
   hashBangLine: F.hashBangLine,
-  htmlCharacterReference: F.htmlCharacterReference,
   identifier2: F.identifier,
-  jsxIdentifier2: F.jsxIdentifier,
   metaProperty: F.metaProperty,
   number: F.number,
   predefinedType: F.predefinedType,
   privatePropertyIdentifier: F.privatePropertyIdentifier,
   regexFlags: F.regexFlags,
   regexPattern: F.regexPattern,
-  unescapedDoubleJsxStringFragment: F.unescapedDoubleJsxStringFragment,
   unescapedDoubleStringFragment: F.unescapedDoubleStringFragment,
-  unescapedSingleJsxStringFragment: F.unescapedSingleJsxStringFragment,
   unescapedSingleStringFragment: F.unescapedSingleStringFragment,
   htmlComment: F.htmlComment,
   jsxText: F.jsxText,
@@ -416,11 +384,8 @@ export const ir = {
   formalParameter,
   identifier,
   importIdentifier,
-  jsxAttribute,
   jsxAttributeName,
-  jsxAttributeValue,
   jsxChild,
-  jsxElement,
   jsxElementName,
   jsxIdentifier,
   moduleExportName,

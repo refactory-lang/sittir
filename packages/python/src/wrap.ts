@@ -220,13 +220,6 @@ export function wrapSimpleStatements(data: _NodeData, tree: TreeHandle): Wrapped
   } as unknown as WrappedNode<SimpleStatements>;
 }
 
-export function wrapSuite(data: _NodeData, tree: TreeHandle): WrappedNode<Suite> {
-  return {
-    ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<Suite>;
-}
-
 export function wrap_TuplePattern(data: _NodeData, tree: TreeHandle): WrappedNode<_TuplePattern> {
   return {
     ...data,
@@ -1219,7 +1212,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_not_in': (d) => ({ ...d, $type: TSKindId.NotIn as number }),
   '_simple_pattern_negative': (d, t) => wrapSimplePatternNegative(d, t),
   '_simple_statements': (d, t) => wrapSimpleStatements(d, t),
-  '_suite': (d, t) => wrapSuite(d, t),
   '_tuple_pattern': (d, t) => wrap_TuplePattern(d, t),
   '_with_clause_paren': (d, t) => wrap_WithClauseParen(d, t),
   'aliased_import': (d, t) => wrapAliasedImport(d, t),
@@ -1347,9 +1339,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_string_content': (d) => ({ ...d, $type: TSKindId._StringContent as number }),
   'escape_interpolation': (d) => ({ ...d, $type: TSKindId.EscapeInterpolation as number }),
   'string_end': (d) => ({ ...d, $type: TSKindId.StringEnd as number }),
-  ']': (d) => d,
-  ')': (d) => d,
-  '}': (d) => d,
   'except': (d) => ({ ...d, $type: TSKindId.Except as number }),
 };
 

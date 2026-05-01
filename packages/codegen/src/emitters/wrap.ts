@@ -29,6 +29,7 @@ import {
 import {
 	collectKindEntries,
 	kindIdMemberName,
+	hasCatalogEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 
@@ -74,7 +75,10 @@ export function emitWrap(config: EmitWrapConfig): string {
 	// no multiple-cardinality alias-source fields).
 	// ------------------------------------------------------------------
 	const bodyLines: string[] = [];
-	for (const [, node] of nodeMap.nodes) {
+	for (const [kind, node] of nodeMap.nodes) {
+		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
+		// never appear at runtime; wrap functions for them are dead code.
+		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const source = renderWrapForNode(node, kindEntries, nodeMap);
 		if (source === undefined) continue;
 		bodyLines.push(source);
@@ -166,6 +170,9 @@ export function emitWrap(config: EmitWrapConfig): string {
 	);
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!node.factoryName) continue;
+		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
+		// never appear in a parsed tree; no wrap entry is needed.
+		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		if (
 			node.modelType === 'branch' ||
 			node.modelType === 'container' ||
