@@ -248,25 +248,17 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push(
 		"import type { AnyNodeData, AnyTreeNodeOf as AnyTreeNode } from '@sittir/types';"
 	);
-	// When kindEntries is present (Phase A KindID migration), emit a value-
-	// import for TSKindId so guard bodies can compare numeric discriminants.
+	// When kindEntries is present, emit a value-import for TSKindId so guard
+	// bodies can compare numeric discriminants (Phase D numeric-only path).
+	if (kindEntries) {
+		lines.push("import { TSKindId } from './types.js';");
+	}
 	const typeImportList = [...typeImports].sort();
 	if (typeImportList.length > 0) {
-		if (kindEntries) {
-			lines.push('import { TSKindId } from \'./types.js\';');
-			lines.push('import type {');
-			lines.push('    NamespaceMap,');
-			for (const t of typeImportList) lines.push(`    ${t},`);
-			lines.push("} from './types.js';");
-		} else {
-			lines.push('import type {');
-			lines.push('    NamespaceMap,');
-			for (const t of typeImportList) lines.push(`    ${t},`);
-			lines.push("} from './types.js';");
-		}
-	} else if (kindEntries) {
-		lines.push('import { TSKindId } from \'./types.js\';');
-		lines.push("import type { NamespaceMap } from './types.js';");
+		lines.push('import type {');
+		lines.push('    NamespaceMap,');
+		for (const t of typeImportList) lines.push(`    ${t},`);
+		lines.push("} from './types.js';");
 	} else {
 		lines.push("import type { NamespaceMap } from './types.js';");
 	}
