@@ -1395,6 +1395,52 @@ fn compound_statement_transport_to_any(t: CompoundStatementTransport) -> Box<Any
 }
 
 #[derive(Debug, Clone)]
+pub enum DictPatternKvTransport {
+    KeyValuePattern(Box<KeyValuePatternTransport>),
+    SplatPattern(Box<SplatPatternTransport>),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for DictPatternKvTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let kind_id: u16 = obj.get("$type")?
+            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in DictPatternKvTransport"))?;
+        match kind_id {
+            170 => Ok(Self::KeyValuePattern(Box::new(
+                KeyValuePatternTransport::from_napi_value(env, napi_val)?
+            ))),
+            172 => Ok(Self::SplatPattern(Box::new(
+                SplatPatternTransport::from_napi_value(env, napi_val)?
+            ))),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in DictPatternKvTransport",
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for DictPatternKvTransport {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("DictPatternKvTransport is receive-only"))
+    }
+}
+
+fn dict_pattern_kv_transport_to_any(t: DictPatternKvTransport) -> Box<AnyTransport> {
+    match t {
+        DictPatternKvTransport::KeyValuePattern(inner) => Box::new(AnyTransport::KeyValuePattern(*inner)),
+        DictPatternKvTransport::SplatPattern(inner) => Box::new(AnyTransport::SplatPattern(*inner)),
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum ExpressionWithinForInClauseTransport {
     Expression(Box<ExpressionTransport>),
     LambdaWithinForInClause(Box<LambdaWithinForInClauseTransport>),
@@ -1804,6 +1850,208 @@ fn simple_pattern_transport_to_any(t: SimplePatternTransport) -> Box<AnyTranspor
 }
 
 #[derive(Debug, Clone)]
+pub enum SimpleStatementTransport {
+    FutureImportStatement(Box<FutureImportStatementTransport>),
+    ImportStatement(Box<ImportStatementTransport>),
+    ImportFromStatement(Box<ImportFromStatementTransport>),
+    PrintStatement(Box<PrintStatementTransport>),
+    AssertStatement(Box<AssertStatementTransport>),
+    ExpressionStatement(Box<ExpressionStatementTransport>),
+    ReturnStatement(Box<ReturnStatementTransport>),
+    DeleteStatement(Box<DeleteStatementTransport>),
+    RaiseStatement(Box<RaiseStatementTransport>),
+    PassStatement(PassStatementTransport),
+    BreakStatement(BreakStatementTransport),
+    ContinueStatement(ContinueStatementTransport),
+    GlobalStatement(Box<GlobalStatementTransport>),
+    NonlocalStatement(Box<NonlocalStatementTransport>),
+    ExecStatement(Box<ExecStatementTransport>),
+    TypeAliasStatement(Box<TypeAliasStatementTransport>),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for SimpleStatementTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let kind_id: u16 = obj.get("$type")?
+            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in SimpleStatementTransport"))?;
+        match kind_id {
+            114 => Ok(Self::FutureImportStatement(Box::new(
+                FutureImportStatementTransport::from_napi_value(env, napi_val)?
+            ))),
+            111 => Ok(Self::ImportStatement(Box::new(
+                ImportStatementTransport::from_napi_value(env, napi_val)?
+            ))),
+            115 => Ok(Self::ImportFromStatement(Box::new(
+                ImportFromStatementTransport::from_napi_value(env, napi_val)?
+            ))),
+            119 => Ok(Self::PrintStatement(Box::new(
+                PrintStatementTransport::from_napi_value(env, napi_val)?
+            ))),
+            121 => Ok(Self::AssertStatement(Box::new(
+                AssertStatementTransport::from_napi_value(env, napi_val)?
+            ))),
+            122 => Ok(Self::ExpressionStatement(Box::new(
+                ExpressionStatementTransport::from_napi_value(env, napi_val)?
+            ))),
+            125 => Ok(Self::ReturnStatement(Box::new(
+                ReturnStatementTransport::from_napi_value(env, napi_val)?
+            ))),
+            126 => Ok(Self::DeleteStatement(Box::new(
+                DeleteStatementTransport::from_napi_value(env, napi_val)?
+            ))),
+            127 => Ok(Self::RaiseStatement(Box::new(
+                RaiseStatementTransport::from_napi_value(env, napi_val)?
+            ))),
+            128 => Ok(Self::PassStatement(
+                PassStatementTransport::from_napi_value(env, napi_val)?
+            )),
+            129 => Ok(Self::BreakStatement(
+                BreakStatementTransport::from_napi_value(env, napi_val)?
+            )),
+            130 => Ok(Self::ContinueStatement(
+                ContinueStatementTransport::from_napi_value(env, napi_val)?
+            )),
+            150 => Ok(Self::GlobalStatement(Box::new(
+                GlobalStatementTransport::from_napi_value(env, napi_val)?
+            ))),
+            151 => Ok(Self::NonlocalStatement(Box::new(
+                NonlocalStatementTransport::from_napi_value(env, napi_val)?
+            ))),
+            152 => Ok(Self::ExecStatement(Box::new(
+                ExecStatementTransport::from_napi_value(env, napi_val)?
+            ))),
+            153 => Ok(Self::TypeAliasStatement(Box::new(
+                TypeAliasStatementTransport::from_napi_value(env, napi_val)?
+            ))),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in SimpleStatementTransport",
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SimpleStatementTransport {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("SimpleStatementTransport is receive-only"))
+    }
+}
+
+fn simple_statement_transport_to_any(t: SimpleStatementTransport) -> Box<AnyTransport> {
+    match t {
+        SimpleStatementTransport::FutureImportStatement(inner) => Box::new(AnyTransport::FutureImportStatement(*inner)),
+        SimpleStatementTransport::ImportStatement(inner) => Box::new(AnyTransport::ImportStatement(*inner)),
+        SimpleStatementTransport::ImportFromStatement(inner) => Box::new(AnyTransport::ImportFromStatement(*inner)),
+        SimpleStatementTransport::PrintStatement(inner) => Box::new(AnyTransport::PrintStatement(*inner)),
+        SimpleStatementTransport::AssertStatement(inner) => Box::new(AnyTransport::AssertStatement(*inner)),
+        SimpleStatementTransport::ExpressionStatement(inner) => Box::new(AnyTransport::ExpressionStatement(*inner)),
+        SimpleStatementTransport::ReturnStatement(inner) => Box::new(AnyTransport::ReturnStatement(*inner)),
+        SimpleStatementTransport::DeleteStatement(inner) => Box::new(AnyTransport::DeleteStatement(*inner)),
+        SimpleStatementTransport::RaiseStatement(inner) => Box::new(AnyTransport::RaiseStatement(*inner)),
+        SimpleStatementTransport::PassStatement(inner) => Box::new(AnyTransport::PassStatement(inner)),
+        SimpleStatementTransport::BreakStatement(inner) => Box::new(AnyTransport::BreakStatement(inner)),
+        SimpleStatementTransport::ContinueStatement(inner) => Box::new(AnyTransport::ContinueStatement(inner)),
+        SimpleStatementTransport::GlobalStatement(inner) => Box::new(AnyTransport::GlobalStatement(*inner)),
+        SimpleStatementTransport::NonlocalStatement(inner) => Box::new(AnyTransport::NonlocalStatement(*inner)),
+        SimpleStatementTransport::ExecStatement(inner) => Box::new(AnyTransport::ExecStatement(*inner)),
+        SimpleStatementTransport::TypeAliasStatement(inner) => Box::new(AnyTransport::TypeAliasStatement(*inner)),
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum StatementTransport {
+    SimpleStatements(Box<SimpleStatementsTransport>),
+    IfStatement(Box<IfStatementTransport>),
+    ForStatement(Box<ForStatementTransport>),
+    WhileStatement(Box<WhileStatementTransport>),
+    TryStatement(Box<TryStatementTransport>),
+    WithStatement(Box<WithStatementTransport>),
+    FunctionDefinition(Box<FunctionDefinitionTransport>),
+    ClassDefinition(Box<ClassDefinitionTransport>),
+    DecoratedDefinition(Box<DecoratedDefinitionTransport>),
+    MatchStatement(Box<MatchStatementTransport>),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let kind_id: u16 = obj.get("$type")?
+            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in StatementTransport"))?;
+        match kind_id {
+            110 => Ok(Self::SimpleStatements(Box::new(
+                SimpleStatementsTransport::from_napi_value(env, napi_val)?
+            ))),
+            131 => Ok(Self::IfStatement(Box::new(
+                IfStatementTransport::from_napi_value(env, napi_val)?
+            ))),
+            137 => Ok(Self::ForStatement(Box::new(
+                ForStatementTransport::from_napi_value(env, napi_val)?
+            ))),
+            138 => Ok(Self::WhileStatement(Box::new(
+                WhileStatementTransport::from_napi_value(env, napi_val)?
+            ))),
+            139 => Ok(Self::TryStatement(Box::new(
+                TryStatementTransport::from_napi_value(env, napi_val)?
+            ))),
+            142 => Ok(Self::WithStatement(Box::new(
+                WithStatementTransport::from_napi_value(env, napi_val)?
+            ))),
+            145 => Ok(Self::FunctionDefinition(Box::new(
+                FunctionDefinitionTransport::from_napi_value(env, napi_val)?
+            ))),
+            154 => Ok(Self::ClassDefinition(Box::new(
+                ClassDefinitionTransport::from_napi_value(env, napi_val)?
+            ))),
+            158 => Ok(Self::DecoratedDefinition(Box::new(
+                DecoratedDefinitionTransport::from_napi_value(env, napi_val)?
+            ))),
+            134 => Ok(Self::MatchStatement(Box::new(
+                MatchStatementTransport::from_napi_value(env, napi_val)?
+            ))),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in StatementTransport",
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for StatementTransport {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("StatementTransport is receive-only"))
+    }
+}
+
+fn statement_transport_to_any(t: StatementTransport) -> Box<AnyTransport> {
+    match t {
+        StatementTransport::SimpleStatements(inner) => Box::new(AnyTransport::SimpleStatements(*inner)),
+        StatementTransport::IfStatement(inner) => Box::new(AnyTransport::IfStatement(*inner)),
+        StatementTransport::ForStatement(inner) => Box::new(AnyTransport::ForStatement(*inner)),
+        StatementTransport::WhileStatement(inner) => Box::new(AnyTransport::WhileStatement(*inner)),
+        StatementTransport::TryStatement(inner) => Box::new(AnyTransport::TryStatement(*inner)),
+        StatementTransport::WithStatement(inner) => Box::new(AnyTransport::WithStatement(*inner)),
+        StatementTransport::FunctionDefinition(inner) => Box::new(AnyTransport::FunctionDefinition(*inner)),
+        StatementTransport::ClassDefinition(inner) => Box::new(AnyTransport::ClassDefinition(*inner)),
+        StatementTransport::DecoratedDefinition(inner) => Box::new(AnyTransport::DecoratedDefinition(*inner)),
+        StatementTransport::MatchStatement(inner) => Box::new(AnyTransport::MatchStatement(*inner)),
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum ExpressionTransport {
     ComparisonOperator(Box<ComparisonOperatorTransport>),
     NotOperator(Box<NotOperatorTransport>),
@@ -1917,6 +2165,87 @@ impl ::napi::bindgen_prelude::ToNapiValue for KeywordIdentifierTransport {
 fn keyword_identifier_transport_to_any(t: KeywordIdentifierTransport) -> Box<AnyTransport> {
     match t {
         KeywordIdentifierTransport::Identifier(inner) => Box::new(AnyTransport::Identifier(inner)),
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ParameterTransport {
+    Identifier(IdentifierTransport),
+    TypedParameter(Box<TypedParameterTransport>),
+    DefaultParameter(Box<DefaultParameterTransport>),
+    TypedDefaultParameter(Box<TypedDefaultParameterTransport>),
+    ListSplatPattern(Box<ListSplatPatternTransport>),
+    TuplePattern(Box<TuplePatternTransport>),
+    KeywordSeparator(KeywordSeparatorTransport),
+    PositionalSeparator(PositionalSeparatorTransport),
+    DictionarySplatPattern(Box<DictionarySplatPatternTransport>),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ParameterTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let kind_id: u16 = obj.get("$type")?
+            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in ParameterTransport"))?;
+        match kind_id {
+            1 => Ok(Self::Identifier(
+                IdentifierTransport::from_napi_value(env, napi_val)?
+            )),
+            207 => Ok(Self::TypedParameter(Box::new(
+                TypedParameterTransport::from_napi_value(env, napi_val)?
+            ))),
+            181 => Ok(Self::DefaultParameter(Box::new(
+                DefaultParameterTransport::from_napi_value(env, napi_val)?
+            ))),
+            182 => Ok(Self::TypedDefaultParameter(Box::new(
+                TypedDefaultParameterTransport::from_napi_value(env, napi_val)?
+            ))),
+            183 => Ok(Self::ListSplatPattern(Box::new(
+                ListSplatPatternTransport::from_napi_value(env, napi_val)?
+            ))),
+            179 => Ok(Self::TuplePattern(Box::new(
+                TuplePatternTransport::from_napi_value(env, napi_val)?
+            ))),
+            239 => Ok(Self::KeywordSeparator(
+                KeywordSeparatorTransport::from_napi_value(env, napi_val)?
+            )),
+            238 => Ok(Self::PositionalSeparator(
+                PositionalSeparatorTransport::from_napi_value(env, napi_val)?
+            )),
+            184 => Ok(Self::DictionarySplatPattern(Box::new(
+                DictionarySplatPatternTransport::from_napi_value(env, napi_val)?
+            ))),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in ParameterTransport",
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ParameterTransport {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ParameterTransport is receive-only"))
+    }
+}
+
+fn parameter_transport_to_any(t: ParameterTransport) -> Box<AnyTransport> {
+    match t {
+        ParameterTransport::Identifier(inner) => Box::new(AnyTransport::Identifier(inner)),
+        ParameterTransport::TypedParameter(inner) => Box::new(AnyTransport::TypedParameter(*inner)),
+        ParameterTransport::DefaultParameter(inner) => Box::new(AnyTransport::DefaultParameter(*inner)),
+        ParameterTransport::TypedDefaultParameter(inner) => Box::new(AnyTransport::TypedDefaultParameter(*inner)),
+        ParameterTransport::ListSplatPattern(inner) => Box::new(AnyTransport::ListSplatPattern(*inner)),
+        ParameterTransport::TuplePattern(inner) => Box::new(AnyTransport::TuplePattern(*inner)),
+        ParameterTransport::KeywordSeparator(inner) => Box::new(AnyTransport::KeywordSeparator(inner)),
+        ParameterTransport::PositionalSeparator(inner) => Box::new(AnyTransport::PositionalSeparator(inner)),
+        ParameterTransport::DictionarySplatPattern(inner) => Box::new(AnyTransport::DictionarySplatPattern(*inner)),
     }
 }
 
@@ -2314,7 +2643,7 @@ pub struct _ListPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<CasePatternTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -2331,7 +2660,7 @@ pub struct MatchBlockTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<MatchBlockBlockTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -2394,7 +2723,7 @@ pub struct SimplePatternNegativeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<PrimaryExpressionTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -2411,7 +2740,7 @@ pub struct SimpleStatementsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<SimpleStatementTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -2445,7 +2774,7 @@ pub struct _TuplePatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<CasePatternTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -2462,7 +2791,7 @@ pub struct _WithClauseParenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<WithItemTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -2530,7 +2859,7 @@ pub struct AssertStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<ExpressionTransport>,
 }
 
 #[derive(Debug, Clone)]
@@ -2582,7 +2911,7 @@ pub struct AssignmentUFormEqTransport {
     pub transport_node_id: Option<f64>,
     pub left: LeftHandSideTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<AssignmentEqTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -2600,7 +2929,7 @@ pub struct AssignmentUFormTypeTransport {
     pub transport_node_id: Option<f64>,
     pub left: LeftHandSideTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<AssignmentTypeTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -2618,7 +2947,7 @@ pub struct AssignmentUFormTypedTransport {
     pub transport_node_id: Option<f64>,
     pub left: LeftHandSideTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<AssignmentTypedTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -2704,7 +3033,7 @@ pub struct BlockTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<StatementTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -2773,7 +3102,7 @@ pub struct CaseClauseTransport {
     pub guard: Option<IfClauseTransport>,
     pub consequence: SuiteTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<CasePatternTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -2893,7 +3222,7 @@ pub struct ComplexPatternTransport {
     pub real: Option<Box<AnyTransport>>,
     pub imaginary: PrimaryExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<PrimaryExpressionTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -2910,7 +3239,7 @@ pub struct ConcatenatedStringTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<StringTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -2978,7 +3307,7 @@ pub struct DecoratedDefinitionTransport {
     pub transport_node_id: Option<f64>,
     pub definition: CompoundStatementTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<DecoratorTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3029,7 +3358,7 @@ pub struct DeleteStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<ExpressionsTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3046,7 +3375,7 @@ pub struct DictPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<DictPatternKvTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3081,7 +3410,7 @@ pub struct DictionaryComprehensionTransport {
     pub transport_node_id: Option<f64>,
     pub body: PairTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<ComprehensionClausesTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3114,7 +3443,7 @@ pub struct DictionarySplatPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<PatternTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3131,7 +3460,7 @@ pub struct DottedNameTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<IdentifierTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3213,7 +3542,7 @@ pub struct ExceptClauseTransport {
     pub value: Option<Vec<ExpressionTransport>>,
     pub alias: Option<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<SuiteTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3247,7 +3576,7 @@ pub struct ExpressionListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<ExpressionTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3264,7 +3593,7 @@ pub struct ExpressionStatementTupleTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<ExpressionTransport>,
 }
 
 #[derive(Debug, Clone)]
@@ -3408,7 +3737,7 @@ pub struct FormatSpecifierTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<InterpolationTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3463,7 +3792,7 @@ pub struct GeneratorExpressionTransport {
     pub transport_node_id: Option<f64>,
     pub body: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<ComprehensionClausesTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3497,7 +3826,7 @@ pub struct GlobalStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<IdentifierTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3564,7 +3893,7 @@ pub struct ImportFromStatementTransport {
     pub transport_node_id: Option<f64>,
     pub module_name: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<WildcardImportTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3711,7 +4040,7 @@ pub struct LambdaParametersTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<ParameterTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3778,7 +4107,7 @@ pub struct ListComprehensionTransport {
     pub transport_node_id: Option<f64>,
     pub body: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<ComprehensionClausesTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3795,7 +4124,7 @@ pub struct ListPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<PatternTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3828,7 +4157,7 @@ pub struct ListSplatPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<PatternTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3879,7 +4208,7 @@ pub struct ModuleTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<StatementTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3928,7 +4257,7 @@ pub struct NonlocalStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<IdentifierTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3978,7 +4307,7 @@ pub struct ParametersTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<ParameterTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3995,7 +4324,7 @@ pub struct ParenthesizedExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<FExpressionTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4044,7 +4373,7 @@ pub struct PatternListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<PatternTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4077,7 +4406,7 @@ pub struct PrintStatementTransport {
     pub transport_node_id: Option<f64>,
     pub argument: Vec<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<Vec<Box<AnyTransport>>>,
+    pub children: Option<Vec<ChevronTransport>>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4095,7 +4424,7 @@ pub struct RaiseStatementTransport {
     pub transport_node_id: Option<f64>,
     pub cause: Option<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<Vec<Box<AnyTransport>>>,
+    pub children: Option<Vec<ExpressionsTransport>>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4129,7 +4458,7 @@ pub struct ReturnStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<Vec<Box<AnyTransport>>>,
+    pub children: Option<Vec<ExpressionsTransport>>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4164,7 +4493,7 @@ pub struct SetComprehensionTransport {
     pub transport_node_id: Option<f64>,
     pub body: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<ComprehensionClausesTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4200,7 +4529,7 @@ pub struct SplatPatternTransport {
     pub transport_node_id: Option<f64>,
     pub identifier: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<IdentifierTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4336,7 +4665,7 @@ pub struct TuplePatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<PatternTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4404,7 +4733,7 @@ pub struct TypeParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<TypeTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4442,7 +4771,7 @@ pub struct TypedParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: TypeTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<ParameterTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4476,7 +4805,7 @@ pub struct UnionPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<SimplePatternTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4543,7 +4872,7 @@ pub struct WithClauseBareTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<WithItemTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4560,7 +4889,7 @@ pub struct WithClauseParenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<WithItemTransport>,
 }
 
 #[derive(Debug, Clone)]
@@ -4624,7 +4953,7 @@ pub struct WithClauseUFormParenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<Box<AnyTransport>>,
+    pub children: Vec<_WithClauseParenTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5853,14 +6182,14 @@ fn render_kw_async_marker_transport(t: &KwAsyncMarkerTransport) -> Result<String
 fn render__list_pattern_transport(node: &_ListPatternTransport) -> Result<String, ::askama::Error> {
     let mut out = String::new();
     for child in node.children.iter() {
-        out.push_str(&render_transport_dispatch(child.as_ref())?);
+        out.push_str(&render_case_pattern_transport(child)?);
     }
     Ok(out)
 }
 
 fn render_match_block_transport(node: &MatchBlockTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_match_block_block_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -5911,7 +6240,7 @@ fn render_simple_pattern_negative_transport(node: &SimplePatternNegativeTranspor
 
 fn render_simple_statements_transport(node: &SimpleStatementsTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_simple_statement_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -5948,14 +6277,14 @@ fn render_suite_transport(node: &SuiteTransport) -> Result<String, ::askama::Err
 fn render__tuple_pattern_transport(node: &_TuplePatternTransport) -> Result<String, ::askama::Error> {
     let mut out = String::new();
     for child in node.children.iter() {
-        out.push_str(&render_transport_dispatch(child.as_ref())?);
+        out.push_str(&render_case_pattern_transport(child)?);
     }
     Ok(out)
 }
 
 fn render__with_clause_paren_transport(node: &_WithClauseParenTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_with_item_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -6012,7 +6341,7 @@ fn render_as_pattern_transport(node: &AsPatternTransport) -> Result<String, ::as
 
 fn render_assert_statement_transport(node: &AssertStatementTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_expression_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -6038,7 +6367,7 @@ fn render_assignment_transport(t: &AssignmentTransport) -> Result<String, ::aska
 
 fn render_assignment_uform_eq_transport(node: &AssignmentUFormEqTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_assignment_eq_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -6058,7 +6387,7 @@ fn render_assignment_uform_eq_transport(node: &AssignmentUFormEqTransport) -> Re
 
 fn render_assignment_uform_type_transport(node: &AssignmentUFormTypeTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_assignment_type_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -6078,7 +6407,7 @@ fn render_assignment_uform_type_transport(node: &AssignmentUFormTypeTransport) -
 
 fn render_assignment_uform_typed_transport(node: &AssignmentUFormTypedTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_assignment_typed_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -6140,7 +6469,7 @@ fn render_binary_operator_transport(node: &BinaryOperatorTransport) -> Result<St
 
 fn render_block_transport(node: &BlockTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_statement_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -6184,7 +6513,7 @@ fn render_call_transport(node: &CallTransport) -> Result<String, ::askama::Error
 
 fn render_case_clause_transport(node: &CaseClauseTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_case_pattern_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -6309,7 +6638,7 @@ fn render_comparison_operator_transport(node: &ComparisonOperatorTransport) -> R
 
 fn render_complex_pattern_transport(node: &ComplexPatternTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_primary_expression_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -6335,7 +6664,7 @@ fn render_complex_pattern_transport(node: &ComplexPatternTransport) -> Result<St
 
 fn render_concatenated_string_transport(node: &ConcatenatedStringTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_string_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -6379,7 +6708,7 @@ fn render_continue_statement_transport(t: &ContinueStatementTransport) -> Result
 
 fn render_decorated_definition_transport(node: &DecoratedDefinitionTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_decorator_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -6423,7 +6752,7 @@ fn render_default_parameter_transport(node: &DefaultParameterTransport) -> Resul
 
 fn render_delete_statement_transport(node: &DeleteStatementTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_expressions_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -6441,7 +6770,7 @@ fn render_delete_statement_transport(node: &DeleteStatementTransport) -> Result<
 
 fn render_dict_pattern_transport(node: &DictPatternTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_dict_pattern_kv_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -6477,7 +6806,7 @@ fn render_dictionary_transport(node: &DictionaryTransport) -> Result<String, ::a
 
 fn render_dictionary_comprehension_transport(node: &DictionaryComprehensionTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_comprehension_clauses_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -6505,7 +6834,7 @@ fn render_dictionary_splat_transport(node: &DictionarySplatTransport) -> Result<
 
 fn render_dictionary_splat_pattern_transport(node: &DictionarySplatPatternTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_pattern_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -6523,7 +6852,7 @@ fn render_dictionary_splat_pattern_transport(node: &DictionarySplatPatternTransp
 
 fn render_dotted_name_transport(node: &DottedNameTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_identifier_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -6567,7 +6896,7 @@ fn render_escape_sequence_transport(t: &EscapeSequenceTransport) -> Result<Strin
 
 fn render_except_clause_transport(node: &ExceptClauseTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_suite_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -6625,7 +6954,7 @@ fn render_exec_statement_transport(node: &ExecStatementTransport) -> Result<Stri
 
 fn render_expression_list_transport(node: &ExpressionListTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_expression_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -6643,7 +6972,7 @@ fn render_expression_list_transport(node: &ExpressionListTransport) -> Result<St
 
 fn render_expression_statement_tuple_transport(node: &ExpressionStatementTupleTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_expression_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -6752,7 +7081,7 @@ fn render_for_statement_transport(node: &ForStatementTransport) -> Result<String
 
 fn render_format_specifier_transport(node: &FormatSpecifierTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_interpolation_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -6818,7 +7147,7 @@ fn render_future_import_statement_transport(node: &FutureImportStatementTranspor
 
 fn render_generator_expression_transport(node: &GeneratorExpressionTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_comprehension_clauses_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -6848,7 +7177,7 @@ fn render_generic_type_transport(node: &GenericTypeTransport) -> Result<String, 
 
 fn render_global_statement_transport(node: &GlobalStatementTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_identifier_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -6901,7 +7230,7 @@ fn render_if_statement_transport(node: &IfStatementTransport) -> Result<String, 
 
 fn render_import_from_statement_transport(node: &ImportFromStatementTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_wildcard_import_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -7011,7 +7340,7 @@ fn render_lambda_transport(node: &LambdaTransport) -> Result<String, ::askama::E
 
 fn render_lambda_parameters_transport(node: &LambdaParametersTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_parameter_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -7065,7 +7394,7 @@ fn render_list_transport(node: &ListTransport) -> Result<String, ::askama::Error
 
 fn render_list_comprehension_transport(node: &ListComprehensionTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_comprehension_clauses_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -7085,7 +7414,7 @@ fn render_list_comprehension_transport(node: &ListComprehensionTransport) -> Res
 
 fn render_list_pattern_transport(node: &ListPatternTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_pattern_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -7111,7 +7440,7 @@ fn render_list_splat_transport(node: &ListSplatTransport) -> Result<String, ::as
 
 fn render_list_splat_pattern_transport(node: &ListSplatPatternTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_pattern_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -7159,7 +7488,7 @@ fn render_member_type_transport(node: &MemberTypeTransport) -> Result<String, ::
 
 fn render_module_transport(node: &ModuleTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_statement_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -7191,7 +7520,7 @@ fn render_none_transport(t: &NoneTransport) -> Result<String, ::askama::Error> {
 
 fn render_nonlocal_statement_transport(node: &NonlocalStatementTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_identifier_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -7227,7 +7556,7 @@ fn render_pair_transport(node: &PairTransport) -> Result<String, ::askama::Error
 
 fn render_parameters_transport(node: &ParametersTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_parameter_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -7245,7 +7574,7 @@ fn render_parameters_transport(node: &ParametersTransport) -> Result<String, ::a
 
 fn render_parenthesized_expression_transport(node: &ParenthesizedExpressionTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_fexpression_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -7285,7 +7614,7 @@ fn render_pass_statement_transport(t: &PassStatementTransport) -> Result<String,
 
 fn render_pattern_list_transport(node: &PatternListTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_pattern_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -7306,9 +7635,9 @@ fn render_positional_separator_transport(t: &PositionalSeparatorTransport) -> Re
 }
 
 fn render_print_statement_transport(node: &PrintStatementTransport) -> Result<String, ::askama::Error> {
-    let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
+    let children_owned = node.children.as_deref().unwrap_or(&[]);
     let children_strings: Vec<String> = children_owned.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_chevron_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -7337,9 +7666,9 @@ fn render_print_statement_transport(node: &PrintStatementTransport) -> Result<St
 }
 
 fn render_raise_statement_transport(node: &RaiseStatementTransport) -> Result<String, ::askama::Error> {
-    let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
+    let children_owned = node.children.as_deref().unwrap_or(&[]);
     let children_strings: Vec<String> = children_owned.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_expressions_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -7376,9 +7705,9 @@ fn render_relative_import_transport(node: &RelativeImportTransport) -> Result<St
 }
 
 fn render_return_statement_transport(node: &ReturnStatementTransport) -> Result<String, ::askama::Error> {
-    let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
+    let children_owned = node.children.as_deref().unwrap_or(&[]);
     let children_strings: Vec<String> = children_owned.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_expressions_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -7414,7 +7743,7 @@ fn render_set_transport(node: &SetTransport) -> Result<String, ::askama::Error> 
 
 fn render_set_comprehension_transport(node: &SetComprehensionTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_comprehension_clauses_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -7458,7 +7787,7 @@ fn render_slice_transport(node: &SliceTransport) -> Result<String, ::askama::Err
 
 fn render_splat_pattern_transport(node: &SplatPatternTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_identifier_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -7585,7 +7914,7 @@ fn render_tuple_transport(node: &TupleTransport) -> Result<String, ::askama::Err
 
 fn render_tuple_pattern_transport(node: &TuplePatternTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_pattern_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -7637,7 +7966,7 @@ fn render_type_conversion_transport(t: &TypeConversionTransport) -> Result<Strin
 
 fn render_type_parameter_transport(node: &TypeParameterTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_type_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -7667,7 +7996,7 @@ fn render_typed_default_parameter_transport(node: &TypedDefaultParameterTranspor
 
 fn render_typed_parameter_transport(node: &TypedParameterTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_parameter_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -7697,7 +8026,7 @@ fn render_unary_operator_transport(node: &UnaryOperatorTransport) -> Result<Stri
 
 fn render_union_pattern_transport(node: &UnionPatternTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_simple_pattern_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -7745,7 +8074,7 @@ fn render_wildcard_import_transport(t: &WildcardImportTransport) -> Result<Strin
 
 fn render_with_clause_bare_transport(node: &WithClauseBareTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_with_item_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -7763,7 +8092,7 @@ fn render_with_clause_bare_transport(node: &WithClauseBareTransport) -> Result<S
 
 fn render_with_clause_paren_transport(node: &WithClauseParenTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_with_item_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -7806,7 +8135,7 @@ fn render_with_clause_uform_bare_transport(node: &WithClauseUFormBareTransport) 
 
 fn render_with_clause_uform_paren_transport(node: &WithClauseUFormParenTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render__with_clause_paren_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -8162,6 +8491,13 @@ fn render_compound_statement_transport(t: &CompoundStatementTransport) -> Result
     }
 }
 
+fn render_dict_pattern_kv_transport(t: &DictPatternKvTransport) -> Result<String, ::askama::Error> {
+    match t {
+        DictPatternKvTransport::KeyValuePattern(inner) => render_key_value_pattern_transport(inner.as_ref()),
+        DictPatternKvTransport::SplatPattern(inner) => render_splat_pattern_transport(inner.as_ref()),
+    }
+}
+
 fn render_expression_within_for_in_clause_transport(t: &ExpressionWithinForInClauseTransport) -> Result<String, ::askama::Error> {
     match t {
         ExpressionWithinForInClauseTransport::Expression(inner) => render_expression_transport(inner.as_ref()),
@@ -8229,6 +8565,42 @@ fn render_simple_pattern_transport(t: &SimplePatternTransport) -> Result<String,
     }
 }
 
+fn render_simple_statement_transport(t: &SimpleStatementTransport) -> Result<String, ::askama::Error> {
+    match t {
+        SimpleStatementTransport::FutureImportStatement(inner) => render_future_import_statement_transport(inner.as_ref()),
+        SimpleStatementTransport::ImportStatement(inner) => render_import_statement_transport(inner.as_ref()),
+        SimpleStatementTransport::ImportFromStatement(inner) => render_import_from_statement_transport(inner.as_ref()),
+        SimpleStatementTransport::PrintStatement(inner) => render_print_statement_transport(inner.as_ref()),
+        SimpleStatementTransport::AssertStatement(inner) => render_assert_statement_transport(inner.as_ref()),
+        SimpleStatementTransport::ExpressionStatement(inner) => render_expression_statement_transport(inner.as_ref()),
+        SimpleStatementTransport::ReturnStatement(inner) => render_return_statement_transport(inner.as_ref()),
+        SimpleStatementTransport::DeleteStatement(inner) => render_delete_statement_transport(inner.as_ref()),
+        SimpleStatementTransport::RaiseStatement(inner) => render_raise_statement_transport(inner.as_ref()),
+        SimpleStatementTransport::PassStatement(inner) => render_pass_statement_transport(inner),
+        SimpleStatementTransport::BreakStatement(inner) => render_break_statement_transport(inner),
+        SimpleStatementTransport::ContinueStatement(inner) => render_continue_statement_transport(inner),
+        SimpleStatementTransport::GlobalStatement(inner) => render_global_statement_transport(inner.as_ref()),
+        SimpleStatementTransport::NonlocalStatement(inner) => render_nonlocal_statement_transport(inner.as_ref()),
+        SimpleStatementTransport::ExecStatement(inner) => render_exec_statement_transport(inner.as_ref()),
+        SimpleStatementTransport::TypeAliasStatement(inner) => render_type_alias_statement_transport(inner.as_ref()),
+    }
+}
+
+fn render_statement_transport(t: &StatementTransport) -> Result<String, ::askama::Error> {
+    match t {
+        StatementTransport::SimpleStatements(inner) => render_simple_statements_transport(inner.as_ref()),
+        StatementTransport::IfStatement(inner) => render_if_statement_transport(inner.as_ref()),
+        StatementTransport::ForStatement(inner) => render_for_statement_transport(inner.as_ref()),
+        StatementTransport::WhileStatement(inner) => render_while_statement_transport(inner.as_ref()),
+        StatementTransport::TryStatement(inner) => render_try_statement_transport(inner.as_ref()),
+        StatementTransport::WithStatement(inner) => render_with_statement_transport(inner.as_ref()),
+        StatementTransport::FunctionDefinition(inner) => render_function_definition_transport(inner.as_ref()),
+        StatementTransport::ClassDefinition(inner) => render_class_definition_transport(inner.as_ref()),
+        StatementTransport::DecoratedDefinition(inner) => render_decorated_definition_transport(inner.as_ref()),
+        StatementTransport::MatchStatement(inner) => render_match_statement_transport(inner.as_ref()),
+    }
+}
+
 fn render_expression_transport(t: &ExpressionTransport) -> Result<String, ::askama::Error> {
     match t {
         ExpressionTransport::ComparisonOperator(inner) => render_comparison_operator_transport(inner.as_ref()),
@@ -8245,6 +8617,20 @@ fn render_expression_transport(t: &ExpressionTransport) -> Result<String, ::aska
 fn render_keyword_identifier_transport(t: &KeywordIdentifierTransport) -> Result<String, ::askama::Error> {
     match t {
         KeywordIdentifierTransport::Identifier(inner) => render_identifier_transport(inner),
+    }
+}
+
+fn render_parameter_transport(t: &ParameterTransport) -> Result<String, ::askama::Error> {
+    match t {
+        ParameterTransport::Identifier(inner) => render_identifier_transport(inner),
+        ParameterTransport::TypedParameter(inner) => render_typed_parameter_transport(inner.as_ref()),
+        ParameterTransport::DefaultParameter(inner) => render_default_parameter_transport(inner.as_ref()),
+        ParameterTransport::TypedDefaultParameter(inner) => render_typed_default_parameter_transport(inner.as_ref()),
+        ParameterTransport::ListSplatPattern(inner) => render_list_splat_pattern_transport(inner.as_ref()),
+        ParameterTransport::TuplePattern(inner) => render_tuple_pattern_transport(inner.as_ref()),
+        ParameterTransport::KeywordSeparator(inner) => render_keyword_separator_transport(inner),
+        ParameterTransport::PositionalSeparator(inner) => render_positional_separator_transport(inner),
+        ParameterTransport::DictionarySplatPattern(inner) => render_dictionary_splat_pattern_transport(inner.as_ref()),
     }
 }
 
@@ -9000,7 +9386,7 @@ fn transport_to_node_kw_async_marker(transport: KwAsyncMarkerTransport) -> Resul
 fn transport_to_node__list_pattern(transport: _ListPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::CasePattern(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(167) /* "_list_pattern" */,
         transport.transport_source,
@@ -9017,7 +9403,7 @@ fn transport_to_node__list_pattern(transport: _ListPatternTransport) -> Result<T
 fn transport_to_node_match_block(transport: MatchBlockTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::MatchBlockBlock(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(135) /* "_match_block" */,
         transport.transport_source,
@@ -9080,7 +9466,7 @@ fn transport_to_node_not_in(transport: NotInTransport) -> Result<TransportNodeDa
 fn transport_to_node_simple_pattern_negative(transport: SimplePatternNegativeTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| primary_expression_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(248) /* "_simple_pattern_negative" */,
         transport.transport_source,
@@ -9097,7 +9483,7 @@ fn transport_to_node_simple_pattern_negative(transport: SimplePatternNegativeTra
 fn transport_to_node_simple_statements(transport: SimpleStatementsTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| simple_statement_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(110) /* "_simple_statements" */,
         transport.transport_source,
@@ -9131,7 +9517,7 @@ fn transport_to_node_suite(transport: SuiteTransport) -> Result<TransportNodeDat
 fn transport_to_node__tuple_pattern(transport: _TuplePatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::CasePattern(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(168) /* "_tuple_pattern" */,
         transport.transport_source,
@@ -9148,7 +9534,7 @@ fn transport_to_node__tuple_pattern(transport: _TuplePatternTransport) -> Result
 fn transport_to_node__with_clause_paren(transport: _WithClauseParenTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::WithItem(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(245) /* "_with_clause_paren" */,
         transport.transport_source,
@@ -9223,7 +9609,7 @@ fn transport_to_node_as_pattern(transport: AsPatternTransport) -> Result<Transpo
 fn transport_to_node_assert_statement(transport: AssertStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(121) /* "assert_statement" */,
         transport.transport_source,
@@ -9249,7 +9635,7 @@ fn transport_to_node_assignment_uform_eq(transport: AssignmentUFormEqTransport) 
     let mut fields = TransportHashMap::new();
     fields.insert("left".to_string(), transport_field_value(left_hand_side_transport_to_any(transport.left))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::AssignmentEq(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(198) /* "assignment" */,
         transport.transport_source,
@@ -9267,7 +9653,7 @@ fn transport_to_node_assignment_uform_type(transport: AssignmentUFormTypeTranspo
     let mut fields = TransportHashMap::new();
     fields.insert("left".to_string(), transport_field_value(left_hand_side_transport_to_any(transport.left))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::AssignmentType(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(198) /* "assignment" */,
         transport.transport_source,
@@ -9285,7 +9671,7 @@ fn transport_to_node_assignment_uform_typed(transport: AssignmentUFormTypedTrans
     let mut fields = TransportHashMap::new();
     fields.insert("left".to_string(), transport_field_value(left_hand_side_transport_to_any(transport.left))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::AssignmentTyped(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(198) /* "assignment" */,
         transport.transport_source,
@@ -9379,7 +9765,7 @@ fn transport_to_node_binary_operator(transport: BinaryOperatorTransport) -> Resu
 fn transport_to_node_block(transport: BlockTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| statement_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(160) /* "block" */,
         transport.transport_source,
@@ -9453,7 +9839,7 @@ fn transport_to_node_case_clause(transport: CaseClauseTransport) -> Result<Trans
     }
     fields.insert("consequence".to_string(), transport_field_value(Box::new(AnyTransport::Suite(transport.consequence)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::CasePattern(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(136) /* "case_clause" */,
         transport.transport_source,
@@ -9586,7 +9972,7 @@ fn transport_to_node_complex_pattern(transport: ComplexPatternTransport) -> Resu
     }
     fields.insert("imaginary".to_string(), transport_field_value(primary_expression_transport_to_any(transport.imaginary))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| primary_expression_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(174) /* "complex_pattern" */,
         transport.transport_source,
@@ -9603,7 +9989,7 @@ fn transport_to_node_complex_pattern(transport: ComplexPatternTransport) -> Resu
 fn transport_to_node_concatenated_string(transport: ConcatenatedStringTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::String(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(230) /* "concatenated_string" */,
         transport.transport_source,
@@ -9674,7 +10060,7 @@ fn transport_to_node_decorated_definition(transport: DecoratedDefinitionTranspor
     let mut fields = TransportHashMap::new();
     fields.insert("definition".to_string(), transport_field_value(compound_statement_transport_to_any(transport.definition))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::Decorator(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(158) /* "decorated_definition" */,
         transport.transport_source,
@@ -9731,7 +10117,7 @@ fn transport_to_node_default_parameter(transport: DefaultParameterTransport) -> 
 fn transport_to_node_delete_statement(transport: DeleteStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| expressions_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(126) /* "delete_statement" */,
         transport.transport_source,
@@ -9748,7 +10134,7 @@ fn transport_to_node_delete_statement(transport: DeleteStatementTransport) -> Re
 fn transport_to_node_dict_pattern(transport: DictPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| dict_pattern_kv_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(169) /* "dict_pattern" */,
         transport.transport_source,
@@ -9783,7 +10169,7 @@ fn transport_to_node_dictionary_comprehension(transport: DictionaryComprehension
     let mut fields = TransportHashMap::new();
     fields.insert("body".to_string(), transport_field_value(Box::new(AnyTransport::Pair(transport.body)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::ComprehensionClauses(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(221) /* "dictionary_comprehension" */,
         transport.transport_source,
@@ -9818,7 +10204,7 @@ fn transport_to_node_dictionary_splat(transport: DictionarySplatTransport) -> Re
 fn transport_to_node_dictionary_splat_pattern(transport: DictionarySplatPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| pattern_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(184) /* "dictionary_splat_pattern" */,
         transport.transport_source,
@@ -9835,7 +10221,7 @@ fn transport_to_node_dictionary_splat_pattern(transport: DictionarySplatPatternT
 fn transport_to_node_dotted_name(transport: DottedNameTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::Identifier(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(162) /* "dotted_name" */,
         transport.transport_source,
@@ -9923,7 +10309,7 @@ fn transport_to_node_except_clause(transport: ExceptClauseTransport) -> Result<T
         fields.insert("alias".to_string(), transport_field_value(expression_transport_to_any(value))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::Suite(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(140) /* "except_clause" */,
         transport.transport_source,
@@ -9961,7 +10347,7 @@ fn transport_to_node_exec_statement(transport: ExecStatementTransport) -> Result
 fn transport_to_node_expression_list(transport: ExpressionListTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(161) /* "expression_list" */,
         transport.transport_source,
@@ -9978,7 +10364,7 @@ fn transport_to_node_expression_list(transport: ExpressionListTransport) -> Resu
 fn transport_to_node_expression_statement_tuple(transport: ExpressionStatementTupleTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(243) /* "expression_statement_tuple" */,
         transport.transport_source,
@@ -10112,7 +10498,7 @@ fn transport_to_node_for_statement(transport: ForStatementTransport) -> Result<T
 fn transport_to_node_format_specifier(transport: FormatSpecifierTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::Interpolation(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(236) /* "format_specifier" */,
         transport.transport_source,
@@ -10177,7 +10563,7 @@ fn transport_to_node_generator_expression(transport: GeneratorExpressionTranspor
     let mut fields = TransportHashMap::new();
     fields.insert("body".to_string(), transport_field_value(expression_transport_to_any(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::ComprehensionClauses(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(223) /* "generator_expression" */,
         transport.transport_source,
@@ -10213,7 +10599,7 @@ fn transport_to_node_generic_type(transport: GenericTypeTransport) -> Result<Tra
 fn transport_to_node_global_statement(transport: GlobalStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::Identifier(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(150) /* "global_statement" */,
         transport.transport_source,
@@ -10285,7 +10671,7 @@ fn transport_to_node_import_from_statement(transport: ImportFromStatementTranspo
     let mut fields = TransportHashMap::new();
     fields.insert("module_name".to_string(), transport_field_value(transport.module_name)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::WildcardImport(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(115) /* "import_from_statement" */,
         transport.transport_source,
@@ -10445,7 +10831,7 @@ fn transport_to_node_lambda(transport: LambdaTransport) -> Result<TransportNodeD
 fn transport_to_node_lambda_parameters(transport: LambdaParametersTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| parameter_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(147) /* "lambda_parameters" */,
         transport.transport_source,
@@ -10515,7 +10901,7 @@ fn transport_to_node_list_comprehension(transport: ListComprehensionTransport) -
     let mut fields = TransportHashMap::new();
     fields.insert("body".to_string(), transport_field_value(expression_transport_to_any(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::ComprehensionClauses(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(220) /* "list_comprehension" */,
         transport.transport_source,
@@ -10532,7 +10918,7 @@ fn transport_to_node_list_comprehension(transport: ListComprehensionTransport) -
 fn transport_to_node_list_pattern(transport: ListPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| pattern_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(180) /* "list_pattern" */,
         transport.transport_source,
@@ -10567,7 +10953,7 @@ fn transport_to_node_list_splat(transport: ListSplatTransport) -> Result<Transpo
 fn transport_to_node_list_splat_pattern(transport: ListSplatPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| pattern_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(183) /* "list_splat_pattern" */,
         transport.transport_source,
@@ -10622,7 +11008,7 @@ fn transport_to_node_member_type(transport: MemberTypeTransport) -> Result<Trans
 fn transport_to_node_module(transport: ModuleTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| statement_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(108) /* "module" */,
         transport.transport_source,
@@ -10672,7 +11058,7 @@ fn transport_to_node_none(transport: NoneTransport) -> Result<TransportNodeData,
 fn transport_to_node_nonlocal_statement(transport: NonlocalStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::Identifier(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(151) /* "nonlocal_statement" */,
         transport.transport_source,
@@ -10726,7 +11112,7 @@ fn transport_to_node_pair(transport: PairTransport) -> Result<TransportNodeData,
 fn transport_to_node_parameters(transport: ParametersTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| parameter_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(146) /* "parameters" */,
         transport.transport_source,
@@ -10743,7 +11129,7 @@ fn transport_to_node_parameters(transport: ParametersTransport) -> Result<Transp
 fn transport_to_node_parenthesized_expression(transport: ParenthesizedExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| fexpression_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(225) /* "parenthesized_expression" */,
         transport.transport_source,
@@ -10791,7 +11177,7 @@ fn transport_to_node_pass_statement(transport: PassStatementTransport) -> Result
 fn transport_to_node_pattern_list(transport: PatternListTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| pattern_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(200) /* "pattern_list" */,
         transport.transport_source,
@@ -10824,7 +11210,7 @@ fn transport_to_node_print_statement(transport: PrintStatementTransport) -> Resu
     fields.insert("argument".to_string(), transport_field_values(transport.argument.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = match transport.children {
-        Some(children) => Some(transport_children(children)?),
+        Some(c) => Some(transport_children(c.into_iter().map(|v| Box::new(AnyTransport::Chevron(v))).collect::<Vec<_>>())?),
         None => None,
     };
     Ok(transport_node_data(
@@ -10847,7 +11233,7 @@ fn transport_to_node_raise_statement(transport: RaiseStatementTransport) -> Resu
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = match transport.children {
-        Some(children) => Some(transport_children(children)?),
+        Some(c) => Some(transport_children(c.into_iter().map(|v| expressions_transport_to_any(v)).collect::<Vec<_>>())?),
         None => None,
     };
     Ok(transport_node_data(
@@ -10888,7 +11274,7 @@ fn transport_to_node_return_statement(transport: ReturnStatementTransport) -> Re
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = match transport.children {
-        Some(children) => Some(transport_children(children)?),
+        Some(c) => Some(transport_children(c.into_iter().map(|v| expressions_transport_to_any(v)).collect::<Vec<_>>())?),
         None => None,
     };
     Ok(transport_node_data(
@@ -10925,7 +11311,7 @@ fn transport_to_node_set_comprehension(transport: SetComprehensionTransport) -> 
     let mut fields = TransportHashMap::new();
     fields.insert("body".to_string(), transport_field_value(expression_transport_to_any(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::ComprehensionClauses(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(222) /* "set_comprehension" */,
         transport.transport_source,
@@ -10969,7 +11355,7 @@ fn transport_to_node_splat_pattern(transport: SplatPatternTransport) -> Result<T
     let mut fields = TransportHashMap::new();
     fields.insert("identifier".to_string(), transport_field_value(transport.identifier)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::Identifier(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(172) /* "splat_pattern" */,
         transport.transport_source,
@@ -11116,7 +11502,7 @@ fn transport_to_node_tuple(transport: TupleTransport) -> Result<TransportNodeDat
 fn transport_to_node_tuple_pattern(transport: TuplePatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| pattern_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(179) /* "tuple_pattern" */,
         transport.transport_source,
@@ -11184,7 +11570,7 @@ fn transport_to_node_type_conversion(transport: TypeConversionTransport) -> Resu
 fn transport_to_node_type_parameter(transport: TypeParameterTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::Type(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(155) /* "type_parameter" */,
         transport.transport_source,
@@ -11222,7 +11608,7 @@ fn transport_to_node_typed_parameter(transport: TypedParameterTransport) -> Resu
     let mut fields = TransportHashMap::new();
     fields.insert("type".to_string(), transport_field_value(Box::new(AnyTransport::Type(transport.r#type)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| parameter_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(207) /* "typed_parameter" */,
         transport.transport_source,
@@ -11258,7 +11644,7 @@ fn transport_to_node_unary_operator(transport: UnaryOperatorTransport) -> Result
 fn transport_to_node_union_pattern(transport: UnionPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| simple_pattern_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(166) /* "union_pattern" */,
         transport.transport_source,
@@ -11330,7 +11716,7 @@ fn transport_to_node_wildcard_import(transport: WildcardImportTransport) -> Resu
 fn transport_to_node_with_clause_bare(transport: WithClauseBareTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::WithItem(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(244) /* "with_clause_bare" */,
         transport.transport_source,
@@ -11347,7 +11733,7 @@ fn transport_to_node_with_clause_bare(transport: WithClauseBareTransport) -> Res
 fn transport_to_node_with_clause_paren(transport: WithClauseParenTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::WithItem(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(245) /* "with_clause_paren" */,
         transport.transport_source,
@@ -11388,7 +11774,7 @@ fn transport_to_node_with_clause_uform_bare(transport: WithClauseUFormBareTransp
 fn transport_to_node_with_clause_uform_paren(transport: WithClauseUFormParenTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::_WithClauseParen(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(143) /* "with_clause" */,
         transport.transport_source,

@@ -803,6 +803,25 @@ const TYPES_MODULE_PATHS: Record<string, string> = {
  * `$type` support. Returns a safe wrapper that returns `undefined` on unknown
  * ids rather than throwing.
  */
+/**
+ * Load the static KIND_NAMES map from the grammar's generated types module.
+ * Returns the Map directly for use as `RulesConfig.kindNames`.
+ */
+export async function loadKindNames(
+	grammar: string
+): Promise<ReadonlyMap<number, string> | undefined> {
+	const typesModulePath = TYPES_MODULE_PATHS[grammar];
+	if (!typesModulePath) return undefined;
+	try {
+		const typesModule = await import(
+			new URL(typesModulePath, import.meta.url).pathname
+		);
+		return typesModule.KIND_NAMES as ReadonlyMap<number, string> | undefined;
+	} catch {
+		return undefined;
+	}
+}
+
 export async function loadKindNameFromId(
 	grammar: string
 ): Promise<((id: number) => string | undefined) | undefined> {
@@ -812,6 +831,16 @@ export async function loadKindNameFromId(
 		const typesModule = await import(
 			new URL(typesModulePath, import.meta.url).pathname
 		);
+		// Phase D: types.ts now exports KIND_NAMES (static Map) instead of
+		// kindNameFromId (function). Wrap the Map in a function to keep the
+		// validator's existing interface.
+		const kindNames = typesModule.KIND_NAMES as
+			| ReadonlyMap<number, string>
+			| undefined;
+		if (kindNames) {
+			return (id: number) => kindNames.get(id);
+		}
+		// Legacy fallback for pre-Phase-D generated types
 		const rawFn = typesModule.kindNameFromId as
 			| ((id: number) => string)
 			| undefined;

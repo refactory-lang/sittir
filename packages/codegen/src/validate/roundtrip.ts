@@ -17,6 +17,7 @@ import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
 	loadKindNameFromId,
+	loadKindNames,
 	loadKindIdFromName,
 	buildReadHandle,
 	findFirst,
@@ -606,10 +607,9 @@ export async function validateRoundTrip(
 	parser.setLanguage(lang);
 
 	const rawEntries = loadRawEntries(grammar);
-	// Phase D: load kindNameFromId to resolve numeric $type for template lookup
-	// and for validator string-keyed maps (ruleKinds, nodeIdToEffectiveType).
 	const kindNameFromId = await loadKindNameFromId(grammar);
-	const { render } = createRenderer(templatesPath, { kindNameFromId });
+	const kindNames = await loadKindNames(grammar);
+	const { render } = createRenderer(templatesPath, { kindNames });
 	// `ruleKinds` was historically derived from config.rules (from the
 	// YAML). For the Jinja path (directory of `.jinja` files), derive
 	// the kind set from the on-disk file listing. Works uniformly for

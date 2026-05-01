@@ -23,7 +23,8 @@ import type {
 	AssembledField,
 	AssembledChild,
 	AssembledGroup,
-	AssembledSupertype
+	AssembledSupertype,
+	UnresolvedRef
 } from '../compiler/node-map.ts';
 import {
 	AssembledContainer,
@@ -1155,6 +1156,14 @@ export function buildSupertypeTransportSet(
  * Terminal values (inline string literals) are skipped — they do not
  * contribute to the transport type.
  *
+ * Unresolved refs are included using their `name` (the grammar kind string,
+ * e.g. `_expression`) — mirroring how `AssembledField.projection.kinds` is
+ * built in `deriveFieldsRaw`. Children nodes are always unresolved in the
+ * assembled IR (the `resolveSlotRefs` pass that would replace them with live
+ * `AssembledNode` refs is never run). Using the name lets `classifySlotForEmit`
+ * look up the node by kind in `nodeMap.nodes` and resolve the correct
+ * supertype / concrete classification.
+ *
  * @param child - any AssembledChild (field or children slot)
  * @returns deduplicated list of resolved kind names
  */
@@ -1162,8 +1171,11 @@ export function deriveChildrenKinds(child: AssembledChild): string[] {
 	const kinds = new Set<string>();
 	for (const v of child.values) {
 		if (!isNodeRef(v)) continue;
-		if (isUnresolvedRef(v.node)) continue;
-		kinds.add((v.node as AssembledNode).kind);
+		kinds.add(
+			isUnresolvedRef(v.node)
+				? (v.node as UnresolvedRef).name
+				: (v.node as AssembledNode).kind
+		);
 	}
 	return [...kinds];
 }

@@ -270,6 +270,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	let polymorphVariants: PolymorphVariantMap = {};
 	let kindNameFromId: ((id: number) => string | undefined) | undefined =
 		undefined;
+	let kindNames: ReadonlyMap<number, string> | undefined = undefined;
 	let kindIdFromName: ((name: string) => number | undefined) | undefined =
 		undefined;
 	if (!factoryModulePath) {
@@ -296,27 +297,20 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 		fieldAliasMap = mapData.fieldAliasMap;
 		factoryFields = mapData.factoryFields;
 		polymorphVariants = mapData.polymorphVariants;
-		// Load kindNameFromId from the grammar's types module for Phase A/B
-		// coexistence: factory output carries numeric TSKindId in $type,
-		// and the Nunjucks render path needs a string kind name for template
-		// file lookup.
+		// Load KIND_NAMES (static Map) and kindIdFromName from the grammar's
+		// types module.
 		const typesModulePath = TYPES_MODULE_PATHS[grammar];
 		if (typesModulePath) {
 			try {
 				const typesModule = await import(
 					new URL(typesModulePath, import.meta.url).pathname
 				);
-				const rawIdFn = typesModule.kindNameFromId as
-					| ((id: number) => string)
+				const kindNamesMap = typesModule.KIND_NAMES as
+					| ReadonlyMap<number, string>
 					| undefined;
-				if (rawIdFn) {
-					kindNameFromId = (id: number) => {
-						try {
-							return rawIdFn(id);
-						} catch {
-							return undefined;
-						}
-					};
+				if (kindNamesMap) {
+					kindNames = kindNamesMap;
+					kindNameFromId = (id: number) => kindNamesMap.get(id);
 				}
 				const rawNameFn = typesModule.kindIdFromName as
 					| ((name: string) => number)
@@ -680,10 +674,7 @@ export async function validateFactoryRoundTrip(
 		importFailure
 	} = await loadFactoryModuleForGrammar(grammar);
 
-	// Phase A/B coexistence: factory output carries numeric TSKindId in $type.
-	// Inject the resolver so the Nunjucks render path can map back to the string
-	// kind name for template file lookup.
-	const { render } = createRenderer(templatesPath, { kindNameFromId });
+	const { render } = createRenderer(templatesPath, { kindNames });
 
 	const readTreeNodeFn = await loadWrapperBasedAliasResolver(grammar);
 
