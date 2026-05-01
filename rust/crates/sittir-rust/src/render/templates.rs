@@ -1872,7 +1872,7 @@ pub struct ArrayExpressionListTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub attributes: Vec<Box<AnyTransport>>,
+    pub attributes: Vec<AttributeItemTransport>,
     pub elements: Vec<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
@@ -1891,7 +1891,7 @@ pub struct ArrayExpressionSemiTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub attributes: Vec<Box<AnyTransport>>,
+    pub attributes: Vec<AttributeItemTransport>,
     pub elements: Box<AnyTransport>,
     pub length: Box<AnyTransport>,
 }
@@ -1910,7 +1910,7 @@ pub struct ClosureExpressionBlockTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub return_type: Option<Box<AnyTransport>>,
-    pub body: Box<AnyTransport>,
+    pub body: BlockTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -2059,7 +2059,7 @@ pub struct FieldPatternNamedTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub name: Box<AnyTransport>,
+    pub name: FieldIdentifierTransport,
     pub pattern: Box<AnyTransport>,
 }
 
@@ -2076,7 +2076,7 @@ pub struct _FieldPatternShorthandTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub name: Box<AnyTransport>,
+    pub name: ShorthandFieldIdentifierTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -2092,7 +2092,7 @@ pub struct _ForeignModItemBodyTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub body: Box<AnyTransport>,
+    pub body: DeclarationListTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -2157,7 +2157,7 @@ pub struct _ImplItemBodyTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub body: Box<AnyTransport>,
+    pub body: DeclarationListTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -2340,7 +2340,7 @@ pub struct LineCommentDocTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub doc: Box<AnyTransport>,
+    pub doc: DocCommentTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -2469,7 +2469,7 @@ pub struct _ModItemInlineTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub body: Box<AnyTransport>,
+    pub body: DeclarationListTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -2597,7 +2597,7 @@ pub struct _RangeExpressionBareTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub operator: Box<AnyTransport>,
+    pub operator: KwOperatorTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -2632,7 +2632,7 @@ pub struct RangeExpressionPostfixTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub start: Box<AnyTransport>,
-    pub operator: Box<AnyTransport>,
+    pub operator: KwOperatorTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -2648,7 +2648,7 @@ pub struct RangeExpressionPrefixTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub operator: Box<AnyTransport>,
+    pub operator: KwOperatorTransport,
     pub end: Box<AnyTransport>,
 }
 
@@ -2795,7 +2795,7 @@ pub struct StructItemBraceTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub body: Box<AnyTransport>,
+    pub body: FieldDeclarationListTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
@@ -2813,7 +2813,7 @@ pub struct StructItemTupleTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub body: Box<AnyTransport>,
+    pub body: OrderedFieldDeclarationListTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
@@ -3035,7 +3035,7 @@ pub struct AbstractTypeTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub type_parameters: Option<Box<AnyTransport>>,
+    pub type_parameters: Option<TypeParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "trait"))]
     pub r#trait: Box<AnyTransport>,
 }
@@ -3168,10 +3168,10 @@ pub struct AssociatedTypeTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub name: Box<AnyTransport>,
-    pub type_parameters: Option<Box<AnyTransport>>,
-    pub bounds: Option<Box<AnyTransport>>,
-    pub where_clause: Option<Box<AnyTransport>>,
+    pub name: TypeIdentifierTransport,
+    pub type_parameters: Option<TypeParametersTransport>,
+    pub bounds: Option<TraitBoundsTransport>,
+    pub where_clause: Option<WhereClauseTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3187,8 +3187,8 @@ pub struct AsyncBlockTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub move_marker: Option<Box<AnyTransport>>,
-    pub block: Box<AnyTransport>,
+    pub move_marker: Option<KwMoveMarkerTransport>,
+    pub block: BlockTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3221,7 +3221,7 @@ pub struct AttributeItemTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub attribute: Box<AnyTransport>,
+    pub attribute: AttributeTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3289,7 +3289,7 @@ pub struct BlockTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub label: Option<Box<AnyTransport>>,
+    pub label: Option<LabelTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
@@ -3307,7 +3307,7 @@ pub struct BlockCommentTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub doc: Option<Box<AnyTransport>>,
+    pub doc: Option<DocCommentTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3372,7 +3372,7 @@ pub struct BreakExpressionTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub label: Option<Box<AnyTransport>>,
+    pub label: Option<LabelTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
@@ -3391,7 +3391,7 @@ pub struct CallExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub function: Box<AnyTransport>,
-    pub arguments: Box<AnyTransport>,
+    pub arguments: ArgumentsTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3407,7 +3407,7 @@ pub struct CapturedPatternTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub identifier: Box<AnyTransport>,
+    pub identifier: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
@@ -3486,10 +3486,10 @@ pub struct ClosureExpressionUFormBlockTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub static_marker: Option<Box<AnyTransport>>,
-    pub async_marker: Option<Box<AnyTransport>>,
-    pub move_marker: Option<Box<AnyTransport>>,
-    pub parameters: Box<AnyTransport>,
+    pub static_marker: Option<KwStaticMarkerTransport>,
+    pub async_marker: Option<KwAsyncMarkerTransport>,
+    pub move_marker: Option<KwMoveMarkerTransport>,
+    pub parameters: ClosureParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
@@ -3507,10 +3507,10 @@ pub struct ClosureExpressionUFormExprTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub static_marker: Option<Box<AnyTransport>>,
-    pub async_marker: Option<Box<AnyTransport>>,
-    pub move_marker: Option<Box<AnyTransport>>,
-    pub parameters: Box<AnyTransport>,
+    pub static_marker: Option<KwStaticMarkerTransport>,
+    pub async_marker: Option<KwAsyncMarkerTransport>,
+    pub move_marker: Option<KwMoveMarkerTransport>,
+    pub parameters: ClosureParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
@@ -3580,7 +3580,7 @@ pub struct ConstBlockTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub body: Box<AnyTransport>,
+    pub body: BlockTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3597,7 +3597,7 @@ pub struct ConstItemTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
-    pub name: Box<AnyTransport>,
+    pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
     pub value: Option<Box<AnyTransport>>,
@@ -3616,7 +3616,7 @@ pub struct ConstParameterTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub name: Box<AnyTransport>,
+    pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
     pub value: Option<Box<AnyTransport>>,
@@ -3635,7 +3635,7 @@ pub struct ContinueExpressionTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub label: Option<Box<AnyTransport>>,
+    pub label: Option<LabelTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3869,10 +3869,10 @@ pub struct EnumItemTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
-    pub name: Box<AnyTransport>,
-    pub type_parameters: Option<Box<AnyTransport>>,
-    pub where_clause: Option<Box<AnyTransport>>,
-    pub body: Box<AnyTransport>,
+    pub name: TypeIdentifierTransport,
+    pub type_parameters: Option<TypeParametersTransport>,
+    pub where_clause: Option<WhereClauseTransport>,
+    pub body: EnumVariantListTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3889,7 +3889,7 @@ pub struct EnumVariantTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
-    pub name: Box<AnyTransport>,
+    pub name: IdentifierTransport,
     pub body: Option<Box<AnyTransport>>,
     pub value: Option<Box<AnyTransport>>,
 }
@@ -4039,9 +4039,9 @@ pub struct ExternCrateDeclarationTransport {
     pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "crate"))]
-    pub crate_: Box<AnyTransport>,
-    pub name: Box<AnyTransport>,
-    pub alias: Option<Box<AnyTransport>>,
+    pub crate_: CrateTransport,
+    pub name: IdentifierTransport,
+    pub alias: Option<IdentifierTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4057,7 +4057,7 @@ pub struct ExternModifierTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub string_literal: Option<Box<AnyTransport>>,
+    pub string_literal: Option<StringLiteralTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4074,7 +4074,7 @@ pub struct FieldDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
-    pub name: Box<AnyTransport>,
+    pub name: FieldIdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
 }
@@ -4162,7 +4162,7 @@ pub struct FieldPatternShorthandTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub name: Box<AnyTransport>,
+    pub name: ShorthandFieldIdentifierTransport,
 }
 
 #[derive(Debug, Clone)]
@@ -4208,8 +4208,8 @@ pub struct FieldPatternUFormShorthandTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub ref_marker: Option<Box<AnyTransport>>,
-    pub mutable_specifier: Option<Box<AnyTransport>>,
+    pub ref_marker: Option<KwRefMarkerTransport>,
+    pub mutable_specifier: Option<MutableSpecifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
@@ -4227,8 +4227,8 @@ pub struct FieldPatternUFormNamedTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub ref_marker: Option<Box<AnyTransport>>,
-    pub mutable_specifier: Option<Box<AnyTransport>>,
+    pub ref_marker: Option<KwRefMarkerTransport>,
+    pub mutable_specifier: Option<MutableSpecifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
@@ -4246,10 +4246,10 @@ pub struct ForExpressionTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub label: Option<Box<AnyTransport>>,
+    pub label: Option<LabelTransport>,
     pub pattern: Box<AnyTransport>,
     pub value: Box<AnyTransport>,
-    pub body: Box<AnyTransport>,
+    pub body: BlockTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4282,7 +4282,7 @@ pub struct ForeignModItemBodyTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub body: Box<AnyTransport>,
+    pub body: DeclarationListTransport,
 }
 
 #[derive(Debug, Clone)]
@@ -4329,7 +4329,7 @@ pub struct ForeignModItemUFormSemiTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
-    pub extern_modifier: Box<AnyTransport>,
+    pub extern_modifier: ExternModifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
@@ -4348,7 +4348,7 @@ pub struct ForeignModItemUFormBodyTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
-    pub extern_modifier: Box<AnyTransport>,
+    pub extern_modifier: ExternModifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
@@ -4382,13 +4382,13 @@ pub struct FunctionItemTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
-    pub function_modifiers: Option<Box<AnyTransport>>,
+    pub function_modifiers: Option<FunctionModifiersTransport>,
     pub name: Box<AnyTransport>,
-    pub type_parameters: Option<Box<AnyTransport>>,
-    pub parameters: Box<AnyTransport>,
+    pub type_parameters: Option<TypeParametersTransport>,
+    pub parameters: ParametersTransport,
     pub return_type: Option<Box<AnyTransport>>,
-    pub where_clause: Option<Box<AnyTransport>>,
-    pub body: Box<AnyTransport>,
+    pub where_clause: Option<WhereClauseTransport>,
+    pub body: BlockTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4404,7 +4404,7 @@ pub struct FunctionModifiersTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub modifier: Vec<Box<AnyTransport>>,
+    pub modifier: Vec<ExternModifierTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4421,12 +4421,12 @@ pub struct FunctionSignatureItemTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
-    pub function_modifiers: Option<Box<AnyTransport>>,
+    pub function_modifiers: Option<FunctionModifiersTransport>,
     pub name: Box<AnyTransport>,
-    pub type_parameters: Option<Box<AnyTransport>>,
-    pub parameters: Box<AnyTransport>,
+    pub type_parameters: Option<TypeParametersTransport>,
+    pub parameters: ParametersTransport,
     pub return_type: Option<Box<AnyTransport>>,
-    pub where_clause: Option<Box<AnyTransport>>,
+    pub where_clause: Option<WhereClauseTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4442,8 +4442,8 @@ pub struct FunctionTypeTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub for_lifetimes: Option<Box<AnyTransport>>,
-    pub parameters: Box<AnyTransport>,
+    pub for_lifetimes: Option<ForLifetimesTransport>,
+    pub parameters: ParametersTransport,
     pub return_type: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
@@ -4462,8 +4462,8 @@ pub struct GenBlockTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub move_marker: Option<Box<AnyTransport>>,
-    pub block: Box<AnyTransport>,
+    pub move_marker: Option<KwMoveMarkerTransport>,
+    pub block: BlockTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4480,7 +4480,7 @@ pub struct GenericFunctionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub function: Box<AnyTransport>,
-    pub type_arguments: Box<AnyTransport>,
+    pub type_arguments: TypeArgumentsTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4496,7 +4496,7 @@ pub struct GenericPatternTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub type_arguments: Box<AnyTransport>,
+    pub type_arguments: TypeArgumentsTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
@@ -4516,7 +4516,7 @@ pub struct GenericTypeTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
-    pub type_arguments: Box<AnyTransport>,
+    pub type_arguments: TypeArgumentsTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4535,7 +4535,7 @@ pub struct GenericTypeWithTurbofishTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
     pub turbofish: Box<AnyTransport>,
-    pub type_arguments: Box<AnyTransport>,
+    pub type_arguments: TypeArgumentsTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4551,7 +4551,7 @@ pub struct HigherRankedTraitBoundTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub type_parameters: Box<AnyTransport>,
+    pub type_parameters: TypeParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
 }
@@ -4585,8 +4585,8 @@ pub struct IfExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub condition: Box<AnyTransport>,
-    pub consequence: Box<AnyTransport>,
-    pub alternative: Option<Box<AnyTransport>>,
+    pub consequence: BlockTransport,
+    pub alternative: Option<ElseClauseTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4602,7 +4602,7 @@ pub struct ImplItemBodyTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub body: Box<AnyTransport>,
+    pub body: DeclarationListTransport,
 }
 
 #[derive(Debug, Clone)]
@@ -4648,14 +4648,14 @@ pub struct ImplItemUFormBodyTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub unsafe_marker: Option<Box<AnyTransport>>,
-    pub type_parameters: Option<Box<AnyTransport>>,
-    pub negative: Option<Box<AnyTransport>>,
+    pub unsafe_marker: Option<KwUnsafeMarkerTransport>,
+    pub type_parameters: Option<TypeParametersTransport>,
+    pub negative: Option<KwNegativeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "trait"))]
     pub r#trait: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
-    pub where_clause: Option<Box<AnyTransport>>,
+    pub where_clause: Option<WhereClauseTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
@@ -4673,14 +4673,14 @@ pub struct ImplItemUFormSemiTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub unsafe_marker: Option<Box<AnyTransport>>,
-    pub type_parameters: Option<Box<AnyTransport>>,
-    pub negative: Option<Box<AnyTransport>>,
+    pub unsafe_marker: Option<KwUnsafeMarkerTransport>,
+    pub type_parameters: Option<TypeParametersTransport>,
+    pub negative: Option<KwNegativeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "trait"))]
     pub r#trait: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
-    pub where_clause: Option<Box<AnyTransport>>,
+    pub where_clause: Option<WhereClauseTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
@@ -4715,7 +4715,7 @@ pub struct InnerAttributeItemTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub attribute: Box<AnyTransport>,
+    pub attribute: AttributeTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4746,7 +4746,7 @@ pub struct LabelTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub identifier: Box<AnyTransport>,
+    pub identifier: IdentifierTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4762,7 +4762,7 @@ pub struct LastMatchArmTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub pattern: Box<AnyTransport>,
+    pub pattern: MatchPatternTransport,
     pub value: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
@@ -4798,12 +4798,12 @@ pub struct LetDeclarationTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub mutable_specifier: Option<Box<AnyTransport>>,
+    pub mutable_specifier: Option<MutableSpecifierTransport>,
     pub pattern: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Option<Box<AnyTransport>>,
     pub value: Option<Box<AnyTransport>>,
-    pub alternative: Option<Box<AnyTransport>>,
+    pub alternative: Option<BlockTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4819,7 +4819,7 @@ pub struct LifetimeTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub identifier: Box<AnyTransport>,
+    pub identifier: IdentifierTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4835,8 +4835,8 @@ pub struct LifetimeParameterTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub name: Box<AnyTransport>,
-    pub bounds: Option<Box<AnyTransport>>,
+    pub name: LifetimeTransport,
+    pub bounds: Option<TraitBoundsTransport>,
 }
 
 #[derive(Debug, Clone)]
@@ -4937,8 +4937,8 @@ pub struct LoopExpressionTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub label: Option<Box<AnyTransport>>,
-    pub body: Box<AnyTransport>,
+    pub label: Option<LabelTransport>,
+    pub body: BlockTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5174,7 +5174,7 @@ pub struct MatchArmUFormWithCommaTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub pattern: Box<AnyTransport>,
+    pub pattern: MatchPatternTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
@@ -5192,7 +5192,7 @@ pub struct MatchArmUFormBlockEndingTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub pattern: Box<AnyTransport>,
+    pub pattern: MatchPatternTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
@@ -5228,7 +5228,7 @@ pub struct MatchExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub value: Box<AnyTransport>,
-    pub body: Box<AnyTransport>,
+    pub body: MatchBlockTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5277,7 +5277,7 @@ pub struct ModItemInlineTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub body: Box<AnyTransport>,
+    pub body: DeclarationListTransport,
 }
 
 #[derive(Debug, Clone)]
@@ -5324,7 +5324,7 @@ pub struct ModItemUFormExternalTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
-    pub name: Box<AnyTransport>,
+    pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
@@ -5343,7 +5343,7 @@ pub struct ModItemUFormInlineTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
-    pub name: Box<AnyTransport>,
+    pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
@@ -5361,7 +5361,7 @@ pub struct MutPatternTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub mutable_specifier: Box<AnyTransport>,
+    pub mutable_specifier: MutableSpecifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
@@ -5506,7 +5506,7 @@ pub struct ParameterTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub mutable_specifier: Option<Box<AnyTransport>>,
+    pub mutable_specifier: Option<MutableSpecifierTransport>,
     pub pattern: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
@@ -5662,7 +5662,7 @@ pub struct RangeExpressionBareTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub operator: Box<AnyTransport>,
+    pub operator: KwOperatorTransport,
 }
 
 #[derive(Debug, Clone)]
@@ -5872,7 +5872,7 @@ pub struct RawStringLiteralTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub raw_string_literal_start: Option<Box<AnyTransport>>,
-    pub string_content: Box<AnyTransport>,
+    pub string_content: _StringContentTransport,
     pub raw_string_literal_end: Option<Box<AnyTransport>>,
 }
 
@@ -5924,7 +5924,7 @@ pub struct ReferencePatternTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub mutable_specifier: Option<Box<AnyTransport>>,
+    pub mutable_specifier: Option<MutableSpecifierTransport>,
     pub pattern: Box<AnyTransport>,
 }
 
@@ -5941,8 +5941,8 @@ pub struct ReferenceTypeTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub lifetime: Option<Box<AnyTransport>>,
-    pub mutable_specifier: Option<Box<AnyTransport>>,
+    pub lifetime: Option<LifetimeTransport>,
+    pub mutable_specifier: Option<MutableSpecifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
 }
@@ -6027,7 +6027,7 @@ pub struct ScopedTypeIdentifierTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub path: Option<Box<AnyTransport>>,
-    pub name: Box<AnyTransport>,
+    pub name: TypeIdentifierTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6044,7 +6044,7 @@ pub struct ScopedTypeIdentifierInExpressionPositionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub path: Option<Box<AnyTransport>>,
-    pub name: Box<AnyTransport>,
+    pub name: TypeIdentifierTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6061,7 +6061,7 @@ pub struct ScopedUseListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub path: Option<Box<AnyTransport>>,
-    pub list: Box<AnyTransport>,
+    pub list: UseListTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6093,10 +6093,10 @@ pub struct SelfParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub reference: Option<Box<AnyTransport>>,
-    pub lifetime: Option<Box<AnyTransport>>,
-    pub mutable_specifier: Option<Box<AnyTransport>>,
+    pub lifetime: Option<LifetimeTransport>,
+    pub mutable_specifier: Option<MutableSpecifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "self"))]
-    pub self_: Box<AnyTransport>,
+    pub self_: Self_Transport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6127,8 +6127,8 @@ pub struct ShorthandFieldInitializerTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub attributes: Vec<Box<AnyTransport>>,
-    pub identifier: Box<AnyTransport>,
+    pub attributes: Vec<AttributeItemTransport>,
+    pub identifier: IdentifierTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6161,7 +6161,7 @@ pub struct SourceFileTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub shebang: Option<Box<AnyTransport>>,
+    pub shebang: Option<ShebangTransport>,
     pub statements: Vec<Box<AnyTransport>>,
 }
 
@@ -6180,7 +6180,7 @@ pub struct StaticItemTransport {
     pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub mutable_specifier: Option<Box<AnyTransport>>,
-    pub name: Box<AnyTransport>,
+    pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
     pub value: Option<Box<AnyTransport>>,
@@ -6217,7 +6217,7 @@ pub struct StructExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub name: Box<AnyTransport>,
-    pub body: Box<AnyTransport>,
+    pub body: FieldInitializerListTransport,
 }
 
 #[derive(Debug, Clone)]
@@ -6268,8 +6268,8 @@ pub struct StructItemUFormBraceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
-    pub name: Box<AnyTransport>,
-    pub type_parameters: Option<Box<AnyTransport>>,
+    pub name: TypeIdentifierTransport,
+    pub type_parameters: Option<TypeParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
@@ -6288,8 +6288,8 @@ pub struct StructItemUFormTupleTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
-    pub name: Box<AnyTransport>,
-    pub type_parameters: Option<Box<AnyTransport>>,
+    pub name: TypeIdentifierTransport,
+    pub type_parameters: Option<TypeParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
@@ -6308,8 +6308,8 @@ pub struct StructItemUFormUnitTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
-    pub name: Box<AnyTransport>,
-    pub type_parameters: Option<Box<AnyTransport>>,
+    pub name: TypeIdentifierTransport,
+    pub type_parameters: Option<TypeParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
@@ -6361,9 +6361,9 @@ pub struct TokenBindingPatternTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub name: Box<AnyTransport>,
+    pub name: MetavariableTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
-    pub r#type: Box<AnyTransport>,
+    pub r#type: FragmentSpecifierTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6703,12 +6703,12 @@ pub struct TraitItemTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
-    pub unsafe_marker: Option<Box<AnyTransport>>,
-    pub name: Box<AnyTransport>,
-    pub type_parameters: Option<Box<AnyTransport>>,
-    pub bounds: Option<Box<AnyTransport>>,
-    pub where_clause: Option<Box<AnyTransport>>,
-    pub body: Box<AnyTransport>,
+    pub unsafe_marker: Option<KwUnsafeMarkerTransport>,
+    pub name: TypeIdentifierTransport,
+    pub type_parameters: Option<TypeParametersTransport>,
+    pub bounds: Option<TraitBoundsTransport>,
+    pub where_clause: Option<WhereClauseTransport>,
+    pub body: DeclarationListTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6724,7 +6724,7 @@ pub struct TryBlockTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub block: Box<AnyTransport>,
+    pub block: BlockTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6756,7 +6756,7 @@ pub struct TupleExpressionTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub attributes: Vec<Box<AnyTransport>>,
+    pub attributes: Vec<AttributeItemTransport>,
     pub elements: Option<Vec<Box<AnyTransport>>>,
 }
 
@@ -6843,8 +6843,8 @@ pub struct TypeBindingTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub name: Box<AnyTransport>,
-    pub type_arguments: Option<Box<AnyTransport>>,
+    pub name: TypeIdentifierTransport,
+    pub type_arguments: Option<TypeArgumentsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
 }
@@ -6881,12 +6881,12 @@ pub struct TypeItemTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
-    pub name: Box<AnyTransport>,
-    pub type_parameters: Option<Box<AnyTransport>>,
-    pub where_clause: Option<Box<AnyTransport>>,
+    pub name: TypeIdentifierTransport,
+    pub type_parameters: Option<TypeParametersTransport>,
+    pub where_clause: Option<WhereClauseTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
-    pub trailing_where_clause: Option<Box<AnyTransport>>,
+    pub trailing_where_clause: Option<WhereClauseTransport>,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6902,8 +6902,8 @@ pub struct TypeParameterTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub name: Box<AnyTransport>,
-    pub bounds: Option<Box<AnyTransport>>,
+    pub name: TypeIdentifierTransport,
+    pub bounds: Option<TraitBoundsTransport>,
     pub default_type: Option<Box<AnyTransport>>,
 }
 
@@ -6955,10 +6955,10 @@ pub struct UnionItemTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
-    pub name: Box<AnyTransport>,
-    pub type_parameters: Option<Box<AnyTransport>>,
-    pub where_clause: Option<Box<AnyTransport>>,
-    pub body: Box<AnyTransport>,
+    pub name: TypeIdentifierTransport,
+    pub type_parameters: Option<TypeParametersTransport>,
+    pub where_clause: Option<WhereClauseTransport>,
+    pub body: FieldDeclarationListTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7004,7 +7004,7 @@ pub struct UnsafeBlockTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub block: Box<AnyTransport>,
+    pub block: BlockTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7021,7 +7021,7 @@ pub struct UseAsClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub path: Box<AnyTransport>,
-    pub alias: Box<AnyTransport>,
+    pub alias: IdentifierTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7104,7 +7104,7 @@ pub struct VariadicParameterTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub mutable_specifier: Option<Box<AnyTransport>>,
+    pub mutable_specifier: Option<MutableSpecifierTransport>,
     pub pattern: Option<Box<AnyTransport>>,
 }
 
@@ -7241,7 +7241,7 @@ pub struct WherePredicateTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub left: Box<AnyTransport>,
-    pub bounds: Box<AnyTransport>,
+    pub bounds: TraitBoundsTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7257,9 +7257,9 @@ pub struct WhileExpressionTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub label: Option<Box<AnyTransport>>,
+    pub label: Option<LabelTransport>,
     pub condition: Box<AnyTransport>,
-    pub body: Box<AnyTransport>,
+    pub body: BlockTransport,
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8525,7 +8525,7 @@ fn render_array_expression_list_transport(node: &ArrayExpressionListTransport) -
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let attributes_strings: Vec<String> = node.attributes.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_attribute_item_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let attributes_buf: Vec<::sittir_core::filters::Renderable<'_>> = attributes_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -8561,7 +8561,7 @@ fn render_array_expression_list_transport(node: &ArrayExpressionListTransport) -
 
 fn render_array_expression_semi_transport(node: &ArrayExpressionSemiTransport) -> Result<String, ::askama::Error> {
     let attributes_strings: Vec<String> = node.attributes.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_attribute_item_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let attributes_buf: Vec<::sittir_core::filters::Renderable<'_>> = attributes_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -8582,7 +8582,7 @@ fn render_array_expression_semi_transport(node: &ArrayExpressionSemiTransport) -
 }
 
 fn render_closure_expression_block_transport(node: &ClosureExpressionBlockTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let body_text = render_block_transport(&node.body)?;
     let return_type_text = if let Some(v) = &node.return_type {
         render_transport_dispatch(v.as_ref())?
     } else {
@@ -8716,7 +8716,7 @@ fn render_field_identifier_transport(node: &FieldIdentifierTransport) -> Result<
 }
 
 fn render_field_pattern_named_transport(node: &FieldPatternNamedTransport) -> Result<String, ::askama::Error> {
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = render_field_identifier_transport(&node.name)?;
     let pattern_text = render_transport_dispatch(node.pattern.as_ref())?;
     let template = FieldPatternNamedTemplate {
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
@@ -8726,7 +8726,7 @@ fn render_field_pattern_named_transport(node: &FieldPatternNamedTransport) -> Re
 }
 
 fn render__field_pattern_shorthand_transport(node: &_FieldPatternShorthandTransport) -> Result<String, ::askama::Error> {
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = render_shorthand_field_identifier_transport(&node.name)?;
     let template = _FieldPatternShorthandTemplate {
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
     };
@@ -8734,7 +8734,7 @@ fn render__field_pattern_shorthand_transport(node: &_FieldPatternShorthandTransp
 }
 
 fn render__foreign_mod_item_body_transport(node: &_ForeignModItemBodyTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let body_text = render_declaration_list_transport(&node.body)?;
     let template = _ForeignModItemBodyTemplate {
         body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
     };
@@ -8773,7 +8773,7 @@ fn render_function_type_trait_form_transport(node: &FunctionTypeTraitFormTranspo
 }
 
 fn render__impl_item_body_transport(node: &_ImplItemBodyTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let body_text = render_declaration_list_transport(&node.body)?;
     let template = _ImplItemBodyTemplate {
         body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
     };
@@ -8839,7 +8839,7 @@ fn render_line_comment_content_transport(t: &LineCommentContentTransport) -> Res
 }
 
 fn render_line_comment_doc_transport(node: &LineCommentDocTransport) -> Result<String, ::askama::Error> {
-    let doc_text = render_transport_dispatch(node.doc.as_ref())?;
+    let doc_text = render_doc_comment_transport(&node.doc)?;
     let template = LineCommentDocTemplate {
         doc: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(doc_text.as_str())),
         inner: ::sittir_core::filters::OptionalNonterminalView::Missing,
@@ -8930,7 +8930,7 @@ fn render_mod_item_external_transport(t: &ModItemExternalTransport) -> Result<St
 }
 
 fn render__mod_item_inline_transport(node: &_ModItemInlineTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let body_text = render_declaration_list_transport(&node.body)?;
     let template = _ModItemInlineTemplate {
         body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
     };
@@ -8994,7 +8994,7 @@ fn render_primitive_type_transport(t: &PrimitiveTypeTransport) -> Result<String,
 }
 
 fn render__range_expression_bare_transport(node: &_RangeExpressionBareTransport) -> Result<String, ::askama::Error> {
-    let operator_text = render_transport_dispatch(node.operator.as_ref())?;
+    let operator_text = render_kw_operator_transport(&node.operator)?;
     let template = _RangeExpressionBareTemplate {
         operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operator_text.as_str())),
     };
@@ -9014,7 +9014,7 @@ fn render_range_expression_binary_transport(node: &RangeExpressionBinaryTranspor
 }
 
 fn render_range_expression_postfix_transport(node: &RangeExpressionPostfixTransport) -> Result<String, ::askama::Error> {
-    let operator_text = render_transport_dispatch(node.operator.as_ref())?;
+    let operator_text = render_kw_operator_transport(&node.operator)?;
     let start_text = render_transport_dispatch(node.start.as_ref())?;
     let template = RangeExpressionPostfixTemplate {
         operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operator_text.as_str())),
@@ -9025,7 +9025,7 @@ fn render_range_expression_postfix_transport(node: &RangeExpressionPostfixTransp
 
 fn render_range_expression_prefix_transport(node: &RangeExpressionPrefixTransport) -> Result<String, ::askama::Error> {
     let end_text = render_transport_dispatch(node.end.as_ref())?;
-    let operator_text = render_transport_dispatch(node.operator.as_ref())?;
+    let operator_text = render_kw_operator_transport(&node.operator)?;
     let template = RangeExpressionPrefixTemplate {
         end: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(end_text.as_str())),
         operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operator_text.as_str())),
@@ -9137,7 +9137,7 @@ fn render_struct_item_brace_transport(node: &StructItemBraceTransport) -> Result
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let body_text = render_field_declaration_list_transport(&node.body)?;
     let template = StructItemBraceTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -9158,7 +9158,7 @@ fn render_struct_item_tuple_transport(node: &StructItemTupleTransport) -> Result
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let body_text = render_ordered_field_declaration_list_transport(&node.body)?;
     let template = StructItemTupleTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -9367,7 +9367,7 @@ fn render_wildcard_pattern_transport(t: &WildcardPatternTransport) -> Result<Str
 fn render_abstract_type_transport(node: &AbstractTypeTransport) -> Result<String, ::askama::Error> {
     let r#trait_text = render_transport_dispatch(node.r#trait.as_ref())?;
     let type_parameters_text = if let Some(v) = &node.type_parameters {
-        render_transport_dispatch(v.as_ref())?
+        render_type_parameters_transport(v)?
     } else {
         String::new()
     };
@@ -9465,18 +9465,18 @@ fn render_assignment_expression_transport(node: &AssignmentExpressionTransport) 
 
 fn render_associated_type_transport(node: &AssociatedTypeTransport) -> Result<String, ::askama::Error> {
     let bounds_text = if let Some(v) = &node.bounds {
-        render_transport_dispatch(v.as_ref())?
+        render_trait_bounds_transport(v)?
     } else {
         String::new()
     };
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = render_type_identifier_transport(&node.name)?;
     let type_parameters_text = if let Some(v) = &node.type_parameters {
-        render_transport_dispatch(v.as_ref())?
+        render_type_parameters_transport(v)?
     } else {
         String::new()
     };
     let where_clause_text = if let Some(v) = &node.where_clause {
-        render_transport_dispatch(v.as_ref())?
+        render_where_clause_transport(v)?
     } else {
         String::new()
     };
@@ -9490,9 +9490,9 @@ fn render_associated_type_transport(node: &AssociatedTypeTransport) -> Result<St
 }
 
 fn render_async_block_transport(node: &AsyncBlockTransport) -> Result<String, ::askama::Error> {
-    let block_text = render_transport_dispatch(node.block.as_ref())?;
+    let block_text = render_block_transport(&node.block)?;
     let move_marker_text = if let Some(v) = &node.move_marker {
-        render_transport_dispatch(v.as_ref())?
+        render_kw_move_marker_transport(v)?
     } else {
         String::new()
     };
@@ -9524,7 +9524,7 @@ fn render_attribute_transport(node: &AttributeTransport) -> Result<String, ::ask
 }
 
 fn render_attribute_item_transport(node: &AttributeItemTransport) -> Result<String, ::askama::Error> {
-    let attribute_text = render_transport_dispatch(node.attribute.as_ref())?;
+    let attribute_text = render_attribute_transport(&node.attribute)?;
     let template = AttributeItemTemplate {
         attribute: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(attribute_text.as_str())),
     };
@@ -9587,7 +9587,7 @@ fn render_block_transport(node: &BlockTransport) -> Result<String, ::askama::Err
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let label_text = if let Some(v) = &node.label {
-        render_transport_dispatch(v.as_ref())?
+        render_label_transport(v)?
     } else {
         String::new()
     };
@@ -9605,7 +9605,7 @@ fn render_block_transport(node: &BlockTransport) -> Result<String, ::askama::Err
 
 fn render_block_comment_transport(node: &BlockCommentTransport) -> Result<String, ::askama::Error> {
     let doc_text = if let Some(v) = &node.doc {
-        render_transport_dispatch(v.as_ref())?
+        render_doc_comment_transport(v)?
     } else {
         String::new()
     };
@@ -9665,7 +9665,7 @@ fn render_break_expression_transport(node: &BreakExpressionTransport) -> Result<
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let label_text = if let Some(v) = &node.label {
-        render_transport_dispatch(v.as_ref())?
+        render_label_transport(v)?
     } else {
         String::new()
     };
@@ -9682,7 +9682,7 @@ fn render_break_expression_transport(node: &BreakExpressionTransport) -> Result<
 }
 
 fn render_call_expression_transport(node: &CallExpressionTransport) -> Result<String, ::askama::Error> {
-    let arguments_text = render_transport_dispatch(node.arguments.as_ref())?;
+    let arguments_text = render_arguments_transport(&node.arguments)?;
     let function_text = render_transport_dispatch(node.function.as_ref())?;
     let template = CallExpressionTemplate {
         arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(arguments_text.as_str())),
@@ -9698,7 +9698,7 @@ fn render_captured_pattern_transport(node: &CapturedPatternTransport) -> Result<
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let identifier_text = render_transport_dispatch(node.identifier.as_ref())?;
+    let identifier_text = render_identifier_transport(&node.identifier)?;
     let template = CapturedPatternTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -9738,18 +9738,18 @@ fn render_closure_expression_uform_block_transport(node: &ClosureExpressionUForm
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let async_marker_text = if let Some(v) = &node.async_marker {
-        render_transport_dispatch(v.as_ref())?
+        render_kw_async_marker_transport(v)?
     } else {
         String::new()
     };
     let move_marker_text = if let Some(v) = &node.move_marker {
-        render_transport_dispatch(v.as_ref())?
+        render_kw_move_marker_transport(v)?
     } else {
         String::new()
     };
-    let parameters_text = render_transport_dispatch(node.parameters.as_ref())?;
+    let parameters_text = render_closure_parameters_transport(&node.parameters)?;
     let static_marker_text = if let Some(v) = &node.static_marker {
-        render_transport_dispatch(v.as_ref())?
+        render_kw_static_marker_transport(v)?
     } else {
         String::new()
     };
@@ -9776,18 +9776,18 @@ fn render_closure_expression_uform_expr_transport(node: &ClosureExpressionUFormE
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let async_marker_text = if let Some(v) = &node.async_marker {
-        render_transport_dispatch(v.as_ref())?
+        render_kw_async_marker_transport(v)?
     } else {
         String::new()
     };
     let move_marker_text = if let Some(v) = &node.move_marker {
-        render_transport_dispatch(v.as_ref())?
+        render_kw_move_marker_transport(v)?
     } else {
         String::new()
     };
-    let parameters_text = render_transport_dispatch(node.parameters.as_ref())?;
+    let parameters_text = render_closure_parameters_transport(&node.parameters)?;
     let static_marker_text = if let Some(v) = &node.static_marker {
-        render_transport_dispatch(v.as_ref())?
+        render_kw_static_marker_transport(v)?
     } else {
         String::new()
     };
@@ -9855,7 +9855,7 @@ fn render_compound_assignment_expr_transport(node: &CompoundAssignmentExprTransp
 }
 
 fn render_const_block_transport(node: &ConstBlockTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let body_text = render_block_transport(&node.body)?;
     let template = ConstBlockTemplate {
         body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
     };
@@ -9863,7 +9863,7 @@ fn render_const_block_transport(node: &ConstBlockTransport) -> Result<String, ::
 }
 
 fn render_const_item_transport(node: &ConstItemTransport) -> Result<String, ::askama::Error> {
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = render_identifier_transport(&node.name)?;
     let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
     let value_text = if let Some(v) = &node.value {
         render_transport_dispatch(v.as_ref())?
@@ -9885,7 +9885,7 @@ fn render_const_item_transport(node: &ConstItemTransport) -> Result<String, ::as
 }
 
 fn render_const_parameter_transport(node: &ConstParameterTransport) -> Result<String, ::askama::Error> {
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = render_identifier_transport(&node.name)?;
     let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
     let value_text = if let Some(v) = &node.value {
         render_transport_dispatch(v.as_ref())?
@@ -9902,7 +9902,7 @@ fn render_const_parameter_transport(node: &ConstParameterTransport) -> Result<St
 
 fn render_continue_expression_transport(node: &ContinueExpressionTransport) -> Result<String, ::askama::Error> {
     let label_text = if let Some(v) = &node.label {
-        render_transport_dispatch(v.as_ref())?
+        render_label_transport(v)?
     } else {
         String::new()
     };
@@ -10081,10 +10081,10 @@ fn render_empty_statement_transport(t: &EmptyStatementTransport) -> Result<Strin
 }
 
 fn render_enum_item_transport(node: &EnumItemTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_transport_dispatch(node.body.as_ref())?;
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let body_text = render_enum_variant_list_transport(&node.body)?;
+    let name_text = render_type_identifier_transport(&node.name)?;
     let type_parameters_text = if let Some(v) = &node.type_parameters {
-        render_transport_dispatch(v.as_ref())?
+        render_type_parameters_transport(v)?
     } else {
         String::new()
     };
@@ -10094,7 +10094,7 @@ fn render_enum_item_transport(node: &EnumItemTransport) -> Result<String, ::aska
         String::new()
     };
     let where_clause_text = if let Some(v) = &node.where_clause {
-        render_transport_dispatch(v.as_ref())?
+        render_where_clause_transport(v)?
     } else {
         String::new()
     };
@@ -10114,7 +10114,7 @@ fn render_enum_variant_transport(node: &EnumVariantTransport) -> Result<String, 
     } else {
         String::new()
     };
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = render_identifier_transport(&node.name)?;
     let value_text = if let Some(v) = &node.value {
         render_transport_dispatch(v.as_ref())?
     } else {
@@ -10237,12 +10237,12 @@ fn render_expression_statement_uform_block_ending_transport(node: &ExpressionSta
 
 fn render_extern_crate_declaration_transport(node: &ExternCrateDeclarationTransport) -> Result<String, ::askama::Error> {
     let alias_text = if let Some(v) = &node.alias {
-        render_transport_dispatch(v.as_ref())?
+        render_identifier_transport(v)?
     } else {
         String::new()
     };
-    let crate__text = render_transport_dispatch(node.crate_.as_ref())?;
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let crate__text = render_crate_transport(&node.crate_)?;
+    let name_text = render_identifier_transport(&node.name)?;
     let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
         render_transport_dispatch(v.as_ref())?
     } else {
@@ -10259,7 +10259,7 @@ fn render_extern_crate_declaration_transport(node: &ExternCrateDeclarationTransp
 
 fn render_extern_modifier_transport(node: &ExternModifierTransport) -> Result<String, ::askama::Error> {
     let string_literal_text = if let Some(v) = &node.string_literal {
-        render_transport_dispatch(v.as_ref())?
+        render_string_literal_transport(v)?
     } else {
         String::new()
     };
@@ -10270,7 +10270,7 @@ fn render_extern_modifier_transport(node: &ExternModifierTransport) -> Result<St
 }
 
 fn render_field_declaration_transport(node: &FieldDeclarationTransport) -> Result<String, ::askama::Error> {
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = render_field_identifier_transport(&node.name)?;
     let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
     let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
         render_transport_dispatch(v.as_ref())?
@@ -10354,7 +10354,7 @@ fn render_field_initializer_list_transport(node: &FieldInitializerListTransport)
 }
 
 fn render_field_pattern_shorthand_transport(node: &FieldPatternShorthandTransport) -> Result<String, ::askama::Error> {
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = render_shorthand_field_identifier_transport(&node.name)?;
     let template = FieldPatternShorthandTemplate {
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
     };
@@ -10376,12 +10376,12 @@ fn render_field_pattern_uform_shorthand_transport(node: &FieldPatternUFormShorth
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let mutable_specifier_text = if let Some(v) = &node.mutable_specifier {
-        render_transport_dispatch(v.as_ref())?
+        render_mutable_specifier_transport(v)?
     } else {
         String::new()
     };
     let ref_marker_text = if let Some(v) = &node.ref_marker {
-        render_transport_dispatch(v.as_ref())?
+        render_kw_ref_marker_transport(v)?
     } else {
         String::new()
     };
@@ -10406,12 +10406,12 @@ fn render_field_pattern_uform_named_transport(node: &FieldPatternUFormNamedTrans
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let mutable_specifier_text = if let Some(v) = &node.mutable_specifier {
-        render_transport_dispatch(v.as_ref())?
+        render_mutable_specifier_transport(v)?
     } else {
         String::new()
     };
     let ref_marker_text = if let Some(v) = &node.ref_marker {
-        render_transport_dispatch(v.as_ref())?
+        render_kw_ref_marker_transport(v)?
     } else {
         String::new()
     };
@@ -10429,9 +10429,9 @@ fn render_field_pattern_uform_named_transport(node: &FieldPatternUFormNamedTrans
 }
 
 fn render_for_expression_transport(node: &ForExpressionTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let body_text = render_block_transport(&node.body)?;
     let label_text = if let Some(v) = &node.label {
-        render_transport_dispatch(v.as_ref())?
+        render_label_transport(v)?
     } else {
         String::new()
     };
@@ -10465,7 +10465,7 @@ fn render_for_lifetimes_transport(node: &ForLifetimesTransport) -> Result<String
 }
 
 fn render_foreign_mod_item_body_transport(node: &ForeignModItemBodyTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let body_text = render_declaration_list_transport(&node.body)?;
     let template = ForeignModItemBodyTemplate {
         body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
     };
@@ -10486,7 +10486,7 @@ fn render_foreign_mod_item_uform_semi_transport(node: &ForeignModItemUFormSemiTr
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let extern_modifier_text = render_transport_dispatch(node.extern_modifier.as_ref())?;
+    let extern_modifier_text = render_extern_modifier_transport(&node.extern_modifier)?;
     let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
         render_transport_dispatch(v.as_ref())?
     } else {
@@ -10512,7 +10512,7 @@ fn render_foreign_mod_item_uform_body_transport(node: &ForeignModItemUFormBodyTr
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let extern_modifier_text = render_transport_dispatch(node.extern_modifier.as_ref())?;
+    let extern_modifier_text = render_extern_modifier_transport(&node.extern_modifier)?;
     let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
         render_transport_dispatch(v.as_ref())?
     } else {
@@ -10536,21 +10536,21 @@ fn render_fragment_specifier_transport(t: &FragmentSpecifierTransport) -> Result
 }
 
 fn render_function_item_transport(node: &FunctionItemTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let body_text = render_block_transport(&node.body)?;
     let function_modifiers_text = if let Some(v) = &node.function_modifiers {
-        render_transport_dispatch(v.as_ref())?
+        render_function_modifiers_transport(v)?
     } else {
         String::new()
     };
     let name_text = render_transport_dispatch(node.name.as_ref())?;
-    let parameters_text = render_transport_dispatch(node.parameters.as_ref())?;
+    let parameters_text = render_parameters_transport(&node.parameters)?;
     let return_type_text = if let Some(v) = &node.return_type {
         render_transport_dispatch(v.as_ref())?
     } else {
         String::new()
     };
     let type_parameters_text = if let Some(v) = &node.type_parameters {
-        render_transport_dispatch(v.as_ref())?
+        render_type_parameters_transport(v)?
     } else {
         String::new()
     };
@@ -10560,7 +10560,7 @@ fn render_function_item_transport(node: &FunctionItemTransport) -> Result<String
         String::new()
     };
     let where_clause_text = if let Some(v) = &node.where_clause {
-        render_transport_dispatch(v.as_ref())?
+        render_where_clause_transport(v)?
     } else {
         String::new()
     };
@@ -10580,7 +10580,7 @@ fn render_function_item_transport(node: &FunctionItemTransport) -> Result<String
 fn render_function_modifiers_transport(node: &FunctionModifiersTransport) -> Result<String, ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = Vec::new();
     let modifier_strings: Vec<String> = node.modifier.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_extern_modifier_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let modifier_buf: Vec<::sittir_core::filters::Renderable<'_>> = modifier_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -10604,19 +10604,19 @@ fn render_function_modifiers_transport(node: &FunctionModifiersTransport) -> Res
 
 fn render_function_signature_item_transport(node: &FunctionSignatureItemTransport) -> Result<String, ::askama::Error> {
     let function_modifiers_text = if let Some(v) = &node.function_modifiers {
-        render_transport_dispatch(v.as_ref())?
+        render_function_modifiers_transport(v)?
     } else {
         String::new()
     };
     let name_text = render_transport_dispatch(node.name.as_ref())?;
-    let parameters_text = render_transport_dispatch(node.parameters.as_ref())?;
+    let parameters_text = render_parameters_transport(&node.parameters)?;
     let return_type_text = if let Some(v) = &node.return_type {
         render_transport_dispatch(v.as_ref())?
     } else {
         String::new()
     };
     let type_parameters_text = if let Some(v) = &node.type_parameters {
-        render_transport_dispatch(v.as_ref())?
+        render_type_parameters_transport(v)?
     } else {
         String::new()
     };
@@ -10626,7 +10626,7 @@ fn render_function_signature_item_transport(node: &FunctionSignatureItemTranspor
         String::new()
     };
     let where_clause_text = if let Some(v) = &node.where_clause {
-        render_transport_dispatch(v.as_ref())?
+        render_where_clause_transport(v)?
     } else {
         String::new()
     };
@@ -10650,11 +10650,11 @@ fn render_function_type_transport(node: &FunctionTypeTransport) -> Result<String
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let for_lifetimes_text = if let Some(v) = &node.for_lifetimes {
-        render_transport_dispatch(v.as_ref())?
+        render_for_lifetimes_transport(v)?
     } else {
         String::new()
     };
-    let parameters_text = render_transport_dispatch(node.parameters.as_ref())?;
+    let parameters_text = render_parameters_transport(&node.parameters)?;
     let return_type_text = if let Some(v) = &node.return_type {
         render_transport_dispatch(v.as_ref())?
     } else {
@@ -10675,9 +10675,9 @@ fn render_function_type_transport(node: &FunctionTypeTransport) -> Result<String
 }
 
 fn render_gen_block_transport(node: &GenBlockTransport) -> Result<String, ::askama::Error> {
-    let block_text = render_transport_dispatch(node.block.as_ref())?;
+    let block_text = render_block_transport(&node.block)?;
     let move_marker_text = if let Some(v) = &node.move_marker {
-        render_transport_dispatch(v.as_ref())?
+        render_kw_move_marker_transport(v)?
     } else {
         String::new()
     };
@@ -10690,7 +10690,7 @@ fn render_gen_block_transport(node: &GenBlockTransport) -> Result<String, ::aska
 
 fn render_generic_function_transport(node: &GenericFunctionTransport) -> Result<String, ::askama::Error> {
     let function_text = render_transport_dispatch(node.function.as_ref())?;
-    let type_arguments_text = render_transport_dispatch(node.type_arguments.as_ref())?;
+    let type_arguments_text = render_type_arguments_transport(&node.type_arguments)?;
     let template = GenericFunctionTemplate {
         function: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(function_text.as_str())),
         type_arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(type_arguments_text.as_str())),
@@ -10705,7 +10705,7 @@ fn render_generic_pattern_transport(node: &GenericPatternTransport) -> Result<St
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let type_arguments_text = render_transport_dispatch(node.type_arguments.as_ref())?;
+    let type_arguments_text = render_type_arguments_transport(&node.type_arguments)?;
     let template = GenericPatternTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -10720,7 +10720,7 @@ fn render_generic_pattern_transport(node: &GenericPatternTransport) -> Result<St
 
 fn render_generic_type_transport(node: &GenericTypeTransport) -> Result<String, ::askama::Error> {
     let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
-    let type_arguments_text = render_transport_dispatch(node.type_arguments.as_ref())?;
+    let type_arguments_text = render_type_arguments_transport(&node.type_arguments)?;
     let template = GenericTypeTemplate {
         r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
         type_arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(type_arguments_text.as_str())),
@@ -10731,7 +10731,7 @@ fn render_generic_type_transport(node: &GenericTypeTransport) -> Result<String, 
 fn render_generic_type_with_turbofish_transport(node: &GenericTypeWithTurbofishTransport) -> Result<String, ::askama::Error> {
     let turbofish_text = render_transport_dispatch(node.turbofish.as_ref())?;
     let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
-    let type_arguments_text = render_transport_dispatch(node.type_arguments.as_ref())?;
+    let type_arguments_text = render_type_arguments_transport(&node.type_arguments)?;
     let template = GenericTypeWithTurbofishTemplate {
         turbofish: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(turbofish_text.as_str())),
         r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
@@ -10742,7 +10742,7 @@ fn render_generic_type_with_turbofish_transport(node: &GenericTypeWithTurbofishT
 
 fn render_higher_ranked_trait_bound_transport(node: &HigherRankedTraitBoundTransport) -> Result<String, ::askama::Error> {
     let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
-    let type_parameters_text = render_transport_dispatch(node.type_parameters.as_ref())?;
+    let type_parameters_text = render_type_parameters_transport(&node.type_parameters)?;
     let template = HigherRankedTraitBoundTemplate {
         r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
         type_parameters: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())),
@@ -10756,12 +10756,12 @@ fn render_identifier_transport(t: &IdentifierTransport) -> Result<String, ::aska
 
 fn render_if_expression_transport(node: &IfExpressionTransport) -> Result<String, ::askama::Error> {
     let alternative_text = if let Some(v) = &node.alternative {
-        render_transport_dispatch(v.as_ref())?
+        render_else_clause_transport(v)?
     } else {
         String::new()
     };
     let condition_text = render_transport_dispatch(node.condition.as_ref())?;
-    let consequence_text = render_transport_dispatch(node.consequence.as_ref())?;
+    let consequence_text = render_block_transport(&node.consequence)?;
     let template = IfExpressionTemplate {
         alternative: if node.alternative.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(alternative_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
         condition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(condition_text.as_str())),
@@ -10771,7 +10771,7 @@ fn render_if_expression_transport(node: &IfExpressionTransport) -> Result<String
 }
 
 fn render_impl_item_body_transport(node: &ImplItemBodyTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let body_text = render_declaration_list_transport(&node.body)?;
     let template = ImplItemBodyTemplate {
         body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
     };
@@ -10793,7 +10793,7 @@ fn render_impl_item_uform_body_transport(node: &ImplItemUFormBodyTransport) -> R
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let negative_text = if let Some(v) = &node.negative {
-        render_transport_dispatch(v.as_ref())?
+        render_kw_negative_transport(v)?
     } else {
         String::new()
     };
@@ -10804,17 +10804,17 @@ fn render_impl_item_uform_body_transport(node: &ImplItemUFormBodyTransport) -> R
     };
     let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
     let type_parameters_text = if let Some(v) = &node.type_parameters {
-        render_transport_dispatch(v.as_ref())?
+        render_type_parameters_transport(v)?
     } else {
         String::new()
     };
     let unsafe_marker_text = if let Some(v) = &node.unsafe_marker {
-        render_transport_dispatch(v.as_ref())?
+        render_kw_unsafe_marker_transport(v)?
     } else {
         String::new()
     };
     let where_clause_text = if let Some(v) = &node.where_clause {
-        render_transport_dispatch(v.as_ref())?
+        render_where_clause_transport(v)?
     } else {
         String::new()
     };
@@ -10843,7 +10843,7 @@ fn render_impl_item_uform_semi_transport(node: &ImplItemUFormSemiTransport) -> R
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let negative_text = if let Some(v) = &node.negative {
-        render_transport_dispatch(v.as_ref())?
+        render_kw_negative_transport(v)?
     } else {
         String::new()
     };
@@ -10854,17 +10854,17 @@ fn render_impl_item_uform_semi_transport(node: &ImplItemUFormSemiTransport) -> R
     };
     let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
     let type_parameters_text = if let Some(v) = &node.type_parameters {
-        render_transport_dispatch(v.as_ref())?
+        render_type_parameters_transport(v)?
     } else {
         String::new()
     };
     let unsafe_marker_text = if let Some(v) = &node.unsafe_marker {
-        render_transport_dispatch(v.as_ref())?
+        render_kw_unsafe_marker_transport(v)?
     } else {
         String::new()
     };
     let where_clause_text = if let Some(v) = &node.where_clause {
-        render_transport_dispatch(v.as_ref())?
+        render_where_clause_transport(v)?
     } else {
         String::new()
     };
@@ -10896,7 +10896,7 @@ fn render_index_expression_transport(node: &IndexExpressionTransport) -> Result<
 }
 
 fn render_inner_attribute_item_transport(node: &InnerAttributeItemTransport) -> Result<String, ::askama::Error> {
-    let attribute_text = render_transport_dispatch(node.attribute.as_ref())?;
+    let attribute_text = render_attribute_transport(&node.attribute)?;
     let template = InnerAttributeItemTemplate {
         attribute: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(attribute_text.as_str())),
     };
@@ -10908,7 +10908,7 @@ fn render_integer_literal_transport(t: &IntegerLiteralTransport) -> Result<Strin
 }
 
 fn render_label_transport(node: &LabelTransport) -> Result<String, ::askama::Error> {
-    let identifier_text = render_transport_dispatch(node.identifier.as_ref())?;
+    let identifier_text = render_identifier_transport(&node.identifier)?;
     let template = LabelTemplate {
         identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(identifier_text.as_str())),
     };
@@ -10922,7 +10922,7 @@ fn render_last_match_arm_transport(node: &LastMatchArmTransport) -> Result<Strin
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let pattern_text = render_transport_dispatch(node.pattern.as_ref())?;
+    let pattern_text = render_match_pattern_transport(&node.pattern)?;
     let value_text = render_transport_dispatch(node.value.as_ref())?;
     let template = LastMatchArmTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -10949,12 +10949,12 @@ fn render_let_condition_transport(node: &LetConditionTransport) -> Result<String
 
 fn render_let_declaration_transport(node: &LetDeclarationTransport) -> Result<String, ::askama::Error> {
     let alternative_text = if let Some(v) = &node.alternative {
-        render_transport_dispatch(v.as_ref())?
+        render_block_transport(v)?
     } else {
         String::new()
     };
     let mutable_specifier_text = if let Some(v) = &node.mutable_specifier {
-        render_transport_dispatch(v.as_ref())?
+        render_mutable_specifier_transport(v)?
     } else {
         String::new()
     };
@@ -10980,7 +10980,7 @@ fn render_let_declaration_transport(node: &LetDeclarationTransport) -> Result<St
 }
 
 fn render_lifetime_transport(node: &LifetimeTransport) -> Result<String, ::askama::Error> {
-    let identifier_text = render_transport_dispatch(node.identifier.as_ref())?;
+    let identifier_text = render_identifier_transport(&node.identifier)?;
     let template = LifetimeTemplate {
         identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(identifier_text.as_str())),
     };
@@ -10989,11 +10989,11 @@ fn render_lifetime_transport(node: &LifetimeTransport) -> Result<String, ::askam
 
 fn render_lifetime_parameter_transport(node: &LifetimeParameterTransport) -> Result<String, ::askama::Error> {
     let bounds_text = if let Some(v) = &node.bounds {
-        render_transport_dispatch(v.as_ref())?
+        render_trait_bounds_transport(v)?
     } else {
         String::new()
     };
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = render_lifetime_transport(&node.name)?;
     let template = LifetimeParameterTemplate {
         bounds: if node.bounds.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(bounds_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
@@ -11064,9 +11064,9 @@ fn render_line_comment_uform_content_transport(node: &LineCommentUFormContentTra
 }
 
 fn render_loop_expression_transport(node: &LoopExpressionTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let body_text = render_block_transport(&node.body)?;
     let label_text = if let Some(v) = &node.label {
-        render_transport_dispatch(v.as_ref())?
+        render_label_transport(v)?
     } else {
         String::new()
     };
@@ -11244,7 +11244,7 @@ fn render_match_arm_uform_with_comma_transport(node: &MatchArmUFormWithCommaTran
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let pattern_text = render_transport_dispatch(node.pattern.as_ref())?;
+    let pattern_text = render_match_pattern_transport(&node.pattern)?;
     let template = MatchArmTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -11264,7 +11264,7 @@ fn render_match_arm_uform_block_ending_transport(node: &MatchArmUFormBlockEnding
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let pattern_text = render_transport_dispatch(node.pattern.as_ref())?;
+    let pattern_text = render_match_pattern_transport(&node.pattern)?;
     let template = MatchArmTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -11297,7 +11297,7 @@ fn render_match_block_transport(node: &MatchBlockTransport) -> Result<String, ::
 }
 
 fn render_match_expression_transport(node: &MatchExpressionTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let body_text = render_match_block_transport(&node.body)?;
     let value_text = render_transport_dispatch(node.value.as_ref())?;
     let template = MatchExpressionTemplate {
         body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
@@ -11335,7 +11335,7 @@ fn render_metavariable_transport(t: &MetavariableTransport) -> Result<String, ::
 }
 
 fn render_mod_item_inline_transport(node: &ModItemInlineTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let body_text = render_declaration_list_transport(&node.body)?;
     let template = ModItemInlineTemplate {
         body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
     };
@@ -11356,7 +11356,7 @@ fn render_mod_item_uform_external_transport(node: &ModItemUFormExternalTransport
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = render_identifier_transport(&node.name)?;
     let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
         render_transport_dispatch(v.as_ref())?
     } else {
@@ -11382,7 +11382,7 @@ fn render_mod_item_uform_inline_transport(node: &ModItemUFormInlineTransport) ->
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = render_identifier_transport(&node.name)?;
     let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
         render_transport_dispatch(v.as_ref())?
     } else {
@@ -11408,7 +11408,7 @@ fn render_mut_pattern_transport(node: &MutPatternTransport) -> Result<String, ::
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let mutable_specifier_text = render_transport_dispatch(node.mutable_specifier.as_ref())?;
+    let mutable_specifier_text = render_mutable_specifier_transport(&node.mutable_specifier)?;
     let template = MutPatternTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -11514,7 +11514,7 @@ fn render_ordered_field_declaration_list_transport(node: &OrderedFieldDeclaratio
 
 fn render_parameter_transport(node: &ParameterTransport) -> Result<String, ::askama::Error> {
     let mutable_specifier_text = if let Some(v) = &node.mutable_specifier {
-        render_transport_dispatch(v.as_ref())?
+        render_mutable_specifier_transport(v)?
     } else {
         String::new()
     };
@@ -11640,7 +11640,7 @@ fn render_qualified_type_transport(node: &QualifiedTypeTransport) -> Result<Stri
 }
 
 fn render_range_expression_bare_transport(node: &RangeExpressionBareTransport) -> Result<String, ::askama::Error> {
-    let operator_text = render_transport_dispatch(node.operator.as_ref())?;
+    let operator_text = render_kw_operator_transport(&node.operator)?;
     let template = RangeExpressionBareTemplate {
         operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operator_text.as_str())),
     };
@@ -11842,7 +11842,7 @@ fn render_reference_expression_transport(node: &ReferenceExpressionTransport) ->
 
 fn render_reference_pattern_transport(node: &ReferencePatternTransport) -> Result<String, ::askama::Error> {
     let mutable_specifier_text = if let Some(v) = &node.mutable_specifier {
-        render_transport_dispatch(v.as_ref())?
+        render_mutable_specifier_transport(v)?
     } else {
         String::new()
     };
@@ -11856,12 +11856,12 @@ fn render_reference_pattern_transport(node: &ReferencePatternTransport) -> Resul
 
 fn render_reference_type_transport(node: &ReferenceTypeTransport) -> Result<String, ::askama::Error> {
     let lifetime_text = if let Some(v) = &node.lifetime {
-        render_transport_dispatch(v.as_ref())?
+        render_lifetime_transport(v)?
     } else {
         String::new()
     };
     let mutable_specifier_text = if let Some(v) = &node.mutable_specifier {
-        render_transport_dispatch(v.as_ref())?
+        render_mutable_specifier_transport(v)?
     } else {
         String::new()
     };
@@ -11930,7 +11930,7 @@ fn render_scoped_identifier_transport(node: &ScopedIdentifierTransport) -> Resul
 }
 
 fn render_scoped_type_identifier_transport(node: &ScopedTypeIdentifierTransport) -> Result<String, ::askama::Error> {
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = render_type_identifier_transport(&node.name)?;
     let path_text = if let Some(v) = &node.path {
         render_transport_dispatch(v.as_ref())?
     } else {
@@ -11944,7 +11944,7 @@ fn render_scoped_type_identifier_transport(node: &ScopedTypeIdentifierTransport)
 }
 
 fn render_scoped_type_identifier_in_expression_position_transport(node: &ScopedTypeIdentifierInExpressionPositionTransport) -> Result<String, ::askama::Error> {
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = render_type_identifier_transport(&node.name)?;
     let path_text = if let Some(v) = &node.path {
         render_transport_dispatch(v.as_ref())?
     } else {
@@ -11958,7 +11958,7 @@ fn render_scoped_type_identifier_in_expression_position_transport(node: &ScopedT
 }
 
 fn render_scoped_use_list_transport(node: &ScopedUseListTransport) -> Result<String, ::askama::Error> {
-    let list_text = render_transport_dispatch(node.list.as_ref())?;
+    let list_text = render_use_list_transport(&node.list)?;
     let path_text = if let Some(v) = &node.path {
         render_transport_dispatch(v.as_ref())?
     } else {
@@ -11977,12 +11977,12 @@ fn render_self_transport(t: &Self_Transport) -> Result<String, ::askama::Error> 
 
 fn render_self_parameter_transport(node: &SelfParameterTransport) -> Result<String, ::askama::Error> {
     let lifetime_text = if let Some(v) = &node.lifetime {
-        render_transport_dispatch(v.as_ref())?
+        render_lifetime_transport(v)?
     } else {
         String::new()
     };
     let mutable_specifier_text = if let Some(v) = &node.mutable_specifier {
-        render_transport_dispatch(v.as_ref())?
+        render_mutable_specifier_transport(v)?
     } else {
         String::new()
     };
@@ -11991,7 +11991,7 @@ fn render_self_parameter_transport(node: &SelfParameterTransport) -> Result<Stri
     } else {
         String::new()
     };
-    let self__text = render_transport_dispatch(node.self_.as_ref())?;
+    let self__text = render_self_transport(&node.self_)?;
     let template = SelfParameterTemplate {
         lifetime: if node.lifetime.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(lifetime_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
         mutable_specifier: if node.mutable_specifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(mutable_specifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
@@ -12007,12 +12007,12 @@ fn render_shebang_transport(t: &ShebangTransport) -> Result<String, ::askama::Er
 
 fn render_shorthand_field_initializer_transport(node: &ShorthandFieldInitializerTransport) -> Result<String, ::askama::Error> {
     let attributes_strings: Vec<String> = node.attributes.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_attribute_item_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let attributes_buf: Vec<::sittir_core::filters::Renderable<'_>> = attributes_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let identifier_text = render_transport_dispatch(node.identifier.as_ref())?;
+    let identifier_text = render_identifier_transport(&node.identifier)?;
     let template = ShorthandFieldInitializerTemplate {
         attributes: ::sittir_core::filters::ListNonterminalView {
             items: attributes_buf.as_slice(),
@@ -12051,7 +12051,7 @@ fn render_source_file_transport(node: &SourceFileTransport) -> Result<String, ::
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let shebang_text = if let Some(v) = &node.shebang {
-        render_transport_dispatch(v.as_ref())?
+        render_shebang_transport(v)?
     } else {
         String::new()
     };
@@ -12073,7 +12073,7 @@ fn render_static_item_transport(node: &StaticItemTransport) -> Result<String, ::
     } else {
         String::new()
     };
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = render_identifier_transport(&node.name)?;
     let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
     let value_text = if let Some(v) = &node.value {
         render_transport_dispatch(v.as_ref())?
@@ -12115,7 +12115,7 @@ fn render_string_literal_transport(node: &StringLiteralTransport) -> Result<Stri
 }
 
 fn render_struct_expression_transport(node: &StructExpressionTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let body_text = render_field_initializer_list_transport(&node.body)?;
     let name_text = render_transport_dispatch(node.name.as_ref())?;
     let template = StructExpressionTemplate {
         body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
@@ -12139,9 +12139,9 @@ fn render_struct_item_uform_brace_transport(node: &StructItemUFormBraceTransport
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = render_type_identifier_transport(&node.name)?;
     let type_parameters_text = if let Some(v) = &node.type_parameters {
-        render_transport_dispatch(v.as_ref())?
+        render_type_parameters_transport(v)?
     } else {
         String::new()
     };
@@ -12171,9 +12171,9 @@ fn render_struct_item_uform_tuple_transport(node: &StructItemUFormTupleTransport
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = render_type_identifier_transport(&node.name)?;
     let type_parameters_text = if let Some(v) = &node.type_parameters {
-        render_transport_dispatch(v.as_ref())?
+        render_type_parameters_transport(v)?
     } else {
         String::new()
     };
@@ -12203,9 +12203,9 @@ fn render_struct_item_uform_unit_transport(node: &StructItemUFormUnitTransport) 
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = render_type_identifier_transport(&node.name)?;
     let type_parameters_text = if let Some(v) = &node.type_parameters {
-        render_transport_dispatch(v.as_ref())?
+        render_type_parameters_transport(v)?
     } else {
         String::new()
     };
@@ -12253,8 +12253,8 @@ fn render_super_transport(t: &SuperTransport) -> Result<String, ::askama::Error>
 }
 
 fn render_token_binding_pattern_transport(node: &TokenBindingPatternTransport) -> Result<String, ::askama::Error> {
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
-    let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
+    let name_text = render_metavariable_transport(&node.name)?;
+    let r#type_text = render_fragment_specifier_transport(&node.r#type)?;
     let template = TokenBindingPatternTemplate {
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
         r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
@@ -12549,20 +12549,20 @@ fn render_trait_bounds_transport(node: &TraitBoundsTransport) -> Result<String, 
 }
 
 fn render_trait_item_transport(node: &TraitItemTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let body_text = render_declaration_list_transport(&node.body)?;
     let bounds_text = if let Some(v) = &node.bounds {
-        render_transport_dispatch(v.as_ref())?
+        render_trait_bounds_transport(v)?
     } else {
         String::new()
     };
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = render_type_identifier_transport(&node.name)?;
     let type_parameters_text = if let Some(v) = &node.type_parameters {
-        render_transport_dispatch(v.as_ref())?
+        render_type_parameters_transport(v)?
     } else {
         String::new()
     };
     let unsafe_marker_text = if let Some(v) = &node.unsafe_marker {
-        render_transport_dispatch(v.as_ref())?
+        render_kw_unsafe_marker_transport(v)?
     } else {
         String::new()
     };
@@ -12572,7 +12572,7 @@ fn render_trait_item_transport(node: &TraitItemTransport) -> Result<String, ::as
         String::new()
     };
     let where_clause_text = if let Some(v) = &node.where_clause {
-        render_transport_dispatch(v.as_ref())?
+        render_where_clause_transport(v)?
     } else {
         String::new()
     };
@@ -12589,7 +12589,7 @@ fn render_trait_item_transport(node: &TraitItemTransport) -> Result<String, ::as
 }
 
 fn render_try_block_transport(node: &TryBlockTransport) -> Result<String, ::askama::Error> {
-    let block_text = render_transport_dispatch(node.block.as_ref())?;
+    let block_text = render_block_transport(&node.block)?;
     let template = TryBlockTemplate {
         block: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(block_text.as_str())),
     };
@@ -12606,7 +12606,7 @@ fn render_try_expression_transport(node: &TryExpressionTransport) -> Result<Stri
 
 fn render_tuple_expression_transport(node: &TupleExpressionTransport) -> Result<String, ::askama::Error> {
     let attributes_strings: Vec<String> = node.attributes.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| render_attribute_item_transport(t))
         .collect::<Result<Vec<_>, _>>()?;
     let attributes_buf: Vec<::sittir_core::filters::Renderable<'_>> = attributes_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -12710,10 +12710,10 @@ fn render_type_arguments_transport(node: &TypeArgumentsTransport) -> Result<Stri
 }
 
 fn render_type_binding_transport(node: &TypeBindingTransport) -> Result<String, ::askama::Error> {
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = render_type_identifier_transport(&node.name)?;
     let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
     let type_arguments_text = if let Some(v) = &node.type_arguments {
-        render_transport_dispatch(v.as_ref())?
+        render_type_arguments_transport(v)?
     } else {
         String::new()
     };
@@ -12736,15 +12736,15 @@ fn render_type_cast_expression_transport(node: &TypeCastExpressionTransport) -> 
 }
 
 fn render_type_item_transport(node: &TypeItemTransport) -> Result<String, ::askama::Error> {
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = render_type_identifier_transport(&node.name)?;
     let trailing_where_clause_text = if let Some(v) = &node.trailing_where_clause {
-        render_transport_dispatch(v.as_ref())?
+        render_where_clause_transport(v)?
     } else {
         String::new()
     };
     let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
     let type_parameters_text = if let Some(v) = &node.type_parameters {
-        render_transport_dispatch(v.as_ref())?
+        render_type_parameters_transport(v)?
     } else {
         String::new()
     };
@@ -12754,7 +12754,7 @@ fn render_type_item_transport(node: &TypeItemTransport) -> Result<String, ::aska
         String::new()
     };
     let where_clause_text = if let Some(v) = &node.where_clause {
-        render_transport_dispatch(v.as_ref())?
+        render_where_clause_transport(v)?
     } else {
         String::new()
     };
@@ -12771,7 +12771,7 @@ fn render_type_item_transport(node: &TypeItemTransport) -> Result<String, ::aska
 
 fn render_type_parameter_transport(node: &TypeParameterTransport) -> Result<String, ::askama::Error> {
     let bounds_text = if let Some(v) = &node.bounds {
-        render_transport_dispatch(v.as_ref())?
+        render_trait_bounds_transport(v)?
     } else {
         String::new()
     };
@@ -12780,7 +12780,7 @@ fn render_type_parameter_transport(node: &TypeParameterTransport) -> Result<Stri
     } else {
         String::new()
     };
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = render_type_identifier_transport(&node.name)?;
     let template = TypeParameterTemplate {
         bounds: if node.bounds.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(bounds_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
         default_type: if node.default_type.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(default_type_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
@@ -12818,10 +12818,10 @@ fn render_unary_expression_transport(node: &UnaryExpressionTransport) -> Result<
 }
 
 fn render_union_item_transport(node: &UnionItemTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_transport_dispatch(node.body.as_ref())?;
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let body_text = render_field_declaration_list_transport(&node.body)?;
+    let name_text = render_type_identifier_transport(&node.name)?;
     let type_parameters_text = if let Some(v) = &node.type_parameters {
-        render_transport_dispatch(v.as_ref())?
+        render_type_parameters_transport(v)?
     } else {
         String::new()
     };
@@ -12831,7 +12831,7 @@ fn render_union_item_transport(node: &UnionItemTransport) -> Result<String, ::as
         String::new()
     };
     let where_clause_text = if let Some(v) = &node.where_clause {
-        render_transport_dispatch(v.as_ref())?
+        render_where_clause_transport(v)?
     } else {
         String::new()
     };
@@ -12854,7 +12854,7 @@ fn render_unit_type_transport(t: &UnitTypeTransport) -> Result<String, ::askama:
 }
 
 fn render_unsafe_block_transport(node: &UnsafeBlockTransport) -> Result<String, ::askama::Error> {
-    let block_text = render_transport_dispatch(node.block.as_ref())?;
+    let block_text = render_block_transport(&node.block)?;
     let template = UnsafeBlockTemplate {
         block: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(block_text.as_str())),
     };
@@ -12862,7 +12862,7 @@ fn render_unsafe_block_transport(node: &UnsafeBlockTransport) -> Result<String, 
 }
 
 fn render_use_as_clause_transport(node: &UseAsClauseTransport) -> Result<String, ::askama::Error> {
-    let alias_text = render_transport_dispatch(node.alias.as_ref())?;
+    let alias_text = render_identifier_transport(&node.alias)?;
     let path_text = render_transport_dispatch(node.path.as_ref())?;
     let template = UseAsClauseTemplate {
         alias: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(alias_text.as_str())),
@@ -12935,7 +12935,7 @@ fn render_use_wildcard_transport(node: &UseWildcardTransport) -> Result<String, 
 
 fn render_variadic_parameter_transport(node: &VariadicParameterTransport) -> Result<String, ::askama::Error> {
     let mutable_specifier_text = if let Some(v) = &node.mutable_specifier {
-        render_transport_dispatch(v.as_ref())?
+        render_mutable_specifier_transport(v)?
     } else {
         String::new()
     };
@@ -13050,7 +13050,7 @@ fn render_where_clause_transport(node: &WhereClauseTransport) -> Result<String, 
 }
 
 fn render_where_predicate_transport(node: &WherePredicateTransport) -> Result<String, ::askama::Error> {
-    let bounds_text = render_transport_dispatch(node.bounds.as_ref())?;
+    let bounds_text = render_trait_bounds_transport(&node.bounds)?;
     let left_text = render_transport_dispatch(node.left.as_ref())?;
     let template = WherePredicateTemplate {
         bounds: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(bounds_text.as_str())),
@@ -13060,10 +13060,10 @@ fn render_where_predicate_transport(node: &WherePredicateTransport) -> Result<St
 }
 
 fn render_while_expression_transport(node: &WhileExpressionTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let body_text = render_block_transport(&node.body)?;
     let condition_text = render_transport_dispatch(node.condition.as_ref())?;
     let label_text = if let Some(v) = &node.label {
-        render_transport_dispatch(v.as_ref())?
+        render_label_transport(v)?
     } else {
         String::new()
     };
@@ -14196,7 +14196,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
 
 fn transport_to_node_array_expression_list(transport: ArrayExpressionListTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("attributes".to_string(), transport_field_values(transport.attributes)?);
+    fields.insert("attributes".to_string(), transport_field_values(transport.attributes.into_iter().map(|v| Box::new(AnyTransport::AttributeItem(v))).collect::<Vec<_>>())?);
     fields.insert("elements".to_string(), transport_field_values(transport.elements)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
@@ -14215,7 +14215,7 @@ fn transport_to_node_array_expression_list(transport: ArrayExpressionListTranspo
 
 fn transport_to_node_array_expression_semi(transport: ArrayExpressionSemiTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("attributes".to_string(), transport_field_values(transport.attributes)?);
+    fields.insert("attributes".to_string(), transport_field_values(transport.attributes.into_iter().map(|v| Box::new(AnyTransport::AttributeItem(v))).collect::<Vec<_>>())?);
     fields.insert("elements".to_string(), transport_field_value(transport.elements)?);
     fields.insert("length".to_string(), transport_field_value(transport.length)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -14238,7 +14238,7 @@ fn transport_to_node_closure_expression_block(transport: ClosureExpressionBlockT
     if let Some(value) = transport.return_type {
         fields.insert("return_type".to_string(), transport_field_value(value)?);
     }
-    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    fields.insert("body".to_string(), transport_field_value(Box::new(AnyTransport::Block(transport.body)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -14390,7 +14390,7 @@ fn transport_to_node_field_identifier(transport: FieldIdentifierTransport) -> Re
 
 fn transport_to_node_field_pattern_named(transport: FieldPatternNamedTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::FieldIdentifier(transport.name)))?);
     fields.insert("pattern".to_string(), transport_field_value(transport.pattern)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -14409,7 +14409,7 @@ fn transport_to_node_field_pattern_named(transport: FieldPatternNamedTransport) 
 
 fn transport_to_node__field_pattern_shorthand(transport: _FieldPatternShorthandTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::ShorthandFieldIdentifier(transport.name)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -14427,7 +14427,7 @@ fn transport_to_node__field_pattern_shorthand(transport: _FieldPatternShorthandT
 
 fn transport_to_node__foreign_mod_item_body(transport: _ForeignModItemBodyTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    fields.insert("body".to_string(), transport_field_value(Box::new(AnyTransport::DeclarationList(transport.body)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -14497,7 +14497,7 @@ fn transport_to_node_function_type_trait_form(transport: FunctionTypeTraitFormTr
 
 fn transport_to_node__impl_item_body(transport: _ImplItemBodyTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    fields.insert("body".to_string(), transport_field_value(Box::new(AnyTransport::DeclarationList(transport.body)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -14672,7 +14672,7 @@ fn transport_to_node_line_comment_content(transport: LineCommentContentTransport
 
 fn transport_to_node_line_comment_doc(transport: LineCommentDocTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("doc".to_string(), transport_field_value(transport.doc)?);
+    fields.insert("doc".to_string(), transport_field_value(Box::new(AnyTransport::DocComment(transport.doc)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -14814,7 +14814,7 @@ fn transport_to_node_mod_item_external(transport: ModItemExternalTransport) -> R
 
 fn transport_to_node__mod_item_inline(transport: _ModItemInlineTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    fields.insert("body".to_string(), transport_field_value(Box::new(AnyTransport::DeclarationList(transport.body)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -14945,7 +14945,7 @@ fn transport_to_node_primitive_type(transport: PrimitiveTypeTransport) -> Result
 
 fn transport_to_node__range_expression_bare(transport: _RangeExpressionBareTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("operator".to_string(), transport_field_value(transport.operator)?);
+    fields.insert("operator".to_string(), transport_field_value(Box::new(AnyTransport::KwOperator(transport.operator)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -14984,7 +14984,7 @@ fn transport_to_node_range_expression_binary(transport: RangeExpressionBinaryTra
 fn transport_to_node_range_expression_postfix(transport: RangeExpressionPostfixTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("start".to_string(), transport_field_value(transport.start)?);
-    fields.insert("operator".to_string(), transport_field_value(transport.operator)?);
+    fields.insert("operator".to_string(), transport_field_value(Box::new(AnyTransport::KwOperator(transport.operator)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -15002,7 +15002,7 @@ fn transport_to_node_range_expression_postfix(transport: RangeExpressionPostfixT
 
 fn transport_to_node_range_expression_prefix(transport: RangeExpressionPrefixTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("operator".to_string(), transport_field_value(transport.operator)?);
+    fields.insert("operator".to_string(), transport_field_value(Box::new(AnyTransport::KwOperator(transport.operator)))?);
     fields.insert("end".to_string(), transport_field_value(transport.end)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -15153,7 +15153,7 @@ fn transport_to_node__string_content(transport: _StringContentTransport) -> Resu
 
 fn transport_to_node_struct_item_brace(transport: StructItemBraceTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    fields.insert("body".to_string(), transport_field_value(Box::new(AnyTransport::FieldDeclarationList(transport.body)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = match transport.children {
         Some(children) => Some(transport_children(children)?),
@@ -15174,7 +15174,7 @@ fn transport_to_node_struct_item_brace(transport: StructItemBraceTransport) -> R
 
 fn transport_to_node_struct_item_tuple(transport: StructItemTupleTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    fields.insert("body".to_string(), transport_field_value(Box::new(AnyTransport::OrderedFieldDeclarationList(transport.body)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = match transport.children {
         Some(children) => Some(transport_children(children)?),
@@ -15399,7 +15399,7 @@ fn transport_to_node_wildcard_pattern(transport: WildcardPatternTransport) -> Re
 fn transport_to_node_abstract_type(transport: AbstractTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.type_parameters {
-        fields.insert("type_parameters".to_string(), transport_field_value(value)?);
+        fields.insert("type_parameters".to_string(), transport_field_value(Box::new(AnyTransport::TypeParameters(value)))?);
     }
     fields.insert("trait".to_string(), transport_field_value(transport.r#trait)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -15517,15 +15517,15 @@ fn transport_to_node_assignment_expression(transport: AssignmentExpressionTransp
 
 fn transport_to_node_associated_type(transport: AssociatedTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::TypeIdentifier(transport.name)))?);
     if let Some(value) = transport.type_parameters {
-        fields.insert("type_parameters".to_string(), transport_field_value(value)?);
+        fields.insert("type_parameters".to_string(), transport_field_value(Box::new(AnyTransport::TypeParameters(value)))?);
     }
     if let Some(value) = transport.bounds {
-        fields.insert("bounds".to_string(), transport_field_value(value)?);
+        fields.insert("bounds".to_string(), transport_field_value(Box::new(AnyTransport::TraitBounds(value)))?);
     }
     if let Some(value) = transport.where_clause {
-        fields.insert("where_clause".to_string(), transport_field_value(value)?);
+        fields.insert("where_clause".to_string(), transport_field_value(Box::new(AnyTransport::WhereClause(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -15545,9 +15545,9 @@ fn transport_to_node_associated_type(transport: AssociatedTypeTransport) -> Resu
 fn transport_to_node_async_block(transport: AsyncBlockTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.move_marker {
-        fields.insert("move_marker".to_string(), transport_field_value(value)?);
+        fields.insert("move_marker".to_string(), transport_field_value(Box::new(AnyTransport::KwMoveMarker(value)))?);
     }
-    fields.insert("block".to_string(), transport_field_value(transport.block)?);
+    fields.insert("block".to_string(), transport_field_value(Box::new(AnyTransport::Block(transport.block)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -15582,7 +15582,7 @@ fn transport_to_node_attribute(transport: AttributeTransport) -> Result<Transpor
 
 fn transport_to_node_attribute_item(transport: AttributeItemTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("attribute".to_string(), transport_field_value(transport.attribute)?);
+    fields.insert("attribute".to_string(), transport_field_value(Box::new(AnyTransport::Attribute(transport.attribute)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -15655,7 +15655,7 @@ fn transport_to_node_binary_expression(transport: BinaryExpressionTransport) -> 
 fn transport_to_node_block(transport: BlockTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.label {
-        fields.insert("label".to_string(), transport_field_value(value)?);
+        fields.insert("label".to_string(), transport_field_value(Box::new(AnyTransport::Label(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
@@ -15675,7 +15675,7 @@ fn transport_to_node_block(transport: BlockTransport) -> Result<TransportNodeDat
 fn transport_to_node_block_comment(transport: BlockCommentTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.doc {
-        fields.insert("doc".to_string(), transport_field_value(value)?);
+        fields.insert("doc".to_string(), transport_field_value(Box::new(AnyTransport::DocComment(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -15745,7 +15745,7 @@ fn transport_to_node_bracketed_type(transport: BracketedTypeTransport) -> Result
 fn transport_to_node_break_expression(transport: BreakExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.label {
-        fields.insert("label".to_string(), transport_field_value(value)?);
+        fields.insert("label".to_string(), transport_field_value(Box::new(AnyTransport::Label(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = match transport.children {
@@ -15768,7 +15768,7 @@ fn transport_to_node_break_expression(transport: BreakExpressionTransport) -> Re
 fn transport_to_node_call_expression(transport: CallExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("function".to_string(), transport_field_value(transport.function)?);
-    fields.insert("arguments".to_string(), transport_field_value(transport.arguments)?);
+    fields.insert("arguments".to_string(), transport_field_value(Box::new(AnyTransport::Arguments(transport.arguments)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -15786,7 +15786,7 @@ fn transport_to_node_call_expression(transport: CallExpressionTransport) -> Resu
 
 fn transport_to_node_captured_pattern(transport: CapturedPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("identifier".to_string(), transport_field_value(transport.identifier)?);
+    fields.insert("identifier".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(transport.identifier)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
@@ -15844,15 +15844,15 @@ fn transport_to_node_closure_expression(transport: ClosureExpressionTransport) -
 fn transport_to_node_closure_expression_uform_block(transport: ClosureExpressionUFormBlockTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.static_marker {
-        fields.insert("static_marker".to_string(), transport_field_value(value)?);
+        fields.insert("static_marker".to_string(), transport_field_value(Box::new(AnyTransport::KwStaticMarker(value)))?);
     }
     if let Some(value) = transport.async_marker {
-        fields.insert("async_marker".to_string(), transport_field_value(value)?);
+        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::KwAsyncMarker(value)))?);
     }
     if let Some(value) = transport.move_marker {
-        fields.insert("move_marker".to_string(), transport_field_value(value)?);
+        fields.insert("move_marker".to_string(), transport_field_value(Box::new(AnyTransport::KwMoveMarker(value)))?);
     }
-    fields.insert("parameters".to_string(), transport_field_value(transport.parameters)?);
+    fields.insert("parameters".to_string(), transport_field_value(Box::new(AnyTransport::ClosureParameters(transport.parameters)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
@@ -15871,15 +15871,15 @@ fn transport_to_node_closure_expression_uform_block(transport: ClosureExpression
 fn transport_to_node_closure_expression_uform_expr(transport: ClosureExpressionUFormExprTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.static_marker {
-        fields.insert("static_marker".to_string(), transport_field_value(value)?);
+        fields.insert("static_marker".to_string(), transport_field_value(Box::new(AnyTransport::KwStaticMarker(value)))?);
     }
     if let Some(value) = transport.async_marker {
-        fields.insert("async_marker".to_string(), transport_field_value(value)?);
+        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::KwAsyncMarker(value)))?);
     }
     if let Some(value) = transport.move_marker {
-        fields.insert("move_marker".to_string(), transport_field_value(value)?);
+        fields.insert("move_marker".to_string(), transport_field_value(Box::new(AnyTransport::KwMoveMarker(value)))?);
     }
-    fields.insert("parameters".to_string(), transport_field_value(transport.parameters)?);
+    fields.insert("parameters".to_string(), transport_field_value(Box::new(AnyTransport::ClosureParameters(transport.parameters)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
@@ -15951,7 +15951,7 @@ fn transport_to_node_compound_assignment_expr(transport: CompoundAssignmentExprT
 
 fn transport_to_node_const_block(transport: ConstBlockTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    fields.insert("body".to_string(), transport_field_value(Box::new(AnyTransport::Block(transport.body)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -15972,7 +15972,7 @@ fn transport_to_node_const_item(transport: ConstItemTransport) -> Result<Transpo
     if let Some(value) = transport.visibility_modifier {
         fields.insert("visibility_modifier".to_string(), transport_field_value(value)?);
     }
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(transport.name)))?);
     fields.insert("type".to_string(), transport_field_value(transport.r#type)?);
     if let Some(value) = transport.value {
         fields.insert("value".to_string(), transport_field_value(value)?);
@@ -15994,7 +15994,7 @@ fn transport_to_node_const_item(transport: ConstItemTransport) -> Result<Transpo
 
 fn transport_to_node_const_parameter(transport: ConstParameterTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(transport.name)))?);
     fields.insert("type".to_string(), transport_field_value(transport.r#type)?);
     if let Some(value) = transport.value {
         fields.insert("value".to_string(), transport_field_value(value)?);
@@ -16017,7 +16017,7 @@ fn transport_to_node_const_parameter(transport: ConstParameterTransport) -> Resu
 fn transport_to_node_continue_expression(transport: ContinueExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.label {
-        fields.insert("label".to_string(), transport_field_value(value)?);
+        fields.insert("label".to_string(), transport_field_value(Box::new(AnyTransport::Label(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -16229,14 +16229,14 @@ fn transport_to_node_enum_item(transport: EnumItemTransport) -> Result<Transport
     if let Some(value) = transport.visibility_modifier {
         fields.insert("visibility_modifier".to_string(), transport_field_value(value)?);
     }
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::TypeIdentifier(transport.name)))?);
     if let Some(value) = transport.type_parameters {
-        fields.insert("type_parameters".to_string(), transport_field_value(value)?);
+        fields.insert("type_parameters".to_string(), transport_field_value(Box::new(AnyTransport::TypeParameters(value)))?);
     }
     if let Some(value) = transport.where_clause {
-        fields.insert("where_clause".to_string(), transport_field_value(value)?);
+        fields.insert("where_clause".to_string(), transport_field_value(Box::new(AnyTransport::WhereClause(value)))?);
     }
-    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    fields.insert("body".to_string(), transport_field_value(Box::new(AnyTransport::EnumVariantList(transport.body)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -16257,7 +16257,7 @@ fn transport_to_node_enum_variant(transport: EnumVariantTransport) -> Result<Tra
     if let Some(value) = transport.visibility_modifier {
         fields.insert("visibility_modifier".to_string(), transport_field_value(value)?);
     }
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(transport.name)))?);
     if let Some(value) = transport.body {
         fields.insert("body".to_string(), transport_field_value(value)?);
     }
@@ -16390,10 +16390,10 @@ fn transport_to_node_extern_crate_declaration(transport: ExternCrateDeclarationT
     if let Some(value) = transport.visibility_modifier {
         fields.insert("visibility_modifier".to_string(), transport_field_value(value)?);
     }
-    fields.insert("crate".to_string(), transport_field_value(transport.crate_)?);
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("crate".to_string(), transport_field_value(Box::new(AnyTransport::Crate(transport.crate_)))?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(transport.name)))?);
     if let Some(value) = transport.alias {
-        fields.insert("alias".to_string(), transport_field_value(value)?);
+        fields.insert("alias".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -16413,7 +16413,7 @@ fn transport_to_node_extern_crate_declaration(transport: ExternCrateDeclarationT
 fn transport_to_node_extern_modifier(transport: ExternModifierTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.string_literal {
-        fields.insert("string_literal".to_string(), transport_field_value(value)?);
+        fields.insert("string_literal".to_string(), transport_field_value(Box::new(AnyTransport::StringLiteral(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -16435,7 +16435,7 @@ fn transport_to_node_field_declaration(transport: FieldDeclarationTransport) -> 
     if let Some(value) = transport.visibility_modifier {
         fields.insert("visibility_modifier".to_string(), transport_field_value(value)?);
     }
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::FieldIdentifier(transport.name)))?);
     fields.insert("type".to_string(), transport_field_value(transport.r#type)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -16526,7 +16526,7 @@ fn transport_to_node_field_initializer_list(transport: FieldInitializerListTrans
 
 fn transport_to_node_field_pattern_shorthand(transport: FieldPatternShorthandTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::ShorthandFieldIdentifier(transport.name)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -16552,10 +16552,10 @@ fn transport_to_node_field_pattern(transport: FieldPatternTransport) -> Result<T
 fn transport_to_node_field_pattern_uform_shorthand(transport: FieldPatternUFormShorthandTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.ref_marker {
-        fields.insert("ref_marker".to_string(), transport_field_value(value)?);
+        fields.insert("ref_marker".to_string(), transport_field_value(Box::new(AnyTransport::KwRefMarker(value)))?);
     }
     if let Some(value) = transport.mutable_specifier {
-        fields.insert("mutable_specifier".to_string(), transport_field_value(value)?);
+        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::MutableSpecifier(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
@@ -16575,10 +16575,10 @@ fn transport_to_node_field_pattern_uform_shorthand(transport: FieldPatternUFormS
 fn transport_to_node_field_pattern_uform_named(transport: FieldPatternUFormNamedTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.ref_marker {
-        fields.insert("ref_marker".to_string(), transport_field_value(value)?);
+        fields.insert("ref_marker".to_string(), transport_field_value(Box::new(AnyTransport::KwRefMarker(value)))?);
     }
     if let Some(value) = transport.mutable_specifier {
-        fields.insert("mutable_specifier".to_string(), transport_field_value(value)?);
+        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::MutableSpecifier(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
@@ -16598,11 +16598,11 @@ fn transport_to_node_field_pattern_uform_named(transport: FieldPatternUFormNamed
 fn transport_to_node_for_expression(transport: ForExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.label {
-        fields.insert("label".to_string(), transport_field_value(value)?);
+        fields.insert("label".to_string(), transport_field_value(Box::new(AnyTransport::Label(value)))?);
     }
     fields.insert("pattern".to_string(), transport_field_value(transport.pattern)?);
     fields.insert("value".to_string(), transport_field_value(transport.value)?);
-    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    fields.insert("body".to_string(), transport_field_value(Box::new(AnyTransport::Block(transport.body)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -16637,7 +16637,7 @@ fn transport_to_node_for_lifetimes(transport: ForLifetimesTransport) -> Result<T
 
 fn transport_to_node_foreign_mod_item_body(transport: ForeignModItemBodyTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    fields.insert("body".to_string(), transport_field_value(Box::new(AnyTransport::DeclarationList(transport.body)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -16665,7 +16665,7 @@ fn transport_to_node_foreign_mod_item_uform_semi(transport: ForeignModItemUFormS
     if let Some(value) = transport.visibility_modifier {
         fields.insert("visibility_modifier".to_string(), transport_field_value(value)?);
     }
-    fields.insert("extern_modifier".to_string(), transport_field_value(transport.extern_modifier)?);
+    fields.insert("extern_modifier".to_string(), transport_field_value(Box::new(AnyTransport::ExternModifier(transport.extern_modifier)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
@@ -16686,7 +16686,7 @@ fn transport_to_node_foreign_mod_item_uform_body(transport: ForeignModItemUFormB
     if let Some(value) = transport.visibility_modifier {
         fields.insert("visibility_modifier".to_string(), transport_field_value(value)?);
     }
-    fields.insert("extern_modifier".to_string(), transport_field_value(transport.extern_modifier)?);
+    fields.insert("extern_modifier".to_string(), transport_field_value(Box::new(AnyTransport::ExternModifier(transport.extern_modifier)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
@@ -16722,20 +16722,20 @@ fn transport_to_node_function_item(transport: FunctionItemTransport) -> Result<T
         fields.insert("visibility_modifier".to_string(), transport_field_value(value)?);
     }
     if let Some(value) = transport.function_modifiers {
-        fields.insert("function_modifiers".to_string(), transport_field_value(value)?);
+        fields.insert("function_modifiers".to_string(), transport_field_value(Box::new(AnyTransport::FunctionModifiers(value)))?);
     }
     fields.insert("name".to_string(), transport_field_value(transport.name)?);
     if let Some(value) = transport.type_parameters {
-        fields.insert("type_parameters".to_string(), transport_field_value(value)?);
+        fields.insert("type_parameters".to_string(), transport_field_value(Box::new(AnyTransport::TypeParameters(value)))?);
     }
-    fields.insert("parameters".to_string(), transport_field_value(transport.parameters)?);
+    fields.insert("parameters".to_string(), transport_field_value(Box::new(AnyTransport::Parameters(transport.parameters)))?);
     if let Some(value) = transport.return_type {
         fields.insert("return_type".to_string(), transport_field_value(value)?);
     }
     if let Some(value) = transport.where_clause {
-        fields.insert("where_clause".to_string(), transport_field_value(value)?);
+        fields.insert("where_clause".to_string(), transport_field_value(Box::new(AnyTransport::WhereClause(value)))?);
     }
-    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    fields.insert("body".to_string(), transport_field_value(Box::new(AnyTransport::Block(transport.body)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -16753,7 +16753,7 @@ fn transport_to_node_function_item(transport: FunctionItemTransport) -> Result<T
 
 fn transport_to_node_function_modifiers(transport: FunctionModifiersTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("modifier".to_string(), transport_field_values(transport.modifier)?);
+    fields.insert("modifier".to_string(), transport_field_values(transport.modifier.into_iter().map(|v| Box::new(AnyTransport::ExternModifier(v))).collect::<Vec<_>>())?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -16775,18 +16775,18 @@ fn transport_to_node_function_signature_item(transport: FunctionSignatureItemTra
         fields.insert("visibility_modifier".to_string(), transport_field_value(value)?);
     }
     if let Some(value) = transport.function_modifiers {
-        fields.insert("function_modifiers".to_string(), transport_field_value(value)?);
+        fields.insert("function_modifiers".to_string(), transport_field_value(Box::new(AnyTransport::FunctionModifiers(value)))?);
     }
     fields.insert("name".to_string(), transport_field_value(transport.name)?);
     if let Some(value) = transport.type_parameters {
-        fields.insert("type_parameters".to_string(), transport_field_value(value)?);
+        fields.insert("type_parameters".to_string(), transport_field_value(Box::new(AnyTransport::TypeParameters(value)))?);
     }
-    fields.insert("parameters".to_string(), transport_field_value(transport.parameters)?);
+    fields.insert("parameters".to_string(), transport_field_value(Box::new(AnyTransport::Parameters(transport.parameters)))?);
     if let Some(value) = transport.return_type {
         fields.insert("return_type".to_string(), transport_field_value(value)?);
     }
     if let Some(value) = transport.where_clause {
-        fields.insert("where_clause".to_string(), transport_field_value(value)?);
+        fields.insert("where_clause".to_string(), transport_field_value(Box::new(AnyTransport::WhereClause(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -16806,9 +16806,9 @@ fn transport_to_node_function_signature_item(transport: FunctionSignatureItemTra
 fn transport_to_node_function_type(transport: FunctionTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.for_lifetimes {
-        fields.insert("for_lifetimes".to_string(), transport_field_value(value)?);
+        fields.insert("for_lifetimes".to_string(), transport_field_value(Box::new(AnyTransport::ForLifetimes(value)))?);
     }
-    fields.insert("parameters".to_string(), transport_field_value(transport.parameters)?);
+    fields.insert("parameters".to_string(), transport_field_value(Box::new(AnyTransport::Parameters(transport.parameters)))?);
     if let Some(value) = transport.return_type {
         fields.insert("return_type".to_string(), transport_field_value(value)?);
     }
@@ -16830,9 +16830,9 @@ fn transport_to_node_function_type(transport: FunctionTypeTransport) -> Result<T
 fn transport_to_node_gen_block(transport: GenBlockTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.move_marker {
-        fields.insert("move_marker".to_string(), transport_field_value(value)?);
+        fields.insert("move_marker".to_string(), transport_field_value(Box::new(AnyTransport::KwMoveMarker(value)))?);
     }
-    fields.insert("block".to_string(), transport_field_value(transport.block)?);
+    fields.insert("block".to_string(), transport_field_value(Box::new(AnyTransport::Block(transport.block)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -16851,7 +16851,7 @@ fn transport_to_node_gen_block(transport: GenBlockTransport) -> Result<Transport
 fn transport_to_node_generic_function(transport: GenericFunctionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("function".to_string(), transport_field_value(transport.function)?);
-    fields.insert("type_arguments".to_string(), transport_field_value(transport.type_arguments)?);
+    fields.insert("type_arguments".to_string(), transport_field_value(Box::new(AnyTransport::TypeArguments(transport.type_arguments)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -16869,7 +16869,7 @@ fn transport_to_node_generic_function(transport: GenericFunctionTransport) -> Re
 
 fn transport_to_node_generic_pattern(transport: GenericPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("type_arguments".to_string(), transport_field_value(transport.type_arguments)?);
+    fields.insert("type_arguments".to_string(), transport_field_value(Box::new(AnyTransport::TypeArguments(transport.type_arguments)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
@@ -16888,7 +16888,7 @@ fn transport_to_node_generic_pattern(transport: GenericPatternTransport) -> Resu
 fn transport_to_node_generic_type(transport: GenericTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("type".to_string(), transport_field_value(transport.r#type)?);
-    fields.insert("type_arguments".to_string(), transport_field_value(transport.type_arguments)?);
+    fields.insert("type_arguments".to_string(), transport_field_value(Box::new(AnyTransport::TypeArguments(transport.type_arguments)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -16908,7 +16908,7 @@ fn transport_to_node_generic_type_with_turbofish(transport: GenericTypeWithTurbo
     let mut fields = TransportHashMap::new();
     fields.insert("type".to_string(), transport_field_value(transport.r#type)?);
     fields.insert("turbofish".to_string(), transport_field_value(transport.turbofish)?);
-    fields.insert("type_arguments".to_string(), transport_field_value(transport.type_arguments)?);
+    fields.insert("type_arguments".to_string(), transport_field_value(Box::new(AnyTransport::TypeArguments(transport.type_arguments)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -16926,7 +16926,7 @@ fn transport_to_node_generic_type_with_turbofish(transport: GenericTypeWithTurbo
 
 fn transport_to_node_higher_ranked_trait_bound(transport: HigherRankedTraitBoundTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("type_parameters".to_string(), transport_field_value(transport.type_parameters)?);
+    fields.insert("type_parameters".to_string(), transport_field_value(Box::new(AnyTransport::TypeParameters(transport.type_parameters)))?);
     fields.insert("type".to_string(), transport_field_value(transport.r#type)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -16960,9 +16960,9 @@ fn transport_to_node_identifier(transport: IdentifierTransport) -> Result<Transp
 fn transport_to_node_if_expression(transport: IfExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("condition".to_string(), transport_field_value(transport.condition)?);
-    fields.insert("consequence".to_string(), transport_field_value(transport.consequence)?);
+    fields.insert("consequence".to_string(), transport_field_value(Box::new(AnyTransport::Block(transport.consequence)))?);
     if let Some(value) = transport.alternative {
-        fields.insert("alternative".to_string(), transport_field_value(value)?);
+        fields.insert("alternative".to_string(), transport_field_value(Box::new(AnyTransport::ElseClause(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -16981,7 +16981,7 @@ fn transport_to_node_if_expression(transport: IfExpressionTransport) -> Result<T
 
 fn transport_to_node_impl_item_body(transport: ImplItemBodyTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    fields.insert("body".to_string(), transport_field_value(Box::new(AnyTransport::DeclarationList(transport.body)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -17007,20 +17007,20 @@ fn transport_to_node_impl_item(transport: ImplItemTransport) -> Result<Transport
 fn transport_to_node_impl_item_uform_body(transport: ImplItemUFormBodyTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.unsafe_marker {
-        fields.insert("unsafe_marker".to_string(), transport_field_value(value)?);
+        fields.insert("unsafe_marker".to_string(), transport_field_value(Box::new(AnyTransport::KwUnsafeMarker(value)))?);
     }
     if let Some(value) = transport.type_parameters {
-        fields.insert("type_parameters".to_string(), transport_field_value(value)?);
+        fields.insert("type_parameters".to_string(), transport_field_value(Box::new(AnyTransport::TypeParameters(value)))?);
     }
     if let Some(value) = transport.negative {
-        fields.insert("negative".to_string(), transport_field_value(value)?);
+        fields.insert("negative".to_string(), transport_field_value(Box::new(AnyTransport::KwNegative(value)))?);
     }
     if let Some(value) = transport.r#trait {
         fields.insert("trait".to_string(), transport_field_value(value)?);
     }
     fields.insert("type".to_string(), transport_field_value(transport.r#type)?);
     if let Some(value) = transport.where_clause {
-        fields.insert("where_clause".to_string(), transport_field_value(value)?);
+        fields.insert("where_clause".to_string(), transport_field_value(Box::new(AnyTransport::WhereClause(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
@@ -17040,20 +17040,20 @@ fn transport_to_node_impl_item_uform_body(transport: ImplItemUFormBodyTransport)
 fn transport_to_node_impl_item_uform_semi(transport: ImplItemUFormSemiTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.unsafe_marker {
-        fields.insert("unsafe_marker".to_string(), transport_field_value(value)?);
+        fields.insert("unsafe_marker".to_string(), transport_field_value(Box::new(AnyTransport::KwUnsafeMarker(value)))?);
     }
     if let Some(value) = transport.type_parameters {
-        fields.insert("type_parameters".to_string(), transport_field_value(value)?);
+        fields.insert("type_parameters".to_string(), transport_field_value(Box::new(AnyTransport::TypeParameters(value)))?);
     }
     if let Some(value) = transport.negative {
-        fields.insert("negative".to_string(), transport_field_value(value)?);
+        fields.insert("negative".to_string(), transport_field_value(Box::new(AnyTransport::KwNegative(value)))?);
     }
     if let Some(value) = transport.r#trait {
         fields.insert("trait".to_string(), transport_field_value(value)?);
     }
     fields.insert("type".to_string(), transport_field_value(transport.r#type)?);
     if let Some(value) = transport.where_clause {
-        fields.insert("where_clause".to_string(), transport_field_value(value)?);
+        fields.insert("where_clause".to_string(), transport_field_value(Box::new(AnyTransport::WhereClause(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
@@ -17091,7 +17091,7 @@ fn transport_to_node_index_expression(transport: IndexExpressionTransport) -> Re
 
 fn transport_to_node_inner_attribute_item(transport: InnerAttributeItemTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("attribute".to_string(), transport_field_value(transport.attribute)?);
+    fields.insert("attribute".to_string(), transport_field_value(Box::new(AnyTransport::Attribute(transport.attribute)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -17123,7 +17123,7 @@ fn transport_to_node_integer_literal(transport: IntegerLiteralTransport) -> Resu
 
 fn transport_to_node_label(transport: LabelTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("identifier".to_string(), transport_field_value(transport.identifier)?);
+    fields.insert("identifier".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(transport.identifier)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -17141,7 +17141,7 @@ fn transport_to_node_label(transport: LabelTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_last_match_arm(transport: LastMatchArmTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("pattern".to_string(), transport_field_value(transport.pattern)?);
+    fields.insert("pattern".to_string(), transport_field_value(Box::new(AnyTransport::MatchPattern(transport.pattern)))?);
     fields.insert("value".to_string(), transport_field_value(transport.value)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
@@ -17180,7 +17180,7 @@ fn transport_to_node_let_condition(transport: LetConditionTransport) -> Result<T
 fn transport_to_node_let_declaration(transport: LetDeclarationTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.mutable_specifier {
-        fields.insert("mutable_specifier".to_string(), transport_field_value(value)?);
+        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::MutableSpecifier(value)))?);
     }
     fields.insert("pattern".to_string(), transport_field_value(transport.pattern)?);
     if let Some(value) = transport.r#type {
@@ -17190,7 +17190,7 @@ fn transport_to_node_let_declaration(transport: LetDeclarationTransport) -> Resu
         fields.insert("value".to_string(), transport_field_value(value)?);
     }
     if let Some(value) = transport.alternative {
-        fields.insert("alternative".to_string(), transport_field_value(value)?);
+        fields.insert("alternative".to_string(), transport_field_value(Box::new(AnyTransport::Block(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -17209,7 +17209,7 @@ fn transport_to_node_let_declaration(transport: LetDeclarationTransport) -> Resu
 
 fn transport_to_node_lifetime(transport: LifetimeTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("identifier".to_string(), transport_field_value(transport.identifier)?);
+    fields.insert("identifier".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(transport.identifier)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -17227,9 +17227,9 @@ fn transport_to_node_lifetime(transport: LifetimeTransport) -> Result<TransportN
 
 fn transport_to_node_lifetime_parameter(transport: LifetimeParameterTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::Lifetime(transport.name)))?);
     if let Some(value) = transport.bounds {
-        fields.insert("bounds".to_string(), transport_field_value(value)?);
+        fields.insert("bounds".to_string(), transport_field_value(Box::new(AnyTransport::TraitBounds(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -17308,9 +17308,9 @@ fn transport_to_node_line_comment_uform_content(transport: LineCommentUFormConte
 fn transport_to_node_loop_expression(transport: LoopExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.label {
-        fields.insert("label".to_string(), transport_field_value(value)?);
+        fields.insert("label".to_string(), transport_field_value(Box::new(AnyTransport::Label(value)))?);
     }
-    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    fields.insert("body".to_string(), transport_field_value(Box::new(AnyTransport::Block(transport.body)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -17513,7 +17513,7 @@ fn transport_to_node_match_arm(transport: MatchArmTransport) -> Result<Transport
 
 fn transport_to_node_match_arm_uform_with_comma(transport: MatchArmUFormWithCommaTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("pattern".to_string(), transport_field_value(transport.pattern)?);
+    fields.insert("pattern".to_string(), transport_field_value(Box::new(AnyTransport::MatchPattern(transport.pattern)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
@@ -17531,7 +17531,7 @@ fn transport_to_node_match_arm_uform_with_comma(transport: MatchArmUFormWithComm
 
 fn transport_to_node_match_arm_uform_block_ending(transport: MatchArmUFormBlockEndingTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("pattern".to_string(), transport_field_value(transport.pattern)?);
+    fields.insert("pattern".to_string(), transport_field_value(Box::new(AnyTransport::MatchPattern(transport.pattern)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
@@ -17570,7 +17570,7 @@ fn transport_to_node_match_block(transport: MatchBlockTransport) -> Result<Trans
 fn transport_to_node_match_expression(transport: MatchExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("value".to_string(), transport_field_value(transport.value)?);
-    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    fields.insert("body".to_string(), transport_field_value(Box::new(AnyTransport::MatchBlock(transport.body)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -17622,7 +17622,7 @@ fn transport_to_node_metavariable(transport: MetavariableTransport) -> Result<Tr
 
 fn transport_to_node_mod_item_inline(transport: ModItemInlineTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    fields.insert("body".to_string(), transport_field_value(Box::new(AnyTransport::DeclarationList(transport.body)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -17650,7 +17650,7 @@ fn transport_to_node_mod_item_uform_external(transport: ModItemUFormExternalTran
     if let Some(value) = transport.visibility_modifier {
         fields.insert("visibility_modifier".to_string(), transport_field_value(value)?);
     }
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(transport.name)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
@@ -17671,7 +17671,7 @@ fn transport_to_node_mod_item_uform_inline(transport: ModItemUFormInlineTranspor
     if let Some(value) = transport.visibility_modifier {
         fields.insert("visibility_modifier".to_string(), transport_field_value(value)?);
     }
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(transport.name)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
@@ -17689,7 +17689,7 @@ fn transport_to_node_mod_item_uform_inline(transport: ModItemUFormInlineTranspor
 
 fn transport_to_node_mut_pattern(transport: MutPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("mutable_specifier".to_string(), transport_field_value(transport.mutable_specifier)?);
+    fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::MutableSpecifier(transport.mutable_specifier)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
@@ -17813,7 +17813,7 @@ fn transport_to_node_ordered_field_declaration_list(transport: OrderedFieldDecla
 fn transport_to_node_parameter(transport: ParameterTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.mutable_specifier {
-        fields.insert("mutable_specifier".to_string(), transport_field_value(value)?);
+        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::MutableSpecifier(value)))?);
     }
     fields.insert("pattern".to_string(), transport_field_value(transport.pattern)?);
     fields.insert("type".to_string(), transport_field_value(transport.r#type)?);
@@ -17947,7 +17947,7 @@ fn transport_to_node_qualified_type(transport: QualifiedTypeTransport) -> Result
 
 fn transport_to_node_range_expression_bare(transport: RangeExpressionBareTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("operator".to_string(), transport_field_value(transport.operator)?);
+    fields.insert("operator".to_string(), transport_field_value(Box::new(AnyTransport::KwOperator(transport.operator)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -18106,7 +18106,7 @@ fn transport_to_node_raw_string_literal(transport: RawStringLiteralTransport) ->
     if let Some(value) = transport.raw_string_literal_start {
         fields.insert("raw_string_literal_start".to_string(), transport_field_value(value)?);
     }
-    fields.insert("string_content".to_string(), transport_field_value(transport.string_content)?);
+    fields.insert("string_content".to_string(), transport_field_value(Box::new(AnyTransport::_StringContent(transport.string_content)))?);
     if let Some(value) = transport.raw_string_literal_end {
         fields.insert("raw_string_literal_end".to_string(), transport_field_value(value)?);
     }
@@ -18163,7 +18163,7 @@ fn transport_to_node_reference_expression(transport: ReferenceExpressionTranspor
 fn transport_to_node_reference_pattern(transport: ReferencePatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.mutable_specifier {
-        fields.insert("mutable_specifier".to_string(), transport_field_value(value)?);
+        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::MutableSpecifier(value)))?);
     }
     fields.insert("pattern".to_string(), transport_field_value(transport.pattern)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -18184,10 +18184,10 @@ fn transport_to_node_reference_pattern(transport: ReferencePatternTransport) -> 
 fn transport_to_node_reference_type(transport: ReferenceTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.lifetime {
-        fields.insert("lifetime".to_string(), transport_field_value(value)?);
+        fields.insert("lifetime".to_string(), transport_field_value(Box::new(AnyTransport::Lifetime(value)))?);
     }
     if let Some(value) = transport.mutable_specifier {
-        fields.insert("mutable_specifier".to_string(), transport_field_value(value)?);
+        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::MutableSpecifier(value)))?);
     }
     fields.insert("type".to_string(), transport_field_value(transport.r#type)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -18282,7 +18282,7 @@ fn transport_to_node_scoped_type_identifier(transport: ScopedTypeIdentifierTrans
     if let Some(value) = transport.path {
         fields.insert("path".to_string(), transport_field_value(value)?);
     }
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::TypeIdentifier(transport.name)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -18303,7 +18303,7 @@ fn transport_to_node_scoped_type_identifier_in_expression_position(transport: Sc
     if let Some(value) = transport.path {
         fields.insert("path".to_string(), transport_field_value(value)?);
     }
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::TypeIdentifier(transport.name)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -18324,7 +18324,7 @@ fn transport_to_node_scoped_use_list(transport: ScopedUseListTransport) -> Resul
     if let Some(value) = transport.path {
         fields.insert("path".to_string(), transport_field_value(value)?);
     }
-    fields.insert("list".to_string(), transport_field_value(transport.list)?);
+    fields.insert("list".to_string(), transport_field_value(Box::new(AnyTransport::UseList(transport.list)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -18360,12 +18360,12 @@ fn transport_to_node_self_parameter(transport: SelfParameterTransport) -> Result
         fields.insert("reference".to_string(), transport_field_value(value)?);
     }
     if let Some(value) = transport.lifetime {
-        fields.insert("lifetime".to_string(), transport_field_value(value)?);
+        fields.insert("lifetime".to_string(), transport_field_value(Box::new(AnyTransport::Lifetime(value)))?);
     }
     if let Some(value) = transport.mutable_specifier {
-        fields.insert("mutable_specifier".to_string(), transport_field_value(value)?);
+        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::MutableSpecifier(value)))?);
     }
-    fields.insert("self".to_string(), transport_field_value(transport.self_)?);
+    fields.insert("self".to_string(), transport_field_value(Box::new(AnyTransport::Self_(transport.self_)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -18397,8 +18397,8 @@ fn transport_to_node_shebang(transport: ShebangTransport) -> Result<TransportNod
 
 fn transport_to_node_shorthand_field_initializer(transport: ShorthandFieldInitializerTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("attributes".to_string(), transport_field_values(transport.attributes)?);
-    fields.insert("identifier".to_string(), transport_field_value(transport.identifier)?);
+    fields.insert("attributes".to_string(), transport_field_values(transport.attributes.into_iter().map(|v| Box::new(AnyTransport::AttributeItem(v))).collect::<Vec<_>>())?);
+    fields.insert("identifier".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(transport.identifier)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -18434,7 +18434,7 @@ fn transport_to_node_slice_pattern(transport: SlicePatternTransport) -> Result<T
 fn transport_to_node_source_file(transport: SourceFileTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.shebang {
-        fields.insert("shebang".to_string(), transport_field_value(value)?);
+        fields.insert("shebang".to_string(), transport_field_value(Box::new(AnyTransport::Shebang(value)))?);
     }
     fields.insert("statements".to_string(), transport_field_values(transport.statements)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -18460,7 +18460,7 @@ fn transport_to_node_static_item(transport: StaticItemTransport) -> Result<Trans
     if let Some(value) = transport.mutable_specifier {
         fields.insert("mutable_specifier".to_string(), transport_field_value(value)?);
     }
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(transport.name)))?);
     fields.insert("type".to_string(), transport_field_value(transport.r#type)?);
     if let Some(value) = transport.value {
         fields.insert("value".to_string(), transport_field_value(value)?);
@@ -18500,7 +18500,7 @@ fn transport_to_node_string_literal(transport: StringLiteralTransport) -> Result
 fn transport_to_node_struct_expression(transport: StructExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("name".to_string(), transport_field_value(transport.name)?);
-    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    fields.insert("body".to_string(), transport_field_value(Box::new(AnyTransport::FieldInitializerList(transport.body)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -18529,9 +18529,9 @@ fn transport_to_node_struct_item_uform_brace(transport: StructItemUFormBraceTran
     if let Some(value) = transport.visibility_modifier {
         fields.insert("visibility_modifier".to_string(), transport_field_value(value)?);
     }
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::TypeIdentifier(transport.name)))?);
     if let Some(value) = transport.type_parameters {
-        fields.insert("type_parameters".to_string(), transport_field_value(value)?);
+        fields.insert("type_parameters".to_string(), transport_field_value(Box::new(AnyTransport::TypeParameters(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
@@ -18553,9 +18553,9 @@ fn transport_to_node_struct_item_uform_tuple(transport: StructItemUFormTupleTran
     if let Some(value) = transport.visibility_modifier {
         fields.insert("visibility_modifier".to_string(), transport_field_value(value)?);
     }
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::TypeIdentifier(transport.name)))?);
     if let Some(value) = transport.type_parameters {
-        fields.insert("type_parameters".to_string(), transport_field_value(value)?);
+        fields.insert("type_parameters".to_string(), transport_field_value(Box::new(AnyTransport::TypeParameters(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
@@ -18577,9 +18577,9 @@ fn transport_to_node_struct_item_uform_unit(transport: StructItemUFormUnitTransp
     if let Some(value) = transport.visibility_modifier {
         fields.insert("visibility_modifier".to_string(), transport_field_value(value)?);
     }
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::TypeIdentifier(transport.name)))?);
     if let Some(value) = transport.type_parameters {
-        fields.insert("type_parameters".to_string(), transport_field_value(value)?);
+        fields.insert("type_parameters".to_string(), transport_field_value(Box::new(AnyTransport::TypeParameters(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
@@ -18630,8 +18630,8 @@ fn transport_to_node_super(transport: SuperTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_token_binding_pattern(transport: TokenBindingPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
-    fields.insert("type".to_string(), transport_field_value(transport.r#type)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::Metavariable(transport.name)))?);
+    fields.insert("type".to_string(), transport_field_value(Box::new(AnyTransport::FragmentSpecifier(transport.r#type)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -18924,19 +18924,19 @@ fn transport_to_node_trait_item(transport: TraitItemTransport) -> Result<Transpo
         fields.insert("visibility_modifier".to_string(), transport_field_value(value)?);
     }
     if let Some(value) = transport.unsafe_marker {
-        fields.insert("unsafe_marker".to_string(), transport_field_value(value)?);
+        fields.insert("unsafe_marker".to_string(), transport_field_value(Box::new(AnyTransport::KwUnsafeMarker(value)))?);
     }
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::TypeIdentifier(transport.name)))?);
     if let Some(value) = transport.type_parameters {
-        fields.insert("type_parameters".to_string(), transport_field_value(value)?);
+        fields.insert("type_parameters".to_string(), transport_field_value(Box::new(AnyTransport::TypeParameters(value)))?);
     }
     if let Some(value) = transport.bounds {
-        fields.insert("bounds".to_string(), transport_field_value(value)?);
+        fields.insert("bounds".to_string(), transport_field_value(Box::new(AnyTransport::TraitBounds(value)))?);
     }
     if let Some(value) = transport.where_clause {
-        fields.insert("where_clause".to_string(), transport_field_value(value)?);
+        fields.insert("where_clause".to_string(), transport_field_value(Box::new(AnyTransport::WhereClause(value)))?);
     }
-    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    fields.insert("body".to_string(), transport_field_value(Box::new(AnyTransport::DeclarationList(transport.body)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -18954,7 +18954,7 @@ fn transport_to_node_trait_item(transport: TraitItemTransport) -> Result<Transpo
 
 fn transport_to_node_try_block(transport: TryBlockTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("block".to_string(), transport_field_value(transport.block)?);
+    fields.insert("block".to_string(), transport_field_value(Box::new(AnyTransport::Block(transport.block)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -18990,7 +18990,7 @@ fn transport_to_node_try_expression(transport: TryExpressionTransport) -> Result
 
 fn transport_to_node_tuple_expression(transport: TupleExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("attributes".to_string(), transport_field_values(transport.attributes)?);
+    fields.insert("attributes".to_string(), transport_field_values(transport.attributes.into_iter().map(|v| Box::new(AnyTransport::AttributeItem(v))).collect::<Vec<_>>())?);
     if let Some(value) = transport.elements {
         fields.insert("elements".to_string(), transport_field_values(value)?);
     }
@@ -19080,9 +19080,9 @@ fn transport_to_node_type_arguments(transport: TypeArgumentsTransport) -> Result
 
 fn transport_to_node_type_binding(transport: TypeBindingTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::TypeIdentifier(transport.name)))?);
     if let Some(value) = transport.type_arguments {
-        fields.insert("type_arguments".to_string(), transport_field_value(value)?);
+        fields.insert("type_arguments".to_string(), transport_field_value(Box::new(AnyTransport::TypeArguments(value)))?);
     }
     fields.insert("type".to_string(), transport_field_value(transport.r#type)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -19124,16 +19124,16 @@ fn transport_to_node_type_item(transport: TypeItemTransport) -> Result<Transport
     if let Some(value) = transport.visibility_modifier {
         fields.insert("visibility_modifier".to_string(), transport_field_value(value)?);
     }
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::TypeIdentifier(transport.name)))?);
     if let Some(value) = transport.type_parameters {
-        fields.insert("type_parameters".to_string(), transport_field_value(value)?);
+        fields.insert("type_parameters".to_string(), transport_field_value(Box::new(AnyTransport::TypeParameters(value)))?);
     }
     if let Some(value) = transport.where_clause {
-        fields.insert("where_clause".to_string(), transport_field_value(value)?);
+        fields.insert("where_clause".to_string(), transport_field_value(Box::new(AnyTransport::WhereClause(value)))?);
     }
     fields.insert("type".to_string(), transport_field_value(transport.r#type)?);
     if let Some(value) = transport.trailing_where_clause {
-        fields.insert("trailing_where_clause".to_string(), transport_field_value(value)?);
+        fields.insert("trailing_where_clause".to_string(), transport_field_value(Box::new(AnyTransport::WhereClause(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -19152,9 +19152,9 @@ fn transport_to_node_type_item(transport: TypeItemTransport) -> Result<Transport
 
 fn transport_to_node_type_parameter(transport: TypeParameterTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::TypeIdentifier(transport.name)))?);
     if let Some(value) = transport.bounds {
-        fields.insert("bounds".to_string(), transport_field_value(value)?);
+        fields.insert("bounds".to_string(), transport_field_value(Box::new(AnyTransport::TraitBounds(value)))?);
     }
     if let Some(value) = transport.default_type {
         fields.insert("default_type".to_string(), transport_field_value(value)?);
@@ -19215,14 +19215,14 @@ fn transport_to_node_union_item(transport: UnionItemTransport) -> Result<Transpo
     if let Some(value) = transport.visibility_modifier {
         fields.insert("visibility_modifier".to_string(), transport_field_value(value)?);
     }
-    fields.insert("name".to_string(), transport_field_value(transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::TypeIdentifier(transport.name)))?);
     if let Some(value) = transport.type_parameters {
-        fields.insert("type_parameters".to_string(), transport_field_value(value)?);
+        fields.insert("type_parameters".to_string(), transport_field_value(Box::new(AnyTransport::TypeParameters(value)))?);
     }
     if let Some(value) = transport.where_clause {
-        fields.insert("where_clause".to_string(), transport_field_value(value)?);
+        fields.insert("where_clause".to_string(), transport_field_value(Box::new(AnyTransport::WhereClause(value)))?);
     }
-    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    fields.insert("body".to_string(), transport_field_value(Box::new(AnyTransport::FieldDeclarationList(transport.body)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -19268,7 +19268,7 @@ fn transport_to_node_unit_type(transport: UnitTypeTransport) -> Result<Transport
 
 fn transport_to_node_unsafe_block(transport: UnsafeBlockTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("block".to_string(), transport_field_value(transport.block)?);
+    fields.insert("block".to_string(), transport_field_value(Box::new(AnyTransport::Block(transport.block)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -19287,7 +19287,7 @@ fn transport_to_node_unsafe_block(transport: UnsafeBlockTransport) -> Result<Tra
 fn transport_to_node_use_as_clause(transport: UseAsClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("path".to_string(), transport_field_value(transport.path)?);
-    fields.insert("alias".to_string(), transport_field_value(transport.alias)?);
+    fields.insert("alias".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(transport.alias)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -19381,7 +19381,7 @@ fn transport_to_node_use_wildcard(transport: UseWildcardTransport) -> Result<Tra
 fn transport_to_node_variadic_parameter(transport: VariadicParameterTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.mutable_specifier {
-        fields.insert("mutable_specifier".to_string(), transport_field_value(value)?);
+        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::MutableSpecifier(value)))?);
     }
     if let Some(value) = transport.pattern {
         fields.insert("pattern".to_string(), transport_field_value(value)?);
@@ -19497,7 +19497,7 @@ fn transport_to_node_where_clause(transport: WhereClauseTransport) -> Result<Tra
 fn transport_to_node_where_predicate(transport: WherePredicateTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("left".to_string(), transport_field_value(transport.left)?);
-    fields.insert("bounds".to_string(), transport_field_value(transport.bounds)?);
+    fields.insert("bounds".to_string(), transport_field_value(Box::new(AnyTransport::TraitBounds(transport.bounds)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -19516,10 +19516,10 @@ fn transport_to_node_where_predicate(transport: WherePredicateTransport) -> Resu
 fn transport_to_node_while_expression(transport: WhileExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.label {
-        fields.insert("label".to_string(), transport_field_value(value)?);
+        fields.insert("label".to_string(), transport_field_value(Box::new(AnyTransport::Label(value)))?);
     }
     fields.insert("condition".to_string(), transport_field_value(transport.condition)?);
-    fields.insert("body".to_string(), transport_field_value(transport.body)?);
+    fields.insert("body".to_string(), transport_field_value(Box::new(AnyTransport::Block(transport.body)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(

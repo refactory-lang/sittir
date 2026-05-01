@@ -573,11 +573,13 @@ describe('native transport emission', () => {
 		expect(emitted.templatesRs.contents).toContain(
 			'pub struct ExpressionUFormLeftTransport'
 		);
+		// Phase 1: single-kind fields emit concrete types instead of Box<AnyTransport>.
+		// left and right both reference only 'identifier' → IdentifierTransport.
 		expect(emitted.templatesRs.contents).toContain(
-			'pub left: Box<AnyTransport>,'
+			'pub left: IdentifierTransport,'
 		);
 		expect(emitted.templatesRs.contents).toContain(
-			'pub right: Box<AnyTransport>,'
+			'pub right: IdentifierTransport,'
 		);
 	});
 

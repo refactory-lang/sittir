@@ -22,14 +22,18 @@ import type {
 	RenderTemplateSurface,
 	AssembledField,
 	AssembledChild,
-	AssembledGroup
+	AssembledGroup,
+	AssembledSupertype
 } from '../compiler/node-map.ts';
 import {
 	AssembledContainer,
 	AssembledPolymorph,
 	isMultiple,
-	isRequired
+	isRequired,
+	isNodeRef,
+	isUnresolvedRef
 } from '../compiler/node-map.ts';
+import { assertNever } from '../polymorph-variant.ts';
 import { compileWordMatcher } from '../compiler/common.ts';
 import type { TemplateFile } from './template-hash.ts';
 import { computeTemplateBundleHash } from './template-hash.ts';
@@ -1054,6 +1058,152 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 }
 
 // ----------------------------------------------------------------------
+// Slot classification — single source for slot type width
+// ----------------------------------------------------------------------
+
+/**
+ * Classification of a transport slot by its type width.
+ *
+ * - `concrete`      — exactly one known kind; emit `<Kind>Transport` directly.
+ *                     `typeName` is the assembled node's typeName (PascalCase,
+ *                     leading-underscore-stripped) used to derive the Rust
+ *                     struct name and render fn name. Falls back to the kind
+ *                     string when nodeMap is unavailable (test / exported path).
+ * - `heterogeneous` — no grammar-bound type (theoretically unreachable in
+ *                     sittir's pipeline; retained as a compile-safety escape).
+ *
+ * Note: `supertype` classification is deferred to Phase 2 (Task 3). For now,
+ * multi-kind slots fall back to `heterogeneous` / `Box<AnyTransport>`.
+ */
+export type SlotClass =
+	| { readonly tag: 'concrete'; readonly kind: string; readonly typeName: string }
+	| { readonly tag: 'heterogeneous' };
+
+/**
+ * Classify a slot's kind set.
+ *
+ * Single source of derivation for slot class — all emitters (field type,
+ * children type, render call, list buffer) MUST call this. DRY constraint.
+ *
+ * Phase 1: single-kind slots get `concrete`. All others get `heterogeneous`.
+ * Phase 2 will add `supertype` for multi-kind slots covered by a supertype.
+ *
+ * @param kinds - the kind set for this slot (projection.kinds for fields;
+ *   deriveChildrenKinds result for children)
+ */
+export function classifySlot(kinds: readonly string[]): SlotClass {
+	if (kinds.length === 1) {
+		const kind = kinds[0]!;
+		return { tag: 'concrete', kind, typeName: kind };
+	}
+	return { tag: 'heterogeneous' };
+}
+
+/**
+ * Build a registry of supertype typeName → resolved concrete subtype set
+ * from the assembled node map. Reserved for Phase 2; exported for tests.
+ *
+ * @param nodeMap - the assembled node map for the grammar
+ */
+export function buildSupertypeTransportSet(
+	nodeMap: NodeMap
+): Map<string, ReadonlySet<string>> {
+	const result = new Map<string, ReadonlySet<string>>();
+	for (const [, node] of nodeMap.nodes) {
+		if (node.modelType !== 'supertype') continue;
+		result.set(node.typeName, new Set((node as AssembledSupertype).subtypes));
+	}
+	return result;
+}
+
+/**
+ * Extract the kind set from an `AssembledChild.values` array.
+ * Parallel to `AssembledField.projection.kinds` for field slots.
+ * Terminal values (inline string literals) are skipped — they do not
+ * contribute to the transport type.
+ *
+ * @param child - any AssembledChild (field or children slot)
+ * @returns deduplicated list of resolved kind names
+ */
+export function deriveChildrenKinds(child: AssembledChild): string[] {
+	const kinds = new Set<string>();
+	for (const v of child.values) {
+		if (!isNodeRef(v)) continue;
+		if (isUnresolvedRef(v.node)) continue;
+		kinds.add((v.node as AssembledNode).kind);
+	}
+	return [...kinds];
+}
+
+/**
+ * Classify a slot for emit purposes — same as `classifySlot` but also
+ * downgrades `concrete` to `heterogeneous` when the single kind maps to a
+ * supertype or multi node (which have no transport struct in Phase 1).
+ *
+ * Phase 2 will emit per-supertype transport enums; until then, these slots
+ * fall back to `Box<AnyTransport>` at the field level and
+ * `render_transport_dispatch` at the render-call level.
+ *
+ * @param kinds - the kind set for this slot
+ * @param nodeMap - for modelType lookup; when absent behaves like classifySlot
+ */
+function classifySlotForEmit(
+	kinds: readonly string[],
+	nodeMap: NodeMap
+): SlotClass {
+	const cls = classifySlot(kinds);
+	if (cls.tag === 'concrete') {
+		const node = nodeMap.nodes.get(cls.kind);
+		if (node === undefined) return cls; // unknown kind — leave typeName as kind
+		if (node.modelType === 'supertype' || node.modelType === 'multi') {
+			// Supertype/multi have no Phase 1 transport type — fall back.
+			return { tag: 'heterogeneous' };
+		}
+		if (node.modelType === 'polymorph') {
+			// Polymorph transport enums do not implement `ToNapiValue` in Phase 1
+			// (only a custom `FromNapiValue` is emitted). Struct fields with
+			// `#[napi(object)]` require `ToNapiValue` for every field type.
+			// Downgrade to `Box<AnyTransport>` (which has both traits) until Phase 2
+			// adds `#[napi(object)]`-compatible impl blocks for polymorph enums.
+			return { tag: 'heterogeneous' };
+		}
+		// Concrete node: use the assembled typeName (PascalCase, leading-underscore-
+		// stripped by the assemble phase). This ensures the render fn name and
+		// struct type name match what renderTypedLeafFn / renderTypedBranchFn emit
+		// (both use node.typeName). Hidden kinds like `_kw_abstract_marker` have
+		// typeName `KwAbstractMarker` — using kind would produce double-underscore
+		// render fn names that don't match.
+		return { tag: 'concrete', kind: cls.kind, typeName: node.typeName };
+	}
+	return cls;
+}
+
+/**
+ * Build a Rust expression that renders a single transport value to `String`.
+ * Single source for all render call sites — field scalar, field list item,
+ * children item.
+ *
+ * @param cls  - slot classification from `classifySlot` or `classifySlotForEmit`
+ * @param expr - Rust expression yielding the reference to render.
+ *               For concrete: `&node.field` (no Box deref needed).
+ *               For heterogeneous: `t.as_ref()` (Box deref).
+ */
+function buildSlotRenderCall(cls: SlotClass, expr: string): string {
+	switch (cls.tag) {
+		case 'concrete':
+			// Use typeName (PascalCase, no leading underscore) so the generated
+			// fn call matches what renderTypedLeafFn/renderTypedBranchFn emit.
+			// Example: _kw_abstract_marker → typeName=KwAbstractMarker →
+			// render_kw_abstract_marker_transport (NOT render__kw_…_transport).
+			return `render_${rustSnakeIdent(cls.typeName)}_transport(${expr})`;
+		case 'heterogeneous':
+			return `render_transport_dispatch(${expr})`;
+		default:
+			return assertNever(cls);
+	}
+}
+
+// ----------------------------------------------------------------------
 // Typed transport dispatch — render_transport_dispatch + per-kind fns
 // ----------------------------------------------------------------------
 
@@ -1073,14 +1223,15 @@ function renderTypedDispatch(
 	structs: EmittedStruct[],
 	nodes: readonly AssembledNode[],
 	literals: readonly TransportLiteral[],
-	meta: MetaData
+	meta: MetaData,
+	nodeMap: NodeMap
 ): string[] {
 	const structsByKind = new Map(structs.map((s) => [s.kind, s]));
 	const lines: string[] = [];
 
 	// ---- per-kind fns ----------------------------------------------------
 	for (const node of nodes) {
-		lines.push(...renderTypedKindFn(node, structsByKind, meta));
+		lines.push(...renderTypedKindFn(node, structsByKind, meta, nodeMap));
 	}
 
 	// ---- render_literal_transport ----------------------------------------
@@ -1132,10 +1283,11 @@ function rustTypedRenderFnName(typeName: string): string {
 function renderTypedKindFn(
 	node: AssembledNode,
 	structsByKind: Map<string, EmittedStruct>,
-	meta: MetaData
+	meta: MetaData,
+	nodeMap: NodeMap
 ): string[] {
 	if (node.modelType === 'polymorph' && node.forms.length > 0) {
-		return renderTypedPolymorphFn(node, structsByKind, meta);
+		return renderTypedPolymorphFn(node, structsByKind, meta, nodeMap);
 	}
 
 	switch (node.modelType) {
@@ -1145,9 +1297,9 @@ function renderTypedKindFn(
 			const struct = structsByKind.get(node.kind);
 			if (struct === undefined) {
 				// No template for this kind — fall back to joining children/text.
-				return renderTypedBranchFallbackFn(node);
+				return renderTypedBranchFallbackFn(node, nodeMap);
 			}
-			return renderTypedBranchFn(node, struct, meta);
+			return renderTypedBranchFn(node, struct, meta, nodeMap);
 		}
 		case 'leaf':
 		case 'keyword':
@@ -1165,7 +1317,7 @@ function renderTypedKindFn(
  * their rendered text, or falls back to `transport_text` if there are no
  * children.
  */
-function renderTypedBranchFallbackFn(node: AssembledNode): string[] {
+function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): string[] {
 	const fnName = rustTypedRenderFnName(node.typeName);
 	const structName = rustTransportStructName(node);
 	const hasChildren = hasRequiredChild(node.structuralChildren) || node.structuralChildren.length > 0;
@@ -1173,17 +1325,21 @@ function renderTypedBranchFallbackFn(node: AssembledNode): string[] {
 	lines.push(`fn ${fnName}(node: &${structName}) -> Result<String, ::askama::Error> {`);
 	if (hasChildren) {
 		const childrenIsRequired = hasRequiredChild(node.structuralChildren);
+		const childrenCls = classifySlotFromChildren(node.structuralChildren, nodeMap);
+		const isErased = childrenCls.tag === 'heterogeneous';
+		const childExpr = isErased ? 'child.as_ref()' : 'child';
+		const childRenderCall = buildSlotRenderCall(childrenCls, childExpr);
 		if (childrenIsRequired) {
 			lines.push(`    let mut out = String::new();`);
 			lines.push(`    for child in node.children.iter() {`);
-			lines.push(`        out.push_str(&render_transport_dispatch(child.as_ref())?);`);
+			lines.push(`        out.push_str(&${childRenderCall}?);`);
 			lines.push(`    }`);
 			lines.push(`    Ok(out)`);
 		} else {
 			lines.push(`    let mut out = String::new();`);
 			lines.push(`    if let Some(children) = &node.children {`);
 			lines.push(`        for child in children.iter() {`);
-			lines.push(`            out.push_str(&render_transport_dispatch(child.as_ref())?);`);
+			lines.push(`            out.push_str(&${childRenderCall}?);`);
 			lines.push(`        }`);
 			lines.push(`    }`);
 			lines.push(`    Ok(out)`);
@@ -1218,7 +1374,8 @@ function renderTypedLeafFn(node: AssembledNode): string[] {
 function renderTypedPolymorphFn(
 	node: Extract<AssembledNode, { modelType: 'polymorph' }>,
 	structsByKind: Map<string, EmittedStruct>,
-	meta: MetaData
+	meta: MetaData,
+	nodeMap: NodeMap
 ): string[] {
 	const lines: string[] = [];
 	const fnName = rustTypedRenderFnName(node.typeName);
@@ -1240,10 +1397,45 @@ function renderTypedPolymorphFn(
 		const formStruct = structsByKind.get(node.kind) ?? undefined;
 		// Forms share the parent's template struct (same kind → same template)
 		// so we build using the form's fields against the parent struct.
-		lines.push(...renderTypedFormFn(node.kind, form, formStruct, meta));
+		lines.push(...renderTypedFormFn(node.kind, form, formStruct, meta, nodeMap));
 	}
 
 	return lines;
+}
+
+/**
+ * Build a name→projection.kinds map from a list of assembled fields.
+ * Used to feed `classifySlot` per field in `buildTypedTemplateBody`.
+ *
+ * @param fields - the node's structural fields
+ */
+function buildFieldKindsByName(
+	fields: readonly AssembledField[]
+): ReadonlyMap<string, readonly string[]> {
+	const map = new Map<string, readonly string[]>();
+	for (const f of fields) {
+		map.set(f.name, f.projection.kinds);
+	}
+	return map;
+}
+
+/**
+ * Classify the children slot of a node from its structural children list.
+ * Merges kind sets across all child entries (a node can have multiple child
+ * slots) and classifies the union.
+ *
+ * Uses `classifySlotForEmit` — downgrades supertype/multi concrete slots to
+ * heterogeneous (no Phase 1 transport type for those).
+ *
+ * @param children - the node's structural children
+ * @param nodeMap - for supertype/multi detection
+ */
+function classifySlotFromChildren(
+	children: readonly AssembledChild[],
+	nodeMap: NodeMap
+): SlotClass {
+	const allKinds = [...new Set(children.flatMap((c) => deriveChildrenKinds(c)))];
+	return classifySlotForEmit(allKinds, nodeMap);
 }
 
 /**
@@ -1253,15 +1445,20 @@ function renderTypedPolymorphFn(
 function renderTypedBranchFn(
 	node: AssembledNode,
 	struct: EmittedStruct,
-	meta: MetaData
+	meta: MetaData,
+	nodeMap: NodeMap
 ): string[] {
 	const lines: string[] = [];
 	const fnName = rustTypedRenderFnName(node.typeName);
 	const structName = rustTransportStructName(node);
 	const separator = meta.separators.get(node.kind) ?? '';
 
+	// Build per-field kind maps for typed render call selection (Phase 1).
+	const fieldKindsByName = buildFieldKindsByName(node.structuralFields);
+	const childrenCls = classifySlotFromChildren(node.structuralChildren, nodeMap);
+
 	lines.push(`fn ${fnName}(node: &${structName}) -> Result<String, ::askama::Error> {`);
-	lines.push(...buildTypedTemplateBody(struct, separator));
+	lines.push(...buildTypedTemplateBody(struct, separator, fieldKindsByName, childrenCls, nodeMap));
 	lines.push(`}`);
 	lines.push('');
 
@@ -1281,7 +1478,8 @@ function renderTypedFormFn(
 	parentKind: string,
 	form: AssembledGroup,
 	parentStruct: EmittedStruct | undefined,
-	meta: MetaData
+	meta: MetaData,
+	nodeMap: NodeMap
 ): string[] {
 	const lines: string[] = [];
 	const fnName = rustTypedRenderFnName(form.typeName);
@@ -1353,8 +1551,12 @@ function renderTypedFormFn(
 		hasText: parentStruct.hasText
 	};
 
+	// Build per-field kind maps for typed render call selection (Phase 1).
+	const formFieldKindsByName = buildFieldKindsByName(form.fields);
+	const formChildrenCls = classifySlotFromChildren(form.children, nodeMap);
+
 	lines.push(`fn ${fnName}(node: &${structName}) -> Result<String, ::askama::Error> {`);
-	lines.push(...buildTypedTemplateBody(formEmittedStruct, separator));
+	lines.push(...buildTypedTemplateBody(formEmittedStruct, separator, formFieldKindsByName, formChildrenCls, nodeMap));
 	lines.push(`}`);
 	lines.push('');
 
@@ -1365,21 +1567,41 @@ function renderTypedFormFn(
  * Emit the two-step Rust boilerplate that converts a list-shaped transport
  * slot into a `*_buf: Vec<Renderable>` ready for `ListNonterminalView`.
  *
+ * For concrete slots the element is already a typed struct reference —
+ * no `as_ref()` Box deref needed. For heterogeneous (fallback) slots the
+ * existing Box deref applies.
+ *
  * @param ident - Rust identifier base (e.g. `"children"`, `"parameters"`).
- * @param required - When `true`, the slot is `Vec<Box<AnyTransport>>`; when
- *   `false` it is `Option<Vec<Box<AnyTransport>>>` and needs `as_deref()`.
+ * @param required - When `true`, the slot is a required Vec; when `false`
+ *   it is `Option<Vec<...>>` and needs `as_deref()`.
+ * @param cls - slot classification from `classifySlot`; controls element
+ *   type and render call. Defaults to `heterogeneous` for callers that
+ *   don't have classification info (legacy path).
  * @returns Lines to splice into the parent function body.
  */
-function emitListSlotBuffer(ident: string, required: boolean): string[] {
+function emitListSlotBuffer(
+	ident: string,
+	required: boolean,
+	cls: SlotClass = { tag: 'heterogeneous' }
+): string[] {
 	const lines: string[] = [];
+	// For concrete slots the element is `&ConcreteType` (no Box).
+	// For heterogeneous slots the element is `Box<AnyTransport>` (needs .as_ref()).
+	const isErased = cls.tag === 'heterogeneous';
+	const itemExpr = isErased ? 't.as_ref()' : 't';
+	const renderCall = buildSlotRenderCall(cls, itemExpr);
 	if (required) {
 		lines.push(`    let ${ident}_strings: Vec<String> = node.${ident}.iter()`);
-		lines.push(`        .map(|t| render_transport_dispatch(t.as_ref()))`);
+		lines.push(`        .map(|t| ${renderCall})`);
 		lines.push(`        .collect::<Result<Vec<_>, _>>()?;`);
 	} else {
-		lines.push(`    let ${ident}_owned: &[Box<AnyTransport>] = node.${ident}.as_deref().unwrap_or(&[]);`);
+		if (isErased) {
+			lines.push(`    let ${ident}_owned: &[Box<AnyTransport>] = node.${ident}.as_deref().unwrap_or(&[]);`);
+		} else {
+			lines.push(`    let ${ident}_owned = node.${ident}.as_deref().unwrap_or(&[]);`);
+		}
 		lines.push(`    let ${ident}_strings: Vec<String> = ${ident}_owned.iter()`);
-		lines.push(`        .map(|t| render_transport_dispatch(t.as_ref()))`);
+		lines.push(`        .map(|t| ${renderCall})`);
 		lines.push(`        .collect::<Result<Vec<_>, _>>()?;`);
 	}
 	lines.push(`    let ${ident}_buf: Vec<::sittir_core::filters::Renderable<'_>> = ${ident}_strings.iter()`);
@@ -1402,14 +1624,27 @@ function emitListSlotBuffer(ident: string, required: boolean): string[] {
  *
  * @param struct - the template struct description
  * @param separator - the list/children separator for this kind
+ * @param fieldKindsByName - per-field projection kinds (fieldName → kinds[]).
+ *   Used to classify each field slot for typed render calls. Falls back to
+ *   heterogeneous (Box<AnyTransport>) when a field name is absent.
+ * @param childrenCls - slot classification for the children slot. Falls back
+ *   to heterogeneous when not provided.
  */
 function buildTypedTemplateBody(
 	struct: EmittedStruct,
-	separator: string
+	separator: string,
+	fieldKindsByName: ReadonlyMap<string, readonly string[]> = new Map(),
+	childrenCls: SlotClass = { tag: 'heterogeneous' },
+	nodeMap: NodeMap | undefined = undefined
 ): string[] {
 	const lines: string[] = [];
 	const templateName = struct.name;
 	const sepLiteral = JSON.stringify(separator);
+
+	// Classify helper — use classifySlotForEmit when nodeMap is available so
+	// that supertype/multi single-kind slots fall back to heterogeneous (Phase 1).
+	const classify = (kinds: readonly string[]): SlotClass =>
+		nodeMap !== undefined ? classifySlotForEmit(kinds, nodeMap) : classifySlot(kinds);
 
 	// Render children to Strings, then borrow as Renderable::Text slices.
 	// The transport struct has a `children` field only when transportHasChildren
@@ -1417,7 +1652,7 @@ function buildTypedTemplateBody(
 	// BoundedType), skip access and emit an empty buffer for the template slot.
 	if (struct.hasChildren) {
 		if (struct.transportHasChildren) {
-			lines.push(...emitListSlotBuffer('children', struct.childrenRequired));
+			lines.push(...emitListSlotBuffer('children', struct.childrenRequired, childrenCls));
 		} else {
 			// Template uses children but transport has no children field —
 			// emit an empty buffer so the ListNonterminalView slot in the template is empty.
@@ -1434,7 +1669,9 @@ function buildTypedTemplateBody(
 		if (!f.hasTransportField) continue;
 		const rIdent = rustFieldIdent(f.name);
 		if (f.view === 'list' || (f.view === 'field' && f.multiple)) {
-			lines.push(...emitListSlotBuffer(rIdent, f.required));
+			const kinds = fieldKindsByName.get(f.name) ?? [];
+			const cls = classify(kinds);
+			lines.push(...emitListSlotBuffer(rIdent, f.required, cls));
 		}
 		// Single-valued 'field' view: rendered inline in template construction below.
 	}
@@ -1444,15 +1681,20 @@ function buildTypedTemplateBody(
 		if (f.view !== 'scalar') continue;
 		if (!f.hasTransportField) continue;
 		const rIdent = rustFieldIdent(f.name);
+		const kinds = fieldKindsByName.get(f.name) ?? [];
+		const cls = classify(kinds);
+		const isErased = cls.tag === 'heterogeneous';
 		if (f.required) {
+			const expr = isErased ? `node.${rIdent}.as_ref()` : `&node.${rIdent}`;
 			lines.push(
-				`    let ${rIdent}_text = render_transport_dispatch(node.${rIdent}.as_ref())?;`
+				`    let ${rIdent}_text = ${buildSlotRenderCall(cls, expr)}?;`
 			);
 		} else {
 			lines.push(
 				`    let ${rIdent}_text = if let Some(v) = &node.${rIdent} {`
 			);
-			lines.push(`        render_transport_dispatch(v.as_ref())?`);
+			const expr = isErased ? `v.as_ref()` : `v`;
+			lines.push(`        ${buildSlotRenderCall(cls, expr)}?`);
 			lines.push(`    } else {`);
 			lines.push(`        String::new()`);
 			lines.push(`    };`);
@@ -1464,15 +1706,20 @@ function buildTypedTemplateBody(
 		if (f.view !== 'field' || f.multiple) continue;
 		if (!f.hasTransportField) continue;
 		const rIdent = rustFieldIdent(f.name);
+		const kinds = fieldKindsByName.get(f.name) ?? [];
+		const cls = classify(kinds);
+		const isErased = cls.tag === 'heterogeneous';
 		if (f.required) {
+			const expr = isErased ? `node.${rIdent}.as_ref()` : `&node.${rIdent}`;
 			lines.push(
-				`    let ${rIdent}_rendered = render_transport_dispatch(node.${rIdent}.as_ref())?;`
+				`    let ${rIdent}_rendered = ${buildSlotRenderCall(cls, expr)}?;`
 			);
 		} else {
 			lines.push(
 				`    let ${rIdent}_rendered = match &node.${rIdent} {`
 			);
-			lines.push(`        Some(v) => Some(render_transport_dispatch(v.as_ref())?),`);
+			const expr = isErased ? `v.as_ref()` : `v`;
+			lines.push(`        Some(v) => Some(${buildSlotRenderCall(cls, expr)}?),`);
 			lines.push(`        None => None,`);
 			lines.push(`    };`);
 		}
@@ -1822,15 +2069,15 @@ function renderTransportSupport(
 		'',
 		...renderLiteralTransportStruct(projection.literals),
 		'',
-		...nodes.flatMap((node) => renderTransportStruct(node)),
+		...nodes.flatMap((node) => renderTransportStruct(node, nodeMap)),
 		'',
 		...renderGrammarRenderable(),
 		'',
 		// Typed dispatch: render_transport_dispatch + per-kind render_<kind>_transport fns.
 		// These are emitted AFTER renderGrammarRenderable() so Renderable::Node is in scope,
 		// and BEFORE renderTransportBridge() so render_transport can call render_transport_dispatch.
-		...renderTypedDispatch(structs, nodes, projection.literals, meta),
-		...renderTransportBridge(nodes, projection.literals, kindEntries ? buildKindIdByKind(kindEntries) : undefined)
+		...renderTypedDispatch(structs, nodes, projection.literals, meta, nodeMap),
+		...renderTransportBridge(nodes, projection.literals, kindEntries ? buildKindIdByKind(kindEntries) : undefined, nodeMap)
 	].join('\n');
 }
 
@@ -2126,7 +2373,8 @@ function renderGrammarRenderable(): string[] {
 function renderTransportBridge(
 	nodes: readonly AssembledNode[],
 	literals: readonly TransportLiteral[],
-	kindIdByKind?: ReadonlyMap<string, number>
+	kindIdByKind?: ReadonlyMap<string, number>,
+	nodeMap?: NodeMap
 ): string[] {
 	return [
 		'use ::sittir_core::types::{FieldValue as TransportFieldValue, KindId as TransportKindId, NodeData as TransportNodeData, Source as TransportSource};',
@@ -2214,7 +2462,7 @@ function renderTransportBridge(
 		'    }',
 		'}',
 		'',
-		...nodes.flatMap((node) => renderTransportToNodeFns(node, kindIdByKind)),
+		...nodes.flatMap((node) => renderTransportToNodeFns(node, kindIdByKind, nodeMap)),
 		'pub fn node_data_from_transport(transport: AnyTransport) -> Result<TransportNodeData, ::askama::Error> {',
 		'    transport_to_node(transport)',
 		'}',
@@ -2238,7 +2486,8 @@ function renderTransportBridge(
 
 function renderTransportToNodeFns(
 	node: AssembledNode,
-	kindIdByKind?: ReadonlyMap<string, number>
+	kindIdByKind?: ReadonlyMap<string, number>,
+	nodeMap?: NodeMap
 ): string[] {
 	if (node.modelType === 'polymorph' && node.forms.length > 0) {
 		const lines: string[] = [];
@@ -2264,7 +2513,8 @@ function renderTransportToNodeFns(
 					form.children,
 					true,
 					true,
-					kindIdByKind
+					kindIdByKind,
+					nodeMap
 				)
 			);
 		}
@@ -2283,7 +2533,8 @@ function renderTransportToNodeFns(
 				node.structuralChildren,
 				true,
 				true,
-				kindIdByKind
+				kindIdByKind,
+				nodeMap
 			);
 		case 'leaf':
 		case 'keyword':
@@ -2303,7 +2554,8 @@ function renderTransportDataToNodeFn(
 	children: readonly AssembledChild[],
 	defaultNamed: boolean,
 	hasOptionalText: boolean,
-	kindIdByKind?: ReadonlyMap<string, number>
+	kindIdByKind?: ReadonlyMap<string, number>,
+	nodeMap?: NodeMap
 ): string[] {
 	const kindArg = kindIdExpr(kind, kindIdByKind);
 	const lines: string[] = [];
@@ -2313,32 +2565,41 @@ function renderTransportDataToNodeFn(
 	lines.push('    let mut fields = TransportHashMap::new();');
 	for (const field of fields) {
 		const access = `transport.${rustFieldIdent(field.name)}`;
+		// When nodeMap is available and the field is a single-concrete-kind slot,
+		// the struct field type is a concrete transport type (not Box<AnyTransport>).
+		// Wrap it back into Box<AnyTransport> for the bridge helper, which expects
+		// the type-erased Box form. Fall back to the direct access when the field
+		// is already Box<AnyTransport> (heterogeneous / polymorph / supertype / multi).
 		if (isMultiple(field)) {
 			if (isRequired(field)) {
+				const bridged = buildBridgeListRequired(field, access, nodeMap);
 				lines.push(
-					`    fields.insert(${JSON.stringify(field.name)}.to_string(), transport_field_values(${access})?);`
+					`    fields.insert(${JSON.stringify(field.name)}.to_string(), transport_field_values(${bridged})?);`
 				);
 			} else {
 				lines.push(`    if let Some(value) = ${access} {`);
+				const bridged = buildBridgeOptionalList(field, 'value', nodeMap);
 				lines.push(
-					`        fields.insert(${JSON.stringify(field.name)}.to_string(), transport_field_values(value)?);`
+					`        fields.insert(${JSON.stringify(field.name)}.to_string(), transport_field_values(${bridged})?);`
 				);
 				lines.push('    }');
 			}
 		} else if (isRequired(field)) {
+			const bridged = buildBridgeSingleRequired(field, access, nodeMap);
 			lines.push(
-				`    fields.insert(${JSON.stringify(field.name)}.to_string(), transport_field_value(${access})?);`
+				`    fields.insert(${JSON.stringify(field.name)}.to_string(), transport_field_value(${bridged})?);`
 			);
 		} else {
 			lines.push(`    if let Some(value) = ${access} {`);
+			const bridged = buildBridgeOptionalSingle(field, 'value', nodeMap);
 			lines.push(
-				`        fields.insert(${JSON.stringify(field.name)}.to_string(), transport_field_value(value)?);`
+				`        fields.insert(${JSON.stringify(field.name)}.to_string(), transport_field_value(${bridged})?);`
 			);
 			lines.push('    }');
 		}
 	}
 	lines.push('    let fields = if fields.is_empty() { None } else { Some(fields) };');
-	lines.push(...renderTransportChildrenBinding(children));
+	lines.push(...renderTransportChildrenBinding(children, nodeMap));
 	lines.push('    Ok(transport_node_data(');
 	lines.push(`        ${kindArg},`);
 	lines.push('        transport.transport_source,');
@@ -2356,12 +2617,121 @@ function renderTransportDataToNodeFn(
 	return lines;
 }
 
+/**
+ * Classify a field for the bridge path and return the `AnyTransport` variant
+ * name if concrete-typed in Phase 1, or `undefined` if heterogeneous
+ * (Box<AnyTransport> — no wrapping needed).
+ */
+function bridgeVariantForField(
+	field: AssembledField,
+	nodeMap: NodeMap | undefined
+): string | undefined {
+	if (nodeMap === undefined) return undefined;
+	const cls = classifySlotForEmit(field.projection.kinds, nodeMap);
+	if (cls.tag !== 'concrete') return undefined;
+	return rustTypeIdent(cls.typeName);
+}
+
+/**
+ * For the bridge path: build a Rust expression for a REQUIRED SINGLE field
+ * that wraps a concrete transport value into `Box<AnyTransport>` when needed.
+ *
+ * When the field type is `Box<AnyTransport>` (heterogeneous), returns `access`
+ * unchanged. When the field type is a concrete transport struct (Phase 1),
+ * wraps via `Box::new(AnyTransport::Variant(access))`.
+ *
+ * @param field - the assembled field
+ * @param access - Rust expression for the field (e.g. `transport.name`)
+ * @param nodeMap - for Phase 1 classification; absent = assume heterogeneous
+ */
+function buildBridgeSingleRequired(
+	field: AssembledField,
+	access: string,
+	nodeMap: NodeMap | undefined
+): string {
+	const variant = bridgeVariantForField(field, nodeMap);
+	if (variant === undefined) return access;
+	return `Box::new(AnyTransport::${variant}(${access}))`;
+}
+
+/**
+ * For the bridge path: build a Rust expression for a REQUIRED LIST field
+ * that wraps each element into `Box<AnyTransport>` when the field is concrete.
+ *
+ * When heterogeneous, returns `access` (`Vec<Box<AnyTransport>>`) unchanged.
+ * When concrete (`Vec<ConcreteType>`), maps to `Vec<Box<AnyTransport>>`.
+ */
+function buildBridgeListRequired(
+	field: AssembledField,
+	access: string,
+	nodeMap: NodeMap | undefined
+): string {
+	const variant = bridgeVariantForField(field, nodeMap);
+	if (variant === undefined) return access;
+	return `${access}.into_iter().map(|v| Box::new(AnyTransport::${variant}(v))).collect::<Vec<_>>()`;
+}
+
+/**
+ * For the bridge path: build the Rust expression for an OPTIONAL SINGLE
+ * field's already-unwrapped value (after `if let Some(value) = access`).
+ *
+ * When heterogeneous, returns `valueExpr` unchanged.
+ * When concrete, wraps via `Box::new(AnyTransport::Variant(valueExpr))`.
+ */
+function buildBridgeOptionalSingle(
+	field: AssembledField,
+	valueExpr: string,
+	nodeMap: NodeMap | undefined
+): string {
+	const variant = bridgeVariantForField(field, nodeMap);
+	if (variant === undefined) return valueExpr;
+	return `Box::new(AnyTransport::${variant}(${valueExpr}))`;
+}
+
+/**
+ * For the bridge path: build the Rust expression for an OPTIONAL LIST
+ * field's already-unwrapped value (after `if let Some(value) = access`).
+ *
+ * When heterogeneous (`Vec<Box<AnyTransport>>`), returns `valueExpr` unchanged.
+ * When concrete (`Vec<ConcreteType>`), maps to `Vec<Box<AnyTransport>>`.
+ */
+function buildBridgeOptionalList(
+	field: AssembledField,
+	valueExpr: string,
+	nodeMap: NodeMap | undefined
+): string {
+	const variant = bridgeVariantForField(field, nodeMap);
+	if (variant === undefined) return valueExpr;
+	return `${valueExpr}.into_iter().map(|v| Box::new(AnyTransport::${variant}(v))).collect::<Vec<_>>()`;
+}
+
 function renderTransportChildrenBinding(
-	children: readonly AssembledChild[]
+	children: readonly AssembledChild[],
+	nodeMap?: NodeMap
 ): string[] {
 	if (children.length === 0) return ['    let children = None;'];
+	// Determine if children slot is concrete-typed (Phase 1) or Box<AnyTransport>.
+	// For the bridge path, concrete children need to be wrapped back into
+	// Box<AnyTransport> via AnyTransport::Variant(child) before passing to
+	// transport_children().
+	const childrenCls = nodeMap !== undefined ? classifySlotFromChildren(children, nodeMap) : undefined;
+	const needsWrap = childrenCls !== undefined && childrenCls.tag === 'concrete';
+	const variant = needsWrap ? rustTypeIdent(childrenCls.typeName) : undefined;
+	const wrapExpr = (expr: string): string =>
+		variant !== undefined
+			? `${expr}.into_iter().map(|v| Box::new(AnyTransport::${variant}(v))).collect::<Vec<_>>()`
+			: expr;
 	if (hasRequiredChild(children)) {
-		return ['    let children = Some(transport_children(transport.children)?);'];
+		const bridged = wrapExpr('transport.children');
+		return [`    let children = Some(transport_children(${bridged})?);`];
+	}
+	if (variant !== undefined) {
+		return [
+			'    let children = match transport.children {',
+			`        Some(c) => Some(transport_children(${wrapExpr('c')})?),`,
+			'        None => None,',
+			'    };'
+		];
 	}
 	return [
 		'    let children = match transport.children {',
@@ -2456,20 +2826,22 @@ function renderLiteralTransportStruct(
 	];
 }
 
-function renderTransportStruct(node: AssembledNode): string[] {
+function renderTransportStruct(node: AssembledNode, nodeMap: NodeMap): string[] {
 	if (node.modelType === 'polymorph' && node.forms.length > 0) {
-		return renderPolymorphTransportDefs(node);
+		return renderPolymorphTransportDefs(node, nodeMap);
 	}
 	return renderTransportDataStruct(
 		rustTransportStructName(node),
 		node,
 		node.structuralFields,
-		node.structuralChildren
+		node.structuralChildren,
+		nodeMap
 	);
 }
 
 function renderPolymorphTransportDefs(
-	node: Extract<AssembledNode, { modelType: 'polymorph' }>
+	node: Extract<AssembledNode, { modelType: 'polymorph' }>,
+	nodeMap: NodeMap
 ): string[] {
 	const lines: string[] = [];
 	// Polymorph envelope enum: no serde, no napi(object) — custom FromNapiValue
@@ -2491,7 +2863,8 @@ function renderPolymorphTransportDefs(
 				rustTransportFormStructName(form),
 				form,
 				form.fields,
-				form.children
+				form.children,
+				nodeMap
 			)
 		);
 	}
@@ -2502,7 +2875,8 @@ function renderTransportDataStruct(
 	structName: string,
 	node: AssembledNode,
 	fields: readonly AssembledField[],
-	children: readonly AssembledChild[]
+	children: readonly AssembledChild[],
+	nodeMap: NodeMap
 ): string[] {
 	const lines: string[] = [];
 	lines.push('#[cfg_attr(feature = "napi-bindings", napi(object))]');
@@ -2515,11 +2889,11 @@ function renderTransportDataStruct(
 		case 'polymorph':
 			lines.push(...renderTransportMetadataFields(true));
 			for (const field of fields) {
-				lines.push(...renderTransportField(field));
+				lines.push(...renderTransportField(field, nodeMap));
 			}
 			if (children.length > 0) {
 				lines.push('    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]');
-				lines.push(`    pub children: ${rustTransportChildrenType(children)},`);
+				lines.push(`    pub children: ${rustTransportChildrenType(children, nodeMap)},`);
 			}
 			break;
 		case 'leaf':
@@ -2561,7 +2935,7 @@ function renderTransportMetadataFields(includeText: boolean): string[] {
 	return lines;
 }
 
-function renderTransportField(field: AssembledField): string[] {
+function renderTransportField(field: AssembledField, nodeMap: NodeMap): string[] {
 	const lines: string[] = [];
 	const rustName = rustFieldIdent(field.name);
 	if (rustName !== field.name) {
@@ -2569,24 +2943,70 @@ function renderTransportField(field: AssembledField): string[] {
 		// still uses the original grammar field name.
 		lines.push(`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(field.name)}))]`);
 	}
-	lines.push(`    pub ${rustName}: ${rustTransportFieldType(field)},`);
+	lines.push(`    pub ${rustName}: ${rustTransportFieldType(field, nodeMap)},`);
 	return lines;
 }
 
-function rustTransportFieldType(field: AssembledField): string {
-	if (isMultiple(field)) {
-		const inner = 'Vec<Box<AnyTransport>>';
+function rustTransportFieldType(field: AssembledField, nodeMap: NodeMap): string {
+	const cls = classifySlot(field.projection.kinds);
+	if (cls.tag === 'concrete') {
+		const base = concreteTransportTypeName(cls.kind, nodeMap);
+		if (base !== null) {
+			const inner = isMultiple(field) ? `Vec<${base}>` : base;
+			return isRequired(field) ? inner : `Option<${inner}>`;
+		}
+		// Fall through to heterogeneous: supertype / unresolved kind — Phase 2.
+	}
+	const isErased = cls.tag === 'heterogeneous' || cls.tag === 'concrete';
+	if (isErased) {
+		const inner = isMultiple(field) ? 'Vec<Box<AnyTransport>>' : 'Box<AnyTransport>';
 		return isRequired(field) ? inner : `Option<${inner}>`;
 	}
-	const inner = 'Box<AnyTransport>';
-	return isRequired(field) ? inner : `Option<${inner}>`;
+	return assertNever(cls);
 }
 
 function rustTransportChildrenType(
-	children: readonly AssembledChild[]
+	children: readonly AssembledChild[],
+	nodeMap: NodeMap
 ): string {
+	const allKinds = [...new Set(children.flatMap((c) => deriveChildrenKinds(c)))];
+	const cls = classifySlot(allKinds);
+	const required = hasRequiredChild(children);
+	if (cls.tag === 'concrete') {
+		const base = concreteTransportTypeName(cls.kind, nodeMap);
+		if (base !== null) {
+			const inner = `Vec<${base}>`;
+			return required ? inner : `Option<${inner}>`;
+		}
+		// Fall through to heterogeneous: supertype / unresolved kind — Phase 2.
+	}
 	const inner = 'Vec<Box<AnyTransport>>';
-	return hasRequiredChild(children) ? inner : `Option<${inner}>`;
+	return required ? inner : `Option<${inner}>`;
+}
+
+/**
+ * Rust type name for a concrete transport struct given a grammar kind.
+ * Returns `null` when the kind maps to a supertype or multi node — those are
+ * NOT emitted as transport structs/enums in Phase 1 (Phase 2 will add them).
+ * The caller must fall back to `Box<AnyTransport>` on `null`.
+ *
+ * @param kind - Grammar kind string (e.g. `"identifier"`, `"_expression"`).
+ * @param nodeMap - For typeName + modelType lookup.
+ */
+function concreteTransportTypeName(kind: string, nodeMap: NodeMap): string | null {
+	const node = nodeMap.nodes.get(kind);
+	if (node !== undefined) {
+		// Supertype and multi nodes are not emitted as transport structs.
+		// Polymorph enums don't implement ToNapiValue in Phase 1 so struct fields
+		// with #[napi(object)] can't use them — return null to fall back to Box<AnyTransport>.
+		// All three: returning null signals "fall back to Box<AnyTransport>" for Phase 1.
+		if (node.modelType === 'supertype' || node.modelType === 'multi' || node.modelType === 'polymorph') {
+			return null;
+		}
+		return `${rustTypeIdent(node.typeName)}Transport`;
+	}
+	// Unknown kind — conservative fallback.
+	return null;
 }
 
 function hasRequiredChild(children: readonly AssembledChild[]): boolean {
