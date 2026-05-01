@@ -1261,7 +1261,7 @@ function renderTypedBranchFn(
 	const separator = meta.separators.get(node.kind) ?? '';
 
 	lines.push(`fn ${fnName}(node: &${structName}) -> Result<String, ::askama::Error> {`);
-	lines.push(...buildTypedTemplateBody(struct, structName, separator));
+	lines.push(...buildTypedTemplateBody(struct, separator));
 	lines.push(`}`);
 	lines.push('');
 
@@ -1354,7 +1354,7 @@ function renderTypedFormFn(
 	};
 
 	lines.push(`fn ${fnName}(node: &${structName}) -> Result<String, ::askama::Error> {`);
-	lines.push(...buildTypedTemplateBody(formEmittedStruct, structName, separator));
+	lines.push(...buildTypedTemplateBody(formEmittedStruct, separator));
 	lines.push(`}`);
 	lines.push('');
 
@@ -1401,12 +1401,10 @@ function emitListSlotBuffer(ident: string, required: boolean): string[] {
  * rather than one, but sound and simple.
  *
  * @param struct - the template struct description
- * @param _structName - the transport struct type (unused in body, kept for docs)
  * @param separator - the list/children separator for this kind
  */
 function buildTypedTemplateBody(
 	struct: EmittedStruct,
-	_structName: string,
 	separator: string
 ): string[] {
 	const lines: string[] = [];
