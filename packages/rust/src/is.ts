@@ -3,6 +3,7 @@
 // Composition: kind × shape = concrete type via NamespaceMap.
 
 import type { AnyNodeData, AnyTreeNodeOf as AnyTreeNode } from '@sittir/types';
+import { TSKindId } from './types.js';
 import type {
     NamespaceMap,
     Condition,
@@ -43,13 +44,10 @@ export interface IsGuards {
     MacroDefinitionParen<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_macro_definition_paren' };
     MatchArmBlockEnding<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_match_arm_block_ending' };
     ModItemInline<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_mod_item_inline' };
-    NonSpecialToken<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_non_special_token' };
     PointerTypeMut<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_pointer_type_mut' };
     RangeExpressionBare<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_range_expression_bare' };
     ReferenceExpressionRawMut<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_reference_expression_raw_mut' };
-    ReservedIdentifier<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_reserved_identifier' };
     ShorthandFieldIdentifier<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_shorthand_field_identifier' };
-    StringContent<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_string_content' };
     TokenTreeBrace<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_token_tree_brace' };
     TokenTreeBracket<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_token_tree_bracket' };
     TokenTreeParen<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_token_tree_paren' };
@@ -77,27 +75,20 @@ export interface IsGuards {
     breakExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'break_expression' };
     callExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'call_expression' };
     capturedPattern<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'captured_pattern' };
-    closureExpressionExpr<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'closure_expression_expr' };
     closureExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'closure_expression' };
     closureParameters<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'closure_parameters' };
-    comment<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'comment' };
     compoundAssignmentExpr<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'compound_assignment_expr' };
     constBlock<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'const_block' };
     constItem<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'const_item' };
     constParameter<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'const_parameter' };
     continueExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'continue_expression' };
     declarationList<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'declaration_list' };
-    delimTokenTreeParen<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'delim_token_tree_paren' };
-    delimTokenTreeBracket<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'delim_token_tree_bracket' };
-    delimTokenTreeBrace<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'delim_token_tree_brace' };
     delimTokenTree<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'delim_token_tree' };
     dynamicType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'dynamic_type' };
     elseClause<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'else_clause' };
     enumItem<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'enum_item' };
     enumVariant<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'enum_variant' };
     enumVariantList<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'enum_variant_list' };
-    expressionStatementWithSemi<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'expression_statement_with_semi' };
-    expressionStatementBlockEnding<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'expression_statement_block_ending' };
     expressionStatement<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'expression_statement' };
     externCrateDeclaration<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'extern_crate_declaration' };
     externModifier<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'extern_modifier' };
@@ -106,11 +97,9 @@ export interface IsGuards {
     fieldExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'field_expression' };
     fieldInitializer<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'field_initializer' };
     fieldInitializerList<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'field_initializer_list' };
-    fieldPatternShorthand<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'field_pattern_shorthand' };
     fieldPattern<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'field_pattern' };
     forExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'for_expression' };
     forLifetimes<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'for_lifetimes' };
-    foreignModItemBody<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'foreign_mod_item_body' };
     foreignModItem<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'foreign_mod_item' };
     functionItem<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'function_item' };
     functionModifiers<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'function_modifiers' };
@@ -123,7 +112,6 @@ export interface IsGuards {
     genericTypeWithTurbofish<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'generic_type_with_turbofish' };
     higherRankedTraitBound<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'higher_ranked_trait_bound' };
     ifExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'if_expression' };
-    implItemBody<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'impl_item_body' };
     implItem<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'impl_item' };
     indexExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'index_expression' };
     innerAttributeItem<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'inner_attribute_item' };
@@ -135,18 +123,13 @@ export interface IsGuards {
     lifetimeParameter<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'lifetime_parameter' };
     lineComment<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'line_comment' };
     loopExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'loop_expression' };
-    macroDefinitionParen<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'macro_definition_paren' };
-    macroDefinitionBracket<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'macro_definition_bracket' };
-    macroDefinitionBrace<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'macro_definition_brace' };
     macroDefinition<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'macro_definition' };
     macroInvocation<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'macro_invocation' };
     macroRule<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'macro_rule' };
-    matchArmBlockEnding<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'match_arm_block_ending' };
     matchArm<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'match_arm' };
     matchBlock<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'match_block' };
     matchExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'match_expression' };
     matchPattern<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'match_pattern' };
-    modItemInline<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'mod_item_inline' };
     modItem<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'mod_item' };
     mutPattern<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'mut_pattern' };
     negativeLiteral<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'negative_literal' };
@@ -155,10 +138,8 @@ export interface IsGuards {
     parameter<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'parameter' };
     parameters<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'parameters' };
     parenthesizedExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'parenthesized_expression' };
-    pointerTypeMut<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'pointer_type_mut' };
     pointerType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'pointer_type' };
     qualifiedType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'qualified_type' };
-    rangeExpressionBare<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'range_expression_bare' };
     rangeExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'range_expression' };
     rangePattern<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'range_pattern' };
     rawStringLiteral<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'raw_string_literal' };
@@ -184,13 +165,7 @@ export interface IsGuards {
     tokenBindingPattern<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'token_binding_pattern' };
     tokenRepetition<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'token_repetition' };
     tokenRepetitionPattern<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'token_repetition_pattern' };
-    tokenTreeParen<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'token_tree_paren' };
-    tokenTreeBracket<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'token_tree_bracket' };
-    tokenTreeBrace<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'token_tree_brace' };
     tokenTree<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'token_tree' };
-    tokenTreePatternParen<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'token_tree_pattern_paren' };
-    tokenTreePatternBracket<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'token_tree_pattern_bracket' };
-    tokenTreePatternBrace<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'token_tree_pattern_brace' };
     tokenTreePattern<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'token_tree_pattern' };
     traitBounds<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'trait_bounds' };
     traitItem<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'trait_item' };
@@ -215,7 +190,6 @@ export interface IsGuards {
     useList<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'use_list' };
     useWildcard<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'use_wildcard' };
     variadicParameter<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'variadic_parameter' };
-    visibilityModifierCrate<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'visibility_modifier_crate' };
     visibilityModifier<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'visibility_modifier' };
     whereClause<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'where_clause' };
     wherePredicate<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'where_predicate' };
@@ -260,13 +234,10 @@ export interface AssertGuards {
     MacroDefinitionParen(v: { readonly $type: string | number }): asserts v is { readonly $type: '_macro_definition_paren' };
     MatchArmBlockEnding(v: { readonly $type: string | number }): asserts v is { readonly $type: '_match_arm_block_ending' };
     ModItemInline(v: { readonly $type: string | number }): asserts v is { readonly $type: '_mod_item_inline' };
-    NonSpecialToken(v: { readonly $type: string | number }): asserts v is { readonly $type: '_non_special_token' };
     PointerTypeMut(v: { readonly $type: string | number }): asserts v is { readonly $type: '_pointer_type_mut' };
     RangeExpressionBare(v: { readonly $type: string | number }): asserts v is { readonly $type: '_range_expression_bare' };
     ReferenceExpressionRawMut(v: { readonly $type: string | number }): asserts v is { readonly $type: '_reference_expression_raw_mut' };
-    ReservedIdentifier(v: { readonly $type: string | number }): asserts v is { readonly $type: '_reserved_identifier' };
     ShorthandFieldIdentifier(v: { readonly $type: string | number }): asserts v is { readonly $type: '_shorthand_field_identifier' };
-    StringContent(v: { readonly $type: string | number }): asserts v is { readonly $type: '_string_content' };
     TokenTreeBrace(v: { readonly $type: string | number }): asserts v is { readonly $type: '_token_tree_brace' };
     TokenTreeBracket(v: { readonly $type: string | number }): asserts v is { readonly $type: '_token_tree_bracket' };
     TokenTreeParen(v: { readonly $type: string | number }): asserts v is { readonly $type: '_token_tree_paren' };
@@ -294,27 +265,20 @@ export interface AssertGuards {
     breakExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'break_expression' };
     callExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'call_expression' };
     capturedPattern(v: { readonly $type: string | number }): asserts v is { readonly $type: 'captured_pattern' };
-    closureExpressionExpr(v: { readonly $type: string | number }): asserts v is { readonly $type: 'closure_expression_expr' };
     closureExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'closure_expression' };
     closureParameters(v: { readonly $type: string | number }): asserts v is { readonly $type: 'closure_parameters' };
-    comment(v: { readonly $type: string | number }): asserts v is { readonly $type: 'comment' };
     compoundAssignmentExpr(v: { readonly $type: string | number }): asserts v is { readonly $type: 'compound_assignment_expr' };
     constBlock(v: { readonly $type: string | number }): asserts v is { readonly $type: 'const_block' };
     constItem(v: { readonly $type: string | number }): asserts v is { readonly $type: 'const_item' };
     constParameter(v: { readonly $type: string | number }): asserts v is { readonly $type: 'const_parameter' };
     continueExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'continue_expression' };
     declarationList(v: { readonly $type: string | number }): asserts v is { readonly $type: 'declaration_list' };
-    delimTokenTreeParen(v: { readonly $type: string | number }): asserts v is { readonly $type: 'delim_token_tree_paren' };
-    delimTokenTreeBracket(v: { readonly $type: string | number }): asserts v is { readonly $type: 'delim_token_tree_bracket' };
-    delimTokenTreeBrace(v: { readonly $type: string | number }): asserts v is { readonly $type: 'delim_token_tree_brace' };
     delimTokenTree(v: { readonly $type: string | number }): asserts v is { readonly $type: 'delim_token_tree' };
     dynamicType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'dynamic_type' };
     elseClause(v: { readonly $type: string | number }): asserts v is { readonly $type: 'else_clause' };
     enumItem(v: { readonly $type: string | number }): asserts v is { readonly $type: 'enum_item' };
     enumVariant(v: { readonly $type: string | number }): asserts v is { readonly $type: 'enum_variant' };
     enumVariantList(v: { readonly $type: string | number }): asserts v is { readonly $type: 'enum_variant_list' };
-    expressionStatementWithSemi(v: { readonly $type: string | number }): asserts v is { readonly $type: 'expression_statement_with_semi' };
-    expressionStatementBlockEnding(v: { readonly $type: string | number }): asserts v is { readonly $type: 'expression_statement_block_ending' };
     expressionStatement(v: { readonly $type: string | number }): asserts v is { readonly $type: 'expression_statement' };
     externCrateDeclaration(v: { readonly $type: string | number }): asserts v is { readonly $type: 'extern_crate_declaration' };
     externModifier(v: { readonly $type: string | number }): asserts v is { readonly $type: 'extern_modifier' };
@@ -323,11 +287,9 @@ export interface AssertGuards {
     fieldExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'field_expression' };
     fieldInitializer(v: { readonly $type: string | number }): asserts v is { readonly $type: 'field_initializer' };
     fieldInitializerList(v: { readonly $type: string | number }): asserts v is { readonly $type: 'field_initializer_list' };
-    fieldPatternShorthand(v: { readonly $type: string | number }): asserts v is { readonly $type: 'field_pattern_shorthand' };
     fieldPattern(v: { readonly $type: string | number }): asserts v is { readonly $type: 'field_pattern' };
     forExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'for_expression' };
     forLifetimes(v: { readonly $type: string | number }): asserts v is { readonly $type: 'for_lifetimes' };
-    foreignModItemBody(v: { readonly $type: string | number }): asserts v is { readonly $type: 'foreign_mod_item_body' };
     foreignModItem(v: { readonly $type: string | number }): asserts v is { readonly $type: 'foreign_mod_item' };
     functionItem(v: { readonly $type: string | number }): asserts v is { readonly $type: 'function_item' };
     functionModifiers(v: { readonly $type: string | number }): asserts v is { readonly $type: 'function_modifiers' };
@@ -340,7 +302,6 @@ export interface AssertGuards {
     genericTypeWithTurbofish(v: { readonly $type: string | number }): asserts v is { readonly $type: 'generic_type_with_turbofish' };
     higherRankedTraitBound(v: { readonly $type: string | number }): asserts v is { readonly $type: 'higher_ranked_trait_bound' };
     ifExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'if_expression' };
-    implItemBody(v: { readonly $type: string | number }): asserts v is { readonly $type: 'impl_item_body' };
     implItem(v: { readonly $type: string | number }): asserts v is { readonly $type: 'impl_item' };
     indexExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'index_expression' };
     innerAttributeItem(v: { readonly $type: string | number }): asserts v is { readonly $type: 'inner_attribute_item' };
@@ -352,18 +313,13 @@ export interface AssertGuards {
     lifetimeParameter(v: { readonly $type: string | number }): asserts v is { readonly $type: 'lifetime_parameter' };
     lineComment(v: { readonly $type: string | number }): asserts v is { readonly $type: 'line_comment' };
     loopExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'loop_expression' };
-    macroDefinitionParen(v: { readonly $type: string | number }): asserts v is { readonly $type: 'macro_definition_paren' };
-    macroDefinitionBracket(v: { readonly $type: string | number }): asserts v is { readonly $type: 'macro_definition_bracket' };
-    macroDefinitionBrace(v: { readonly $type: string | number }): asserts v is { readonly $type: 'macro_definition_brace' };
     macroDefinition(v: { readonly $type: string | number }): asserts v is { readonly $type: 'macro_definition' };
     macroInvocation(v: { readonly $type: string | number }): asserts v is { readonly $type: 'macro_invocation' };
     macroRule(v: { readonly $type: string | number }): asserts v is { readonly $type: 'macro_rule' };
-    matchArmBlockEnding(v: { readonly $type: string | number }): asserts v is { readonly $type: 'match_arm_block_ending' };
     matchArm(v: { readonly $type: string | number }): asserts v is { readonly $type: 'match_arm' };
     matchBlock(v: { readonly $type: string | number }): asserts v is { readonly $type: 'match_block' };
     matchExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'match_expression' };
     matchPattern(v: { readonly $type: string | number }): asserts v is { readonly $type: 'match_pattern' };
-    modItemInline(v: { readonly $type: string | number }): asserts v is { readonly $type: 'mod_item_inline' };
     modItem(v: { readonly $type: string | number }): asserts v is { readonly $type: 'mod_item' };
     mutPattern(v: { readonly $type: string | number }): asserts v is { readonly $type: 'mut_pattern' };
     negativeLiteral(v: { readonly $type: string | number }): asserts v is { readonly $type: 'negative_literal' };
@@ -372,10 +328,8 @@ export interface AssertGuards {
     parameter(v: { readonly $type: string | number }): asserts v is { readonly $type: 'parameter' };
     parameters(v: { readonly $type: string | number }): asserts v is { readonly $type: 'parameters' };
     parenthesizedExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'parenthesized_expression' };
-    pointerTypeMut(v: { readonly $type: string | number }): asserts v is { readonly $type: 'pointer_type_mut' };
     pointerType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'pointer_type' };
     qualifiedType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'qualified_type' };
-    rangeExpressionBare(v: { readonly $type: string | number }): asserts v is { readonly $type: 'range_expression_bare' };
     rangeExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'range_expression' };
     rangePattern(v: { readonly $type: string | number }): asserts v is { readonly $type: 'range_pattern' };
     rawStringLiteral(v: { readonly $type: string | number }): asserts v is { readonly $type: 'raw_string_literal' };
@@ -401,13 +355,7 @@ export interface AssertGuards {
     tokenBindingPattern(v: { readonly $type: string | number }): asserts v is { readonly $type: 'token_binding_pattern' };
     tokenRepetition(v: { readonly $type: string | number }): asserts v is { readonly $type: 'token_repetition' };
     tokenRepetitionPattern(v: { readonly $type: string | number }): asserts v is { readonly $type: 'token_repetition_pattern' };
-    tokenTreeParen(v: { readonly $type: string | number }): asserts v is { readonly $type: 'token_tree_paren' };
-    tokenTreeBracket(v: { readonly $type: string | number }): asserts v is { readonly $type: 'token_tree_bracket' };
-    tokenTreeBrace(v: { readonly $type: string | number }): asserts v is { readonly $type: 'token_tree_brace' };
     tokenTree(v: { readonly $type: string | number }): asserts v is { readonly $type: 'token_tree' };
-    tokenTreePatternParen(v: { readonly $type: string | number }): asserts v is { readonly $type: 'token_tree_pattern_paren' };
-    tokenTreePatternBracket(v: { readonly $type: string | number }): asserts v is { readonly $type: 'token_tree_pattern_bracket' };
-    tokenTreePatternBrace(v: { readonly $type: string | number }): asserts v is { readonly $type: 'token_tree_pattern_brace' };
     tokenTreePattern(v: { readonly $type: string | number }): asserts v is { readonly $type: 'token_tree_pattern' };
     traitBounds(v: { readonly $type: string | number }): asserts v is { readonly $type: 'trait_bounds' };
     traitItem(v: { readonly $type: string | number }): asserts v is { readonly $type: 'trait_item' };
@@ -432,7 +380,6 @@ export interface AssertGuards {
     useList(v: { readonly $type: string | number }): asserts v is { readonly $type: 'use_list' };
     useWildcard(v: { readonly $type: string | number }): asserts v is { readonly $type: 'use_wildcard' };
     variadicParameter(v: { readonly $type: string | number }): asserts v is { readonly $type: 'variadic_parameter' };
-    visibilityModifierCrate(v: { readonly $type: string | number }): asserts v is { readonly $type: 'visibility_modifier_crate' };
     visibilityModifier(v: { readonly $type: string | number }): asserts v is { readonly $type: 'visibility_modifier' };
     whereClause(v: { readonly $type: string | number }): asserts v is { readonly $type: 'where_clause' };
     wherePredicate(v: { readonly $type: string | number }): asserts v is { readonly $type: 'where_predicate' };
@@ -457,246 +404,235 @@ export interface AssertGuards {
     useClause(v: { readonly $type: string | number }): asserts v is UseClause;
 }
 
-// Runtime: kind guards = string equality; supertype guards = Set.has.
-// Building from literal string arrays keeps the runtime footprint minimal.
-function _g(k: string): (v: { readonly $type: string | number }) => boolean {
-    return (v) => v.$type === k;
+// Runtime: kind guards accept both numeric (factory/wrap) and string (readNode)
+// $type during Phase A coexistence. Phase D removes the string arm.
+function _g(k: string, id: number): (v: { readonly $type: string | number }) => boolean {
+    return (v) => v.$type === id || v.$type === k;
 }
-function _sg(ks: ReadonlySet<string>): (v: { readonly $type: string | number }) => boolean {
-    return (v) => ks.has(v.$type as string);
+function _sg(ks: ReadonlySet<string>, ids: ReadonlySet<number>): (v: { readonly $type: string | number }) => boolean {
+    return (v) => typeof v.$type === 'number' ? ids.has(v.$type) : ks.has(v.$type);
 }
 
 const _supertype_condition = new Set<string>(["unary_expression", "reference_expression", "try_expression", "binary_expression", "assignment_expression", "compound_assignment_expr", "type_cast_expression", "call_expression", "return_expression", "yield_expression", "string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "identifier", "self", "scoped_identifier", "generic_function", "await_expression", "field_expression", "array_expression", "tuple_expression", "macro_invocation", "unit_expression", "break_expression", "continue_expression", "index_expression", "metavariable", "closure_expression", "parenthesized_expression", "struct_expression", "unsafe_block", "async_block", "gen_block", "try_block", "block", "if_expression", "match_expression", "while_expression", "loop_expression", "for_expression", "const_block", "range_expression", "let_condition", "_let_chain"]);
+const _supertype_condition_ids = new Set<number>([247, 249, 248, 250, 251, 252, 253, 256, 254, 255, 311, 312, 129, 313, 126, 151, 1, 139, 243, 225, 287, 288, 258, 260, 239, 261, 284, 285, 286, 142, 281, 259, 262, 289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280, 246, 268, 269]);
 const _supertype_declarationStatement = new Set<string>(["const_item", "macro_invocation", "macro_definition", "empty_statement", "attribute_item", "inner_attribute_item", "mod_item", "foreign_mod_item", "struct_item", "union_item", "enum_item", "type_item", "function_item", "function_signature_item", "impl_item", "trait_item", "associated_type", "let_declaration", "use_declaration", "extern_crate_declaration", "static_item"]);
+const _supertype_declarationStatement_ids = new Set<number>([185, 239, 161, 159, 170, 171, 173, 174, 176, 177, 178, 187, 188, 189, 193, 194, 195, 203, 204, 184, 186]);
 const _supertype_delimTokens = new Set<string>(["string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "identifier", "mutable_specifier", "self", "super", "crate", "delim_token_tree"]);
+const _supertype_delimTokens_ids = new Set<number>([311, 312, 129, 313, 126, 151, 1, 120, 139, 140, 141, 240]);
 const _supertype_expression = new Set<string>(["unary_expression", "reference_expression", "try_expression", "binary_expression", "assignment_expression", "compound_assignment_expr", "type_cast_expression", "call_expression", "return_expression", "yield_expression", "string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "identifier", "self", "scoped_identifier", "generic_function", "await_expression", "field_expression", "array_expression", "tuple_expression", "macro_invocation", "unit_expression", "break_expression", "continue_expression", "index_expression", "metavariable", "closure_expression", "parenthesized_expression", "struct_expression", "unsafe_block", "async_block", "gen_block", "try_block", "block", "if_expression", "match_expression", "while_expression", "loop_expression", "for_expression", "const_block", "range_expression"]);
+const _supertype_expression_ids = new Set<number>([247, 249, 248, 250, 251, 252, 253, 256, 254, 255, 311, 312, 129, 313, 126, 151, 1, 139, 243, 225, 287, 288, 258, 260, 239, 261, 284, 285, 286, 142, 281, 259, 262, 289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280, 246]);
 const _supertype_expressionEndingWithBlock = new Set<string>(["unsafe_block", "async_block", "gen_block", "try_block", "block", "if_expression", "match_expression", "while_expression", "loop_expression", "for_expression", "const_block"]);
+const _supertype_expressionEndingWithBlock_ids = new Set<number>([289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280]);
 const _supertype_expressionExceptRange = new Set<string>(["unary_expression", "reference_expression", "try_expression", "binary_expression", "assignment_expression", "compound_assignment_expr", "type_cast_expression", "call_expression", "return_expression", "yield_expression", "string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "identifier", "self", "scoped_identifier", "generic_function", "await_expression", "field_expression", "array_expression", "tuple_expression", "macro_invocation", "unit_expression", "break_expression", "continue_expression", "index_expression", "metavariable", "closure_expression", "parenthesized_expression", "struct_expression", "unsafe_block", "async_block", "gen_block", "try_block", "block", "if_expression", "match_expression", "while_expression", "loop_expression", "for_expression", "const_block"]);
+const _supertype_expressionExceptRange_ids = new Set<number>([247, 249, 248, 250, 251, 252, 253, 256, 254, 255, 311, 312, 129, 313, 126, 151, 1, 139, 243, 225, 287, 288, 258, 260, 239, 261, 284, 285, 286, 142, 281, 259, 262, 289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280]);
 const _supertype_literal = new Set<string>(["string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal"]);
+const _supertype_literal_ids = new Set<number>([311, 312, 129, 313, 126, 151]);
 const _supertype_literalPattern = new Set<string>(["string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "negative_literal"]);
+const _supertype_literalPattern_ids = new Set<number>([311, 312, 129, 313, 126, 151, 310]);
 const _supertype_nonDelimToken = new Set<string>(["string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "identifier", "mutable_specifier", "self", "super", "crate"]);
+const _supertype_nonDelimToken_ids = new Set<number>([311, 312, 129, 313, 126, 151, 1, 120, 139, 140, 141]);
 const _supertype_path = new Set<string>(["self", "identifier", "metavariable", "super", "crate", "scoped_identifier"]);
+const _supertype_path_ids = new Set<number>([139, 1, 142, 140, 141, 243]);
 const _supertype_pattern = new Set<string>(["string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "negative_literal", "identifier", "scoped_identifier", "generic_pattern", "tuple_pattern", "tuple_struct_pattern", "struct_pattern", "ref_pattern", "slice_pattern", "captured_pattern", "reference_pattern", "remaining_field_pattern", "mut_pattern", "range_pattern", "or_pattern", "const_block", "macro_invocation", "_wildcard_pattern"]);
+const _supertype_pattern_ids = new Set<number>([311, 312, 129, 313, 126, 151, 310, 1, 243, 295, 296, 298, 299, 304, 297, 305, 306, 301, 302, 303, 307, 280, 239, 320]);
 const _supertype_statement = new Set<string>(["expression_statement", "const_item", "macro_invocation", "macro_definition", "empty_statement", "attribute_item", "inner_attribute_item", "mod_item", "foreign_mod_item", "struct_item", "union_item", "enum_item", "type_item", "function_item", "function_signature_item", "impl_item", "trait_item", "associated_type", "let_declaration", "use_declaration", "extern_crate_declaration", "static_item"]);
+const _supertype_statement_ids = new Set<number>([160, 185, 239, 161, 159, 170, 171, 173, 174, 176, 177, 178, 187, 188, 189, 193, 194, 195, 203, 204, 184, 186]);
 const _supertype_tokenPattern = new Set<string>(["token_tree_pattern", "token_repetition_pattern", "token_binding_pattern", "metavariable", "string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "identifier", "mutable_specifier", "self", "super", "crate"]);
+const _supertype_tokenPattern_ids = new Set<number>([164, 166, 165, 142, 311, 312, 129, 313, 126, 151, 1, 120, 139, 140, 141]);
 const _supertype_tokens = new Set<string>(["token_tree", "token_repetition", "metavariable", "string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "identifier", "mutable_specifier", "self", "super", "crate"]);
+const _supertype_tokens_ids = new Set<number>([168, 169, 142, 311, 312, 129, 313, 126, 151, 1, 120, 139, 140, 141]);
 const _supertype_type = new Set<string>(["abstract_type", "reference_type", "metavariable", "pointer_type", "generic_type", "scoped_type_identifier", "tuple_type", "unit_type", "array_type", "function_type", "_type_identifier", "macro_invocation", "never_type", "dynamic_type", "bounded_type", "removed_trait_bound", "_primitive_type"]);
+const _supertype_type_ids = new Set<number>([235, 232, 142, 233, 226, 245, 223, 224, 220, 222, 417, 239, 234, 236, 228, 198]);
 const _supertype_useClause = new Set<string>(["self", "identifier", "metavariable", "super", "crate", "scoped_identifier", "use_as_clause", "use_list", "scoped_use_list", "use_wildcard"]);
+const _supertype_useClause_ids = new Set<number>([139, 1, 142, 140, 141, 243, 208, 207, 206, 209]);
 
 export const is = {
-    ClosureExpressionExpr: _g("_closure_expression_expr"),
-    DelimTokenTreeBrace: _g("_delim_token_tree_brace"),
-    DelimTokenTreeBracket: _g("_delim_token_tree_bracket"),
-    DelimTokenTreeParen: _g("_delim_token_tree_paren"),
-    ExpressionStatementBlockEnding: _g("_expression_statement_block_ending"),
-    ExpressionStatementWithSemi: _g("_expression_statement_with_semi"),
-    FieldIdentifier: _g("_field_identifier"),
-    FieldPatternShorthand: _g("_field_pattern_shorthand"),
-    ForeignModItemBody: _g("_foreign_mod_item_body"),
-    FunctionTypeFnForm: _g("_function_type_fn_form"),
-    FunctionTypeTraitForm: _g("_function_type_trait_form"),
-    ImplItemBody: _g("_impl_item_body"),
-    LetChain: _g("_let_chain"),
-    MacroDefinitionBrace: _g("_macro_definition_brace"),
-    MacroDefinitionBracket: _g("_macro_definition_bracket"),
-    MacroDefinitionParen: _g("_macro_definition_paren"),
-    MatchArmBlockEnding: _g("_match_arm_block_ending"),
-    ModItemInline: _g("_mod_item_inline"),
-    NonSpecialToken: _g("_non_special_token"),
-    PointerTypeMut: _g("_pointer_type_mut"),
-    RangeExpressionBare: _g("_range_expression_bare"),
-    ReferenceExpressionRawMut: _g("_reference_expression_raw_mut"),
-    ReservedIdentifier: _g("_reserved_identifier"),
-    ShorthandFieldIdentifier: _g("_shorthand_field_identifier"),
-    StringContent: _g("_string_content"),
-    TokenTreeBrace: _g("_token_tree_brace"),
-    TokenTreeBracket: _g("_token_tree_bracket"),
-    TokenTreeParen: _g("_token_tree_paren"),
-    TokenTreePatternBrace: _g("_token_tree_pattern_brace"),
-    TokenTreePatternBracket: _g("_token_tree_pattern_bracket"),
-    TokenTreePatternParen: _g("_token_tree_pattern_paren"),
-    TypeIdentifier: _g("_type_identifier"),
-    VisibilityModifierCrate: _g("_visibility_modifier_crate"),
-    abstractType: _g("abstract_type"),
-    arguments: _g("arguments"),
-    arrayExpression: _g("array_expression"),
-    arrayType: _g("array_type"),
-    assignmentExpression: _g("assignment_expression"),
-    associatedType: _g("associated_type"),
-    asyncBlock: _g("async_block"),
-    attribute: _g("attribute"),
-    attributeItem: _g("attribute_item"),
-    awaitExpression: _g("await_expression"),
-    baseFieldInitializer: _g("base_field_initializer"),
-    binaryExpression: _g("binary_expression"),
-    block: _g("block"),
-    blockComment: _g("block_comment"),
-    boundedType: _g("bounded_type"),
-    bracketedType: _g("bracketed_type"),
-    breakExpression: _g("break_expression"),
-    callExpression: _g("call_expression"),
-    capturedPattern: _g("captured_pattern"),
-    closureExpressionExpr: _g("closure_expression_expr"),
-    closureExpression: _g("closure_expression"),
-    closureParameters: _g("closure_parameters"),
-    comment: _g("comment"),
-    compoundAssignmentExpr: _g("compound_assignment_expr"),
-    constBlock: _g("const_block"),
-    constItem: _g("const_item"),
-    constParameter: _g("const_parameter"),
-    continueExpression: _g("continue_expression"),
-    declarationList: _g("declaration_list"),
-    delimTokenTreeParen: _g("delim_token_tree_paren"),
-    delimTokenTreeBracket: _g("delim_token_tree_bracket"),
-    delimTokenTreeBrace: _g("delim_token_tree_brace"),
-    delimTokenTree: _g("delim_token_tree"),
-    dynamicType: _g("dynamic_type"),
-    elseClause: _g("else_clause"),
-    enumItem: _g("enum_item"),
-    enumVariant: _g("enum_variant"),
-    enumVariantList: _g("enum_variant_list"),
-    expressionStatementWithSemi: _g("expression_statement_with_semi"),
-    expressionStatementBlockEnding: _g("expression_statement_block_ending"),
-    expressionStatement: _g("expression_statement"),
-    externCrateDeclaration: _g("extern_crate_declaration"),
-    externModifier: _g("extern_modifier"),
-    fieldDeclaration: _g("field_declaration"),
-    fieldDeclarationList: _g("field_declaration_list"),
-    fieldExpression: _g("field_expression"),
-    fieldInitializer: _g("field_initializer"),
-    fieldInitializerList: _g("field_initializer_list"),
-    fieldPatternShorthand: _g("field_pattern_shorthand"),
-    fieldPattern: _g("field_pattern"),
-    forExpression: _g("for_expression"),
-    forLifetimes: _g("for_lifetimes"),
-    foreignModItemBody: _g("foreign_mod_item_body"),
-    foreignModItem: _g("foreign_mod_item"),
-    functionItem: _g("function_item"),
-    functionModifiers: _g("function_modifiers"),
-    functionSignatureItem: _g("function_signature_item"),
-    functionType: _g("function_type"),
-    genBlock: _g("gen_block"),
-    genericFunction: _g("generic_function"),
-    genericPattern: _g("generic_pattern"),
-    genericType: _g("generic_type"),
-    genericTypeWithTurbofish: _g("generic_type_with_turbofish"),
-    higherRankedTraitBound: _g("higher_ranked_trait_bound"),
-    ifExpression: _g("if_expression"),
-    implItemBody: _g("impl_item_body"),
-    implItem: _g("impl_item"),
-    indexExpression: _g("index_expression"),
-    innerAttributeItem: _g("inner_attribute_item"),
-    label: _g("label"),
-    lastMatchArm: _g("last_match_arm"),
-    letCondition: _g("let_condition"),
-    letDeclaration: _g("let_declaration"),
-    lifetime: _g("lifetime"),
-    lifetimeParameter: _g("lifetime_parameter"),
-    lineComment: _g("line_comment"),
-    loopExpression: _g("loop_expression"),
-    macroDefinitionParen: _g("macro_definition_paren"),
-    macroDefinitionBracket: _g("macro_definition_bracket"),
-    macroDefinitionBrace: _g("macro_definition_brace"),
-    macroDefinition: _g("macro_definition"),
-    macroInvocation: _g("macro_invocation"),
-    macroRule: _g("macro_rule"),
-    matchArmBlockEnding: _g("match_arm_block_ending"),
-    matchArm: _g("match_arm"),
-    matchBlock: _g("match_block"),
-    matchExpression: _g("match_expression"),
-    matchPattern: _g("match_pattern"),
-    modItemInline: _g("mod_item_inline"),
-    modItem: _g("mod_item"),
-    mutPattern: _g("mut_pattern"),
-    negativeLiteral: _g("negative_literal"),
-    orPattern: _g("or_pattern"),
-    orderedFieldDeclarationList: _g("ordered_field_declaration_list"),
-    parameter: _g("parameter"),
-    parameters: _g("parameters"),
-    parenthesizedExpression: _g("parenthesized_expression"),
-    pointerTypeMut: _g("pointer_type_mut"),
-    pointerType: _g("pointer_type"),
-    qualifiedType: _g("qualified_type"),
-    rangeExpressionBare: _g("range_expression_bare"),
-    rangeExpression: _g("range_expression"),
-    rangePattern: _g("range_pattern"),
-    rawStringLiteral: _g("raw_string_literal"),
-    refPattern: _g("ref_pattern"),
-    referenceExpression: _g("reference_expression"),
-    referencePattern: _g("reference_pattern"),
-    referenceType: _g("reference_type"),
-    removedTraitBound: _g("removed_trait_bound"),
-    returnExpression: _g("return_expression"),
-    scopedIdentifier: _g("scoped_identifier"),
-    scopedTypeIdentifier: _g("scoped_type_identifier"),
-    scopedTypeIdentifierInExpressionPosition: _g("scoped_type_identifier_in_expression_position"),
-    scopedUseList: _g("scoped_use_list"),
-    selfParameter: _g("self_parameter"),
-    shorthandFieldInitializer: _g("shorthand_field_initializer"),
-    slicePattern: _g("slice_pattern"),
-    sourceFile: _g("source_file"),
-    staticItem: _g("static_item"),
-    stringLiteral: _g("string_literal"),
-    structExpression: _g("struct_expression"),
-    structItem: _g("struct_item"),
-    structPattern: _g("struct_pattern"),
-    tokenBindingPattern: _g("token_binding_pattern"),
-    tokenRepetition: _g("token_repetition"),
-    tokenRepetitionPattern: _g("token_repetition_pattern"),
-    tokenTreeParen: _g("token_tree_paren"),
-    tokenTreeBracket: _g("token_tree_bracket"),
-    tokenTreeBrace: _g("token_tree_brace"),
-    tokenTree: _g("token_tree"),
-    tokenTreePatternParen: _g("token_tree_pattern_paren"),
-    tokenTreePatternBracket: _g("token_tree_pattern_bracket"),
-    tokenTreePatternBrace: _g("token_tree_pattern_brace"),
-    tokenTreePattern: _g("token_tree_pattern"),
-    traitBounds: _g("trait_bounds"),
-    traitItem: _g("trait_item"),
-    tryBlock: _g("try_block"),
-    tryExpression: _g("try_expression"),
-    tupleExpression: _g("tuple_expression"),
-    tuplePattern: _g("tuple_pattern"),
-    tupleStructPattern: _g("tuple_struct_pattern"),
-    tupleType: _g("tuple_type"),
-    typeArguments: _g("type_arguments"),
-    typeBinding: _g("type_binding"),
-    typeCastExpression: _g("type_cast_expression"),
-    typeItem: _g("type_item"),
-    typeParameter: _g("type_parameter"),
-    typeParameters: _g("type_parameters"),
-    unaryExpression: _g("unary_expression"),
-    unionItem: _g("union_item"),
-    unsafeBlock: _g("unsafe_block"),
-    useAsClause: _g("use_as_clause"),
-    useBounds: _g("use_bounds"),
-    useDeclaration: _g("use_declaration"),
-    useList: _g("use_list"),
-    useWildcard: _g("use_wildcard"),
-    variadicParameter: _g("variadic_parameter"),
-    visibilityModifierCrate: _g("visibility_modifier_crate"),
-    visibilityModifier: _g("visibility_modifier"),
-    whereClause: _g("where_clause"),
-    wherePredicate: _g("where_predicate"),
-    whileExpression: _g("while_expression"),
-    yieldExpression: _g("yield_expression"),
+    ClosureExpressionExpr: _g("_closure_expression_expr", TSKindId._ClosureExpressionExpr),
+    DelimTokenTreeBrace: _g("_delim_token_tree_brace", TSKindId._DelimTokenTreeBrace),
+    DelimTokenTreeBracket: _g("_delim_token_tree_bracket", TSKindId._DelimTokenTreeBracket),
+    DelimTokenTreeParen: _g("_delim_token_tree_paren", TSKindId._DelimTokenTreeParen),
+    ExpressionStatementBlockEnding: _g("_expression_statement_block_ending", TSKindId._ExpressionStatementBlockEnding),
+    ExpressionStatementWithSemi: _g("_expression_statement_with_semi", TSKindId._ExpressionStatementWithSemi),
+    FieldIdentifier: _g("_field_identifier", TSKindId.FieldIdentifier),
+    FieldPatternShorthand: _g("_field_pattern_shorthand", TSKindId._FieldPatternShorthand),
+    ForeignModItemBody: _g("_foreign_mod_item_body", TSKindId._ForeignModItemBody),
+    FunctionTypeFnForm: _g("_function_type_fn_form", TSKindId.FunctionTypeFnForm),
+    FunctionTypeTraitForm: _g("_function_type_trait_form", TSKindId.FunctionTypeTraitForm),
+    ImplItemBody: _g("_impl_item_body", TSKindId._ImplItemBody),
+    LetChain: _g("_let_chain", TSKindId.LetChain),
+    MacroDefinitionBrace: _g("_macro_definition_brace", TSKindId._MacroDefinitionBrace),
+    MacroDefinitionBracket: _g("_macro_definition_bracket", TSKindId._MacroDefinitionBracket),
+    MacroDefinitionParen: _g("_macro_definition_paren", TSKindId._MacroDefinitionParen),
+    MatchArmBlockEnding: _g("_match_arm_block_ending", TSKindId._MatchArmBlockEnding),
+    ModItemInline: _g("_mod_item_inline", TSKindId._ModItemInline),
+    PointerTypeMut: _g("_pointer_type_mut", TSKindId._PointerTypeMut),
+    RangeExpressionBare: _g("_range_expression_bare", TSKindId._RangeExpressionBare),
+    ReferenceExpressionRawMut: _g("_reference_expression_raw_mut", TSKindId.ReferenceExpressionRawMut),
+    ShorthandFieldIdentifier: _g("_shorthand_field_identifier", TSKindId.ShorthandFieldIdentifier),
+    TokenTreeBrace: _g("_token_tree_brace", TSKindId._TokenTreeBrace),
+    TokenTreeBracket: _g("_token_tree_bracket", TSKindId._TokenTreeBracket),
+    TokenTreeParen: _g("_token_tree_paren", TSKindId._TokenTreeParen),
+    TokenTreePatternBrace: _g("_token_tree_pattern_brace", TSKindId._TokenTreePatternBrace),
+    TokenTreePatternBracket: _g("_token_tree_pattern_bracket", TSKindId._TokenTreePatternBracket),
+    TokenTreePatternParen: _g("_token_tree_pattern_paren", TSKindId._TokenTreePatternParen),
+    TypeIdentifier: _g("_type_identifier", TSKindId.TypeIdentifier),
+    VisibilityModifierCrate: _g("_visibility_modifier_crate", TSKindId._VisibilityModifierCrate),
+    abstractType: _g("abstract_type", TSKindId.AbstractType),
+    arguments: _g("arguments", TSKindId.Arguments),
+    arrayExpression: _g("array_expression", TSKindId.ArrayExpression),
+    arrayType: _g("array_type", TSKindId.ArrayType),
+    assignmentExpression: _g("assignment_expression", TSKindId.AssignmentExpression),
+    associatedType: _g("associated_type", TSKindId.AssociatedType),
+    asyncBlock: _g("async_block", TSKindId.AsyncBlock),
+    attribute: _g("attribute", TSKindId.Attribute),
+    attributeItem: _g("attribute_item", TSKindId.AttributeItem),
+    awaitExpression: _g("await_expression", TSKindId.AwaitExpression),
+    baseFieldInitializer: _g("base_field_initializer", TSKindId.BaseFieldInitializer),
+    binaryExpression: _g("binary_expression", TSKindId.BinaryExpression),
+    block: _g("block", TSKindId.Block),
+    blockComment: _g("block_comment", TSKindId.BlockComment),
+    boundedType: _g("bounded_type", TSKindId.BoundedType),
+    bracketedType: _g("bracketed_type", TSKindId.BracketedType),
+    breakExpression: _g("break_expression", TSKindId.BreakExpression),
+    callExpression: _g("call_expression", TSKindId.CallExpression),
+    capturedPattern: _g("captured_pattern", TSKindId.CapturedPattern),
+    closureExpression: _g("closure_expression", TSKindId.ClosureExpression),
+    closureParameters: _g("closure_parameters", TSKindId.ClosureParameters),
+    compoundAssignmentExpr: _g("compound_assignment_expr", TSKindId.CompoundAssignmentExpr),
+    constBlock: _g("const_block", TSKindId.ConstBlock),
+    constItem: _g("const_item", TSKindId.ConstItem),
+    constParameter: _g("const_parameter", TSKindId.ConstParameter),
+    continueExpression: _g("continue_expression", TSKindId.ContinueExpression),
+    declarationList: _g("declaration_list", TSKindId.DeclarationList),
+    delimTokenTree: _g("delim_token_tree", TSKindId.DelimTokenTree),
+    dynamicType: _g("dynamic_type", TSKindId.DynamicType),
+    elseClause: _g("else_clause", TSKindId.ElseClause),
+    enumItem: _g("enum_item", TSKindId.EnumItem),
+    enumVariant: _g("enum_variant", TSKindId.EnumVariant),
+    enumVariantList: _g("enum_variant_list", TSKindId.EnumVariantList),
+    expressionStatement: _g("expression_statement", TSKindId.ExpressionStatement),
+    externCrateDeclaration: _g("extern_crate_declaration", TSKindId.ExternCrateDeclaration),
+    externModifier: _g("extern_modifier", TSKindId.ExternModifier),
+    fieldDeclaration: _g("field_declaration", TSKindId.FieldDeclaration),
+    fieldDeclarationList: _g("field_declaration_list", TSKindId.FieldDeclarationList),
+    fieldExpression: _g("field_expression", TSKindId.FieldExpression),
+    fieldInitializer: _g("field_initializer", TSKindId.FieldInitializer),
+    fieldInitializerList: _g("field_initializer_list", TSKindId.FieldInitializerList),
+    fieldPattern: _g("field_pattern", TSKindId.FieldPattern),
+    forExpression: _g("for_expression", TSKindId.ForExpression),
+    forLifetimes: _g("for_lifetimes", TSKindId.ForLifetimes),
+    foreignModItem: _g("foreign_mod_item", TSKindId.ForeignModItem),
+    functionItem: _g("function_item", TSKindId.FunctionItem),
+    functionModifiers: _g("function_modifiers", TSKindId.FunctionModifiers),
+    functionSignatureItem: _g("function_signature_item", TSKindId.FunctionSignatureItem),
+    functionType: _g("function_type", TSKindId.FunctionType),
+    genBlock: _g("gen_block", TSKindId.GenBlock),
+    genericFunction: _g("generic_function", TSKindId.GenericFunction),
+    genericPattern: _g("generic_pattern", TSKindId.GenericPattern),
+    genericType: _g("generic_type", TSKindId.GenericType),
+    genericTypeWithTurbofish: _g("generic_type_with_turbofish", TSKindId.GenericTypeWithTurbofish),
+    higherRankedTraitBound: _g("higher_ranked_trait_bound", TSKindId.HigherRankedTraitBound),
+    ifExpression: _g("if_expression", TSKindId.IfExpression),
+    implItem: _g("impl_item", TSKindId.ImplItem),
+    indexExpression: _g("index_expression", TSKindId.IndexExpression),
+    innerAttributeItem: _g("inner_attribute_item", TSKindId.InnerAttributeItem),
+    label: _g("label", TSKindId.Label),
+    lastMatchArm: _g("last_match_arm", TSKindId.LastMatchArm),
+    letCondition: _g("let_condition", TSKindId.LetCondition),
+    letDeclaration: _g("let_declaration", TSKindId.LetDeclaration),
+    lifetime: _g("lifetime", TSKindId.Lifetime),
+    lifetimeParameter: _g("lifetime_parameter", TSKindId.LifetimeParameter),
+    lineComment: _g("line_comment", TSKindId.LineComment),
+    loopExpression: _g("loop_expression", TSKindId.LoopExpression),
+    macroDefinition: _g("macro_definition", TSKindId.MacroDefinition),
+    macroInvocation: _g("macro_invocation", TSKindId.MacroInvocation),
+    macroRule: _g("macro_rule", TSKindId.MacroRule),
+    matchArm: _g("match_arm", TSKindId.MatchArm),
+    matchBlock: _g("match_block", TSKindId.MatchBlock),
+    matchExpression: _g("match_expression", TSKindId.MatchExpression),
+    matchPattern: _g("match_pattern", TSKindId.MatchPattern),
+    modItem: _g("mod_item", TSKindId.ModItem),
+    mutPattern: _g("mut_pattern", TSKindId.MutPattern),
+    negativeLiteral: _g("negative_literal", TSKindId.NegativeLiteral),
+    orPattern: _g("or_pattern", TSKindId.OrPattern),
+    orderedFieldDeclarationList: _g("ordered_field_declaration_list", TSKindId.OrderedFieldDeclarationList),
+    parameter: _g("parameter", TSKindId.Parameter),
+    parameters: _g("parameters", TSKindId.Parameters),
+    parenthesizedExpression: _g("parenthesized_expression", TSKindId.ParenthesizedExpression),
+    pointerType: _g("pointer_type", TSKindId.PointerType),
+    qualifiedType: _g("qualified_type", TSKindId.QualifiedType),
+    rangeExpression: _g("range_expression", TSKindId.RangeExpression),
+    rangePattern: _g("range_pattern", TSKindId.RangePattern),
+    rawStringLiteral: _g("raw_string_literal", TSKindId.RawStringLiteral),
+    refPattern: _g("ref_pattern", TSKindId.RefPattern),
+    referenceExpression: _g("reference_expression", TSKindId.ReferenceExpression),
+    referencePattern: _g("reference_pattern", TSKindId.ReferencePattern),
+    referenceType: _g("reference_type", TSKindId.ReferenceType),
+    removedTraitBound: _g("removed_trait_bound", TSKindId.RemovedTraitBound),
+    returnExpression: _g("return_expression", TSKindId.ReturnExpression),
+    scopedIdentifier: _g("scoped_identifier", TSKindId.ScopedIdentifier),
+    scopedTypeIdentifier: _g("scoped_type_identifier", TSKindId.ScopedTypeIdentifier),
+    scopedTypeIdentifierInExpressionPosition: _g("scoped_type_identifier_in_expression_position", TSKindId.ScopedTypeIdentifierInExpressionPosition),
+    scopedUseList: _g("scoped_use_list", TSKindId.ScopedUseList),
+    selfParameter: _g("self_parameter", TSKindId.SelfParameter),
+    shorthandFieldInitializer: _g("shorthand_field_initializer", TSKindId.ShorthandFieldInitializer),
+    slicePattern: _g("slice_pattern", TSKindId.SlicePattern),
+    sourceFile: _g("source_file", TSKindId.SourceFile),
+    staticItem: _g("static_item", TSKindId.StaticItem),
+    stringLiteral: _g("string_literal", TSKindId.StringLiteral),
+    structExpression: _g("struct_expression", TSKindId.StructExpression),
+    structItem: _g("struct_item", TSKindId.StructItem),
+    structPattern: _g("struct_pattern", TSKindId.StructPattern),
+    tokenBindingPattern: _g("token_binding_pattern", TSKindId.TokenBindingPattern),
+    tokenRepetition: _g("token_repetition", TSKindId.TokenRepetition),
+    tokenRepetitionPattern: _g("token_repetition_pattern", TSKindId.TokenRepetitionPattern),
+    tokenTree: _g("token_tree", TSKindId.TokenTree),
+    tokenTreePattern: _g("token_tree_pattern", TSKindId.TokenTreePattern),
+    traitBounds: _g("trait_bounds", TSKindId.TraitBounds),
+    traitItem: _g("trait_item", TSKindId.TraitItem),
+    tryBlock: _g("try_block", TSKindId.TryBlock),
+    tryExpression: _g("try_expression", TSKindId.TryExpression),
+    tupleExpression: _g("tuple_expression", TSKindId.TupleExpression),
+    tuplePattern: _g("tuple_pattern", TSKindId.TuplePattern),
+    tupleStructPattern: _g("tuple_struct_pattern", TSKindId.TupleStructPattern),
+    tupleType: _g("tuple_type", TSKindId.TupleType),
+    typeArguments: _g("type_arguments", TSKindId.TypeArguments),
+    typeBinding: _g("type_binding", TSKindId.TypeBinding),
+    typeCastExpression: _g("type_cast_expression", TSKindId.TypeCastExpression),
+    typeItem: _g("type_item", TSKindId.TypeItem),
+    typeParameter: _g("type_parameter", TSKindId.TypeParameter),
+    typeParameters: _g("type_parameters", TSKindId.TypeParameters),
+    unaryExpression: _g("unary_expression", TSKindId.UnaryExpression),
+    unionItem: _g("union_item", TSKindId.UnionItem),
+    unsafeBlock: _g("unsafe_block", TSKindId.UnsafeBlock),
+    useAsClause: _g("use_as_clause", TSKindId.UseAsClause),
+    useBounds: _g("use_bounds", TSKindId.UseBounds),
+    useDeclaration: _g("use_declaration", TSKindId.UseDeclaration),
+    useList: _g("use_list", TSKindId.UseList),
+    useWildcard: _g("use_wildcard", TSKindId.UseWildcard),
+    variadicParameter: _g("variadic_parameter", TSKindId.VariadicParameter),
+    visibilityModifier: _g("visibility_modifier", TSKindId.VisibilityModifier),
+    whereClause: _g("where_clause", TSKindId.WhereClause),
+    wherePredicate: _g("where_predicate", TSKindId.WherePredicate),
+    whileExpression: _g("while_expression", TSKindId.WhileExpression),
+    yieldExpression: _g("yield_expression", TSKindId.YieldExpression),
     kind: (v: { readonly $type: string | number }, k: string): boolean => v.$type === k,
-    condition: _sg(_supertype_condition),
-    declarationStatement: _sg(_supertype_declarationStatement),
-    delimTokens: _sg(_supertype_delimTokens),
-    expression: _sg(_supertype_expression),
-    expressionEndingWithBlock: _sg(_supertype_expressionEndingWithBlock),
-    expressionExceptRange: _sg(_supertype_expressionExceptRange),
-    literal: _sg(_supertype_literal),
-    literalPattern: _sg(_supertype_literalPattern),
-    nonDelimToken: _sg(_supertype_nonDelimToken),
-    path: _sg(_supertype_path),
-    pattern: _sg(_supertype_pattern),
-    statement: _sg(_supertype_statement),
-    tokenPattern: _sg(_supertype_tokenPattern),
-    tokens: _sg(_supertype_tokens),
-    type: _sg(_supertype_type),
-    useClause: _sg(_supertype_useClause),
+    condition: _sg(_supertype_condition, _supertype_condition_ids),
+    declarationStatement: _sg(_supertype_declarationStatement, _supertype_declarationStatement_ids),
+    delimTokens: _sg(_supertype_delimTokens, _supertype_delimTokens_ids),
+    expression: _sg(_supertype_expression, _supertype_expression_ids),
+    expressionEndingWithBlock: _sg(_supertype_expressionEndingWithBlock, _supertype_expressionEndingWithBlock_ids),
+    expressionExceptRange: _sg(_supertype_expressionExceptRange, _supertype_expressionExceptRange_ids),
+    literal: _sg(_supertype_literal, _supertype_literal_ids),
+    literalPattern: _sg(_supertype_literalPattern, _supertype_literalPattern_ids),
+    nonDelimToken: _sg(_supertype_nonDelimToken, _supertype_nonDelimToken_ids),
+    path: _sg(_supertype_path, _supertype_path_ids),
+    pattern: _sg(_supertype_pattern, _supertype_pattern_ids),
+    statement: _sg(_supertype_statement, _supertype_statement_ids),
+    tokenPattern: _sg(_supertype_tokenPattern, _supertype_tokenPattern_ids),
+    tokens: _sg(_supertype_tokens, _supertype_tokens_ids),
+    type: _sg(_supertype_type, _supertype_type_ids),
+    useClause: _sg(_supertype_useClause, _supertype_useClause_ids),
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
@@ -740,13 +676,10 @@ export const assert = {
     MacroDefinitionParen: _makeAssert('MacroDefinitionParen', is.MacroDefinitionParen as _AnyGuard),
     MatchArmBlockEnding: _makeAssert('MatchArmBlockEnding', is.MatchArmBlockEnding as _AnyGuard),
     ModItemInline: _makeAssert('ModItemInline', is.ModItemInline as _AnyGuard),
-    NonSpecialToken: _makeAssert('NonSpecialToken', is.NonSpecialToken as _AnyGuard),
     PointerTypeMut: _makeAssert('PointerTypeMut', is.PointerTypeMut as _AnyGuard),
     RangeExpressionBare: _makeAssert('RangeExpressionBare', is.RangeExpressionBare as _AnyGuard),
     ReferenceExpressionRawMut: _makeAssert('ReferenceExpressionRawMut', is.ReferenceExpressionRawMut as _AnyGuard),
-    ReservedIdentifier: _makeAssert('ReservedIdentifier', is.ReservedIdentifier as _AnyGuard),
     ShorthandFieldIdentifier: _makeAssert('ShorthandFieldIdentifier', is.ShorthandFieldIdentifier as _AnyGuard),
-    StringContent: _makeAssert('StringContent', is.StringContent as _AnyGuard),
     TokenTreeBrace: _makeAssert('TokenTreeBrace', is.TokenTreeBrace as _AnyGuard),
     TokenTreeBracket: _makeAssert('TokenTreeBracket', is.TokenTreeBracket as _AnyGuard),
     TokenTreeParen: _makeAssert('TokenTreeParen', is.TokenTreeParen as _AnyGuard),
@@ -774,27 +707,20 @@ export const assert = {
     breakExpression: _makeAssert('breakExpression', is.breakExpression as _AnyGuard),
     callExpression: _makeAssert('callExpression', is.callExpression as _AnyGuard),
     capturedPattern: _makeAssert('capturedPattern', is.capturedPattern as _AnyGuard),
-    closureExpressionExpr: _makeAssert('closureExpressionExpr', is.closureExpressionExpr as _AnyGuard),
     closureExpression: _makeAssert('closureExpression', is.closureExpression as _AnyGuard),
     closureParameters: _makeAssert('closureParameters', is.closureParameters as _AnyGuard),
-    comment: _makeAssert('comment', is.comment as _AnyGuard),
     compoundAssignmentExpr: _makeAssert('compoundAssignmentExpr', is.compoundAssignmentExpr as _AnyGuard),
     constBlock: _makeAssert('constBlock', is.constBlock as _AnyGuard),
     constItem: _makeAssert('constItem', is.constItem as _AnyGuard),
     constParameter: _makeAssert('constParameter', is.constParameter as _AnyGuard),
     continueExpression: _makeAssert('continueExpression', is.continueExpression as _AnyGuard),
     declarationList: _makeAssert('declarationList', is.declarationList as _AnyGuard),
-    delimTokenTreeParen: _makeAssert('delimTokenTreeParen', is.delimTokenTreeParen as _AnyGuard),
-    delimTokenTreeBracket: _makeAssert('delimTokenTreeBracket', is.delimTokenTreeBracket as _AnyGuard),
-    delimTokenTreeBrace: _makeAssert('delimTokenTreeBrace', is.delimTokenTreeBrace as _AnyGuard),
     delimTokenTree: _makeAssert('delimTokenTree', is.delimTokenTree as _AnyGuard),
     dynamicType: _makeAssert('dynamicType', is.dynamicType as _AnyGuard),
     elseClause: _makeAssert('elseClause', is.elseClause as _AnyGuard),
     enumItem: _makeAssert('enumItem', is.enumItem as _AnyGuard),
     enumVariant: _makeAssert('enumVariant', is.enumVariant as _AnyGuard),
     enumVariantList: _makeAssert('enumVariantList', is.enumVariantList as _AnyGuard),
-    expressionStatementWithSemi: _makeAssert('expressionStatementWithSemi', is.expressionStatementWithSemi as _AnyGuard),
-    expressionStatementBlockEnding: _makeAssert('expressionStatementBlockEnding', is.expressionStatementBlockEnding as _AnyGuard),
     expressionStatement: _makeAssert('expressionStatement', is.expressionStatement as _AnyGuard),
     externCrateDeclaration: _makeAssert('externCrateDeclaration', is.externCrateDeclaration as _AnyGuard),
     externModifier: _makeAssert('externModifier', is.externModifier as _AnyGuard),
@@ -803,11 +729,9 @@ export const assert = {
     fieldExpression: _makeAssert('fieldExpression', is.fieldExpression as _AnyGuard),
     fieldInitializer: _makeAssert('fieldInitializer', is.fieldInitializer as _AnyGuard),
     fieldInitializerList: _makeAssert('fieldInitializerList', is.fieldInitializerList as _AnyGuard),
-    fieldPatternShorthand: _makeAssert('fieldPatternShorthand', is.fieldPatternShorthand as _AnyGuard),
     fieldPattern: _makeAssert('fieldPattern', is.fieldPattern as _AnyGuard),
     forExpression: _makeAssert('forExpression', is.forExpression as _AnyGuard),
     forLifetimes: _makeAssert('forLifetimes', is.forLifetimes as _AnyGuard),
-    foreignModItemBody: _makeAssert('foreignModItemBody', is.foreignModItemBody as _AnyGuard),
     foreignModItem: _makeAssert('foreignModItem', is.foreignModItem as _AnyGuard),
     functionItem: _makeAssert('functionItem', is.functionItem as _AnyGuard),
     functionModifiers: _makeAssert('functionModifiers', is.functionModifiers as _AnyGuard),
@@ -820,7 +744,6 @@ export const assert = {
     genericTypeWithTurbofish: _makeAssert('genericTypeWithTurbofish', is.genericTypeWithTurbofish as _AnyGuard),
     higherRankedTraitBound: _makeAssert('higherRankedTraitBound', is.higherRankedTraitBound as _AnyGuard),
     ifExpression: _makeAssert('ifExpression', is.ifExpression as _AnyGuard),
-    implItemBody: _makeAssert('implItemBody', is.implItemBody as _AnyGuard),
     implItem: _makeAssert('implItem', is.implItem as _AnyGuard),
     indexExpression: _makeAssert('indexExpression', is.indexExpression as _AnyGuard),
     innerAttributeItem: _makeAssert('innerAttributeItem', is.innerAttributeItem as _AnyGuard),
@@ -832,18 +755,13 @@ export const assert = {
     lifetimeParameter: _makeAssert('lifetimeParameter', is.lifetimeParameter as _AnyGuard),
     lineComment: _makeAssert('lineComment', is.lineComment as _AnyGuard),
     loopExpression: _makeAssert('loopExpression', is.loopExpression as _AnyGuard),
-    macroDefinitionParen: _makeAssert('macroDefinitionParen', is.macroDefinitionParen as _AnyGuard),
-    macroDefinitionBracket: _makeAssert('macroDefinitionBracket', is.macroDefinitionBracket as _AnyGuard),
-    macroDefinitionBrace: _makeAssert('macroDefinitionBrace', is.macroDefinitionBrace as _AnyGuard),
     macroDefinition: _makeAssert('macroDefinition', is.macroDefinition as _AnyGuard),
     macroInvocation: _makeAssert('macroInvocation', is.macroInvocation as _AnyGuard),
     macroRule: _makeAssert('macroRule', is.macroRule as _AnyGuard),
-    matchArmBlockEnding: _makeAssert('matchArmBlockEnding', is.matchArmBlockEnding as _AnyGuard),
     matchArm: _makeAssert('matchArm', is.matchArm as _AnyGuard),
     matchBlock: _makeAssert('matchBlock', is.matchBlock as _AnyGuard),
     matchExpression: _makeAssert('matchExpression', is.matchExpression as _AnyGuard),
     matchPattern: _makeAssert('matchPattern', is.matchPattern as _AnyGuard),
-    modItemInline: _makeAssert('modItemInline', is.modItemInline as _AnyGuard),
     modItem: _makeAssert('modItem', is.modItem as _AnyGuard),
     mutPattern: _makeAssert('mutPattern', is.mutPattern as _AnyGuard),
     negativeLiteral: _makeAssert('negativeLiteral', is.negativeLiteral as _AnyGuard),
@@ -852,10 +770,8 @@ export const assert = {
     parameter: _makeAssert('parameter', is.parameter as _AnyGuard),
     parameters: _makeAssert('parameters', is.parameters as _AnyGuard),
     parenthesizedExpression: _makeAssert('parenthesizedExpression', is.parenthesizedExpression as _AnyGuard),
-    pointerTypeMut: _makeAssert('pointerTypeMut', is.pointerTypeMut as _AnyGuard),
     pointerType: _makeAssert('pointerType', is.pointerType as _AnyGuard),
     qualifiedType: _makeAssert('qualifiedType', is.qualifiedType as _AnyGuard),
-    rangeExpressionBare: _makeAssert('rangeExpressionBare', is.rangeExpressionBare as _AnyGuard),
     rangeExpression: _makeAssert('rangeExpression', is.rangeExpression as _AnyGuard),
     rangePattern: _makeAssert('rangePattern', is.rangePattern as _AnyGuard),
     rawStringLiteral: _makeAssert('rawStringLiteral', is.rawStringLiteral as _AnyGuard),
@@ -881,13 +797,7 @@ export const assert = {
     tokenBindingPattern: _makeAssert('tokenBindingPattern', is.tokenBindingPattern as _AnyGuard),
     tokenRepetition: _makeAssert('tokenRepetition', is.tokenRepetition as _AnyGuard),
     tokenRepetitionPattern: _makeAssert('tokenRepetitionPattern', is.tokenRepetitionPattern as _AnyGuard),
-    tokenTreeParen: _makeAssert('tokenTreeParen', is.tokenTreeParen as _AnyGuard),
-    tokenTreeBracket: _makeAssert('tokenTreeBracket', is.tokenTreeBracket as _AnyGuard),
-    tokenTreeBrace: _makeAssert('tokenTreeBrace', is.tokenTreeBrace as _AnyGuard),
     tokenTree: _makeAssert('tokenTree', is.tokenTree as _AnyGuard),
-    tokenTreePatternParen: _makeAssert('tokenTreePatternParen', is.tokenTreePatternParen as _AnyGuard),
-    tokenTreePatternBracket: _makeAssert('tokenTreePatternBracket', is.tokenTreePatternBracket as _AnyGuard),
-    tokenTreePatternBrace: _makeAssert('tokenTreePatternBrace', is.tokenTreePatternBrace as _AnyGuard),
     tokenTreePattern: _makeAssert('tokenTreePattern', is.tokenTreePattern as _AnyGuard),
     traitBounds: _makeAssert('traitBounds', is.traitBounds as _AnyGuard),
     traitItem: _makeAssert('traitItem', is.traitItem as _AnyGuard),
@@ -912,7 +822,6 @@ export const assert = {
     useList: _makeAssert('useList', is.useList as _AnyGuard),
     useWildcard: _makeAssert('useWildcard', is.useWildcard as _AnyGuard),
     variadicParameter: _makeAssert('variadicParameter', is.variadicParameter as _AnyGuard),
-    visibilityModifierCrate: _makeAssert('visibilityModifierCrate', is.visibilityModifierCrate as _AnyGuard),
     visibilityModifier: _makeAssert('visibilityModifier', is.visibilityModifier as _AnyGuard),
     whereClause: _makeAssert('whereClause', is.whereClause as _AnyGuard),
     wherePredicate: _makeAssert('wherePredicate', is.wherePredicate as _AnyGuard),

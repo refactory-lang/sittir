@@ -3,6 +3,7 @@
 // Composition: kind × shape = concrete type via NamespaceMap.
 
 import type { AnyNodeData, AnyTreeNodeOf as AnyTreeNode } from '@sittir/types';
+import { TSKindId } from './types.js';
 import type {
     NamespaceMap,
     CompoundStatement,
@@ -33,7 +34,6 @@ export interface IsGuards {
     MatchBlock<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_match_block' };
     SimplePatternNegative<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_simple_pattern_negative' };
     SimpleStatements<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_simple_statements' };
-    Suite<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_suite' };
     TuplePattern<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_tuple_pattern' };
     WithClauseParen<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_with_clause_paren' };
     aliasedImport<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'aliased_import' };
@@ -73,7 +73,6 @@ export interface IsGuards {
     exceptClause<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'except_clause' };
     execStatement<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'exec_statement' };
     expressionList<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'expression_list' };
-    expressionStatementTuple<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'expression_statement_tuple' };
     expressionStatement<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'expression_statement' };
     finallyClause<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'finally_clause' };
     forInClause<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'for_in_clause' };
@@ -134,8 +133,6 @@ export interface IsGuards {
     unionPattern<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'union_pattern' };
     unionType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'union_type' };
     whileStatement<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'while_statement' };
-    withClauseBare<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'with_clause_bare' };
-    withClauseParen<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'with_clause_paren' };
     withClause<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'with_clause' };
     withItem<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'with_item' };
     withStatement<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'with_statement' };
@@ -169,7 +166,6 @@ export interface AssertGuards {
     MatchBlock(v: { readonly $type: string | number }): asserts v is { readonly $type: '_match_block' };
     SimplePatternNegative(v: { readonly $type: string | number }): asserts v is { readonly $type: '_simple_pattern_negative' };
     SimpleStatements(v: { readonly $type: string | number }): asserts v is { readonly $type: '_simple_statements' };
-    Suite(v: { readonly $type: string | number }): asserts v is { readonly $type: '_suite' };
     TuplePattern(v: { readonly $type: string | number }): asserts v is { readonly $type: '_tuple_pattern' };
     WithClauseParen(v: { readonly $type: string | number }): asserts v is { readonly $type: '_with_clause_paren' };
     aliasedImport(v: { readonly $type: string | number }): asserts v is { readonly $type: 'aliased_import' };
@@ -209,7 +205,6 @@ export interface AssertGuards {
     exceptClause(v: { readonly $type: string | number }): asserts v is { readonly $type: 'except_clause' };
     execStatement(v: { readonly $type: string | number }): asserts v is { readonly $type: 'exec_statement' };
     expressionList(v: { readonly $type: string | number }): asserts v is { readonly $type: 'expression_list' };
-    expressionStatementTuple(v: { readonly $type: string | number }): asserts v is { readonly $type: 'expression_statement_tuple' };
     expressionStatement(v: { readonly $type: string | number }): asserts v is { readonly $type: 'expression_statement' };
     finallyClause(v: { readonly $type: string | number }): asserts v is { readonly $type: 'finally_clause' };
     forInClause(v: { readonly $type: string | number }): asserts v is { readonly $type: 'for_in_clause' };
@@ -270,8 +265,6 @@ export interface AssertGuards {
     unionPattern(v: { readonly $type: string | number }): asserts v is { readonly $type: 'union_pattern' };
     unionType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'union_type' };
     whileStatement(v: { readonly $type: string | number }): asserts v is { readonly $type: 'while_statement' };
-    withClauseBare(v: { readonly $type: string | number }): asserts v is { readonly $type: 'with_clause_bare' };
-    withClauseParen(v: { readonly $type: string | number }): asserts v is { readonly $type: 'with_clause_paren' };
     withClause(v: { readonly $type: string | number }): asserts v is { readonly $type: 'with_clause' };
     withItem(v: { readonly $type: string | number }): asserts v is { readonly $type: 'with_item' };
     withStatement(v: { readonly $type: string | number }): asserts v is { readonly $type: 'with_statement' };
@@ -295,165 +288,177 @@ export interface AssertGuards {
     primaryExpression(v: { readonly $type: string | number }): asserts v is PrimaryExpression;
 }
 
-// Runtime: kind guards = string equality; supertype guards = Set.has.
-// Building from literal string arrays keeps the runtime footprint minimal.
-function _g(k: string): (v: { readonly $type: string | number }) => boolean {
-    return (v) => v.$type === k;
+// Runtime: kind guards accept both numeric (factory/wrap) and string (readNode)
+// $type during Phase A coexistence. Phase D removes the string arm.
+function _g(k: string, id: number): (v: { readonly $type: string | number }) => boolean {
+    return (v) => v.$type === id || v.$type === k;
 }
-function _sg(ks: ReadonlySet<string>): (v: { readonly $type: string | number }) => boolean {
-    return (v) => ks.has(v.$type as string);
+function _sg(ks: ReadonlySet<string>, ids: ReadonlySet<number>): (v: { readonly $type: string | number }) => boolean {
+    return (v) => typeof v.$type === 'number' ? ids.has(v.$type) : ks.has(v.$type);
 }
 
 const _supertype_compoundStatement = new Set<string>(["if_statement", "for_statement", "while_statement", "try_statement", "with_statement", "function_definition", "class_definition", "decorated_definition", "match_statement"]);
+const _supertype_compoundStatement_ids = new Set<number>([131, 137, 138, 139, 142, 145, 154, 158, 134]);
 const _supertype_dictPatternKv = new Set<string>(["_key_value_pattern", "splat_pattern"]);
+const _supertype_dictPatternKv_ids = new Set<number>([170, 172]);
 const _supertype_expressionWithinForInClause = new Set<string>(["expression", "lambda_within_for_in_clause"]);
+const _supertype_expressionWithinForInClause_ids = new Set<number>([187, 197]);
 const _supertype_expressions = new Set<string>(["expression", "expression_list"]);
+const _supertype_expressions_ids = new Set<number>([187, 161]);
 const _supertype_fExpression = new Set<string>(["expression", "expression_list", "pattern_list", "yield"]);
+const _supertype_fExpression_ids = new Set<number>([187, 161, 200, 202]);
 const _supertype_leftHandSide = new Set<string>(["pattern", "pattern_list"]);
+const _supertype_leftHandSide_ids = new Set<number>([178, 200]);
 const _supertype_namedExpressionLhs = new Set<string>(["identifier", "keyword_identifier"]);
+const _supertype_namedExpressionLhs_ids = new Set<number>([1]);
 const _supertype_rightHandSide = new Set<string>(["expression", "expression_list", "assignment", "augmented_assignment", "pattern_list", "yield"]);
+const _supertype_rightHandSide_ids = new Set<number>([187, 161, 198, 199, 200, 202]);
 const _supertype_simplePattern = new Set<string>(["class_pattern", "splat_pattern", "union_pattern", "_list_pattern", "_tuple_pattern", "dict_pattern", "string", "concatenated_string", "true", "false", "none", "_simple_pattern_negative", "complex_pattern", "dotted_name"]);
+const _supertype_simplePattern_ids = new Set<number>([173, 172, 166, 167, 168, 169, 231, 230, 96, 97, 98, 248, 174, 162]);
 const _supertype_simpleStatement = new Set<string>(["future_import_statement", "import_statement", "import_from_statement", "print_statement", "assert_statement", "expression_statement", "return_statement", "delete_statement", "raise_statement", "pass_statement", "break_statement", "continue_statement", "global_statement", "nonlocal_statement", "exec_statement", "type_alias_statement"]);
+const _supertype_simpleStatement_ids = new Set<number>([114, 111, 115, 119, 121, 122, 125, 126, 127, 128, 129, 130, 150, 151, 152, 153]);
 const _supertype_statement = new Set<string>(["_simple_statements", "if_statement", "for_statement", "while_statement", "try_statement", "with_statement", "function_definition", "class_definition", "decorated_definition", "match_statement"]);
+const _supertype_statement_ids = new Set<number>([110, 131, 137, 138, 139, 142, 145, 154, 158, 134]);
 const _supertype_expression = new Set<string>(["comparison_operator", "not_operator", "boolean_operator", "lambda", "primary_expression", "conditional_expression", "named_expression", "as_pattern"]);
+const _supertype_expression_ids = new Set<number>([195, 189, 190, 196, 188, 229, 123, 185]);
 const _supertype_keywordIdentifier = new Set<string>(["identifier"]);
+const _supertype_keywordIdentifier_ids = new Set<number>([1]);
 const _supertype_parameter = new Set<string>(["identifier", "typed_parameter", "default_parameter", "typed_default_parameter", "list_splat_pattern", "tuple_pattern", "keyword_separator", "positional_separator", "dictionary_splat_pattern"]);
+const _supertype_parameter_ids = new Set<number>([1, 207, 181, 182, 183, 179, 239, 238, 184]);
 const _supertype_pattern = new Set<string>(["identifier", "keyword_identifier", "subscript", "attribute", "list_splat_pattern", "tuple_pattern", "list_pattern"]);
+const _supertype_pattern_ids = new Set<number>([1, 204, 203, 183, 179, 180]);
 const _supertype_primaryExpression = new Set<string>(["await", "binary_operator", "identifier", "keyword_identifier", "string", "concatenated_string", "integer", "float", "true", "false", "none", "unary_operator", "attribute", "subscript", "call", "list", "list_comprehension", "dictionary", "dictionary_comprehension", "set", "set_comprehension", "tuple", "parenthesized_expression", "generator_expression", "ellipsis", "list_splat_pattern"]);
+const _supertype_primaryExpression_ids = new Set<number>([237, 191, 1, 231, 230, 93, 94, 96, 97, 98, 192, 203, 204, 206, 215, 220, 218, 221, 216, 222, 217, 225, 223, 87, 183]);
 
 export const is = {
-    AsPattern: _g("_as_pattern"),
-    AsPatternTarget: _g("_as_pattern_target"),
-    ComprehensionClauses: _g("_comprehension_clauses"),
-    FormatExpression: _g("_format_expression"),
-    ListPattern: _g("_list_pattern"),
-    MatchBlock: _g("_match_block"),
-    SimplePatternNegative: _g("_simple_pattern_negative"),
-    SimpleStatements: _g("_simple_statements"),
-    Suite: _g("_suite"),
-    TuplePattern: _g("_tuple_pattern"),
-    WithClauseParen: _g("_with_clause_paren"),
-    aliasedImport: _g("aliased_import"),
-    argumentList: _g("argument_list"),
-    asPattern: _g("as_pattern"),
-    assertStatement: _g("assert_statement"),
-    assignment: _g("assignment"),
-    attribute: _g("attribute"),
-    augmentedAssignment: _g("augmented_assignment"),
-    await: _g("await"),
-    binaryOperator: _g("binary_operator"),
-    block: _g("block"),
-    booleanOperator: _g("boolean_operator"),
-    call: _g("call"),
-    caseClause: _g("case_clause"),
-    casePattern: _g("case_pattern"),
-    chevron: _g("chevron"),
-    classDefinition: _g("class_definition"),
-    classPattern: _g("class_pattern"),
-    comparisonOperator: _g("comparison_operator"),
-    complexPattern: _g("complex_pattern"),
-    concatenatedString: _g("concatenated_string"),
-    conditionalExpression: _g("conditional_expression"),
-    constrainedType: _g("constrained_type"),
-    decoratedDefinition: _g("decorated_definition"),
-    decorator: _g("decorator"),
-    defaultParameter: _g("default_parameter"),
-    deleteStatement: _g("delete_statement"),
-    dictPattern: _g("dict_pattern"),
-    dictionary: _g("dictionary"),
-    dictionaryComprehension: _g("dictionary_comprehension"),
-    dictionarySplat: _g("dictionary_splat"),
-    dictionarySplatPattern: _g("dictionary_splat_pattern"),
-    dottedName: _g("dotted_name"),
-    elifClause: _g("elif_clause"),
-    elseClause: _g("else_clause"),
-    exceptClause: _g("except_clause"),
-    execStatement: _g("exec_statement"),
-    expressionList: _g("expression_list"),
-    expressionStatementTuple: _g("expression_statement_tuple"),
-    expressionStatement: _g("expression_statement"),
-    finallyClause: _g("finally_clause"),
-    forInClause: _g("for_in_clause"),
-    forStatement: _g("for_statement"),
-    formatSpecifier: _g("format_specifier"),
-    functionDefinition: _g("function_definition"),
-    futureImportStatement: _g("future_import_statement"),
-    generatorExpression: _g("generator_expression"),
-    genericType: _g("generic_type"),
-    globalStatement: _g("global_statement"),
-    ifClause: _g("if_clause"),
-    ifStatement: _g("if_statement"),
-    importFromStatement: _g("import_from_statement"),
-    importStatement: _g("import_statement"),
-    interpolation: _g("interpolation"),
-    keywordArgument: _g("keyword_argument"),
-    keywordPattern: _g("keyword_pattern"),
-    lambda: _g("lambda"),
-    lambdaParameters: _g("lambda_parameters"),
-    lambdaWithinForInClause: _g("lambda_within_for_in_clause"),
-    list: _g("list"),
-    listComprehension: _g("list_comprehension"),
-    listPattern: _g("list_pattern"),
-    listSplat: _g("list_splat"),
-    listSplatPattern: _g("list_splat_pattern"),
-    matchStatement: _g("match_statement"),
-    memberType: _g("member_type"),
-    module: _g("module"),
-    namedExpression: _g("named_expression"),
-    nonlocalStatement: _g("nonlocal_statement"),
-    notOperator: _g("not_operator"),
-    pair: _g("pair"),
-    parameters: _g("parameters"),
-    parenthesizedExpression: _g("parenthesized_expression"),
-    parenthesizedListSplat: _g("parenthesized_list_splat"),
-    patternList: _g("pattern_list"),
-    printStatement: _g("print_statement"),
-    raiseStatement: _g("raise_statement"),
-    relativeImport: _g("relative_import"),
-    returnStatement: _g("return_statement"),
-    set: _g("set"),
-    setComprehension: _g("set_comprehension"),
-    slice: _g("slice"),
-    splatPattern: _g("splat_pattern"),
-    splatType: _g("splat_type"),
-    string: _g("string"),
-    stringContent: _g("string_content"),
-    subscript: _g("subscript"),
-    tryStatement: _g("try_statement"),
-    tuple: _g("tuple"),
-    tuplePattern: _g("tuple_pattern"),
-    type: _g("type"),
-    typeAliasStatement: _g("type_alias_statement"),
-    typeParameter: _g("type_parameter"),
-    typedDefaultParameter: _g("typed_default_parameter"),
-    typedParameter: _g("typed_parameter"),
-    unaryOperator: _g("unary_operator"),
-    unionPattern: _g("union_pattern"),
-    unionType: _g("union_type"),
-    whileStatement: _g("while_statement"),
-    withClauseBare: _g("with_clause_bare"),
-    withClauseParen: _g("with_clause_paren"),
-    withClause: _g("with_clause"),
-    withItem: _g("with_item"),
-    withStatement: _g("with_statement"),
-    yield_: _g("yield"),
+    AsPattern: _g("_as_pattern", TSKindId._AsPattern),
+    AsPatternTarget: _g("_as_pattern_target", TSKindId.AsPatternTarget),
+    ComprehensionClauses: _g("_comprehension_clauses", TSKindId.ComprehensionClauses),
+    FormatExpression: _g("_format_expression", TSKindId.FormatExpression),
+    ListPattern: _g("_list_pattern", TSKindId._ListPattern),
+    MatchBlock: _g("_match_block", TSKindId.MatchBlock),
+    SimplePatternNegative: _g("_simple_pattern_negative", TSKindId.SimplePatternNegative),
+    SimpleStatements: _g("_simple_statements", TSKindId.SimpleStatements),
+    TuplePattern: _g("_tuple_pattern", TSKindId._TuplePattern),
+    WithClauseParen: _g("_with_clause_paren", TSKindId._WithClauseParen),
+    aliasedImport: _g("aliased_import", TSKindId.AliasedImport),
+    argumentList: _g("argument_list", TSKindId.ArgumentList),
+    asPattern: _g("as_pattern", TSKindId.AsPattern),
+    assertStatement: _g("assert_statement", TSKindId.AssertStatement),
+    assignment: _g("assignment", TSKindId.Assignment),
+    attribute: _g("attribute", TSKindId.Attribute),
+    augmentedAssignment: _g("augmented_assignment", TSKindId.AugmentedAssignment),
+    await: _g("await", TSKindId.Await),
+    binaryOperator: _g("binary_operator", TSKindId.BinaryOperator),
+    block: _g("block", TSKindId.Block),
+    booleanOperator: _g("boolean_operator", TSKindId.BooleanOperator),
+    call: _g("call", TSKindId.Call),
+    caseClause: _g("case_clause", TSKindId.CaseClause),
+    casePattern: _g("case_pattern", TSKindId.CasePattern),
+    chevron: _g("chevron", TSKindId.Chevron),
+    classDefinition: _g("class_definition", TSKindId.ClassDefinition),
+    classPattern: _g("class_pattern", TSKindId.ClassPattern),
+    comparisonOperator: _g("comparison_operator", TSKindId.ComparisonOperator),
+    complexPattern: _g("complex_pattern", TSKindId.ComplexPattern),
+    concatenatedString: _g("concatenated_string", TSKindId.ConcatenatedString),
+    conditionalExpression: _g("conditional_expression", TSKindId.ConditionalExpression),
+    constrainedType: _g("constrained_type", TSKindId.ConstrainedType),
+    decoratedDefinition: _g("decorated_definition", TSKindId.DecoratedDefinition),
+    decorator: _g("decorator", TSKindId.Decorator),
+    defaultParameter: _g("default_parameter", TSKindId.DefaultParameter),
+    deleteStatement: _g("delete_statement", TSKindId.DeleteStatement),
+    dictPattern: _g("dict_pattern", TSKindId.DictPattern),
+    dictionary: _g("dictionary", TSKindId.Dictionary),
+    dictionaryComprehension: _g("dictionary_comprehension", TSKindId.DictionaryComprehension),
+    dictionarySplat: _g("dictionary_splat", TSKindId.DictionarySplat),
+    dictionarySplatPattern: _g("dictionary_splat_pattern", TSKindId.DictionarySplatPattern),
+    dottedName: _g("dotted_name", TSKindId.DottedName),
+    elifClause: _g("elif_clause", TSKindId.ElifClause),
+    elseClause: _g("else_clause", TSKindId.ElseClause),
+    exceptClause: _g("except_clause", TSKindId.ExceptClause),
+    execStatement: _g("exec_statement", TSKindId.ExecStatement),
+    expressionList: _g("expression_list", TSKindId.ExpressionList),
+    expressionStatement: _g("expression_statement", TSKindId.ExpressionStatement),
+    finallyClause: _g("finally_clause", TSKindId.FinallyClause),
+    forInClause: _g("for_in_clause", TSKindId.ForInClause),
+    forStatement: _g("for_statement", TSKindId.ForStatement),
+    formatSpecifier: _g("format_specifier", TSKindId.FormatSpecifier),
+    functionDefinition: _g("function_definition", TSKindId.FunctionDefinition),
+    futureImportStatement: _g("future_import_statement", TSKindId.FutureImportStatement),
+    generatorExpression: _g("generator_expression", TSKindId.GeneratorExpression),
+    genericType: _g("generic_type", TSKindId.GenericType),
+    globalStatement: _g("global_statement", TSKindId.GlobalStatement),
+    ifClause: _g("if_clause", TSKindId.IfClause),
+    ifStatement: _g("if_statement", TSKindId.IfStatement),
+    importFromStatement: _g("import_from_statement", TSKindId.ImportFromStatement),
+    importStatement: _g("import_statement", TSKindId.ImportStatement),
+    interpolation: _g("interpolation", TSKindId.Interpolation),
+    keywordArgument: _g("keyword_argument", TSKindId.KeywordArgument),
+    keywordPattern: _g("keyword_pattern", TSKindId.KeywordPattern),
+    lambda: _g("lambda", TSKindId.Lambda),
+    lambdaParameters: _g("lambda_parameters", TSKindId.LambdaParameters),
+    lambdaWithinForInClause: _g("lambda_within_for_in_clause", TSKindId.LambdaWithinForInClause),
+    list: _g("list", TSKindId.List),
+    listComprehension: _g("list_comprehension", TSKindId.ListComprehension),
+    listPattern: _g("list_pattern", TSKindId.ListPattern),
+    listSplat: _g("list_splat", TSKindId.ListSplat),
+    listSplatPattern: _g("list_splat_pattern", TSKindId.ListSplatPattern),
+    matchStatement: _g("match_statement", TSKindId.MatchStatement),
+    memberType: _g("member_type", TSKindId.MemberType),
+    module: _g("module", TSKindId.Module),
+    namedExpression: _g("named_expression", TSKindId.NamedExpression),
+    nonlocalStatement: _g("nonlocal_statement", TSKindId.NonlocalStatement),
+    notOperator: _g("not_operator", TSKindId.NotOperator),
+    pair: _g("pair", TSKindId.Pair),
+    parameters: _g("parameters", TSKindId.Parameters),
+    parenthesizedExpression: _g("parenthesized_expression", TSKindId.ParenthesizedExpression),
+    parenthesizedListSplat: _g("parenthesized_list_splat", TSKindId.ParenthesizedListSplat),
+    patternList: _g("pattern_list", TSKindId.PatternList),
+    printStatement: _g("print_statement", TSKindId.PrintStatement),
+    raiseStatement: _g("raise_statement", TSKindId.RaiseStatement),
+    relativeImport: _g("relative_import", TSKindId.RelativeImport),
+    returnStatement: _g("return_statement", TSKindId.ReturnStatement),
+    set: _g("set", TSKindId.Set),
+    setComprehension: _g("set_comprehension", TSKindId.SetComprehension),
+    slice: _g("slice", TSKindId.Slice),
+    splatPattern: _g("splat_pattern", TSKindId.SplatPattern),
+    splatType: _g("splat_type", TSKindId.SplatType),
+    string: _g("string", TSKindId.String),
+    stringContent: _g("string_content", TSKindId.StringContent),
+    subscript: _g("subscript", TSKindId.Subscript),
+    tryStatement: _g("try_statement", TSKindId.TryStatement),
+    tuple: _g("tuple", TSKindId.Tuple),
+    tuplePattern: _g("tuple_pattern", TSKindId.TuplePattern),
+    type: _g("type", TSKindId.Type),
+    typeAliasStatement: _g("type_alias_statement", TSKindId.TypeAliasStatement),
+    typeParameter: _g("type_parameter", TSKindId.TypeParameter),
+    typedDefaultParameter: _g("typed_default_parameter", TSKindId.TypedDefaultParameter),
+    typedParameter: _g("typed_parameter", TSKindId.TypedParameter),
+    unaryOperator: _g("unary_operator", TSKindId.UnaryOperator),
+    unionPattern: _g("union_pattern", TSKindId.UnionPattern),
+    unionType: _g("union_type", TSKindId.UnionType),
+    whileStatement: _g("while_statement", TSKindId.WhileStatement),
+    withClause: _g("with_clause", TSKindId.WithClause),
+    withItem: _g("with_item", TSKindId.WithItem),
+    withStatement: _g("with_statement", TSKindId.WithStatement),
+    yield_: _g("yield", TSKindId.Yield),
     kind: (v: { readonly $type: string | number }, k: string): boolean => v.$type === k,
-    compoundStatement: _sg(_supertype_compoundStatement),
-    dictPatternKv: _sg(_supertype_dictPatternKv),
-    expressionWithinForInClause: _sg(_supertype_expressionWithinForInClause),
-    expressions: _sg(_supertype_expressions),
-    fExpression: _sg(_supertype_fExpression),
-    leftHandSide: _sg(_supertype_leftHandSide),
-    namedExpressionLhs: _sg(_supertype_namedExpressionLhs),
-    rightHandSide: _sg(_supertype_rightHandSide),
-    simplePattern: _sg(_supertype_simplePattern),
-    simpleStatement: _sg(_supertype_simpleStatement),
-    statement: _sg(_supertype_statement),
-    expression: _sg(_supertype_expression),
-    keywordIdentifier: _sg(_supertype_keywordIdentifier),
-    parameter: _sg(_supertype_parameter),
-    pattern: _sg(_supertype_pattern),
-    primaryExpression: _sg(_supertype_primaryExpression),
+    compoundStatement: _sg(_supertype_compoundStatement, _supertype_compoundStatement_ids),
+    dictPatternKv: _sg(_supertype_dictPatternKv, _supertype_dictPatternKv_ids),
+    expressionWithinForInClause: _sg(_supertype_expressionWithinForInClause, _supertype_expressionWithinForInClause_ids),
+    expressions: _sg(_supertype_expressions, _supertype_expressions_ids),
+    fExpression: _sg(_supertype_fExpression, _supertype_fExpression_ids),
+    leftHandSide: _sg(_supertype_leftHandSide, _supertype_leftHandSide_ids),
+    namedExpressionLhs: _sg(_supertype_namedExpressionLhs, _supertype_namedExpressionLhs_ids),
+    rightHandSide: _sg(_supertype_rightHandSide, _supertype_rightHandSide_ids),
+    simplePattern: _sg(_supertype_simplePattern, _supertype_simplePattern_ids),
+    simpleStatement: _sg(_supertype_simpleStatement, _supertype_simpleStatement_ids),
+    statement: _sg(_supertype_statement, _supertype_statement_ids),
+    expression: _sg(_supertype_expression, _supertype_expression_ids),
+    keywordIdentifier: _sg(_supertype_keywordIdentifier, _supertype_keywordIdentifier_ids),
+    parameter: _sg(_supertype_parameter, _supertype_parameter_ids),
+    pattern: _sg(_supertype_pattern, _supertype_pattern_ids),
+    primaryExpression: _sg(_supertype_primaryExpression, _supertype_primaryExpression_ids),
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
@@ -487,7 +492,6 @@ export const assert = {
     MatchBlock: _makeAssert('MatchBlock', is.MatchBlock as _AnyGuard),
     SimplePatternNegative: _makeAssert('SimplePatternNegative', is.SimplePatternNegative as _AnyGuard),
     SimpleStatements: _makeAssert('SimpleStatements', is.SimpleStatements as _AnyGuard),
-    Suite: _makeAssert('Suite', is.Suite as _AnyGuard),
     TuplePattern: _makeAssert('TuplePattern', is.TuplePattern as _AnyGuard),
     WithClauseParen: _makeAssert('WithClauseParen', is.WithClauseParen as _AnyGuard),
     aliasedImport: _makeAssert('aliasedImport', is.aliasedImport as _AnyGuard),
@@ -527,7 +531,6 @@ export const assert = {
     exceptClause: _makeAssert('exceptClause', is.exceptClause as _AnyGuard),
     execStatement: _makeAssert('execStatement', is.execStatement as _AnyGuard),
     expressionList: _makeAssert('expressionList', is.expressionList as _AnyGuard),
-    expressionStatementTuple: _makeAssert('expressionStatementTuple', is.expressionStatementTuple as _AnyGuard),
     expressionStatement: _makeAssert('expressionStatement', is.expressionStatement as _AnyGuard),
     finallyClause: _makeAssert('finallyClause', is.finallyClause as _AnyGuard),
     forInClause: _makeAssert('forInClause', is.forInClause as _AnyGuard),
@@ -588,8 +591,6 @@ export const assert = {
     unionPattern: _makeAssert('unionPattern', is.unionPattern as _AnyGuard),
     unionType: _makeAssert('unionType', is.unionType as _AnyGuard),
     whileStatement: _makeAssert('whileStatement', is.whileStatement as _AnyGuard),
-    withClauseBare: _makeAssert('withClauseBare', is.withClauseBare as _AnyGuard),
-    withClauseParen: _makeAssert('withClauseParen', is.withClauseParen as _AnyGuard),
     withClause: _makeAssert('withClause', is.withClause as _AnyGuard),
     withItem: _makeAssert('withItem', is.withItem as _AnyGuard),
     withStatement: _makeAssert('withStatement', is.withStatement as _AnyGuard),

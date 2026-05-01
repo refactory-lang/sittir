@@ -181,7 +181,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			nodeMap,
 			roundTripFailures: cfg.roundTripFailures
 		}),
-		is: emitIs({ grammar: cfg.grammar, nodeMap }),
+		is: emitIs({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
 		nodeMap
 	};
 }
