@@ -2046,10 +2046,11 @@ function emitTextFactory(
 	nodeMap?: NodeMap
 ): string {
 	const fn = node.rawFactoryName!;
-	// Phase A: leaf / keyword / enum / $TEXT nodes are represented by
-	// Terminal<K extends string> which carries string $type. Keep string
-	// discriminant for these until Phase B migrates Terminal<K>.
-	const typeExpr = `'${node.kind}' as const`;
+	// Phase B-inverse: emit numeric TSKindId discriminant for leaf / keyword /
+	// enum nodes, matching the AnyNodeData.$type: number contract. Falls back to
+	// string literal for kinds not yet in kindEntries (TSGrammar-only or no
+	// parser.c available).
+	const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap!, kindEntries);
 	const body: string[] = [`export function ${fn}${sig} {`];
 	if (guard) body.push(`  ${guard}`);
 	body.push(

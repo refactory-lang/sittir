@@ -76,10 +76,16 @@ impl From<KindId> for u16 {
 
 /// Primitive NodeData — the wire shape. Exactly eight `$`-prefixed
 /// top-level fields. Enrichment (`$variant`, etc.) is TS-side only.
+///
+/// `type_` is a numeric `KindId` (parser.c-derived symbol ID) rather than
+/// a string kind name. JSON wire shape is `{"$type": 42}` — `KindId` is
+/// `#[serde(transparent)]` so serde handles the u16 ↔ JSON number mapping
+/// without an explicit custom impl. Phase B-inverse of the KindID runtime
+/// migration (2026-04-30).
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct NodeData {
     #[serde(rename = "$type")]
-    pub type_: String,
+    pub type_: KindId,
 
     #[serde(rename = "$source")]
     pub source: Source,

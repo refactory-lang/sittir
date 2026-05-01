@@ -177,8 +177,19 @@ export function emitWrap(config: EmitWrapConfig): string {
 			node.modelType === 'enum' ||
 			node.modelType === 'keyword'
 		) {
-			// Terminal nodes have no subtree to drill into — pass through.
-			lines.push(`  '${kind}': (d) => d,`);
+			// Terminal nodes have no subtree to drill into — pass through,
+			// but stamp numeric $type when kindEntries is present (Phase B-inverse:
+			// readNode returns string $type from the JS wasm path; wrap normalizes it).
+			if (kindEntries) {
+				const entry = kindEntries.find((e) => e.kind === kind);
+				if (entry) {
+					lines.push(`  '${kind}': (d) => ({ ...d, $type: TSKindId.${kindIdMemberName(nodeMap, kind)} as number }),`);
+				} else {
+					lines.push(`  '${kind}': (d) => d,`);
+				}
+			} else {
+				lines.push(`  '${kind}': (d) => d,`);
+			}
 		}
 	}
 	lines.push('};');
@@ -204,14 +215,26 @@ export function emitWrap(config: EmitWrapConfig): string {
 	// ------------------------------------------------------------------
 	// Public entry points
 	// ------------------------------------------------------------------
+	// Import kindNameFromId when kindEntries is present so wrapNode can resolve
+	// numeric $type (from the native path) to a string for the dispatch tables.
+	if (kindEntries) {
+		lines.push("import { kindNameFromId } from './types.js';");
+	}
 	lines.push('/** Wrap a NodeData into its lazy read-only view. */');
 	lines.push(
 		'export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {'
 	);
-	lines.push('  // Phase A KindID bridge: core\'s readNode still returns string $type at runtime.');
-	lines.push('  // Cast to string for the string-keyed alias/dispatch tables before per-kind');
-	lines.push('  // wrap functions stamp the numeric TSKindId.$type on their output.');
-	lines.push('  const rawType = data.$type as unknown as string;');
+	lines.push('  // Phase B-inverse bridge: the native path now returns numeric $type');
+	lines.push('  // (KindId) from Rust; the JS wasm path still returns string $type.');
+	lines.push('  // Resolve to a kind-name string for the string-keyed dispatch tables,');
+	lines.push('  // then per-kind wrap functions stamp the numeric TSKindId.$type on output.');
+	if (kindEntries) {
+		lines.push('  const rawType = typeof data.$type === "number"');
+		lines.push('    ? kindNameFromId(data.$type as never) ?? String(data.$type)');
+		lines.push('    : (data.$type as unknown as string);');
+	} else {
+		lines.push('  const rawType = data.$type as unknown as string;');
+	}
 	lines.push('  // Canonical-hidden remap (Option Y): parser-output `$type`');
 	lines.push(
 		'  // is the visible alias target (e.g. `range_pattern_left_with_right`);'
@@ -283,10 +306,22 @@ export function emitWrap(config: EmitWrapConfig): string {
 	lines.push('  asType?: { from: string; to: string },');
 	lines.push('): unknown {');
 	lines.push('  let data = readNode(tree, nodeId);');
-	lines.push('  // Phase A KindID bridge: core returns string $type; cast for string comparison.');
-	lines.push('  if (asType && (data.$type as unknown as string) === asType.from) {');
-	lines.push('    data = { ...data, $type: asType.to as unknown as number };');
-	lines.push('  }');
+	lines.push('  // Phase B-inverse: asType comparison must handle both string and numeric $type.');
+	lines.push('  // When numeric (native path), convert to kind-name first for comparison.');
+	if (kindEntries) {
+		lines.push('  if (asType) {');
+		lines.push('    const currentType = typeof data.$type === "number"');
+		lines.push('      ? kindNameFromId(data.$type as never) ?? String(data.$type)');
+		lines.push('      : (data.$type as unknown as string);');
+		lines.push('    if (currentType === asType.from) {');
+		lines.push('      data = { ...data, $type: asType.to as unknown as number };');
+		lines.push('    }');
+		lines.push('  }');
+	} else {
+		lines.push('  if (asType && (data.$type as unknown as string) === asType.from) {');
+		lines.push('    data = { ...data, $type: asType.to as unknown as number };');
+		lines.push('  }');
+	}
 	lines.push('  return wrapNode(data, tree);');
 	lines.push('}');
 	lines.push('');

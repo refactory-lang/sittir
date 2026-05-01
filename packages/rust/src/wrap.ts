@@ -2041,24 +2041,24 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_function_type_trait_form': (d, t) => wrapFunctionTypeTraitForm(d, t),
   '_impl_item_body': (d, t) => wrap_ImplItemBody(d, t),
   '_kw_async_marker': (d) => d,
-  '_kw_move_marker': (d) => d,
+  '_kw_move_marker': (d) => ({ ...d, $type: TSKindId.KwMoveMarker as number }),
   '_kw_ref_marker': (d) => d,
-  '_kw_static_marker': (d) => d,
-  '_kw_unsafe_marker': (d) => d,
+  '_kw_static_marker': (d) => ({ ...d, $type: TSKindId.KwStaticMarker as number }),
+  '_kw_unsafe_marker': (d) => ({ ...d, $type: TSKindId.KwUnsafeMarker as number }),
   '_let_chain': (d, t) => wrapLetChain(d, t),
-  '_line_comment_content': (d) => d,
-  '_line_comment_regular_dslash': (d) => d,
+  '_line_comment_content': (d) => ({ ...d, $type: TSKindId.LineCommentContent as number }),
+  '_line_comment_regular_dslash': (d) => ({ ...d, $type: TSKindId.LineCommentRegularDslash as number }),
   '_macro_definition_brace': (d, t) => wrap_MacroDefinitionBrace(d, t),
   '_macro_definition_bracket': (d, t) => wrap_MacroDefinitionBracket(d, t),
   '_macro_definition_paren': (d, t) => wrap_MacroDefinitionParen(d, t),
   '_match_arm_block_ending': (d, t) => wrap_MatchArmBlockEnding(d, t),
   '_mod_item_inline': (d, t) => wrap_ModItemInline(d, t),
   '_non_special_token': (d, t) => wrapNonSpecialToken(d, t),
-  '_pointer_type_const': (d) => d,
+  '_pointer_type_const': (d) => ({ ...d, $type: TSKindId.PointerTypeConst as number }),
   '_pointer_type_mut': (d, t) => wrap_PointerTypeMut(d, t),
   '_primitive_type': (d) => d,
   '_range_expression_bare': (d, t) => wrap_RangeExpressionBare(d, t),
-  '_reference_expression_raw_const': (d) => d,
+  '_reference_expression_raw_const': (d) => ({ ...d, $type: TSKindId.ReferenceExpressionRawConst as number }),
   '_reference_expression_raw_mut': (d, t) => wrapReferenceExpressionRawMut(d, t),
   '_reserved_identifier': (d, t) => wrapReservedIdentifier(d, t),
   '_shorthand_field_identifier': (d, t) => wrapShorthandFieldIdentifier(d, t),
@@ -2071,7 +2071,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_token_tree_pattern_paren': (d, t) => wrap_TokenTreePatternParen(d, t),
   '_type_identifier': (d, t) => wrapTypeIdentifier(d, t),
   '_visibility_modifier_crate': (d, t) => wrap_VisibilityModifierCrate(d, t),
-  '_wildcard_pattern': (d) => d,
+  '_wildcard_pattern': (d) => ({ ...d, $type: TSKindId.WildcardPattern as number }),
   'abstract_type': (d, t) => wrapAbstractType(d, t),
   'arguments': (d, t) => wrapArguments(d, t),
   'array_expression': (d, t) => wrapArrayExpression(d, t),
@@ -2086,13 +2086,13 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'binary_expression': (d, t) => wrapBinaryExpression(d, t),
   'block': (d, t) => wrapBlock(d, t),
   'block_comment': (d, t) => wrapBlockComment(d, t),
-  'boolean_literal': (d) => d,
+  'boolean_literal': (d) => ({ ...d, $type: TSKindId.BooleanLiteral as number }),
   'bounded_type': (d, t) => wrapBoundedType(d, t),
   'bracketed_type': (d, t) => wrapBracketedType(d, t),
   'break_expression': (d, t) => wrapBreakExpression(d, t),
   'call_expression': (d, t) => wrapCallExpression(d, t),
   'captured_pattern': (d, t) => wrapCapturedPattern(d, t),
-  'char_literal': (d) => d,
+  'char_literal': (d) => ({ ...d, $type: TSKindId.CharLiteral as number }),
   'closure_expression_expr': (d, t) => wrapClosureExpressionExpr(d, t),
   'closure_expression': (d, t) => wrapClosureExpression(d, t),
   'closure_parameters': (d, t) => wrapClosureParameters(d, t),
@@ -2102,7 +2102,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'const_item': (d, t) => wrapConstItem(d, t),
   'const_parameter': (d, t) => wrapConstParameter(d, t),
   'continue_expression': (d, t) => wrapContinueExpression(d, t),
-  'crate': (d) => d,
+  'crate': (d) => ({ ...d, $type: TSKindId.Crate as number }),
   'declaration_list': (d, t) => wrapDeclarationList(d, t),
   'delim_token_tree_paren': (d, t) => wrapDelimTokenTreeParen(d, t),
   'delim_token_tree_bracket': (d, t) => wrapDelimTokenTreeBracket(d, t),
@@ -2113,7 +2113,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'enum_item': (d, t) => wrapEnumItem(d, t),
   'enum_variant': (d, t) => wrapEnumVariant(d, t),
   'enum_variant_list': (d, t) => wrapEnumVariantList(d, t),
-  'escape_sequence': (d) => d,
+  'escape_sequence': (d) => ({ ...d, $type: TSKindId.EscapeSequence as number }),
   'expression_statement_with_semi': (d, t) => wrapExpressionStatementWithSemi(d, t),
   'expression_statement_block_ending': (d, t) => wrapExpressionStatementBlockEnding(d, t),
   'expression_statement': (d, t) => wrapExpressionStatement(d, t),
@@ -2130,7 +2130,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'for_lifetimes': (d, t) => wrapForLifetimes(d, t),
   'foreign_mod_item_body': (d, t) => wrapForeignModItemBody(d, t),
   'foreign_mod_item': (d, t) => wrapForeignModItem(d, t),
-  'fragment_specifier': (d) => d,
+  'fragment_specifier': (d) => ({ ...d, $type: TSKindId.FragmentSpecifier as number }),
   'function_item': (d, t) => wrapFunctionItem(d, t),
   'function_modifiers': (d, t) => wrapFunctionModifiers(d, t),
   'function_signature_item': (d, t) => wrapFunctionSignatureItem(d, t),
@@ -2141,13 +2141,13 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'generic_type': (d, t) => wrapGenericType(d, t),
   'generic_type_with_turbofish': (d, t) => wrapGenericTypeWithTurbofish(d, t),
   'higher_ranked_trait_bound': (d, t) => wrapHigherRankedTraitBound(d, t),
-  'identifier': (d) => d,
+  'identifier': (d) => ({ ...d, $type: TSKindId.Identifier as number }),
   'if_expression': (d, t) => wrapIfExpression(d, t),
   'impl_item_body': (d, t) => wrapImplItemBody(d, t),
   'impl_item': (d, t) => wrapImplItem(d, t),
   'index_expression': (d, t) => wrapIndexExpression(d, t),
   'inner_attribute_item': (d, t) => wrapInnerAttributeItem(d, t),
-  'integer_literal': (d) => d,
+  'integer_literal': (d) => ({ ...d, $type: TSKindId.IntegerLiteral as number }),
   'label': (d, t) => wrapLabel(d, t),
   'last_match_arm': (d, t) => wrapLastMatchArm(d, t),
   'let_condition': (d, t) => wrapLetCondition(d, t),
@@ -2167,11 +2167,11 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'match_block': (d, t) => wrapMatchBlock(d, t),
   'match_expression': (d, t) => wrapMatchExpression(d, t),
   'match_pattern': (d, t) => wrapMatchPattern(d, t),
-  'metavariable': (d) => d,
+  'metavariable': (d) => ({ ...d, $type: TSKindId.Metavariable as number }),
   'mod_item_inline': (d, t) => wrapModItemInline(d, t),
   'mod_item': (d, t) => wrapModItem(d, t),
   'mut_pattern': (d, t) => wrapMutPattern(d, t),
-  'mutable_specifier': (d) => d,
+  'mutable_specifier': (d) => ({ ...d, $type: TSKindId.MutableSpecifier as number }),
   'negative_literal': (d, t) => wrapNegativeLiteral(d, t),
   'or_pattern': (d, t) => wrapOrPattern(d, t),
   'ordered_field_declaration_list': (d, t) => wrapOrderedFieldDeclarationList(d, t),
@@ -2195,9 +2195,9 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'scoped_type_identifier': (d, t) => wrapScopedTypeIdentifier(d, t),
   'scoped_type_identifier_in_expression_position': (d, t) => wrapScopedTypeIdentifierInExpressionPosition(d, t),
   'scoped_use_list': (d, t) => wrapScopedUseList(d, t),
-  'self': (d) => d,
+  'self': (d) => ({ ...d, $type: TSKindId.Self as number }),
   'self_parameter': (d, t) => wrapSelfParameter(d, t),
-  'shebang': (d) => d,
+  'shebang': (d) => ({ ...d, $type: TSKindId.Shebang as number }),
   'shorthand_field_initializer': (d, t) => wrapShorthandFieldInitializer(d, t),
   'slice_pattern': (d, t) => wrapSlicePattern(d, t),
   'source_file': (d, t) => wrapSourceFile(d, t),
@@ -2206,7 +2206,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'struct_expression': (d, t) => wrapStructExpression(d, t),
   'struct_item': (d, t) => wrapStructItem(d, t),
   'struct_pattern': (d, t) => wrapStructPattern(d, t),
-  'super': (d) => d,
+  'super': (d) => ({ ...d, $type: TSKindId.Super as number }),
   'token_binding_pattern': (d, t) => wrapTokenBindingPattern(d, t),
   'token_repetition': (d, t) => wrapTokenRepetition(d, t),
   'token_repetition_pattern': (d, t) => wrapTokenRepetitionPattern(d, t),
@@ -2234,8 +2234,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'type_parameters': (d, t) => wrapTypeParameters(d, t),
   'unary_expression': (d, t) => wrapUnaryExpression(d, t),
   'union_item': (d, t) => wrapUnionItem(d, t),
-  'unit_expression': (d) => d,
-  'unit_type': (d) => d,
+  'unit_expression': (d) => ({ ...d, $type: TSKindId.UnitExpression as number }),
+  'unit_type': (d) => ({ ...d, $type: TSKindId.UnitType as number }),
   'unsafe_block': (d, t) => wrapUnsafeBlock(d, t),
   'use_as_clause': (d, t) => wrapUseAsClause(d, t),
   'use_bounds': (d, t) => wrapUseBounds(d, t),
@@ -2249,12 +2249,12 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'where_predicate': (d, t) => wrapWherePredicate(d, t),
   'while_expression': (d, t) => wrapWhileExpression(d, t),
   'yield_expression': (d, t) => wrapYieldExpression(d, t),
-  'string_content': (d) => d,
-  'raw_string_literal_content': (d) => d,
-  'float_literal': (d) => d,
-  '_outer_block_doc_comment_marker': (d) => d,
-  '_inner_block_doc_comment_marker': (d) => d,
-  '_error_sentinel': (d) => d,
+  'string_content': (d) => ({ ...d, $type: TSKindId.StringContent as number }),
+  'raw_string_literal_content': (d) => ({ ...d, $type: TSKindId.RawStringLiteralContent as number }),
+  'float_literal': (d) => ({ ...d, $type: TSKindId.FloatLiteral as number }),
+  '_outer_block_doc_comment_marker': (d) => ({ ...d, $type: TSKindId.OuterBlockDocCommentMarker as number }),
+  '_inner_block_doc_comment_marker': (d) => ({ ...d, $type: TSKindId.InnerBlockDocCommentMarker as number }),
+  '_error_sentinel': (d) => ({ ...d, $type: TSKindId.ErrorSentinel as number }),
 };
 
 const _aliasTargetToSource: Record<string, string> = {
@@ -2310,12 +2310,16 @@ const _aliasTargetToSource: Record<string, string> = {
   'visibility_modifier_pub': '_visibility_modifier_pub',
 };
 
+import { kindNameFromId } from './types.js';
 /** Wrap a NodeData into its lazy read-only view. */
 export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
-  // Phase A KindID bridge: core's readNode still returns string $type at runtime.
-  // Cast to string for the string-keyed alias/dispatch tables before per-kind
-  // wrap functions stamp the numeric TSKindId.$type on their output.
-  const rawType = data.$type as unknown as string;
+  // Phase B-inverse bridge: the native path now returns numeric $type
+  // (KindId) from Rust; the JS wasm path still returns string $type.
+  // Resolve to a kind-name string for the string-keyed dispatch tables,
+  // then per-kind wrap functions stamp the numeric TSKindId.$type on output.
+  const rawType = typeof data.$type === "number"
+    ? kindNameFromId(data.$type as never) ?? String(data.$type)
+    : (data.$type as unknown as string);
   // Canonical-hidden remap (Option Y): parser-output `$type`
   // is the visible alias target (e.g. `range_pattern_left_with_right`);
   // remap to the hidden alias source (`_range_pattern_left_with_right`)
@@ -2367,9 +2371,15 @@ export function readTreeNode(
   asType?: { from: string; to: string },
 ): unknown {
   let data = readNode(tree, nodeId);
-  // Phase A KindID bridge: core returns string $type; cast for string comparison.
-  if (asType && (data.$type as unknown as string) === asType.from) {
-    data = { ...data, $type: asType.to as unknown as number };
+  // Phase B-inverse: asType comparison must handle both string and numeric $type.
+  // When numeric (native path), convert to kind-name first for comparison.
+  if (asType) {
+    const currentType = typeof data.$type === "number"
+      ? kindNameFromId(data.$type as never) ?? String(data.$type)
+      : (data.$type as unknown as string);
+    if (currentType === asType.from) {
+      data = { ...data, $type: asType.to as unknown as number };
+    }
   }
   return wrapNode(data, tree);
 }

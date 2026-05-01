@@ -349,7 +349,10 @@ function slotFieldType(f: EmittedField): string {
 	return `${C}OptionalNonterminalView<'a>`;
 }
 
-function renderDirectSupport(meta: MetaData): string {
+function renderDirectSupport(
+	meta: MetaData,
+	kindIdByKind?: ReadonlyMap<string, number>
+): string {
 	const lines: string[] = [];
 	lines.push(`use ::askama::Template as _AskamaTemplate;`);
 	lines.push(`use ::sittir_core::types::{FieldValue, NodeData};`);
@@ -421,51 +424,86 @@ function renderDirectSupport(meta: MetaData): string {
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
-	lines.push(`fn separator_for(kind: &str) -> &'static str {`);
-	lines.push(`    match kind {`);
-	for (const [k, s] of Array.from(meta.separators.entries()).sort(([a], [b]) =>
-		a.localeCompare(b)
-	)) {
-		lines.push(`        ${JSON.stringify(k)} => ${JSON.stringify(s)},`);
-	}
-	lines.push(`        _ => "",`);
-	lines.push(`    }`);
-	lines.push(`}`);
-	lines.push('');
-	lines.push(
-		`fn variant_for(parent_kind: &str, child_kind: &str) -> Option<&'static str> {`
-	);
-	lines.push(`    match (parent_kind, child_kind) {`);
-	const sortedVariants: [string, string, string][] = [];
-	for (const [parent, map] of meta.variants) {
-		for (const [child, label] of map)
-			sortedVariants.push([parent, child, label]);
-	}
-	sortedVariants.sort(
-		(a, b) => a[0].localeCompare(b[0]) || a[1].localeCompare(b[1])
-	);
-	for (const [parent, child, label] of sortedVariants) {
+	if (kindIdByKind !== undefined) {
+		// Phase C: NodeData.type_ is KindId (u16). Match on numeric IDs.
+		lines.push(`fn separator_for(kind_id: u16) -> &'static str {`);
+		lines.push(`    match kind_id {`);
+		for (const [k, s] of Array.from(meta.separators.entries()).sort(([a], [b]) =>
+			a.localeCompare(b)
+		)) {
+			const id = kindIdByKind.get(k);
+			if (id !== undefined) {
+				lines.push(`        ${id} => ${JSON.stringify(s)}, // ${JSON.stringify(k)}`);
+			}
+		}
+		lines.push(`        _ => "",`);
+		lines.push(`    }`);
+		lines.push(`}`);
+		lines.push('');
 		lines.push(
-			`        (${JSON.stringify(parent)}, ${JSON.stringify(child)}) => Some(${JSON.stringify(label)}),`
+			`fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str> {`
 		);
+		lines.push(`    match (parent_id, child_id) {`);
+		const sortedVariants: [string, string, string][] = [];
+		for (const [parent, map] of meta.variants) {
+			for (const [child, label] of map)
+				sortedVariants.push([parent, child, label]);
+		}
+		sortedVariants.sort(
+			(a, b) => a[0].localeCompare(b[0]) || a[1].localeCompare(b[1])
+		);
+		for (const [parent, child, label] of sortedVariants) {
+			const parentId = kindIdByKind.get(parent);
+			const childId = kindIdByKind.get(child);
+			if (parentId !== undefined && childId !== undefined) {
+				lines.push(
+					`        (${parentId}, ${childId}) => Some(${JSON.stringify(label)}), // (${JSON.stringify(parent)}, ${JSON.stringify(child)})`
+				);
+			}
+		}
+		lines.push(`        _ => None,`);
+		lines.push(`    }`);
+		lines.push(`}`);
+		lines.push('');
+		lines.push(`fn first_named_child_kind_id(node: &NodeData) -> Option<u16> {`);
+		lines.push(
+			`    node.children.as_ref()?.iter().find(|child| child.named).map(|child| child.type_.0)`
+		);
+		lines.push(`}`);
+		lines.push('');
+		lines.push(`fn resolve_variant(node: &NodeData) -> &'static str {`);
+		lines.push(`    first_named_child_kind_id(node)`);
+		lines.push(
+			`        .and_then(|child_id| variant_for(node.type_.0, child_id))`
+		);
+		lines.push(`        .unwrap_or("")`);
+		lines.push(`}`);
+	} else {
+		// Fallback: no kindEntries (parser.c unavailable). Emit numeric functions
+		// with only a `_ =>` arm — no IDs available to populate match arms.
+		// NodeData.type_ is KindId regardless, so the functions take u16.
+		lines.push(`fn separator_for(_kind_id: u16) -> &'static str {`);
+		lines.push(`    ""`);
+		lines.push(`}`);
+		lines.push('');
+		lines.push(
+			`fn variant_for(_parent_id: u16, _child_id: u16) -> Option<&'static str> {`
+		);
+		lines.push(`    None`);
+		lines.push(`}`);
+		lines.push('');
+		lines.push(`fn first_named_child_kind_id(node: &NodeData) -> Option<u16> {`);
+		lines.push(
+			`    node.children.as_ref()?.iter().find(|child| child.named).map(|child| child.type_.0)`
+		);
+		lines.push(`}`);
+		lines.push('');
+		lines.push(`fn resolve_variant(node: &NodeData) -> &'static str {`);
+		lines.push(`    first_named_child_kind_id(node)`);
+		lines.push(`        .and_then(|child_id| variant_for(node.type_.0, child_id))`);
+		lines.push(`        .unwrap_or("")`);
+		lines.push(`}`);
 	}
-	lines.push(`        _ => None,`);
-	lines.push(`    }`);
-	lines.push(`}`);
-	lines.push('');
-	lines.push(`fn first_named_child_kind(node: &NodeData) -> Option<&str> {`);
-	lines.push(
-		`    node.children.as_ref()?.iter().find(|child| child.named).map(|child| child.type_.as_str())`
-	);
-	lines.push(`}`);
-	lines.push('');
-	lines.push(`fn resolve_variant(node: &NodeData) -> &'static str {`);
-	lines.push(`    first_named_child_kind(node)`);
-	lines.push(
-		`        .and_then(|child_kind| variant_for(node.type_.as_str(), child_kind))`
-	);
-	lines.push(`        .unwrap_or("")`);
-	lines.push(`}`);
 	lines.push('');
 	lines.push(
 		`fn render_node_value(node: &NodeData) -> Result<String, ::askama::Error> {`
@@ -663,7 +701,7 @@ function renderDirectSupport(meta: MetaData): string {
 	lines.push(`            }`);
 	lines.push(`            Ok(ResolvedField::from_items(`);
 	lines.push(`                rendered,`);
-	lines.push(`                separator_for(node.type_.as_str()),`);
+	lines.push(`                separator_for(node.type_.0),`);
 	lines.push(`                false,`);
 	lines.push(`                detect_field_trailing_sep(node, name),`);
 	lines.push(`            ))`);
@@ -754,7 +792,7 @@ function renderDirectSupport(meta: MetaData): string {
 	lines.push(`    }`);
 	lines.push(`    Ok(ResolvedField::from_items(`);
 	lines.push(`        children,`);
-	lines.push(`        separator_for(node.type_.as_str()),`);
+	lines.push(`        separator_for(node.type_.0),`);
 	lines.push(`        leading_sep,`);
 	lines.push(`        trailing_sep,`);
 	lines.push(`    ))`);
@@ -907,9 +945,11 @@ function renderPerKindFns(structs: EmittedStruct[]): string {
 	return lines.join('\n');
 }
 
-function renderDispatchFn(structs: EmittedStruct[]): string {
+function renderDispatchFn(
+	structs: EmittedStruct[],
+	kindIdByKind?: ReadonlyMap<string, number>
+): string {
 	const lines: string[] = [];
-	const templateKinds = new Set(structs.map((s) => s.kind));
 	lines.push(
 		`pub fn render_dispatch(node: &::sittir_core::types::NodeData) -> Result<String, ::askama::Error> {`
 	);
@@ -918,18 +958,38 @@ function renderDispatchFn(structs: EmittedStruct[]): string {
 	lines.push(`            return Ok(text.clone());`);
 	lines.push(`        }`);
 	lines.push(`    }`);
-	lines.push(`    match node.type_.as_str() {`);
-	for (const s of structs) {
-		const patterns = [JSON.stringify(s.kind)];
-		if (s.kind.startsWith('_')) {
-			const visible = JSON.stringify(s.kind.replace(/^_+/, ''));
-			if (!templateKinds.has(s.kind.replace(/^_+/, ''))) patterns.push(visible);
+	if (kindIdByKind !== undefined) {
+		// Phase C: NodeData.type_ is KindId — match on numeric id.
+		lines.push(`    match node.type_.0 {`);
+		for (const s of structs) {
+			// Collect all string aliases for this kind (hidden + visible forms)
+			// and resolve each to its numeric id. Emit a multi-arm pattern for
+			// each distinct id, comment-annotated with the string kind name.
+			const kindAliases: string[] = [s.kind];
+			if (s.kind.startsWith('_')) {
+				// Some hidden kinds are aliased to a visible name — include both.
+				const visible = s.kind.replace(/^_+/, '');
+				if (kindIdByKind.has(visible)) kindAliases.push(visible);
+			}
+			const ids = new Set(
+				kindAliases
+					.map((k) => kindIdByKind.get(k))
+					.filter((id): id is number => id !== undefined)
+			);
+			if (ids.size === 0) continue; // no parser symbol — skip
+			const patternParts = [...ids].map((id) => String(id));
+			const comment = kindAliases.map((k) => JSON.stringify(k)).join(' | ');
+			lines.push(
+				`        ${patternParts.join(' | ')} => ${renderFnName(s.kind)}(node), // ${comment}`
+			);
 		}
-		lines.push(
-			`        ${patterns.join(' | ')} => ${renderFnName(s.kind)}(node),`
-		);
+		lines.push(`        _ => token_shaped_fallback(node),`);
+	} else {
+		// Fallback: no kindEntries — cannot emit numeric dispatch.
+		// Emit an always-fallback match; correct rendering requires kindEntries.
+		lines.push(`    match node.type_.0 {`);
+		lines.push(`        _ => token_shaped_fallback(node),`);
 	}
-	lines.push(`        _ => token_shaped_fallback(node),`);
 	lines.push(`    }`);
 	lines.push(`}`);
 	return lines.join('\n');
@@ -1714,11 +1774,33 @@ export function emitRenderModule(
 		renderTransportSupport(nodeMap, structs, meta, generatedIdTables),
 		'',
 		renderStructDefs(structs),
-		renderDirectSupport(meta),
+		renderDirectSupport(
+			meta,
+			generatedIdTables
+				? buildKindIdByKind(
+						collectKindEntries(
+							collectCatalogKinds(generatedIdTables),
+							nodeMap,
+							generatedIdTables
+						)
+					)
+				: undefined
+		),
 		'',
 		renderPerKindFns(structs),
 		'',
-		renderDispatchFn(structs)
+		renderDispatchFn(
+			structs,
+			generatedIdTables
+				? buildKindIdByKind(
+						collectKindEntries(
+							collectCatalogKinds(generatedIdTables),
+							nodeMap,
+							generatedIdTables
+						)
+					)
+				: undefined
+		)
 	].join('\n');
 	return {
 		hashRs,
@@ -1771,8 +1853,24 @@ function renderTransportSupport(
 		// These are emitted AFTER renderGrammarRenderable() so Renderable::Node is in scope,
 		// and BEFORE renderTransportBridge() so render_transport can call render_transport_dispatch.
 		...renderTypedDispatch(structs, nodes, projection.literals, meta),
-		...renderTransportBridge(nodes, projection.literals)
+		...renderTransportBridge(nodes, projection.literals, kindEntries ? buildKindIdByKind(kindEntries) : undefined)
 	].join('\n');
+}
+
+/**
+ * Build a `Map<string, number>` from `kindEntries` for O(1) lookup by kind.
+ * Also indexes `displayName` when present so literal kinds (e.g. `"+"`)
+ * resolve the same way as their parser-symbol names (`PLUS`).
+ */
+function buildKindIdByKind(kindEntries: readonly KindEnumEntry[]): ReadonlyMap<string, number> {
+	const map = new Map<string, number>();
+	for (const e of kindEntries) {
+		map.set(e.kind, e.id);
+		if (e.displayName !== undefined && !map.has(e.displayName)) {
+			map.set(e.displayName, e.id);
+		}
+	}
+	return map;
 }
 
 /**
@@ -2050,14 +2148,15 @@ function renderGrammarRenderable(): string[] {
 
 function renderTransportBridge(
 	nodes: readonly AssembledNode[],
-	literals: readonly TransportLiteral[]
+	literals: readonly TransportLiteral[],
+	kindIdByKind?: ReadonlyMap<string, number>
 ): string[] {
 	return [
-		'use ::sittir_core::types::{FieldValue as TransportFieldValue, NodeData as TransportNodeData, Source as TransportSource};',
+		'use ::sittir_core::types::{FieldValue as TransportFieldValue, KindId as TransportKindId, NodeData as TransportNodeData, Source as TransportSource};',
 		'use ::std::collections::HashMap as TransportHashMap;',
 		'',
 		'fn transport_node_data(',
-		'    kind: &str,',
+		'    kind: TransportKindId,',
 		'    source: Option<TransportSource>,',
 		'    named: Option<bool>,',
 		'    default_named: bool,',
@@ -2068,7 +2167,7 @@ function renderTransportBridge(
 		'    children: Option<Vec<TransportNodeData>>,',
 		') -> TransportNodeData {',
 		'    TransportNodeData {',
-		'        type_: kind.to_string(),',
+		'        type_: kind,',
 		'        source: source.unwrap_or(TransportSource::Factory),',
 		'        named: named.unwrap_or(default_named),',
 		'        fields,',
@@ -2105,7 +2204,7 @@ function renderTransportBridge(
 		'    Ok(nodes)',
 		'}',
 		'',
-		'fn literal_transport_to_node(kind: &str, transport: LiteralTransport) -> Result<TransportNodeData, ::askama::Error> {',
+		'fn literal_transport_to_node(kind: TransportKindId, transport: LiteralTransport) -> Result<TransportNodeData, ::askama::Error> {',
 		'    Ok(transport_node_data(',
 		'        kind,',
 		'        transport.transport_source,',
@@ -2126,12 +2225,19 @@ function renderTransportBridge(
 			return `        AnyTransport::${rustTransportVariantName(node)}(data) => ${rustTransportToNodeFnName(node.typeName)}(data),`;
 		}),
 		...literals.map((literal, index) => {
-			return `        AnyTransport::${rustLiteralTransportVariantName(literal, index)}(data) => literal_transport_to_node(${JSON.stringify(literal.kind)}, data),`;
+			// Phase C: pass TransportKindId(id) instead of string literal.
+			const id = kindIdByKind?.get(literal.kind);
+			const safeKind = JSON.stringify(rustBlockCommentSafe(literal.kind));
+			const kindArg =
+				id !== undefined
+					? `TransportKindId(${id}) /* ${safeKind} */`
+					: `TransportKindId(0) /* ${safeKind} — no parser symbol */`;
+			return `        AnyTransport::${rustLiteralTransportVariantName(literal, index)}(data) => literal_transport_to_node(${kindArg}, data),`;
 		}),
 		'    }',
 		'}',
 		'',
-		...nodes.flatMap((node) => renderTransportToNodeFns(node)),
+		...nodes.flatMap((node) => renderTransportToNodeFns(node, kindIdByKind)),
 		'pub fn node_data_from_transport(transport: AnyTransport) -> Result<TransportNodeData, ::askama::Error> {',
 		'    transport_to_node(transport)',
 		'}',
@@ -2153,7 +2259,10 @@ function renderTransportBridge(
 	];
 }
 
-function renderTransportToNodeFns(node: AssembledNode): string[] {
+function renderTransportToNodeFns(
+	node: AssembledNode,
+	kindIdByKind?: ReadonlyMap<string, number>
+): string[] {
 	if (node.modelType === 'polymorph' && node.forms.length > 0) {
 		const lines: string[] = [];
 		lines.push(
@@ -2177,7 +2286,8 @@ function renderTransportToNodeFns(node: AssembledNode): string[] {
 					form.fields,
 					form.children,
 					true,
-					true
+					true,
+					kindIdByKind
 				)
 			);
 		}
@@ -2195,13 +2305,14 @@ function renderTransportToNodeFns(node: AssembledNode): string[] {
 				node.structuralFields,
 				node.structuralChildren,
 				true,
-				true
+				true,
+				kindIdByKind
 			);
 		case 'leaf':
 		case 'keyword':
 		case 'token':
 		case 'enum':
-			return renderTerminalTransportToNodeFn(node);
+			return renderTerminalTransportToNodeFn(node, kindIdByKind);
 		default:
 			return [];
 	}
@@ -2214,8 +2325,10 @@ function renderTransportDataToNodeFn(
 	fields: readonly AssembledField[],
 	children: readonly AssembledChild[],
 	defaultNamed: boolean,
-	hasOptionalText: boolean
+	hasOptionalText: boolean,
+	kindIdByKind?: ReadonlyMap<string, number>
 ): string[] {
+	const kindArg = kindIdExpr(kind, kindIdByKind);
 	const lines: string[] = [];
 	lines.push(
 		`fn ${fnName}(transport: ${structName}) -> Result<TransportNodeData, ::askama::Error> {`
@@ -2250,7 +2363,7 @@ function renderTransportDataToNodeFn(
 	lines.push('    let fields = if fields.is_empty() { None } else { Some(fields) };');
 	lines.push(...renderTransportChildrenBinding(children));
 	lines.push('    Ok(transport_node_data(');
-	lines.push(`        ${JSON.stringify(kind)},`);
+	lines.push(`        ${kindArg},`);
 	lines.push('        transport.transport_source,');
 	lines.push('        transport.transport_named,');
 	lines.push(`        ${defaultNamed ? 'true' : 'false'},`);
@@ -2281,11 +2394,61 @@ function renderTransportChildrenBinding(
 	];
 }
 
-function renderTerminalTransportToNodeFn(node: AssembledNode): string[] {
+/**
+ * Sanitize a kind string for use inside a Rust block comment.
+ *
+ * Rust block comments do not support nesting or escape sequences, so the
+ * sequence star-slash inside a comment closes it prematurely. For example,
+ * the kind "star-slash" would produce a broken block comment where the
+ * inner star-slash ends the comment early, leaving a dangling double-quote
+ * that Rust parses as an unterminated string literal.
+ *
+ * Replacement: star-slash -> "* /" (insert a space between star and slash).
+ *
+ * @param kind - Raw grammar kind string, possibly containing star-slash.
+ * @returns A version of the kind string safe for use inside Rust block comments.
+ */
+function rustBlockCommentSafe(kind: string): string {
+	// Two sequences are unsafe inside Rust block comments:
+	//   */  closes the comment prematurely
+	//   /*  opens a nested comment (Rust supports nesting), so the
+	//       enclosing */ then closes the nested comment, not the outer one,
+	//       leaving the outer comment unterminated.
+	// Replace both with a space-separated form to keep comments readable.
+	// Use split/join to avoid regex literals that some bundlers misparse.
+	return kind.split('*/').join('* /').split('/*').join('/ *');
+}
+
+/**
+ * Emit a `TransportKindId(n)` expression for `kind`, falling back to
+ * `TransportKindId(0)` with a comment when the kind has no parser symbol.
+ *
+ * @param kind - Grammar kind string (e.g. `"function_item"`).
+ * @param kindIdByKind - Map from kind string to numeric parser symbol id.
+ *   When absent (no parser.c available), always produces the fallback.
+ * @returns A Rust expression, e.g. TransportKindId(188) with a kind comment.
+ */
+function kindIdExpr(
+	kind: string,
+	kindIdByKind?: ReadonlyMap<string, number>
+): string {
+	const id = kindIdByKind?.get(kind);
+	const safeKind = JSON.stringify(rustBlockCommentSafe(kind));
+	if (id !== undefined) {
+		return `TransportKindId(${id}) /* ${safeKind} */`;
+	}
+	return `TransportKindId(0) /* ${safeKind} — no parser symbol */`;
+}
+
+function renderTerminalTransportToNodeFn(
+	node: AssembledNode,
+	kindIdByKind?: ReadonlyMap<string, number>
+): string[] {
+	const kindArg = kindIdExpr(node.kind, kindIdByKind);
 	return [
 		`fn ${rustTransportToNodeFnName(node.typeName)}(transport: ${rustTransportStructName(node)}) -> Result<TransportNodeData, ::askama::Error> {`,
 		'    Ok(transport_node_data(',
-		`        ${JSON.stringify(node.kind)},`,
+		`        ${kindArg},`,
 		'        transport.transport_source,',
 		'        transport.transport_named,',
 		'        true,',

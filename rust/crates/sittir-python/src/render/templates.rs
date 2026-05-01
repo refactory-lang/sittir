@@ -7645,11 +7645,11 @@ pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::a
     }
 }
 
-use ::sittir_core::types::{FieldValue as TransportFieldValue, NodeData as TransportNodeData, Source as TransportSource};
+use ::sittir_core::types::{FieldValue as TransportFieldValue, KindId as TransportKindId, NodeData as TransportNodeData, Source as TransportSource};
 use ::std::collections::HashMap as TransportHashMap;
 
 fn transport_node_data(
-    kind: &str,
+    kind: TransportKindId,
     source: Option<TransportSource>,
     named: Option<bool>,
     default_named: bool,
@@ -7660,7 +7660,7 @@ fn transport_node_data(
     children: Option<Vec<TransportNodeData>>,
 ) -> TransportNodeData {
     TransportNodeData {
-        type_: kind.to_string(),
+        type_: kind,
         source: source.unwrap_or(TransportSource::Factory),
         named: named.unwrap_or(default_named),
         fields,
@@ -7697,7 +7697,7 @@ fn transport_children(values: Vec<Box<AnyTransport>>) -> Result<Vec<TransportNod
     Ok(nodes)
 }
 
-fn literal_transport_to_node(kind: &str, transport: LiteralTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn literal_transport_to_node(kind: TransportKindId, transport: LiteralTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         kind,
         transport.transport_source,
@@ -7927,30 +7927,30 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::Try(data) => transport_to_node_try(data),
         AnyTransport::While(data) => transport_to_node_while(data),
         AnyTransport::With(data) => transport_to_node_with(data),
-        AnyTransport::Literal0_2b_3d(data) => literal_transport_to_node("+=", data),
-        AnyTransport::Literal1_2d_3d(data) => literal_transport_to_node("-=", data),
-        AnyTransport::Literal2_2a_3d(data) => literal_transport_to_node("*=", data),
-        AnyTransport::Literal3_2f_3d(data) => literal_transport_to_node("/=", data),
-        AnyTransport::Literal4_40_3d(data) => literal_transport_to_node("@=", data),
-        AnyTransport::Literal5_2f_2f_3d(data) => literal_transport_to_node("//=", data),
-        AnyTransport::Literal6_25_3d(data) => literal_transport_to_node("%=", data),
-        AnyTransport::Literal7_2a_2a_3d(data) => literal_transport_to_node("**=", data),
-        AnyTransport::Literal8_3e_3e_3d(data) => literal_transport_to_node(">>=", data),
-        AnyTransport::Literal9_3c_3c_3d(data) => literal_transport_to_node("<<=", data),
-        AnyTransport::Literal10_26_3d(data) => literal_transport_to_node("&=", data),
-        AnyTransport::Literal11_5e_3d(data) => literal_transport_to_node("^=", data),
-        AnyTransport::Literal12_7c_3d(data) => literal_transport_to_node("|=", data),
-        AnyTransport::Literal13_3c(data) => literal_transport_to_node("<", data),
-        AnyTransport::Literal14_3c_3d(data) => literal_transport_to_node("<=", data),
-        AnyTransport::Literal15_3d_3d(data) => literal_transport_to_node("==", data),
-        AnyTransport::Literal16_21_3d(data) => literal_transport_to_node("!=", data),
-        AnyTransport::Literal17_3e_3d(data) => literal_transport_to_node(">=", data),
-        AnyTransport::Literal18_3e(data) => literal_transport_to_node(">", data),
-        AnyTransport::Literal19_3c_3e(data) => literal_transport_to_node("<>", data),
-        AnyTransport::Literal20_6e_6f_74_20_69_6e(data) => literal_transport_to_node("not in", data),
-        AnyTransport::Literal21_69_73(data) => literal_transport_to_node("is", data),
-        AnyTransport::Literal22_69_73_20_6e_6f_74(data) => literal_transport_to_node("is not", data),
-        AnyTransport::Literal23_7e(data) => literal_transport_to_node("~", data),
+        AnyTransport::Literal0_2b_3d(data) => literal_transport_to_node(TransportKindId(73) /* "+=" */, data),
+        AnyTransport::Literal1_2d_3d(data) => literal_transport_to_node(TransportKindId(74) /* "-=" */, data),
+        AnyTransport::Literal2_2a_3d(data) => literal_transport_to_node(TransportKindId(75) /* "*=" */, data),
+        AnyTransport::Literal3_2f_3d(data) => literal_transport_to_node(TransportKindId(76) /* "/=" */, data),
+        AnyTransport::Literal4_40_3d(data) => literal_transport_to_node(TransportKindId(77) /* "@=" */, data),
+        AnyTransport::Literal5_2f_2f_3d(data) => literal_transport_to_node(TransportKindId(78) /* "//=" */, data),
+        AnyTransport::Literal6_25_3d(data) => literal_transport_to_node(TransportKindId(79) /* "%=" */, data),
+        AnyTransport::Literal7_2a_2a_3d(data) => literal_transport_to_node(TransportKindId(80) /* "**=" */, data),
+        AnyTransport::Literal8_3e_3e_3d(data) => literal_transport_to_node(TransportKindId(81) /* ">>=" */, data),
+        AnyTransport::Literal9_3c_3c_3d(data) => literal_transport_to_node(TransportKindId(82) /* "<<=" */, data),
+        AnyTransport::Literal10_26_3d(data) => literal_transport_to_node(TransportKindId(83) /* "&=" */, data),
+        AnyTransport::Literal11_5e_3d(data) => literal_transport_to_node(TransportKindId(84) /* "^=" */, data),
+        AnyTransport::Literal12_7c_3d(data) => literal_transport_to_node(TransportKindId(85) /* "|=" */, data),
+        AnyTransport::Literal13_3c(data) => literal_transport_to_node(TransportKindId(65) /* "<" */, data),
+        AnyTransport::Literal14_3c_3d(data) => literal_transport_to_node(TransportKindId(66) /* "<=" */, data),
+        AnyTransport::Literal15_3d_3d(data) => literal_transport_to_node(TransportKindId(67) /* "==" */, data),
+        AnyTransport::Literal16_21_3d(data) => literal_transport_to_node(TransportKindId(68) /* "!=" */, data),
+        AnyTransport::Literal17_3e_3d(data) => literal_transport_to_node(TransportKindId(69) /* ">=" */, data),
+        AnyTransport::Literal18_3e(data) => literal_transport_to_node(TransportKindId(70) /* ">" */, data),
+        AnyTransport::Literal19_3c_3e(data) => literal_transport_to_node(TransportKindId(71) /* "<>" */, data),
+        AnyTransport::Literal20_6e_6f_74_20_69_6e(data) => literal_transport_to_node(TransportKindId(193) /* "not in" */, data),
+        AnyTransport::Literal21_69_73(data) => literal_transport_to_node(TransportKindId(64) /* "is" */, data),
+        AnyTransport::Literal22_69_73_20_6e_6f_74(data) => literal_transport_to_node(TransportKindId(194) /* "is not" */, data),
+        AnyTransport::Literal23_7e(data) => literal_transport_to_node(TransportKindId(63) /* "~" */, data),
     }
 }
 
@@ -7959,7 +7959,7 @@ fn transport_to_node__as_pattern(transport: _AsPatternTransport) -> Result<Trans
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "_as_pattern",
+        TransportKindId(165) /* "_as_pattern" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -7976,7 +7976,7 @@ fn transport_to_node_as_pattern_target(transport: AsPatternTargetTransport) -> R
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "_as_pattern_target",
+        TransportKindId(284) /* "_as_pattern_target" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -7994,7 +7994,7 @@ fn transport_to_node_assignment_eq(transport: AssignmentEqTransport) -> Result<T
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "_assignment_eq",
+        TransportKindId(240) /* "_assignment_eq" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8012,7 +8012,7 @@ fn transport_to_node_assignment_type(transport: AssignmentTypeTransport) -> Resu
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "_assignment_type",
+        TransportKindId(241) /* "_assignment_type" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8031,7 +8031,7 @@ fn transport_to_node_assignment_typed(transport: AssignmentTypedTransport) -> Re
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "_assignment_typed",
+        TransportKindId(242) /* "_assignment_typed" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8048,7 +8048,7 @@ fn transport_to_node_comprehension_clauses(transport: ComprehensionClausesTransp
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "_comprehension_clauses",
+        TransportKindId(224) /* "_comprehension_clauses" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8065,7 +8065,7 @@ fn transport_to_node_format_expression(transport: FormatExpressionTransport) -> 
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "_format_expression",
+        TransportKindId(285) /* "_format_expression" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8083,7 +8083,7 @@ fn transport_to_node_import_list(transport: ImportListTransport) -> Result<Trans
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "_import_list",
+        TransportKindId(116) /* "_import_list" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8097,7 +8097,7 @@ fn transport_to_node_import_list(transport: ImportListTransport) -> Result<Trans
 
 fn transport_to_node_is_not(transport: IsNotTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "_is_not",
+        TransportKindId(194) /* "_is_not" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8116,7 +8116,7 @@ fn transport_to_node_key_value_pattern(transport: KeyValuePatternTransport) -> R
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "_key_value_pattern",
+        TransportKindId(170) /* "_key_value_pattern" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8130,7 +8130,7 @@ fn transport_to_node_key_value_pattern(transport: KeyValuePatternTransport) -> R
 
 fn transport_to_node_kw_async_marker(transport: KwAsyncMarkerTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "_kw_async_marker",
+        TransportKindId(250) /* "_kw_async_marker" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8147,7 +8147,7 @@ fn transport_to_node__list_pattern(transport: _ListPatternTransport) -> Result<T
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "_list_pattern",
+        TransportKindId(167) /* "_list_pattern" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8164,7 +8164,7 @@ fn transport_to_node_match_block(transport: MatchBlockTransport) -> Result<Trans
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "_match_block",
+        TransportKindId(135) /* "_match_block" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8182,7 +8182,7 @@ fn transport_to_node_match_block_block(transport: MatchBlockBlockTransport) -> R
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "_match_block_block",
+        TransportKindId(246) /* "_match_block_block" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8196,7 +8196,7 @@ fn transport_to_node_match_block_block(transport: MatchBlockBlockTransport) -> R
 
 fn transport_to_node_not_escape_sequence(transport: NotEscapeSequenceTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "_not_escape_sequence",
+        TransportKindId(235) /* "_not_escape_sequence" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8210,7 +8210,7 @@ fn transport_to_node_not_escape_sequence(transport: NotEscapeSequenceTransport) 
 
 fn transport_to_node_not_in(transport: NotInTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "_not_in",
+        TransportKindId(193) /* "_not_in" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8227,7 +8227,7 @@ fn transport_to_node_simple_pattern_negative(transport: SimplePatternNegativeTra
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "_simple_pattern_negative",
+        TransportKindId(248) /* "_simple_pattern_negative" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8244,7 +8244,7 @@ fn transport_to_node_simple_statements(transport: SimpleStatementsTransport) -> 
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "_simple_statements",
+        TransportKindId(110) /* "_simple_statements" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8261,7 +8261,7 @@ fn transport_to_node_suite(transport: SuiteTransport) -> Result<TransportNodeDat
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "_suite",
+        TransportKindId(0) /* "_suite" — no parser symbol */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8278,7 +8278,7 @@ fn transport_to_node__tuple_pattern(transport: _TuplePatternTransport) -> Result
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "_tuple_pattern",
+        TransportKindId(168) /* "_tuple_pattern" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8295,7 +8295,7 @@ fn transport_to_node__with_clause_paren(transport: _WithClauseParenTransport) ->
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "_with_clause_paren",
+        TransportKindId(245) /* "_with_clause_paren" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8314,7 +8314,7 @@ fn transport_to_node_aliased_import(transport: AliasedImportTransport) -> Result
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "aliased_import",
+        TransportKindId(117) /* "aliased_import" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8334,7 +8334,7 @@ fn transport_to_node_argument_list(transport: ArgumentListTransport) -> Result<T
         None => None,
     };
     Ok(transport_node_data(
-        "argument_list",
+        TransportKindId(157) /* "argument_list" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8353,7 +8353,7 @@ fn transport_to_node_as_pattern(transport: AsPatternTransport) -> Result<Transpo
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "as_pattern",
+        TransportKindId(185) /* "as_pattern" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8370,7 +8370,7 @@ fn transport_to_node_assert_statement(transport: AssertStatementTransport) -> Re
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "assert_statement",
+        TransportKindId(121) /* "assert_statement" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8396,7 +8396,7 @@ fn transport_to_node_assignment_uform_eq(transport: AssignmentUFormEqTransport) 
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "assignment",
+        TransportKindId(198) /* "assignment" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8414,7 +8414,7 @@ fn transport_to_node_assignment_uform_type(transport: AssignmentUFormTypeTranspo
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "assignment",
+        TransportKindId(198) /* "assignment" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8432,7 +8432,7 @@ fn transport_to_node_assignment_uform_typed(transport: AssignmentUFormTypedTrans
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "assignment",
+        TransportKindId(198) /* "assignment" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8451,7 +8451,7 @@ fn transport_to_node_attribute(transport: AttributeTransport) -> Result<Transpor
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "attribute",
+        TransportKindId(203) /* "attribute" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8471,7 +8471,7 @@ fn transport_to_node_augmented_assignment(transport: AugmentedAssignmentTranspor
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "augmented_assignment",
+        TransportKindId(199) /* "augmented_assignment" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8489,7 +8489,7 @@ fn transport_to_node_await(transport: AwaitTransport) -> Result<TransportNodeDat
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "await",
+        TransportKindId(237) /* "await" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8509,7 +8509,7 @@ fn transport_to_node_binary_operator(transport: BinaryOperatorTransport) -> Resu
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "binary_operator",
+        TransportKindId(191) /* "binary_operator" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8526,7 +8526,7 @@ fn transport_to_node_block(transport: BlockTransport) -> Result<TransportNodeDat
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "block",
+        TransportKindId(160) /* "block" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8546,7 +8546,7 @@ fn transport_to_node_boolean_operator(transport: BooleanOperatorTransport) -> Re
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "boolean_operator",
+        TransportKindId(190) /* "boolean_operator" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8560,7 +8560,7 @@ fn transport_to_node_boolean_operator(transport: BooleanOperatorTransport) -> Re
 
 fn transport_to_node_break_statement(transport: BreakStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "break_statement",
+        TransportKindId(129) /* "break_statement" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8579,7 +8579,7 @@ fn transport_to_node_call(transport: CallTransport) -> Result<TransportNodeData,
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "call",
+        TransportKindId(206) /* "call" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8600,7 +8600,7 @@ fn transport_to_node_case_clause(transport: CaseClauseTransport) -> Result<Trans
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "case_clause",
+        TransportKindId(136) /* "case_clause" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8617,7 +8617,7 @@ fn transport_to_node_case_pattern(transport: CasePatternTransport) -> Result<Tra
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "case_pattern",
+        TransportKindId(163) /* "case_pattern" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8635,7 +8635,7 @@ fn transport_to_node_chevron(transport: ChevronTransport) -> Result<TransportNod
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "chevron",
+        TransportKindId(120) /* "chevron" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8660,7 +8660,7 @@ fn transport_to_node_class_definition(transport: ClassDefinitionTransport) -> Re
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "class_definition",
+        TransportKindId(154) /* "class_definition" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8679,7 +8679,7 @@ fn transport_to_node_class_pattern(transport: ClassPatternTransport) -> Result<T
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "class_pattern",
+        TransportKindId(173) /* "class_pattern" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8693,7 +8693,7 @@ fn transport_to_node_class_pattern(transport: ClassPatternTransport) -> Result<T
 
 fn transport_to_node_comment(transport: CommentTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "comment",
+        TransportKindId(99) /* "comment" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8712,7 +8712,7 @@ fn transport_to_node_comparison_operator(transport: ComparisonOperatorTransport)
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "comparison_operator",
+        TransportKindId(195) /* "comparison_operator" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8733,7 +8733,7 @@ fn transport_to_node_complex_pattern(transport: ComplexPatternTransport) -> Resu
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "complex_pattern",
+        TransportKindId(174) /* "complex_pattern" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8750,7 +8750,7 @@ fn transport_to_node_concatenated_string(transport: ConcatenatedStringTransport)
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "concatenated_string",
+        TransportKindId(230) /* "concatenated_string" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8770,7 +8770,7 @@ fn transport_to_node_conditional_expression(transport: ConditionalExpressionTran
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "conditional_expression",
+        TransportKindId(229) /* "conditional_expression" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8789,7 +8789,7 @@ fn transport_to_node_constrained_type(transport: ConstrainedTypeTransport) -> Re
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "constrained_type",
+        TransportKindId(212) /* "constrained_type" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8803,7 +8803,7 @@ fn transport_to_node_constrained_type(transport: ConstrainedTypeTransport) -> Re
 
 fn transport_to_node_continue_statement(transport: ContinueStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "continue_statement",
+        TransportKindId(130) /* "continue_statement" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8821,7 +8821,7 @@ fn transport_to_node_decorated_definition(transport: DecoratedDefinitionTranspor
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "decorated_definition",
+        TransportKindId(158) /* "decorated_definition" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8842,7 +8842,7 @@ fn transport_to_node_decorator(transport: DecoratorTransport) -> Result<Transpor
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "decorator",
+        TransportKindId(159) /* "decorator" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8861,7 +8861,7 @@ fn transport_to_node_default_parameter(transport: DefaultParameterTransport) -> 
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "default_parameter",
+        TransportKindId(181) /* "default_parameter" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8878,7 +8878,7 @@ fn transport_to_node_delete_statement(transport: DeleteStatementTransport) -> Re
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "delete_statement",
+        TransportKindId(126) /* "delete_statement" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8895,7 +8895,7 @@ fn transport_to_node_dict_pattern(transport: DictPatternTransport) -> Result<Tra
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "dict_pattern",
+        TransportKindId(169) /* "dict_pattern" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8912,7 +8912,7 @@ fn transport_to_node_dictionary(transport: DictionaryTransport) -> Result<Transp
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "dictionary",
+        TransportKindId(218) /* "dictionary" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8930,7 +8930,7 @@ fn transport_to_node_dictionary_comprehension(transport: DictionaryComprehension
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "dictionary_comprehension",
+        TransportKindId(221) /* "dictionary_comprehension" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8948,7 +8948,7 @@ fn transport_to_node_dictionary_splat(transport: DictionarySplatTransport) -> Re
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "dictionary_splat",
+        TransportKindId(149) /* "dictionary_splat" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8965,7 +8965,7 @@ fn transport_to_node_dictionary_splat_pattern(transport: DictionarySplatPatternT
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "dictionary_splat_pattern",
+        TransportKindId(184) /* "dictionary_splat_pattern" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -8982,7 +8982,7 @@ fn transport_to_node_dotted_name(transport: DottedNameTransport) -> Result<Trans
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "dotted_name",
+        TransportKindId(162) /* "dotted_name" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9001,7 +9001,7 @@ fn transport_to_node_elif_clause(transport: ElifClauseTransport) -> Result<Trans
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "elif_clause",
+        TransportKindId(132) /* "elif_clause" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9015,7 +9015,7 @@ fn transport_to_node_elif_clause(transport: ElifClauseTransport) -> Result<Trans
 
 fn transport_to_node_ellipsis2(transport: Ellipsis2Transport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "ellipsis",
+        TransportKindId(87) /* "ellipsis" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9033,7 +9033,7 @@ fn transport_to_node_else_clause(transport: ElseClauseTransport) -> Result<Trans
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "else_clause",
+        TransportKindId(133) /* "else_clause" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9047,7 +9047,7 @@ fn transport_to_node_else_clause(transport: ElseClauseTransport) -> Result<Trans
 
 fn transport_to_node_escape_sequence(transport: EscapeSequenceTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "escape_sequence",
+        TransportKindId(89) /* "escape_sequence" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9070,7 +9070,7 @@ fn transport_to_node_except_clause(transport: ExceptClauseTransport) -> Result<T
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "except_clause",
+        TransportKindId(140) /* "except_clause" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9091,7 +9091,7 @@ fn transport_to_node_exec_statement(transport: ExecStatementTransport) -> Result
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "exec_statement",
+        TransportKindId(152) /* "exec_statement" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9108,7 +9108,7 @@ fn transport_to_node_expression_list(transport: ExpressionListTransport) -> Resu
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "expression_list",
+        TransportKindId(161) /* "expression_list" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9125,7 +9125,7 @@ fn transport_to_node_expression_statement_tuple(transport: ExpressionStatementTu
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "expression_statement_tuple",
+        TransportKindId(243) /* "expression_statement_tuple" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9148,7 +9148,7 @@ fn transport_to_node_expression_statement_uform_tuple(transport: ExpressionState
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "expression_statement",
+        TransportKindId(122) /* "expression_statement" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9162,7 +9162,7 @@ fn transport_to_node_expression_statement_uform_tuple(transport: ExpressionState
 
 fn transport_to_node_false(transport: FalseTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "false",
+        TransportKindId(97) /* "false" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9180,7 +9180,7 @@ fn transport_to_node_finally_clause(transport: FinallyClauseTransport) -> Result
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "finally_clause",
+        TransportKindId(141) /* "finally_clause" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9194,7 +9194,7 @@ fn transport_to_node_finally_clause(transport: FinallyClauseTransport) -> Result
 
 fn transport_to_node_float(transport: FloatTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "float",
+        TransportKindId(94) /* "float" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9216,7 +9216,7 @@ fn transport_to_node_for_in_clause(transport: ForInClauseTransport) -> Result<Tr
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "for_in_clause",
+        TransportKindId(227) /* "for_in_clause" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9242,7 +9242,7 @@ fn transport_to_node_for_statement(transport: ForStatementTransport) -> Result<T
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "for_statement",
+        TransportKindId(137) /* "for_statement" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9259,7 +9259,7 @@ fn transport_to_node_format_specifier(transport: FormatSpecifierTransport) -> Re
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "format_specifier",
+        TransportKindId(236) /* "format_specifier" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9288,7 +9288,7 @@ fn transport_to_node_function_definition(transport: FunctionDefinitionTransport)
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "function_definition",
+        TransportKindId(145) /* "function_definition" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9306,7 +9306,7 @@ fn transport_to_node_future_import_statement(transport: FutureImportStatementTra
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "future_import_statement",
+        TransportKindId(114) /* "future_import_statement" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9324,7 +9324,7 @@ fn transport_to_node_generator_expression(transport: GeneratorExpressionTranspor
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "generator_expression",
+        TransportKindId(223) /* "generator_expression" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9343,7 +9343,7 @@ fn transport_to_node_generic_type(transport: GenericTypeTransport) -> Result<Tra
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "generic_type",
+        TransportKindId(210) /* "generic_type" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9360,7 +9360,7 @@ fn transport_to_node_global_statement(transport: GlobalStatementTransport) -> Re
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "global_statement",
+        TransportKindId(150) /* "global_statement" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9374,7 +9374,7 @@ fn transport_to_node_global_statement(transport: GlobalStatementTransport) -> Re
 
 fn transport_to_node_identifier(transport: IdentifierTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "identifier",
+        TransportKindId(1) /* "identifier" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9392,7 +9392,7 @@ fn transport_to_node_if_clause(transport: IfClauseTransport) -> Result<Transport
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "if_clause",
+        TransportKindId(228) /* "if_clause" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9414,7 +9414,7 @@ fn transport_to_node_if_statement(transport: IfStatementTransport) -> Result<Tra
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "if_statement",
+        TransportKindId(131) /* "if_statement" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9432,7 +9432,7 @@ fn transport_to_node_import_from_statement(transport: ImportFromStatementTranspo
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "import_from_statement",
+        TransportKindId(115) /* "import_from_statement" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9446,7 +9446,7 @@ fn transport_to_node_import_from_statement(transport: ImportFromStatementTranspo
 
 fn transport_to_node_import_prefix(transport: ImportPrefixTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "import_prefix",
+        TransportKindId(112) /* "import_prefix" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9464,7 +9464,7 @@ fn transport_to_node_import_statement(transport: ImportStatementTransport) -> Re
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "import_statement",
+        TransportKindId(111) /* "import_statement" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9478,7 +9478,7 @@ fn transport_to_node_import_statement(transport: ImportStatementTransport) -> Re
 
 fn transport_to_node_integer(transport: IntegerTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "integer",
+        TransportKindId(93) /* "integer" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9502,7 +9502,7 @@ fn transport_to_node_interpolation(transport: InterpolationTransport) -> Result<
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "interpolation",
+        TransportKindId(233) /* "interpolation" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9521,7 +9521,7 @@ fn transport_to_node_keyword_argument(transport: KeywordArgumentTransport) -> Re
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "keyword_argument",
+        TransportKindId(214) /* "keyword_argument" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9540,7 +9540,7 @@ fn transport_to_node_keyword_pattern(transport: KeywordPatternTransport) -> Resu
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "keyword_pattern",
+        TransportKindId(171) /* "keyword_pattern" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9554,7 +9554,7 @@ fn transport_to_node_keyword_pattern(transport: KeywordPatternTransport) -> Resu
 
 fn transport_to_node_keyword_separator(transport: KeywordSeparatorTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "keyword_separator",
+        TransportKindId(239) /* "keyword_separator" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9575,7 +9575,7 @@ fn transport_to_node_lambda(transport: LambdaTransport) -> Result<TransportNodeD
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "lambda",
+        TransportKindId(196) /* "lambda" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9592,7 +9592,7 @@ fn transport_to_node_lambda_parameters(transport: LambdaParametersTransport) -> 
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "lambda_parameters",
+        TransportKindId(147) /* "lambda_parameters" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9613,7 +9613,7 @@ fn transport_to_node_lambda_within_for_in_clause(transport: LambdaWithinForInCla
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "lambda_within_for_in_clause",
+        TransportKindId(197) /* "lambda_within_for_in_clause" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9627,7 +9627,7 @@ fn transport_to_node_lambda_within_for_in_clause(transport: LambdaWithinForInCla
 
 fn transport_to_node_line_continuation(transport: LineContinuationTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "line_continuation",
+        TransportKindId(100) /* "line_continuation" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9644,7 +9644,7 @@ fn transport_to_node_list(transport: ListTransport) -> Result<TransportNodeData,
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "list",
+        TransportKindId(215) /* "list" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9662,7 +9662,7 @@ fn transport_to_node_list_comprehension(transport: ListComprehensionTransport) -
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "list_comprehension",
+        TransportKindId(220) /* "list_comprehension" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9679,7 +9679,7 @@ fn transport_to_node_list_pattern(transport: ListPatternTransport) -> Result<Tra
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "list_pattern",
+        TransportKindId(180) /* "list_pattern" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9697,7 +9697,7 @@ fn transport_to_node_list_splat(transport: ListSplatTransport) -> Result<Transpo
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "list_splat",
+        TransportKindId(148) /* "list_splat" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9714,7 +9714,7 @@ fn transport_to_node_list_splat_pattern(transport: ListSplatPatternTransport) ->
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "list_splat_pattern",
+        TransportKindId(183) /* "list_splat_pattern" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9733,7 +9733,7 @@ fn transport_to_node_match_statement(transport: MatchStatementTransport) -> Resu
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "match_statement",
+        TransportKindId(134) /* "match_statement" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9752,7 +9752,7 @@ fn transport_to_node_member_type(transport: MemberTypeTransport) -> Result<Trans
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "member_type",
+        TransportKindId(213) /* "member_type" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9769,7 +9769,7 @@ fn transport_to_node_module(transport: ModuleTransport) -> Result<TransportNodeD
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "module",
+        TransportKindId(108) /* "module" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9788,7 +9788,7 @@ fn transport_to_node_named_expression(transport: NamedExpressionTransport) -> Re
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "named_expression",
+        TransportKindId(123) /* "named_expression" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9802,7 +9802,7 @@ fn transport_to_node_named_expression(transport: NamedExpressionTransport) -> Re
 
 fn transport_to_node_none(transport: NoneTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "none",
+        TransportKindId(98) /* "none" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9819,7 +9819,7 @@ fn transport_to_node_nonlocal_statement(transport: NonlocalStatementTransport) -
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "nonlocal_statement",
+        TransportKindId(151) /* "nonlocal_statement" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9837,7 +9837,7 @@ fn transport_to_node_not_operator(transport: NotOperatorTransport) -> Result<Tra
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "not_operator",
+        TransportKindId(189) /* "not_operator" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9856,7 +9856,7 @@ fn transport_to_node_pair(transport: PairTransport) -> Result<TransportNodeData,
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "pair",
+        TransportKindId(219) /* "pair" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9873,7 +9873,7 @@ fn transport_to_node_parameters(transport: ParametersTransport) -> Result<Transp
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "parameters",
+        TransportKindId(146) /* "parameters" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9890,7 +9890,7 @@ fn transport_to_node_parenthesized_expression(transport: ParenthesizedExpression
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "parenthesized_expression",
+        TransportKindId(225) /* "parenthesized_expression" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9907,7 +9907,7 @@ fn transport_to_node_parenthesized_list_splat(transport: ParenthesizedListSplatT
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "parenthesized_list_splat",
+        TransportKindId(156) /* "parenthesized_list_splat" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9921,7 +9921,7 @@ fn transport_to_node_parenthesized_list_splat(transport: ParenthesizedListSplatT
 
 fn transport_to_node_pass_statement(transport: PassStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "pass_statement",
+        TransportKindId(128) /* "pass_statement" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9938,7 +9938,7 @@ fn transport_to_node_pattern_list(transport: PatternListTransport) -> Result<Tra
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "pattern_list",
+        TransportKindId(200) /* "pattern_list" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9952,7 +9952,7 @@ fn transport_to_node_pattern_list(transport: PatternListTransport) -> Result<Tra
 
 fn transport_to_node_positional_separator(transport: PositionalSeparatorTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "positional_separator",
+        TransportKindId(238) /* "positional_separator" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9973,7 +9973,7 @@ fn transport_to_node_print_statement(transport: PrintStatementTransport) -> Resu
         None => None,
     };
     Ok(transport_node_data(
-        "print_statement",
+        TransportKindId(119) /* "print_statement" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -9996,7 +9996,7 @@ fn transport_to_node_raise_statement(transport: RaiseStatementTransport) -> Resu
         None => None,
     };
     Ok(transport_node_data(
-        "raise_statement",
+        TransportKindId(127) /* "raise_statement" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10017,7 +10017,7 @@ fn transport_to_node_relative_import(transport: RelativeImportTransport) -> Resu
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "relative_import",
+        TransportKindId(113) /* "relative_import" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10037,7 +10037,7 @@ fn transport_to_node_return_statement(transport: ReturnStatementTransport) -> Re
         None => None,
     };
     Ok(transport_node_data(
-        "return_statement",
+        TransportKindId(125) /* "return_statement" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10054,7 +10054,7 @@ fn transport_to_node_set(transport: SetTransport) -> Result<TransportNodeData, :
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "set",
+        TransportKindId(216) /* "set" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10072,7 +10072,7 @@ fn transport_to_node_set_comprehension(transport: SetComprehensionTransport) -> 
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "set_comprehension",
+        TransportKindId(222) /* "set_comprehension" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10098,7 +10098,7 @@ fn transport_to_node_slice(transport: SliceTransport) -> Result<TransportNodeDat
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "slice",
+        TransportKindId(205) /* "slice" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10116,7 +10116,7 @@ fn transport_to_node_splat_pattern(transport: SplatPatternTransport) -> Result<T
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "splat_pattern",
+        TransportKindId(172) /* "splat_pattern" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10134,7 +10134,7 @@ fn transport_to_node_splat_type(transport: SplatTypeTransport) -> Result<Transpo
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "splat_type",
+        TransportKindId(209) /* "splat_type" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10154,7 +10154,7 @@ fn transport_to_node_string(transport: StringTransport) -> Result<TransportNodeD
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "string",
+        TransportKindId(231) /* "string" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10171,7 +10171,7 @@ fn transport_to_node_string_content(transport: StringContentTransport) -> Result
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "string_content",
+        TransportKindId(232) /* "string_content" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10190,7 +10190,7 @@ fn transport_to_node_subscript(transport: SubscriptTransport) -> Result<Transpor
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "subscript",
+        TransportKindId(204) /* "subscript" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10204,7 +10204,7 @@ fn transport_to_node_subscript(transport: SubscriptTransport) -> Result<Transpor
 
 fn transport_to_node_true(transport: TrueTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "true",
+        TransportKindId(96) /* "true" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10229,7 +10229,7 @@ fn transport_to_node_try_statement(transport: TryStatementTransport) -> Result<T
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "try_statement",
+        TransportKindId(139) /* "try_statement" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10246,7 +10246,7 @@ fn transport_to_node_tuple(transport: TupleTransport) -> Result<TransportNodeDat
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "tuple",
+        TransportKindId(217) /* "tuple" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10263,7 +10263,7 @@ fn transport_to_node_tuple_pattern(transport: TuplePatternTransport) -> Result<T
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "tuple_pattern",
+        TransportKindId(179) /* "tuple_pattern" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10280,7 +10280,7 @@ fn transport_to_node_type(transport: TypeTransport) -> Result<TransportNodeData,
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "type",
+        TransportKindId(208) /* "type" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10300,7 +10300,7 @@ fn transport_to_node_type_alias_statement(transport: TypeAliasStatementTransport
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "type_alias_statement",
+        TransportKindId(153) /* "type_alias_statement" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10314,7 +10314,7 @@ fn transport_to_node_type_alias_statement(transport: TypeAliasStatementTransport
 
 fn transport_to_node_type_conversion(transport: TypeConversionTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "type_conversion",
+        TransportKindId(92) /* "type_conversion" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10331,7 +10331,7 @@ fn transport_to_node_type_parameter(transport: TypeParameterTransport) -> Result
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "type_parameter",
+        TransportKindId(155) /* "type_parameter" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10351,7 +10351,7 @@ fn transport_to_node_typed_default_parameter(transport: TypedDefaultParameterTra
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "typed_default_parameter",
+        TransportKindId(182) /* "typed_default_parameter" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10369,7 +10369,7 @@ fn transport_to_node_typed_parameter(transport: TypedParameterTransport) -> Resu
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "typed_parameter",
+        TransportKindId(207) /* "typed_parameter" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10388,7 +10388,7 @@ fn transport_to_node_unary_operator(transport: UnaryOperatorTransport) -> Result
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "unary_operator",
+        TransportKindId(192) /* "unary_operator" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10405,7 +10405,7 @@ fn transport_to_node_union_pattern(transport: UnionPatternTransport) -> Result<T
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "union_pattern",
+        TransportKindId(166) /* "union_pattern" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10424,7 +10424,7 @@ fn transport_to_node_union_type(transport: UnionTypeTransport) -> Result<Transpo
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "union_type",
+        TransportKindId(211) /* "union_type" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10446,7 +10446,7 @@ fn transport_to_node_while_statement(transport: WhileStatementTransport) -> Resu
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "while_statement",
+        TransportKindId(138) /* "while_statement" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10460,7 +10460,7 @@ fn transport_to_node_while_statement(transport: WhileStatementTransport) -> Resu
 
 fn transport_to_node_wildcard_import(transport: WildcardImportTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "wildcard_import",
+        TransportKindId(118) /* "wildcard_import" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10477,7 +10477,7 @@ fn transport_to_node_with_clause_bare(transport: WithClauseBareTransport) -> Res
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "with_clause_bare",
+        TransportKindId(244) /* "with_clause_bare" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10494,7 +10494,7 @@ fn transport_to_node_with_clause_paren(transport: WithClauseParenTransport) -> R
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "with_clause_paren",
+        TransportKindId(245) /* "with_clause_paren" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10518,7 +10518,7 @@ fn transport_to_node_with_clause_uform_bare(transport: WithClauseUFormBareTransp
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "with_clause",
+        TransportKindId(143) /* "with_clause" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10535,7 +10535,7 @@ fn transport_to_node_with_clause_uform_paren(transport: WithClauseUFormParenTran
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "with_clause",
+        TransportKindId(143) /* "with_clause" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10553,7 +10553,7 @@ fn transport_to_node_with_item(transport: WithItemTransport) -> Result<Transport
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "with_item",
+        TransportKindId(144) /* "with_item" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10575,7 +10575,7 @@ fn transport_to_node_with_statement(transport: WithStatementTransport) -> Result
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        "with_statement",
+        TransportKindId(142) /* "with_statement" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10592,7 +10592,7 @@ fn transport_to_node_yield(transport: YieldTransport) -> Result<TransportNodeDat
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
     Ok(transport_node_data(
-        "yield",
+        TransportKindId(202) /* "yield" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10606,7 +10606,7 @@ fn transport_to_node_yield(transport: YieldTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_newline(transport: NewlineTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "_newline",
+        TransportKindId(101) /* "_newline" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10620,7 +10620,7 @@ fn transport_to_node_newline(transport: NewlineTransport) -> Result<TransportNod
 
 fn transport_to_node_indent(transport: IndentTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "_indent",
+        TransportKindId(102) /* "_indent" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10634,7 +10634,7 @@ fn transport_to_node_indent(transport: IndentTransport) -> Result<TransportNodeD
 
 fn transport_to_node_dedent(transport: DedentTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "_dedent",
+        TransportKindId(103) /* "_dedent" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10648,7 +10648,7 @@ fn transport_to_node_dedent(transport: DedentTransport) -> Result<TransportNodeD
 
 fn transport_to_node_string_start(transport: StringStartTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "string_start",
+        TransportKindId(104) /* "string_start" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10662,7 +10662,7 @@ fn transport_to_node_string_start(transport: StringStartTransport) -> Result<Tra
 
 fn transport_to_node__string_content(transport: _StringContentTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "_string_content",
+        TransportKindId(105) /* "_string_content" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10676,7 +10676,7 @@ fn transport_to_node__string_content(transport: _StringContentTransport) -> Resu
 
 fn transport_to_node_escape_interpolation(transport: EscapeInterpolationTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "escape_interpolation",
+        TransportKindId(106) /* "escape_interpolation" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10690,7 +10690,7 @@ fn transport_to_node_escape_interpolation(transport: EscapeInterpolationTranspor
 
 fn transport_to_node_string_end(transport: StringEndTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "string_end",
+        TransportKindId(107) /* "string_end" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10704,7 +10704,7 @@ fn transport_to_node_string_end(transport: StringEndTransport) -> Result<Transpo
 
 fn transport_to_node_close_bracket(transport: CloseBracketTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "]",
+        TransportKindId(46) /* "]" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10718,7 +10718,7 @@ fn transport_to_node_close_bracket(transport: CloseBracketTransport) -> Result<T
 
 fn transport_to_node_close_paren(transport: CloseParenTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        ")",
+        TransportKindId(8) /* ")" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10732,7 +10732,7 @@ fn transport_to_node_close_paren(transport: CloseParenTransport) -> Result<Trans
 
 fn transport_to_node_close_brace(transport: CloseBraceTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "}",
+        TransportKindId(51) /* "}" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10746,7 +10746,7 @@ fn transport_to_node_close_brace(transport: CloseBraceTransport) -> Result<Trans
 
 fn transport_to_node_except(transport: ExceptTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "except",
+        TransportKindId(33) /* "except" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10760,7 +10760,7 @@ fn transport_to_node_except(transport: ExceptTransport) -> Result<TransportNodeD
 
 fn transport_to_node_as(transport: AsTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "as",
+        TransportKindId(10) /* "as" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10774,7 +10774,7 @@ fn transport_to_node_as(transport: AsTransport) -> Result<TransportNodeData, ::a
 
 fn transport_to_node_eq(transport: EqTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "=",
+        TransportKindId(43) /* "=" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10788,7 +10788,7 @@ fn transport_to_node_eq(transport: EqTransport) -> Result<TransportNodeData, ::a
 
 fn transport_to_node_colon(transport: ColonTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        ":",
+        TransportKindId(23) /* ":" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10802,7 +10802,7 @@ fn transport_to_node_colon(transport: ColonTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_async(transport: AsyncTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "async",
+        TransportKindId(28) /* "async" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10816,7 +10816,7 @@ fn transport_to_node_async(transport: AsyncTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_bracket(transport: BracketTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "[",
+        TransportKindId(45) /* "[" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10830,7 +10830,7 @@ fn transport_to_node_bracket(transport: BracketTransport) -> Result<TransportNod
 
 fn transport_to_node_tok_bs(transport: TokBsTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "\\",
+        TransportKindId(90) /* "\\" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10844,7 +10844,7 @@ fn transport_to_node_tok_bs(transport: TokBsTransport) -> Result<TransportNodeDa
 
 fn transport_to_node_minus(transport: MinusTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "-",
+        TransportKindId(53) /* "-" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10858,7 +10858,7 @@ fn transport_to_node_minus(transport: MinusTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_paren(transport: ParenTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "(",
+        TransportKindId(7) /* "(" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10872,7 +10872,7 @@ fn transport_to_node_paren(transport: ParenTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_comma(transport: CommaTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        ",",
+        TransportKindId(9) /* "," */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10886,7 +10886,7 @@ fn transport_to_node_comma(transport: CommaTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_assert(transport: AssertTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "assert",
+        TransportKindId(14) /* "assert" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10900,7 +10900,7 @@ fn transport_to_node_assert(transport: AssertTransport) -> Result<TransportNodeD
 
 fn transport_to_node_dot(transport: DotTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        ".",
+        TransportKindId(4) /* "." */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10914,7 +10914,7 @@ fn transport_to_node_dot(transport: DotTransport) -> Result<TransportNodeData, :
 
 fn transport_to_node_plus(transport: PlusTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "+",
+        TransportKindId(52) /* "+" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10928,7 +10928,7 @@ fn transport_to_node_plus(transport: PlusTransport) -> Result<TransportNodeData,
 
 fn transport_to_node_star(transport: StarTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "*",
+        TransportKindId(11) /* "*" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10942,7 +10942,7 @@ fn transport_to_node_star(transport: StarTransport) -> Result<TransportNodeData,
 
 fn transport_to_node_at(transport: AtTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "@",
+        TransportKindId(47) /* "@" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10956,7 +10956,7 @@ fn transport_to_node_at(transport: AtTransport) -> Result<TransportNodeData, ::a
 
 fn transport_to_node_slash(transport: SlashTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "/",
+        TransportKindId(57) /* "/" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10970,7 +10970,7 @@ fn transport_to_node_slash(transport: SlashTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_percent(transport: PercentTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "%",
+        TransportKindId(58) /* "%" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10984,7 +10984,7 @@ fn transport_to_node_percent(transport: PercentTransport) -> Result<TransportNod
 
 fn transport_to_node_slashslash(transport: SlashslashTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "//",
+        TransportKindId(59) /* "//" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -10998,7 +10998,7 @@ fn transport_to_node_slashslash(transport: SlashslashTransport) -> Result<Transp
 
 fn transport_to_node_starstar(transport: StarstarTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "**",
+        TransportKindId(39) /* "**" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11012,7 +11012,7 @@ fn transport_to_node_starstar(transport: StarstarTransport) -> Result<TransportN
 
 fn transport_to_node_pipe(transport: PipeTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "|",
+        TransportKindId(49) /* "|" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11026,7 +11026,7 @@ fn transport_to_node_pipe(transport: PipeTransport) -> Result<TransportNodeData,
 
 fn transport_to_node_amp(transport: AmpTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "&",
+        TransportKindId(60) /* "&" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11040,7 +11040,7 @@ fn transport_to_node_amp(transport: AmpTransport) -> Result<TransportNodeData, :
 
 fn transport_to_node_caret(transport: CaretTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "^",
+        TransportKindId(61) /* "^" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11054,7 +11054,7 @@ fn transport_to_node_caret(transport: CaretTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_shl(transport: ShlTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "<<",
+        TransportKindId(62) /* "<<" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11068,7 +11068,7 @@ fn transport_to_node_shl(transport: ShlTransport) -> Result<TransportNodeData, :
 
 fn transport_to_node_shr(transport: ShrTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        ">>",
+        TransportKindId(13) /* ">>" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11082,7 +11082,7 @@ fn transport_to_node_shr(transport: ShrTransport) -> Result<TransportNodeData, :
 
 fn transport_to_node_and(transport: AndTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "and",
+        TransportKindId(55) /* "and" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11096,7 +11096,7 @@ fn transport_to_node_and(transport: AndTransport) -> Result<TransportNodeData, :
 
 fn transport_to_node_or(transport: OrTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "or",
+        TransportKindId(56) /* "or" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11110,7 +11110,7 @@ fn transport_to_node_or(transport: OrTransport) -> Result<TransportNodeData, ::a
 
 fn transport_to_node_break(transport: BreakTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "break",
+        TransportKindId(20) /* "break" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11124,7 +11124,7 @@ fn transport_to_node_break(transport: BreakTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_case(transport: CaseTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "case",
+        TransportKindId(27) /* "case" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11138,7 +11138,7 @@ fn transport_to_node_case(transport: CaseTransport) -> Result<TransportNodeData,
 
 fn transport_to_node_class(transport: ClassTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "class",
+        TransportKindId(44) /* "class" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11152,7 +11152,7 @@ fn transport_to_node_class(transport: ClassTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_if(transport: IfTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "if",
+        TransportKindId(22) /* "if" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11166,7 +11166,7 @@ fn transport_to_node_if(transport: IfTransport) -> Result<TransportNodeData, ::a
 
 fn transport_to_node_else(transport: ElseTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "else",
+        TransportKindId(25) /* "else" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11180,7 +11180,7 @@ fn transport_to_node_else(transport: ElseTransport) -> Result<TransportNodeData,
 
 fn transport_to_node_continue(transport: ContinueTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "continue",
+        TransportKindId(21) /* "continue" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11194,7 +11194,7 @@ fn transport_to_node_continue(transport: ContinueTransport) -> Result<TransportN
 
 fn transport_to_node_del(transport: DelTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "del",
+        TransportKindId(17) /* "del" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11208,7 +11208,7 @@ fn transport_to_node_del(transport: DelTransport) -> Result<TransportNodeData, :
 
 fn transport_to_node_brace(transport: BraceTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "{",
+        TransportKindId(50) /* "{" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11222,7 +11222,7 @@ fn transport_to_node_brace(transport: BraceTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_elif(transport: ElifTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "elif",
+        TransportKindId(24) /* "elif" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11236,7 +11236,7 @@ fn transport_to_node_elif(transport: ElifTransport) -> Result<TransportNodeData,
 
 fn transport_to_node_ellipsis(transport: EllipsisTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "...",
+        TransportKindId(0) /* "..." — no parser symbol */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11250,7 +11250,7 @@ fn transport_to_node_ellipsis(transport: EllipsisTransport) -> Result<TransportN
 
 fn transport_to_node_exec(transport: ExecTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "exec",
+        TransportKindId(42) /* "exec" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11264,7 +11264,7 @@ fn transport_to_node_exec(transport: ExecTransport) -> Result<TransportNodeData,
 
 fn transport_to_node_in(transport: InTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "in",
+        TransportKindId(30) /* "in" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11278,7 +11278,7 @@ fn transport_to_node_in(transport: InTransport) -> Result<TransportNodeData, ::a
 
 fn transport_to_node_false2(transport: False2Transport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "False",
+        TransportKindId(0) /* "False" — no parser symbol */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11292,7 +11292,7 @@ fn transport_to_node_false2(transport: False2Transport) -> Result<TransportNodeD
 
 fn transport_to_node_finally(transport: FinallyTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "finally",
+        TransportKindId(35) /* "finally" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11306,7 +11306,7 @@ fn transport_to_node_finally(transport: FinallyTransport) -> Result<TransportNod
 
 fn transport_to_node_for(transport: ForTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "for",
+        TransportKindId(29) /* "for" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11320,7 +11320,7 @@ fn transport_to_node_for(transport: ForTransport) -> Result<TransportNodeData, :
 
 fn transport_to_node_def(transport: DefTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "def",
+        TransportKindId(37) /* "def" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11334,7 +11334,7 @@ fn transport_to_node_def(transport: DefTransport) -> Result<TransportNodeData, :
 
 fn transport_to_node_arrow(transport: ArrowTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "->",
+        TransportKindId(38) /* "->" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11348,7 +11348,7 @@ fn transport_to_node_arrow(transport: ArrowTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_from(transport: FromTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "from",
+        TransportKindId(5) /* "from" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11362,7 +11362,7 @@ fn transport_to_node_from(transport: FromTransport) -> Result<TransportNodeData,
 
 fn transport_to_node_future_u(transport: FutureUTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "__future__",
+        TransportKindId(6) /* "__future__" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11376,7 +11376,7 @@ fn transport_to_node_future_u(transport: FutureUTransport) -> Result<TransportNo
 
 fn transport_to_node_import(transport: ImportTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "import",
+        TransportKindId(3) /* "import" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11390,7 +11390,7 @@ fn transport_to_node_import(transport: ImportTransport) -> Result<TransportNodeD
 
 fn transport_to_node_global(transport: GlobalTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "global",
+        TransportKindId(40) /* "global" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11404,7 +11404,7 @@ fn transport_to_node_global(transport: GlobalTransport) -> Result<TransportNodeD
 
 fn transport_to_node_match(transport: MatchTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "match",
+        TransportKindId(26) /* "match" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11418,7 +11418,7 @@ fn transport_to_node_match(transport: MatchTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_coloneq(transport: ColoneqTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        ":=",
+        TransportKindId(15) /* ":=" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11432,7 +11432,7 @@ fn transport_to_node_coloneq(transport: ColoneqTransport) -> Result<TransportNod
 
 fn transport_to_node_none2(transport: None2Transport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "None",
+        TransportKindId(0) /* "None" — no parser symbol */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11446,7 +11446,7 @@ fn transport_to_node_none2(transport: None2Transport) -> Result<TransportNodeDat
 
 fn transport_to_node_nonlocal(transport: NonlocalTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "nonlocal",
+        TransportKindId(41) /* "nonlocal" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11460,7 +11460,7 @@ fn transport_to_node_nonlocal(transport: NonlocalTransport) -> Result<TransportN
 
 fn transport_to_node_not(transport: NotTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "not",
+        TransportKindId(54) /* "not" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11474,7 +11474,7 @@ fn transport_to_node_not(transport: NotTransport) -> Result<TransportNodeData, :
 
 fn transport_to_node_pass(transport: PassTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "pass",
+        TransportKindId(19) /* "pass" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11488,7 +11488,7 @@ fn transport_to_node_pass(transport: PassTransport) -> Result<TransportNodeData,
 
 fn transport_to_node_print(transport: PrintTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "print",
+        TransportKindId(12) /* "print" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11502,7 +11502,7 @@ fn transport_to_node_print(transport: PrintTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_raise(transport: RaiseTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "raise",
+        TransportKindId(18) /* "raise" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11516,7 +11516,7 @@ fn transport_to_node_raise(transport: RaiseTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_return(transport: ReturnTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "return",
+        TransportKindId(16) /* "return" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11530,7 +11530,7 @@ fn transport_to_node_return(transport: ReturnTransport) -> Result<TransportNodeD
 
 fn transport_to_node_anonymous(transport: AnonymousTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "_",
+        TransportKindId(48) /* "_" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11544,7 +11544,7 @@ fn transport_to_node_anonymous(transport: AnonymousTransport) -> Result<Transpor
 
 fn transport_to_node_true2(transport: True2Transport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "True",
+        TransportKindId(0) /* "True" — no parser symbol */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11558,7 +11558,7 @@ fn transport_to_node_true2(transport: True2Transport) -> Result<TransportNodeDat
 
 fn transport_to_node_try(transport: TryTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "try",
+        TransportKindId(32) /* "try" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11572,7 +11572,7 @@ fn transport_to_node_try(transport: TryTransport) -> Result<TransportNodeData, :
 
 fn transport_to_node_while(transport: WhileTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "while",
+        TransportKindId(31) /* "while" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11586,7 +11586,7 @@ fn transport_to_node_while(transport: WhileTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_with(transport: WithTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        "with",
+        TransportKindId(36) /* "with" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -12471,47 +12471,41 @@ impl ResolvedField {
     }
 }
 
-fn separator_for(kind: &str) -> &'static str {
-    match kind {
-        "_with_clause_paren" => ",",
-        "dict_pattern" => ",",
-        "dictionary" => ",",
-        "dotted_name" => ".",
-        "expression_statement_tuple" => ",",
-        "lambda_parameters" => ",",
-        "set" => ",",
-        "type_parameter" => ",",
-        "with_clause_bare" => ",",
-        "with_clause_paren" => ",",
+fn separator_for(kind_id: u16) -> &'static str {
+    match kind_id {
+        245 => ",", // "_with_clause_paren"
+        169 => ",", // "dict_pattern"
+        218 => ",", // "dictionary"
+        162 => ".", // "dotted_name"
+        243 => ",", // "expression_statement_tuple"
+        147 => ",", // "lambda_parameters"
+        216 => ",", // "set"
+        155 => ",", // "type_parameter"
+        244 => ",", // "with_clause_bare"
+        245 => ",", // "with_clause_paren"
         _ => "",
     }
 }
 
-fn variant_for(parent_kind: &str, child_kind: &str) -> Option<&'static str> {
-    match (parent_kind, child_kind) {
-        ("assignment", "assignment__form_eq") => Some("eq"),
-        ("assignment", "assignment__form_type") => Some("type"),
-        ("assignment", "assignment__form_typed") => Some("typed"),
-        ("assignment", "assignment_eq") => Some("eq"),
-        ("assignment", "assignment_type") => Some("eq"),
-        ("assignment", "assignment_typed") => Some("eq"),
-        ("expression_statement", "expression_statement__form_tuple") => Some("tuple"),
-        ("expression_statement", "expression_statement_tuple") => Some("tuple"),
-        ("with_clause", "with_clause__form_bare") => Some("bare"),
-        ("with_clause", "with_clause__form_paren") => Some("paren"),
-        ("with_clause", "with_clause_bare") => Some("bare"),
-        ("with_clause", "with_clause_paren") => Some("bare"),
+fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str> {
+    match (parent_id, child_id) {
+        (198, 240) => Some("eq"), // ("assignment", "assignment_eq")
+        (198, 241) => Some("eq"), // ("assignment", "assignment_type")
+        (198, 242) => Some("eq"), // ("assignment", "assignment_typed")
+        (122, 243) => Some("tuple"), // ("expression_statement", "expression_statement_tuple")
+        (143, 244) => Some("bare"), // ("with_clause", "with_clause_bare")
+        (143, 245) => Some("bare"), // ("with_clause", "with_clause_paren")
         _ => None,
     }
 }
 
-fn first_named_child_kind(node: &NodeData) -> Option<&str> {
-    node.children.as_ref()?.iter().find(|child| child.named).map(|child| child.type_.as_str())
+fn first_named_child_kind_id(node: &NodeData) -> Option<u16> {
+    node.children.as_ref()?.iter().find(|child| child.named).map(|child| child.type_.0)
 }
 
 fn resolve_variant(node: &NodeData) -> &'static str {
-    first_named_child_kind(node)
-        .and_then(|child_kind| variant_for(node.type_.as_str(), child_kind))
+    first_named_child_kind_id(node)
+        .and_then(|child_id| variant_for(node.type_.0, child_id))
         .unwrap_or("")
 }
 
@@ -12665,7 +12659,7 @@ fn resolve_field(node: &NodeData, name: &str, required: bool) -> Result<Resolved
             }
             Ok(ResolvedField::from_items(
                 rendered,
-                separator_for(node.type_.as_str()),
+                separator_for(node.type_.0),
                 false,
                 detect_field_trailing_sep(node, name),
             ))
@@ -12738,7 +12732,7 @@ fn resolve_children(node: &NodeData, consumed_fields: &[&str]) -> Result<Resolve
     }
     Ok(ResolvedField::from_items(
         children,
-        separator_for(node.type_.as_str()),
+        separator_for(node.type_.0),
         leading_sep,
         trailing_sep,
     ))
@@ -14481,124 +14475,123 @@ pub fn render_dispatch(node: &::sittir_core::types::NodeData) -> Result<String, 
             return Ok(text.clone());
         }
     }
-    match node.type_.as_str() {
-        "_as_pattern_target" | "as_pattern_target" => render_hidden_as_pattern_target(node),
-        "_as_pattern" => render_hidden_as_pattern(node),
-        "_assignment_eq" | "assignment_eq" => render_hidden_assignment_eq(node),
-        "_assignment_type" | "assignment_type" => render_hidden_assignment_type(node),
-        "_assignment_typed" | "assignment_typed" => render_hidden_assignment_typed(node),
-        "_comprehension_clauses" | "comprehension_clauses" => render_hidden_comprehension_clauses(node),
-        "_format_expression" | "format_expression" => render_hidden_format_expression(node),
-        "_match_block_block" | "match_block_block" => render_hidden_match_block_block(node),
-        "_match_block" | "match_block" => render_hidden_match_block(node),
-        "_simple_pattern_negative" | "simple_pattern_negative" => render_hidden_simple_pattern_negative(node),
-        "_simple_statements" | "simple_statements" => render_hidden_simple_statements(node),
-        "_suite" | "suite" => render_hidden_suite(node),
-        "_with_clause_paren" => render_hidden_with_clause_paren(node),
-        "aliased_import" => render_aliased_import(node),
-        "argument_list" => render_argument_list(node),
-        "as_pattern" => render_as_pattern(node),
-        "assert_statement" => render_assert_statement(node),
-        "assignment" => render_assignment(node),
-        "attribute" => render_attribute(node),
-        "augmented_assignment" => render_augmented_assignment(node),
-        "await" => render_await(node),
-        "binary_operator" => render_binary_operator(node),
-        "block" => render_block(node),
-        "boolean_operator" => render_boolean_operator(node),
-        "call" => render_call(node),
-        "case_clause" => render_case_clause(node),
-        "case_pattern" => render_case_pattern(node),
-        "chevron" => render_chevron(node),
-        "class_definition" => render_class_definition(node),
-        "class_pattern" => render_class_pattern(node),
-        "comparison_operator" => render_comparison_operator(node),
-        "complex_pattern" => render_complex_pattern(node),
-        "concatenated_string" => render_concatenated_string(node),
-        "conditional_expression" => render_conditional_expression(node),
-        "constrained_type" => render_constrained_type(node),
-        "decorated_definition" => render_decorated_definition(node),
-        "decorator" => render_decorator(node),
-        "default_parameter" => render_default_parameter(node),
-        "delete_statement" => render_delete_statement(node),
-        "dict_pattern" => render_dict_pattern(node),
-        "dictionary_comprehension" => render_dictionary_comprehension(node),
-        "dictionary_splat_pattern" => render_dictionary_splat_pattern(node),
-        "dictionary_splat" => render_dictionary_splat(node),
-        "dictionary" => render_dictionary(node),
-        "dotted_name" => render_dotted_name(node),
-        "elif_clause" => render_elif_clause(node),
-        "else_clause" => render_else_clause(node),
-        "except_clause" => render_except_clause(node),
-        "exec_statement" => render_exec_statement(node),
-        "expression_list" => render_expression_list(node),
-        "expression_statement_tuple" => render_expression_statement_tuple(node),
-        "expression_statement" => render_expression_statement(node),
-        "finally_clause" => render_finally_clause(node),
-        "for_in_clause" => render_for_in_clause(node),
-        "for_statement" => render_for_statement(node),
-        "format_specifier" => render_format_specifier(node),
-        "function_definition" => render_function_definition(node),
-        "future_import_statement" => render_future_import_statement(node),
-        "generator_expression" => render_generator_expression(node),
-        "generic_type" => render_generic_type(node),
-        "global_statement" => render_global_statement(node),
-        "if_clause" => render_if_clause(node),
-        "if_statement" => render_if_statement(node),
-        "import_from_statement" => render_import_from_statement(node),
-        "import_statement" => render_import_statement(node),
-        "interpolation" => render_interpolation(node),
-        "keyword_argument" => render_keyword_argument(node),
-        "keyword_pattern" => render_keyword_pattern(node),
-        "lambda_parameters" => render_lambda_parameters(node),
-        "lambda_within_for_in_clause" => render_lambda_within_for_in_clause(node),
-        "lambda" => render_lambda(node),
-        "list_comprehension" => render_list_comprehension(node),
-        "list_pattern" => render_list_pattern(node),
-        "list_splat_pattern" => render_list_splat_pattern(node),
-        "list_splat" => render_list_splat(node),
-        "list" => render_list(node),
-        "match_statement" => render_match_statement(node),
-        "member_type" => render_member_type(node),
-        "module" => render_module(node),
-        "named_expression" => render_named_expression(node),
-        "nonlocal_statement" => render_nonlocal_statement(node),
-        "not_operator" => render_not_operator(node),
-        "pair" => render_pair(node),
-        "parameters" => render_parameters(node),
-        "parenthesized_expression" => render_parenthesized_expression(node),
-        "parenthesized_list_splat" => render_parenthesized_list_splat(node),
-        "pattern_list" => render_pattern_list(node),
-        "print_statement" => render_print_statement(node),
-        "raise_statement" => render_raise_statement(node),
-        "relative_import" => render_relative_import(node),
-        "return_statement" => render_return_statement(node),
-        "set_comprehension" => render_set_comprehension(node),
-        "set" => render_set(node),
-        "slice" => render_slice(node),
-        "splat_pattern" => render_splat_pattern(node),
-        "splat_type" => render_splat_type(node),
-        "string_content" => render_string_content(node),
-        "string" => render_string(node),
-        "subscript" => render_subscript(node),
-        "try_statement" => render_try_statement(node),
-        "tuple_pattern" => render_tuple_pattern(node),
-        "tuple" => render_tuple(node),
-        "type_alias_statement" => render_type_alias_statement(node),
-        "type_parameter" => render_type_parameter(node),
-        "type" => render_type(node),
-        "typed_default_parameter" => render_typed_default_parameter(node),
-        "typed_parameter" => render_typed_parameter(node),
-        "unary_operator" => render_unary_operator(node),
-        "union_pattern" => render_union_pattern(node),
-        "union_type" => render_union_type(node),
-        "while_statement" => render_while_statement(node),
-        "with_clause_bare" => render_with_clause_bare(node),
-        "with_clause_paren" => render_with_clause_paren(node),
-        "with_clause" => render_with_clause(node),
-        "with_item" => render_with_item(node),
-        "with_statement" => render_with_statement(node),
-        "yield" => render_yield(node),
+    match node.type_.0 {
+        284 => render_hidden_as_pattern_target(node), // "_as_pattern_target" | "as_pattern_target"
+        165 | 185 => render_hidden_as_pattern(node), // "_as_pattern" | "as_pattern"
+        240 => render_hidden_assignment_eq(node), // "_assignment_eq" | "assignment_eq"
+        241 => render_hidden_assignment_type(node), // "_assignment_type" | "assignment_type"
+        242 => render_hidden_assignment_typed(node), // "_assignment_typed" | "assignment_typed"
+        224 => render_hidden_comprehension_clauses(node), // "_comprehension_clauses"
+        285 => render_hidden_format_expression(node), // "_format_expression" | "format_expression"
+        246 => render_hidden_match_block_block(node), // "_match_block_block" | "match_block_block"
+        135 => render_hidden_match_block(node), // "_match_block"
+        248 => render_hidden_simple_pattern_negative(node), // "_simple_pattern_negative" | "simple_pattern_negative"
+        110 => render_hidden_simple_statements(node), // "_simple_statements"
+        245 => render_hidden_with_clause_paren(node), // "_with_clause_paren" | "with_clause_paren"
+        117 => render_aliased_import(node), // "aliased_import"
+        157 => render_argument_list(node), // "argument_list"
+        185 => render_as_pattern(node), // "as_pattern"
+        121 => render_assert_statement(node), // "assert_statement"
+        198 => render_assignment(node), // "assignment"
+        203 => render_attribute(node), // "attribute"
+        199 => render_augmented_assignment(node), // "augmented_assignment"
+        237 => render_await(node), // "await"
+        191 => render_binary_operator(node), // "binary_operator"
+        160 => render_block(node), // "block"
+        190 => render_boolean_operator(node), // "boolean_operator"
+        206 => render_call(node), // "call"
+        136 => render_case_clause(node), // "case_clause"
+        163 => render_case_pattern(node), // "case_pattern"
+        120 => render_chevron(node), // "chevron"
+        154 => render_class_definition(node), // "class_definition"
+        173 => render_class_pattern(node), // "class_pattern"
+        195 => render_comparison_operator(node), // "comparison_operator"
+        174 => render_complex_pattern(node), // "complex_pattern"
+        230 => render_concatenated_string(node), // "concatenated_string"
+        229 => render_conditional_expression(node), // "conditional_expression"
+        212 => render_constrained_type(node), // "constrained_type"
+        158 => render_decorated_definition(node), // "decorated_definition"
+        159 => render_decorator(node), // "decorator"
+        181 => render_default_parameter(node), // "default_parameter"
+        126 => render_delete_statement(node), // "delete_statement"
+        169 => render_dict_pattern(node), // "dict_pattern"
+        221 => render_dictionary_comprehension(node), // "dictionary_comprehension"
+        184 => render_dictionary_splat_pattern(node), // "dictionary_splat_pattern"
+        149 => render_dictionary_splat(node), // "dictionary_splat"
+        218 => render_dictionary(node), // "dictionary"
+        162 => render_dotted_name(node), // "dotted_name"
+        132 => render_elif_clause(node), // "elif_clause"
+        133 => render_else_clause(node), // "else_clause"
+        140 => render_except_clause(node), // "except_clause"
+        152 => render_exec_statement(node), // "exec_statement"
+        161 => render_expression_list(node), // "expression_list"
+        243 => render_expression_statement_tuple(node), // "expression_statement_tuple"
+        122 => render_expression_statement(node), // "expression_statement"
+        141 => render_finally_clause(node), // "finally_clause"
+        227 => render_for_in_clause(node), // "for_in_clause"
+        137 => render_for_statement(node), // "for_statement"
+        236 => render_format_specifier(node), // "format_specifier"
+        145 => render_function_definition(node), // "function_definition"
+        114 => render_future_import_statement(node), // "future_import_statement"
+        223 => render_generator_expression(node), // "generator_expression"
+        210 => render_generic_type(node), // "generic_type"
+        150 => render_global_statement(node), // "global_statement"
+        228 => render_if_clause(node), // "if_clause"
+        131 => render_if_statement(node), // "if_statement"
+        115 => render_import_from_statement(node), // "import_from_statement"
+        111 => render_import_statement(node), // "import_statement"
+        233 => render_interpolation(node), // "interpolation"
+        214 => render_keyword_argument(node), // "keyword_argument"
+        171 => render_keyword_pattern(node), // "keyword_pattern"
+        147 => render_lambda_parameters(node), // "lambda_parameters"
+        197 => render_lambda_within_for_in_clause(node), // "lambda_within_for_in_clause"
+        196 => render_lambda(node), // "lambda"
+        220 => render_list_comprehension(node), // "list_comprehension"
+        180 => render_list_pattern(node), // "list_pattern"
+        183 => render_list_splat_pattern(node), // "list_splat_pattern"
+        148 => render_list_splat(node), // "list_splat"
+        215 => render_list(node), // "list"
+        134 => render_match_statement(node), // "match_statement"
+        213 => render_member_type(node), // "member_type"
+        108 => render_module(node), // "module"
+        123 => render_named_expression(node), // "named_expression"
+        151 => render_nonlocal_statement(node), // "nonlocal_statement"
+        189 => render_not_operator(node), // "not_operator"
+        219 => render_pair(node), // "pair"
+        146 => render_parameters(node), // "parameters"
+        225 => render_parenthesized_expression(node), // "parenthesized_expression"
+        156 => render_parenthesized_list_splat(node), // "parenthesized_list_splat"
+        200 => render_pattern_list(node), // "pattern_list"
+        119 => render_print_statement(node), // "print_statement"
+        127 => render_raise_statement(node), // "raise_statement"
+        113 => render_relative_import(node), // "relative_import"
+        125 => render_return_statement(node), // "return_statement"
+        222 => render_set_comprehension(node), // "set_comprehension"
+        216 => render_set(node), // "set"
+        205 => render_slice(node), // "slice"
+        172 => render_splat_pattern(node), // "splat_pattern"
+        209 => render_splat_type(node), // "splat_type"
+        232 => render_string_content(node), // "string_content"
+        231 => render_string(node), // "string"
+        204 => render_subscript(node), // "subscript"
+        139 => render_try_statement(node), // "try_statement"
+        179 => render_tuple_pattern(node), // "tuple_pattern"
+        217 => render_tuple(node), // "tuple"
+        153 => render_type_alias_statement(node), // "type_alias_statement"
+        155 => render_type_parameter(node), // "type_parameter"
+        208 => render_type(node), // "type"
+        182 => render_typed_default_parameter(node), // "typed_default_parameter"
+        207 => render_typed_parameter(node), // "typed_parameter"
+        192 => render_unary_operator(node), // "unary_operator"
+        166 => render_union_pattern(node), // "union_pattern"
+        211 => render_union_type(node), // "union_type"
+        138 => render_while_statement(node), // "while_statement"
+        244 => render_with_clause_bare(node), // "with_clause_bare"
+        245 => render_with_clause_paren(node), // "with_clause_paren"
+        143 => render_with_clause(node), // "with_clause"
+        144 => render_with_item(node), // "with_item"
+        142 => render_with_statement(node), // "with_statement"
+        202 => render_yield(node), // "yield"
         _ => token_shaped_fallback(node),
     }
 }

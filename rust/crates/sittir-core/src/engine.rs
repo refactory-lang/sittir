@@ -244,8 +244,11 @@ mod tests {
     }
 
     fn node(source: Source) -> NodeData {
+        // KindId(1) is the `identifier` symbol in the Rust grammar (see
+        // kind_ids.rs); used for test assertions. The render fn below formats
+        // the numeric id — tests assert on the number, not the name.
         NodeData {
-            type_: "identifier".to_string(),
+            type_: crate::types::KindId(1),
             source,
             named: true,
             fields: None,
@@ -262,7 +265,8 @@ mod tests {
 
         let rendered = engine.render_node_data(node(Source::Factory)).unwrap();
 
-        assert_eq!(rendered, "<<rendered:identifier>>");
+        // KindId(1) Display → "1"; the TestGrammar render fn formats the KindId.
+        assert_eq!(rendered, "<<rendered:1>>");
     }
 
     #[test]

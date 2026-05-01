@@ -2218,11 +2218,11 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_index_signature_mapped_type_clause': (d, t) => wrap_IndexSignatureMappedTypeClause(d, t),
   '_interface_body': (d, t) => wrapInterfaceBody(d, t),
   '_jsx_string': (d, t) => wrapJsxString(d, t),
-  '_kw_abstract_marker': (d) => d,
+  '_kw_abstract_marker': (d) => ({ ...d, $type: TSKindId.KwAbstractMarker as number }),
   '_kw_async_marker': (d) => d,
-  '_kw_const_marker': (d) => d,
+  '_kw_const_marker': (d) => ({ ...d, $type: TSKindId.KwConstMarker as number }),
   '_kw_readonly_marker': (d) => d,
-  '_kw_static_marker': (d) => d,
+  '_kw_static_marker': (d) => ({ ...d, $type: TSKindId.KwStaticMarker as number }),
   '_lhs_expression': (d, t) => wrapLhsExpression(d, t),
   '_parenthesized_expression_sequence': (d, t) => wrap_ParenthesizedExpressionSequence(d, t),
   '_property_identifier': (d, t) => wrapPropertyIdentifier(d, t),
@@ -2237,7 +2237,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_type_identifier': (d, t) => wrapTypeIdentifier(d, t),
   'abstract_class_declaration': (d, t) => wrapAbstractClassDeclaration(d, t),
   'abstract_method_signature': (d, t) => wrapAbstractMethodSignature(d, t),
-  'accessibility_modifier': (d) => d,
+  'accessibility_modifier': (d) => ({ ...d, $type: TSKindId.AccessibilityModifier as number }),
   'adding_type_annotation': (d, t) => wrapAddingTypeAnnotation(d, t),
   'ambient_declaration': (d, t) => wrapAmbientDeclaration(d, t),
   'arguments': (d, t) => wrapArguments(d, t),
@@ -2266,7 +2266,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'class_heritage_implements_clause': (d, t) => wrapClassHeritageImplementsClause(d, t),
   'class_heritage': (d, t) => wrapClassHeritage(d, t),
   'class_static_block': (d, t) => wrapClassStaticBlock(d, t),
-  'comment': (d) => d,
+  'comment': (d) => ({ ...d, $type: TSKindId.Comment as number }),
   'computed_property_name': (d, t) => wrapComputedPropertyName(d, t),
   'conditional_type': (d, t) => wrapConditionalType(d, t),
   'constraint': (d, t) => wrapConstraint(d, t),
@@ -2284,7 +2284,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'enum_assignment': (d, t) => wrapEnumAssignment(d, t),
   'enum_body': (d, t) => wrapEnumBody(d, t),
   'enum_declaration': (d, t) => wrapEnumDeclaration(d, t),
-  'escape_sequence': (d) => d,
+  'escape_sequence': (d) => ({ ...d, $type: TSKindId.EscapeSequence as number }),
   'export_clause': (d, t) => wrapExportClause(d, t),
   'export_specifier': (d, t) => wrapExportSpecifier(d, t),
   'export_statement_type_export': (d, t) => wrapExportStatementTypeExport(d, t),
@@ -2294,7 +2294,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'expression_statement': (d, t) => wrapExpressionStatement(d, t),
   'extends_clause': (d, t) => wrapExtendsClause(d, t),
   'extends_type_clause': (d, t) => wrapExtendsTypeClause(d, t),
-  'false': (d) => d,
+  'false': (d) => ({ ...d, $type: TSKindId.False as number }),
   'field_definition': (d, t) => wrapFieldDefinition(d, t),
   'finally_clause': (d, t) => wrapFinallyClause(d, t),
   'flow_maybe_type': (d, t) => wrapFlowMaybeType(d, t),
@@ -2308,12 +2308,12 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'generator_function': (d, t) => wrapGeneratorFunction(d, t),
   'generator_function_declaration': (d, t) => wrapGeneratorFunctionDeclaration(d, t),
   'generic_type': (d, t) => wrapGenericType(d, t),
-  'hash_bang_line': (d) => d,
+  'hash_bang_line': (d) => ({ ...d, $type: TSKindId.HashBangLine as number }),
   'html_character_reference': (d) => d,
-  'identifier': (d) => d,
+  'identifier': (d) => ({ ...d, $type: TSKindId.Identifier as number }),
   'if_statement': (d, t) => wrapIfStatement(d, t),
   'implements_clause': (d, t) => wrapImplementsClause(d, t),
-  'import': (d) => d,
+  'import': (d) => ({ ...d, $type: TSKindId.Import as number }),
   'import_alias': (d, t) => wrapImportAlias(d, t),
   'import_attribute': (d, t) => wrapImportAttribute(d, t),
   'import_clause_namespace_import': (d, t) => wrapImportClauseNamespaceImport(d, t),
@@ -2346,7 +2346,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'lookup_type': (d, t) => wrapLookupType(d, t),
   'mapped_type_clause': (d, t) => wrapMappedTypeClause(d, t),
   'member_expression': (d, t) => wrapMemberExpression(d, t),
-  'meta_property': (d) => d,
+  'meta_property': (d) => ({ ...d, $type: TSKindId.MetaProperty as number }),
   'method_definition': (d, t) => wrapMethodDefinition(d, t),
   'method_signature': (d, t) => wrapMethodSignature(d, t),
   'module': (d, t) => wrapModule(d, t),
@@ -2357,8 +2357,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'nested_type_identifier': (d, t) => wrapNestedTypeIdentifier(d, t),
   'new_expression': (d, t) => wrapNewExpression(d, t),
   'non_null_expression': (d, t) => wrapNonNullExpression(d, t),
-  'null': (d) => d,
-  'number': (d) => d,
+  'null': (d) => ({ ...d, $type: TSKindId.Null as number }),
+  'number': (d) => ({ ...d, $type: TSKindId.Number as number }),
   'object': (d, t) => wrapObject(d, t),
   'object_assignment_pattern': (d, t) => wrapObjectAssignmentPattern(d, t),
   'object_pattern': (d, t) => wrapObjectPattern(d, t),
@@ -2368,21 +2368,21 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'optional_parameter': (d, t) => wrapOptionalParameter(d, t),
   'optional_tuple_parameter': (d, t) => wrapOptionalTupleParameter(d, t),
   'optional_type': (d, t) => wrapOptionalType(d, t),
-  'override_modifier': (d) => d,
+  'override_modifier': (d) => ({ ...d, $type: TSKindId.OverrideModifier as number }),
   'pair': (d, t) => wrapPair(d, t),
   'pair_pattern': (d, t) => wrapPairPattern(d, t),
   'parenthesized_expression_sequence': (d, t) => wrapParenthesizedExpressionSequence(d, t),
   'parenthesized_expression': (d, t) => wrapParenthesizedExpression(d, t),
   'parenthesized_type': (d, t) => wrapParenthesizedType(d, t),
-  'predefined_type': (d) => d,
-  'private_property_identifier': (d) => d,
+  'predefined_type': (d) => ({ ...d, $type: TSKindId.PredefinedType as number }),
+  'private_property_identifier': (d) => ({ ...d, $type: TSKindId.PrivatePropertyIdentifier as number }),
   'program': (d, t) => wrapProgram(d, t),
   'property_signature': (d, t) => wrapPropertySignature(d, t),
   'public_field_definition': (d, t) => wrapPublicFieldDefinition(d, t),
   'readonly_type': (d, t) => wrapReadonlyType(d, t),
   'regex': (d, t) => wrapRegex(d, t),
-  'regex_flags': (d) => d,
-  'regex_pattern': (d) => d,
+  'regex_flags': (d) => ({ ...d, $type: TSKindId.RegexFlags as number }),
+  'regex_pattern': (d) => ({ ...d, $type: TSKindId.RegexPattern as number }),
   'required_parameter': (d, t) => wrapRequiredParameter(d, t),
   'rest_pattern': (d, t) => wrapRestPattern(d, t),
   'rest_type': (d, t) => wrapRestType(d, t),
@@ -2395,7 +2395,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'string_single': (d, t) => wrapStringSingle(d, t),
   'string': (d, t) => wrapString(d, t),
   'subscript_expression': (d, t) => wrapSubscriptExpression(d, t),
-  'super': (d) => d,
+  'super': (d) => ({ ...d, $type: TSKindId.Super as number }),
   'switch_body': (d, t) => wrapSwitchBody(d, t),
   'switch_case': (d, t) => wrapSwitchCase(d, t),
   'switch_default': (d, t) => wrapSwitchDefault(d, t),
@@ -2405,9 +2405,9 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'template_substitution': (d, t) => wrapTemplateSubstitution(d, t),
   'template_type': (d, t) => wrapTemplateType(d, t),
   'ternary_expression': (d, t) => wrapTernaryExpression(d, t),
-  'this': (d) => d,
+  'this': (d) => ({ ...d, $type: TSKindId.This as number }),
   'throw_statement': (d, t) => wrapThrowStatement(d, t),
-  'true': (d) => d,
+  'true': (d) => ({ ...d, $type: TSKindId.True as number }),
   'try_statement': (d, t) => wrapTryStatement(d, t),
   'tuple_parameter': (d, t) => wrapTupleParameter(d, t),
   'tuple_type': (d, t) => wrapTupleType(d, t),
@@ -2421,11 +2421,11 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'type_predicate_annotation': (d, t) => wrapTypePredicateAnnotation(d, t),
   'type_query': (d, t) => wrapTypeQuery(d, t),
   'unary_expression': (d, t) => wrapUnaryExpression(d, t),
-  'undefined': (d) => d,
+  'undefined': (d) => ({ ...d, $type: TSKindId.Undefined as number }),
   'unescaped_double_jsx_string_fragment': (d) => d,
-  'unescaped_double_string_fragment': (d) => d,
+  'unescaped_double_string_fragment': (d) => ({ ...d, $type: TSKindId.UnescapedDoubleStringFragment as number }),
   'unescaped_single_jsx_string_fragment': (d) => d,
-  'unescaped_single_string_fragment': (d) => d,
+  'unescaped_single_string_fragment': (d) => ({ ...d, $type: TSKindId.UnescapedSingleStringFragment as number }),
   'union_type': (d, t) => wrapUnionType(d, t),
   'update_expression': (d, t) => wrapUpdateExpression(d, t),
   'variable_declaration': (d, t) => wrapVariableDeclaration(d, t),
@@ -2433,14 +2433,14 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'while_statement': (d, t) => wrapWhileStatement(d, t),
   'with_statement': (d, t) => wrapWithStatement(d, t),
   'yield_expression': (d, t) => wrapYieldExpression(d, t),
-  '_automatic_semicolon': (d) => d,
-  '_template_chars': (d) => d,
-  '_ternary_qmark': (d) => d,
-  'html_comment': (d) => d,
+  '_automatic_semicolon': (d) => ({ ...d, $type: TSKindId.AutomaticSemicolon as number }),
+  '_template_chars': (d) => ({ ...d, $type: TSKindId.TemplateChars as number }),
+  '_ternary_qmark': (d) => ({ ...d, $type: TSKindId.TernaryQmark as number }),
+  'html_comment': (d) => ({ ...d, $type: TSKindId.HtmlComment as number }),
   '||': (d) => d,
-  'jsx_text': (d) => d,
-  '_function_signature_automatic_semicolon': (d) => d,
-  '__error_recovery': (d) => d,
+  'jsx_text': (d) => ({ ...d, $type: TSKindId.JsxText as number }),
+  '_function_signature_automatic_semicolon': (d) => ({ ...d, $type: TSKindId.FunctionSignatureAutomaticSemicolon as number }),
+  '__error_recovery': (d) => ({ ...d, $type: TSKindId.ErrorRecovery as number }),
 };
 
 const _aliasTargetToSource: Record<string, string> = {
@@ -2509,12 +2509,16 @@ const _aliasTargetToSource: Record<string, string> = {
   'update_expression_prefix': '_update_expression_prefix',
 };
 
+import { kindNameFromId } from './types.js';
 /** Wrap a NodeData into its lazy read-only view. */
 export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
-  // Phase A KindID bridge: core's readNode still returns string $type at runtime.
-  // Cast to string for the string-keyed alias/dispatch tables before per-kind
-  // wrap functions stamp the numeric TSKindId.$type on their output.
-  const rawType = data.$type as unknown as string;
+  // Phase B-inverse bridge: the native path now returns numeric $type
+  // (KindId) from Rust; the JS wasm path still returns string $type.
+  // Resolve to a kind-name string for the string-keyed dispatch tables,
+  // then per-kind wrap functions stamp the numeric TSKindId.$type on output.
+  const rawType = typeof data.$type === "number"
+    ? kindNameFromId(data.$type as never) ?? String(data.$type)
+    : (data.$type as unknown as string);
   // Canonical-hidden remap (Option Y): parser-output `$type`
   // is the visible alias target (e.g. `range_pattern_left_with_right`);
   // remap to the hidden alias source (`_range_pattern_left_with_right`)
@@ -2566,9 +2570,15 @@ export function readTreeNode(
   asType?: { from: string; to: string },
 ): unknown {
   let data = readNode(tree, nodeId);
-  // Phase A KindID bridge: core returns string $type; cast for string comparison.
-  if (asType && (data.$type as unknown as string) === asType.from) {
-    data = { ...data, $type: asType.to as unknown as number };
+  // Phase B-inverse: asType comparison must handle both string and numeric $type.
+  // When numeric (native path), convert to kind-name first for comparison.
+  if (asType) {
+    const currentType = typeof data.$type === "number"
+      ? kindNameFromId(data.$type as never) ?? String(data.$type)
+      : (data.$type as unknown as string);
+    if (currentType === asType.from) {
+      data = { ...data, $type: asType.to as unknown as number };
+    }
   }
   return wrapNode(data, tree);
 }

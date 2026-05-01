@@ -9,6 +9,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { ir } from '../src/ir.js';
+import { TSKindId } from '../src/types.js';
 
 describe('loose from() — string input for leaf-typed fields (T052d-i)', () => {
 	it('identifier field accepts a bare string', () => {
@@ -19,8 +20,8 @@ describe('loose from() — string input for leaf-typed fields (T052d-i)', () => 
 		// function and doesn't auto-resolve bare strings to
 		// identifier nodes (that resolution lives in field-level
 		// from()), so the test passes a constructed identifier.
-		const result = ir.dottedName.from(ir.identifier('foo')) as any;
-		expect(result.$type).toBe('dotted_name');
+		const result = ir.dottedName.from(ir.identifier('foo') as any) as any;
+		expect(result.$type).toBe(TSKindId.DottedName);
 	});
 
 	it('aliased_import accepts string for both name and alias', () => {
@@ -30,7 +31,7 @@ describe('loose from() — string input for leaf-typed fields (T052d-i)', () => 
 			name: 'os' as any,
 			alias: 'system' as any
 		}) as any;
-		expect(result.$type).toBe('aliased_import');
+		expect(result.$type).toBe(TSKindId.AliasedImport);
 	});
 });
 
@@ -48,7 +49,7 @@ describe('loose from() — kind-tagged object dispatch (T052d-ii)', () => {
 				}
 			] as any
 		}) as any;
-		expect(result.$type).toBe('assignment');
+		expect(result.$type).toBe(TSKindId.Assignment);
 	});
 });
 
@@ -61,7 +62,7 @@ describe('loose from() — supertype subtype (T052d-iii)', () => {
 			kind: 'integer',
 			text: '1'
 		} as any) as any;
-		expect(result.$type).toBe('expression_statement');
+		expect(result.$type).toBe(TSKindId.ExpressionStatement);
 	});
 });
 
@@ -77,6 +78,6 @@ describe('loose from() — NodeData passthrough still works', () => {
 			left: 'x' as any,
 			children: [child]
 		}) as any;
-		expect(result.$type).toBe('assignment');
+		expect(result.$type).toBe(TSKindId.Assignment);
 	});
 });

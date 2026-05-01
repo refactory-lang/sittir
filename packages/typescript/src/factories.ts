@@ -1422,7 +1422,7 @@ export function abstractMethodSignature(config: ConfigOf<T.AbstractMethodSignatu
 
 export function accessibilityModifier(text: 'public' | 'private' | 'protected') {
   return {
-    $type: 'accessibility_modifier' as const,
+    $type: TSKindId.AccessibilityModifier as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -2164,7 +2164,7 @@ export function classStaticBlock(config: ConfigOf<T.ClassStaticBlock>) {
 export function comment(text: string) {
   if (text.length === 0) throw new Error(`comment: text must be non-empty`);
   return {
-    $type: 'comment' as const,
+    $type: TSKindId.Comment as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -2531,7 +2531,7 @@ export function enumDeclaration(config: ConfigOf<T.EnumDeclaration>) {
 export function escapeSequence(text: string) {
   if (text.length === 0) throw new Error(`escape_sequence: text must be non-empty`);
   return {
-    $type: 'escape_sequence' as const,
+    $type: TSKindId.EscapeSequence as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -2792,7 +2792,7 @@ export function extendsTypeClause(config: ConfigOf<T.ExtendsTypeClause>) {
 
 export function false_() {
   return {
-    $type: 'false' as const,
+    $type: TSKindId.False as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: 'false' as const,
@@ -3140,7 +3140,7 @@ export function genericType(config: ConfigOf<T.GenericType>) {
 export function hashBangLine(text: string) {
   if (text.length === 0) throw new Error(`hash_bang_line: text must be non-empty`); if (!_leafRe_hashBangLine.test(text)) throw new Error(`hash_bang_line: text does not match pattern: ${text}`);
   return {
-    $type: 'hash_bang_line' as const,
+    $type: TSKindId.HashBangLine as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -3166,7 +3166,7 @@ export function htmlCharacterReference(text: string) {
 export function identifier(text: string) {
   if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
   return {
-    $type: 'identifier' as const,
+    $type: TSKindId.Identifier as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -3217,7 +3217,7 @@ export function implementsClause(...children: T.Type[]) {
 
 export function import_() {
   return {
-    $type: 'import' as const,
+    $type: TSKindId.Import as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: 'import' as const,
@@ -4019,7 +4019,7 @@ export function memberExpression(config: ConfigOf<T.MemberExpression>) {
 export function metaProperty(text: string) {
   if (text.length === 0) throw new Error(`meta_property: text must be non-empty`);
   return {
-    $type: 'meta_property' as const,
+    $type: TSKindId.MetaProperty as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -4266,7 +4266,7 @@ export function nonNullExpression(config: ConfigOf<T.NonNullExpression>) {
 
 export function null_() {
   return {
-    $type: 'null' as const,
+    $type: TSKindId.Null as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: 'null' as const,
@@ -4279,7 +4279,7 @@ export function null_() {
 export function number(text: string) {
   if (text.length === 0) throw new Error(`number: text must be non-empty`);
   return {
-    $type: 'number' as const,
+    $type: TSKindId.Number as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -4516,7 +4516,7 @@ export function optionalType(config: ConfigOf<T.OptionalType>) {
 
 export function overrideModifier() {
   return {
-    $type: 'override_modifier' as const,
+    $type: TSKindId.OverrideModifier as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: 'override' as const,
@@ -4654,7 +4654,7 @@ export function parenthesizedType(config: ConfigOf<T.ParenthesizedType>) {
 export function predefinedType(text: string) {
   if (text.length === 0) throw new Error(`predefined_type: text must be non-empty`);
   return {
-    $type: 'predefined_type' as const,
+    $type: TSKindId.PredefinedType as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -4667,7 +4667,7 @@ export function predefinedType(text: string) {
 export function privatePropertyIdentifier(text: string) {
   if (text.length === 0) throw new Error(`private_property_identifier: text must be non-empty`);
   return {
-    $type: 'private_property_identifier' as const,
+    $type: TSKindId.PrivatePropertyIdentifier as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -4805,7 +4805,7 @@ export function regex(config: ConfigOf<T.Regex>) {
 export function regexFlags(text: string) {
   if (text.length === 0) throw new Error(`regex_flags: text must be non-empty`); if (!_leafRe_regexFlags.test(text)) throw new Error(`regex_flags: text does not match pattern: ${text}`);
   return {
-    $type: 'regex_flags' as const,
+    $type: TSKindId.RegexFlags as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -4818,7 +4818,7 @@ export function regexFlags(text: string) {
 export function regexPattern(text: string) {
   if (text.length === 0) throw new Error(`regex_pattern: text must be non-empty`);
   return {
-    $type: 'regex_pattern' as const,
+    $type: TSKindId.RegexPattern as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -5097,7 +5097,7 @@ export function subscriptExpression(config: ConfigOf<T.SubscriptExpression>) {
 
 export function super_() {
   return {
-    $type: 'super' as const,
+    $type: TSKindId.Super as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: 'super' as const,
@@ -5270,7 +5270,7 @@ export function ternaryExpression(config: ConfigOf<T.TernaryExpression>) {
 
 export function this_() {
   return {
-    $type: 'this' as const,
+    $type: TSKindId.This as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: 'this' as const,
@@ -5307,7 +5307,7 @@ export function throwStatement(config: ConfigOf<T.ThrowStatement>) {
 
 export function true_() {
   return {
-    $type: 'true' as const,
+    $type: TSKindId.True as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: 'true' as const,
@@ -5577,7 +5577,7 @@ export function unaryExpression(config: ConfigOf<T.UnaryExpression>) {
 
 export function undefined_() {
   return {
-    $type: 'undefined' as const,
+    $type: TSKindId.Undefined as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: 'undefined' as const,
@@ -5603,7 +5603,7 @@ export function unescapedDoubleJsxStringFragment(text: string) {
 export function unescapedDoubleStringFragment(text: string) {
   if (text.length === 0) throw new Error(`unescaped_double_string_fragment: text must be non-empty`); if (!_leafRe_unescapedDoubleStringFragment.test(text)) throw new Error(`unescaped_double_string_fragment: text does not match pattern: ${text}`);
   return {
-    $type: 'unescaped_double_string_fragment' as const,
+    $type: TSKindId.UnescapedDoubleStringFragment as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -5629,7 +5629,7 @@ export function unescapedSingleJsxStringFragment(text: string) {
 export function unescapedSingleStringFragment(text: string) {
   if (text.length === 0) throw new Error(`unescaped_single_string_fragment: text must be non-empty`); if (!_leafRe_unescapedSingleStringFragment.test(text)) throw new Error(`unescaped_single_string_fragment: text does not match pattern: ${text}`);
   return {
-    $type: 'unescaped_single_string_fragment' as const,
+    $type: TSKindId.UnescapedSingleStringFragment as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -5828,7 +5828,7 @@ export function yieldExpression(config?: ConfigOf<T.YieldExpression>) {
 export function automaticSemicolon(text: string) {
   if (text.length === 0) throw new Error(`_automatic_semicolon: text must be non-empty`);
   return {
-    $type: '_automatic_semicolon' as const,
+    $type: TSKindId.AutomaticSemicolon as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -5841,7 +5841,7 @@ export function automaticSemicolon(text: string) {
 export function templateChars(text: string) {
   if (text.length === 0) throw new Error(`_template_chars: text must be non-empty`);
   return {
-    $type: '_template_chars' as const,
+    $type: TSKindId.TemplateChars as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -5854,7 +5854,7 @@ export function templateChars(text: string) {
 export function ternaryQmark(text: string) {
   if (text.length === 0) throw new Error(`_ternary_qmark: text must be non-empty`);
   return {
-    $type: '_ternary_qmark' as const,
+    $type: TSKindId.TernaryQmark as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -5867,7 +5867,7 @@ export function ternaryQmark(text: string) {
 export function htmlComment(text: string) {
   if (text.length === 0) throw new Error(`html_comment: text must be non-empty`);
   return {
-    $type: 'html_comment' as const,
+    $type: TSKindId.HtmlComment as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -5893,7 +5893,7 @@ export function oror(text: string) {
 export function jsxText(text: string) {
   if (text.length === 0) throw new Error(`jsx_text: text must be non-empty`);
   return {
-    $type: 'jsx_text' as const,
+    $type: TSKindId.JsxText as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -5906,7 +5906,7 @@ export function jsxText(text: string) {
 export function functionSignatureAutomaticSemicolon(text: string) {
   if (text.length === 0) throw new Error(`_function_signature_automatic_semicolon: text must be non-empty`);
   return {
-    $type: '_function_signature_automatic_semicolon' as const,
+    $type: TSKindId.FunctionSignatureAutomaticSemicolon as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -5919,7 +5919,7 @@ export function functionSignatureAutomaticSemicolon(text: string) {
 export function errorRecovery(text: string) {
   if (text.length === 0) throw new Error(`__error_recovery: text must be non-empty`);
   return {
-    $type: '__error_recovery' as const,
+    $type: TSKindId.ErrorRecovery as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,

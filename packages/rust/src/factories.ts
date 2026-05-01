@@ -365,7 +365,7 @@ export function letChain(child: (T.LetChain | T.LetCondition | T.Expression)) {
 export function lineCommentContent(text: string) {
   if (text.length === 0) throw new Error(`_line_comment_content: text must be non-empty`); if (!_leafRe_lineCommentContent.test(text)) throw new Error(`_line_comment_content: text does not match pattern: ${text}`);
   return {
-    $type: '_line_comment_content' as const,
+    $type: TSKindId.LineCommentContent as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -397,7 +397,7 @@ export function _lineCommentDoc(config: ConfigOf<T.LineCommentDoc>) {
 export function lineCommentRegularDslash(text: string) {
   if (text.length === 0) throw new Error(`_line_comment_regular_dslash: text must be non-empty`);
   return {
-    $type: '_line_comment_regular_dslash' as const,
+    $type: TSKindId.LineCommentRegularDslash as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -718,7 +718,7 @@ export function _rangePatternPrefix(config: ConfigOf<T.RangePatternPrefix>) {
 export function referenceExpressionRawConst(text: string) {
   if (text.length === 0) throw new Error(`_reference_expression_raw_const: text must be non-empty`);
   return {
-    $type: '_reference_expression_raw_const' as const,
+    $type: TSKindId.ReferenceExpressionRawConst as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -1333,7 +1333,7 @@ export function blockComment(config?: ConfigOf<T.BlockComment>) {
 
 export function booleanLiteral(text: 'true' | 'false') {
   return {
-    $type: 'boolean_literal' as const,
+    $type: TSKindId.BooleanLiteral as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -1454,7 +1454,7 @@ export function capturedPattern(config: ConfigOf<T.CapturedPattern>) {
 export function charLiteral(text: string) {
   if (text.length === 0) throw new Error(`char_literal: text must be non-empty`);
   return {
-    $type: 'char_literal' as const,
+    $type: TSKindId.CharLiteral as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -1727,7 +1727,7 @@ export function continueExpression(config?: ConfigOf<T.ContinueExpression>) {
 
 export function crate() {
   return {
-    $type: 'crate' as const,
+    $type: TSKindId.Crate as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: 'crate' as const,
@@ -1965,7 +1965,7 @@ export function enumVariantList(...children: (T.AttributeItem | T.EnumVariant)[]
 export function escapeSequence(text: string) {
   if (text.length === 0) throw new Error(`escape_sequence: text must be non-empty`);
   return {
-    $type: 'escape_sequence' as const,
+    $type: TSKindId.EscapeSequence as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -2424,7 +2424,7 @@ export function foreignModItemUFormBody(config: Omit<ConfigOf<T.ForeignModItemUF
 
 export function fragmentSpecifier(text: 'block' | 'expr' | 'expr_2021' | 'ident' | 'item' | 'lifetime' | 'literal' | 'meta' | 'pat' | 'pat_param' | 'path' | 'stmt' | 'tt' | 'ty' | 'vis') {
   return {
-    $type: 'fragment_specifier' as const,
+    $type: TSKindId.FragmentSpecifier as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -2681,7 +2681,7 @@ export function higherRankedTraitBound(config: ConfigOf<T.HigherRankedTraitBound
 export function identifier(text: string) {
   if (text.length === 0) throw new Error(`identifier: text must be non-empty`); if (!_leafRe_identifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`);
   return {
-    $type: 'identifier' as const,
+    $type: TSKindId.Identifier as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -2869,7 +2869,7 @@ export function innerAttributeItem(config: ConfigOf<T.InnerAttributeItem>) {
 export function integerLiteral(text: string) {
   if (text.length === 0) throw new Error(`integer_literal: text must be non-empty`);
   return {
-    $type: 'integer_literal' as const,
+    $type: TSKindId.IntegerLiteral as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -3424,7 +3424,7 @@ export function matchPattern(config: ConfigOf<T.MatchPattern>) {
 export function metavariable(text: string) {
   if (text.length === 0) throw new Error(`metavariable: text must be non-empty`); if (!_leafRe_metavariable.test(text)) throw new Error(`metavariable: text does not match pattern: ${text}`);
   return {
-    $type: 'metavariable' as const,
+    $type: TSKindId.Metavariable as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -3545,7 +3545,7 @@ export function mutPattern(config: ConfigOf<T.MutPattern>) {
 
 export function mutableSpecifier() {
   return {
-    $type: 'mutable_specifier' as const,
+    $type: TSKindId.MutableSpecifier as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: 'mut' as const,
@@ -4001,7 +4001,7 @@ export function rangePatternUFormPrefix(config: Omit<ConfigOf<T.RangePatternUFor
 
 export function rawStringLiteral(text: string) {
   return {
-    $type: 'raw_string_literal' as const,
+    $type: TSKindId.RawStringLiteral as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -4214,7 +4214,7 @@ export function scopedUseList(config: ConfigOf<T.ScopedUseList>) {
 
 export function self() {
   return {
-    $type: 'self' as const,
+    $type: TSKindId.Self as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: 'self' as const,
@@ -4252,7 +4252,7 @@ export function selfParameter(config?: ConfigOf<T.SelfParameter>) {
 export function shebang(text: string) {
   if (text.length === 0) throw new Error(`shebang: text must be non-empty`); if (!_leafRe_shebang.test(text)) throw new Error(`shebang: text does not match pattern: ${text}`);
   return {
-    $type: 'shebang' as const,
+    $type: TSKindId.Shebang as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -4522,7 +4522,7 @@ export function structPattern(config: ConfigOf<T.StructPattern>) {
 
 export function super_() {
   return {
-    $type: 'super' as const,
+    $type: TSKindId.Super as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: 'super' as const,
@@ -5140,7 +5140,7 @@ export function unionItem(config: ConfigOf<T.UnionItem>) {
 export function unitExpression(text: string) {
   if (text.length === 0) throw new Error(`unit_expression: text must be non-empty`);
   return {
-    $type: 'unit_expression' as const,
+    $type: TSKindId.UnitExpression as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -5153,7 +5153,7 @@ export function unitExpression(text: string) {
 export function unitType(text: string) {
   if (text.length === 0) throw new Error(`unit_type: text must be non-empty`);
   return {
-    $type: 'unit_type' as const,
+    $type: TSKindId.UnitType as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -5453,7 +5453,7 @@ export function yieldExpression(child?: T.Expression) {
 export function stringContent(text: string) {
   if (text.length === 0) throw new Error(`string_content: text must be non-empty`);
   return {
-    $type: 'string_content' as const,
+    $type: TSKindId.StringContent as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -5466,7 +5466,7 @@ export function stringContent(text: string) {
 export function rawStringLiteralContent(text: string) {
   if (text.length === 0) throw new Error(`raw_string_literal_content: text must be non-empty`);
   return {
-    $type: 'raw_string_literal_content' as const,
+    $type: TSKindId.RawStringLiteralContent as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -5479,7 +5479,7 @@ export function rawStringLiteralContent(text: string) {
 export function floatLiteral(text: string) {
   if (text.length === 0) throw new Error(`float_literal: text must be non-empty`);
   return {
-    $type: 'float_literal' as const,
+    $type: TSKindId.FloatLiteral as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -5492,7 +5492,7 @@ export function floatLiteral(text: string) {
 export function outerBlockDocCommentMarker(text: string) {
   if (text.length === 0) throw new Error(`_outer_block_doc_comment_marker: text must be non-empty`);
   return {
-    $type: '_outer_block_doc_comment_marker' as const,
+    $type: TSKindId.OuterBlockDocCommentMarker as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -5505,7 +5505,7 @@ export function outerBlockDocCommentMarker(text: string) {
 export function innerBlockDocCommentMarker(text: string) {
   if (text.length === 0) throw new Error(`_inner_block_doc_comment_marker: text must be non-empty`);
   return {
-    $type: '_inner_block_doc_comment_marker' as const,
+    $type: TSKindId.InnerBlockDocCommentMarker as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -5518,7 +5518,7 @@ export function innerBlockDocCommentMarker(text: string) {
 export function errorSentinel(text: string) {
   if (text.length === 0) throw new Error(`_error_sentinel: text must be non-empty`);
   return {
-    $type: '_error_sentinel' as const,
+    $type: TSKindId.ErrorSentinel as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,

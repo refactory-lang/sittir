@@ -188,7 +188,7 @@ export function _importList(config: ConfigOf<T.ImportList>) {
 export function isNot(text: string) {
   if (text.length === 0) throw new Error(`_is_not: text must be non-empty`);
   return {
-    $type: '_is_not' as const,
+    $type: TSKindId.IsNot as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -272,7 +272,7 @@ export function _matchBlockBlock(config: ConfigOf<T.MatchBlockBlock>) {
 export function notIn(text: string) {
   if (text.length === 0) throw new Error(`_not_in: text must be non-empty`);
   return {
-    $type: '_not_in' as const,
+    $type: TSKindId.NotIn as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -284,7 +284,7 @@ export function notIn(text: string) {
 
 export function simplePatternNegative(text: string) {
   return {
-    $type: '_simple_pattern_negative' as const,
+    $type: TSKindId.SimplePatternNegative as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -659,7 +659,7 @@ export function booleanOperator(config: ConfigOf<T.BooleanOperator>) {
 
 export function breakStatement() {
   return {
-    $type: 'break_statement' as const,
+    $type: TSKindId.BreakStatement as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: 'break' as const,
@@ -802,7 +802,7 @@ export function classPattern(config: ConfigOf<T.ClassPattern>) {
 export function comment(text: string) {
   if (text.length === 0) throw new Error(`comment: text must be non-empty`);
   return {
-    $type: 'comment' as const,
+    $type: TSKindId.Comment as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -922,7 +922,7 @@ export function constrainedType(config: ConfigOf<T.ConstrainedType>) {
 
 export function continueStatement() {
   return {
-    $type: 'continue_statement' as const,
+    $type: TSKindId.ContinueStatement as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: 'continue' as const,
@@ -1165,7 +1165,7 @@ export function elseClause(config: ConfigOf<T.ElseClause>) {
 export function escapeSequence(text: string) {
   if (text.length === 0) throw new Error(`escape_sequence: text must be non-empty`);
   return {
-    $type: 'escape_sequence' as const,
+    $type: TSKindId.EscapeSequence as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -1275,7 +1275,7 @@ export function expressionStatementUFormTuple(_config?: Omit<ConfigOf<T.Expressi
 
 export function false_() {
   return {
-    $type: 'false' as const,
+    $type: TSKindId.False as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: 'False' as const,
@@ -1307,7 +1307,7 @@ export function finallyClause(config: ConfigOf<T.FinallyClause>) {
 export function float(text: string) {
   if (text.length === 0) throw new Error(`float: text must be non-empty`);
   return {
-    $type: 'float' as const,
+    $type: TSKindId.Float as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -1495,7 +1495,7 @@ export function globalStatement(...children: T.Identifier[]) {
 export function identifier(text: string) {
   if (text.length === 0) throw new Error(`identifier: text must be non-empty`); if (!_leafRe_identifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`);
   return {
-    $type: 'identifier' as const,
+    $type: TSKindId.Identifier as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -1569,7 +1569,7 @@ export function importFromStatement(config: ConfigOf<T.ImportFromStatement>) {
 export function importPrefix(text: string) {
   if (text.length === 0) throw new Error(`import_prefix: text must be non-empty`);
   return {
-    $type: 'import_prefix' as const,
+    $type: TSKindId.ImportPrefix as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -1601,7 +1601,7 @@ export function importStatement(config: ConfigOf<T.ImportStatement>) {
 export function integer(text: string) {
   if (text.length === 0) throw new Error(`integer: text must be non-empty`);
   return {
-    $type: 'integer' as const,
+    $type: TSKindId.Integer as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -1737,7 +1737,7 @@ export function lambdaWithinForInClause(config: ConfigOf<T.LambdaWithinForInClau
 export function lineContinuation(text: string) {
   if (text.length === 0) throw new Error(`line_continuation: text must be non-empty`);
   return {
-    $type: 'line_continuation' as const,
+    $type: TSKindId.LineContinuation as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -1917,7 +1917,7 @@ export function namedExpression(config: ConfigOf<T.NamedExpression>) {
 
 export function none() {
   return {
-    $type: 'none' as const,
+    $type: TSKindId.None as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: 'None' as const,
@@ -2032,7 +2032,7 @@ export function parenthesizedListSplat(child: (T.ParenthesizedListSplat | T.List
 
 export function passStatement() {
   return {
-    $type: 'pass_statement' as const,
+    $type: TSKindId.PassStatement as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: 'pass' as const,
@@ -2255,7 +2255,7 @@ export function splatType(config: ConfigOf<T.SplatType>) {
 
 export function string(text: string) {
   return {
-    $type: 'string' as const,
+    $type: TSKindId.String as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -2304,7 +2304,7 @@ export function subscript(config: ConfigOf<T.Subscript>) {
 
 export function true_() {
   return {
-    $type: 'true' as const,
+    $type: TSKindId.True as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: 'True' as const,
@@ -2411,7 +2411,7 @@ export function typeAliasStatement(config: ConfigOf<T.TypeAliasStatement>) {
 export function typeConversion(text: string) {
   if (text.length === 0) throw new Error(`type_conversion: text must be non-empty`); if (!_leafRe_typeConversion.test(text)) throw new Error(`type_conversion: text does not match pattern: ${text}`);
   return {
-    $type: 'type_conversion' as const,
+    $type: TSKindId.TypeConversion as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -2700,7 +2700,7 @@ export function yield_(child: (T.Expression | T.Expressions)) {
 export function newline(text: string) {
   if (text.length === 0) throw new Error(`_newline: text must be non-empty`);
   return {
-    $type: '_newline' as const,
+    $type: TSKindId.Newline as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -2713,7 +2713,7 @@ export function newline(text: string) {
 export function indent(text: string) {
   if (text.length === 0) throw new Error(`_indent: text must be non-empty`);
   return {
-    $type: '_indent' as const,
+    $type: TSKindId.Indent as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -2726,7 +2726,7 @@ export function indent(text: string) {
 export function dedent(text: string) {
   if (text.length === 0) throw new Error(`_dedent: text must be non-empty`);
   return {
-    $type: '_dedent' as const,
+    $type: TSKindId.Dedent as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -2739,7 +2739,7 @@ export function dedent(text: string) {
 export function stringStart(text: string) {
   if (text.length === 0) throw new Error(`string_start: text must be non-empty`);
   return {
-    $type: 'string_start' as const,
+    $type: TSKindId.StringStart as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -2752,7 +2752,7 @@ export function stringStart(text: string) {
 export function _stringContent(text: string) {
   if (text.length === 0) throw new Error(`_string_content: text must be non-empty`);
   return {
-    $type: '_string_content' as const,
+    $type: TSKindId._StringContent as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -2765,7 +2765,7 @@ export function _stringContent(text: string) {
 export function escapeInterpolation(text: string) {
   if (text.length === 0) throw new Error(`escape_interpolation: text must be non-empty`);
   return {
-    $type: 'escape_interpolation' as const,
+    $type: TSKindId.EscapeInterpolation as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -2778,7 +2778,7 @@ export function escapeInterpolation(text: string) {
 export function stringEnd(text: string) {
   if (text.length === 0) throw new Error(`string_end: text must be non-empty`);
   return {
-    $type: 'string_end' as const,
+    $type: TSKindId.StringEnd as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
@@ -2830,7 +2830,7 @@ export function closeBrace(text: string) {
 export function except(text: string) {
   if (text.length === 0) throw new Error(`except: text must be non-empty`);
   return {
-    $type: 'except' as const,
+    $type: TSKindId.Except as number,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,

@@ -3,16 +3,45 @@
 /**
  * A single replacement against a source string. Napi boundary type.
  *
- * `#[napi(object)]` auto-generates the N-API mapping with camelCase
- * field renaming — TS side sees `{ startPos, endPos, insertedText }`
- * per contracts/napi-api.md. `serde` mirrors that with camelCase so
- * `apply_edits` can accept JSON payloads in the TS-forced-backend
- * round-trip path.
+ * `#[napi(object)]` (gated on napi-bindings feature) auto-generates
+ * the N-API mapping with camelCase field renaming — TS side sees
+ * `{ startPos, endPos, insertedText }` per contracts/napi-api.md.
+ * `serde` mirrors that with camelCase so `apply_edits` can accept
+ * JSON payloads in the TS-forced-backend round-trip path.
  */
 export interface Edit {
   startPos: number
   endPos: number
   insertedText: string
+}
+
+/**
+ * Where a `NodeData` originated. `Ts` = `readNode` over a tree-sitter
+ * tree; `Sg` = ast-grep path; `Factory` = constructed on the TS side.
+ *
+ * Serialized as `"ts"` / `"sg"` / `"factory"` (rename_all = lowercase).
+ * `#[napi(string_enum)]` (gated on napi-bindings feature) adds
+ * `FromNapiValue` / `ToNapiValue` via napi-rs string enum mapping.
+ * The feature gate prevents napi C-symbol leakage into sittir-core
+ * test binaries that build without Node.js.
+ */
+export declare const enum Source {
+  Ts = 'Ts',
+  Sg = 'Sg',
+  Factory = 'Factory'
+}
+
+/**
+ * Byte-range for a `NodeData` within its source string. `start`/`end`
+ * are UTF-8 byte offsets (ast-grep / tree-sitter convention).
+ * `#[napi(object)]` (gated on napi-bindings feature) adds
+ * `FromNapiValue` / `ToNapiValue` so transport structs can include
+ * `Option<Span>` fields. Feature gate prevents napi C-symbol leakage
+ * into sittir-core test binaries.
+ */
+export interface Span {
+  start: number
+  end: number
 }
 export declare class SittirEngine {
   constructor(options?: EngineOptions | undefined | null)
