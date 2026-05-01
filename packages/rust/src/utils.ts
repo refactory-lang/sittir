@@ -1828,7 +1828,7 @@ function assertTransportValue(value: unknown, path: string, alternatives: readon
   if (typeof value.$type !== 'number' && typeof value.$type !== 'string') throw new TypeError(`${path}.$type must be a number or string`);
   const accepted = alternatives.some((candidate) => {
     const typeMatch = typeof value.$type === "number"
-      ? value.$type === kindIdFromName(candidate.type)
+      ? (() => { try { return value.$type === kindIdFromName(candidate.type); } catch { return false; } })()
       : value.$type === candidate.type;
     if (!typeMatch) return false;
     return candidate.text === undefined || value.$text === candidate.text;

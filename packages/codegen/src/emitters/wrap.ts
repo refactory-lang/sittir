@@ -43,10 +43,21 @@ export interface EmitWrapConfig {
 	 * $type is inherited from data (string passthrough — legacy mode).
 	 */
 	generatedIdTables?: GeneratedIdTables;
+	/**
+	 * Kind names listed in the grammar's `inline:` array. When a kind has no
+	 * parser symbol AND appears here, it's a deliberately inlined rule — warn
+	 * and skip. When absent from this list, it's a codegen bug — throw.
+	 */
+	inlineKinds?: readonly string[];
+	/**
+	 * Kind names synthesized by evaluate's inline-alias-source pass. No parser
+	 * symbol by design; warn and skip.
+	 */
+	synthesizedKinds?: ReadonlySet<string>;
 }
 
 export function emitWrap(config: EmitWrapConfig): string {
-	const { nodeMap, generatedIdTables } = config;
+	const { nodeMap, generatedIdTables, inlineKinds, synthesizedKinds } = config;
 
 	// Collect KindEnumEntry table for numeric $type stamping when
 	// generatedIdTables is present (Phase A KindID migration). Undefined
@@ -78,7 +89,37 @@ export function emitWrap(config: EmitWrapConfig): string {
 	for (const [kind, node] of nodeMap.nodes) {
 		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
 		// never appear at runtime; wrap functions for them are dead code.
-		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
+		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) {
+			if (inlineKinds?.includes(kind)) {
+				console.warn(
+					`[codegen] '${kind}' is in inline: array — no parser symbol expected. ` +
+					`Skipping wrap emission. ` +
+					// TODO: map inlined-kind factories to their decomposition (the
+					// concrete kinds the inlined rule expands to).
+					`Future: map to decomposition.`
+				);
+			} else if (synthesizedKinds?.has(kind)) {
+				console.warn(
+					`[codegen] '${kind}' is evaluate-synthesized (inline-alias-source) — ` +
+					`no parser symbol expected. Skipping wrap emission. ` +
+					// TODO: map inlined-kind factories to their decomposition (the
+					// concrete kinds the inlined rule expands to).
+					`Future: map to decomposition.`
+				);
+			} else {
+				// TSGrammar-only phantom: tree-sitter implicitly inlined this hidden
+				// rule during LR table generation. Not in the explicit inline: list
+				// but also not a codegen bug — tree-sitter's LR optimizer can inline
+				// hidden rules without the author listing them in inline:. Warn and
+				// skip; don't throw, as this is expected for many hidden rules.
+				console.warn(
+					`[codegen] skipping wrap emission for '${kind}' — no parser symbol ` +
+					`(TSGrammar-only, implicitly inlined by tree-sitter). If this kind ` +
+					`should have a parser symbol, audit the grammar overrides and the inline: array.`
+				);
+			}
+			continue;
+		}
 		const source = renderWrapForNode(node, kindEntries, nodeMap);
 		if (source === undefined) continue;
 		bodyLines.push(source);

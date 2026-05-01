@@ -1010,30 +1010,15 @@ function emitKindIdEnumAndLookups(
 
 	lines.push('export function kindIdFromName(kindName: string): TSKindId {');
 	lines.push('  switch (kindName) {');
-	// Track emitted case strings so a kind whose displayName equals
-	// another kind's `kind` does not produce a duplicate-case TS error.
-	const emittedCases = new Set<string>();
+	// Strict canonical-key-only resolution: each case matches the catalog key
+	// (e.g. `"as_pattern"`, `"PLUS"`), never a displayName. DisplayName cases
+	// (e.g. `"+"` for `PLUS`) are intentionally omitted — they produced
+	// shadowing bugs (python `_as_pattern` displayName `"as_pattern"` shadowed
+	// the real `as_pattern` entry) and the napi dispatch path uses numeric
+	// $type ids, not name strings. If a separate displayName→id helper is needed
+	// in the future, emit it as `kindIdFromDisplayName` — don't mix into this function.
 	for (const entry of entries) {
-		const kindCase = JSON.stringify(entry.kind);
-		if (!emittedCases.has(kindCase)) {
-			lines.push(`    case ${kindCase}: return TSKindId.${entry.member};`);
-			emittedCases.add(kindCase);
-		}
-		// Anon tokens carry both a parser symbol name (`PLUS`) and a
-		// display name (`+`). Tree-sitter emits the literal text on the
-		// wire, so kindIdFromName must accept either spelling and resolve
-		// to the same KindId. Without this case JS callers passing the
-		// literal `value.$type` from a parsed tree would throw and fall
-		// back to a string $type — breaking the napi numeric dispatch.
-		if (entry.displayName !== undefined) {
-			const displayCase = JSON.stringify(entry.displayName);
-			if (!emittedCases.has(displayCase)) {
-				lines.push(
-					`    case ${displayCase}: return TSKindId.${entry.member};`
-				);
-				emittedCases.add(displayCase);
-			}
-		}
+		lines.push(`    case ${JSON.stringify(entry.kind)}: return TSKindId.${entry.member};`);
 	}
 	lines.push(
 		"    default: throw new TypeError(`unknown kind name ${kindName}`);"

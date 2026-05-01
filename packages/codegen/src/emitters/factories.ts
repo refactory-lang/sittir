@@ -65,10 +65,22 @@ export interface EmitFactoriesConfig {
 	 * (legacy callers / unit tests), falls back to string `$type: 'kind' as const`.
 	 */
 	generatedIdTables?: GeneratedIdTables;
+	/**
+	 * Kind names listed in the grammar's `inline:` array. When a kind has no
+	 * parser symbol AND appears here, it's a deliberately inlined rule — warn
+	 * and skip. When it's absent from this list, it's a codegen bug — throw.
+	 */
+	inlineKinds?: readonly string[];
+	/**
+	 * Kind names synthesized by evaluate's inline-alias-source pass
+	 * (`synthesizeInlineAliasSources`). These have no parser symbol by design;
+	 * warn and skip, same treatment as inline-list kinds.
+	 */
+	synthesizedKinds?: ReadonlySet<string>;
 }
 
 export function emitFactories(config: EmitFactoriesConfig): string {
-	const { nodeMap, strict = false, generatedIdTables } = config;
+	const { nodeMap, strict = false, generatedIdTables, inlineKinds, synthesizedKinds } = config;
 
 	// Collect KindEnumEntry table for numeric $type emission when
 	// generatedIdTables is present (Phase A KindID migration). Undefined
@@ -126,7 +138,7 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	if (leafReConsts.size > 0) lines.push('');
 
 	const aliasSourceKinds = collectAliasSourceKinds(nodeMap);
-	emitPerNodeFactories(nodeMap, strict, aliasSourceKinds, leafReConsts, kindEntries, lines);
+	emitPerNodeFactories(nodeMap, strict, aliasSourceKinds, leafReConsts, kindEntries, inlineKinds, synthesizedKinds, lines);
 
 	const mapEntries = buildFactoryMapEntries(nodeMap, aliasSourceKinds, kindEntries);
 
@@ -526,6 +538,8 @@ function emitPerNodeFactories(
 	aliasSourceKinds: Set<string>,
 	leafReConsts: Map<string, string>,
 	kindEntries: readonly KindEnumEntry[] | undefined,
+	inlineKinds: readonly string[] | undefined,
+	synthesizedKinds: ReadonlySet<string> | undefined,
 	lines: string[]
 ): void {
 	const refineInfos = collectRefineKindInfos(nodeMap);
@@ -551,7 +565,38 @@ function emitPerNodeFactories(
 		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined this rule
 		// during parser compilation) can never appear at runtime. Skip factory
 		// emission entirely — factories / wrap / validators for them are dead code.
-		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
+		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) {
+			if (inlineKinds?.includes(kind)) {
+				console.warn(
+					`[codegen] '${kind}' is in inline: array — no parser symbol expected. ` +
+					`Skipping factory emission. ` +
+					// TODO: map inlined-kind factories to their decomposition (the
+					// concrete kinds the inlined rule expands to).
+					`Future: map to decomposition.`
+				);
+			} else if (synthesizedKinds?.has(kind)) {
+				console.warn(
+					`[codegen] '${kind}' is evaluate-synthesized (inline-alias-source) — ` +
+					`no parser symbol expected. Skipping factory emission. ` +
+					// TODO: map inlined-kind factories to their decomposition (the
+					// concrete kinds the inlined rule expands to).
+					`Future: map to decomposition.`
+				);
+			} else {
+				// TSGrammar-only phantom: tree-sitter implicitly inlined this hidden
+				// rule during LR table generation. Not in the explicit inline: list
+				// but also not a codegen bug — tree-sitter's LR optimizer can inline
+				// hidden rules without the author listing them in inline:. Warn and
+				// skip; don't throw, as this is expected for many hidden rules.
+				console.warn(
+					`[codegen] skipping factory emission for '${kind}' — no parser symbol ` +
+					`(TSGrammar-only, implicitly inlined by tree-sitter). Factories for ` +
+					`this kind cannot carry a numeric $type. If this kind should have a ` +
+					`parser symbol, audit the grammar overrides and the inline: array.`
+				);
+			}
+			continue;
+		}
 		const source = renderFactoryForNode(node, strict, nodeMap, leafReConsts, kindEntries);
 		if (source === undefined) continue;
 		lines.push(source);

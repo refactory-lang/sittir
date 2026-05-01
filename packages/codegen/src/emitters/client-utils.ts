@@ -811,8 +811,14 @@ function emitNativeTransportAssertions(
 		"  if (typeof value.$type !== 'number' && typeof value.$type !== 'string') throw new TypeError(`${path}.$type must be a number or string`);"
 	);
 	lines.push('  const accepted = alternatives.some((candidate) => {');
+	// `kindIdFromName` only resolves by canonical catalog key, not by
+	// displayName (e.g. '+', ';'). For displayName-typed alternatives
+	// (anonymous-token terminals), the candidate.type won't be in the catalog
+	// so kindIdFromName throws. Wrap in a try/catch and fall back to false:
+	// if the alternative can't be resolved to a numeric id, it simply doesn't
+	// match a numeric $type (the string-$type branch below handles those cases).
 	lines.push('    const typeMatch = typeof value.$type === "number"');
-	lines.push('      ? value.$type === kindIdFromName(candidate.type)');
+	lines.push('      ? (() => { try { return value.$type === kindIdFromName(candidate.type); } catch { return false; } })()');
 	lines.push('      : value.$type === candidate.type;');
 	lines.push('    if (!typeMatch) return false;');
 	lines.push(
