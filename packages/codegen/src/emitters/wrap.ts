@@ -98,6 +98,9 @@ export function emitWrap(config: EmitWrapConfig): string {
 					// concrete kinds the inlined rule expands to).
 					`Future: map to decomposition.`
 				);
+			} else if (synthesizedKinds?.has(kind)) {
+				// Intentionally synthesized by evaluate — no parser symbol by design.
+				// Warn-and-skip, same treatment as inline-list kinds.
 			} else {
 				console.warn(
 					`[codegen] VAPORIZED: '${kind}' has no parser symbol and is ` +

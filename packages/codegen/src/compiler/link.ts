@@ -169,7 +169,7 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
 					`refine(${kind}): no rule named '${kind}' found at link time — refine() target must be a top-level rule`
 				);
 			}
-			validateRefineForms(kind, rule, forms);
+			validateRefineForms(kind, rule, forms, rules);
 		}
 	}
 

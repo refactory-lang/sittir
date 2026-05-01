@@ -919,6 +919,7 @@ function grammarFn(
 	// body so the `_X → X` invariant holds uniformly — every alias
 	// target has a named hidden source in the rules map.
 	synthesizeInlineAliasSources(rules, provenanceByKind, externals);
+	synthesizeFieldEnumRules(rules, provenanceByKind);
 	const identified = buildRuleCatalog(rules, provenanceByKind);
 	const references = attachReferenceRuleIds(refs, identified.ruleCatalog);
 
@@ -1047,6 +1048,253 @@ function rewriteInlineAliases(
 			} as Rule;
 		default:
 			return rule;
+	}
+}
+
+// ---------------------------------------------------------------------------
+// synthesizeFieldEnumRules — promote inline field-enums to named hidden rules
+// ---------------------------------------------------------------------------
+
+/**
+ * Post-evaluation pass: detect `field(name, enum([...]))` patterns inside
+ * every rule and synthesize a named hidden rule `_<parentKind>_<fieldName>`
+ * for each one. Replace the field's inline enum content with a `SymbolRule`
+ * referencing the new rule.
+ *
+ * @remarks
+ * A field whose content is a choice-of-literals (already collapsed to
+ * `EnumRule` by `choice()`) represents a closed, compile-time-known set of
+ * operator/punctuation tokens. Promoting these to named hidden rules enables
+ * downstream emitters to generate a compact Rust enum with KindId-backed
+ * discriminants rather than a heap-allocated `text: String` field.
+ *
+ * Also follows single-step symbol indirections: when a field's content is a
+ * bare `SymbolRule` referencing a rule that resolves to a `StringRule` or
+ * `EnumRule` (e.g. `field('mutability', $.mutable_specifier)` where
+ * `mutable_specifier` = `'mut'`), the target rule's literals are collected
+ * and a new enum kind is synthesized in the same way.
+ *
+ * Synthesized rules carry provenance `'evaluate-synthesized'` so emitters
+ * recognize them as intentional codegen artifacts with no parser symbol.
+ *
+ * @param rules - Mutable rules map; synthesized rules are added in place.
+ * @param provenanceByKind - Provenance map; entries are added for each new kind.
+ */
+function synthesizeFieldEnumRules(
+	rules: Record<string, Rule>,
+	provenanceByKind: Map<string, RuleProvenance>
+): void {
+	// Collect rewrites first so we don't modify rules while iterating.
+	const rewrites = new Map<string, Rule>();
+	const newRules = new Map<string, EnumRule>();
+
+	for (const [parentKind, rule] of Object.entries(rules)) {
+		const rewritten = rewriteFieldEnums(
+			rule,
+			parentKind,
+			rules,
+			newRules
+		);
+		if (rewritten !== rule) rewrites.set(parentKind, rewritten);
+	}
+
+	// Apply rule rewrites.
+	for (const [kind, newRule] of rewrites) {
+		rules[kind] = newRule;
+	}
+
+	// Register synthesized enum rules.
+	for (const [kindName, enumRule] of newRules) {
+		if (!rules[kindName]) {
+			rules[kindName] = enumRule;
+			provenanceByKind.set(kindName, 'evaluate-synthesized');
+		}
+	}
+}
+
+/**
+ * Walk a rule tree and rewrite every `field(name, inlineEnum)` to
+ * `field(name, symbol(_<parentKind>_<fieldName>))`, collecting the
+ * synthesized enum rules into `newRules`.
+ *
+ * @param rule - The rule tree to walk and potentially rewrite.
+ * @param parentKind - The grammar kind that owns this rule (for naming).
+ * @param rules - The full rules map for symbol-reference resolution.
+ * @param newRules - Accumulator for synthesized `EnumRule` entries.
+ * @returns The rewritten rule (may be structurally identical if no change was needed).
+ */
+function rewriteFieldEnums(
+	rule: Rule,
+	parentKind: string,
+	rules: Record<string, Rule>,
+	newRules: Map<string, EnumRule>
+): Rule {
+	const recurse = (r: Rule): Rule =>
+		rewriteFieldEnums(r, parentKind, rules, newRules);
+
+	switch (rule.type) {
+		case 'field': {
+			const synthesized = tryExtractFieldEnum(
+				rule.name,
+				rule.content,
+				parentKind,
+				rules
+			);
+			if (synthesized !== null) {
+				const { enumKindName, enumRule } = synthesized;
+				if (!newRules.has(enumKindName)) {
+					newRules.set(enumKindName, enumRule);
+				}
+				// Replace the field's inline content with a SymbolRule.
+				const symRule: SymbolRule = {
+					type: 'symbol',
+					name: enumKindName,
+					hidden: true
+				};
+				return {
+					type: 'field',
+					name: rule.name,
+					content: symRule,
+					source: rule.source,
+					nameFrom: rule.nameFrom,
+					blockBearer: rule.blockBearer
+				} satisfies FieldRule;
+			}
+			// Content isn't an enum candidate — recurse to find nested fields.
+			const newContent = recurse(rule.content);
+			if (newContent === rule.content) return rule;
+			return { ...rule, content: newContent } as FieldRule;
+		}
+		case 'seq':
+		case 'choice': {
+			const newMembers = rule.members.map(recurse);
+			if (newMembers.every((m, i) => m === rule.members[i])) return rule;
+			return { ...rule, members: newMembers } as Rule;
+		}
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'variant':
+		case 'clause':
+		case 'group':
+		case 'token': {
+			const newContent = recurse((rule as { content: Rule }).content);
+			if (newContent === (rule as { content: Rule }).content) return rule;
+			return { ...rule, content: newContent } as Rule;
+		}
+		default:
+			return rule;
+	}
+}
+
+/**
+ * Try to extract an enum definition from a field's content.
+ *
+ * Returns `{ enumKindName, enumRule }` when the content resolves to a
+ * closed set of string literals, or `null` when it does not qualify.
+ *
+ * Qualifying shapes:
+ *
+ * 1. `EnumRule` (inline `choice('+', '-', ...)` already collapsed) — use
+ *    its members directly.
+ *
+ * 2. `StringRule` (single literal inline in the field position) — wrap in
+ *    a 1-member enum.
+ *
+ * 3. `SymbolRule` whose referent in `rules` resolves to a `StringRule` or
+ *    `EnumRule` — use that rule's literals. Follows exactly one level of
+ *    indirection (symbol → literal | enum).
+ *
+ * @param fieldName - The field's grammar name (e.g. `'operator'`).
+ * @param content - The field's current content rule.
+ * @param parentKind - The kind that owns the field (for the synthesized name).
+ * @param rules - Full rules map for symbol resolution.
+ * @returns Synthesized kind name + enum rule, or `null`.
+ */
+function tryExtractFieldEnum(
+	fieldName: string,
+	content: Rule,
+	parentKind: string,
+	rules: Record<string, Rule>
+): { enumKindName: string; enumRule: EnumRule } | null {
+	const members = resolveToEnumMembers(content, rules);
+	if (members === null || members.length === 0) return null;
+
+	const enumKindName = `_${parentKind}_${fieldName}`;
+	const enumRule: EnumRule = {
+		type: 'enum',
+		members,
+		source: 'grammar'
+	};
+	return { enumKindName, enumRule };
+}
+
+/**
+ * Resolve a rule to an ordered list of string members if it represents a
+ * closed set of literals. Returns `null` when the rule cannot be reduced to
+ * an all-literal set.
+ *
+ * @param rule - The rule to inspect.
+ * @param rules - Full rules map for one-level symbol indirection.
+ * @returns An array of `StringRule` members, or `null`.
+ * @remarks
+ * Only one level of symbol indirection is followed. Chains like
+ * `symbol → symbol → enum` are intentionally NOT followed — deeper
+ * resolution belongs in Link, and multi-level chains are uncommon for
+ * operator fields.
+ */
+function resolveToEnumMembers(
+	rule: Rule,
+	rules: Record<string, Rule>
+): StringRule[] | null {
+	switch (rule.type) {
+		case 'enum':
+			// Already a collapsed choice-of-strings.
+			return rule.members as StringRule[];
+		case 'string':
+			// Single inline literal — wrap as a 1-member enum.
+			return [rule];
+		case 'symbol': {
+			// Follow one level of symbol indirection.
+			const target = rules[rule.name];
+			if (target === undefined) return null;
+			return resolveToEnumMembersOneLevelDeep(target);
+		}
+		default:
+			return null;
+	}
+}
+
+/**
+ * Resolve a target rule to enum members without further symbol indirection.
+ *
+ * @param target - The resolved rule (one hop from a symbol reference).
+ * @returns An array of `StringRule` members, or `null` when the target is
+ *   not a literal or all-literal choice/enum.
+ * @remarks
+ * Kept separate from {@link resolveToEnumMembers} to make the "one-level
+ * indirection" constraint explicit and prevent accidental chain following.
+ * A `ChoiceRule` reaching here is the raw evaluate-time form — all-string
+ * choices should already have been collapsed to `EnumRule` by `choice()`,
+ * but handle the raw form defensively.
+ */
+function resolveToEnumMembersOneLevelDeep(target: Rule): StringRule[] | null {
+	switch (target.type) {
+		case 'string':
+			return [target];
+		case 'enum':
+			return target.members as StringRule[];
+		case 'choice': {
+			// Defensive: all-string choice not yet collapsed (should not occur
+			// in normal evaluate output, but handle gracefully).
+			if (target.members.length === 0) return null;
+			const allStrings = target.members.every(
+				(m): m is StringRule => m.type === 'string'
+			);
+			return allStrings ? target.members : null;
+		}
+		default:
+			return null;
 	}
 }
 

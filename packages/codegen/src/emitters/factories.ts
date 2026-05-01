@@ -574,6 +574,10 @@ function emitPerNodeFactories(
 					// concrete kinds the inlined rule expands to).
 					`Future: map to decomposition.`
 				);
+			} else if (synthesizedKinds?.has(kind)) {
+				// Intentionally synthesized by evaluate (e.g. inline-alias-source
+				// pass or field-enum synthesis) — no parser symbol by design.
+				// Warn-and-skip, same treatment as inline-list kinds.
 			} else {
 				// Kind has no parser symbol AND is NOT in the explicit inline:
 				// array. This is a codegen bug — the pipeline synthesized a

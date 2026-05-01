@@ -544,15 +544,26 @@ describe('Evaluate — evaluate()', () => {
 		expect(raw.word).toBeNull();
 	});
 
-	it('detects enum from choice of strings', async () => {
+	it('detects enum from choice of strings and synthesizes hidden enum rule', async () => {
 		const raw = await evaluate(fixture('test-grammar.js'));
 		// binary_expression has field('operator', choice('+', '-', '*', '/'))
+		// After synthesis, the field's content is replaced by a SymbolRule
+		// and a hidden rule `_binary_expression_operator` is added to raw.rules.
 		const binExpr = raw.rules['binary_expression'];
 		expect(binExpr!.type).toBe('seq');
 		const operatorField = (binExpr as any).members.find(
 			(m: any) => m.type === 'field' && m.name === 'operator'
 		);
+		// Field content is now a SymbolRule pointing to the synthesized kind.
 		expect(operatorField.content).toEqual(
+			expect.objectContaining({
+				type: 'symbol',
+				name: '_binary_expression_operator',
+				hidden: true
+			})
+		);
+		// The synthesized enum rule exists in raw.rules.
+		expect(raw.rules['_binary_expression_operator']).toEqual(
 			expect.objectContaining({
 				type: 'enum',
 				members: [
