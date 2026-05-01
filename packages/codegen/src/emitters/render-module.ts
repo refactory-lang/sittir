@@ -1362,6 +1362,33 @@ function renderTypedFormFn(
 }
 
 /**
+ * Emit the two-step Rust boilerplate that converts a list-shaped transport
+ * slot into a `*_buf: Vec<Renderable>` ready for `ListNonterminalView`.
+ *
+ * @param ident - Rust identifier base (e.g. `"children"`, `"parameters"`).
+ * @param required - When `true`, the slot is `Vec<Box<AnyTransport>>`; when
+ *   `false` it is `Option<Vec<Box<AnyTransport>>>` and needs `as_deref()`.
+ * @returns Lines to splice into the parent function body.
+ */
+function emitListSlotBuffer(ident: string, required: boolean): string[] {
+	const lines: string[] = [];
+	if (required) {
+		lines.push(`    let ${ident}_strings: Vec<String> = node.${ident}.iter()`);
+		lines.push(`        .map(|t| render_transport_dispatch(t.as_ref()))`);
+		lines.push(`        .collect::<Result<Vec<_>, _>>()?;`);
+	} else {
+		lines.push(`    let ${ident}_owned: &[Box<AnyTransport>] = node.${ident}.as_deref().unwrap_or(&[]);`);
+		lines.push(`    let ${ident}_strings: Vec<String> = ${ident}_owned.iter()`);
+		lines.push(`        .map(|t| render_transport_dispatch(t.as_ref()))`);
+		lines.push(`        .collect::<Result<Vec<_>, _>>()?;`);
+	}
+	lines.push(`    let ${ident}_buf: Vec<::sittir_core::filters::Renderable<'_>> = ${ident}_strings.iter()`);
+	lines.push(`        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))`);
+	lines.push(`        .collect();`);
+	return lines;
+}
+
+/**
  * Build the function body that constructs a template struct from typed
  * transport fields and calls `template.render()`.
  *
@@ -1392,29 +1419,7 @@ function buildTypedTemplateBody(
 	// BoundedType), skip access and emit an empty buffer for the template slot.
 	if (struct.hasChildren) {
 		if (struct.transportHasChildren) {
-			if (struct.childrenRequired) {
-				lines.push(
-					`    let children_strings: Vec<String> = node.children.iter()`
-				);
-				lines.push(`        .map(|t| render_transport_dispatch(t.as_ref()))`);
-				lines.push(`        .collect::<Result<Vec<_>, _>>()?;`);
-			} else {
-				lines.push(
-					`    let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);`
-				);
-				lines.push(
-					`    let children_strings: Vec<String> = children_owned.iter()`
-				);
-				lines.push(`        .map(|t| render_transport_dispatch(t.as_ref()))`);
-				lines.push(`        .collect::<Result<Vec<_>, _>>()?;`);
-			}
-			lines.push(
-				`    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()`
-			);
-			lines.push(
-				`        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))`
-			);
-			lines.push(`        .collect();`);
+			lines.push(...emitListSlotBuffer('children', struct.childrenRequired));
 		} else {
 			// Template uses children but transport has no children field —
 			// emit an empty buffer so the ListNonterminalView slot in the template is empty.
@@ -1431,33 +1436,7 @@ function buildTypedTemplateBody(
 		if (!f.hasTransportField) continue;
 		const rIdent = rustFieldIdent(f.name);
 		if (f.view === 'list' || (f.view === 'field' && f.multiple)) {
-			if (f.required) {
-				lines.push(
-					`    let ${rIdent}_strings: Vec<String> = node.${rIdent}.iter()`
-				);
-				lines.push(
-					`        .map(|t| render_transport_dispatch(t.as_ref()))`
-				);
-				lines.push(`        .collect::<Result<Vec<_>, _>>()?;`);
-			} else {
-				lines.push(
-					`    let ${rIdent}_owned: &[Box<AnyTransport>] = node.${rIdent}.as_deref().unwrap_or(&[]);`
-				);
-				lines.push(
-					`    let ${rIdent}_strings: Vec<String> = ${rIdent}_owned.iter()`
-				);
-				lines.push(
-					`        .map(|t| render_transport_dispatch(t.as_ref()))`
-				);
-				lines.push(`        .collect::<Result<Vec<_>, _>>()?;`);
-			}
-			lines.push(
-				`    let ${rIdent}_buf: Vec<::sittir_core::filters::Renderable<'_>> = ${rIdent}_strings.iter()`
-			);
-			lines.push(
-				`        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))`
-			);
-			lines.push(`        .collect();`);
+			lines.push(...emitListSlotBuffer(rIdent, f.required));
 		}
 		// Single-valued 'field' view: rendered inline in template construction below.
 	}
