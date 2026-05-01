@@ -138,22 +138,20 @@ export function kindDiscriminantExpr(
 	return `TSKindId.${kindIdMemberName(nodeMap, kind)}`;
 }
 
+/**
+ * Subset of `toCatalogMap` — drops TSGrammar-only entries (those whose
+ * `id` is undefined). Substituting a `-1` sentinel would let them
+ * survive the `id === undefined` filter in `collectKindEntries` and
+ * emit `_kindIdByKind` / `TSKindId.X` entries that match nothing at
+ * runtime (silent never-match). Filter them here so the catalog only
+ * contains real parser-symbol ids.
+ */
 function toIdMap(
 	ids: GeneratedIdTables['kindIds']
 ): Map<string, number> {
-	if (!ids) return new Map();
-	const entries = ids instanceof Map ? [...ids.entries()] : Object.entries(ids);
-	// Drop entries whose id is genuinely undefined (TSGrammar-only — no
-	// parser symbol). Substituting a `-1` sentinel would survive the
-	// `id === undefined` filter in collectKindEntries and emit
-	// `_kindIdByKind` / `TSKindId.X` entries that match nothing at
-	// runtime — silent never-match. Filter them out at the source so
-	// the downstream catalog only contains real ids.
 	const result = new Map<string, number>();
-	for (const [name, value] of entries) {
-		const id = typeof value === 'number' ? value : value.id;
-		if (id === undefined) continue;
-		result.set(name, id);
+	for (const [name, row] of toCatalogMap(ids)) {
+		if (row.id !== undefined) result.set(name, row.id);
 	}
 	return result;
 }
