@@ -23,11 +23,11 @@ export interface AbstractClassDeclarationTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  decorator: Array<Box<AnyTransport>>
-  name: Box<AnyTransport>
-  typeParameters?: Box<AnyTransport>
+  decorator: Array<DecoratorTransport>
+  name: TypeIdentifierTransport
+  typeParameters?: TypeParametersTransport
   classHeritage?: Box<AnyTransport>
-  body: Box<AnyTransport>
+  body: ClassBodyTransport
 }
 
 export interface AbstractMethodSignatureTransport {
@@ -36,13 +36,13 @@ export interface AbstractMethodSignatureTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  accessibilityModifier?: Box<AnyTransport>
-  overrideModifier?: Box<AnyTransport>
+  accessibilityModifier?: AccessibilityModifierTransport
+  overrideModifier?: OverrideModifierTransport
   accessorKind?: Box<AnyTransport>
   name: Box<AnyTransport>
-  optionalMarker?: Box<AnyTransport>
-  typeParameters?: Box<AnyTransport>
-  parameters: Box<AnyTransport>
+  optionalMarker?: KwOptionalMarkerTransport
+  typeParameters?: TypeParametersTransport
+  parameters: FormalParametersTransport
   returnType?: Box<AnyTransport>
 }
 
@@ -164,8 +164,8 @@ export interface ArrowFunctionUCallSignatureTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  typeParameters?: Box<AnyTransport>
-  parameters: Box<AnyTransport>
+  typeParameters?: TypeParametersTransport
+  parameters: FormalParametersTransport
   returnType?: Box<AnyTransport>
 }
 
@@ -175,8 +175,8 @@ export interface ArrowFunctionUCallSignatureTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  typeParameters?: Box<AnyTransport>
-  parameters: Box<AnyTransport>
+  typeParameters?: TypeParametersTransport
+  parameters: FormalParametersTransport
   returnType?: Box<AnyTransport>
 }
 
@@ -186,7 +186,7 @@ export interface ArrowFunctionUFormParameterTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: Box<AnyTransport>
+  asyncMarker?: KwAsyncMarkerTransport
   body: Box<AnyTransport>
   '$children': Array<Box<AnyTransport>>
 }
@@ -197,7 +197,7 @@ export interface ArrowFunctionUFormUCallSignatureTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: Box<AnyTransport>
+  asyncMarker?: KwAsyncMarkerTransport
   body: Box<AnyTransport>
   '$children': Array<Box<AnyTransport>>
 }
@@ -218,7 +218,7 @@ export interface AssertsAnnotationTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asserts: Box<AnyTransport>
+  asserts: AssertsTransport
 }
 
 export interface AssertsTransport {
@@ -352,7 +352,7 @@ export interface BreakStatementTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  label?: Box<AnyTransport>
+  label?: StatementIdentifierTransport
   semicolon: Box<AnyTransport>
 }
 
@@ -371,8 +371,8 @@ export interface CallExpressionCallTransport {
   '$span'?: Span
   '$nodeId'?: number
   function: Box<AnyTransport>
-  typeArguments?: Box<AnyTransport>
-  arguments: Box<AnyTransport>
+  typeArguments?: TypeArgumentsTransport
+  arguments: ArgumentsTransport
 }
 
 export interface CallExpressionMemberTransport {
@@ -382,8 +382,8 @@ export interface CallExpressionMemberTransport {
   '$span'?: Span
   '$nodeId'?: number
   function: Box<AnyTransport>
-  typeArguments?: Box<AnyTransport>
-  arguments: Box<AnyTransport>
+  typeArguments?: TypeArgumentsTransport
+  arguments: ArgumentsTransport
 }
 
 export interface CallExpressionTemplateCallTransport {
@@ -393,7 +393,7 @@ export interface CallExpressionTemplateCallTransport {
   '$span'?: Span
   '$nodeId'?: number
   function: Box<AnyTransport>
-  arguments: Box<AnyTransport>
+  arguments: TemplateStringTransport
 }
 
 export interface CallExpressionUFormCallTransport {
@@ -429,8 +429,8 @@ export interface CallSignatureTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  typeParameters?: Box<AnyTransport>
-  parameters: Box<AnyTransport>
+  typeParameters?: TypeParametersTransport
+  parameters: FormalParametersTransport
   returnType?: Box<AnyTransport>
 }
 
@@ -440,8 +440,8 @@ export interface CallSignatureTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  typeParameters?: Box<AnyTransport>
-  parameters: Box<AnyTransport>
+  typeParameters?: TypeParametersTransport
+  parameters: FormalParametersTransport
   returnType?: Box<AnyTransport>
 }
 
@@ -468,8 +468,8 @@ export interface CatchClauseTransport {
   '$span'?: Span
   '$nodeId'?: number
   parameter?: Box<AnyTransport>
-  type?: Box<AnyTransport>
-  body: Box<AnyTransport>
+  type?: TypeAnnotationTransport
+  body: StatementBlockTransport
 }
 
 export interface CatchTransport {
@@ -504,7 +504,7 @@ export interface ClassBodyMethodTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  decorator: Array<Box<AnyTransport>>
+  decorator: Array<DecoratorTransport>
   '$children': Array<Box<AnyTransport>>
 }
 
@@ -523,12 +523,12 @@ export interface ClassDeclarationTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  decorator: Array<Box<AnyTransport>>
-  name: Box<AnyTransport>
-  typeParameters?: Box<AnyTransport>
+  decorator: Array<DecoratorTransport>
+  name: TypeIdentifierTransport
+  typeParameters?: TypeParametersTransport
   classHeritage?: Box<AnyTransport>
-  body: Box<AnyTransport>
-  automaticSemicolon?: Box<AnyTransport>
+  body: ClassBodyTransport
+  automaticSemicolon?: AutomaticSemicolonTransport
 }
 
 export interface ClassHeritageExtendsClauseTransport {
@@ -591,7 +591,7 @@ export interface ClassStaticBlockTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  body: Box<AnyTransport>
+  body: StatementBlockTransport
   '$children'?: Array<Box<AnyTransport>>
 }
 
@@ -601,11 +601,11 @@ export interface ClassTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  decorator: Array<Box<AnyTransport>>
-  name?: Box<AnyTransport>
-  typeParameters?: Box<AnyTransport>
+  decorator: Array<DecoratorTransport>
+  name?: TypeIdentifierTransport
+  typeParameters?: TypeParametersTransport
   classHeritage?: Box<AnyTransport>
-  body: Box<AnyTransport>
+  body: ClassBodyTransport
 }
 
 export interface CloseBraceTransport {
@@ -692,9 +692,9 @@ export interface ConstructorTypeTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  abstractMarker?: Box<AnyTransport>
-  typeParameters?: Box<AnyTransport>
-  parameters: Box<AnyTransport>
+  abstractMarker?: KwAbstractMarkerTransport
+  typeParameters?: TypeParametersTransport
+  parameters: FormalParametersTransport
   type: Box<AnyTransport>
 }
 
@@ -704,10 +704,10 @@ export interface ConstructSignatureTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  abstractMarker?: Box<AnyTransport>
-  typeParameters?: Box<AnyTransport>
-  parameters: Box<AnyTransport>
-  type?: Box<AnyTransport>
+  abstractMarker?: KwAbstractMarkerTransport
+  typeParameters?: TypeParametersTransport
+  parameters: FormalParametersTransport
+  type?: TypeAnnotationTransport
 }
 
 export interface ConstTransport {
@@ -724,7 +724,7 @@ export interface ContinueStatementTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  label?: Box<AnyTransport>
+  label?: StatementIdentifierTransport
   semicolon: Box<AnyTransport>
 }
 
@@ -768,8 +768,8 @@ export interface DecoratorCallExpressionTransport {
   '$span'?: Span
   '$nodeId'?: number
   function: Box<AnyTransport>
-  typeArguments?: Box<AnyTransport>
-  arguments: Box<AnyTransport>
+  typeArguments?: TypeArgumentsTransport
+  arguments: ArgumentsTransport
 }
 
 export interface DecoratorMemberExpressionTransport {
@@ -779,7 +779,7 @@ export interface DecoratorMemberExpressionTransport {
   '$span'?: Span
   '$nodeId'?: number
   object: Box<AnyTransport>
-  property: Box<AnyTransport>
+  property: PropertyIdentifierTransport
 }
 
 export interface DecoratorParenthesizedExpressionTransport {
@@ -906,9 +906,9 @@ export interface EnumDeclarationTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  constMarker?: Box<AnyTransport>
-  name: Box<AnyTransport>
-  body: Box<AnyTransport>
+  constMarker?: KwConstMarkerTransport
+  name: IdentifierTransport
+  body: EnumBodyTransport
 }
 
 export interface EnumTransport {
@@ -1004,7 +1004,7 @@ export interface ExportStatementDefaultDeclArmTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  decorator: Array<Box<AnyTransport>>
+  decorator: Array<DecoratorTransport>
   '$children': Array<Box<AnyTransport>>
 }
 
@@ -1163,7 +1163,7 @@ export interface ExtendsClauseSingleTransport {
   '$span'?: Span
   '$nodeId'?: number
   value: Box<AnyTransport>
-  typeArguments?: Box<AnyTransport>
+  typeArguments?: TypeArgumentsTransport
 }
 
 export interface ExtendsClauseTransport {
@@ -1173,7 +1173,7 @@ export interface ExtendsClauseTransport {
   '$span'?: Span
   '$nodeId'?: number
   value: Array<Box<AnyTransport>>
-  typeArguments?: Box<AnyTransport>
+  typeArguments?: TypeArgumentsTransport
 }
 
 export interface ExtendsTransport {
@@ -1215,8 +1215,8 @@ export interface FieldDefinitionTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  decorator: Array<Box<AnyTransport>>
-  staticMarker?: Box<AnyTransport>
+  decorator: Array<DecoratorTransport>
+  staticMarker?: KwStaticMarkerTransport
   property: Box<AnyTransport>
   value?: Box<AnyTransport>
 }
@@ -1227,7 +1227,7 @@ export interface FinallyClauseTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  body: Box<AnyTransport>
+  body: StatementBlockTransport
 }
 
 export interface FinallyTransport {
@@ -1354,12 +1354,12 @@ export interface FunctionDeclarationTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: Box<AnyTransport>
-  name: Box<AnyTransport>
-  typeParameters?: Box<AnyTransport>
-  parameters: Box<AnyTransport>
+  asyncMarker?: KwAsyncMarkerTransport
+  name: IdentifierTransport
+  typeParameters?: TypeParametersTransport
+  parameters: FormalParametersTransport
   returnType?: Box<AnyTransport>
-  body: Box<AnyTransport>
+  body: StatementBlockTransport
   '$children'?: Array<Box<AnyTransport>>
 }
 
@@ -1369,12 +1369,12 @@ export interface FunctionExpressionTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: Box<AnyTransport>
-  name?: Box<AnyTransport>
-  typeParameters?: Box<AnyTransport>
-  parameters: Box<AnyTransport>
+  asyncMarker?: KwAsyncMarkerTransport
+  name?: IdentifierTransport
+  typeParameters?: TypeParametersTransport
+  parameters: FormalParametersTransport
   returnType?: Box<AnyTransport>
-  body: Box<AnyTransport>
+  body: StatementBlockTransport
 }
 
 export interface FunctionSignatureAutomaticSemicolonTransport {
@@ -1391,10 +1391,10 @@ export interface FunctionSignatureTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: Box<AnyTransport>
-  name: Box<AnyTransport>
-  typeParameters?: Box<AnyTransport>
-  parameters: Box<AnyTransport>
+  asyncMarker?: KwAsyncMarkerTransport
+  name: IdentifierTransport
+  typeParameters?: TypeParametersTransport
+  parameters: FormalParametersTransport
   returnType?: Box<AnyTransport>
   semicolon: Box<AnyTransport>
 }
@@ -1413,8 +1413,8 @@ export interface FunctionTypeTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  typeParameters?: Box<AnyTransport>
-  parameters: Box<AnyTransport>
+  typeParameters?: TypeParametersTransport
+  parameters: FormalParametersTransport
   returnType: Box<AnyTransport>
 }
 
@@ -1424,12 +1424,12 @@ export interface GeneratorFunctionDeclarationTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: Box<AnyTransport>
-  name: Box<AnyTransport>
-  typeParameters?: Box<AnyTransport>
-  parameters: Box<AnyTransport>
+  asyncMarker?: KwAsyncMarkerTransport
+  name: IdentifierTransport
+  typeParameters?: TypeParametersTransport
+  parameters: FormalParametersTransport
   returnType?: Box<AnyTransport>
-  body: Box<AnyTransport>
+  body: StatementBlockTransport
   '$children'?: Array<Box<AnyTransport>>
 }
 
@@ -1439,12 +1439,12 @@ export interface GeneratorFunctionTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: Box<AnyTransport>
-  name?: Box<AnyTransport>
-  typeParameters?: Box<AnyTransport>
-  parameters: Box<AnyTransport>
+  asyncMarker?: KwAsyncMarkerTransport
+  name?: IdentifierTransport
+  typeParameters?: TypeParametersTransport
+  parameters: FormalParametersTransport
   returnType?: Box<AnyTransport>
-  body: Box<AnyTransport>
+  body: StatementBlockTransport
 }
 
 export interface GenericTypeTransport {
@@ -1454,7 +1454,7 @@ export interface GenericTypeTransport {
   '$span'?: Span
   '$nodeId'?: number
   name: Box<AnyTransport>
-  typeArguments: Box<AnyTransport>
+  typeArguments: TypeArgumentsTransport
 }
 
 export interface GeTransport {
@@ -1521,7 +1521,7 @@ export interface IfStatementTransport {
   '$nodeId'?: number
   condition: Box<AnyTransport>
   consequence: Box<AnyTransport>
-  alternative?: Box<AnyTransport>
+  alternative?: ElseClauseTransport
 }
 
 export interface IfTransport {
@@ -1555,7 +1555,7 @@ export interface ImportAliasTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  name: Box<AnyTransport>
+  name: IdentifierTransport
   value: Box<AnyTransport>
   semicolon: Box<AnyTransport>
 }
@@ -1566,7 +1566,7 @@ export interface ImportAttributeTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  object: Box<AnyTransport>
+  object: ObjectTransport
 }
 
 export interface ImportClauseDefaultImportTransport {
@@ -1656,7 +1656,7 @@ export interface ImportRequireClauseTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  identifier: Box<AnyTransport>
+  identifier: IdentifierTransport
   source: Box<AnyTransport>
 }
 
@@ -1716,7 +1716,7 @@ export interface ImportStatementTransport {
   '$nodeId'?: number
   importClause?: Box<AnyTransport>
   fromClause: Box<AnyTransport>
-  importAttribute?: Box<AnyTransport>
+  importAttribute?: ImportAttributeTransport
   semicolon: Box<AnyTransport>
 }
 
@@ -1801,7 +1801,7 @@ export interface InferTypeTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  typeIdentifier: Box<AnyTransport>
+  typeIdentifier: TypeIdentifierTransport
   type?: Box<AnyTransport>
 }
 
@@ -1829,7 +1829,7 @@ export interface InstantiationExpressionTransport {
   '$span'?: Span
   '$nodeId'?: number
   expression: Box<AnyTransport>
-  typeArguments: Box<AnyTransport>
+  typeArguments: TypeArgumentsTransport
 }
 
 export interface InterfaceBodyTransport {
@@ -1847,10 +1847,10 @@ export interface InterfaceDeclarationTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  name: Box<AnyTransport>
-  typeParameters?: Box<AnyTransport>
-  extendsTypeClause?: Box<AnyTransport>
-  body: Box<AnyTransport>
+  name: TypeIdentifierTransport
+  typeParameters?: TypeParametersTransport
+  extendsTypeClause?: ExtendsTypeClauseTransport
+  body: InterfaceBodyTransport
 }
 
 export interface InterfaceTransport {
@@ -1868,7 +1868,7 @@ export interface InternalModuleTransport {
   '$span'?: Span
   '$nodeId'?: number
   name: Box<AnyTransport>
-  body?: Box<AnyTransport>
+  body?: StatementBlockTransport
 }
 
 export interface IntersectionTypeTransport {
@@ -1921,8 +1921,8 @@ export interface JsxElementTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  openTag: Box<AnyTransport>
-  closeTag: Box<AnyTransport>
+  openTag: JsxOpeningElementTransport
+  closeTag: JsxClosingElementTransport
   '$children': Array<Box<AnyTransport>>
 }
 
@@ -1959,7 +1959,7 @@ export interface JsxOpeningElementTransport {
   '$span'?: Span
   '$nodeId'?: number
   name?: Box<AnyTransport>
-  typeArguments?: Box<AnyTransport>
+  typeArguments?: TypeArgumentsTransport
   attribute: Array<Box<AnyTransport>>
 }
 
@@ -1970,7 +1970,7 @@ export interface JsxSelfClosingElementTransport {
   '$span'?: Span
   '$nodeId'?: number
   name?: Box<AnyTransport>
-  typeArguments?: Box<AnyTransport>
+  typeArguments?: TypeArgumentsTransport
   attribute: Array<Box<AnyTransport>>
 }
 
@@ -1981,7 +1981,7 @@ export interface JsxStartOpeningElementTransport {
   '$span'?: Span
   '$nodeId'?: number
   name?: Box<AnyTransport>
-  typeArguments?: Box<AnyTransport>
+  typeArguments?: TypeArgumentsTransport
   attribute: Array<Box<AnyTransport>>
 }
 
@@ -2064,7 +2064,7 @@ export interface LabeledStatementTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  label: Box<AnyTransport>
+  label: StatementIdentifierTransport
   body: Box<AnyTransport>
 }
 
@@ -2083,7 +2083,7 @@ export interface LexicalDeclarationTransport {
   '$span'?: Span
   '$nodeId'?: number
   kind: Box<AnyTransport>
-  declarators: Array<Box<AnyTransport>>
+  declarators: Array<VariableDeclaratorTransport>
   semicolon: Box<AnyTransport>
 }
 
@@ -2137,7 +2137,7 @@ export interface MappedTypeClauseTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  name: Box<AnyTransport>
+  name: TypeIdentifierTransport
   type: Box<AnyTransport>
   alias?: Box<AnyTransport>
 }
@@ -2166,18 +2166,18 @@ export interface MethodDefinitionTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  accessibilityModifier?: Box<AnyTransport>
-  staticMarker?: Box<AnyTransport>
-  overrideModifier?: Box<AnyTransport>
-  readonlyMarker?: Box<AnyTransport>
-  asyncMarker?: Box<AnyTransport>
+  accessibilityModifier?: AccessibilityModifierTransport
+  staticMarker?: KwStaticMarkerTransport
+  overrideModifier?: OverrideModifierTransport
+  readonlyMarker?: KwReadonlyMarkerTransport
+  asyncMarker?: KwAsyncMarkerTransport
   accessorKind?: Box<AnyTransport>
   name: Box<AnyTransport>
-  optionalMarker?: Box<AnyTransport>
-  typeParameters?: Box<AnyTransport>
-  parameters: Box<AnyTransport>
+  optionalMarker?: KwOptionalMarkerTransport
+  typeParameters?: TypeParametersTransport
+  parameters: FormalParametersTransport
   returnType?: Box<AnyTransport>
-  body: Box<AnyTransport>
+  body: StatementBlockTransport
 }
 
 export interface MethodSignatureTransport {
@@ -2186,16 +2186,16 @@ export interface MethodSignatureTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  accessibilityModifier?: Box<AnyTransport>
-  staticMarker?: Box<AnyTransport>
-  overrideModifier?: Box<AnyTransport>
-  readonlyMarker?: Box<AnyTransport>
-  asyncMarker?: Box<AnyTransport>
+  accessibilityModifier?: AccessibilityModifierTransport
+  staticMarker?: KwStaticMarkerTransport
+  overrideModifier?: OverrideModifierTransport
+  readonlyMarker?: KwReadonlyMarkerTransport
+  asyncMarker?: KwAsyncMarkerTransport
   accessorKind?: Box<AnyTransport>
   name: Box<AnyTransport>
-  optionalMarker?: Box<AnyTransport>
-  typeParameters?: Box<AnyTransport>
-  parameters: Box<AnyTransport>
+  optionalMarker?: KwOptionalMarkerTransport
+  typeParameters?: TypeParametersTransport
+  parameters: FormalParametersTransport
   returnType?: Box<AnyTransport>
 }
 
@@ -2214,7 +2214,7 @@ export interface ModuleTransport {
   '$span'?: Span
   '$nodeId'?: number
   name: Box<AnyTransport>
-  body?: Box<AnyTransport>
+  body?: StatementBlockTransport
 }
 
 export interface ModuleTransport {
@@ -2224,7 +2224,7 @@ export interface ModuleTransport {
   '$span'?: Span
   '$nodeId'?: number
   name: Box<AnyTransport>
-  body?: Box<AnyTransport>
+  body?: StatementBlockTransport
 }
 
 export interface NamedImportsTransport {
@@ -2251,7 +2251,7 @@ export interface NamespaceImportTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  identifier: Box<AnyTransport>
+  identifier: IdentifierTransport
 }
 
 export interface NamespaceTransport {
@@ -2277,7 +2277,7 @@ export interface NestedIdentifierTransport {
   '$span'?: Span
   '$nodeId'?: number
   object: Box<AnyTransport>
-  property: Box<AnyTransport>
+  property: PropertyIdentifierTransport
 }
 
 export interface NestedTypeIdentifierTransport {
@@ -2287,7 +2287,7 @@ export interface NestedTypeIdentifierTransport {
   '$span'?: Span
   '$nodeId'?: number
   module: Box<AnyTransport>
-  name: Box<AnyTransport>
+  name: TypeIdentifierTransport
 }
 
 export interface NewExpressionTransport {
@@ -2297,8 +2297,8 @@ export interface NewExpressionTransport {
   '$span'?: Span
   '$nodeId'?: number
   constructor: Box<AnyTransport>
-  typeArguments?: Box<AnyTransport>
-  arguments?: Box<AnyTransport>
+  typeArguments?: TypeArgumentsTransport
+  arguments?: ArgumentsTransport
 }
 
 export interface NewTransport {
@@ -2333,7 +2333,7 @@ export interface NumberTransport {
   '$span'?: Span
   '$nodeId'?: number
   operator: Box<AnyTransport>
-  argument: Box<AnyTransport>
+  argument: NumberTransport
 }
 
 export interface NumberTransport {
@@ -2415,10 +2415,10 @@ export interface OptionalParameterTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  decorator: Array<Box<AnyTransport>>
-  readonlyMarker?: Box<AnyTransport>
+  decorator: Array<DecoratorTransport>
+  readonlyMarker?: KwReadonlyMarkerTransport
   pattern: Box<AnyTransport>
-  type?: Box<AnyTransport>
+  type?: TypeAnnotationTransport
   value?: Box<AnyTransport>
   '$children'?: Array<Box<AnyTransport>>
 }
@@ -2429,8 +2429,8 @@ export interface OptionalTupleParameterTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  name: Box<AnyTransport>
-  type: Box<AnyTransport>
+  name: IdentifierTransport
+  type: TypeAnnotationTransport
 }
 
 export interface OptionalTypeTransport {
@@ -2492,8 +2492,8 @@ export interface ParameterNameTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  decorator: Array<Box<AnyTransport>>
-  readonlyMarker?: Box<AnyTransport>
+  decorator: Array<DecoratorTransport>
+  readonlyMarker?: KwReadonlyMarkerTransport
   pattern: Box<AnyTransport>
   '$children'?: Array<Box<AnyTransport>>
 }
@@ -2522,7 +2522,7 @@ export interface ParenthesizedExpressionTypedTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  type?: Box<AnyTransport>
+  type?: TypeAnnotationTransport
   '$children': Array<Box<AnyTransport>>
 }
 
@@ -2607,7 +2607,7 @@ export interface ProgramTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  hashBangLine?: Box<AnyTransport>
+  hashBangLine?: HashBangLineTransport
   statements: Array<Box<AnyTransport>>
 }
 
@@ -2626,13 +2626,13 @@ export interface PropertySignatureTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  accessibilityModifier?: Box<AnyTransport>
-  staticMarker?: Box<AnyTransport>
-  overrideModifier?: Box<AnyTransport>
-  readonlyMarker?: Box<AnyTransport>
+  accessibilityModifier?: AccessibilityModifierTransport
+  staticMarker?: KwStaticMarkerTransport
+  overrideModifier?: OverrideModifierTransport
+  readonlyMarker?: KwReadonlyMarkerTransport
   name: Box<AnyTransport>
-  optionalMarker?: Box<AnyTransport>
-  type?: Box<AnyTransport>
+  optionalMarker?: KwOptionalMarkerTransport
+  type?: TypeAnnotationTransport
 }
 
 export interface PublicFieldDefinitionAbstractFirstTransport {
@@ -2641,8 +2641,8 @@ export interface PublicFieldDefinitionAbstractFirstTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  abstractMarker: Box<AnyTransport>
-  readonlyMarker?: Box<AnyTransport>
+  abstractMarker: KwAbstractMarkerTransport
+  readonlyMarker?: KwReadonlyMarkerTransport
 }
 
 export interface PublicFieldDefinitionAccessFirstTransport {
@@ -2679,8 +2679,8 @@ export interface PublicFieldDefinitionReadonlyFirstTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  readonlyMarker: Box<AnyTransport>
-  abstractMarker?: Box<AnyTransport>
+  readonlyMarker: KwReadonlyMarkerTransport
+  abstractMarker?: KwAbstractMarkerTransport
 }
 
 export interface PublicFieldDefinitionStaticModsTransport {
@@ -2689,8 +2689,8 @@ export interface PublicFieldDefinitionStaticModsTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  staticMarker: Box<AnyTransport>
-  readonlyMarker?: Box<AnyTransport>
+  staticMarker: KwStaticMarkerTransport
+  readonlyMarker?: KwReadonlyMarkerTransport
   '$children'?: Array<Box<AnyTransport>>
 }
 
@@ -2700,10 +2700,10 @@ export interface PublicFieldDefinitionTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  decorator: Array<Box<AnyTransport>>
+  decorator: Array<DecoratorTransport>
   name: Box<AnyTransport>
   optionalityMarker?: Box<AnyTransport>
-  type?: Box<AnyTransport>
+  type?: TypeAnnotationTransport
   value?: Box<AnyTransport>
   '$children'?: Array<Box<AnyTransport>>
 }
@@ -2755,8 +2755,8 @@ export interface RegexTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  pattern: Box<AnyTransport>
-  flags?: Box<AnyTransport>
+  pattern: RegexPatternTransport
+  flags?: RegexFlagsTransport
 }
 
 export interface RequiredParameterTransport {
@@ -2765,10 +2765,10 @@ export interface RequiredParameterTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  decorator: Array<Box<AnyTransport>>
-  readonlyMarker?: Box<AnyTransport>
+  decorator: Array<DecoratorTransport>
+  readonlyMarker?: KwReadonlyMarkerTransport
   pattern: Box<AnyTransport>
-  type?: Box<AnyTransport>
+  type?: TypeAnnotationTransport
   value?: Box<AnyTransport>
   '$children'?: Array<Box<AnyTransport>>
 }
@@ -2916,7 +2916,7 @@ export interface StatementBlockTransport {
   '$span'?: Span
   '$nodeId'?: number
   statements: Array<Box<AnyTransport>>
-  automaticSemicolon?: Box<AnyTransport>
+  automaticSemicolon?: AutomaticSemicolonTransport
 }
 
 export interface StatementIdentifierTransport {
@@ -3006,7 +3006,7 @@ export interface SubscriptExpressionTransport {
   '$span'?: Span
   '$nodeId'?: number
   object: Box<AnyTransport>
-  optionalChain?: Box<AnyTransport>
+  optionalChain?: OptionalChainTransport
   index: Box<AnyTransport>
 }
 
@@ -3053,7 +3053,7 @@ export interface SwitchStatementTransport {
   '$span'?: Span
   '$nodeId'?: number
   value: Box<AnyTransport>
-  body: Box<AnyTransport>
+  body: SwitchBodyTransport
 }
 
 export interface SwitchTransport {
@@ -3288,9 +3288,9 @@ export interface TryStatementTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  body: Box<AnyTransport>
-  handler?: Box<AnyTransport>
-  finalizer?: Box<AnyTransport>
+  body: StatementBlockTransport
+  handler?: CatchClauseTransport
+  finalizer?: FinallyClauseTransport
 }
 
 export interface TryTransport {
@@ -3308,7 +3308,7 @@ export interface TupleParameterTransport {
   '$span'?: Span
   '$nodeId'?: number
   name: Box<AnyTransport>
-  type: Box<AnyTransport>
+  type: TypeAnnotationTransport
 }
 
 export interface TupleTypeTransport {
@@ -3326,8 +3326,8 @@ export interface TypeAliasDeclarationTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  name: Box<AnyTransport>
-  typeParameters?: Box<AnyTransport>
+  name: TypeIdentifierTransport
+  typeParameters?: TypeParametersTransport
   value: Box<AnyTransport>
   semicolon: Box<AnyTransport>
 }
@@ -3356,7 +3356,7 @@ export interface TypeAssertionTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  typeArguments: Box<AnyTransport>
+  typeArguments: TypeArgumentsTransport
   expression: Box<AnyTransport>
 }
 
@@ -3392,10 +3392,10 @@ export interface TypeParameterTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  constMarker?: Box<AnyTransport>
-  name: Box<AnyTransport>
-  constraint?: Box<AnyTransport>
-  value?: Box<AnyTransport>
+  constMarker?: KwConstMarkerTransport
+  name: TypeIdentifierTransport
+  constraint?: ConstraintTransport
+  value?: DefaultTypeTransport
 }
 
 export interface TypePredicateAnnotationTransport {
@@ -3404,7 +3404,7 @@ export interface TypePredicateAnnotationTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  typePredicate: Box<AnyTransport>
+  typePredicate: TypePredicateTransport
 }
 
 export interface TypePredicateTransport {
@@ -3424,7 +3424,7 @@ export interface TypeQueryCallExpressionInTypeAnnotationTransport {
   '$span'?: Span
   '$nodeId'?: number
   function: Box<AnyTransport>
-  arguments: Box<AnyTransport>
+  arguments: ArgumentsTransport
 }
 
 export interface TypeQueryCallExpressionTransport {
@@ -3434,7 +3434,7 @@ export interface TypeQueryCallExpressionTransport {
   '$span'?: Span
   '$nodeId'?: number
   function: Box<AnyTransport>
-  arguments: Box<AnyTransport>
+  arguments: ArgumentsTransport
 }
 
 export interface TypeQueryInstantiationExpressionTransport {
@@ -3444,7 +3444,7 @@ export interface TypeQueryInstantiationExpressionTransport {
   '$span'?: Span
   '$nodeId'?: number
   function: Box<AnyTransport>
-  typeArguments: Box<AnyTransport>
+  typeArguments: TypeArgumentsTransport
 }
 
 export interface TypeQueryMemberExpressionInTypeAnnotationTransport {
@@ -3598,7 +3598,7 @@ export interface VariableDeclarationTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  declarators: Array<Box<AnyTransport>>
+  declarators: Array<VariableDeclaratorTransport>
   semicolon: Box<AnyTransport>
 }
 
@@ -3609,7 +3609,7 @@ export interface VariableDeclaratorTransport {
   '$span'?: Span
   '$nodeId'?: number
   name: Box<AnyTransport>
-  type?: Box<AnyTransport>
+  type?: TypeAnnotationTransport
   value?: Box<AnyTransport>
 }
 

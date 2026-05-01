@@ -101,7 +101,6 @@ import type {
   IndexTypeQuery,
   InferType,
   InstantiationExpression,
-  InterfaceBody,
   InterfaceDeclaration,
   InternalModule,
   IntersectionType,
@@ -145,7 +144,6 @@ import type {
   ParenthesizedExpressionSequence,
   ParenthesizedType,
   Program,
-  PropertyIdentifier,
   PropertySignature,
   PublicFieldDefinition,
   PublicFieldDefinitionAccessorOpt,
@@ -160,10 +158,8 @@ import type {
   SequenceExpression,
   SpreadElement,
   StatementBlock,
-  StatementIdentifier,
   String,
   StringDouble,
-  StringFragment,
   StringSingle,
   SubscriptExpression,
   SwitchBody,
@@ -175,7 +171,6 @@ import type {
   TemplateSubstitution,
   TemplateType,
   TernaryExpression,
-  ThisType,
   ThrowStatement,
   TryStatement,
   TupleParameter,
@@ -408,28 +403,12 @@ export function wrap_IndexSignatureMappedTypeClause(data: _NodeData, tree: TreeH
   } as unknown as WrappedNode<_IndexSignatureMappedTypeClause>;
 }
 
-export function wrapInterfaceBody(data: _NodeData, tree: TreeHandle): WrappedNode<InterfaceBody> {
-  return {
-    ...data,
-    $type: TSKindId.InterfaceBody as number,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<InterfaceBody>;
-}
-
 export function wrap_ParenthesizedExpressionSequence(data: _NodeData, tree: TreeHandle): WrappedNode<_ParenthesizedExpressionSequence> {
   return {
     ...data,
     $type: TSKindId._ParenthesizedExpressionSequence as number,
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<_ParenthesizedExpressionSequence>;
-}
-
-export function wrapPropertyIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<PropertyIdentifier> {
-  return {
-    ...data,
-    $type: TSKindId.PropertyIdentifier as number,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<PropertyIdentifier>;
 }
 
 export function wrapPublicFieldDefinitionAccessorOpt(data: _NodeData, tree: TreeHandle): WrappedNode<PublicFieldDefinitionAccessorOpt> {
@@ -449,14 +428,6 @@ export function wrapPublicFieldDefinitionDeclareFirst(data: _NodeData, tree: Tre
   } as unknown as WrappedNode<PublicFieldDefinitionDeclareFirst>;
 }
 
-export function wrapStatementIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<StatementIdentifier> {
-  return {
-    ...data,
-    $type: TSKindId.StatementIdentifier as number,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<StatementIdentifier>;
-}
-
 export function wrap_StringDouble(data: _NodeData, tree: TreeHandle): WrappedNode<_StringDouble> {
   return {
     ...data,
@@ -471,14 +442,6 @@ export function wrap_StringSingle(data: _NodeData, tree: TreeHandle): WrappedNod
     $type: TSKindId._StringSingle as number,
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<_StringSingle>;
-}
-
-export function wrapThisType(data: _NodeData, tree: TreeHandle): WrappedNode<ThisType> {
-  return {
-    ...data,
-    $type: TSKindId.ThisType as number,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<ThisType>;
 }
 
 export function wrapTypeIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<TypeIdentifier> {
@@ -531,7 +494,7 @@ export function wrapAmbientDeclaration(data: _NodeData, tree: TreeHandle): Wrapp
   return {
     ...data,
     $type: TSKindId.AmbientDeclaration as number,
-    get declaration() { return drillAs(data.$fields?.['declaration'], tree, "property_identifier", "_property_identifier"); },
+    get declaration() { return drillAs(data.$fields?.['declaration'], tree, "property_identifier", "identifier"); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<AmbientDeclaration>;
 }
@@ -567,6 +530,24 @@ export function wrapArrayType(data: _NodeData, tree: TreeHandle): WrappedNode<Ar
     get primaryType() { return drillIn(data.$fields?.['primary_type'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ArrayType>;
+}
+
+export function wrapArrowFunctionParameter(data: _NodeData, tree: TreeHandle): WrappedNode<ArrowFunctionParameter> {
+  return {
+    ...data,
+    get parameter() { return drillAs(data.$fields?.['parameter'], tree, "identifier", "_reserved_identifier"); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ArrowFunctionParameter>;
+}
+
+export function wrapArrowFunctionUCallSignature(data: _NodeData, tree: TreeHandle): WrappedNode<ArrowFunctionUCallSignature> {
+  return {
+    ...data,
+    get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
+    get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
+    get returnType() { return drillIn(data.$fields?.['return_type'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ArrowFunctionUCallSignature>;
 }
 
 export function wrapArrowFunction(data: _NodeData, tree: TreeHandle): WrappedNode<ArrowFunction> {
@@ -662,7 +643,7 @@ export function wrapBreakStatement(data: _NodeData, tree: TreeHandle): WrappedNo
   return {
     ...data,
     $type: TSKindId.BreakStatement as number,
-    get label() { return drillAs(data.$fields?.['label'], tree, "statement_identifier", "_statement_identifier"); },
+    get label() { return drillAs(data.$fields?.['label'], tree, "statement_identifier", "identifier"); },
     get semicolon() { return drillIn(data.$fields?.['semicolon'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<BreakStatement>;
@@ -731,6 +712,20 @@ export function wrapClassDeclaration(data: _NodeData, tree: TreeHandle): Wrapped
     get automaticSemicolon() { return drillIn(data.$fields?.['automatic_semicolon'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ClassDeclaration>;
+}
+
+export function wrapClassHeritageExtendsClause(data: _NodeData, tree: TreeHandle): WrappedNode<ClassHeritageExtendsClause> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<ClassHeritageExtendsClause>;
+}
+
+export function wrapClassHeritageImplementsClause(data: _NodeData, tree: TreeHandle): WrappedNode<ClassHeritageImplementsClause> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<ClassHeritageImplementsClause>;
 }
 
 export function wrapClassHeritage(data: _NodeData, tree: TreeHandle): WrappedNode<ClassHeritage> {
@@ -808,7 +803,7 @@ export function wrapContinueStatement(data: _NodeData, tree: TreeHandle): Wrappe
   return {
     ...data,
     $type: TSKindId.ContinueStatement as number,
-    get label() { return drillAs(data.$fields?.['label'], tree, "statement_identifier", "_statement_identifier"); },
+    get label() { return drillAs(data.$fields?.['label'], tree, "statement_identifier", "identifier"); },
     get semicolon() { return drillIn(data.$fields?.['semicolon'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ContinueStatement>;
@@ -847,7 +842,7 @@ export function wrapDecoratorMemberExpression(data: _NodeData, tree: TreeHandle)
     ...data,
     $type: TSKindId.DecoratorMemberExpression as number,
     get object() { return drillAs(data.$fields?.['object'], tree, "member_expression", "decorator_member_expression"); },
-    get property() { return drillAs(data.$fields?.['property'], tree, "property_identifier", "_property_identifier"); },
+    get property() { return drillAs(data.$fields?.['property'], tree, "property_identifier", "identifier"); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<DecoratorMemberExpression>;
 }
@@ -935,6 +930,28 @@ export function wrapExportSpecifier(data: _NodeData, tree: TreeHandle): WrappedN
     get alias() { return drillIn(data.$fields?.['alias'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ExportSpecifier>;
+}
+
+export function wrapExportStatementTypeExport(data: _NodeData, tree: TreeHandle): WrappedNode<ExportStatementTypeExport> {
+  return {
+    ...data,
+    get source() { return drillIn(data.$fields?.['source'], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<ExportStatementTypeExport>;
+}
+
+export function wrapExportStatementEqualsExport(data: _NodeData, tree: TreeHandle): WrappedNode<ExportStatementEqualsExport> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<ExportStatementEqualsExport>;
+}
+
+export function wrapExportStatementNamespaceExport(data: _NodeData, tree: TreeHandle): WrappedNode<ExportStatementNamespaceExport> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<ExportStatementNamespaceExport>;
 }
 
 export function wrapExportStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ExportStatement> {
@@ -1153,6 +1170,27 @@ export function wrapImportAttribute(data: _NodeData, tree: TreeHandle): WrappedN
   } as unknown as WrappedNode<ImportAttribute>;
 }
 
+export function wrapImportClauseNamespaceImport(data: _NodeData, tree: TreeHandle): WrappedNode<ImportClauseNamespaceImport> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<ImportClauseNamespaceImport>;
+}
+
+export function wrapImportClauseNamedImports(data: _NodeData, tree: TreeHandle): WrappedNode<ImportClauseNamedImports> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<ImportClauseNamedImports>;
+}
+
+export function wrapImportClauseDefaultImport(data: _NodeData, tree: TreeHandle): WrappedNode<ImportClauseDefaultImport> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<ImportClauseDefaultImport>;
+}
+
 export function wrapImportClause(data: _NodeData, tree: TreeHandle): WrappedNode<ImportClause> {
   return {
     ...data,
@@ -1169,6 +1207,14 @@ export function wrapImportRequireClause(data: _NodeData, tree: TreeHandle): Wrap
     get source() { return drillIn(data.$fields?.['source'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ImportRequireClause>;
+}
+
+export function wrapImportSpecifierName(data: _NodeData, tree: TreeHandle): WrappedNode<ImportSpecifierName> {
+  return {
+    ...data,
+    get name() { return drillIn(data.$fields?.['name'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ImportSpecifierName>;
 }
 
 export function wrapImportSpecifier(data: _NodeData, tree: TreeHandle): WrappedNode<ImportSpecifier> {
@@ -1190,6 +1236,13 @@ export function wrapImportStatement(data: _NodeData, tree: TreeHandle): WrappedN
     get semicolon() { return drillIn(data.$fields?.['semicolon'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ImportStatement>;
+}
+
+export function wrapIndexSignatureMappedTypeClause(data: _NodeData, tree: TreeHandle): WrappedNode<IndexSignatureMappedTypeClause> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<IndexSignatureMappedTypeClause>;
 }
 
 export function wrapIndexSignature(data: _NodeData, tree: TreeHandle): WrappedNode<IndexSignature> {
@@ -1238,7 +1291,7 @@ export function wrapInterfaceDeclaration(data: _NodeData, tree: TreeHandle): Wra
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
     get extendsTypeClause() { return drillIn(data.$fields?.['extends_type_clause'], tree); },
-    get body() { return drillAs(data.$fields?.['body'], tree, "interface_body", "_interface_body"); },
+    get body() { return drillAs(data.$fields?.['body'], tree, "interface_body", "object_type"); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<InterfaceDeclaration>;
 }
@@ -1318,7 +1371,7 @@ export function wrapMemberExpression(data: _NodeData, tree: TreeHandle): Wrapped
     ...data,
     $type: TSKindId.MemberExpression as number,
     get object() { return drillIn(data.$fields?.['object'], tree); },
-    get property() { return drillAs(data.$fields?.['property'], tree, "property_identifier", "_property_identifier"); },
+    get property() { return drillAs(data.$fields?.['property'], tree, "property_identifier", "identifier"); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<MemberExpression>;
 }
@@ -1402,7 +1455,7 @@ export function wrapNestedIdentifier(data: _NodeData, tree: TreeHandle): Wrapped
     ...data,
     $type: TSKindId.NestedIdentifier as number,
     get object() { return drillAs(data.$fields?.['object'], tree, "member_expression", "nested_identifier"); },
-    get property() { return drillAs(data.$fields?.['property'], tree, "property_identifier", "_property_identifier"); },
+    get property() { return drillAs(data.$fields?.['property'], tree, "property_identifier", "identifier"); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<NestedIdentifier>;
 }
@@ -1542,6 +1595,13 @@ export function wrapPairPattern(data: _NodeData, tree: TreeHandle): WrappedNode<
     get value() { return drillIn(data.$fields?.['value'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<PairPattern>;
+}
+
+export function wrapParenthesizedExpressionSequence(data: _NodeData, tree: TreeHandle): WrappedNode<ParenthesizedExpressionSequence> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<ParenthesizedExpressionSequence>;
 }
 
 export function wrapParenthesizedExpression(data: _NodeData, tree: TreeHandle): WrappedNode<ParenthesizedExpression> {
@@ -1692,6 +1752,20 @@ export function wrapStatementBlock(data: _NodeData, tree: TreeHandle): WrappedNo
     get automaticSemicolon() { return drillIn(data.$fields?.['automatic_semicolon'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<StatementBlock>;
+}
+
+export function wrapStringDouble(data: _NodeData, tree: TreeHandle): WrappedNode<StringDouble> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<StringDouble>;
+}
+
+export function wrapStringSingle(data: _NodeData, tree: TreeHandle): WrappedNode<StringSingle> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<StringSingle>;
 }
 
 export function wrapString(data: _NodeData, tree: TreeHandle): WrappedNode<String> {
@@ -2015,18 +2089,14 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_import_clause_namespace_import': (d, t) => wrap_ImportClauseNamespaceImport(d, t),
   '_import_specifier_name': (d, t) => wrap_ImportSpecifierName(d, t),
   '_index_signature_mapped_type_clause': (d, t) => wrap_IndexSignatureMappedTypeClause(d, t),
-  '_interface_body': (d, t) => wrapInterfaceBody(d, t),
   '_kw_abstract_marker': (d) => ({ ...d, $type: TSKindId.KwAbstractMarker as number }),
   '_kw_const_marker': (d) => ({ ...d, $type: TSKindId.KwConstMarker as number }),
   '_kw_static_marker': (d) => ({ ...d, $type: TSKindId.KwStaticMarker as number }),
   '_parenthesized_expression_sequence': (d, t) => wrap_ParenthesizedExpressionSequence(d, t),
-  '_property_identifier': (d, t) => wrapPropertyIdentifier(d, t),
   '_public_field_definition_accessor_opt': (d, t) => wrapPublicFieldDefinitionAccessorOpt(d, t),
   '_public_field_definition_declare_first': (d, t) => wrapPublicFieldDefinitionDeclareFirst(d, t),
-  '_statement_identifier': (d, t) => wrapStatementIdentifier(d, t),
   '_string_double': (d, t) => wrap_StringDouble(d, t),
   '_string_single': (d, t) => wrap_StringSingle(d, t),
-  '_this_type': (d, t) => wrapThisType(d, t),
   '_type_identifier': (d, t) => wrapTypeIdentifier(d, t),
   'abstract_class_declaration': (d, t) => wrapAbstractClassDeclaration(d, t),
   'abstract_method_signature': (d, t) => wrapAbstractMethodSignature(d, t),
@@ -2037,6 +2107,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'array': (d, t) => wrapArray(d, t),
   'array_pattern': (d, t) => wrapArrayPattern(d, t),
   'array_type': (d, t) => wrapArrayType(d, t),
+  'arrow_function_parameter': (d, t) => wrapArrowFunctionParameter(d, t),
+  'arrow_function__call_signature': (d, t) => wrapArrowFunctionUCallSignature(d, t),
   'arrow_function': (d, t) => wrapArrowFunction(d, t),
   'as_expression': (d, t) => wrapAsExpression(d, t),
   'asserts': (d, t) => wrapAsserts(d, t),
@@ -2053,6 +2125,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'class': (d, t) => wrapClass(d, t),
   'class_body': (d, t) => wrapClassBody(d, t),
   'class_declaration': (d, t) => wrapClassDeclaration(d, t),
+  'class_heritage_extends_clause': (d, t) => wrapClassHeritageExtendsClause(d, t),
+  'class_heritage_implements_clause': (d, t) => wrapClassHeritageImplementsClause(d, t),
   'class_heritage': (d, t) => wrapClassHeritage(d, t),
   'class_static_block': (d, t) => wrapClassStaticBlock(d, t),
   'comment': (d) => ({ ...d, $type: TSKindId.Comment as number }),
@@ -2076,6 +2150,9 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'escape_sequence': (d) => ({ ...d, $type: TSKindId.EscapeSequence as number }),
   'export_clause': (d, t) => wrapExportClause(d, t),
   'export_specifier': (d, t) => wrapExportSpecifier(d, t),
+  'export_statement_type_export': (d, t) => wrapExportStatementTypeExport(d, t),
+  'export_statement_equals_export': (d, t) => wrapExportStatementEqualsExport(d, t),
+  'export_statement_namespace_export': (d, t) => wrapExportStatementNamespaceExport(d, t),
   'export_statement': (d, t) => wrapExportStatement(d, t),
   'expression_statement': (d, t) => wrapExpressionStatement(d, t),
   'extends_clause': (d, t) => wrapExtendsClause(d, t),
@@ -2100,10 +2177,15 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'import': (d) => ({ ...d, $type: TSKindId.Import as number }),
   'import_alias': (d, t) => wrapImportAlias(d, t),
   'import_attribute': (d, t) => wrapImportAttribute(d, t),
+  'import_clause_namespace_import': (d, t) => wrapImportClauseNamespaceImport(d, t),
+  'import_clause_named_imports': (d, t) => wrapImportClauseNamedImports(d, t),
+  'import_clause_default_import': (d, t) => wrapImportClauseDefaultImport(d, t),
   'import_clause': (d, t) => wrapImportClause(d, t),
   'import_require_clause': (d, t) => wrapImportRequireClause(d, t),
+  'import_specifier_name': (d, t) => wrapImportSpecifierName(d, t),
   'import_specifier': (d, t) => wrapImportSpecifier(d, t),
   'import_statement': (d, t) => wrapImportStatement(d, t),
+  'index_signature_mapped_type_clause': (d, t) => wrapIndexSignatureMappedTypeClause(d, t),
   'index_signature': (d, t) => wrapIndexSignature(d, t),
   'index_type_query': (d, t) => wrapIndexTypeQuery(d, t),
   'infer_type': (d, t) => wrapInferType(d, t),
@@ -2142,6 +2224,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'override_modifier': (d) => ({ ...d, $type: TSKindId.OverrideModifier as number }),
   'pair': (d, t) => wrapPair(d, t),
   'pair_pattern': (d, t) => wrapPairPattern(d, t),
+  'parenthesized_expression_sequence': (d, t) => wrapParenthesizedExpressionSequence(d, t),
   'parenthesized_expression': (d, t) => wrapParenthesizedExpression(d, t),
   'parenthesized_type': (d, t) => wrapParenthesizedType(d, t),
   'predefined_type': (d) => ({ ...d, $type: TSKindId.PredefinedType as number }),
@@ -2161,6 +2244,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'sequence_expression': (d, t) => wrapSequenceExpression(d, t),
   'spread_element': (d, t) => wrapSpreadElement(d, t),
   'statement_block': (d, t) => wrapStatementBlock(d, t),
+  'string_double': (d, t) => wrapStringDouble(d, t),
+  'string_single': (d, t) => wrapStringSingle(d, t),
   'string': (d, t) => wrapString(d, t),
   'subscript_expression': (d, t) => wrapSubscriptExpression(d, t),
   'super': (d) => ({ ...d, $type: TSKindId.Super as number }),
@@ -2235,7 +2320,6 @@ const _aliasTargetToSource: Record<string, string> = {
   'import_specifier_as': '_import_specifier_as',
   'index_signature_colon': '_index_signature_colon',
   'initializer': '_initializer',
-  'interface_body': '_interface_body',
   'jsx_attribute_name': '_jsx_attribute_name',
   'jsx_attribute_value': '_jsx_attribute_value',
   'jsx_child': '_jsx_child',
@@ -2248,7 +2332,6 @@ const _aliasTargetToSource: Record<string, string> = {
   'lhs_expression': '_lhs_expression',
   'module_export_name': '_module_export_name',
   'parenthesized_expression_typed': '_parenthesized_expression_typed',
-  'property_identifier': '_property_identifier',
   'property_name': '_property_name',
   'public_field_definition_abstract_first': '_public_field_definition_abstract_first',
   'public_field_definition_access_first': '_public_field_definition_access_first',
@@ -2261,7 +2344,7 @@ const _aliasTargetToSource: Record<string, string> = {
   'shorthand_property_identifier': '_shorthand_property_identifier',
   'shorthand_property_identifier_pattern': '_shorthand_property_identifier_pattern',
   'statement_identifier': '_statement_identifier',
-  'string_fragment': '_string_fragment',
+  'template_chars': '_template_chars',
   'tuple_type_member': '_tuple_type_member',
   'type_identifier': '_type_identifier',
   'type_query_call_expression': '_type_query_call_expression',
@@ -2274,7 +2357,7 @@ const _aliasTargetToSource: Record<string, string> = {
   'update_expression_prefix': '_update_expression_prefix',
 };
 
-import { kindNameFromId } from './types.js';
+import { KIND_NAMES } from './types.js';
 /** Wrap a NodeData into its lazy read-only view. */
 export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
   // Phase B-inverse bridge: the native path now returns numeric $type
@@ -2282,7 +2365,7 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
   // Resolve to a kind-name string for the string-keyed dispatch tables,
   // then per-kind wrap functions stamp the numeric TSKindId.$type on output.
   const rawType = typeof data.$type === "number"
-    ? kindNameFromId(data.$type as never) ?? String(data.$type)
+    ? KIND_NAMES.get(data.$type as never) ?? String(data.$type)
     : (data.$type as unknown as string);
   // Canonical-hidden remap (Option Y): parser-output `$type`
   // is the visible alias target (e.g. `range_pattern_left_with_right`);
@@ -2339,7 +2422,7 @@ export function readTreeNode(
   // When numeric (native path), convert to kind-name first for comparison.
   if (asType) {
     const currentType = typeof data.$type === "number"
-      ? kindNameFromId(data.$type as never) ?? String(data.$type)
+      ? KIND_NAMES.get(data.$type as never) ?? String(data.$type)
       : (data.$type as unknown as string);
     if (currentType === asType.from) {
       data = { ...data, $type: asType.to as unknown as number };

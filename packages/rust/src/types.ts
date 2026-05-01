@@ -105,8 +105,6 @@ export const enum SyntaxKind {
   RangePatternPrefix = '_range_pattern_prefix',
   ReferenceExpressionRawMut = '_reference_expression_raw_mut',
   ReservedIdentifier = '_reserved_identifier',
-  ShorthandFieldIdentifier = '_shorthand_field_identifier',
-  _StringContent = '_string_content',
   StructItemBrace = '_struct_item_brace',
   StructItemTuple = '_struct_item_tuple',
   _TokenTreeBrace = '_token_tree_brace',
@@ -282,7 +280,6 @@ export const enum SyntaxKind {
   WherePredicate = 'where_predicate',
   WhileExpression = 'while_expression',
   YieldExpression = 'yield_expression',
-  DocComment = '_doc_comment',
   KwAsyncMarker = '_kw_async_marker',
   KwMoveMarker = '_kw_move_marker',
   KwRefMarker = '_kw_ref_marker',
@@ -313,6 +310,7 @@ export const enum SyntaxKind {
   FloatLiteral = 'float_literal',
   OuterBlockDocCommentMarker = '_outer_block_doc_comment_marker',
   InnerBlockDocCommentMarker = '_inner_block_doc_comment_marker',
+  LineDocContent = '_line_doc_content',
   ErrorSentinel = '_error_sentinel',
   Anonymous = '_',
   Fn = 'fn',
@@ -497,17 +495,17 @@ export const enum TSKindId {
   Crate = 141,
   Metavariable = 142,
   Move = 143,
-  LineCommentRegularDslashToken1 = 144,
-  LineCommentRegularDslashToken2 = 145,
+  _LineCommentRegularDslashToken1 = 144,
+  _LineCommentRegularDslashToken2 = 145,
   LineCommentContent = 146,
   StringContent = 147,
-  RawStringLiteralStart = 148,
+  _RawStringLiteralStart = 148,
   RawStringLiteralContent = 149,
-  RawStringLiteralEnd = 150,
+  _RawStringLiteralEnd = 150,
   FloatLiteral = 151,
   OuterBlockDocCommentMarker = 152,
   InnerBlockDocCommentMarker = 153,
-  BlockCommentContent = 154,
+  _BlockCommentContent = 154,
   LineDocContent = 155,
   ErrorSentinel = 156,
   SourceFile = 157,
@@ -661,17 +659,18 @@ export const enum TSKindId {
   CapturedPattern = 305,
   ReferencePattern = 306,
   OrPattern = 307,
+  Literal = 308,
   LiteralPattern = 309,
   NegativeLiteral = 310,
   StringLiteral = 311,
   RawStringLiteral = 312,
   BooleanLiteral = 313,
   LineComment = 314,
-  LineDocCommentMarker = 315,
+  _LineDocCommentMarker = 315,
   InnerLineDocCommentMarker = 316,
   OuterLineDocCommentMarker = 317,
   BlockComment = 318,
-  BlockDocCommentMarker = 319,
+  _BlockDocCommentMarker = 319,
   WildcardPattern = 320,
   ArrayExpressionSemi = 321,
   ArrayExpressionList = 322,
@@ -705,9 +704,9 @@ export const enum TSKindId {
   VisibilityModifierInPath = 350,
   KwMoveMarker = 351,
   KwStaticMarker = 352,
-  KwPub = 353,
-  KwIn = 354,
-  KwTurbofish = 355,
+  _KwPub = 353,
+  _KwIn = 354,
+  _KwTurbofish = 355,
   KwUnsafeMarker = 356,
   KwNegative = 357,
   PointerTypeConst = 358,
@@ -715,8 +714,8 @@ export const enum TSKindId {
   KwOperator = 360,
   ReferenceExpressionRawConst = 361,
   ReferenceExpressionRawMut = 362,
-  KwReference = 363,
-  KwMutableSpecifier = 364,
+  _KwReference = 363,
+  _KwMutableSpecifier = 364,
   _ExpressionStatementWithSemi = 365,
   _ExpressionStatementBlockEnding = 366,
   ForeignModItemSemi = 367,
@@ -737,7 +736,7 @@ export const enum TSKindId {
   SourceFileRepeat1 = 382,
   TokenRepetitionPatternRepeat1 = 383,
   TokenRepetitionRepeat1 = 384,
-  NonSpecialTokenRepeat1 = 385,
+  _NonSpecialTokenRepeat1 = 385,
   DeclarationListRepeat1 = 386,
   EnumVariantListRepeat1 = 387,
   EnumVariantListRepeat2 = 388,
@@ -763,432 +762,430 @@ export const enum TSKindId {
   SlicePatternRepeat1 = 408,
   StructPatternRepeat1 = 409,
   StringLiteralRepeat1 = 410,
-  ArrayExpressionListRepeat1 = 411,
-  MacroDefinitionParenRepeat1 = 412,
-  DelimTokenTreeParenRepeat1 = 413,
+  _ArrayExpressionListRepeat1 = 411,
+  _MacroDefinitionParenRepeat1 = 412,
+  _DelimTokenTreeParenRepeat1 = 413,
   FieldIdentifier = 414,
-  ShorthandFieldIdentifier = 416,
+  _ShorthandFieldIdentifier = 416,
   TypeIdentifier = 417,
 }
 
-export function kindNameFromId(kindId: TSKindId): string {
-  switch (kindId) {
-    case TSKindId.Identifier: return "identifier";
-    case TSKindId.Semi: return "semi";
-    case TSKindId.MacroRulesBang: return "macro_rules_bang";
-    case TSKindId.EqGt: return "eq_gt";
-    case TSKindId.Colon: return "colon";
-    case TSKindId.Dollar: return "dollar";
-    case TSKindId.Lparen: return "lparen";
-    case TSKindId.Rparen: return "rparen";
-    case TSKindId.TokenRepetitionPatternToken1: return "token_repetition_pattern_token1";
-    case TSKindId.Plus: return "plus";
-    case TSKindId.Star: return "star";
-    case TSKindId.Qmark: return "qmark";
-    case TSKindId.Expr: return "expr";
-    case TSKindId.Expr2021: return "expr_2021";
-    case TSKindId.Ident: return "ident";
-    case TSKindId.Item: return "item";
-    case TSKindId.Literal: return "literal";
-    case TSKindId.Meta: return "meta";
-    case TSKindId.Pat: return "pat";
-    case TSKindId.PatParam: return "pat_param";
-    case TSKindId.Path: return "path";
-    case TSKindId.Stmt: return "stmt";
-    case TSKindId.Tt: return "tt";
-    case TSKindId.Ty: return "ty";
-    case TSKindId.Vis: return "vis";
-    case TSKindId.U8: return "u8";
-    case TSKindId.I8: return "i8";
-    case TSKindId.U16: return "u16";
-    case TSKindId.I16: return "i16";
-    case TSKindId.U32: return "u32";
-    case TSKindId.I32: return "i32";
-    case TSKindId.U64: return "u64";
-    case TSKindId.I64: return "i64";
-    case TSKindId.U128: return "u128";
-    case TSKindId.I128: return "i128";
-    case TSKindId.Isize: return "isize";
-    case TSKindId.Usize: return "usize";
-    case TSKindId.F32: return "f32";
-    case TSKindId.F64: return "f64";
-    case TSKindId.Bool: return "bool";
-    case TSKindId.Str: return "str";
-    case TSKindId.Char: return "char";
-    case TSKindId.Dash: return "dash";
-    case TSKindId.Slash: return "slash";
-    case TSKindId.Percent: return "percent";
-    case TSKindId.Caret: return "caret";
-    case TSKindId.Bang: return "bang";
-    case TSKindId.Amp: return "amp";
-    case TSKindId.Pipe: return "pipe";
-    case TSKindId.AmpAmp: return "amp_amp";
-    case TSKindId.PipePipe: return "pipe_pipe";
-    case TSKindId.LtLt: return "lt_lt";
-    case TSKindId.GtGt: return "gt_gt";
-    case TSKindId.PlusEq: return "plus_eq";
-    case TSKindId.DashEq: return "dash_eq";
-    case TSKindId.StarEq: return "star_eq";
-    case TSKindId.SlashEq: return "slash_eq";
-    case TSKindId.PercentEq: return "percent_eq";
-    case TSKindId.CaretEq: return "caret_eq";
-    case TSKindId.AmpEq: return "amp_eq";
-    case TSKindId.PipeEq: return "pipe_eq";
-    case TSKindId.LtLtEq: return "lt_lt_eq";
-    case TSKindId.GtGtEq: return "gt_gt_eq";
-    case TSKindId.Eq: return "eq";
-    case TSKindId.EqEq: return "eq_eq";
-    case TSKindId.BangEq: return "bang_eq";
-    case TSKindId.Gt: return "gt";
-    case TSKindId.Lt: return "lt";
-    case TSKindId.GtEq: return "gt_eq";
-    case TSKindId.LtEq: return "lt_eq";
-    case TSKindId.At: return "at";
-    case TSKindId.Anonymous: return "_";
-    case TSKindId.Dot: return "dot";
-    case TSKindId.DotDot: return "dot_dot";
-    case TSKindId.DotDotDot: return "dot_dot_dot";
-    case TSKindId.DotDotEq: return "dot_dot_eq";
-    case TSKindId.Comma: return "comma";
-    case TSKindId.ColonColon: return "colon_colon";
-    case TSKindId.DashGt: return "dash_gt";
-    case TSKindId.Pound: return "pound";
-    case TSKindId.Squote: return "squote";
-    case TSKindId.As: return "as";
-    case TSKindId.Async: return "async";
-    case TSKindId.Await: return "await";
-    case TSKindId.Break: return "break";
-    case TSKindId.Const: return "const";
-    case TSKindId.Continue: return "continue";
-    case TSKindId.Default: return "default";
-    case TSKindId.Enum: return "enum";
-    case TSKindId.Fn: return "fn";
-    case TSKindId.For: return "for";
-    case TSKindId.Gen: return "gen";
-    case TSKindId.If: return "if";
-    case TSKindId.Impl: return "impl";
-    case TSKindId.Let: return "let";
-    case TSKindId.Loop: return "loop";
-    case TSKindId.Match: return "match";
-    case TSKindId.Mod: return "mod";
-    case TSKindId.Pub: return "pub";
-    case TSKindId.Return: return "return";
-    case TSKindId.Static: return "static";
-    case TSKindId.Struct: return "struct";
-    case TSKindId.Trait: return "trait";
-    case TSKindId.Type: return "type";
-    case TSKindId.Union: return "union";
-    case TSKindId.Unsafe: return "unsafe";
-    case TSKindId.Use: return "use";
-    case TSKindId.Where: return "where";
-    case TSKindId.While: return "while";
-    case TSKindId.Lbrack: return "lbrack";
-    case TSKindId.Rbrack: return "rbrack";
-    case TSKindId.Lbrace: return "lbrace";
-    case TSKindId.Rbrace: return "rbrace";
-    case TSKindId.Extern: return "extern";
-    case TSKindId.Else: return "else";
-    case TSKindId.Lt2: return "lt2";
-    case TSKindId.Dyn: return "dyn";
-    case TSKindId.MutableSpecifier: return "mutable_specifier";
-    case TSKindId.Raw: return "raw";
-    case TSKindId.Yield: return "yield";
-    case TSKindId.In: return "in";
-    case TSKindId.Try: return "try";
-    case TSKindId.Ref: return "ref";
-    case TSKindId.IntegerLiteral: return "integer_literal";
-    case TSKindId.StringLiteralToken1: return "string_literal_token1";
-    case TSKindId.Dquote: return "dquote";
-    case TSKindId.CharLiteral: return "char_literal";
-    case TSKindId.EscapeSequence: return "escape_sequence";
-    case TSKindId.True: return "true";
-    case TSKindId.False: return "false";
-    case TSKindId.SlashSlash: return "slash_slash";
-    case TSKindId.Bang2: return "bang2";
-    case TSKindId.Slash2: return "slash2";
-    case TSKindId.SlashStar: return "slash_star";
-    case TSKindId.StarSlash: return "star_slash";
-    case TSKindId.Shebang: return "shebang";
-    case TSKindId.Self: return "self";
-    case TSKindId.Super: return "super";
-    case TSKindId.Crate: return "crate";
-    case TSKindId.Metavariable: return "metavariable";
-    case TSKindId.Move: return "move";
-    case TSKindId.LineCommentRegularDslashToken1: return "_line_comment_regular_dslash_token1";
-    case TSKindId.LineCommentRegularDslashToken2: return "_line_comment_regular_dslash_token2";
-    case TSKindId.LineCommentContent: return "_line_comment_content";
-    case TSKindId.StringContent: return "string_content";
-    case TSKindId.RawStringLiteralStart: return "_raw_string_literal_start";
-    case TSKindId.RawStringLiteralContent: return "raw_string_literal_content";
-    case TSKindId.RawStringLiteralEnd: return "_raw_string_literal_end";
-    case TSKindId.FloatLiteral: return "float_literal";
-    case TSKindId.OuterBlockDocCommentMarker: return "_outer_block_doc_comment_marker";
-    case TSKindId.InnerBlockDocCommentMarker: return "_inner_block_doc_comment_marker";
-    case TSKindId.BlockCommentContent: return "_block_comment_content";
-    case TSKindId.LineDocContent: return "_line_doc_content";
-    case TSKindId.ErrorSentinel: return "_error_sentinel";
-    case TSKindId.SourceFile: return "source_file";
-    case TSKindId.Statement: return "_statement";
-    case TSKindId.EmptyStatement: return "empty_statement";
-    case TSKindId.ExpressionStatement: return "expression_statement";
-    case TSKindId.MacroDefinition: return "macro_definition";
-    case TSKindId.MacroRule: return "macro_rule";
-    case TSKindId.TokenPattern: return "_token_pattern";
-    case TSKindId.TokenTreePattern: return "token_tree_pattern";
-    case TSKindId.TokenBindingPattern: return "token_binding_pattern";
-    case TSKindId.TokenRepetitionPattern: return "token_repetition_pattern";
-    case TSKindId.FragmentSpecifier: return "fragment_specifier";
-    case TSKindId.TokenTree: return "token_tree";
-    case TSKindId.TokenRepetition: return "token_repetition";
-    case TSKindId.AttributeItem: return "attribute_item";
-    case TSKindId.InnerAttributeItem: return "inner_attribute_item";
-    case TSKindId.Attribute: return "attribute";
-    case TSKindId.ModItem: return "mod_item";
-    case TSKindId.ForeignModItem: return "foreign_mod_item";
-    case TSKindId.DeclarationList: return "declaration_list";
-    case TSKindId.StructItem: return "struct_item";
-    case TSKindId.UnionItem: return "union_item";
-    case TSKindId.EnumItem: return "enum_item";
-    case TSKindId.EnumVariantList: return "enum_variant_list";
-    case TSKindId.EnumVariant: return "enum_variant";
-    case TSKindId.FieldDeclarationList: return "field_declaration_list";
-    case TSKindId.FieldDeclaration: return "field_declaration";
-    case TSKindId.OrderedFieldDeclarationList: return "ordered_field_declaration_list";
-    case TSKindId.ExternCrateDeclaration: return "extern_crate_declaration";
-    case TSKindId.ConstItem: return "const_item";
-    case TSKindId.StaticItem: return "static_item";
-    case TSKindId.TypeItem: return "type_item";
-    case TSKindId.FunctionItem: return "function_item";
-    case TSKindId.FunctionSignatureItem: return "function_signature_item";
-    case TSKindId.FunctionModifiers: return "function_modifiers";
-    case TSKindId.WhereClause: return "where_clause";
-    case TSKindId.WherePredicate: return "where_predicate";
-    case TSKindId.ImplItem: return "impl_item";
-    case TSKindId.TraitItem: return "trait_item";
-    case TSKindId.AssociatedType: return "associated_type";
-    case TSKindId.TraitBounds: return "trait_bounds";
-    case TSKindId.HigherRankedTraitBound: return "higher_ranked_trait_bound";
-    case TSKindId.RemovedTraitBound: return "removed_trait_bound";
-    case TSKindId.TypeParameters: return "type_parameters";
-    case TSKindId.ConstParameter: return "const_parameter";
-    case TSKindId.TypeParameter: return "type_parameter";
-    case TSKindId.LifetimeParameter: return "lifetime_parameter";
-    case TSKindId.LetDeclaration: return "let_declaration";
-    case TSKindId.UseDeclaration: return "use_declaration";
-    case TSKindId.UseClause: return "_use_clause";
-    case TSKindId.ScopedUseList: return "scoped_use_list";
-    case TSKindId.UseList: return "use_list";
-    case TSKindId.UseAsClause: return "use_as_clause";
-    case TSKindId.UseWildcard: return "use_wildcard";
-    case TSKindId.Parameters: return "parameters";
-    case TSKindId.SelfParameter: return "self_parameter";
-    case TSKindId.VariadicParameter: return "variadic_parameter";
-    case TSKindId.Parameter: return "parameter";
-    case TSKindId.ExternModifier: return "extern_modifier";
-    case TSKindId.VisibilityModifier: return "visibility_modifier";
-    case TSKindId._Type: return "_type";
-    case TSKindId.BracketedType: return "bracketed_type";
-    case TSKindId.QualifiedType: return "qualified_type";
-    case TSKindId.Lifetime: return "lifetime";
-    case TSKindId.ArrayType: return "array_type";
-    case TSKindId.ForLifetimes: return "for_lifetimes";
-    case TSKindId.FunctionType: return "function_type";
-    case TSKindId.TupleType: return "tuple_type";
-    case TSKindId.UnitType: return "unit_type";
-    case TSKindId.GenericFunction: return "generic_function";
-    case TSKindId.GenericType: return "generic_type";
-    case TSKindId.GenericTypeWithTurbofish: return "generic_type_with_turbofish";
-    case TSKindId.BoundedType: return "bounded_type";
-    case TSKindId.UseBounds: return "use_bounds";
-    case TSKindId.TypeArguments: return "type_arguments";
-    case TSKindId.TypeBinding: return "type_binding";
-    case TSKindId.ReferenceType: return "reference_type";
-    case TSKindId.PointerType: return "pointer_type";
-    case TSKindId.NeverType: return "never_type";
-    case TSKindId.AbstractType: return "abstract_type";
-    case TSKindId.DynamicType: return "dynamic_type";
-    case TSKindId.ExpressionExceptRange: return "_expression_except_range";
-    case TSKindId.Expression: return "_expression";
-    case TSKindId.MacroInvocation: return "macro_invocation";
-    case TSKindId.DelimTokenTree: return "delim_token_tree";
-    case TSKindId.DelimTokens: return "_delim_tokens";
-    case TSKindId.NonDelimToken: return "_non_delim_token";
-    case TSKindId.ScopedIdentifier: return "scoped_identifier";
-    case TSKindId.ScopedTypeIdentifierInExpressionPosition: return "scoped_type_identifier_in_expression_position";
-    case TSKindId.ScopedTypeIdentifier: return "scoped_type_identifier";
-    case TSKindId.RangeExpression: return "range_expression";
-    case TSKindId.UnaryExpression: return "unary_expression";
-    case TSKindId.TryExpression: return "try_expression";
-    case TSKindId.ReferenceExpression: return "reference_expression";
-    case TSKindId.BinaryExpression: return "binary_expression";
-    case TSKindId.AssignmentExpression: return "assignment_expression";
-    case TSKindId.CompoundAssignmentExpr: return "compound_assignment_expr";
-    case TSKindId.TypeCastExpression: return "type_cast_expression";
-    case TSKindId.ReturnExpression: return "return_expression";
-    case TSKindId.YieldExpression: return "yield_expression";
-    case TSKindId.CallExpression: return "call_expression";
-    case TSKindId.Arguments: return "arguments";
-    case TSKindId.ArrayExpression: return "array_expression";
-    case TSKindId.ParenthesizedExpression: return "parenthesized_expression";
-    case TSKindId.TupleExpression: return "tuple_expression";
-    case TSKindId.UnitExpression: return "unit_expression";
-    case TSKindId.StructExpression: return "struct_expression";
-    case TSKindId.FieldInitializerList: return "field_initializer_list";
-    case TSKindId.ShorthandFieldInitializer: return "shorthand_field_initializer";
-    case TSKindId.FieldInitializer: return "field_initializer";
-    case TSKindId.BaseFieldInitializer: return "base_field_initializer";
-    case TSKindId.IfExpression: return "if_expression";
-    case TSKindId.LetCondition: return "let_condition";
-    case TSKindId.LetChain: return "_let_chain";
-    case TSKindId.Condition: return "_condition";
-    case TSKindId.ElseClause: return "else_clause";
-    case TSKindId.MatchExpression: return "match_expression";
-    case TSKindId.MatchBlock: return "match_block";
-    case TSKindId.MatchArm: return "match_arm";
-    case TSKindId.LastMatchArm: return "last_match_arm";
-    case TSKindId.MatchPattern: return "match_pattern";
-    case TSKindId.WhileExpression: return "while_expression";
-    case TSKindId.LoopExpression: return "loop_expression";
-    case TSKindId.ForExpression: return "for_expression";
-    case TSKindId.ConstBlock: return "const_block";
-    case TSKindId.ClosureExpression: return "closure_expression";
-    case TSKindId.ClosureParameters: return "closure_parameters";
-    case TSKindId.Label: return "label";
-    case TSKindId.BreakExpression: return "break_expression";
-    case TSKindId.ContinueExpression: return "continue_expression";
-    case TSKindId.IndexExpression: return "index_expression";
-    case TSKindId.AwaitExpression: return "await_expression";
-    case TSKindId.FieldExpression: return "field_expression";
-    case TSKindId.UnsafeBlock: return "unsafe_block";
-    case TSKindId.AsyncBlock: return "async_block";
-    case TSKindId.GenBlock: return "gen_block";
-    case TSKindId.TryBlock: return "try_block";
-    case TSKindId.Block: return "block";
-    case TSKindId.Pattern: return "_pattern";
-    case TSKindId.GenericPattern: return "generic_pattern";
-    case TSKindId.TuplePattern: return "tuple_pattern";
-    case TSKindId.SlicePattern: return "slice_pattern";
-    case TSKindId.TupleStructPattern: return "tuple_struct_pattern";
-    case TSKindId.StructPattern: return "struct_pattern";
-    case TSKindId.FieldPattern: return "field_pattern";
-    case TSKindId.RemainingFieldPattern: return "remaining_field_pattern";
-    case TSKindId.MutPattern: return "mut_pattern";
-    case TSKindId.RangePattern: return "range_pattern";
-    case TSKindId.RefPattern: return "ref_pattern";
-    case TSKindId.CapturedPattern: return "captured_pattern";
-    case TSKindId.ReferencePattern: return "reference_pattern";
-    case TSKindId.OrPattern: return "or_pattern";
-    case TSKindId.LiteralPattern: return "_literal_pattern";
-    case TSKindId.NegativeLiteral: return "negative_literal";
-    case TSKindId.StringLiteral: return "string_literal";
-    case TSKindId.RawStringLiteral: return "raw_string_literal";
-    case TSKindId.BooleanLiteral: return "boolean_literal";
-    case TSKindId.LineComment: return "line_comment";
-    case TSKindId.LineDocCommentMarker: return "_line_doc_comment_marker";
-    case TSKindId.InnerLineDocCommentMarker: return "_inner_line_doc_comment_marker";
-    case TSKindId.OuterLineDocCommentMarker: return "_outer_line_doc_comment_marker";
-    case TSKindId.BlockComment: return "block_comment";
-    case TSKindId.BlockDocCommentMarker: return "_block_doc_comment_marker";
-    case TSKindId.WildcardPattern: return "_wildcard_pattern";
-    case TSKindId.ArrayExpressionSemi: return "_array_expression_semi";
-    case TSKindId.ArrayExpressionList: return "_array_expression_list";
-    case TSKindId.ClosureExpressionBlock: return "_closure_expression_block";
-    case TSKindId._ClosureExpressionExpr: return "_closure_expression_expr";
-    case TSKindId._FieldPatternShorthand: return "_field_pattern_shorthand";
-    case TSKindId.FieldPatternNamed: return "_field_pattern_named";
-    case TSKindId.FunctionTypeTraitForm: return "_function_type_trait_form";
-    case TSKindId.FunctionTypeFnForm: return "_function_type_fn_form";
-    case TSKindId._ImplItemBody: return "_impl_item_body";
-    case TSKindId.ImplItemSemi: return "_impl_item_semi";
-    case TSKindId._MacroDefinitionParen: return "_macro_definition_paren";
-    case TSKindId._MacroDefinitionBracket: return "_macro_definition_bracket";
-    case TSKindId._MacroDefinitionBrace: return "_macro_definition_brace";
-    case TSKindId.ModItemExternal: return "_mod_item_external";
-    case TSKindId._ModItemInline: return "_mod_item_inline";
-    case TSKindId.OrPatternBinary: return "_or_pattern_binary";
-    case TSKindId.OrPatternPrefix: return "_or_pattern_prefix";
-    case TSKindId.RangeExpressionBinary: return "_range_expression_binary";
-    case TSKindId.RangeExpressionPostfix: return "_range_expression_postfix";
-    case TSKindId.RangeExpressionPrefix: return "_range_expression_prefix";
-    case TSKindId._RangeExpressionBare: return "_range_expression_bare";
-    case TSKindId.RangePatternPrefix: return "_range_pattern_prefix";
-    case TSKindId.RangePatternLeftWithRight: return "_range_pattern_left_with_right";
-    case TSKindId.RangePatternLeftBare: return "_range_pattern_left_bare";
-    case TSKindId.StructItemBrace: return "_struct_item_brace";
-    case TSKindId.StructItemTuple: return "_struct_item_tuple";
-    case TSKindId.StructItemUnit: return "_struct_item_unit";
-    case TSKindId._VisibilityModifierCrate: return "_visibility_modifier_crate";
-    case TSKindId.VisibilityModifierPub: return "_visibility_modifier_pub";
-    case TSKindId.VisibilityModifierInPath: return "_visibility_modifier_in_path";
-    case TSKindId.KwMoveMarker: return "_kw_move_marker";
-    case TSKindId.KwStaticMarker: return "_kw_static_marker";
-    case TSKindId.KwPub: return "_kw_pub";
-    case TSKindId.KwIn: return "_kw_in";
-    case TSKindId.KwTurbofish: return "_kw_turbofish";
-    case TSKindId.KwUnsafeMarker: return "_kw_unsafe_marker";
-    case TSKindId.KwNegative: return "_kw_negative";
-    case TSKindId.PointerTypeConst: return "_pointer_type_const";
-    case TSKindId._PointerTypeMut: return "_pointer_type_mut";
-    case TSKindId.KwOperator: return "_kw_operator";
-    case TSKindId.ReferenceExpressionRawConst: return "_reference_expression_raw_const";
-    case TSKindId.ReferenceExpressionRawMut: return "_reference_expression_raw_mut";
-    case TSKindId.KwReference: return "_kw_reference";
-    case TSKindId.KwMutableSpecifier: return "_kw_mutable_specifier";
-    case TSKindId._ExpressionStatementWithSemi: return "_expression_statement_with_semi";
-    case TSKindId._ExpressionStatementBlockEnding: return "_expression_statement_block_ending";
-    case TSKindId.ForeignModItemSemi: return "_foreign_mod_item_semi";
-    case TSKindId._ForeignModItemBody: return "_foreign_mod_item_body";
-    case TSKindId.MatchArmWithComma: return "_match_arm_with_comma";
-    case TSKindId._MatchArmBlockEnding: return "_match_arm_block_ending";
-    case TSKindId.LineCommentRegularDslash: return "_line_comment_regular_dslash";
-    case TSKindId.LineCommentDoc: return "_line_comment_doc";
-    case TSKindId._TokenTreePatternParen: return "_token_tree_pattern_paren";
-    case TSKindId._TokenTreePatternBracket: return "_token_tree_pattern_bracket";
-    case TSKindId._TokenTreePatternBrace: return "_token_tree_pattern_brace";
-    case TSKindId._TokenTreeParen: return "_token_tree_paren";
-    case TSKindId._TokenTreeBracket: return "_token_tree_bracket";
-    case TSKindId._TokenTreeBrace: return "_token_tree_brace";
-    case TSKindId._DelimTokenTreeParen: return "_delim_token_tree_paren";
-    case TSKindId._DelimTokenTreeBracket: return "_delim_token_tree_bracket";
-    case TSKindId._DelimTokenTreeBrace: return "_delim_token_tree_brace";
-    case TSKindId.SourceFileRepeat1: return "source_file_repeat1";
-    case TSKindId.TokenRepetitionPatternRepeat1: return "token_repetition_pattern_repeat1";
-    case TSKindId.TokenRepetitionRepeat1: return "token_repetition_repeat1";
-    case TSKindId.NonSpecialTokenRepeat1: return "_non_special_token_repeat1";
-    case TSKindId.DeclarationListRepeat1: return "declaration_list_repeat1";
-    case TSKindId.EnumVariantListRepeat1: return "enum_variant_list_repeat1";
-    case TSKindId.EnumVariantListRepeat2: return "enum_variant_list_repeat2";
-    case TSKindId.FieldDeclarationListRepeat1: return "field_declaration_list_repeat1";
-    case TSKindId.OrderedFieldDeclarationListRepeat1: return "ordered_field_declaration_list_repeat1";
-    case TSKindId.FunctionModifiersRepeat1: return "function_modifiers_repeat1";
-    case TSKindId.WhereClauseRepeat1: return "where_clause_repeat1";
-    case TSKindId.TraitBoundsRepeat1: return "trait_bounds_repeat1";
-    case TSKindId.TypeParametersRepeat1: return "type_parameters_repeat1";
-    case TSKindId.UseListRepeat1: return "use_list_repeat1";
-    case TSKindId.ParametersRepeat1: return "parameters_repeat1";
-    case TSKindId.ForLifetimesRepeat1: return "for_lifetimes_repeat1";
-    case TSKindId.TupleTypeRepeat1: return "tuple_type_repeat1";
-    case TSKindId.UseBoundsRepeat1: return "use_bounds_repeat1";
-    case TSKindId.TypeArgumentsRepeat1: return "type_arguments_repeat1";
-    case TSKindId.ArgumentsRepeat1: return "arguments_repeat1";
-    case TSKindId.TupleExpressionRepeat1: return "tuple_expression_repeat1";
-    case TSKindId.FieldInitializerListRepeat1: return "field_initializer_list_repeat1";
-    case TSKindId.MatchBlockRepeat1: return "match_block_repeat1";
-    case TSKindId.MatchArmRepeat1: return "match_arm_repeat1";
-    case TSKindId.ClosureParametersRepeat1: return "closure_parameters_repeat1";
-    case TSKindId.TuplePatternRepeat1: return "tuple_pattern_repeat1";
-    case TSKindId.SlicePatternRepeat1: return "slice_pattern_repeat1";
-    case TSKindId.StructPatternRepeat1: return "struct_pattern_repeat1";
-    case TSKindId.StringLiteralRepeat1: return "string_literal_repeat1";
-    case TSKindId.ArrayExpressionListRepeat1: return "_array_expression_list_repeat1";
-    case TSKindId.MacroDefinitionParenRepeat1: return "_macro_definition_paren_repeat1";
-    case TSKindId.DelimTokenTreeParenRepeat1: return "_delim_token_tree_paren_repeat1";
-    case TSKindId.FieldIdentifier: return "_field_identifier";
-    case TSKindId.ShorthandFieldIdentifier: return "_shorthand_field_identifier";
-    case TSKindId.TypeIdentifier: return "_type_identifier";
-    default: throw new TypeError(`unknown kind id ${String(kindId)}`);
-  }
-}
+export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
+  [1, "identifier"],
+  [2, "semi"],
+  [3, "macro_rules_bang"],
+  [4, "eq_gt"],
+  [5, "colon"],
+  [6, "dollar"],
+  [7, "lparen"],
+  [8, "rparen"],
+  [9, "token_repetition_pattern_token1"],
+  [10, "plus"],
+  [11, "star"],
+  [12, "qmark"],
+  [14, "expr"],
+  [15, "expr_2021"],
+  [16, "ident"],
+  [17, "item"],
+  [19, "literal"],
+  [20, "meta"],
+  [21, "pat"],
+  [22, "pat_param"],
+  [23, "path"],
+  [24, "stmt"],
+  [25, "tt"],
+  [26, "ty"],
+  [27, "vis"],
+  [28, "u8"],
+  [29, "i8"],
+  [30, "u16"],
+  [31, "i16"],
+  [32, "u32"],
+  [33, "i32"],
+  [34, "u64"],
+  [35, "i64"],
+  [36, "u128"],
+  [37, "i128"],
+  [38, "isize"],
+  [39, "usize"],
+  [40, "f32"],
+  [41, "f64"],
+  [42, "bool"],
+  [43, "str"],
+  [44, "char"],
+  [45, "dash"],
+  [46, "slash"],
+  [47, "percent"],
+  [48, "caret"],
+  [49, "bang"],
+  [50, "amp"],
+  [51, "pipe"],
+  [52, "amp_amp"],
+  [53, "pipe_pipe"],
+  [54, "lt_lt"],
+  [55, "gt_gt"],
+  [56, "plus_eq"],
+  [57, "dash_eq"],
+  [58, "star_eq"],
+  [59, "slash_eq"],
+  [60, "percent_eq"],
+  [61, "caret_eq"],
+  [62, "amp_eq"],
+  [63, "pipe_eq"],
+  [64, "lt_lt_eq"],
+  [65, "gt_gt_eq"],
+  [66, "eq"],
+  [67, "eq_eq"],
+  [68, "bang_eq"],
+  [69, "gt"],
+  [70, "lt"],
+  [71, "gt_eq"],
+  [72, "lt_eq"],
+  [73, "at"],
+  [74, "_"],
+  [75, "dot"],
+  [76, "dot_dot"],
+  [77, "dot_dot_dot"],
+  [78, "dot_dot_eq"],
+  [79, "comma"],
+  [80, "colon_colon"],
+  [81, "dash_gt"],
+  [82, "pound"],
+  [83, "squote"],
+  [84, "as"],
+  [85, "async"],
+  [86, "await"],
+  [87, "break"],
+  [88, "const"],
+  [89, "continue"],
+  [90, "default"],
+  [91, "enum"],
+  [92, "fn"],
+  [93, "for"],
+  [94, "gen"],
+  [95, "if"],
+  [96, "impl"],
+  [97, "let"],
+  [98, "loop"],
+  [99, "match"],
+  [100, "mod"],
+  [101, "pub"],
+  [102, "return"],
+  [103, "static"],
+  [104, "struct"],
+  [105, "trait"],
+  [106, "type"],
+  [107, "union"],
+  [108, "unsafe"],
+  [109, "use"],
+  [110, "where"],
+  [111, "while"],
+  [112, "lbrack"],
+  [113, "rbrack"],
+  [114, "lbrace"],
+  [115, "rbrace"],
+  [116, "extern"],
+  [117, "else"],
+  [118, "lt2"],
+  [119, "dyn"],
+  [120, "mutable_specifier"],
+  [121, "raw"],
+  [122, "yield"],
+  [123, "in"],
+  [124, "try"],
+  [125, "ref"],
+  [126, "integer_literal"],
+  [127, "string_literal_token1"],
+  [128, "dquote"],
+  [129, "char_literal"],
+  [130, "escape_sequence"],
+  [131, "true"],
+  [132, "false"],
+  [133, "slash_slash"],
+  [134, "bang2"],
+  [135, "slash2"],
+  [136, "slash_star"],
+  [137, "star_slash"],
+  [138, "shebang"],
+  [139, "self"],
+  [140, "super"],
+  [141, "crate"],
+  [142, "metavariable"],
+  [143, "move"],
+  [144, "_line_comment_regular_dslash_token1"],
+  [145, "_line_comment_regular_dslash_token2"],
+  [146, "_line_comment_content"],
+  [147, "string_content"],
+  [148, "_raw_string_literal_start"],
+  [149, "raw_string_literal_content"],
+  [150, "_raw_string_literal_end"],
+  [151, "float_literal"],
+  [152, "_outer_block_doc_comment_marker"],
+  [153, "_inner_block_doc_comment_marker"],
+  [154, "_block_comment_content"],
+  [155, "_line_doc_content"],
+  [156, "_error_sentinel"],
+  [157, "source_file"],
+  [158, "_statement"],
+  [159, "empty_statement"],
+  [160, "expression_statement"],
+  [161, "macro_definition"],
+  [162, "macro_rule"],
+  [163, "_token_pattern"],
+  [164, "token_tree_pattern"],
+  [165, "token_binding_pattern"],
+  [166, "token_repetition_pattern"],
+  [167, "fragment_specifier"],
+  [168, "token_tree"],
+  [169, "token_repetition"],
+  [170, "attribute_item"],
+  [171, "inner_attribute_item"],
+  [172, "attribute"],
+  [173, "mod_item"],
+  [174, "foreign_mod_item"],
+  [175, "declaration_list"],
+  [176, "struct_item"],
+  [177, "union_item"],
+  [178, "enum_item"],
+  [179, "enum_variant_list"],
+  [180, "enum_variant"],
+  [181, "field_declaration_list"],
+  [182, "field_declaration"],
+  [183, "ordered_field_declaration_list"],
+  [184, "extern_crate_declaration"],
+  [185, "const_item"],
+  [186, "static_item"],
+  [187, "type_item"],
+  [188, "function_item"],
+  [189, "function_signature_item"],
+  [190, "function_modifiers"],
+  [191, "where_clause"],
+  [192, "where_predicate"],
+  [193, "impl_item"],
+  [194, "trait_item"],
+  [195, "associated_type"],
+  [196, "trait_bounds"],
+  [197, "higher_ranked_trait_bound"],
+  [198, "removed_trait_bound"],
+  [199, "type_parameters"],
+  [200, "const_parameter"],
+  [201, "type_parameter"],
+  [202, "lifetime_parameter"],
+  [203, "let_declaration"],
+  [204, "use_declaration"],
+  [205, "_use_clause"],
+  [206, "scoped_use_list"],
+  [207, "use_list"],
+  [208, "use_as_clause"],
+  [209, "use_wildcard"],
+  [210, "parameters"],
+  [211, "self_parameter"],
+  [212, "variadic_parameter"],
+  [213, "parameter"],
+  [214, "extern_modifier"],
+  [215, "visibility_modifier"],
+  [216, "_type"],
+  [217, "bracketed_type"],
+  [218, "qualified_type"],
+  [219, "lifetime"],
+  [220, "array_type"],
+  [221, "for_lifetimes"],
+  [222, "function_type"],
+  [223, "tuple_type"],
+  [224, "unit_type"],
+  [225, "generic_function"],
+  [226, "generic_type"],
+  [227, "generic_type_with_turbofish"],
+  [228, "bounded_type"],
+  [229, "use_bounds"],
+  [230, "type_arguments"],
+  [231, "type_binding"],
+  [232, "reference_type"],
+  [233, "pointer_type"],
+  [234, "never_type"],
+  [235, "abstract_type"],
+  [236, "dynamic_type"],
+  [237, "_expression_except_range"],
+  [238, "_expression"],
+  [239, "macro_invocation"],
+  [240, "delim_token_tree"],
+  [241, "_delim_tokens"],
+  [242, "_non_delim_token"],
+  [243, "scoped_identifier"],
+  [244, "scoped_type_identifier_in_expression_position"],
+  [245, "scoped_type_identifier"],
+  [246, "range_expression"],
+  [247, "unary_expression"],
+  [248, "try_expression"],
+  [249, "reference_expression"],
+  [250, "binary_expression"],
+  [251, "assignment_expression"],
+  [252, "compound_assignment_expr"],
+  [253, "type_cast_expression"],
+  [254, "return_expression"],
+  [255, "yield_expression"],
+  [256, "call_expression"],
+  [257, "arguments"],
+  [258, "array_expression"],
+  [259, "parenthesized_expression"],
+  [260, "tuple_expression"],
+  [261, "unit_expression"],
+  [262, "struct_expression"],
+  [263, "field_initializer_list"],
+  [264, "shorthand_field_initializer"],
+  [265, "field_initializer"],
+  [266, "base_field_initializer"],
+  [267, "if_expression"],
+  [268, "let_condition"],
+  [269, "_let_chain"],
+  [270, "_condition"],
+  [271, "else_clause"],
+  [272, "match_expression"],
+  [273, "match_block"],
+  [274, "match_arm"],
+  [275, "last_match_arm"],
+  [276, "match_pattern"],
+  [277, "while_expression"],
+  [278, "loop_expression"],
+  [279, "for_expression"],
+  [280, "const_block"],
+  [281, "closure_expression"],
+  [282, "closure_parameters"],
+  [283, "label"],
+  [284, "break_expression"],
+  [285, "continue_expression"],
+  [286, "index_expression"],
+  [287, "await_expression"],
+  [288, "field_expression"],
+  [289, "unsafe_block"],
+  [290, "async_block"],
+  [291, "gen_block"],
+  [292, "try_block"],
+  [293, "block"],
+  [294, "_pattern"],
+  [295, "generic_pattern"],
+  [296, "tuple_pattern"],
+  [297, "slice_pattern"],
+  [298, "tuple_struct_pattern"],
+  [299, "struct_pattern"],
+  [300, "field_pattern"],
+  [301, "remaining_field_pattern"],
+  [302, "mut_pattern"],
+  [303, "range_pattern"],
+  [304, "ref_pattern"],
+  [305, "captured_pattern"],
+  [306, "reference_pattern"],
+  [307, "or_pattern"],
+  [308, "_literal"],
+  [309, "_literal_pattern"],
+  [310, "negative_literal"],
+  [311, "string_literal"],
+  [312, "raw_string_literal"],
+  [313, "boolean_literal"],
+  [314, "line_comment"],
+  [315, "_line_doc_comment_marker"],
+  [316, "_inner_line_doc_comment_marker"],
+  [317, "_outer_line_doc_comment_marker"],
+  [318, "block_comment"],
+  [319, "_block_doc_comment_marker"],
+  [320, "_wildcard_pattern"],
+  [321, "_array_expression_semi"],
+  [322, "_array_expression_list"],
+  [323, "_closure_expression_block"],
+  [324, "_closure_expression_expr"],
+  [325, "_field_pattern_shorthand"],
+  [326, "_field_pattern_named"],
+  [327, "_function_type_trait_form"],
+  [328, "_function_type_fn_form"],
+  [329, "_impl_item_body"],
+  [330, "_impl_item_semi"],
+  [331, "_macro_definition_paren"],
+  [332, "_macro_definition_bracket"],
+  [333, "_macro_definition_brace"],
+  [334, "_mod_item_external"],
+  [335, "_mod_item_inline"],
+  [336, "_or_pattern_binary"],
+  [337, "_or_pattern_prefix"],
+  [338, "_range_expression_binary"],
+  [339, "_range_expression_postfix"],
+  [340, "_range_expression_prefix"],
+  [341, "_range_expression_bare"],
+  [342, "_range_pattern_prefix"],
+  [343, "_range_pattern_left_with_right"],
+  [344, "_range_pattern_left_bare"],
+  [345, "_struct_item_brace"],
+  [346, "_struct_item_tuple"],
+  [347, "_struct_item_unit"],
+  [348, "_visibility_modifier_crate"],
+  [349, "_visibility_modifier_pub"],
+  [350, "_visibility_modifier_in_path"],
+  [351, "_kw_move_marker"],
+  [352, "_kw_static_marker"],
+  [353, "_kw_pub"],
+  [354, "_kw_in"],
+  [355, "_kw_turbofish"],
+  [356, "_kw_unsafe_marker"],
+  [357, "_kw_negative"],
+  [358, "_pointer_type_const"],
+  [359, "_pointer_type_mut"],
+  [360, "_kw_operator"],
+  [361, "_reference_expression_raw_const"],
+  [362, "_reference_expression_raw_mut"],
+  [363, "_kw_reference"],
+  [364, "_kw_mutable_specifier"],
+  [365, "_expression_statement_with_semi"],
+  [366, "_expression_statement_block_ending"],
+  [367, "_foreign_mod_item_semi"],
+  [368, "_foreign_mod_item_body"],
+  [369, "_match_arm_with_comma"],
+  [370, "_match_arm_block_ending"],
+  [371, "_line_comment_regular_dslash"],
+  [372, "_line_comment_doc"],
+  [373, "_token_tree_pattern_paren"],
+  [374, "_token_tree_pattern_bracket"],
+  [375, "_token_tree_pattern_brace"],
+  [376, "_token_tree_paren"],
+  [377, "_token_tree_bracket"],
+  [378, "_token_tree_brace"],
+  [379, "_delim_token_tree_paren"],
+  [380, "_delim_token_tree_bracket"],
+  [381, "_delim_token_tree_brace"],
+  [382, "source_file_repeat1"],
+  [383, "token_repetition_pattern_repeat1"],
+  [384, "token_repetition_repeat1"],
+  [385, "_non_special_token_repeat1"],
+  [386, "declaration_list_repeat1"],
+  [387, "enum_variant_list_repeat1"],
+  [388, "enum_variant_list_repeat2"],
+  [389, "field_declaration_list_repeat1"],
+  [390, "ordered_field_declaration_list_repeat1"],
+  [391, "function_modifiers_repeat1"],
+  [392, "where_clause_repeat1"],
+  [393, "trait_bounds_repeat1"],
+  [394, "type_parameters_repeat1"],
+  [395, "use_list_repeat1"],
+  [396, "parameters_repeat1"],
+  [397, "for_lifetimes_repeat1"],
+  [398, "tuple_type_repeat1"],
+  [399, "use_bounds_repeat1"],
+  [400, "type_arguments_repeat1"],
+  [401, "arguments_repeat1"],
+  [402, "tuple_expression_repeat1"],
+  [403, "field_initializer_list_repeat1"],
+  [404, "match_block_repeat1"],
+  [405, "match_arm_repeat1"],
+  [406, "closure_parameters_repeat1"],
+  [407, "tuple_pattern_repeat1"],
+  [408, "slice_pattern_repeat1"],
+  [409, "struct_pattern_repeat1"],
+  [410, "string_literal_repeat1"],
+  [411, "_array_expression_list_repeat1"],
+  [412, "_macro_definition_paren_repeat1"],
+  [413, "_delim_token_tree_paren_repeat1"],
+  [414, "_field_identifier"],
+  [416, "_shorthand_field_identifier"],
+  [417, "_type_identifier"],
+]);
 
 export function kindIdFromName(kindName: string): TSKindId {
   switch (kindName) {
@@ -1333,17 +1330,17 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "crate": return TSKindId.Crate;
     case "metavariable": return TSKindId.Metavariable;
     case "move": return TSKindId.Move;
-    case "_line_comment_regular_dslash_token1": return TSKindId.LineCommentRegularDslashToken1;
-    case "_line_comment_regular_dslash_token2": return TSKindId.LineCommentRegularDslashToken2;
+    case "_line_comment_regular_dslash_token1": return TSKindId._LineCommentRegularDslashToken1;
+    case "_line_comment_regular_dslash_token2": return TSKindId._LineCommentRegularDslashToken2;
     case "_line_comment_content": return TSKindId.LineCommentContent;
     case "string_content": return TSKindId.StringContent;
-    case "_raw_string_literal_start": return TSKindId.RawStringLiteralStart;
+    case "_raw_string_literal_start": return TSKindId._RawStringLiteralStart;
     case "raw_string_literal_content": return TSKindId.RawStringLiteralContent;
-    case "_raw_string_literal_end": return TSKindId.RawStringLiteralEnd;
+    case "_raw_string_literal_end": return TSKindId._RawStringLiteralEnd;
     case "float_literal": return TSKindId.FloatLiteral;
     case "_outer_block_doc_comment_marker": return TSKindId.OuterBlockDocCommentMarker;
     case "_inner_block_doc_comment_marker": return TSKindId.InnerBlockDocCommentMarker;
-    case "_block_comment_content": return TSKindId.BlockCommentContent;
+    case "_block_comment_content": return TSKindId._BlockCommentContent;
     case "_line_doc_content": return TSKindId.LineDocContent;
     case "_error_sentinel": return TSKindId.ErrorSentinel;
     case "source_file": return TSKindId.SourceFile;
@@ -1497,17 +1494,18 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "captured_pattern": return TSKindId.CapturedPattern;
     case "reference_pattern": return TSKindId.ReferencePattern;
     case "or_pattern": return TSKindId.OrPattern;
+    case "_literal": return TSKindId.Literal;
     case "_literal_pattern": return TSKindId.LiteralPattern;
     case "negative_literal": return TSKindId.NegativeLiteral;
     case "string_literal": return TSKindId.StringLiteral;
     case "raw_string_literal": return TSKindId.RawStringLiteral;
     case "boolean_literal": return TSKindId.BooleanLiteral;
     case "line_comment": return TSKindId.LineComment;
-    case "_line_doc_comment_marker": return TSKindId.LineDocCommentMarker;
+    case "_line_doc_comment_marker": return TSKindId._LineDocCommentMarker;
     case "_inner_line_doc_comment_marker": return TSKindId.InnerLineDocCommentMarker;
     case "_outer_line_doc_comment_marker": return TSKindId.OuterLineDocCommentMarker;
     case "block_comment": return TSKindId.BlockComment;
-    case "_block_doc_comment_marker": return TSKindId.BlockDocCommentMarker;
+    case "_block_doc_comment_marker": return TSKindId._BlockDocCommentMarker;
     case "_wildcard_pattern": return TSKindId.WildcardPattern;
     case "_array_expression_semi": return TSKindId.ArrayExpressionSemi;
     case "_array_expression_list": return TSKindId.ArrayExpressionList;
@@ -1541,9 +1539,9 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_visibility_modifier_in_path": return TSKindId.VisibilityModifierInPath;
     case "_kw_move_marker": return TSKindId.KwMoveMarker;
     case "_kw_static_marker": return TSKindId.KwStaticMarker;
-    case "_kw_pub": return TSKindId.KwPub;
-    case "_kw_in": return TSKindId.KwIn;
-    case "_kw_turbofish": return TSKindId.KwTurbofish;
+    case "_kw_pub": return TSKindId._KwPub;
+    case "_kw_in": return TSKindId._KwIn;
+    case "_kw_turbofish": return TSKindId._KwTurbofish;
     case "_kw_unsafe_marker": return TSKindId.KwUnsafeMarker;
     case "_kw_negative": return TSKindId.KwNegative;
     case "_pointer_type_const": return TSKindId.PointerTypeConst;
@@ -1551,8 +1549,8 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_kw_operator": return TSKindId.KwOperator;
     case "_reference_expression_raw_const": return TSKindId.ReferenceExpressionRawConst;
     case "_reference_expression_raw_mut": return TSKindId.ReferenceExpressionRawMut;
-    case "_kw_reference": return TSKindId.KwReference;
-    case "_kw_mutable_specifier": return TSKindId.KwMutableSpecifier;
+    case "_kw_reference": return TSKindId._KwReference;
+    case "_kw_mutable_specifier": return TSKindId._KwMutableSpecifier;
     case "_expression_statement_with_semi": return TSKindId._ExpressionStatementWithSemi;
     case "_expression_statement_block_ending": return TSKindId._ExpressionStatementBlockEnding;
     case "_foreign_mod_item_semi": return TSKindId.ForeignModItemSemi;
@@ -1573,7 +1571,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "source_file_repeat1": return TSKindId.SourceFileRepeat1;
     case "token_repetition_pattern_repeat1": return TSKindId.TokenRepetitionPatternRepeat1;
     case "token_repetition_repeat1": return TSKindId.TokenRepetitionRepeat1;
-    case "_non_special_token_repeat1": return TSKindId.NonSpecialTokenRepeat1;
+    case "_non_special_token_repeat1": return TSKindId._NonSpecialTokenRepeat1;
     case "declaration_list_repeat1": return TSKindId.DeclarationListRepeat1;
     case "enum_variant_list_repeat1": return TSKindId.EnumVariantListRepeat1;
     case "enum_variant_list_repeat2": return TSKindId.EnumVariantListRepeat2;
@@ -1599,11 +1597,11 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "slice_pattern_repeat1": return TSKindId.SlicePatternRepeat1;
     case "struct_pattern_repeat1": return TSKindId.StructPatternRepeat1;
     case "string_literal_repeat1": return TSKindId.StringLiteralRepeat1;
-    case "_array_expression_list_repeat1": return TSKindId.ArrayExpressionListRepeat1;
-    case "_macro_definition_paren_repeat1": return TSKindId.MacroDefinitionParenRepeat1;
-    case "_delim_token_tree_paren_repeat1": return TSKindId.DelimTokenTreeParenRepeat1;
+    case "_array_expression_list_repeat1": return TSKindId._ArrayExpressionListRepeat1;
+    case "_macro_definition_paren_repeat1": return TSKindId._MacroDefinitionParenRepeat1;
+    case "_delim_token_tree_paren_repeat1": return TSKindId._DelimTokenTreeParenRepeat1;
     case "_field_identifier": return TSKindId.FieldIdentifier;
-    case "_shorthand_field_identifier": return TSKindId.ShorthandFieldIdentifier;
+    case "_shorthand_field_identifier": return TSKindId._ShorthandFieldIdentifier;
     case "_type_identifier": return TSKindId.TypeIdentifier;
     default: throw new TypeError(`unknown kind name ${kindName}`);
   }
@@ -1948,7 +1946,7 @@ export const enum TypeKind {
   UnitType = 'unit_type',
   ArrayType = 'array_type',
   FunctionType = 'function_type',
-  TypeIdentifier = '_type_identifier',
+  Identifier = 'identifier',
   MacroInvocation = 'macro_invocation',
   NeverType = 'never_type',
   DynamicType = 'dynamic_type',
@@ -2031,7 +2029,7 @@ export interface _ExpressionStatementWithSemi {
 
 export interface FieldIdentifier {
   readonly $type: TSKindId.FieldIdentifier;
-  readonly $children: readonly [FieldIdentifier];
+  readonly $children: readonly [Identifier];
 }
 
 export interface FieldPatternNamed {
@@ -2045,7 +2043,7 @@ export interface FieldPatternNamed {
 export interface _FieldPatternShorthand {
   readonly $type: TSKindId._FieldPatternShorthand;
   readonly $fields: {
-    readonly name: ShorthandFieldIdentifier;
+    readonly name: Identifier;
   };
 }
 
@@ -2083,7 +2081,7 @@ export interface LetChain {
 export interface LineCommentDoc {
   readonly $type: TSKindId.LineCommentDoc;
   readonly $fields: {
-    readonly doc: DocComment;
+    readonly doc: LineDocContent;
   };
 }
 
@@ -2204,16 +2202,6 @@ export interface ReservedIdentifier {
   readonly $children: readonly [Identifier];
 }
 
-export interface ShorthandFieldIdentifier {
-  readonly $type: TSKindId.ShorthandFieldIdentifier;
-  readonly $children: readonly [Identifier];
-}
-
-export interface _StringContent {
-  readonly $type: "_string_content";
-  readonly $children: readonly [RawStringLiteralContent];
-}
-
 export interface StructItemBrace {
   readonly $type: TSKindId.StructItemBrace;
   readonly $fields: {
@@ -2262,7 +2250,7 @@ export interface _TokenTreePatternParen {
 
 export interface TypeIdentifier {
   readonly $type: TSKindId.TypeIdentifier;
-  readonly $children: readonly [TypeIdentifier];
+  readonly $children: readonly [Identifier];
 }
 
 export interface _VisibilityModifierCrate {
@@ -2388,7 +2376,7 @@ export interface Block {
 export interface BlockComment {
   readonly $type: TSKindId.BlockComment;
   readonly $fields: {
-    readonly doc?: DocComment;
+    readonly doc?: BlockCommentContent;
   };
 }
 
@@ -2669,7 +2657,7 @@ export interface FieldInitializerList {
 export interface FieldPatternShorthand {
   readonly $type: "field_pattern_shorthand";
   readonly $fields: {
-    readonly name: ShorthandFieldIdentifier;
+    readonly name: Identifier;
   };
 }
 
@@ -3243,7 +3231,7 @@ export interface RawStringLiteral {
   readonly $type: TSKindId.RawStringLiteral;
   readonly $fields: {
     readonly raw_string_literal_start?: string;
-    readonly string_content: _StringContent;
+    readonly string_content: RawStringLiteralContent;
     readonly raw_string_literal_end?: string;
   };
 }
@@ -3728,7 +3716,6 @@ export interface YieldExpression {
 
 
 // Leaf node types
-export type DocComment = Terminal<"_doc_comment", string>;
 export type LineCommentContent = Terminal<"_line_comment_content", string>;
 export type LineCommentRegularDslash = Terminal<"_line_comment_regular_dslash", string>;
 export type PrimitiveType = Terminal<"_primitive_type", "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char">;
@@ -3752,7 +3739,10 @@ export type RawStringLiteralContent = Terminal<"raw_string_literal_content", str
 export type FloatLiteral = Terminal<"float_literal", string>;
 export type OuterBlockDocCommentMarker = Terminal<"_outer_block_doc_comment_marker", string>;
 export type InnerBlockDocCommentMarker = Terminal<"_inner_block_doc_comment_marker", string>;
+export type LineDocContent = Terminal<"_line_doc_content", string>;
 export type ErrorSentinel = Terminal<"_error_sentinel", string>;
+
+export type BlockCommentContent = Terminal<"_block_comment_content", string>;
 
 // Tree types
 export interface ArrayExpressionListTree extends AnyTreeNode { readonly type: "_array_expression_list"; }
@@ -3791,8 +3781,6 @@ export interface RangePatternLeftWithRightTree extends AnyTreeNode { readonly ty
 export interface RangePatternPrefixTree extends AnyTreeNode { readonly type: "_range_pattern_prefix"; }
 export interface ReferenceExpressionRawMutTree extends AnyTreeNode { readonly type: "_reference_expression_raw_mut"; }
 export interface ReservedIdentifierTree extends AnyTreeNode { readonly type: "_reserved_identifier"; }
-export interface ShorthandFieldIdentifierTree extends AnyTreeNode { readonly type: "_shorthand_field_identifier"; }
-export interface _StringContentTree extends AnyTreeNode { readonly type: "_string_content"; }
 export interface StructItemBraceTree extends AnyTreeNode { readonly type: "_struct_item_brace"; }
 export interface StructItemTupleTree extends AnyTreeNode { readonly type: "_struct_item_tuple"; }
 export interface _TokenTreeBraceTree extends AnyTreeNode { readonly type: "_token_tree_brace"; }
@@ -4016,7 +4004,6 @@ export interface WhereClauseTree extends TreeNode<'where_clause'> {}
 export interface WherePredicateTree extends TreeNode<'where_predicate'> {}
 export interface WhileExpressionTree extends TreeNode<'while_expression'> {}
 export interface YieldExpressionTree extends TreeNode<'yield_expression'> {}
-export interface DocCommentTree extends AnyTreeNode { readonly type: "_doc_comment"; }
 export interface LineCommentContentTree extends AnyTreeNode { readonly type: "_line_comment_content"; }
 export interface LineCommentRegularDslashTree extends AnyTreeNode { readonly type: "_line_comment_regular_dslash"; }
 export interface PrimitiveTypeTree extends AnyTreeNode { readonly type: "_primitive_type"; }
@@ -4040,6 +4027,7 @@ export interface RawStringLiteralContentTree extends AnyTreeNode { readonly type
 export interface FloatLiteralTree extends TreeNode<'float_literal'> {}
 export interface OuterBlockDocCommentMarkerTree extends AnyTreeNode { readonly type: "_outer_block_doc_comment_marker"; }
 export interface InnerBlockDocCommentMarkerTree extends AnyTreeNode { readonly type: "_inner_block_doc_comment_marker"; }
+export interface LineDocContentTree extends AnyTreeNode { readonly type: "_line_doc_content"; }
 export interface ErrorSentinelTree extends AnyTreeNode { readonly type: "_error_sentinel"; }
 export interface FnTree extends AnyTreeNode { readonly type: "fn"; }
 export interface AsyncTree extends AnyTreeNode { readonly type: "async"; }
@@ -4443,7 +4431,7 @@ export type _Type =
   | UnitType
   | ArrayType
   | FunctionType
-  | TypeIdentifier
+  | Identifier
   | MacroInvocation
   | DynamicType
   | BoundedType
@@ -4451,7 +4439,7 @@ export type _Type =
   | PrimitiveType
 ;
 
-export type _TypeTree = AbstractTypeTree | ReferenceTypeTree | MetavariableTree | PointerTypeTree | GenericTypeTree | ScopedTypeIdentifierTree | TupleTypeTree | UnitTypeTree | ArrayTypeTree | FunctionTypeTree | TypeIdentifierTree | MacroInvocationTree | DynamicTypeTree | BoundedTypeTree | RemovedTraitBoundTree | PrimitiveTypeTree;
+export type _TypeTree = AbstractTypeTree | ReferenceTypeTree | MetavariableTree | PointerTypeTree | GenericTypeTree | ScopedTypeIdentifierTree | TupleTypeTree | UnitTypeTree | ArrayTypeTree | FunctionTypeTree | IdentifierTree | MacroInvocationTree | DynamicTypeTree | BoundedTypeTree | RemovedTraitBoundTree | PrimitiveTypeTree;
 
 export type UseClause =
   | Self
@@ -4513,8 +4501,6 @@ export type RustNode =
   | RangePatternPrefix
   | ReferenceExpressionRawMut
   | ReservedIdentifier
-  | ShorthandFieldIdentifier
-  | _StringContent
   | StructItemBrace
   | StructItemTuple
   | _TokenTreeBrace
@@ -4729,8 +4715,6 @@ export interface KindMap {
   '_range_pattern_prefix': RangePatternPrefix;
   '_reference_expression_raw_mut': ReferenceExpressionRawMut;
   '_reserved_identifier': ReservedIdentifier;
-  '_shorthand_field_identifier': ShorthandFieldIdentifier;
-  '_string_content': _StringContent;
   '_struct_item_brace': StructItemBrace;
   '_struct_item_tuple': StructItemTuple;
   '_token_tree_brace': _TokenTreeBrace;
@@ -4906,7 +4890,6 @@ export interface KindMap {
   'where_predicate': WherePredicate;
   'while_expression': WhileExpression;
   'yield_expression': YieldExpression;
-  '_doc_comment': DocComment;
   '_line_comment_content': LineCommentContent;
   '_line_comment_regular_dslash': LineCommentRegularDslash;
   '_primitive_type': PrimitiveType;
@@ -4930,6 +4913,7 @@ export interface KindMap {
   'float_literal': FloatLiteral;
   '_outer_block_doc_comment_marker': OuterBlockDocCommentMarker;
   '_inner_block_doc_comment_marker': InnerBlockDocCommentMarker;
+  '_line_doc_content': LineDocContent;
   '_error_sentinel': ErrorSentinel;
 }
 
@@ -4992,8 +4976,6 @@ export interface RangePatternLeftWithRightNs extends NodeNs<RangePatternLeftWith
 export interface RangePatternPrefixNs extends NodeNs<RangePatternPrefix, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ReferenceExpressionRawMutNs extends NodeNs<ReferenceExpressionRawMut, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ReservedIdentifierNs extends NodeNs<ReservedIdentifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ShorthandFieldIdentifierNs extends NodeNs<ShorthandFieldIdentifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface _StringContentNs extends NodeNs<_StringContent, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface StructItemBraceNs extends NodeNs<StructItemBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface StructItemTupleNs extends NodeNs<StructItemTuple, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _TokenTreeBraceNs extends NodeNs<_TokenTreeBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5207,8 +5189,6 @@ export interface NamespaceMap {
   '_range_pattern_prefix': RangePatternPrefixNs;
   '_reference_expression_raw_mut': ReferenceExpressionRawMutNs;
   '_reserved_identifier': ReservedIdentifierNs;
-  '_shorthand_field_identifier': ShorthandFieldIdentifierNs;
-  '_string_content': _StringContentNs;
   '_struct_item_brace': StructItemBraceNs;
   '_struct_item_tuple': StructItemTupleNs;
   '_token_tree_brace': _TokenTreeBraceNs;
@@ -5644,20 +5624,6 @@ export namespace ReservedIdentifier {
   export type Loose = LooseFor<'_reserved_identifier'>;
   export type Tree = TreeFor<'_reserved_identifier'>;
   export type Kind = '_reserved_identifier';
-}
-export namespace ShorthandFieldIdentifier {
-  export type Config = ConfigFor<'_shorthand_field_identifier'>;
-  export type Fluent = FluentFor<'_shorthand_field_identifier'>;
-  export type Loose = LooseFor<'_shorthand_field_identifier'>;
-  export type Tree = TreeFor<'_shorthand_field_identifier'>;
-  export type Kind = '_shorthand_field_identifier';
-}
-export namespace _StringContent {
-  export type Config = ConfigFor<'_string_content'>;
-  export type Fluent = FluentFor<'_string_content'>;
-  export type Loose = LooseFor<'_string_content'>;
-  export type Tree = TreeFor<'_string_content'>;
-  export type Kind = '_string_content';
 }
 export namespace StructItemBrace {
   export type Config = ConfigFor<'_struct_item_brace'>;
@@ -6986,10 +6952,6 @@ export namespace _DelimTokenTreeParen {
   }
 }
 
-export namespace DocComment {
-  export type Transport = TerminalTransport<"_doc_comment", string>;
-}
-
 export namespace _ExpressionStatementBlockEnding {
   export interface Transport {
     readonly $type: TSKindId._ExpressionStatementBlockEnding;
@@ -7022,7 +6984,7 @@ export namespace FieldIdentifier {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly $children: readonly [FieldIdentifier.Transport];
+    readonly $children: readonly [Identifier.Transport];
   }
 }
 
@@ -7047,7 +7009,7 @@ export namespace _FieldPatternShorthand {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly name: ShorthandFieldIdentifier.Transport;
+    readonly name: Identifier.Transport;
   }
 }
 
@@ -7107,8 +7069,8 @@ export namespace ImplItemSemi {
   export type Transport = TerminalTransport<"_impl_item_semi", ";">;
 }
 
-export namespace InnerDocCommentMarker {
-  export type Transport = TerminalTransport<"_inner_doc_comment_marker", "!">;
+export namespace InnerLineDocCommentMarker {
+  export type Transport = TerminalTransport<"_inner_line_doc_comment_marker", "!">;
 }
 
 export namespace KwAsyncMarker {
@@ -7163,7 +7125,7 @@ export namespace LineCommentDoc {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly doc: DocComment.Transport;
+    readonly doc: LineDocContent.Transport;
   }
 }
 
@@ -7284,8 +7246,8 @@ export namespace OrPatternPrefix {
   }
 }
 
-export namespace OuterDocCommentMarker {
-  export type Transport = TerminalTransport<"_outer_doc_comment_marker", "/">;
+export namespace OuterLineDocCommentMarker {
+  export type Transport = TerminalTransport<"_outer_line_doc_comment_marker", "/">;
 }
 
 export namespace PointerTypeConst {
@@ -7416,30 +7378,6 @@ export namespace ReservedIdentifier {
   }
 }
 
-export namespace ShorthandFieldIdentifier {
-  export interface Transport {
-    readonly $type: TSKindId.ShorthandFieldIdentifier;
-    readonly $source?: 'ts' | 'sg' | 'factory';
-    readonly $named?: boolean;
-    readonly $text?: string;
-    readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
-    readonly $children: readonly [Identifier.Transport];
-  }
-}
-
-export namespace _StringContent {
-  export interface Transport {
-    readonly $type: "_string_content";
-    readonly $source?: 'ts' | 'sg' | 'factory';
-    readonly $named?: boolean;
-    readonly $text?: string;
-    readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
-    readonly $children: readonly [RawStringLiteralContent.Transport];
-  }
-}
-
 export namespace StructItemBrace {
   export interface Transport {
     readonly $type: TSKindId.StructItemBrace;
@@ -7550,7 +7488,7 @@ export namespace TypeIdentifier {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly $children: readonly [TypeIdentifier.Transport];
+    readonly $children: readonly [Identifier.Transport];
   }
 }
 
@@ -7788,7 +7726,7 @@ export namespace BlockComment {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly doc?: DocComment.Transport;
+    readonly doc?: TerminalTransport<"_block_comment_content">;
   }
 }
 
@@ -8329,7 +8267,7 @@ export namespace FieldPatternShorthand {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly name: ShorthandFieldIdentifier.Transport;
+    readonly name: Identifier.Transport;
   }
 }
 
@@ -9356,7 +9294,7 @@ export namespace RawStringLiteral {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
     readonly raw_string_literal_start?: TerminalTransport<string>;
-    readonly string_content: _StringContent.Transport;
+    readonly string_content: RawStringLiteralContent.Transport;
     readonly raw_string_literal_end?: TerminalTransport<string>;
   }
 }
@@ -10295,6 +10233,10 @@ export namespace InnerBlockDocCommentMarker {
   export type Transport = TerminalTransport<"_inner_block_doc_comment_marker", string>;
 }
 
+export namespace LineDocContent {
+  export type Transport = TerminalTransport<"_line_doc_content", string>;
+}
+
 export namespace ErrorSentinel {
   export type Transport = TerminalTransport<"_error_sentinel", string>;
 }
@@ -10652,7 +10594,7 @@ export namespace Tokens {
 }
 
 export namespace _Type {
-  export type Transport = AbstractType.Transport | ReferenceType.Transport | Metavariable.Transport | PointerType.Transport | GenericType.Transport | ScopedTypeIdentifier.Transport | TupleType.Transport | UnitType.Transport | ArrayType.Transport | FunctionType.Transport | TypeIdentifier.Transport | MacroInvocation.Transport | NeverType.Transport | DynamicType.Transport | BoundedType.Transport | RemovedTraitBound.Transport | PrimitiveType.Transport;
+  export type Transport = AbstractType.Transport | ReferenceType.Transport | Metavariable.Transport | PointerType.Transport | GenericType.Transport | ScopedTypeIdentifier.Transport | TupleType.Transport | UnitType.Transport | ArrayType.Transport | FunctionType.Transport | Identifier.Transport | MacroInvocation.Transport | NeverType.Transport | DynamicType.Transport | BoundedType.Transport | RemovedTraitBound.Transport | PrimitiveType.Transport;
 }
 
 export namespace UseClause {
@@ -10667,7 +10609,6 @@ export type TransportFor<K extends SyntaxKind | keyof KindMap> =
   K extends "_delim_token_tree_brace" ? _DelimTokenTreeBrace.Transport :
   K extends "_delim_token_tree_bracket" ? _DelimTokenTreeBracket.Transport :
   K extends "_delim_token_tree_paren" ? _DelimTokenTreeParen.Transport :
-  K extends "_doc_comment" ? DocComment.Transport :
   K extends "_expression_statement_block_ending" ? _ExpressionStatementBlockEnding.Transport :
   K extends "_expression_statement_with_semi" ? _ExpressionStatementWithSemi.Transport :
   K extends "_field_identifier" ? FieldIdentifier.Transport :
@@ -10679,7 +10620,7 @@ export type TransportFor<K extends SyntaxKind | keyof KindMap> =
   K extends "_function_type_trait_form" ? FunctionTypeTraitForm.Transport :
   K extends "_impl_item_body" ? _ImplItemBody.Transport :
   K extends "_impl_item_semi" ? ImplItemSemi.Transport :
-  K extends "_inner_doc_comment_marker" ? InnerDocCommentMarker.Transport :
+  K extends "_inner_line_doc_comment_marker" ? InnerLineDocCommentMarker.Transport :
   K extends "_kw_async_marker" ? KwAsyncMarker.Transport :
   K extends "_kw_move_marker" ? KwMoveMarker.Transport :
   K extends "_kw_negative" ? KwNegative.Transport :
@@ -10701,7 +10642,7 @@ export type TransportFor<K extends SyntaxKind | keyof KindMap> =
   K extends "_non_special_token" ? NonSpecialToken.Transport :
   K extends "_or_pattern_binary" ? OrPatternBinary.Transport :
   K extends "_or_pattern_prefix" ? OrPatternPrefix.Transport :
-  K extends "_outer_doc_comment_marker" ? OuterDocCommentMarker.Transport :
+  K extends "_outer_line_doc_comment_marker" ? OuterLineDocCommentMarker.Transport :
   K extends "_pointer_type_const" ? PointerTypeConst.Transport :
   K extends "_pointer_type_mut" ? _PointerTypeMut.Transport :
   K extends "_primitive_type" ? PrimitiveType.Transport :
@@ -10715,8 +10656,6 @@ export type TransportFor<K extends SyntaxKind | keyof KindMap> =
   K extends "_reference_expression_raw_const" ? ReferenceExpressionRawConst.Transport :
   K extends "_reference_expression_raw_mut" ? ReferenceExpressionRawMut.Transport :
   K extends "_reserved_identifier" ? ReservedIdentifier.Transport :
-  K extends "_shorthand_field_identifier" ? ShorthandFieldIdentifier.Transport :
-  K extends "_string_content" ? _StringContent.Transport :
   K extends "_struct_item_brace" ? StructItemBrace.Transport :
   K extends "_struct_item_tuple" ? StructItemTuple.Transport :
   K extends "_struct_item_unit" ? StructItemUnit.Transport :
@@ -10916,6 +10855,7 @@ export type TransportFor<K extends SyntaxKind | keyof KindMap> =
   K extends "float_literal" ? FloatLiteral.Transport :
   K extends "_outer_block_doc_comment_marker" ? OuterBlockDocCommentMarker.Transport :
   K extends "_inner_block_doc_comment_marker" ? InnerBlockDocCommentMarker.Transport :
+  K extends "_line_doc_content" ? LineDocContent.Transport :
   K extends "_error_sentinel" ? ErrorSentinel.Transport :
   K extends "[" ? Bracket.Transport :
   K extends "]" ? CloseBracket.Transport :
@@ -11001,7 +10941,6 @@ export type AnyTransport =
   | _DelimTokenTreeBrace.Transport
   | _DelimTokenTreeBracket.Transport
   | _DelimTokenTreeParen.Transport
-  | DocComment.Transport
   | _ExpressionStatementBlockEnding.Transport
   | _ExpressionStatementWithSemi.Transport
   | FieldIdentifier.Transport
@@ -11013,7 +10952,7 @@ export type AnyTransport =
   | FunctionTypeTraitForm.Transport
   | _ImplItemBody.Transport
   | ImplItemSemi.Transport
-  | InnerDocCommentMarker.Transport
+  | InnerLineDocCommentMarker.Transport
   | KwAsyncMarker.Transport
   | KwMoveMarker.Transport
   | KwNegative.Transport
@@ -11035,7 +10974,7 @@ export type AnyTransport =
   | NonSpecialToken.Transport
   | OrPatternBinary.Transport
   | OrPatternPrefix.Transport
-  | OuterDocCommentMarker.Transport
+  | OuterLineDocCommentMarker.Transport
   | PointerTypeConst.Transport
   | _PointerTypeMut.Transport
   | PrimitiveType.Transport
@@ -11049,8 +10988,6 @@ export type AnyTransport =
   | ReferenceExpressionRawConst.Transport
   | ReferenceExpressionRawMut.Transport
   | ReservedIdentifier.Transport
-  | ShorthandFieldIdentifier.Transport
-  | _StringContent.Transport
   | StructItemBrace.Transport
   | StructItemTuple.Transport
   | StructItemUnit.Transport
@@ -11250,6 +11187,7 @@ export type AnyTransport =
   | FloatLiteral.Transport
   | OuterBlockDocCommentMarker.Transport
   | InnerBlockDocCommentMarker.Transport
+  | LineDocContent.Transport
   | ErrorSentinel.Transport
   | Bracket.Transport
   | CloseBracket.Transport

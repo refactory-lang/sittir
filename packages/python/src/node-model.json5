@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 241,
+  "nodeCount": 239,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -370,31 +370,6 @@
       ]
     },
     {
-      "kind": "_as_pattern_target",
-      "modelType": "container",
-      "typeName": "AsPatternTarget",
-      "factoryName": "asPatternTarget",
-      "irKey": "asPatternTarget",
-      "hidden": false,
-      "children": [
-        {
-          "name": "expression",
-          "propertyName": "expression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "expression",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
-    },
-    {
       "kind": "_assignment_eq",
       "modelType": "group",
       "typeName": "AssignmentEq",
@@ -667,31 +642,6 @@
         "expression_list",
         "pattern_list",
         "yield"
-      ]
-    },
-    {
-      "kind": "_format_expression",
-      "modelType": "container",
-      "typeName": "FormatExpression",
-      "factoryName": "formatExpression",
-      "irKey": "format",
-      "hidden": false,
-      "children": [
-        {
-          "name": "interpolation",
-          "propertyName": "interpolation",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "interpolation",
-              "unresolved": true
-            }
-          ]
-        }
       ]
     },
     {
@@ -1470,7 +1420,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_as_pattern_target",
+              "name": "as_pattern_target",
               "unresolved": true
             }
           ],
@@ -1478,11 +1428,8 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_as_pattern_target"
+              "as_pattern_target"
             ]
-          },
-          "aliasSources": {
-            "as_pattern_target": "_as_pattern_target"
           }
         }
       ],
@@ -4352,7 +4299,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_format_expression",
+              "name": "interpolation",
               "unresolved": true
             }
           ]

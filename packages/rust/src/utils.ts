@@ -3,7 +3,7 @@
 
 import type { AnyNodeData, AnyTreeNodeOf } from '@sittir/types';
 import type { AnyTransport, NamespaceMap } from './types.js';
-import { kindNameFromId, kindIdFromName } from './types.js';
+import { KIND_NAMES, kindIdFromName } from './types.js';
 
 /**
  * Type guard: returns true if `v` is a NodeData.
@@ -86,7 +86,6 @@ const nativeTransportAliasTargetToSource: Record<string, string> = {
   "condition": "_condition",
   "declaration_statement": "_declaration_statement",
   "delim_tokens": "_delim_tokens",
-  "doc_comment": "_doc_comment",
   "expression": "_expression",
   "expression_ending_with_block": "_expression_ending_with_block",
   "expression_except_range": "_expression_except_range",
@@ -103,6 +102,7 @@ const nativeTransportAliasTargetToSource: Record<string, string> = {
   "line_comment_content": "_line_comment_content",
   "line_comment_doc": "_line_comment_doc",
   "line_comment_regular_dslash": "_line_comment_regular_dslash",
+  "line_doc_content": "_line_doc_content",
   "literal": "_literal",
   "literal_pattern": "_literal_pattern",
   "match_arm_with_comma": "_match_arm_with_comma",
@@ -120,7 +120,6 @@ const nativeTransportAliasTargetToSource: Record<string, string> = {
   "reference_expression_raw_const": "_reference_expression_raw_const",
   "reference_expression_raw_mut": "_reference_expression_raw_mut",
   "reserved_identifier": "_reserved_identifier",
-  "shorthand_field_identifier": "_shorthand_field_identifier",
   "statement": "_statement",
   "struct_item_brace": "_struct_item_brace",
   "struct_item_tuple": "_struct_item_tuple",
@@ -592,7 +591,7 @@ function projectTransportValue(value: unknown, path: string): unknown {
 
   // Resolve the wire kind name (including alias rewriting) for internal
   // routing. $type is always numeric in Phase D.
-  const resolvedKind = nativeTransportType(kindNameFromId(numericType));
+  const resolvedKind = nativeTransportType(KIND_NAMES.get(numericType) ?? String(numericType));
 
   const projected: Record<string, unknown> = {};
   for (const key of transportMetadataKeys) {
@@ -779,6 +778,9 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 330: // _impl_item_semi
       assertImplItemSemiTransport(node, 'node');
       return;
+    case 316: // _inner_line_doc_comment_marker
+      assertInnerLineDocCommentMarkerTransport(node, 'node');
+      return;
     case 351: // _kw_move_marker
       assertKwMoveMarkerTransport(node, 'node');
       return;
@@ -833,6 +835,9 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 337: // _or_pattern_prefix
       assertOrPatternPrefixTransport(node, 'node');
       return;
+    case 317: // _outer_line_doc_comment_marker
+      assertOuterLineDocCommentMarkerTransport(node, 'node');
+      return;
     case 358: // _pointer_type_const
       assertPointerTypeConstTransport(node, 'node');
       return;
@@ -865,9 +870,6 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
       return;
     case 362: // _reference_expression_raw_mut
       assertReferenceExpressionRawMutTransport(node, 'node');
-      return;
-    case 416: // _shorthand_field_identifier
-      assertShorthandFieldIdentifierTransport(node, 'node');
       return;
     case 345: // _struct_item_brace
       assertStructItemBraceTransport(node, 'node');
@@ -1463,6 +1465,9 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 153: // _inner_block_doc_comment_marker
       assertInnerBlockDocCommentMarkerTransport(node, 'node');
       return;
+    case 155: // _line_doc_content
+      assertLineDocContentTransport(node, 'node');
+      return;
     case 156: // _error_sentinel
       assertErrorSentinelTransport(node, 'node');
       return;
@@ -1932,12 +1937,6 @@ function assert_DelimTokenTreeParenTransport(node: Record<string, unknown>, path
   }
 }
 
-function assertDocCommentTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "_doc_comment");
-  assertOptionalMetadata(node, path);
-  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
-}
-
 function assert_ExpressionStatementBlockEndingTransport(node: Record<string, unknown>, path: string): void {
   assertTransportKind(node, path, "_expression_statement_block_ending");
   assertOptionalMetadata(node, path);
@@ -1969,7 +1968,7 @@ function assertFieldIdentifierTransport(node: Record<string, unknown>, path: str
   if (node.$children !== undefined) {
     if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
     for (let i = 0; i < node.$children.length; i++) {
-      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_field_identifier"}] as const);
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"identifier"}] as const);
     }
   }
 }
@@ -1987,7 +1986,7 @@ function assert_FieldPatternShorthandTransport(node: Record<string, unknown>, pa
   assertTransportKind(node, path, "_field_pattern_shorthand");
   assertOptionalMetadata(node, path);
   if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
-  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"_shorthand_field_identifier"}] as const);
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"}] as const);
 }
 
 function assert_ForeignModItemBodyTransport(node: Record<string, unknown>, path: string): void {
@@ -2034,8 +2033,8 @@ function assertImplItemSemiTransport(node: Record<string, unknown>, path: string
   assertTextIn(node.$text, `${path}.$text`, [";"] as const);
 }
 
-function assertInnerDocCommentMarkerTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "_inner_doc_comment_marker");
+function assertInnerLineDocCommentMarkerTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_inner_line_doc_comment_marker");
   assertOptionalMetadata(node, path);
   assertTextIn(node.$text, `${path}.$text`, ["!"] as const);
 }
@@ -2104,7 +2103,7 @@ function assertLineCommentDocTransport(node: Record<string, unknown>, path: stri
   assertTransportKind(node, path, "_line_comment_doc");
   assertOptionalMetadata(node, path);
   if (node["doc"] === undefined) throw new TypeError(`${path}.doc` + ' is required');
-  if (node["doc"] !== undefined) assertTransportValue(node["doc"], `${path}.doc`, [{"type":"_doc_comment"}] as const);
+  if (node["doc"] !== undefined) assertTransportValue(node["doc"], `${path}.doc`, [{"type":"_line_doc_content"}] as const);
 }
 
 function assertLineCommentRegularDslashTransport(node: Record<string, unknown>, path: string): void {
@@ -2201,8 +2200,8 @@ function assertOrPatternPrefixTransport(node: Record<string, unknown>, path: str
   if (node["right"] !== undefined) assertTransportValue(node["right"], `${path}.right`, [{"type":"string_literal"},{"type":"raw_string_literal"},{"type":"char_literal"},{"type":"boolean_literal","text":"true"},{"type":"boolean_literal","text":"false"},{"type":"integer_literal"},{"type":"float_literal"},{"type":"negative_literal"},{"type":"identifier"},{"type":"scoped_identifier"},{"type":"generic_pattern"},{"type":"tuple_pattern"},{"type":"tuple_struct_pattern"},{"type":"struct_pattern"},{"type":"ref_pattern"},{"type":"slice_pattern"},{"type":"captured_pattern"},{"type":"reference_pattern"},{"type":"remaining_field_pattern","text":".."},{"type":"mut_pattern"},{"type":"range_pattern"},{"type":"or_pattern"},{"type":"const_block"},{"type":"macro_invocation"},{"type":"_wildcard_pattern","text":"_"}] as const);
 }
 
-function assertOuterDocCommentMarkerTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "_outer_doc_comment_marker");
+function assertOuterLineDocCommentMarkerTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_outer_line_doc_comment_marker");
   assertOptionalMetadata(node, path);
   assertTextIn(node.$text, `${path}.$text`, ["/"] as const);
 }
@@ -2313,30 +2312,6 @@ function assertReservedIdentifierTransport(node: Record<string, unknown>, path: 
     if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
     for (let i = 0; i < node.$children.length; i++) {
       assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"identifier"}] as const);
-    }
-  }
-}
-
-function assertShorthandFieldIdentifierTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "_shorthand_field_identifier");
-  assertOptionalMetadata(node, path);
-  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
-  if (node.$children !== undefined) {
-    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
-    for (let i = 0; i < node.$children.length; i++) {
-      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"identifier"}] as const);
-    }
-  }
-}
-
-function assert_StringContentTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "_string_content");
-  assertOptionalMetadata(node, path);
-  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
-  if (node.$children !== undefined) {
-    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
-    for (let i = 0; i < node.$children.length; i++) {
-      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"raw_string_literal_content"}] as const);
     }
   }
 }
@@ -2452,7 +2427,7 @@ function assertTypeIdentifierTransport(node: Record<string, unknown>, path: stri
   if (node.$children !== undefined) {
     if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
     for (let i = 0; i < node.$children.length; i++) {
-      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_type_identifier"}] as const);
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"identifier"}] as const);
     }
   }
 }
@@ -2667,7 +2642,7 @@ function assertBlockTransport(node: Record<string, unknown>, path: string): void
 function assertBlockCommentTransport(node: Record<string, unknown>, path: string): void {
   assertTransportKind(node, path, "block_comment");
   assertOptionalMetadata(node, path);
-  if (node["doc"] !== undefined) assertTransportValue(node["doc"], `${path}.doc`, [{"type":"_doc_comment"}] as const);
+  if (node["doc"] !== undefined) assertTransportValue(node["doc"], `${path}.doc`, [{"type":"_block_comment_content"}] as const);
 }
 
 function assertBooleanLiteralTransport(node: Record<string, unknown>, path: string): void {
@@ -3181,7 +3156,7 @@ function assertFieldPatternShorthandTransport(node: Record<string, unknown>, pat
   assertTransportKind(node, path, "field_pattern_shorthand");
   assertOptionalMetadata(node, path);
   if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
-  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"_shorthand_field_identifier"}] as const);
+  if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"}] as const);
 }
 
 function assertFieldPatternTransport(node: Record<string, unknown>, path: string): void {
@@ -4214,7 +4189,7 @@ function assertRawStringLiteralTransport(node: Record<string, unknown>, path: st
   assertOptionalMetadata(node, path);
   if (node["raw_string_literal_start"] !== undefined) assertTransportValue(node["raw_string_literal_start"], `${path}.raw_string_literal_start`, [] as const);
   if (node["string_content"] === undefined) throw new TypeError(`${path}.string_content` + ' is required');
-  if (node["string_content"] !== undefined) assertTransportValue(node["string_content"], `${path}.string_content`, [{"type":"_string_content"}] as const);
+  if (node["string_content"] !== undefined) assertTransportValue(node["string_content"], `${path}.string_content`, [{"type":"raw_string_literal_content"}] as const);
   if (node["raw_string_literal_end"] !== undefined) assertTransportValue(node["raw_string_literal_end"], `${path}.raw_string_literal_end`, [] as const);
 }
 
@@ -5084,6 +5059,12 @@ function assertOuterBlockDocCommentMarkerTransport(node: Record<string, unknown>
 
 function assertInnerBlockDocCommentMarkerTransport(node: Record<string, unknown>, path: string): void {
   assertTransportKind(node, path, "_inner_block_doc_comment_marker");
+  assertOptionalMetadata(node, path);
+  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
+}
+
+function assertLineDocContentTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_line_doc_content");
   assertOptionalMetadata(node, path);
   if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);
 }

@@ -3,9 +3,7 @@
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
   '_as_pattern',
-  '_as_pattern_target',
   '_comprehension_clauses',
-  '_format_expression',
   '_list_pattern',
   '_match_block',
   '_simple_pattern_negative',
@@ -452,8 +450,6 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
   "_with_clause_paren": 245,
   "_simple_pattern_negative": 248,
   "_kw_async_marker": 250,
-  "_as_pattern_target": 284,
-  "_format_expression": 285,
 } as const satisfies Record<string, number>;
 
 export const TREE_SITTER_KIND_BY_KIND_ID = {
@@ -629,8 +625,6 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
   [245]: "_with_clause_paren",
   [248]: "_simple_pattern_negative",
   [250]: "_kw_async_marker",
-  [284]: "_as_pattern_target",
-  [285]: "_format_expression",
 } as const;
 
 export const TREE_SITTER_KIND_ID_JSON = [
@@ -806,8 +800,6 @@ export const TREE_SITTER_KIND_ID_JSON = [
   { name: "_with_clause_paren", id: 245, enumName: "WithClauseParen", cName: "sym__with_clause_paren" },
   { name: "_simple_pattern_negative", id: 248, enumName: "SimplePatternNegative", cName: "sym__simple_pattern_negative" },
   { name: "_kw_async_marker", id: 250, enumName: "KwAsyncMarker", cName: "sym__kw_async_marker" },
-  { name: "_as_pattern_target", id: 284, enumName: "AliasAsPatternTarget", cName: "alias_sym_as_pattern_target" },
-  { name: "_format_expression", id: 285, enumName: "AliasFormatExpression", cName: "alias_sym_format_expression" },
 ] as const;
 
 export const enum TSFieldId {
@@ -1054,11 +1046,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
 }>> = {
   '_as_pattern': [
   ],
-  '_as_pattern_target': [
-  ],
   '_comprehension_clauses': [
-  ],
-  '_format_expression': [
   ],
   '_list_pattern': [
   ],

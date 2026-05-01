@@ -21,11 +21,13 @@ import type {
     Pattern,
     PrimaryExpression,
     PrimaryType,
+    PropertyIdentifier,
     PropertyName,
     Semicolon,
     ShorthandPropertyIdentifier,
     ShorthandPropertyIdentifierPattern,
     Statement,
+    StatementIdentifier,
     TupleTypeMember,
     Type,
     _Identifier,
@@ -55,15 +57,11 @@ export interface IsGuards {
     ImportClauseNamespaceImport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ImportClauseNamespaceImport };
     ImportSpecifierName<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ImportSpecifierName };
     IndexSignatureMappedTypeClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._IndexSignatureMappedTypeClause };
-    InterfaceBody<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.InterfaceBody };
     ParenthesizedExpressionSequence<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ParenthesizedExpressionSequence };
-    PropertyIdentifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PropertyIdentifier };
     PublicFieldDefinitionAccessorOpt<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PublicFieldDefinitionAccessorOpt };
     PublicFieldDefinitionDeclareFirst<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
-    StatementIdentifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StatementIdentifier };
     StringDouble<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._StringDouble };
     StringSingle<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._StringSingle };
-    ThisType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ThisType };
     TypeIdentifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeIdentifier };
     abstractClassDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AbstractClassDeclaration };
     abstractMethodSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AbstractMethodSignature };
@@ -230,10 +228,12 @@ export interface IsGuards {
     jsxElementName(v: { readonly $type: string | number }): v is JsxElementName;
     jsxIdentifier(v: { readonly $type: string | number }): v is _JsxIdentifier;
     moduleExportName(v: { readonly $type: string | number }): v is ModuleExportName;
+    propertyIdentifier(v: { readonly $type: string | number }): v is PropertyIdentifier;
     propertyName(v: { readonly $type: string | number }): v is PropertyName;
     semicolon(v: { readonly $type: string | number }): v is Semicolon;
     shorthandPropertyIdentifier(v: { readonly $type: string | number }): v is ShorthandPropertyIdentifier;
     shorthandPropertyIdentifierPattern(v: { readonly $type: string | number }): v is ShorthandPropertyIdentifierPattern;
+    statementIdentifier(v: { readonly $type: string | number }): v is StatementIdentifier;
     tupleTypeMember(v: { readonly $type: string | number }): v is TupleTypeMember;
     declaration(v: { readonly $type: string | number }): v is Declaration;
     expression(v: { readonly $type: string | number }): v is Expression;
@@ -265,15 +265,11 @@ export interface AssertGuards {
     ImportClauseNamespaceImport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ImportClauseNamespaceImport };
     ImportSpecifierName(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ImportSpecifierName };
     IndexSignatureMappedTypeClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._IndexSignatureMappedTypeClause };
-    InterfaceBody(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.InterfaceBody };
     ParenthesizedExpressionSequence(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ParenthesizedExpressionSequence };
-    PropertyIdentifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PropertyIdentifier };
     PublicFieldDefinitionAccessorOpt(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PublicFieldDefinitionAccessorOpt };
     PublicFieldDefinitionDeclareFirst(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
-    StatementIdentifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StatementIdentifier };
     StringDouble(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._StringDouble };
     StringSingle(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._StringSingle };
-    ThisType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ThisType };
     TypeIdentifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeIdentifier };
     abstractClassDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AbstractClassDeclaration };
     abstractMethodSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AbstractMethodSignature };
@@ -440,10 +436,12 @@ export interface AssertGuards {
     jsxElementName(v: { readonly $type: string | number }): asserts v is JsxElementName;
     jsxIdentifier(v: { readonly $type: string | number }): asserts v is _JsxIdentifier;
     moduleExportName(v: { readonly $type: string | number }): asserts v is ModuleExportName;
+    propertyIdentifier(v: { readonly $type: string | number }): asserts v is PropertyIdentifier;
     propertyName(v: { readonly $type: string | number }): asserts v is PropertyName;
     semicolon(v: { readonly $type: string | number }): asserts v is Semicolon;
     shorthandPropertyIdentifier(v: { readonly $type: string | number }): asserts v is ShorthandPropertyIdentifier;
     shorthandPropertyIdentifierPattern(v: { readonly $type: string | number }): asserts v is ShorthandPropertyIdentifierPattern;
+    statementIdentifier(v: { readonly $type: string | number }): asserts v is StatementIdentifier;
     tupleTypeMember(v: { readonly $type: string | number }): asserts v is TupleTypeMember;
     declaration(v: { readonly $type: string | number }): asserts v is Declaration;
     expression(v: { readonly $type: string | number }): asserts v is Expression;
@@ -473,16 +471,18 @@ const _supertype_jsxChild_ids = new Set<number>([163]);
 const _supertype_jsxElementName_ids = new Set<number>([1, 219]);
 const _supertype_jsxIdentifier_ids = new Set<number>([1]);
 const _supertype_moduleExportName_ids = new Set<number>([1, 247]);
+const _supertype_propertyIdentifier_ids = new Set<number>([1]);
 const _supertype_propertyName_ids = new Set<number>([1, 104, 247, 103, 265]);
 const _supertype_semicolon_ids = new Set<number>([159]);
 const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1]);
 const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1]);
+const _supertype_statementIdentifier_ids = new Set<number>([1]);
 const _supertype_tupleTypeMember_ids = new Set<number>([308, 309, 310, 311]);
 const _supertype_declaration_ids = new Set<number>([271, 282, 283, 284, 293, 290, 288, 286, 281]);
 const _supertype_expression_ids = new Set<number>([274, 275, 276, 284, 273, 236, 238, 233, 244, 243, 242, 245, 232, 212]);
 const _supertype_pattern_ids = new Set<number>([234, 235, 112, 1, 214, 218, 268, 260]);
 const _supertype_primaryExpression_ids = new Set<number>([268]);
-const _supertype_primaryType_ids = new Set<number>([334, 335, 430, 287, 319, 337, 346, 347, 333, 326, 327, 107, 330, 328, 318, 316, 350, 349]);
+const _supertype_primaryType_ids = new Set<number>([334, 335, 1, 287, 319, 337, 346, 347, 333, 326, 327, 107, 330, 328, 318, 316, 350, 349]);
 const _supertype_statement_ids = new Set<number>([167, 174, 199, 182, 186, 188, 189, 190, 191, 193, 194, 195, 196, 197, 198, 200, 201, 203]);
 const _supertype_type_ids = new Set<number>([351, 348, 313, 317, 303, 304]);
 
@@ -766,16 +766,12 @@ const _kindIdByKind = new Map<string, number>([
     ["_string_single", TSKindId._StringSingle],
     ["_update_expression_postfix", TSKindId.UpdateExpressionPostfix],
     ["_update_expression_prefix", TSKindId.UpdateExpressionPrefix],
-    ["_interface_body", TSKindId.InterfaceBody],
-    ["_property_identifier", TSKindId.PropertyIdentifier],
     ["_public_field_definition_abstract_first", TSKindId.PublicFieldDefinitionAbstractFirst],
     ["_public_field_definition_access_first", TSKindId.PublicFieldDefinitionAccessFirst],
     ["_public_field_definition_accessor_opt", TSKindId.PublicFieldDefinitionAccessorOpt],
     ["_public_field_definition_declare_first", TSKindId.PublicFieldDefinitionDeclareFirst],
     ["_public_field_definition_readonly_first", TSKindId.PublicFieldDefinitionReadonlyFirst],
     ["_public_field_definition_static_mods", TSKindId.PublicFieldDefinitionStaticMods],
-    ["_statement_identifier", TSKindId.StatementIdentifier],
-    ["_this_type", TSKindId.ThisType],
     ["_type_identifier", TSKindId.TypeIdentifier],
 ]);
 
@@ -799,15 +795,11 @@ export const is = {
     ImportClauseNamespaceImport: _g(TSKindId._ImportClauseNamespaceImport),
     ImportSpecifierName: _g(TSKindId._ImportSpecifierName),
     IndexSignatureMappedTypeClause: _g(TSKindId._IndexSignatureMappedTypeClause),
-    InterfaceBody: _g(TSKindId.InterfaceBody),
     ParenthesizedExpressionSequence: _g(TSKindId._ParenthesizedExpressionSequence),
-    PropertyIdentifier: _g(TSKindId.PropertyIdentifier),
     PublicFieldDefinitionAccessorOpt: _g(TSKindId.PublicFieldDefinitionAccessorOpt),
     PublicFieldDefinitionDeclareFirst: _g(TSKindId.PublicFieldDefinitionDeclareFirst),
-    StatementIdentifier: _g(TSKindId.StatementIdentifier),
     StringDouble: _g(TSKindId._StringDouble),
     StringSingle: _g(TSKindId._StringSingle),
-    ThisType: _g(TSKindId.ThisType),
     TypeIdentifier: _g(TSKindId.TypeIdentifier),
     abstractClassDeclaration: _g(TSKindId.AbstractClassDeclaration),
     abstractMethodSignature: _g(TSKindId.AbstractMethodSignature),
@@ -977,10 +969,12 @@ export const is = {
     jsxElementName: _sg(_supertype_jsxElementName_ids),
     jsxIdentifier: _sg(_supertype_jsxIdentifier_ids),
     moduleExportName: _sg(_supertype_moduleExportName_ids),
+    propertyIdentifier: _sg(_supertype_propertyIdentifier_ids),
     propertyName: _sg(_supertype_propertyName_ids),
     semicolon: _sg(_supertype_semicolon_ids),
     shorthandPropertyIdentifier: _sg(_supertype_shorthandPropertyIdentifier_ids),
     shorthandPropertyIdentifierPattern: _sg(_supertype_shorthandPropertyIdentifierPattern_ids),
+    statementIdentifier: _sg(_supertype_statementIdentifier_ids),
     tupleTypeMember: _sg(_supertype_tupleTypeMember_ids),
     declaration: _sg(_supertype_declaration_ids),
     expression: _sg(_supertype_expression_ids),
@@ -1033,15 +1027,11 @@ export const assert = {
     ImportClauseNamespaceImport: _makeAssert('ImportClauseNamespaceImport', is.ImportClauseNamespaceImport as _AnyGuard),
     ImportSpecifierName: _makeAssert('ImportSpecifierName', is.ImportSpecifierName as _AnyGuard),
     IndexSignatureMappedTypeClause: _makeAssert('IndexSignatureMappedTypeClause', is.IndexSignatureMappedTypeClause as _AnyGuard),
-    InterfaceBody: _makeAssert('InterfaceBody', is.InterfaceBody as _AnyGuard),
     ParenthesizedExpressionSequence: _makeAssert('ParenthesizedExpressionSequence', is.ParenthesizedExpressionSequence as _AnyGuard),
-    PropertyIdentifier: _makeAssert('PropertyIdentifier', is.PropertyIdentifier as _AnyGuard),
     PublicFieldDefinitionAccessorOpt: _makeAssert('PublicFieldDefinitionAccessorOpt', is.PublicFieldDefinitionAccessorOpt as _AnyGuard),
     PublicFieldDefinitionDeclareFirst: _makeAssert('PublicFieldDefinitionDeclareFirst', is.PublicFieldDefinitionDeclareFirst as _AnyGuard),
-    StatementIdentifier: _makeAssert('StatementIdentifier', is.StatementIdentifier as _AnyGuard),
     StringDouble: _makeAssert('StringDouble', is.StringDouble as _AnyGuard),
     StringSingle: _makeAssert('StringSingle', is.StringSingle as _AnyGuard),
-    ThisType: _makeAssert('ThisType', is.ThisType as _AnyGuard),
     TypeIdentifier: _makeAssert('TypeIdentifier', is.TypeIdentifier as _AnyGuard),
     abstractClassDeclaration: _makeAssert('abstractClassDeclaration', is.abstractClassDeclaration as _AnyGuard),
     abstractMethodSignature: _makeAssert('abstractMethodSignature', is.abstractMethodSignature as _AnyGuard),
@@ -1208,10 +1198,12 @@ export const assert = {
     jsxElementName: _makeAssert('jsxElementName', is.jsxElementName as _AnyGuard),
     jsxIdentifier: _makeAssert('jsxIdentifier', is.jsxIdentifier as _AnyGuard),
     moduleExportName: _makeAssert('moduleExportName', is.moduleExportName as _AnyGuard),
+    propertyIdentifier: _makeAssert('propertyIdentifier', is.propertyIdentifier as _AnyGuard),
     propertyName: _makeAssert('propertyName', is.propertyName as _AnyGuard),
     semicolon: _makeAssert('semicolon', is.semicolon as _AnyGuard),
     shorthandPropertyIdentifier: _makeAssert('shorthandPropertyIdentifier', is.shorthandPropertyIdentifier as _AnyGuard),
     shorthandPropertyIdentifierPattern: _makeAssert('shorthandPropertyIdentifierPattern', is.shorthandPropertyIdentifierPattern as _AnyGuard),
+    statementIdentifier: _makeAssert('statementIdentifier', is.statementIdentifier as _AnyGuard),
     tupleTypeMember: _makeAssert('tupleTypeMember', is.tupleTypeMember as _AnyGuard),
     declaration: _makeAssert('declaration', is.declaration as _AnyGuard),
     expression: _makeAssert('expression', is.expression as _AnyGuard),

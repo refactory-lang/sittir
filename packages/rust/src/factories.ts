@@ -204,7 +204,7 @@ export function _expressionStatementWithSemi(child: T.Expression) {
   };
 }
 
-export function fieldIdentifier(child: T.FieldIdentifier) {
+export function fieldIdentifier(child: T.Identifier) {
   const children = [child];
   return {
     $type: TSKindId.FieldIdentifier as number,
@@ -250,7 +250,7 @@ export function _fieldPatternShorthand(config: ConfigOf<T._FieldPatternShorthand
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    name(value?: T.ShorthandFieldIdentifier) { return _fs(config, _fieldPatternShorthand, 'name', value, config?.name); },
+    name(value?: T.Identifier) { return _fs(config, _fieldPatternShorthand, 'name', value, config?.name); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -371,7 +371,7 @@ export function _lineCommentDoc(config: ConfigOf<T.LineCommentDoc>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    doc(value?: T.DocComment) { return _fs(config, _lineCommentDoc, 'doc', value, config?.doc); },
+    doc(value?: T.LineDocContent) { return _fs(config, _lineCommentDoc, 'doc', value, config?.doc); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -703,22 +703,6 @@ export function referenceExpressionRawMut(child: T.MutableSpecifier) {
   };
 }
 
-export function shorthandFieldIdentifier(child: T.Identifier) {
-  const children = [child];
-  return {
-    $type: TSKindId.ShorthandFieldIdentifier as number,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ShorthandFieldIdentifierTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
 export function _structItemBrace(config: ConfigOf<T.StructItemBrace>) {
   const fields = {
     body: config.body,
@@ -859,7 +843,7 @@ export function _tokenTreePatternParen(...children: T.TokenPattern[]) {
   };
 }
 
-export function typeIdentifier(child: T.TypeIdentifier) {
+export function typeIdentifier(child: T.Identifier) {
   const children = [child];
   return {
     $type: TSKindId.TypeIdentifier as number,
@@ -1248,7 +1232,7 @@ export function blockComment(config?: ConfigOf<T.BlockComment>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    doc(value?: T.DocComment | undefined) { return _fs(config, blockComment, 'doc', value, config?.doc); },
+    doc(value?: T.BlockCommentContent | undefined) { return _fs(config, blockComment, 'doc', value, config?.doc); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1388,6 +1372,25 @@ export function charLiteral(text: string) {
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.CharLiteralTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function closureExpressionExpr(config: ConfigOf<T.ClosureExpressionExpr>) {
+  const fields = {
+    body: config.body,
+  };
+  return {
+    $type: TSKindId._ClosureExpressionExpr as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    body(value?: T.Expression | "_") { return _fs(config, closureExpressionExpr, 'body', value, config?.body); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ClosureExpressionExprTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1644,6 +1647,51 @@ export function declarationList(...children: T.DeclarationStatement[]) {
   };
 }
 
+export function delimTokenTreeParen(...children: T.DelimTokens[]) {
+  return {
+    $type: TSKindId._DelimTokenTreeParen as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.DelimTokenTreeParenTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function delimTokenTreeBracket(...children: T.DelimTokens[]) {
+  return {
+    $type: TSKindId._DelimTokenTreeBracket as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.DelimTokenTreeBracketTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function delimTokenTreeBrace(...children: T.DelimTokens[]) {
+  return {
+    $type: TSKindId._DelimTokenTreeBrace as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.DelimTokenTreeBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function delimTokenTree(config: ConfigOf<T.DelimTokenTreeUFormParen>): ReturnType<typeof delimTokenTreeUFormParen>;
 export function delimTokenTree(config: ConfigOf<T.DelimTokenTreeUFormBracket>): ReturnType<typeof delimTokenTreeUFormBracket>;
 export function delimTokenTree(config: ConfigOf<T.DelimTokenTreeUFormBrace>): ReturnType<typeof delimTokenTreeUFormBrace>;
@@ -1819,6 +1867,38 @@ export function escapeSequence(text: string) {
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.EscapeSequenceTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function expressionStatementWithSemi(child: T.Expression) {
+  const children = [child];
+  return {
+    $type: TSKindId._ExpressionStatementWithSemi as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ExpressionStatementWithSemiTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function expressionStatementBlockEnding(child: T.ExpressionEndingWithBlock) {
+  const children = [child];
+  return {
+    $type: TSKindId._ExpressionStatementBlockEnding as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ExpressionStatementBlockEndingTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2011,6 +2091,25 @@ export function fieldInitializerList(...children: (T.ShorthandFieldInitializer |
   };
 }
 
+export function fieldPatternShorthand(config: ConfigOf<T.FieldPatternShorthand>) {
+  const fields = {
+    name: config.name,
+  };
+  return {
+    $type: TSKindId._FieldPatternShorthand as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    name(value?: T.Identifier) { return _fs(config, fieldPatternShorthand, 'name', value, config?.name); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.FieldPatternShorthandTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function fieldPattern(config: ConfigOf<T.FieldPatternUFormShorthand>): ReturnType<typeof fieldPatternUFormShorthand>;
 export function fieldPattern(config: ConfigOf<T.FieldPatternUFormNamed>): ReturnType<typeof fieldPatternUFormNamed>;
 export function fieldPattern(config: ConfigOf<T.FieldPatternUFormShorthand> | ConfigOf<T.FieldPatternUFormNamed>) {
@@ -2042,7 +2141,7 @@ export function fieldPatternUFormShorthand(config: Omit<ConfigOf<T.FieldPatternU
       if (value === undefined) return fields.mutable_specifier;
       return fieldPatternUFormShorthand({ refMarker: config.refMarker, name: inner.$fields.name, mutableSpecifier: value });
     },
-    name(value?: T.ShorthandFieldIdentifier) {
+    name(value?: T.Identifier) {
       if (value === undefined) return inner.$fields.name;
       return fieldPatternUFormShorthand({ refMarker: config.refMarker, mutableSpecifier: config.mutableSpecifier, name: value });
     },
@@ -2131,6 +2230,25 @@ export function forLifetimes(...children: T.Lifetime[]) {
       return toEdit(this, startOrRange);
     },
     replace(this: AnyNodeData, target: T.ForLifetimesTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function foreignModItemBody(config: ConfigOf<T.ForeignModItemBody>) {
+  const fields = {
+    body: config.body,
+  };
+  return {
+    $type: TSKindId._ForeignModItemBody as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    body(value?: T.DeclarationList) { return _fs(config, foreignModItemBody, 'body', value, config?.body); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ForeignModItemBodyTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2491,6 +2609,25 @@ export function ifExpression(config: ConfigOf<T.IfExpression>) {
   };
 }
 
+export function implItemBody(config: ConfigOf<T.ImplItemBody>) {
+  const fields = {
+    body: config.body,
+  };
+  return {
+    $type: TSKindId._ImplItemBody as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    body(value?: T.DeclarationList) { return _fs(config, implItemBody, 'body', value, config?.body); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ImplItemBodyTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function implItem(config: ConfigOf<T.ImplItemUFormBody>): ReturnType<typeof implItemUFormBody>;
 export function implItem(config: ConfigOf<T.ImplItemUFormSemi>): ReturnType<typeof implItemUFormSemi>;
 export function implItem(config: ConfigOf<T.ImplItemUFormBody> | ConfigOf<T.ImplItemUFormSemi>) {
@@ -2811,7 +2948,7 @@ export function lineCommentUFormDoc(config: Omit<ConfigOf<T.LineCommentUFormDoc>
     $named: true as const,
     $variant: 'doc' as const,
     $children: children,
-    doc(value?: T.DocComment) {
+    doc(value?: T.LineDocContent) {
       if (value === undefined) return inner.$fields.doc;
       return lineCommentUFormDoc({ doc: value });
     },
@@ -2862,6 +2999,51 @@ export function loopExpression(config: ConfigOf<T.LoopExpression>) {
       return toEdit(this, startOrRange);
     },
     replace(this: AnyNodeData, target: T.LoopExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function macroDefinitionParen(...children: T.MacroRule[]) {
+  return {
+    $type: TSKindId._MacroDefinitionParen as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.MacroDefinitionParenTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function macroDefinitionBracket(...children: T.MacroRule[]) {
+  return {
+    $type: TSKindId._MacroDefinitionBracket as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.MacroDefinitionBracketTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function macroDefinitionBrace(...children: T.MacroRule[]) {
+  return {
+    $type: TSKindId._MacroDefinitionBrace as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.MacroDefinitionBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2991,6 +3173,25 @@ export function macroRule(config: ConfigOf<T.MacroRule>) {
       return toEdit(this, startOrRange);
     },
     replace(this: AnyNodeData, target: T.MacroRuleTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function matchArmBlockEnding(config: ConfigOf<T.MatchArmBlockEnding>) {
+  const fields = {
+    value: config.value,
+  };
+  return {
+    $type: TSKindId._MatchArmBlockEnding as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    value(value?: T.ExpressionEndingWithBlock) { return _fs(config, matchArmBlockEnding, 'value', value, config?.value); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.MatchArmBlockEndingTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3125,6 +3326,25 @@ export function metavariable(text: string) {
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.MetavariableTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function modItemInline(config: ConfigOf<T.ModItemInline>) {
+  const fields = {
+    body: config.body,
+  };
+  return {
+    $type: TSKindId._ModItemInline as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    body(value?: T.DeclarationList) { return _fs(config, modItemInline, 'body', value, config?.body); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ModItemInlineTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3378,6 +3598,22 @@ export function parenthesizedExpression(child: T.Expression) {
   };
 }
 
+export function pointerTypeMut(child: T.MutableSpecifier) {
+  const children = [child];
+  return {
+    $type: TSKindId._PointerTypeMut as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.PointerTypeMutTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function pointerType(config: ConfigOf<T.PointerTypeUFormConst>): ReturnType<typeof pointerTypeUFormConst>;
 export function pointerType(config: ConfigOf<T.PointerTypeUFormMut>): ReturnType<typeof pointerTypeUFormMut>;
 export function pointerType(config: ConfigOf<T.PointerTypeUFormConst> | ConfigOf<T.PointerTypeUFormMut>) {
@@ -3450,6 +3686,25 @@ export function qualifiedType(config: ConfigOf<T.QualifiedType>) {
       return toEdit(this, startOrRange);
     },
     replace(this: AnyNodeData, target: T.QualifiedTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function rangeExpressionBare(_config?: ConfigOf<T.RangeExpressionBare>) {
+  const fields = {
+    operator: ".." as const,
+  };
+  return {
+    $type: TSKindId._RangeExpressionBare as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    get operator() { return fields.operator; },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.RangeExpressionBareTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4223,6 +4478,51 @@ export function tokenRepetitionPattern(...children: T.TokenPattern[]) {
   };
 }
 
+export function tokenTreeParen(...children: T.Tokens[]) {
+  return {
+    $type: TSKindId._TokenTreeParen as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.TokenTreeParenTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function tokenTreeBracket(...children: T.Tokens[]) {
+  return {
+    $type: TSKindId._TokenTreeBracket as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.TokenTreeBracketTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function tokenTreeBrace(...children: T.Tokens[]) {
+  return {
+    $type: TSKindId._TokenTreeBrace as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.TokenTreeBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function tokenTree(config: ConfigOf<T.TokenTreeUFormParen>): ReturnType<typeof tokenTreeUFormParen>;
 export function tokenTree(config: ConfigOf<T.TokenTreeUFormBracket>): ReturnType<typeof tokenTreeUFormBracket>;
 export function tokenTree(config: ConfigOf<T.TokenTreeUFormBrace>): ReturnType<typeof tokenTreeUFormBrace>;
@@ -4283,6 +4583,51 @@ export function tokenTreeUFormBrace(config?: Omit<ConfigOf<T.TokenTreeUFormBrace
       return toEdit(this, startOrRange);
     },
     replace(this: AnyNodeData, target: T.TokenTreeUFormBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function tokenTreePatternParen(...children: T.TokenPattern[]) {
+  return {
+    $type: TSKindId._TokenTreePatternParen as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.TokenTreePatternParenTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function tokenTreePatternBracket(...children: T.TokenPattern[]) {
+  return {
+    $type: TSKindId._TokenTreePatternBracket as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.TokenTreePatternBracketTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function tokenTreePatternBrace(...children: T.TokenPattern[]) {
+  return {
+    $type: TSKindId._TokenTreePatternBrace as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.TokenTreePatternBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4844,6 +5189,22 @@ export function variadicParameter(config?: ConfigOf<T.VariadicParameter>) {
   };
 }
 
+export function visibilityModifierCrate(child: T.Crate) {
+  const children = [child];
+  return {
+    $type: TSKindId._VisibilityModifierCrate as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.VisibilityModifierCrateTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function visibilityModifier(config: ConfigOf<T.VisibilityModifierUFormInPath>): ReturnType<typeof visibilityModifierUFormInPath>;
 export function visibilityModifier(config: ConfigOf<T.VisibilityModifierUFormCrate>): ReturnType<typeof visibilityModifierUFormCrate>;
 export function visibilityModifier(config: ConfigOf<T.VisibilityModifierUFormPub>): ReturnType<typeof visibilityModifierUFormPub>;
@@ -5049,6 +5410,19 @@ export function innerBlockDocCommentMarker(text: string) {
   };
 }
 
+export function lineDocContent(text: string) {
+  if (text.length === 0) throw new Error(`_line_doc_content: text must be non-empty`);
+  return {
+    $type: TSKindId.LineDocContent as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.LineDocContentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
 export function errorSentinel(text: string) {
   if (text.length === 0) throw new Error(`_error_sentinel: text must be non-empty`);
   return {
@@ -5100,7 +5474,6 @@ export type FluentKindMap = {
   "_range_pattern_prefix": T.RangePatternPrefix;
   "_reference_expression_raw_const": T.ReferenceExpressionRawConst;
   "_reference_expression_raw_mut": FluentNode<"_reference_expression_raw_mut", T.ReferenceExpressionRawMut.Config>;
-  "_shorthand_field_identifier": FluentNode<"_shorthand_field_identifier", T.ShorthandFieldIdentifier.Config>;
   "_struct_item_brace": T.StructItemBrace;
   "_struct_item_tuple": T.StructItemTuple;
   "_token_tree_brace": FluentNode<"_token_tree_brace", T._TokenTreeBrace.Config>;
@@ -5134,6 +5507,7 @@ export type FluentKindMap = {
   "call_expression": FluentNode<"call_expression", T.CallExpression.Config>;
   "captured_pattern": FluentNode<"captured_pattern", T.CapturedPattern.Config>;
   "char_literal": T.CharLiteral;
+  "closure_expression_expr": FluentNode<"closure_expression_expr", T.ClosureExpressionExpr.Config>;
   "closure_expression": FluentNode<"closure_expression", T.ClosureExpression.Config>;
   "closure_parameters": FluentNode<"closure_parameters", T.ClosureParameters.Config>;
   "compound_assignment_expr": FluentNode<"compound_assignment_expr", T.CompoundAssignmentExpr.Config>;
@@ -5143,6 +5517,9 @@ export type FluentKindMap = {
   "continue_expression": FluentNode<"continue_expression", T.ContinueExpression.Config>;
   "crate": T.Crate;
   "declaration_list": FluentNode<"declaration_list", T.DeclarationList.Config>;
+  "delim_token_tree_paren": FluentNode<"delim_token_tree_paren", T.DelimTokenTreeParen.Config>;
+  "delim_token_tree_bracket": FluentNode<"delim_token_tree_bracket", T.DelimTokenTreeBracket.Config>;
+  "delim_token_tree_brace": FluentNode<"delim_token_tree_brace", T.DelimTokenTreeBrace.Config>;
   "delim_token_tree": FluentNode<"delim_token_tree", T.DelimTokenTree.Config>;
   "dynamic_type": FluentNode<"dynamic_type", T.DynamicType.Config>;
   "else_clause": FluentNode<"else_clause", T.ElseClause.Config>;
@@ -5150,6 +5527,8 @@ export type FluentKindMap = {
   "enum_variant": FluentNode<"enum_variant", T.EnumVariant.Config>;
   "enum_variant_list": FluentNode<"enum_variant_list", T.EnumVariantList.Config>;
   "escape_sequence": T.EscapeSequence;
+  "expression_statement_with_semi": FluentNode<"expression_statement_with_semi", T.ExpressionStatementWithSemi.Config>;
+  "expression_statement_block_ending": FluentNode<"expression_statement_block_ending", T.ExpressionStatementBlockEnding.Config>;
   "expression_statement": FluentNode<"expression_statement", T.ExpressionStatement.Config>;
   "extern_crate_declaration": FluentNode<"extern_crate_declaration", T.ExternCrateDeclaration.Config>;
   "extern_modifier": FluentNode<"extern_modifier", T.ExternModifier.Config>;
@@ -5158,9 +5537,11 @@ export type FluentKindMap = {
   "field_expression": FluentNode<"field_expression", T.FieldExpression.Config>;
   "field_initializer": FluentNode<"field_initializer", T.FieldInitializer.Config>;
   "field_initializer_list": FluentNode<"field_initializer_list", T.FieldInitializerList.Config>;
+  "field_pattern_shorthand": FluentNode<"field_pattern_shorthand", T.FieldPatternShorthand.Config>;
   "field_pattern": FluentNode<"field_pattern", T.FieldPattern.Config>;
   "for_expression": FluentNode<"for_expression", T.ForExpression.Config>;
   "for_lifetimes": FluentNode<"for_lifetimes", T.ForLifetimes.Config>;
+  "foreign_mod_item_body": FluentNode<"foreign_mod_item_body", T.ForeignModItemBody.Config>;
   "foreign_mod_item": FluentNode<"foreign_mod_item", T.ForeignModItem.Config>;
   "fragment_specifier": T.FragmentSpecifier;
   "function_item": FluentNode<"function_item", T.FunctionItem.Config>;
@@ -5175,6 +5556,7 @@ export type FluentKindMap = {
   "higher_ranked_trait_bound": FluentNode<"higher_ranked_trait_bound", T.HigherRankedTraitBound.Config>;
   "identifier": T.Identifier;
   "if_expression": FluentNode<"if_expression", T.IfExpression.Config>;
+  "impl_item_body": FluentNode<"impl_item_body", T.ImplItemBody.Config>;
   "impl_item": FluentNode<"impl_item", T.ImplItem.Config>;
   "index_expression": FluentNode<"index_expression", T.IndexExpression.Config>;
   "inner_attribute_item": FluentNode<"inner_attribute_item", T.InnerAttributeItem.Config>;
@@ -5187,14 +5569,19 @@ export type FluentKindMap = {
   "lifetime_parameter": FluentNode<"lifetime_parameter", T.LifetimeParameter.Config>;
   "line_comment": FluentNode<"line_comment", T.LineComment.Config>;
   "loop_expression": FluentNode<"loop_expression", T.LoopExpression.Config>;
+  "macro_definition_paren": FluentNode<"macro_definition_paren", T.MacroDefinitionParen.Config>;
+  "macro_definition_bracket": FluentNode<"macro_definition_bracket", T.MacroDefinitionBracket.Config>;
+  "macro_definition_brace": FluentNode<"macro_definition_brace", T.MacroDefinitionBrace.Config>;
   "macro_definition": FluentNode<"macro_definition", T.MacroDefinition.Config>;
   "macro_invocation": FluentNode<"macro_invocation", T.MacroInvocation.Config>;
   "macro_rule": FluentNode<"macro_rule", T.MacroRule.Config>;
+  "match_arm_block_ending": FluentNode<"match_arm_block_ending", T.MatchArmBlockEnding.Config>;
   "match_arm": FluentNode<"match_arm", T.MatchArm.Config>;
   "match_block": FluentNode<"match_block", T.MatchBlock.Config>;
   "match_expression": FluentNode<"match_expression", T.MatchExpression.Config>;
   "match_pattern": FluentNode<"match_pattern", T.MatchPattern.Config>;
   "metavariable": T.Metavariable;
+  "mod_item_inline": FluentNode<"mod_item_inline", T.ModItemInline.Config>;
   "mod_item": FluentNode<"mod_item", T.ModItem.Config>;
   "mut_pattern": FluentNode<"mut_pattern", T.MutPattern.Config>;
   "mutable_specifier": T.MutableSpecifier;
@@ -5204,8 +5591,10 @@ export type FluentKindMap = {
   "parameter": FluentNode<"parameter", T.Parameter.Config>;
   "parameters": FluentNode<"parameters", T.Parameters.Config>;
   "parenthesized_expression": FluentNode<"parenthesized_expression", T.ParenthesizedExpression.Config>;
+  "pointer_type_mut": FluentNode<"pointer_type_mut", T.PointerTypeMut.Config>;
   "pointer_type": FluentNode<"pointer_type", T.PointerType.Config>;
   "qualified_type": FluentNode<"qualified_type", T.QualifiedType.Config>;
+  "range_expression_bare": FluentNode<"range_expression_bare", T.RangeExpressionBare.Config>;
   "range_expression": FluentNode<"range_expression", T.RangeExpression.Config>;
   "range_pattern": FluentNode<"range_pattern", T.RangePattern.Config>;
   "raw_string_literal": FluentNode<"raw_string_literal", T.RawStringLiteral.Config>;
@@ -5234,7 +5623,13 @@ export type FluentKindMap = {
   "token_binding_pattern": FluentNode<"token_binding_pattern", T.TokenBindingPattern.Config>;
   "token_repetition": FluentNode<"token_repetition", T.TokenRepetition.Config>;
   "token_repetition_pattern": FluentNode<"token_repetition_pattern", T.TokenRepetitionPattern.Config>;
+  "token_tree_paren": FluentNode<"token_tree_paren", T.TokenTreeParen.Config>;
+  "token_tree_bracket": FluentNode<"token_tree_bracket", T.TokenTreeBracket.Config>;
+  "token_tree_brace": FluentNode<"token_tree_brace", T.TokenTreeBrace.Config>;
   "token_tree": FluentNode<"token_tree", T.TokenTree.Config>;
+  "token_tree_pattern_paren": FluentNode<"token_tree_pattern_paren", T.TokenTreePatternParen.Config>;
+  "token_tree_pattern_bracket": FluentNode<"token_tree_pattern_bracket", T.TokenTreePatternBracket.Config>;
+  "token_tree_pattern_brace": FluentNode<"token_tree_pattern_brace", T.TokenTreePatternBrace.Config>;
   "token_tree_pattern": FluentNode<"token_tree_pattern", T.TokenTreePattern.Config>;
   "trait_bounds": FluentNode<"trait_bounds", T.TraitBounds.Config>;
   "trait_item": FluentNode<"trait_item", T.TraitItem.Config>;
@@ -5261,6 +5656,7 @@ export type FluentKindMap = {
   "use_list": FluentNode<"use_list", T.UseList.Config>;
   "use_wildcard": FluentNode<"use_wildcard", T.UseWildcard.Config>;
   "variadic_parameter": FluentNode<"variadic_parameter", T.VariadicParameter.Config>;
+  "visibility_modifier_crate": FluentNode<"visibility_modifier_crate", T.VisibilityModifierCrate.Config>;
   "visibility_modifier": FluentNode<"visibility_modifier", T.VisibilityModifier.Config>;
   "where_clause": FluentNode<"where_clause", T.WhereClause.Config>;
   "where_predicate": FluentNode<"where_predicate", T.WherePredicate.Config>;
@@ -5271,6 +5667,7 @@ export type FluentKindMap = {
   "float_literal": T.FloatLiteral;
   "_outer_block_doc_comment_marker": T.OuterBlockDocCommentMarker;
   "_inner_block_doc_comment_marker": T.InnerBlockDocCommentMarker;
+  "_line_doc_content": T.LineDocContent;
   "_error_sentinel": T.ErrorSentinel;
 };
 
@@ -5312,7 +5709,6 @@ export const _factoryMap = {
   "_range_pattern_prefix": _rangePatternPrefix,
   "_reference_expression_raw_const": referenceExpressionRawConst,
   "_reference_expression_raw_mut": referenceExpressionRawMut,
-  "_shorthand_field_identifier": shorthandFieldIdentifier,
   "_struct_item_brace": _structItemBrace,
   "_struct_item_tuple": _structItemTuple,
   "_token_tree_brace": _tokenTreeBrace,
@@ -5346,6 +5742,7 @@ export const _factoryMap = {
   "call_expression": callExpression,
   "captured_pattern": capturedPattern,
   "char_literal": charLiteral,
+  "closure_expression_expr": closureExpressionExpr,
   "closure_expression": closureExpression,
   "closure_parameters": closureParameters,
   "compound_assignment_expr": compoundAssignmentExpr,
@@ -5355,6 +5752,9 @@ export const _factoryMap = {
   "continue_expression": continueExpression,
   "crate": crate,
   "declaration_list": declarationList,
+  "delim_token_tree_paren": delimTokenTreeParen,
+  "delim_token_tree_bracket": delimTokenTreeBracket,
+  "delim_token_tree_brace": delimTokenTreeBrace,
   "delim_token_tree": delimTokenTree,
   "dynamic_type": dynamicType,
   "else_clause": elseClause,
@@ -5362,6 +5762,8 @@ export const _factoryMap = {
   "enum_variant": enumVariant,
   "enum_variant_list": enumVariantList,
   "escape_sequence": escapeSequence,
+  "expression_statement_with_semi": expressionStatementWithSemi,
+  "expression_statement_block_ending": expressionStatementBlockEnding,
   "expression_statement": expressionStatement,
   "extern_crate_declaration": externCrateDeclaration,
   "extern_modifier": externModifier,
@@ -5370,9 +5772,11 @@ export const _factoryMap = {
   "field_expression": fieldExpression,
   "field_initializer": fieldInitializer,
   "field_initializer_list": fieldInitializerList,
+  "field_pattern_shorthand": fieldPatternShorthand,
   "field_pattern": fieldPattern,
   "for_expression": forExpression,
   "for_lifetimes": forLifetimes,
+  "foreign_mod_item_body": foreignModItemBody,
   "foreign_mod_item": foreignModItem,
   "fragment_specifier": fragmentSpecifier,
   "function_item": functionItem,
@@ -5387,6 +5791,7 @@ export const _factoryMap = {
   "higher_ranked_trait_bound": higherRankedTraitBound,
   "identifier": identifier,
   "if_expression": ifExpression,
+  "impl_item_body": implItemBody,
   "impl_item": implItem,
   "index_expression": indexExpression,
   "inner_attribute_item": innerAttributeItem,
@@ -5399,14 +5804,19 @@ export const _factoryMap = {
   "lifetime_parameter": lifetimeParameter,
   "line_comment": lineComment,
   "loop_expression": loopExpression,
+  "macro_definition_paren": macroDefinitionParen,
+  "macro_definition_bracket": macroDefinitionBracket,
+  "macro_definition_brace": macroDefinitionBrace,
   "macro_definition": macroDefinition,
   "macro_invocation": macroInvocation,
   "macro_rule": macroRule,
+  "match_arm_block_ending": matchArmBlockEnding,
   "match_arm": matchArm,
   "match_block": matchBlock,
   "match_expression": matchExpression,
   "match_pattern": matchPattern,
   "metavariable": metavariable,
+  "mod_item_inline": modItemInline,
   "mod_item": modItem,
   "mut_pattern": mutPattern,
   "mutable_specifier": mutableSpecifier,
@@ -5416,8 +5826,10 @@ export const _factoryMap = {
   "parameter": parameter,
   "parameters": parameters,
   "parenthesized_expression": parenthesizedExpression,
+  "pointer_type_mut": pointerTypeMut,
   "pointer_type": pointerType,
   "qualified_type": qualifiedType,
+  "range_expression_bare": rangeExpressionBare,
   "range_expression": rangeExpression,
   "range_pattern": rangePattern,
   "raw_string_literal": rawStringLiteral,
@@ -5446,7 +5858,13 @@ export const _factoryMap = {
   "token_binding_pattern": tokenBindingPattern,
   "token_repetition": tokenRepetition,
   "token_repetition_pattern": tokenRepetitionPattern,
+  "token_tree_paren": tokenTreeParen,
+  "token_tree_bracket": tokenTreeBracket,
+  "token_tree_brace": tokenTreeBrace,
   "token_tree": tokenTree,
+  "token_tree_pattern_paren": tokenTreePatternParen,
+  "token_tree_pattern_bracket": tokenTreePatternBracket,
+  "token_tree_pattern_brace": tokenTreePatternBrace,
   "token_tree_pattern": tokenTreePattern,
   "trait_bounds": traitBounds,
   "trait_item": traitItem,
@@ -5473,6 +5891,7 @@ export const _factoryMap = {
   "use_list": useList,
   "use_wildcard": useWildcard,
   "variadic_parameter": variadicParameter,
+  "visibility_modifier_crate": visibilityModifierCrate,
   "visibility_modifier": visibilityModifier,
   "where_clause": whereClause,
   "where_predicate": wherePredicate,
@@ -5483,6 +5902,7 @@ export const _factoryMap = {
   "float_literal": floatLiteral,
   "_outer_block_doc_comment_marker": outerBlockDocCommentMarker,
   "_inner_block_doc_comment_marker": innerBlockDocCommentMarker,
+  "_line_doc_content": lineDocContent,
   "_error_sentinel": errorSentinel,
 } as const;
 export type _FactoryMap = typeof _factoryMap;

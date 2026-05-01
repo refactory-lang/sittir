@@ -21,18 +21,13 @@ export const NODE_KINDS = [
   '_import_clause_namespace_import',
   '_import_specifier_name',
   '_index_signature_mapped_type_clause',
-  '_interface_body',
   '_jsx_string',
   '_lhs_expression',
   '_parenthesized_expression_sequence',
-  '_property_identifier',
   '_public_field_definition_accessor_opt',
   '_public_field_definition_declare_first',
-  '_statement_identifier',
   '_string_double',
-  '_string_fragment',
   '_string_single',
-  '_this_type',
   '_type_identifier',
   'abstract_class_declaration',
   'abstract_method_signature',
@@ -689,12 +684,8 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
   "_export_statement_namespace_export": 386,
   "_string_double": 390,
   "_string_single": 391,
-  "_interface_body": 418,
-  "_property_identifier": 419,
   "_public_field_definition_accessor_opt": 422,
   "_public_field_definition_declare_first": 423,
-  "_statement_identifier": 428,
-  "_this_type": 429,
   "_type_identifier": 430,
 } as const satisfies Record<string, number>;
 
@@ -954,12 +945,8 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
   [386]: "_export_statement_namespace_export",
   [390]: "_string_double",
   [391]: "_string_single",
-  [418]: "_interface_body",
-  [419]: "_property_identifier",
   [422]: "_public_field_definition_accessor_opt",
   [423]: "_public_field_definition_declare_first",
-  [428]: "_statement_identifier",
-  [429]: "_this_type",
   [430]: "_type_identifier",
 } as const;
 
@@ -1219,12 +1206,8 @@ export const TREE_SITTER_KIND_ID_JSON = [
   { name: "_export_statement_namespace_export", id: 386, enumName: "ExportStatementNamespaceExport", cName: "sym__export_statement_namespace_export" },
   { name: "_string_double", id: 390, enumName: "StringDouble", cName: "sym__string_double" },
   { name: "_string_single", id: 391, enumName: "StringSingle", cName: "sym__string_single" },
-  { name: "_interface_body", id: 418, enumName: "AliasInterfaceBody", cName: "alias_sym_interface_body" },
-  { name: "_property_identifier", id: 419, enumName: "AliasPropertyIdentifier", cName: "alias_sym_property_identifier" },
   { name: "_public_field_definition_accessor_opt", id: 422, enumName: "AliasPublicFieldDefinitionAccessorOpt", cName: "alias_sym_public_field_definition_accessor_opt" },
   { name: "_public_field_definition_declare_first", id: 423, enumName: "AliasPublicFieldDefinitionDeclareFirst", cName: "alias_sym_public_field_definition_declare_first" },
-  { name: "_statement_identifier", id: 428, enumName: "AliasStatementIdentifier", cName: "alias_sym_statement_identifier" },
-  { name: "_this_type", id: 429, enumName: "AliasThisType", cName: "alias_sym_this_type" },
   { name: "_type_identifier", id: 430, enumName: "AliasTypeIdentifier", cName: "alias_sym_type_identifier" },
 ] as const;
 
@@ -1590,30 +1573,20 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   '_index_signature_mapped_type_clause': [
   ],
-  '_interface_body': [
-  ],
   '_jsx_string': [
   ],
   '_lhs_expression': [
   ],
   '_parenthesized_expression_sequence': [
   ],
-  '_property_identifier': [
-  ],
   '_public_field_definition_accessor_opt': [
     { name: 'accessorMarker', required: true, multiple: false },
   ],
   '_public_field_definition_declare_first': [
   ],
-  '_statement_identifier': [
-  ],
   '_string_double': [
   ],
-  '_string_fragment': [
-  ],
   '_string_single': [
-  ],
-  '_this_type': [
   ],
   '_type_identifier': [
   ],

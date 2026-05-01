@@ -574,25 +574,22 @@ function emitPerNodeFactories(
 					// concrete kinds the inlined rule expands to).
 					`Future: map to decomposition.`
 				);
-			} else if (synthesizedKinds?.has(kind)) {
-				console.warn(
-					`[codegen] '${kind}' is evaluate-synthesized (inline-alias-source) — ` +
-					`no parser symbol expected. Skipping factory emission. ` +
-					// TODO: map inlined-kind factories to their decomposition (the
-					// concrete kinds the inlined rule expands to).
-					`Future: map to decomposition.`
-				);
 			} else {
-				// TSGrammar-only phantom: tree-sitter implicitly inlined this hidden
-				// rule during LR table generation. Not in the explicit inline: list
-				// but also not a codegen bug — tree-sitter's LR optimizer can inline
-				// hidden rules without the author listing them in inline:. Warn and
-				// skip; don't throw, as this is expected for many hidden rules.
+				// Kind has no parser symbol AND is NOT in the explicit inline:
+				// array. This is a codegen bug — the pipeline synthesized a
+				// phantom kind that tree-sitter never assigned a symbol.
+				// Investigate: either the grammar overrides should register it
+				// (so it gets a sym_ entry in parser.c), or the codegen
+				// synthesis path that created it should be fixed.
+				// Vaporized rule: enrich/evaluate created this kind but
+				// tree-sitter dropped it during grammar compilation. The
+				// rule is in nodeMap but not in grammar.json or parser.c.
+				// Root cause unknown — tracked for investigation. See
+				// memory: project_vaporized_rules_investigation.md
 				console.warn(
-					`[codegen] skipping factory emission for '${kind}' — no parser symbol ` +
-					`(TSGrammar-only, implicitly inlined by tree-sitter). Factories for ` +
-					`this kind cannot carry a numeric $type. If this kind should have a ` +
-					`parser symbol, audit the grammar overrides and the inline: array.`
+					`[codegen] VAPORIZED: '${kind}' has no parser symbol and is ` +
+					`NOT in the grammar's inline: array. Skipping factory ` +
+					`emission. Investigate why tree-sitter dropped this rule.`
 				);
 			}
 			continue;

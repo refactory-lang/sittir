@@ -44,13 +44,8 @@ interface InternalRenderContext {
 	prefix: string;
 	format?: FormatRecord;
 	ignoreFormat?: boolean;
-	/**
-	 * Resolver lifted from `config.kindNameFromId` for direct access inside
-	 * render-path helpers. Present when the grammar package injected a
-	 * resolver into `RulesConfig`; absent for the legacy regex-substitutor
-	 * path (which never sees numeric `$type` from the current readNode).
-	 */
-	kindNameFromId?: (id: number) => string | undefined;
+	/** Static kind-name table from `config.kindNames`. */
+	kindNames?: ReadonlyMap<number, string>;
 }
 
 function buildRenderContext(
@@ -71,7 +66,7 @@ function buildRenderContext(
 		prefix,
 		format: options?.format,
 		ignoreFormat: options?.ignoreFormat,
-		kindNameFromId: config.kindNameFromId
+		kindNames: config.kindNames
 	};
 }
 
@@ -93,11 +88,10 @@ function buildRenderContext(
  * @param kindNameFromId  Optional id→name resolver from `RulesConfig`.
  */
 function resolveKindName(
-	type: string | number,
-	kindNameFromId?: (id: number) => string | undefined
+	type: number,
+	ctx: InternalRenderContext
 ): string {
-	if (typeof type === 'string') return type;
-	return kindNameFromId?.(type) ?? String(type);
+	return ctx.kindNames?.get(type) ?? String(type);
 }
 
 // ---------------------------------------------------------------------------
@@ -306,7 +300,7 @@ export function prepare(
 
 	// Resolve a string kind name for rules-map lookup. Handles both numeric
 	// (parser.c-derived) and string (hidden/synthetic) $type values.
-	const ruleKey = resolveKindName(node.$type, ctx.kindNameFromId);
+	const ruleKey = resolveKindName(node.$type, ctx);
 
 	const rule = ctx.config.rules[ruleKey];
 	if (!rule) {
@@ -352,7 +346,7 @@ export function prepare(
 	 * Uses resolveKindName for resolution (handles both numeric and string $type).
 	 */
 	const childKindMatches = (c: AnyNodeData, kindName: string): boolean =>
-		resolveKindName(c.$type, ctx.kindNameFromId) === kindName;
+		resolveKindName(c.$type, ctx) === kindName;
 
 	const resolveSlot = (pfx: string, name: string): string => {
 		const fieldKey = name.toLowerCase();
@@ -700,7 +694,7 @@ function resolveFormat(
 	// FormatRecord.kinds is string-keyed; resolve $type to a string kind name.
 	// resolveKindName handles both numeric (parser.c-derived) and string (hidden)
 	// $type values.
-	const kindKey = resolveKindName(node.$type, ctx.kindNameFromId);
+	const kindKey = resolveKindName(node.$type, ctx);
 	return node.$format ?? ctx.format?.kinds?.[kindKey] ?? ctx.format;
 }
 
@@ -726,7 +720,7 @@ function pickTemplate(
 ): string | null {
 	/** Compare a child's $type (numeric or string) to a string kind name. */
 	const childKindMatches = (c: AnyNodeData, kindName: string): boolean =>
-		resolveKindName(c.$type, ctx.kindNameFromId) === kindName;
+		resolveKindName(c.$type, ctx) === kindName;
 
 	// Score each template by variable resolution against the node.
 	// Lower `unresolved` is better — a template with all variables
@@ -1176,16 +1170,11 @@ function renderNunjucks(
 		);
 	}
 
-	// Resolve $type to string kind name for template file lookup ("<kind>.jinja").
-	// Numeric $type (parser.c-derived) requires kindNameFromId on RulesConfig.
-	// String $type (hidden/synthetic kinds like "_suite") is used as-is.
-	const kindName = typeof node.$type === 'string'
-		? node.$type
-		: ctx.kindNameFromId?.(node.$type);
+	const kindName = resolveKindName(node.$type, ctx);
 	if (kindName === undefined) {
 		throw new Error(
-			`render: cannot resolve numeric $type ${node.$type} — kindNameFromId required. ` +
-				`The grammar package's RulesConfig must supply 'kindNameFromId'.`
+			`render: cannot resolve $type ${node.$type} — kindNames table required. ` +
+				`The grammar package's RulesConfig must supply 'kindNames'.`
 		);
 	}
 
@@ -1456,7 +1445,7 @@ export function createRendererFromConfig(
 		// whitespace artifacts indicate walker bugs (template emits a
 		// trailing/leading space when an optional field is absent) and
 		// must surface, not be hidden. Native engine matches this contract.
-		return withMetrics(grammar, resolveKindName(node.$type, ctx.kindNameFromId), () => {
+		return withMetrics(grammar, resolveKindName(node.$type, ctx), () => {
 			if (nunjucksEnv || templatesDir) {
 				return renderNunjucks(node, ctx, nunjucksEnv, templatesDir);
 			}

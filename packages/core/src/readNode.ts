@@ -157,13 +157,15 @@ export function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {
 	 * fallback is intentional for hidden/synthetic kinds and unit-test handles
 	 * that have no grammar backing.
 	 */
-	function resolveKindId(kind: string): string | number {
+	function resolveKindId(kind: string): number {
 		if (kindIdFromName) {
 			const id = kindIdFromName(kind);
 			if (id !== undefined) return id;
 		}
-		// No resolver or kind not in catalog — use string name as $type.
-		return kind;
+		// No resolver or kind not in catalog — return 0 as sentinel.
+		// This path should only fire for unit-test handles with no grammar
+		// backing. Production grammars always supply kindIdFromName.
+		return 0;
 	}
 
 	const allChildren = node.children();

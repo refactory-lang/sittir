@@ -20,7 +20,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { TSKindId, kindIdFromName, kindNameFromId } from '../src/types.ts';
+import { TSKindId, kindIdFromName, KIND_NAMES } from '../src/types.ts';
 
 describe('kindIdFromName coverage (Phase B)', () => {
 	it('resolves children-only named kinds (empty_statement)', () => {
@@ -55,12 +55,12 @@ describe('kindIdFromName coverage (Phase B)', () => {
 		expect(() => kindIdFromName('+')).toThrow(/unknown kind name/);
 	});
 
-	it('round-trips: kindNameFromId(kindIdFromName(name)) returns canonical name', () => {
+	it('round-trips: KIND_NAMES.get(kindIdFromName(name)) returns canonical name', () => {
 		// Canonical name = catalog `kind` (parser symbol name). Anon-sym names
 		// are lowercased on the catalog side (`anon_sym_PLUS` → `plus`).
 		// Note: '+' (displayName) no longer resolves — only the canonical 'plus' key.
-		expect(kindNameFromId(kindIdFromName('empty_statement'))).toBe('empty_statement');
-		expect(kindNameFromId(kindIdFromName('plus'))).toBe('plus');
+		expect(KIND_NAMES.get(kindIdFromName('empty_statement'))).toBe('empty_statement');
+		expect(KIND_NAMES.get(kindIdFromName('plus'))).toBe('plus');
 	});
 
 	it('throws on genuinely unknown kinds', () => {

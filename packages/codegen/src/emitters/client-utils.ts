@@ -50,7 +50,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 		"import type { AnyNodeData, AnyTreeNodeOf } from '@sittir/types';"
 	);
 	lines.push("import type { AnyTransport, NamespaceMap } from './types.js';");
-	lines.push("import { kindNameFromId, kindIdFromName } from './types.js';");
+	lines.push("import { KIND_NAMES, kindIdFromName } from './types.js';");
 	lines.push('');
 
 	// isNodeData
@@ -250,7 +250,7 @@ function emitNativeTransportProjection(lines: string[], nodeMap: NodeMap, kindEn
 	lines.push('');
 	lines.push('  // Resolve the wire kind name (including alias rewriting) for internal');
 	lines.push('  // routing. $type is always numeric in Phase D.');
-	lines.push('  const resolvedKind = nativeTransportType(kindNameFromId(numericType));');
+	lines.push('  const resolvedKind = nativeTransportType(KIND_NAMES.get(numericType) ?? String(numericType));');
 	lines.push('');
 	lines.push('  const projected: Record<string, unknown> = {};');
 	lines.push('  for (const key of transportMetadataKeys) {');

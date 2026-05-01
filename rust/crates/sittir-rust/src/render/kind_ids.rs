@@ -313,6 +313,7 @@ pub const REF_PATTERN: KindId = KindId(304);
 pub const CAPTURED_PATTERN: KindId = KindId(305);
 pub const REFERENCE_PATTERN: KindId = KindId(306);
 pub const OR_PATTERN: KindId = KindId(307);
+pub const _LITERAL: KindId = KindId(308);
 pub const _LITERAL_PATTERN: KindId = KindId(309);
 pub const NEGATIVE_LITERAL: KindId = KindId(310);
 pub const STRING_LITERAL: KindId = KindId(311);
@@ -731,6 +732,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         305 => "captured_pattern", // "captured_pattern"
         306 => "reference_pattern", // "reference_pattern"
         307 => "or_pattern", // "or_pattern"
+        308 => "_literal", // "_literal"
         309 => "_literal_pattern", // "_literal_pattern"
         310 => "negative_literal", // "negative_literal"
         311 => "string_literal", // "string_literal"

@@ -24,7 +24,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createRenderer } from '@sittir/core';
 import type { AnyNodeData } from '@sittir/types';
-import { kindNameFromId } from '../src/types.ts';
+import { KIND_NAMES } from '../src/types.ts';
 
 interface RenderFixture {
 	kind: 'render';
@@ -59,7 +59,7 @@ const TEMPLATES_PATH = resolve(__dirname, '..', 'templates');
 const fixtures: ParityFixture[] = JSON.parse(
 	readFileSync(FIXTURES_PATH, 'utf-8')
 );
-const { render } = createRenderer(TEMPLATES_PATH, { kindNameFromId });
+const { render } = createRenderer(TEMPLATES_PATH, { kindNames: KIND_NAMES });
 
 // Split by kind so a render regression doesn't mask round-trip issues
 // (and vice versa). Each bucket runs as its own `describe`.

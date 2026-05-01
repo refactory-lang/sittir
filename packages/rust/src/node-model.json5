@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 396,
+  "nodeCount": 394,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -848,14 +848,6 @@
       ]
     },
     {
-      "kind": "_doc_comment",
-      "modelType": "leaf",
-      "typeName": "DocComment",
-      "factoryName": "docComment",
-      "irKey": "docComment",
-      "hidden": false
-    },
-    {
       "kind": "_error_sentinel",
       "modelType": "leaf",
       "typeName": "ErrorSentinel",
@@ -1058,7 +1050,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_field_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ]
@@ -1142,7 +1134,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_shorthand_field_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -1150,11 +1142,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_shorthand_field_identifier"
+              "identifier"
             ]
           },
           "aliasSources": {
-            "shorthand_field_identifier": "_shorthand_field_identifier"
+            "shorthand_field_identifier": "identifier"
           }
         }
       ],
@@ -1323,10 +1315,10 @@
       "hidden": false
     },
     {
-      "kind": "_inner_doc_comment_marker",
+      "kind": "_inner_line_doc_comment_marker",
       "modelType": "token",
-      "typeName": "InnerDocCommentMarker",
-      "irKey": "innerDocCommentMarker",
+      "typeName": "InnerLineDocCommentMarker",
+      "irKey": "innerLineDocCommentMarker",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"!\" as const",
@@ -1491,7 +1483,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_doc_comment",
+              "name": "_line_doc_content",
               "unresolved": true
             }
           ],
@@ -1499,11 +1491,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_doc_comment"
+              "_line_doc_content"
             ]
           },
           "aliasSources": {
-            "doc_comment": "_doc_comment"
+            "doc_comment": "_line_doc_content"
           }
         }
       ],
@@ -1515,6 +1507,14 @@
       "typeName": "LineCommentRegularDslash",
       "factoryName": "lineCommentRegularDslash",
       "irKey": "lineCommentRegularDslash",
+      "hidden": false
+    },
+    {
+      "kind": "_line_doc_content",
+      "modelType": "leaf",
+      "typeName": "LineDocContent",
+      "factoryName": "lineDocContent",
+      "irKey": "lineDocContent",
       "hidden": false
     },
     {
@@ -1991,10 +1991,10 @@
       "hidden": false
     },
     {
-      "kind": "_outer_doc_comment_marker",
+      "kind": "_outer_line_doc_comment_marker",
       "modelType": "token",
-      "typeName": "OuterDocCommentMarker",
-      "irKey": "outerDocCommentMarker",
+      "typeName": "OuterLineDocCommentMarker",
+      "irKey": "outerLineDocCommentMarker",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"/\" as const",
@@ -2508,31 +2508,6 @@
       ]
     },
     {
-      "kind": "_shorthand_field_identifier",
-      "modelType": "container",
-      "typeName": "ShorthandFieldIdentifier",
-      "factoryName": "shorthandFieldIdentifier",
-      "irKey": "shorthandFieldIdentifier",
-      "hidden": false,
-      "children": [
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
-    },
-    {
       "kind": "_statement",
       "modelType": "supertype",
       "typeName": "Statement",
@@ -2561,31 +2536,6 @@
         "type_item",
         "union_item",
         "use_declaration"
-      ]
-    },
-    {
-      "kind": "_string_content",
-      "modelType": "container",
-      "typeName": "_StringContent",
-      "factoryName": "_stringContent",
-      "irKey": "_stringContent",
-      "hidden": false,
-      "children": [
-        {
-          "name": "raw_string_literal_content",
-          "propertyName": "rawStringLiteralContent",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "raw_string_literal_content",
-              "unresolved": true
-            }
-          ]
-        }
       ]
     },
     {
@@ -2905,13 +2855,13 @@
       "hidden": true,
       "subtypes": [
         "_primitive_type",
-        "_type_identifier",
         "abstract_type",
         "array_type",
         "bounded_type",
         "dynamic_type",
         "function_type",
         "generic_type",
+        "identifier",
         "macro_invocation",
         "metavariable",
         "never_type",
@@ -2941,7 +2891,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ]
@@ -4072,7 +4022,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_doc_comment",
+              "name": "_block_comment_content",
               "unresolved": true
             }
           ],
@@ -4080,11 +4030,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_doc_comment"
+              "_block_comment_content"
             ]
           },
           "aliasSources": {
-            "doc_comment": "_doc_comment"
+            "doc_comment": "_block_comment_content"
           }
         }
       ],
@@ -7139,7 +7089,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_shorthand_field_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -7147,11 +7097,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_shorthand_field_identifier"
+              "identifier"
             ]
           },
           "aliasSources": {
-            "shorthand_field_identifier": "_shorthand_field_identifier"
+            "shorthand_field_identifier": "identifier"
           }
         }
       ],
@@ -13181,7 +13131,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_string_content",
+              "name": "raw_string_literal_content",
               "unresolved": true
             }
           ],
@@ -13189,11 +13139,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_string_content"
+              "raw_string_literal_content"
             ]
           },
           "aliasSources": {
-            "string_content": "_string_content"
+            "string_content": "raw_string_literal_content"
           }
         },
         {

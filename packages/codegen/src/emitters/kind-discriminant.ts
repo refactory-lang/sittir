@@ -50,7 +50,15 @@ export interface KindEnumEntry {
  * passes-through). This is exactly what we want.
  */
 export function kindIdMemberName(nodeMap: NodeMap, kind: string): string {
-	return nodeMap.nodes.get(kind)?.typeName ?? toPascal(kind);
+	const typeName = nodeMap.nodes.get(kind)?.typeName;
+	if (typeName) return typeName;
+	// toPascal strips leading underscores (`_literal` → `Literal`). For
+	// hidden kinds this creates member-name collisions with visible kinds
+	// that have the same base name (`literal` → `Literal`). Preserve the
+	// leading underscore so hidden kinds get a distinct member:
+	// `_literal` → `_Literal`, `_primitive_type` → `_PrimitiveType`.
+	const prefix = kind.match(/^_+/)?.[0] ?? '';
+	return `${prefix}${toPascal(kind)}`;
 }
 
 /**
@@ -86,13 +94,10 @@ export function collectKindEntries(
 ): KindEnumEntry[] {
 	const fullCatalog = toCatalogMap(generatedIdTables.kindIds);
 	const entries: KindEnumEntry[] = [];
-	const seenMembers = new Set<string>();
 	for (const kind of allKinds) {
 		const row = fullCatalog.get(kind);
 		if (row === undefined || row.id === undefined) continue;
 		const member = kindIdMemberName(nodeMap, kind);
-		if (seenMembers.has(member)) continue;
-		seenMembers.add(member);
 		const displayName =
 			row.parser?.displayName !== undefined && row.parser.displayName !== kind
 				? row.parser.displayName
@@ -123,12 +128,18 @@ export function findKindEntry(
 	kindEntries: readonly KindEnumEntry[],
 	kind: string
 ): KindEnumEntry | undefined {
-	// Prefer an exact kind match (catalog key) over a displayName match so that
-	// visible kinds (e.g. `as_pattern`, id=185) are never shadowed by a hidden
-	// source kind whose displayName happens to equal the visible kind's name
-	// (e.g. `_as_pattern`, id=165, displayName="as_pattern").
+	// 1. Exact catalog key match (the canonical case).
+	// 2. Hidden-source fallback: visible variant-child kinds (e.g.
+	//    `closure_expression_expr`) are emitted by sittir from hidden alias
+	//    sources (`_closure_expression_expr`). The catalog keys are the
+	//    hidden form (from `sym__closure_expression_expr` → strip `sym_` →
+	//    `_closure_expression_expr`). Try the underscore-prefixed form so
+	//    the join succeeds for Pattern B kinds.
+	// 3. DisplayName fallback (last resort — only anon tokens whose literal
+	//    text matches a displayName should reach this).
 	return (
 		kindEntries.find((e) => e.kind === kind) ??
+		kindEntries.find((e) => e.kind === `_${kind}`) ??
 		kindEntries.find((e) => e.displayName === kind)
 	);
 }
@@ -150,7 +161,7 @@ export function hasCatalogEntry(
 	kind: string
 ): boolean {
 	if (!kindEntries) return false;
-	return kindEntries.some((e) => e.kind === kind);
+	return findKindEntry(kindEntries, kind) !== undefined;
 }
 
 /**

@@ -11,7 +11,6 @@ import type {
   AliasedImport,
   ArgumentList,
   AsPattern,
-  AsPatternTarget,
   AssertStatement,
   Assignment,
   Attribute,
@@ -52,7 +51,6 @@ import type {
   FinallyClause,
   ForInClause,
   ForStatement,
-  FormatExpression,
   FormatSpecifier,
   FunctionDefinition,
   FutureImportStatement,
@@ -164,28 +162,12 @@ export function wrap_AsPattern(data: _NodeData, tree: TreeHandle): WrappedNode<_
   } as unknown as WrappedNode<_AsPattern>;
 }
 
-export function wrapAsPatternTarget(data: _NodeData, tree: TreeHandle): WrappedNode<AsPatternTarget> {
-  return {
-    ...data,
-    $type: TSKindId.AsPatternTarget as number,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<AsPatternTarget>;
-}
-
 export function wrapComprehensionClauses(data: _NodeData, tree: TreeHandle): WrappedNode<ComprehensionClauses> {
   return {
     ...data,
     $type: TSKindId.ComprehensionClauses as number,
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ComprehensionClauses>;
-}
-
-export function wrapFormatExpression(data: _NodeData, tree: TreeHandle): WrappedNode<FormatExpression> {
-  return {
-    ...data,
-    $type: TSKindId.FormatExpression as number,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<FormatExpression>;
 }
 
 export function wrap_ListPattern(data: _NodeData, tree: TreeHandle): WrappedNode<_ListPattern> {
@@ -259,7 +241,7 @@ export function wrapAsPattern(data: _NodeData, tree: TreeHandle): WrappedNode<As
     ...data,
     $type: TSKindId.AsPattern as number,
     get expression() { return drillIn(data.$fields?.['expression'], tree); },
-    get alias() { return drillAs(data.$fields?.['alias'], tree, "as_pattern_target", "_as_pattern_target"); },
+    get alias() { return drillIn(data.$fields?.['alias'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<AsPattern>;
 }
@@ -581,6 +563,13 @@ export function wrapExpressionList(data: _NodeData, tree: TreeHandle): WrappedNo
     $type: TSKindId.ExpressionList as number,
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ExpressionList>;
+}
+
+export function wrapExpressionStatementTuple(data: _NodeData, tree: TreeHandle): WrappedNode<ExpressionStatementTuple> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ExpressionStatementTuple>;
 }
 
 export function wrapExpressionStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ExpressionStatement> {
@@ -1143,6 +1132,20 @@ export function wrapWhileStatement(data: _NodeData, tree: TreeHandle): WrappedNo
   } as unknown as WrappedNode<WhileStatement>;
 }
 
+export function wrapWithClauseBare(data: _NodeData, tree: TreeHandle): WrappedNode<WithClauseBare> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<WithClauseBare>;
+}
+
+export function wrapWithClauseParen(data: _NodeData, tree: TreeHandle): WrappedNode<WithClauseParen> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<WithClauseParen>;
+}
+
 export function wrapWithClause(data: _NodeData, tree: TreeHandle): WrappedNode<WithClause> {
   return {
     ...data,
@@ -1181,9 +1184,7 @@ export function wrapYield(data: _NodeData, tree: TreeHandle): WrappedNode<Yield>
 
 const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {
   '_as_pattern': (d, t) => wrap_AsPattern(d, t),
-  '_as_pattern_target': (d, t) => wrapAsPatternTarget(d, t),
   '_comprehension_clauses': (d, t) => wrapComprehensionClauses(d, t),
-  '_format_expression': (d, t) => wrapFormatExpression(d, t),
   '_is_not': (d) => ({ ...d, $type: TSKindId.IsNot as number }),
   '_kw_async_marker': (d) => ({ ...d, $type: TSKindId.KwAsyncMarker as number }),
   '_list_pattern': (d, t) => wrap_ListPattern(d, t),
@@ -1234,6 +1235,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'except_clause': (d, t) => wrapExceptClause(d, t),
   'exec_statement': (d, t) => wrapExecStatement(d, t),
   'expression_list': (d, t) => wrapExpressionList(d, t),
+  'expression_statement_tuple': (d, t) => wrapExpressionStatementTuple(d, t),
   'expression_statement': (d, t) => wrapExpressionStatement(d, t),
   'false': (d) => ({ ...d, $type: TSKindId.False as number }),
   'finally_clause': (d, t) => wrapFinallyClause(d, t),
@@ -1304,6 +1306,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'union_pattern': (d, t) => wrapUnionPattern(d, t),
   'union_type': (d, t) => wrapUnionType(d, t),
   'while_statement': (d, t) => wrapWhileStatement(d, t),
+  'with_clause_bare': (d, t) => wrapWithClauseBare(d, t),
+  'with_clause_paren': (d, t) => wrapWithClauseParen(d, t),
   'with_clause': (d, t) => wrapWithClause(d, t),
   'with_item': (d, t) => wrapWithItem(d, t),
   'with_statement': (d, t) => wrapWithStatement(d, t),
@@ -1319,7 +1323,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 };
 
 const _aliasTargetToSource: Record<string, string> = {
-  'as_pattern_target': '_as_pattern_target',
   'assignment_eq': '_assignment_eq',
   'assignment_type': '_assignment_type',
   'assignment_typed': '_assignment_typed',
@@ -1328,7 +1331,6 @@ const _aliasTargetToSource: Record<string, string> = {
   'expression_within_for_in_clause': '_expression_within_for_in_clause',
   'expressions': '_expressions',
   'f_expression': '_f_expression',
-  'format_expression': '_format_expression',
   'kw_async_marker': '_kw_async_marker',
   'left_hand_side': '_left_hand_side',
   'match_block': '_match_block',
@@ -1344,7 +1346,7 @@ const _aliasTargetToSource: Record<string, string> = {
   'suite': '_suite',
 };
 
-import { kindNameFromId } from './types.js';
+import { KIND_NAMES } from './types.js';
 /** Wrap a NodeData into its lazy read-only view. */
 export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
   // Phase B-inverse bridge: the native path now returns numeric $type
@@ -1352,7 +1354,7 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
   // Resolve to a kind-name string for the string-keyed dispatch tables,
   // then per-kind wrap functions stamp the numeric TSKindId.$type on output.
   const rawType = typeof data.$type === "number"
-    ? kindNameFromId(data.$type as never) ?? String(data.$type)
+    ? KIND_NAMES.get(data.$type as never) ?? String(data.$type)
     : (data.$type as unknown as string);
   // Canonical-hidden remap (Option Y): parser-output `$type`
   // is the visible alias target (e.g. `range_pattern_left_with_right`);
@@ -1409,7 +1411,7 @@ export function readTreeNode(
   // When numeric (native path), convert to kind-name first for comparison.
   if (asType) {
     const currentType = typeof data.$type === "number"
-      ? kindNameFromId(data.$type as never) ?? String(data.$type)
+      ? KIND_NAMES.get(data.$type as never) ?? String(data.$type)
       : (data.$type as unknown as string);
     if (currentType === asType.from) {
       data = { ...data, $type: asType.to as unknown as number };

@@ -133,14 +133,12 @@ export interface JsEngineOptions {
 	parse?: (source: string) => TreeHandle;
 
 	/**
-	 * Resolver for numeric `$type` values produced by Phase A/B factory/wrap output.
-	 * Forwarded to `RulesConfig.kindNameFromId` so the Nunjucks render path can map
-	 * a numeric TSKindId back to a string kind name for template file lookup.
-	 *
-	 * Required when the engine will render factory-built NodeData (numeric `$type`).
-	 * Omit for read-only / WASM-backed paths where `readNode` still emits string types.
+	 * Static lookup table: numeric KindId → kind name string. Pre-computed
+	 * at codegen time from the parser symbol catalog. Used by the Nunjucks
+	 * render path to resolve template filenames from numeric `$type`.
+	 * Pure `Map.get()` at runtime — no function call, no throw.
 	 */
-	kindNameFromId?: (id: number) => string | undefined;
+	kindNames?: ReadonlyMap<number, string>;
 }
 
 /**
@@ -155,8 +153,8 @@ export interface JsEngineOptions {
  * @returns A JS engine implementing `SittirEngineLike`.
  */
 export function createJsEngine(options: JsEngineOptions): SittirEngineLike {
-	const { templatesPath, format: engineFormat, parse, kindNameFromId } = options;
-	const renderer = createRenderer(templatesPath, { kindNameFromId });
+	const { templatesPath, format: engineFormat, parse, kindNames } = options;
+	const renderer = createRenderer(templatesPath, { kindNames });
 
 	function renderNode(
 		node: AnyNodeData,

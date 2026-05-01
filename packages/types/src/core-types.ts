@@ -63,7 +63,7 @@ export interface AnyNodeData {
 	 * possible. String $type is retained only for hidden/synthetic kinds
 	 * that tree-sitter inlines away (no parser.c symbol, no TSKindId).
 	 */
-	$type: string | number;
+	$type: number;
 	/** Which producer emitted this node. */
 	$source?: 'ts' | 'sg' | 'factory';
 	/** Variant subtype name — set by factory, absent on readNode output. */
@@ -164,14 +164,12 @@ export interface RulesConfig {
 	};
 	rules: Record<string, TemplateRule>;
 	/**
-	 * Required resolver for numeric `$type` values. The Nunjucks render
-	 * engine calls this resolver to recover the string kind name for template
-	 * file lookup (templates are keyed by `<kind>.jinja`).
-	 *
-	 * Returning `undefined` causes the engine to throw a descriptive error
-	 * identifying the unknown numeric id.
+	 * Static lookup table: numeric KindId → kind name string. Pre-computed
+	 * at codegen time from the parser symbol catalog. Used by the JS
+	 * Nunjucks render path to resolve template filenames from numeric
+	 * `$type`. Pure `Map.get()` at runtime — no function call, no throw.
 	 */
-	kindNameFromId?: (id: number) => string | undefined;
+	kindNames?: ReadonlyMap<number, string>;
 }
 
 // ---------------------------------------------------------------------------

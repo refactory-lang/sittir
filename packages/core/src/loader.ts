@@ -17,15 +17,11 @@ import type { BoundRenderer } from './render.ts';
  */
 export interface CreateRendererOptions {
 	/**
-	 * Resolver for numeric `$type` values produced by Phase A/B factory/wrap
-	 * output. When `node.$type` is a number, the Nunjucks render engine calls
-	 * this to recover the string kind name for template file lookup.
-	 *
-	 * Forward the grammar package's generated `kindNameFromId` function here,
-	 * wrapped in a try/catch that returns `undefined` for unknown ids (since
-	 * the generated function throws on unknowns).
+	 * Static lookup table: numeric KindId → kind name string. Pre-computed
+	 * at codegen time. Used by the Nunjucks render path to resolve template
+	 * filenames from numeric `$type`. Pure `Map.get()` at runtime.
 	 */
-	kindNameFromId?: (id: number) => string | undefined;
+	kindNames?: ReadonlyMap<number, string>;
 }
 
 /**
@@ -65,7 +61,7 @@ export function createRenderer(
 		expandoChar: null,
 		metadata: { grammarSha: '' },
 		rules: {},
-		kindNameFromId: options?.kindNameFromId
+		kindNames: options?.kindNames
 	};
 	return createRendererFromConfig(emptyConfig, { templatesDir: pathOrConfig });
 }

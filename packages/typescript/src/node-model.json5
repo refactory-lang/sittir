@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 427,
+  "nodeCount": 424,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -17,10 +17,12 @@
     "_jsx_element_name",
     "_jsx_identifier",
     "_module_export_name",
+    "_property_identifier",
     "_property_name",
     "_semicolon",
     "_shorthand_property_identifier",
     "_shorthand_property_identifier_pattern",
+    "_statement_identifier",
     "_tuple_type_member",
     "declaration",
     "expression",
@@ -2548,31 +2550,6 @@
       "children": []
     },
     {
-      "kind": "_interface_body",
-      "modelType": "container",
-      "typeName": "InterfaceBody",
-      "factoryName": "interfaceBody",
-      "irKey": "interfaceBody",
-      "hidden": false,
-      "children": [
-        {
-          "name": "object_type",
-          "propertyName": "objectType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "object_type",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
-    },
-    {
       "kind": "_jsx_attribute",
       "modelType": "supertype",
       "typeName": "_JsxAttribute",
@@ -2591,6 +2568,7 @@
       "hidden": true,
       "subtypes": [
         "identifier",
+        "jsx_identifier",
         "jsx_namespace_name"
       ]
     },
@@ -2779,7 +2757,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_string_fragment",
+              "name": "unescaped_double_jsx_string_fragment",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "unescaped_single_jsx_string_fragment",
               "unresolved": true
             }
           ]
@@ -3297,27 +3281,13 @@
     },
     {
       "kind": "_property_identifier",
-      "modelType": "container",
+      "modelType": "supertype",
       "typeName": "PropertyIdentifier",
-      "factoryName": "propertyIdentifier",
       "irKey": "propertyIdentifier",
-      "hidden": false,
-      "children": [
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "unresolved": true
-            }
-          ]
-        }
+      "hidden": true,
+      "subtypes": [
+        "_reserved_identifier",
+        "identifier"
       ]
     },
     {
@@ -3678,27 +3648,13 @@
     },
     {
       "kind": "_statement_identifier",
-      "modelType": "container",
+      "modelType": "supertype",
       "typeName": "StatementIdentifier",
-      "factoryName": "statementIdentifier",
       "irKey": "statementIdentifier",
-      "hidden": false,
-      "children": [
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "unresolved": true
-            }
-          ]
-        }
+      "hidden": true,
+      "subtypes": [
+        "_reserved_identifier",
+        "identifier"
       ]
     },
     {
@@ -3719,7 +3675,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_string_fragment",
+              "name": "unescaped_double_string_fragment",
               "unresolved": true
             }
           ]
@@ -3735,31 +3691,6 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "escape_sequence",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "_string_fragment",
-      "modelType": "container",
-      "typeName": "StringFragment",
-      "factoryName": "stringFragment",
-      "irKey": "stringFragment",
-      "hidden": false,
-      "children": [
-        {
-          "name": "unescaped_double_jsx_string_fragment",
-          "propertyName": "unescapedDoubleJsxStringFragment",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "unescaped_double_jsx_string_fragment",
               "unresolved": true
             }
           ]
@@ -3784,7 +3715,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_string_fragment",
+              "name": "unescaped_single_string_fragment",
               "unresolved": true
             }
           ]
@@ -3823,33 +3754,6 @@
       "hidden": false
     },
     {
-      "kind": "_this_type",
-      "modelType": "container",
-      "typeName": "ThisType",
-      "factoryName": "thisType",
-      "irKey": "thisType",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "thisType()",
-      "children": [
-        {
-          "name": "this",
-          "propertyName": "this",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "this",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
-    },
-    {
       "kind": "_tuple_type_member",
       "modelType": "supertype",
       "typeName": "TupleTypeMember",
@@ -3881,7 +3785,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ]
@@ -4204,7 +4108,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -4213,11 +4117,11 @@
             "typeName": "",
             "kinds": [
               "private_property_identifier",
-              "_property_identifier"
+              "identifier"
             ]
           },
           "aliasSources": {
-            "property_identifier": "_property_identifier"
+            "property_identifier": "identifier"
           }
         }
       ],
@@ -4290,7 +4194,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -4299,11 +4203,11 @@
             "typeName": "",
             "kinds": [
               "private_property_identifier",
-              "_property_identifier"
+              "identifier"
             ]
           },
           "aliasSources": {
-            "property_identifier": "_property_identifier"
+            "property_identifier": "identifier"
           }
         }
       ],
@@ -4994,7 +4898,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_identifier",
+              "name": "identifier",
               "unresolved": true
             },
             {
@@ -5016,13 +4920,13 @@
             "kinds": [
               "declaration",
               "statement_block",
-              "_property_identifier",
+              "identifier",
               "type",
               "_semicolon"
             ]
           },
           "aliasSources": {
-            "property_identifier": "_property_identifier"
+            "property_identifier": "identifier"
           }
         }
       ],
@@ -6442,7 +6346,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_statement_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -6450,11 +6354,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_statement_identifier"
+              "identifier"
             ]
           },
           "aliasSources": {
-            "statement_identifier": "_statement_identifier"
+            "statement_identifier": "identifier"
           }
         },
         {
@@ -7871,7 +7775,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_statement_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -7879,11 +7783,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_statement_identifier"
+              "identifier"
             ]
           },
           "aliasSources": {
-            "statement_identifier": "_statement_identifier"
+            "statement_identifier": "identifier"
           }
         },
         {
@@ -8196,7 +8100,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -8204,11 +8108,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_property_identifier"
+              "identifier"
             ]
           },
           "aliasSources": {
-            "property_identifier": "_property_identifier"
+            "property_identifier": "identifier"
           }
         }
       ],
@@ -12615,7 +12519,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_interface_body",
+              "name": "object_type",
               "unresolved": true
             }
           ],
@@ -12623,11 +12527,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_interface_body"
+              "object_type"
             ]
           },
           "aliasSources": {
-            "interface_body": "_interface_body"
+            "interface_body": "object_type"
           }
         }
       ],
@@ -13689,7 +13593,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -13698,11 +13602,11 @@
             "typeName": "",
             "kinds": [
               "private_property_identifier",
-              "_property_identifier"
+              "identifier"
             ]
           },
           "aliasSources": {
-            "property_identifier": "_property_identifier"
+            "property_identifier": "identifier"
           }
         }
       ],
@@ -14527,7 +14431,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -14535,11 +14439,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_property_identifier"
+              "identifier"
             ]
           },
           "aliasSources": {
-            "property_identifier": "_property_identifier"
+            "property_identifier": "identifier"
           }
         }
       ],
@@ -15843,12 +15747,12 @@
       "irKey": "primaryType",
       "hidden": true,
       "subtypes": [
-        "_type_identifier",
         "array_type",
         "conditional_type",
         "existential_type",
         "flow_maybe_type",
         "generic_type",
+        "identifier",
         "index_type_query",
         "intersection_type",
         "literal_type",
@@ -17096,7 +17000,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_string_fragment",
+              "name": "unescaped_double_string_fragment",
               "unresolved": true
             }
           ]
@@ -17136,7 +17040,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_string_fragment",
+              "name": "unescaped_single_string_fragment",
               "unresolved": true
             }
           ]
@@ -17472,7 +17376,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_string_fragment",
+              "name": "_template_chars",
               "unresolved": true
             }
           ]
@@ -17512,7 +17416,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_string_fragment",
+              "name": "_template_chars",
               "unresolved": true
             }
           ]

@@ -3,7 +3,7 @@
 
 import type { AnyNodeData, AnyTreeNodeOf } from '@sittir/types';
 import type { AnyTransport, NamespaceMap } from './types.js';
-import { kindNameFromId, kindIdFromName } from './types.js';
+import { KIND_NAMES, kindIdFromName } from './types.js';
 
 /**
  * Type guard: returns true if `v` is a NodeData.
@@ -80,7 +80,6 @@ type NativeTransportRawChildRule = { readonly childrenRequired: boolean; readonl
 type NativeTransportVariantRule = { readonly variant: string; readonly fields: readonly NativeTransportFieldRule[]; readonly children?: { readonly required: boolean; readonly alternatives: readonly NativeTransportAlternative[] } };
 
 const nativeTransportAliasTargetToSource: Record<string, string> = {
-  "as_pattern_target": "_as_pattern_target",
   "assignment_eq": "_assignment_eq",
   "assignment_type": "_assignment_type",
   "assignment_typed": "_assignment_typed",
@@ -89,7 +88,6 @@ const nativeTransportAliasTargetToSource: Record<string, string> = {
   "expression_within_for_in_clause": "_expression_within_for_in_clause",
   "expressions": "_expressions",
   "f_expression": "_f_expression",
-  "format_expression": "_format_expression",
   "kw_async_marker": "_kw_async_marker",
   "left_hand_side": "_left_hand_side",
   "match_block": "_match_block",
@@ -288,7 +286,7 @@ function projectTransportValue(value: unknown, path: string): unknown {
 
   // Resolve the wire kind name (including alias rewriting) for internal
   // routing. $type is always numeric in Phase D.
-  const resolvedKind = nativeTransportType(kindNameFromId(numericType));
+  const resolvedKind = nativeTransportType(KIND_NAMES.get(numericType) ?? String(numericType));
 
   const projected: Record<string, unknown> = {};
   for (const key of transportMetadataKeys) {
@@ -424,9 +422,6 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 165: // _as_pattern
       assert_AsPatternTransport(node, 'node');
       return;
-    case 284: // _as_pattern_target
-      assertAsPatternTargetTransport(node, 'node');
-      return;
     case 240: // _assignment_eq
       assertAssignmentEqTransport(node, 'node');
       return;
@@ -438,9 +433,6 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
       return;
     case 224: // _comprehension_clauses
       assertComprehensionClausesTransport(node, 'node');
-      return;
-    case 285: // _format_expression
-      assertFormatExpressionTransport(node, 'node');
       return;
     case 116: // _import_list
       assertImportListTransport(node, 'node');
@@ -1244,18 +1236,6 @@ function assert_AsPatternTransport(node: Record<string, unknown>, path: string):
   }
 }
 
-function assertAsPatternTargetTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "_as_pattern_target");
-  assertOptionalMetadata(node, path);
-  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
-  if (node.$children !== undefined) {
-    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
-    for (let i = 0; i < node.$children.length; i++) {
-      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"}] as const);
-    }
-  }
-}
-
 function assertAssignmentEqTransport(node: Record<string, unknown>, path: string): void {
   assertTransportKind(node, path, "_assignment_eq");
   assertOptionalMetadata(node, path);
@@ -1287,18 +1267,6 @@ function assertComprehensionClausesTransport(node: Record<string, unknown>, path
     if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
     for (let i = 0; i < node.$children.length; i++) {
       assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"for_in_clause"},{"type":"if_clause"}] as const);
-    }
-  }
-}
-
-function assertFormatExpressionTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "_format_expression");
-  assertOptionalMetadata(node, path);
-  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
-  if (node.$children !== undefined) {
-    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
-    for (let i = 0; i < node.$children.length; i++) {
-      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"interpolation"}] as const);
     }
   }
 }
@@ -1460,7 +1428,7 @@ function assertAsPatternTransport(node: Record<string, unknown>, path: string): 
   if (node["expression"] === undefined) throw new TypeError(`${path}.expression` + ' is required');
   if (node["expression"] !== undefined) assertTransportValue(node["expression"], `${path}.expression`, [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"}] as const);
   if (node["alias"] === undefined) throw new TypeError(`${path}.alias` + ' is required');
-  if (node["alias"] !== undefined) assertTransportValue(node["alias"], `${path}.alias`, [{"type":"_as_pattern_target"}] as const);
+  if (node["alias"] !== undefined) assertTransportValue(node["alias"], `${path}.alias`, [{"type":"as_pattern_target"}] as const);
 }
 
 function assertAssertStatementTransport(node: Record<string, unknown>, path: string): void {
@@ -1994,7 +1962,7 @@ function assertFormatSpecifierTransport(node: Record<string, unknown>, path: str
   if (node.$children !== undefined) {
     if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
     for (let i = 0; i < node.$children.length; i++) {
-      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_format_expression"}] as const);
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"interpolation"}] as const);
     }
   }
 }

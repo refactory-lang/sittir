@@ -445,6 +445,14 @@ describe('expression_list', () => {
   });
 });
 
+describe('expression_statement_tuple', () => {
+  it('factory produces correct type', () => {
+    const node = ir.expressionStatementTuple({ type: "expression" } as never);
+    expect(node.$type).toBe(TSKindId._ExpressionStatementTuple);
+    expect(node.$source).toBe('factory');
+  });
+});
+
 describe('expression_statement', () => {
   it('factory produces correct type', () => {
     const node = ir.expressionStatement({});
@@ -1159,6 +1167,22 @@ describe('while_statement', () => {
   it('render produces non-empty string', () => {
     const node = ir.whileStatement({ condition: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('with_clause_bare', () => {
+  it('factory produces correct type', () => {
+    const node = ir.withClauseBare({ type: "with_item" } as never);
+    expect(node.$type).toBe(TSKindId._WithClauseBare);
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('with_clause_paren', () => {
+  it('factory produces correct type', () => {
+    const node = ir.withClauseParen({ type: "with_item" } as never);
+    expect(node.$type).toBe(TSKindId._WithClauseParen);
+    expect(node.$source).toBe('factory');
   });
 });
 

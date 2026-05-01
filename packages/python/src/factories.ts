@@ -60,22 +60,6 @@ export function _asPattern(child: (T.CasePattern | T.Identifier)) {
   };
 }
 
-export function asPatternTarget(child: T.Expression) {
-  const children = [child];
-  return {
-    $type: TSKindId.AsPatternTarget as number,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.AsPatternTargetTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
 export function _assignmentEq(config: ConfigOf<T.AssignmentEq>) {
   const fields = {
     right: config.right,
@@ -147,22 +131,6 @@ export function comprehensionClauses(...children: (T.ForInClause | T.IfClause)[]
       return toEdit(this, startOrRange);
     },
     replace(this: AnyNodeData, target: T.ComprehensionClausesTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function formatExpression(child: T.Interpolation) {
-  const children = [child];
-  return {
-    $type: TSKindId.FormatExpression as number,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.FormatExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1223,6 +1191,22 @@ export function expressionList(...children: T.Expression[]) {
   };
 }
 
+export function expressionStatementTuple(...children: T.Expression[]) {
+  _assertNonEmpty(children, 'expression_statement_tuple.children');
+  return {
+    $type: TSKindId._ExpressionStatementTuple as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ExpressionStatementTupleTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function expressionStatement(config: Omit<ConfigOf<T.ExpressionStatementUFormTuple>, '$variant'>) {
   return expressionStatementUFormTuple(config as Parameters<typeof expressionStatementUFormTuple>[0]);
 }
@@ -1335,7 +1319,7 @@ export function forStatement(config: ConfigOf<T.ForStatement>) {
   };
 }
 
-export function formatSpecifier(...children: T.FormatExpression[]) {
+export function formatSpecifier(...children: T.Interpolation[]) {
   return {
     $type: TSKindId.FormatSpecifier as number,
     $source: 'factory' as const,
@@ -2534,6 +2518,38 @@ export function whileStatement(config: ConfigOf<T.WhileStatement>) {
   };
 }
 
+export function withClauseBare(...children: T.WithItem[]) {
+  _assertNonEmpty(children, 'with_clause_bare.children');
+  return {
+    $type: TSKindId._WithClauseBare as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.WithClauseBareTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function withClauseParen(...children: T.WithItem[]) {
+  _assertNonEmpty(children, 'with_clause_paren.children');
+  return {
+    $type: TSKindId._WithClauseParen as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.WithClauseParenTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function withClause(config: ConfigOf<T.WithClauseUFormBare>): ReturnType<typeof withClauseUFormBare>;
 export function withClause(config: ConfigOf<T.WithClauseUFormParen>): ReturnType<typeof withClauseUFormParen>;
 export function withClause(config: ConfigOf<T.WithClauseUFormBare> | ConfigOf<T.WithClauseUFormParen>) {
@@ -2724,6 +2740,45 @@ export function stringEnd(text: string) {
   };
 }
 
+export function closeBracket(text: string) {
+  if (text.length === 0) throw new Error(`]: text must be non-empty`);
+  return {
+    $type: TSKindId.Rbrack as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.CloseBracketTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function closeParen(text: string) {
+  if (text.length === 0) throw new Error(`): text must be non-empty`);
+  return {
+    $type: TSKindId.Rparen as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.CloseParenTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function closeBrace(text: string) {
+  if (text.length === 0) throw new Error(`}: text must be non-empty`);
+  return {
+    $type: TSKindId.Rbrace as number,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.CloseBraceTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
 export function except(text: string) {
   if (text.length === 0) throw new Error(`except: text must be non-empty`);
   return {
@@ -2739,12 +2794,10 @@ export function except(text: string) {
 
 export type FluentKindMap = {
   "_as_pattern": FluentNode<"_as_pattern", T._AsPattern.Config>;
-  "_as_pattern_target": FluentNode<"_as_pattern_target", T.AsPatternTarget.Config>;
   "_assignment_eq": T.AssignmentEq;
   "_assignment_type": T.AssignmentType;
   "_assignment_typed": T.AssignmentTyped;
   "_comprehension_clauses": FluentNode<"_comprehension_clauses", T.ComprehensionClauses.Config>;
-  "_format_expression": FluentNode<"_format_expression", T.FormatExpression.Config>;
   "_import_list": T.ImportList;
   "_is_not": T.IsNot;
   "_key_value_pattern": T.KeyValuePattern;
@@ -2797,6 +2850,7 @@ export type FluentKindMap = {
   "except_clause": FluentNode<"except_clause", T.ExceptClause.Config>;
   "exec_statement": FluentNode<"exec_statement", T.ExecStatement.Config>;
   "expression_list": FluentNode<"expression_list", T.ExpressionList.Config>;
+  "expression_statement_tuple": FluentNode<"expression_statement_tuple", T.ExpressionStatementTuple.Config>;
   "expression_statement": FluentNode<"expression_statement", T.ExpressionStatement.Config>;
   "false": T.False;
   "finally_clause": FluentNode<"finally_clause", T.FinallyClause.Config>;
@@ -2867,6 +2921,8 @@ export type FluentKindMap = {
   "union_pattern": FluentNode<"union_pattern", T.UnionPattern.Config>;
   "union_type": FluentNode<"union_type", T.UnionType.Config>;
   "while_statement": FluentNode<"while_statement", T.WhileStatement.Config>;
+  "with_clause_bare": FluentNode<"with_clause_bare", T.WithClauseBare.Config>;
+  "with_clause_paren": FluentNode<"with_clause_paren", T.WithClauseParen.Config>;
   "with_clause": FluentNode<"with_clause", T.WithClause.Config>;
   "with_item": FluentNode<"with_item", T.WithItem.Config>;
   "with_statement": FluentNode<"with_statement", T.WithStatement.Config>;
@@ -2878,17 +2934,18 @@ export type FluentKindMap = {
   "_string_content": T._StringContent;
   "escape_interpolation": T.EscapeInterpolation;
   "string_end": T.StringEnd;
+  "]": T.CloseBracket;
+  ")": T.CloseParen;
+  "}": T.CloseBrace;
   "except": T.Except;
 };
 
 export const _factoryMap = {
   "_as_pattern": _asPattern,
-  "_as_pattern_target": asPatternTarget,
   "_assignment_eq": _assignmentEq,
   "_assignment_type": _assignmentType,
   "_assignment_typed": _assignmentTyped,
   "_comprehension_clauses": comprehensionClauses,
-  "_format_expression": formatExpression,
   "_import_list": _importList,
   "_is_not": isNot,
   "_key_value_pattern": _keyValuePattern,
@@ -2941,6 +2998,7 @@ export const _factoryMap = {
   "except_clause": exceptClause,
   "exec_statement": execStatement,
   "expression_list": expressionList,
+  "expression_statement_tuple": expressionStatementTuple,
   "expression_statement": expressionStatement,
   "false": false_,
   "finally_clause": finallyClause,
@@ -3011,6 +3069,8 @@ export const _factoryMap = {
   "union_pattern": unionPattern,
   "union_type": unionType,
   "while_statement": whileStatement,
+  "with_clause_bare": withClauseBare,
+  "with_clause_paren": withClauseParen,
   "with_clause": withClause,
   "with_item": withItem,
   "with_statement": withStatement,
@@ -3022,6 +3082,9 @@ export const _factoryMap = {
   "_string_content": _stringContent,
   "escape_interpolation": escapeInterpolation,
   "string_end": stringEnd,
+  "]": closeBracket,
+  ")": closeParen,
+  "}": closeBrace,
   "except": except,
 } as const;
 export type _FactoryMap = typeof _factoryMap;

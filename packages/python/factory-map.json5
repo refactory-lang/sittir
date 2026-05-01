@@ -5,12 +5,10 @@
 {
   "factoryShapes": {
     "_as_pattern": "children",
-    "_as_pattern_target": "children",
     "_assignment_eq": "config",
     "_assignment_type": "config",
     "_assignment_typed": "config",
     "_comprehension_clauses": "children",
-    "_format_expression": "children",
     "_kw_async_marker": "text",
     "_match_block": "children",
     "_match_block_block": "config",
@@ -181,9 +179,6 @@
     "with": "text"
   },
   "fieldAliasMap": {
-    "as_pattern.alias": {
-      "as_pattern_target": "_as_pattern_target"
-    },
     "match_statement.body": {
       "block": "_match_block"
     }

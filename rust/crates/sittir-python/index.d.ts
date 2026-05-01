@@ -66,8 +66,8 @@ export interface AliasedImportTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  name: Box<AnyTransport>
-  alias: Box<AnyTransport>
+  name: DottedNameTransport
+  alias: IdentifierTransport
 }
 
 export interface AmpTransport {
@@ -111,15 +111,6 @@ export interface ArrowTransport {
   '$text': string
 }
 
-export interface AsPatternTargetTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeId'?: number
-  '$children': Array<Box<AnyTransport>>
-}
-
 export interface AsPatternTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -135,7 +126,7 @@ export interface AsPatternTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  expression: Box<AnyTransport>
+  expression: ExpressionTransport
   alias: Box<AnyTransport>
 }
 
@@ -162,7 +153,7 @@ export interface AssignmentEqTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  right: Box<AnyTransport>
+  right: RightHandSideTransport
 }
 
 export interface AssignmentTypedTransport {
@@ -171,8 +162,8 @@ export interface AssignmentTypedTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  type: Box<AnyTransport>
-  right: Box<AnyTransport>
+  type: TypeTransport
+  right: RightHandSideTransport
 }
 
 export interface AssignmentTypeTransport {
@@ -181,7 +172,7 @@ export interface AssignmentTypeTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  type: Box<AnyTransport>
+  type: TypeTransport
 }
 
 export interface AssignmentUFormEqTransport {
@@ -190,7 +181,7 @@ export interface AssignmentUFormEqTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  left: Box<AnyTransport>
+  left: LeftHandSideTransport
   '$children': Array<Box<AnyTransport>>
 }
 
@@ -200,7 +191,7 @@ export interface AssignmentUFormTypedTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  left: Box<AnyTransport>
+  left: LeftHandSideTransport
   '$children': Array<Box<AnyTransport>>
 }
 
@@ -210,7 +201,7 @@ export interface AssignmentUFormTypeTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  left: Box<AnyTransport>
+  left: LeftHandSideTransport
   '$children': Array<Box<AnyTransport>>
 }
 
@@ -244,8 +235,8 @@ export interface AttributeTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  object: Box<AnyTransport>
-  attribute: Box<AnyTransport>
+  object: PrimaryExpressionTransport
+  attribute: IdentifierTransport
 }
 
 export interface AugmentedAssignmentTransport {
@@ -254,9 +245,9 @@ export interface AugmentedAssignmentTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  left: Box<AnyTransport>
+  left: LeftHandSideTransport
   operator: Box<AnyTransport>
-  right: Box<AnyTransport>
+  right: RightHandSideTransport
 }
 
 export interface AwaitTransport {
@@ -265,7 +256,7 @@ export interface AwaitTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  primaryExpression: Box<AnyTransport>
+  primaryExpression: PrimaryExpressionTransport
 }
 
 export interface BinaryOperatorTransport {
@@ -274,9 +265,9 @@ export interface BinaryOperatorTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  left: Box<AnyTransport>
+  left: PrimaryExpressionTransport
   operator: Box<AnyTransport>
-  right: Box<AnyTransport>
+  right: PrimaryExpressionTransport
 }
 
 export interface BlockTransport {
@@ -294,9 +285,9 @@ export interface BooleanOperatorTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  left: Box<AnyTransport>
+  left: ExpressionTransport
   operator: Box<AnyTransport>
-  right: Box<AnyTransport>
+  right: ExpressionTransport
 }
 
 export interface BraceTransport {
@@ -337,7 +328,7 @@ export interface CallTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  function: Box<AnyTransport>
+  function: PrimaryExpressionTransport
   arguments: Box<AnyTransport>
 }
 
@@ -355,8 +346,8 @@ export interface CaseClauseTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  guard?: Box<AnyTransport>
-  consequence: Box<AnyTransport>
+  guard?: IfClauseTransport
+  consequence: SuiteTransport
   '$children': Array<Box<AnyTransport>>
 }
 
@@ -383,7 +374,7 @@ export interface ChevronTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  expression: Box<AnyTransport>
+  expression: ExpressionTransport
 }
 
 export interface ClassDefinitionTransport {
@@ -392,10 +383,10 @@ export interface ClassDefinitionTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  name: Box<AnyTransport>
-  typeParameters?: Box<AnyTransport>
-  superclasses?: Box<AnyTransport>
-  body: Box<AnyTransport>
+  name: IdentifierTransport
+  typeParameters?: TypeParameterTransport
+  superclasses?: ArgumentListTransport
+  body: SuiteTransport
 }
 
 export interface ClassPatternTransport {
@@ -404,8 +395,8 @@ export interface ClassPatternTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  dottedName: Box<AnyTransport>
-  arguments: Array<Box<AnyTransport>>
+  dottedName: DottedNameTransport
+  arguments: Array<CasePatternTransport>
 }
 
 export interface ClassTransport {
@@ -478,7 +469,7 @@ export interface ComparisonOperatorTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  left: Box<AnyTransport>
+  left: PrimaryExpressionTransport
   operators: Array<Box<AnyTransport>>
 }
 
@@ -489,7 +480,7 @@ export interface ComplexPatternTransport {
   '$span'?: Span
   '$nodeId'?: number
   real?: Box<AnyTransport>
-  imaginary: Box<AnyTransport>
+  imaginary: PrimaryExpressionTransport
   '$children': Array<Box<AnyTransport>>
 }
 
@@ -517,9 +508,9 @@ export interface ConditionalExpressionTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  body: Box<AnyTransport>
-  condition: Box<AnyTransport>
-  alternative: Box<AnyTransport>
+  body: ExpressionTransport
+  condition: ExpressionTransport
+  alternative: ExpressionTransport
 }
 
 export interface ConstrainedTypeTransport {
@@ -528,8 +519,8 @@ export interface ConstrainedTypeTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  baseType: Box<AnyTransport>
-  constraint: Box<AnyTransport>
+  baseType: TypeTransport
+  constraint: TypeTransport
 }
 
 export interface ContinueStatementTransport {
@@ -554,7 +545,7 @@ export interface DecoratedDefinitionTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  definition: Box<AnyTransport>
+  definition: CompoundStatementTransport
   '$children': Array<Box<AnyTransport>>
 }
 
@@ -564,7 +555,7 @@ export interface DecoratorTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  expression: Box<AnyTransport>
+  expression: ExpressionTransport
   newline?: Box<AnyTransport>
 }
 
@@ -582,8 +573,8 @@ export interface DefaultParameterTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  name: Box<AnyTransport>
-  value: Box<AnyTransport>
+  name: PatternTransport
+  value: ExpressionTransport
 }
 
 export interface DefTransport {
@@ -617,7 +608,7 @@ export interface DictionaryComprehensionTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  body: Box<AnyTransport>
+  body: PairTransport
   '$children': Array<Box<AnyTransport>>
 }
 
@@ -636,7 +627,7 @@ export interface DictionarySplatTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  expression: Box<AnyTransport>
+  expression: ExpressionTransport
 }
 
 export interface DictionaryTransport {
@@ -680,8 +671,8 @@ export interface ElifClauseTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  condition: Box<AnyTransport>
-  consequence: Box<AnyTransport>
+  condition: ExpressionTransport
+  consequence: SuiteTransport
 }
 
 export interface ElifTransport {
@@ -714,7 +705,7 @@ export interface ElseClauseTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  body: Box<AnyTransport>
+  body: SuiteTransport
 }
 
 export interface ElseTransport {
@@ -759,8 +750,8 @@ export interface ExceptClauseTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  value?: Array<Box<AnyTransport>>
-  alias?: Box<AnyTransport>
+  value?: Array<ExpressionTransport>
+  alias?: ExpressionTransport
   '$children': Array<Box<AnyTransport>>
 }
 
@@ -778,8 +769,8 @@ export interface ExecStatementTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  code: Box<AnyTransport>
-  inClause?: Array<Box<AnyTransport>>
+  code: PrimaryExpressionTransport
+  inClause?: Array<ExpressionTransport>
 }
 
 export interface ExecTransport {
@@ -839,7 +830,7 @@ export interface FinallyClauseTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  block: Box<AnyTransport>
+  block: SuiteTransport
 }
 
 export interface FinallyTransport {
@@ -864,18 +855,9 @@ export interface ForInClauseTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: Box<AnyTransport>
-  left: Box<AnyTransport>
-  right: Array<Box<AnyTransport>>
-}
-
-export interface FormatExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeId'?: number
-  '$children': Array<Box<AnyTransport>>
+  asyncMarker?: KwAsyncMarkerTransport
+  left: LeftHandSideTransport
+  right: Array<ExpressionWithinForInClauseTransport>
 }
 
 export interface FormatSpecifierTransport {
@@ -893,11 +875,11 @@ export interface ForStatementTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: Box<AnyTransport>
-  left: Box<AnyTransport>
-  right: Box<AnyTransport>
-  body: Box<AnyTransport>
-  alternative?: Box<AnyTransport>
+  asyncMarker?: KwAsyncMarkerTransport
+  left: LeftHandSideTransport
+  right: ExpressionsTransport
+  body: SuiteTransport
+  alternative?: ElseClauseTransport
 }
 
 export interface ForTransport {
@@ -922,12 +904,12 @@ export interface FunctionDefinitionTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: Box<AnyTransport>
-  name: Box<AnyTransport>
-  typeParameters?: Box<AnyTransport>
-  parameters: Box<AnyTransport>
-  returnType?: Box<AnyTransport>
-  body: Box<AnyTransport>
+  asyncMarker?: KwAsyncMarkerTransport
+  name: IdentifierTransport
+  typeParameters?: TypeParameterTransport
+  parameters: ParametersTransport
+  returnType?: TypeTransport
+  body: SuiteTransport
 }
 
 export interface FutureImportStatementTransport {
@@ -953,7 +935,7 @@ export interface GeneratorExpressionTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  body: Box<AnyTransport>
+  body: ExpressionTransport
   '$children': Array<Box<AnyTransport>>
 }
 
@@ -963,8 +945,8 @@ export interface GenericTypeTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  identifier: Box<AnyTransport>
-  typeParameter: Box<AnyTransport>
+  identifier: IdentifierTransport
+  typeParameter: TypeParameterTransport
 }
 
 export interface GlobalStatementTransport {
@@ -998,7 +980,7 @@ export interface IfClauseTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  expression: Box<AnyTransport>
+  expression: ExpressionTransport
 }
 
 export interface IfStatementTransport {
@@ -1007,8 +989,8 @@ export interface IfStatementTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  condition: Box<AnyTransport>
-  consequence: Box<AnyTransport>
+  condition: ExpressionTransport
+  consequence: SuiteTransport
   alternative?: Array<Box<AnyTransport>>
 }
 
@@ -1086,9 +1068,9 @@ export interface InterpolationTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  expression: Box<AnyTransport>
-  typeConversion?: Box<AnyTransport>
-  formatSpecifier?: Box<AnyTransport>
+  expression: FExpressionTransport
+  typeConversion?: TypeConversionTransport
+  formatSpecifier?: FormatSpecifierTransport
 }
 
 export interface InTransport {
@@ -1113,8 +1095,8 @@ export interface KeyValuePatternTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  key: Box<AnyTransport>
-  value: Box<AnyTransport>
+  key: SimplePatternTransport
+  value: CasePatternTransport
 }
 
 export interface KeywordArgumentTransport {
@@ -1123,8 +1105,8 @@ export interface KeywordArgumentTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  name: Box<AnyTransport>
-  value: Box<AnyTransport>
+  name: NamedExpressionLhsTransport
+  value: ExpressionTransport
 }
 
 export interface KeywordPatternTransport {
@@ -1133,8 +1115,8 @@ export interface KeywordPatternTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  identifier: Box<AnyTransport>
-  simplePattern: Box<AnyTransport>
+  identifier: IdentifierTransport
+  simplePattern: SimplePatternTransport
 }
 
 export interface KeywordSeparatorTransport {
@@ -1168,8 +1150,8 @@ export interface LambdaTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  parameters?: Box<AnyTransport>
-  body: Box<AnyTransport>
+  parameters?: LambdaParametersTransport
+  body: ExpressionTransport
 }
 
 export interface LambdaWithinForInClauseTransport {
@@ -1178,8 +1160,8 @@ export interface LambdaWithinForInClauseTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  parameters?: Box<AnyTransport>
-  body: Box<AnyTransport>
+  parameters?: LambdaParametersTransport
+  body: ExpressionWithinForInClauseTransport
 }
 
 export interface LineContinuationTransport {
@@ -1196,7 +1178,7 @@ export interface ListComprehensionTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  body: Box<AnyTransport>
+  body: ExpressionTransport
   '$children': Array<Box<AnyTransport>>
 }
 
@@ -1233,7 +1215,7 @@ export interface ListSplatTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  expression: Box<AnyTransport>
+  expression: ExpressionTransport
 }
 
 export interface ListTransport {
@@ -1259,7 +1241,7 @@ export interface MatchBlockBlockTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  alternative: Array<Box<AnyTransport>>
+  alternative: Array<CaseClauseTransport>
 }
 
 export interface MatchBlockTransport {
@@ -1277,8 +1259,8 @@ export interface MatchStatementTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  subject: Array<Box<AnyTransport>>
-  body: Box<AnyTransport>
+  subject: Array<ExpressionTransport>
+  body: MatchBlockTransport
 }
 
 export interface MatchTransport {
@@ -1295,8 +1277,8 @@ export interface MemberTypeTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  baseType: Box<AnyTransport>
-  identifier: Box<AnyTransport>
+  baseType: TypeTransport
+  identifier: IdentifierTransport
 }
 
 export interface MinusTransport {
@@ -1322,8 +1304,8 @@ export interface NamedExpressionTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  name: Box<AnyTransport>
-  value: Box<AnyTransport>
+  name: NamedExpressionLhsTransport
+  value: ExpressionTransport
 }
 
 export interface NewlineTransport {
@@ -1389,7 +1371,7 @@ export interface NotOperatorTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  argument: Box<AnyTransport>
+  argument: ExpressionTransport
 }
 
 export interface NotTransport {
@@ -1414,8 +1396,8 @@ export interface PairTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  key: Box<AnyTransport>
-  value: Box<AnyTransport>
+  key: ExpressionTransport
+  value: ExpressionTransport
 }
 
 export interface ParametersTransport {
@@ -1516,7 +1498,7 @@ export interface PrintStatementTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  argument: Array<Box<AnyTransport>>
+  argument: Array<ExpressionTransport>
   '$children'?: Array<Box<AnyTransport>>
 }
 
@@ -1534,7 +1516,7 @@ export interface RaiseStatementTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  cause?: Box<AnyTransport>
+  cause?: ExpressionTransport
   '$children'?: Array<Box<AnyTransport>>
 }
 
@@ -1552,8 +1534,8 @@ export interface RelativeImportTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  importPrefix: Box<AnyTransport>
-  dottedName?: Box<AnyTransport>
+  importPrefix: ImportPrefixTransport
+  dottedName?: DottedNameTransport
 }
 
 export interface ReturnStatementTransport {
@@ -1579,7 +1561,7 @@ export interface SetComprehensionTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  body: Box<AnyTransport>
+  body: ExpressionTransport
   '$children': Array<Box<AnyTransport>>
 }
 
@@ -1648,9 +1630,9 @@ export interface SliceTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  start?: Box<AnyTransport>
-  stop?: Box<AnyTransport>
-  step?: Box<AnyTransport>
+  start?: ExpressionTransport
+  stop?: ExpressionTransport
+  step?: ExpressionTransport
 }
 
 export interface SplatPatternTransport {
@@ -1669,7 +1651,7 @@ export interface SplatTypeTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  identifier: Box<AnyTransport>
+  identifier: IdentifierTransport
 }
 
 export interface StarstarTransport {
@@ -1727,9 +1709,9 @@ export interface StringTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  stringStart: Box<AnyTransport>
+  stringStart: StringStartTransport
   content: Array<Box<AnyTransport>>
-  stringEnd: Box<AnyTransport>
+  stringEnd: StringEndTransport
 }
 
 export interface SubscriptTransport {
@@ -1738,7 +1720,7 @@ export interface SubscriptTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  value: Box<AnyTransport>
+  value: PrimaryExpressionTransport
   subscript: Array<Box<AnyTransport>>
 }
 
@@ -1781,10 +1763,10 @@ export interface TryStatementTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  body: Box<AnyTransport>
-  exceptClauses: Array<Box<AnyTransport>>
-  elseClause?: Box<AnyTransport>
-  finallyClause?: Box<AnyTransport>
+  body: SuiteTransport
+  exceptClauses: Array<ExceptClauseTransport>
+  elseClause?: ElseClauseTransport
+  finallyClause?: FinallyClauseTransport
 }
 
 export interface TryTransport {
@@ -1829,8 +1811,8 @@ export interface TypeAliasStatementTransport {
   '$span'?: Span
   '$nodeId'?: number
   type: Box<AnyTransport>
-  left: Box<AnyTransport>
-  right: Box<AnyTransport>
+  left: TypeTransport
+  right: TypeTransport
 }
 
 export interface TypeConversionTransport {
@@ -1847,9 +1829,9 @@ export interface TypedDefaultParameterTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  name: Box<AnyTransport>
-  type: Box<AnyTransport>
-  value: Box<AnyTransport>
+  name: IdentifierTransport
+  type: TypeTransport
+  value: ExpressionTransport
 }
 
 export interface TypedParameterTransport {
@@ -1858,7 +1840,7 @@ export interface TypedParameterTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  type: Box<AnyTransport>
+  type: TypeTransport
   '$children': Array<Box<AnyTransport>>
 }
 
@@ -1887,7 +1869,7 @@ export interface UnaryOperatorTransport {
   '$span'?: Span
   '$nodeId'?: number
   operator: Box<AnyTransport>
-  argument: Box<AnyTransport>
+  argument: PrimaryExpressionTransport
 }
 
 export interface UnionPatternTransport {
@@ -1905,8 +1887,8 @@ export interface UnionTypeTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  left: Box<AnyTransport>
-  right: Box<AnyTransport>
+  left: TypeTransport
+  right: TypeTransport
 }
 
 export interface WhileStatementTransport {
@@ -1915,9 +1897,9 @@ export interface WhileStatementTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  condition: Box<AnyTransport>
-  body: Box<AnyTransport>
-  alternative?: Box<AnyTransport>
+  condition: ExpressionTransport
+  body: SuiteTransport
+  alternative?: ElseClauseTransport
 }
 
 export interface WhileTransport {
@@ -1987,7 +1969,7 @@ export interface WithItemTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  value: Box<AnyTransport>
+  value: ExpressionTransport
 }
 
 export interface WithStatementTransport {
@@ -1996,9 +1978,9 @@ export interface WithStatementTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: Box<AnyTransport>
+  asyncMarker?: KwAsyncMarkerTransport
   withClause: Box<AnyTransport>
-  body: Box<AnyTransport>
+  body: SuiteTransport
 }
 
 export interface WithTransport {

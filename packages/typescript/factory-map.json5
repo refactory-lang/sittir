@@ -35,7 +35,6 @@
     "_index_signature_colon": "config",
     "_index_signature_mapped_type_clause": "children",
     "_initializer": "config",
-    "_interface_body": "children",
     "_kw_abstract_marker": "text",
     "_kw_async_marker": "text",
     "_kw_const_marker": "text",
@@ -45,7 +44,6 @@
     "_number": "config",
     "_parenthesized_expression_sequence": "children",
     "_parenthesized_expression_typed": "config",
-    "_property_identifier": "children",
     "_public_field_definition_abstract_first": "config",
     "_public_field_definition_access_first": "config",
     "_public_field_definition_accessor_opt": "config",
@@ -53,9 +51,7 @@
     "_public_field_definition_readonly_first": "config",
     "_public_field_definition_static_mods": "config",
     "_reserved_identifier": "text",
-    "_statement_identifier": "children",
     "_string_double": "children",
-    "_string_fragment": "children",
     "_string_single": "children",
     "_type_identifier": "children",
     "_type_query_call_expression": "config",
@@ -265,6 +261,7 @@
     "with_statement": "config",
     "yield_expression": "config",
     "_automatic_semicolon": "text",
+    "_template_chars": "text",
     "html_comment": "text",
     "||": "text",
     "jsx_text": "text",
@@ -345,14 +342,14 @@
       "call_expression": "_type_query_call_expression"
     },
     "_type_query_member_expression.property": {
-      "property_identifier": "_property_identifier"
+      "property_identifier": "identifier"
     },
     "_type_query_member_expression_in_type_annotation.object": {
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
     "_type_query_member_expression_in_type_annotation.property": {
-      "property_identifier": "_property_identifier"
+      "property_identifier": "identifier"
     },
     "_type_query_subscript_expression.object": {
       "subscript_expression": "_type_query_subscript_expression",
@@ -360,7 +357,7 @@
       "call_expression": "_type_query_call_expression"
     },
     "ambient_declaration.declaration": {
-      "property_identifier": "_property_identifier"
+      "property_identifier": "identifier"
     },
     "arrow_function_parameter.parameter": {
       "identifier": "_reserved_identifier"
@@ -369,10 +366,10 @@
       "identifier": "_reserved_identifier"
     },
     "break_statement.label": {
-      "statement_identifier": "_statement_identifier"
+      "statement_identifier": "identifier"
     },
     "continue_statement.label": {
-      "statement_identifier": "_statement_identifier"
+      "statement_identifier": "identifier"
     },
     "decorator_call_expression.function": {
       "member_expression": "decorator_member_expression"
@@ -381,10 +378,10 @@
       "member_expression": "decorator_member_expression"
     },
     "decorator_member_expression.property": {
-      "property_identifier": "_property_identifier"
+      "property_identifier": "identifier"
     },
     "interface_declaration.body": {
-      "interface_body": "_interface_body"
+      "interface_body": "object_type"
     },
     "jsx_opening_element.name": {
       "member_expression": "nested_identifier"
@@ -396,13 +393,13 @@
       "statement_identifier": "_statement_identifier"
     },
     "member_expression.property": {
-      "property_identifier": "_property_identifier"
+      "property_identifier": "identifier"
     },
     "nested_identifier.object": {
       "member_expression": "nested_identifier"
     },
     "nested_identifier.property": {
-      "property_identifier": "_property_identifier"
+      "property_identifier": "identifier"
     },
     "object_assignment_pattern.left": {
       "shorthand_property_identifier_pattern": "_shorthand_property_identifier_pattern"

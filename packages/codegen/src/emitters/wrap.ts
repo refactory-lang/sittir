@@ -98,24 +98,11 @@ export function emitWrap(config: EmitWrapConfig): string {
 					// concrete kinds the inlined rule expands to).
 					`Future: map to decomposition.`
 				);
-			} else if (synthesizedKinds?.has(kind)) {
-				console.warn(
-					`[codegen] '${kind}' is evaluate-synthesized (inline-alias-source) — ` +
-					`no parser symbol expected. Skipping wrap emission. ` +
-					// TODO: map inlined-kind factories to their decomposition (the
-					// concrete kinds the inlined rule expands to).
-					`Future: map to decomposition.`
-				);
 			} else {
-				// TSGrammar-only phantom: tree-sitter implicitly inlined this hidden
-				// rule during LR table generation. Not in the explicit inline: list
-				// but also not a codegen bug — tree-sitter's LR optimizer can inline
-				// hidden rules without the author listing them in inline:. Warn and
-				// skip; don't throw, as this is expected for many hidden rules.
 				console.warn(
-					`[codegen] skipping wrap emission for '${kind}' — no parser symbol ` +
-					`(TSGrammar-only, implicitly inlined by tree-sitter). If this kind ` +
-					`should have a parser symbol, audit the grammar overrides and the inline: array.`
+					`[codegen] VAPORIZED: '${kind}' has no parser symbol and is ` +
+					`NOT in the grammar's inline: array. Skipping wrap ` +
+					`emission. Investigate why tree-sitter dropped this rule.`
 				);
 			}
 			continue;
@@ -263,10 +250,10 @@ export function emitWrap(config: EmitWrapConfig): string {
 	// ------------------------------------------------------------------
 	// Public entry points
 	// ------------------------------------------------------------------
-	// Import kindNameFromId when kindEntries is present so wrapNode can resolve
+	// Import KIND_NAMES when kindEntries is present so wrapNode can resolve
 	// numeric $type (from the native path) to a string for the dispatch tables.
 	if (kindEntries) {
-		lines.push("import { kindNameFromId } from './types.js';");
+		lines.push("import { KIND_NAMES } from './types.js';");
 	}
 	lines.push('/** Wrap a NodeData into its lazy read-only view. */');
 	lines.push(
@@ -278,7 +265,7 @@ export function emitWrap(config: EmitWrapConfig): string {
 	lines.push('  // then per-kind wrap functions stamp the numeric TSKindId.$type on output.');
 	if (kindEntries) {
 		lines.push('  const rawType = typeof data.$type === "number"');
-		lines.push('    ? kindNameFromId(data.$type as never) ?? String(data.$type)');
+		lines.push('    ? KIND_NAMES.get(data.$type as never) ?? String(data.$type)');
 		lines.push('    : (data.$type as unknown as string);');
 	} else {
 		lines.push('  const rawType = data.$type as unknown as string;');
@@ -359,7 +346,7 @@ export function emitWrap(config: EmitWrapConfig): string {
 	if (kindEntries) {
 		lines.push('  if (asType) {');
 		lines.push('    const currentType = typeof data.$type === "number"');
-		lines.push('      ? kindNameFromId(data.$type as never) ?? String(data.$type)');
+		lines.push('      ? KIND_NAMES.get(data.$type as never) ?? String(data.$type)');
 		lines.push('      : (data.$type as unknown as string);');
 		lines.push('    if (currentType === asType.from) {');
 		lines.push('      data = { ...data, $type: asType.to as unknown as number };');

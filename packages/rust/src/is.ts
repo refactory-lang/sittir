@@ -47,7 +47,6 @@ export interface IsGuards {
     PointerTypeMut<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._PointerTypeMut };
     RangeExpressionBare<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._RangeExpressionBare };
     ReferenceExpressionRawMut<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ReferenceExpressionRawMut };
-    ShorthandFieldIdentifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ShorthandFieldIdentifier };
     TokenTreeBrace<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TokenTreeBrace };
     TokenTreeBracket<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TokenTreeBracket };
     TokenTreeParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TokenTreeParen };
@@ -237,7 +236,6 @@ export interface AssertGuards {
     PointerTypeMut(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._PointerTypeMut };
     RangeExpressionBare(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._RangeExpressionBare };
     ReferenceExpressionRawMut(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ReferenceExpressionRawMut };
-    ShorthandFieldIdentifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ShorthandFieldIdentifier };
     TokenTreeBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TokenTreeBrace };
     TokenTreeBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TokenTreeBracket };
     TokenTreeParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TokenTreeParen };
@@ -426,7 +424,7 @@ const _supertype_pattern_ids = new Set<number>([311, 312, 129, 313, 126, 151, 31
 const _supertype_statement_ids = new Set<number>([160, 185, 239, 161, 170, 171, 173, 174, 176, 177, 178, 187, 188, 189, 193, 194, 195, 203, 204, 184, 186]);
 const _supertype_tokenPattern_ids = new Set<number>([164, 166, 165, 142, 311, 312, 129, 313, 126, 151, 1, 120, 139, 140, 141]);
 const _supertype_tokens_ids = new Set<number>([168, 169, 142, 311, 312, 129, 313, 126, 151, 1, 120, 139, 140, 141]);
-const _supertype_type_ids = new Set<number>([235, 232, 142, 233, 226, 245, 223, 224, 220, 222, 417, 239, 236, 228, 198]);
+const _supertype_type_ids = new Set<number>([235, 232, 142, 233, 226, 245, 223, 224, 220, 222, 1, 239, 236, 228, 198]);
 const _supertype_useClause_ids = new Set<number>([139, 1, 142, 140, 141, 243, 208, 207, 206, 209]);
 
 const _kindIdByKind = new Map<string, number>([
@@ -484,6 +482,7 @@ const _kindIdByKind = new Map<string, number>([
     ["float_literal", TSKindId.FloatLiteral],
     ["_outer_block_doc_comment_marker", TSKindId.OuterBlockDocCommentMarker],
     ["_inner_block_doc_comment_marker", TSKindId.InnerBlockDocCommentMarker],
+    ["_line_doc_content", TSKindId.LineDocContent],
     ["_error_sentinel", TSKindId.ErrorSentinel],
     ["source_file", TSKindId.SourceFile],
     ["expression_statement", TSKindId.ExpressionStatement],
@@ -680,7 +679,6 @@ const _kindIdByKind = new Map<string, number>([
     ["_delim_token_tree_bracket", TSKindId._DelimTokenTreeBracket],
     ["_delim_token_tree_brace", TSKindId._DelimTokenTreeBrace],
     ["_field_identifier", TSKindId.FieldIdentifier],
-    ["_shorthand_field_identifier", TSKindId.ShorthandFieldIdentifier],
     ["_type_identifier", TSKindId.TypeIdentifier],
 ]);
 
@@ -706,7 +704,6 @@ export const is = {
     PointerTypeMut: _g(TSKindId._PointerTypeMut),
     RangeExpressionBare: _g(TSKindId._RangeExpressionBare),
     ReferenceExpressionRawMut: _g(TSKindId.ReferenceExpressionRawMut),
-    ShorthandFieldIdentifier: _g(TSKindId.ShorthandFieldIdentifier),
     TokenTreeBrace: _g(TSKindId._TokenTreeBrace),
     TokenTreeBracket: _g(TSKindId._TokenTreeBracket),
     TokenTreeParen: _g(TSKindId._TokenTreeParen),
@@ -920,7 +917,6 @@ export const assert = {
     PointerTypeMut: _makeAssert('PointerTypeMut', is.PointerTypeMut as _AnyGuard),
     RangeExpressionBare: _makeAssert('RangeExpressionBare', is.RangeExpressionBare as _AnyGuard),
     ReferenceExpressionRawMut: _makeAssert('ReferenceExpressionRawMut', is.ReferenceExpressionRawMut as _AnyGuard),
-    ShorthandFieldIdentifier: _makeAssert('ShorthandFieldIdentifier', is.ShorthandFieldIdentifier as _AnyGuard),
     TokenTreeBrace: _makeAssert('TokenTreeBrace', is.TokenTreeBrace as _AnyGuard),
     TokenTreeBracket: _makeAssert('TokenTreeBracket', is.TokenTreeBracket as _AnyGuard),
     TokenTreeParen: _makeAssert('TokenTreeParen', is.TokenTreeParen as _AnyGuard),

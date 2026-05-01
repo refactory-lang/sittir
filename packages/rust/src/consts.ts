@@ -25,8 +25,6 @@ export const NODE_KINDS = [
   '_range_expression_bare',
   '_reference_expression_raw_mut',
   '_reserved_identifier',
-  '_shorthand_field_identifier',
-  '_string_content',
   '_token_tree_brace',
   '_token_tree_bracket',
   '_token_tree_paren',
@@ -203,7 +201,6 @@ export const NODE_KINDS = [
 /** All leaf/terminal node kind strings. */
 export const LEAF_KINDS = [
   '_',
-  '_doc_comment',
   '_error_sentinel',
   '_inner_block_doc_comment_marker',
   '_kw_async_marker',
@@ -213,6 +210,7 @@ export const LEAF_KINDS = [
   '_kw_unsafe_marker',
   '_line_comment_content',
   '_line_comment_regular_dslash',
+  '_line_doc_content',
   '_outer_block_doc_comment_marker',
   '_pointer_type_const',
   '_primitive_type',
@@ -283,7 +281,7 @@ export const KEYWORDS = [
   '_',
   '_foreign_mod_item_semi',
   '_impl_item_semi',
-  '_inner_doc_comment_marker',
+  '_inner_line_doc_comment_marker',
   '_kw_async_marker',
   '_kw_move_marker',
   '_kw_negative',
@@ -292,7 +290,7 @@ export const KEYWORDS = [
   '_kw_static_marker',
   '_kw_unsafe_marker',
   '_mod_item_external',
-  '_outer_doc_comment_marker',
+  '_outer_line_doc_comment_marker',
   '_pointer_type_const',
   '_range_pattern_left_bare',
   '_struct_item_unit',
@@ -448,6 +446,7 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
   "float_literal": 151,
   "_outer_block_doc_comment_marker": 152,
   "_inner_block_doc_comment_marker": 153,
+  "_line_doc_content": 155,
   "_error_sentinel": 156,
   "source_file": 157,
   "empty_statement": 159,
@@ -595,6 +594,8 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
   "raw_string_literal": 312,
   "boolean_literal": 313,
   "line_comment": 314,
+  "_inner_line_doc_comment_marker": 316,
+  "_outer_line_doc_comment_marker": 317,
   "block_comment": 318,
   "_wildcard_pattern": 320,
   "_closure_expression_expr": 324,
@@ -637,7 +638,6 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
   "_delim_token_tree_bracket": 380,
   "_delim_token_tree_brace": 381,
   "_field_identifier": 414,
-  "_shorthand_field_identifier": 416,
   "_type_identifier": 417,
 } as const satisfies Record<string, number>;
 
@@ -696,6 +696,7 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
   [151]: "float_literal",
   [152]: "_outer_block_doc_comment_marker",
   [153]: "_inner_block_doc_comment_marker",
+  [155]: "_line_doc_content",
   [156]: "_error_sentinel",
   [157]: "source_file",
   [159]: "empty_statement",
@@ -843,6 +844,8 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
   [312]: "raw_string_literal",
   [313]: "boolean_literal",
   [314]: "line_comment",
+  [316]: "_inner_line_doc_comment_marker",
+  [317]: "_outer_line_doc_comment_marker",
   [318]: "block_comment",
   [320]: "_wildcard_pattern",
   [324]: "_closure_expression_expr",
@@ -885,7 +888,6 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
   [380]: "_delim_token_tree_bracket",
   [381]: "_delim_token_tree_brace",
   [414]: "_field_identifier",
-  [416]: "_shorthand_field_identifier",
   [417]: "_type_identifier",
 } as const;
 
@@ -944,6 +946,7 @@ export const TREE_SITTER_KIND_ID_JSON = [
   { name: "float_literal", id: 151, enumName: "FloatLiteral", cName: "sym_float_literal" },
   { name: "_outer_block_doc_comment_marker", id: 152, enumName: "OuterBlockDocCommentMarker", cName: "sym__outer_block_doc_comment_marker" },
   { name: "_inner_block_doc_comment_marker", id: 153, enumName: "InnerBlockDocCommentMarker", cName: "sym__inner_block_doc_comment_marker" },
+  { name: "_line_doc_content", id: 155, enumName: "LineDocContent", cName: "sym__line_doc_content" },
   { name: "_error_sentinel", id: 156, enumName: "ErrorSentinel", cName: "sym__error_sentinel" },
   { name: "source_file", id: 157, enumName: "SourceFile", cName: "sym_source_file" },
   { name: "empty_statement", id: 159, enumName: "EmptyStatement", cName: "sym_empty_statement" },
@@ -1091,6 +1094,8 @@ export const TREE_SITTER_KIND_ID_JSON = [
   { name: "raw_string_literal", id: 312, enumName: "RawStringLiteral", cName: "sym_raw_string_literal" },
   { name: "boolean_literal", id: 313, enumName: "BooleanLiteral", cName: "sym_boolean_literal" },
   { name: "line_comment", id: 314, enumName: "LineComment", cName: "sym_line_comment" },
+  { name: "_inner_line_doc_comment_marker", id: 316, enumName: "InnerLineDocCommentMarker", cName: "sym__inner_line_doc_comment_marker" },
+  { name: "_outer_line_doc_comment_marker", id: 317, enumName: "OuterLineDocCommentMarker", cName: "sym__outer_line_doc_comment_marker" },
   { name: "block_comment", id: 318, enumName: "BlockComment", cName: "sym_block_comment" },
   { name: "_wildcard_pattern", id: 320, enumName: "WildcardPattern", cName: "sym__wildcard_pattern" },
   { name: "_closure_expression_expr", id: 324, enumName: "ClosureExpressionExpr", cName: "sym__closure_expression_expr" },
@@ -1133,7 +1138,6 @@ export const TREE_SITTER_KIND_ID_JSON = [
   { name: "_delim_token_tree_bracket", id: 380, enumName: "DelimTokenTreeBracket", cName: "sym__delim_token_tree_bracket" },
   { name: "_delim_token_tree_brace", id: 381, enumName: "DelimTokenTreeBrace", cName: "sym__delim_token_tree_brace" },
   { name: "_field_identifier", id: 414, enumName: "AliasFieldIdentifier", cName: "alias_sym_field_identifier" },
-  { name: "_shorthand_field_identifier", id: 416, enumName: "AliasShorthandFieldIdentifier", cName: "alias_sym_shorthand_field_identifier" },
   { name: "_type_identifier", id: 417, enumName: "AliasTypeIdentifier", cName: "alias_sym_type_identifier" },
 ] as const;
 
@@ -1476,10 +1480,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_reference_expression_raw_mut': [
   ],
   '_reserved_identifier': [
-  ],
-  '_shorthand_field_identifier': [
-  ],
-  '_string_content': [
   ],
   '_token_tree_brace': [
   ],

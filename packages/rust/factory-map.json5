@@ -11,7 +11,6 @@
     "_delim_token_tree_brace": "children",
     "_delim_token_tree_bracket": "children",
     "_delim_token_tree_paren": "children",
-    "_doc_comment": "text",
     "_expression_statement_block_ending": "children",
     "_expression_statement_with_semi": "children",
     "_field_identifier": "children",
@@ -50,8 +49,6 @@
     "_reference_expression_raw_const": "text",
     "_reference_expression_raw_mut": "children",
     "_reserved_identifier": "children",
-    "_shorthand_field_identifier": "children",
-    "_string_content": "children",
     "_struct_item_brace": "config",
     "_struct_item_tuple": "config",
     "_token_tree_brace": "children",
@@ -244,6 +241,7 @@
     "string_content": "text",
     "raw_string_literal_content": "text",
     "float_literal": "text",
+    "_line_doc_content": "text",
     "fn": "text",
     "async": "text",
     "move": "text",
@@ -285,22 +283,22 @@
   },
   "fieldAliasMap": {
     "_field_pattern_shorthand.name": {
-      "shorthand_field_identifier": "_shorthand_field_identifier"
+      "shorthand_field_identifier": "identifier"
     },
     "_line_comment_doc.doc": {
-      "doc_comment": "_doc_comment"
+      "doc_comment": "_line_doc_content"
     },
     "block_comment.doc": {
-      "doc_comment": "_doc_comment"
+      "doc_comment": "_block_comment_content"
     },
     "field_pattern_shorthand.name": {
-      "shorthand_field_identifier": "_shorthand_field_identifier"
+      "shorthand_field_identifier": "identifier"
     },
     "macro_invocation.token_tree": {
       "token_tree": "delim_token_tree"
     },
     "raw_string_literal.string_content": {
-      "string_content": "_string_content"
+      "string_content": "raw_string_literal_content"
     },
     "scoped_identifier.path": {
       "generic_type": "generic_type_with_turbofish"

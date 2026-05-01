@@ -994,18 +994,11 @@ function emitKindIdEnumAndLookups(
 	lines.push('}');
 	lines.push('');
 
-	lines.push('export function kindNameFromId(kindId: TSKindId): string {');
-	lines.push('  switch (kindId) {');
+	lines.push('export const KIND_NAMES: ReadonlyMap<number, string> = new Map([');
 	for (const entry of entries) {
-		lines.push(
-			`    case TSKindId.${entry.member}: return ${JSON.stringify(entry.kind)};`
-		);
+		lines.push(`  [${entry.id}, ${JSON.stringify(entry.kind)}],`);
 	}
-	lines.push(
-		"    default: throw new TypeError(`unknown kind id ${String(kindId)}`);"
-	);
-	lines.push('  }');
-	lines.push('}');
+	lines.push(']);');
 	lines.push('');
 
 	lines.push('export function kindIdFromName(kindName: string): TSKindId {');

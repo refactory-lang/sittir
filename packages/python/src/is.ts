@@ -27,9 +27,7 @@ import type {
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
     AsPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._AsPattern };
-    AsPatternTarget<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AsPatternTarget };
     ComprehensionClauses<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ComprehensionClauses };
-    FormatExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FormatExpression };
     ListPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ListPattern };
     MatchBlock<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MatchBlock };
     SimplePatternNegative<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimplePatternNegative };
@@ -159,9 +157,7 @@ export interface IsGuards {
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
 export interface AssertGuards {
     AsPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._AsPattern };
-    AsPatternTarget(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AsPatternTarget };
     ComprehensionClauses(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ComprehensionClauses };
-    FormatExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FormatExpression };
     ListPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ListPattern };
     MatchBlock(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MatchBlock };
     SimplePatternNegative(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SimplePatternNegative };
@@ -487,15 +483,11 @@ const _kindIdByKind = new Map<string, number>([
     ["_match_block_block", TSKindId.MatchBlockBlock],
     ["_simple_pattern_negative", TSKindId.SimplePatternNegative],
     ["_kw_async_marker", TSKindId.KwAsyncMarker],
-    ["_as_pattern_target", TSKindId.AsPatternTarget],
-    ["_format_expression", TSKindId.FormatExpression],
 ]);
 
 export const is = {
     AsPattern: _g(TSKindId._AsPattern),
-    AsPatternTarget: _g(TSKindId.AsPatternTarget),
     ComprehensionClauses: _g(TSKindId.ComprehensionClauses),
-    FormatExpression: _g(TSKindId.FormatExpression),
     ListPattern: _g(TSKindId._ListPattern),
     MatchBlock: _g(TSKindId.MatchBlock),
     SimplePatternNegative: _g(TSKindId.SimplePatternNegative),
@@ -649,9 +641,7 @@ function _makeAssertKind(guard: _AnyGuard) {
 
 export const assert = {
     AsPattern: _makeAssert('AsPattern', is.AsPattern as _AnyGuard),
-    AsPatternTarget: _makeAssert('AsPatternTarget', is.AsPatternTarget as _AnyGuard),
     ComprehensionClauses: _makeAssert('ComprehensionClauses', is.ComprehensionClauses as _AnyGuard),
-    FormatExpression: _makeAssert('FormatExpression', is.FormatExpression as _AnyGuard),
     ListPattern: _makeAssert('ListPattern', is.ListPattern as _AnyGuard),
     MatchBlock: _makeAssert('MatchBlock', is.MatchBlock as _AnyGuard),
     SimplePatternNegative: _makeAssert('SimplePatternNegative', is.SimplePatternNegative as _AnyGuard),

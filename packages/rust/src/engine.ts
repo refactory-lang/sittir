@@ -17,7 +17,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getActiveBackend } from './backend.js';
 import { toNativeRenderTransport } from './utils.js';
-import { kindNameFromId } from './types.js';
+import { KIND_NAMES } from './types.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -144,16 +144,7 @@ export function createEngine(options?: EngineOptions): SittirEngineLike {
 	const jsOptions: JsEngineOptions = {
 		templatesPath: join(__dirname, '..', 'templates'),
 		format: options?.format,
-		// Phase A/B coexistence: factory/wrap output uses numeric TSKindId in
-		// $type. Supply the resolver so the Nunjucks render path can map back
-		// to a string kind name for template file lookup.
-		kindNameFromId: (id: number) => {
-			try {
-				return kindNameFromId(id as never);
-			} catch {
-				return undefined;
-			}
-		}
+		kindNames: KIND_NAMES
 		// parse omitted: no synchronous JS reader available
 	};
 

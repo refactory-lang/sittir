@@ -59,6 +59,7 @@ export const _fromMap = {
   "except_clause": exceptClauseFrom,
   "exec_statement": execStatementFrom,
   "expression_list": expressionListFrom,
+  "expression_statement_tuple": expressionStatementTupleFrom,
   "expression_statement": expressionStatementFrom,
   "false": false_From,
   "finally_clause": finallyClauseFrom,
@@ -129,6 +130,8 @@ export const _fromMap = {
   "union_pattern": unionPatternFrom,
   "union_type": unionTypeFrom,
   "while_statement": whileStatementFrom,
+  "with_clause_bare": withClauseBareFrom,
+  "with_clause_paren": withClauseParenFrom,
   "with_clause": withClauseFrom,
   "with_item": withItemFrom,
   "with_statement": withStatementFrom,
@@ -136,6 +139,9 @@ export const _fromMap = {
   "string_start": stringStartFrom,
   "escape_interpolation": escapeInterpolationFrom,
   "string_end": stringEndFrom,
+  "]": closeBracketFrom,
+  ")": closeParenFrom,
+  "}": closeBraceFrom,
   "except": exceptFrom,
 } as const;
 export type _FromMap = typeof _fromMap;
@@ -164,6 +170,9 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
   "string_start": { factory: F.stringStart },
   "escape_interpolation": { factory: F.escapeInterpolation },
   "string_end": { factory: F.stringEnd },
+  "]": { factory: F.closeBracket },
+  ")": { factory: F.closeParen },
+  "}": { factory: F.closeBrace },
   "except": { factory: F.except },
 };
 
@@ -355,7 +364,7 @@ export function asPatternFrom(input: T.AsPattern.Loose): ReturnType<typeof F.asP
   if (isNodeData(input)) return input;
   return F.asPattern({
     expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
-    alias: _resolveOneBranch<T.AsPatternTarget>(input.alias, "_as_pattern_target"),
+    alias: _resolveOneBranch<T.AsPatternTarget>(input.alias, "as_pattern_target"),
   });
 }
 
@@ -684,6 +693,10 @@ export function expressionListFrom(...input: readonly (NonNullable<T.ExpressionL
     return F.expressionList(...((data.$children ?? []) as readonly NonNullable<T.ExpressionList.Config['children']>[number][]));
   }
   return F.expressionList(...(input as readonly NonNullable<T.ExpressionList.Config['children']>[number][]));
+}
+
+export function expressionStatementTupleFrom(...input: readonly (NonNullable<T.ExpressionStatementTuple.Config['children']>[number] | T.ExpressionStatementTuple)[]) {
+  return F.expressionStatementTuple(...(input as readonly NonNullable<T.ExpressionStatementTuple.Config['children']>[number][]));
 }
 
 export function expressionStatementFrom(input?: T.ExpressionStatement.Loose): ReturnType<typeof F.expressionStatement> | T.ExpressionStatement {
@@ -1237,6 +1250,14 @@ export function whileStatementFrom(input: T.WhileStatement.Loose): ReturnType<ty
   });
 }
 
+export function withClauseBareFrom(...input: readonly (NonNullable<T.WithClauseBare.Config['children']>[number] | T.WithClauseBare)[]) {
+  return F.withClauseBare(...(input as readonly NonNullable<T.WithClauseBare.Config['children']>[number][]));
+}
+
+export function withClauseParenFrom(...input: readonly (NonNullable<T.WithClauseParen.Config['children']>[number] | T.WithClauseParen)[]) {
+  return F.withClauseParen(...(input as readonly NonNullable<T.WithClauseParen.Config['children']>[number][]));
+}
+
 export function withClauseFrom(input?: T.WithClause.Loose): ReturnType<typeof F.withClause> | T.WithClause {
   if (input !== undefined && isNodeData(input)) return input;
   return F.withClause(input as Parameters<typeof F.withClause>[0]);
@@ -1288,6 +1309,21 @@ export function escapeInterpolationFrom(input: string | T.EscapeInterpolation) {
 export function stringEndFrom(input: string | T.StringEnd) {
   if (typeof input !== 'string') return input;
   return F.stringEnd(input as Parameters<typeof F.stringEnd>[0]);
+}
+
+export function closeBracketFrom(input: string | T.CloseBracket) {
+  if (typeof input !== 'string') return input;
+  return F.closeBracket(input as Parameters<typeof F.closeBracket>[0]);
+}
+
+export function closeParenFrom(input: string | T.CloseParen) {
+  if (typeof input !== 'string') return input;
+  return F.closeParen(input as Parameters<typeof F.closeParen>[0]);
+}
+
+export function closeBraceFrom(input: string | T.CloseBrace) {
+  if (typeof input !== 'string') return input;
+  return F.closeBrace(input as Parameters<typeof F.closeBrace>[0]);
 }
 
 export function exceptFrom(input: string | T.Except) {
