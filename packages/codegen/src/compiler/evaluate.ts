@@ -918,7 +918,7 @@ function grammarFn(
 	// downstream to point at. Synthesize `_${target}` with the inline
 	// body so the `_X → X` invariant holds uniformly — every alias
 	// target has a named hidden source in the rules map.
-	synthesizeInlineAliasSources(rules, provenanceByKind);
+	synthesizeInlineAliasSources(rules, provenanceByKind, externals);
 	const identified = buildRuleCatalog(rules, provenanceByKind);
 	const references = attachReferenceRuleIds(refs, identified.ruleCatalog);
 
@@ -947,9 +947,9 @@ function grammarFn(
 
 /**
  * For every `alias(inlineContent, $.target)` whose source isn't a
- * bare symbol reference to an existing rule, synthesize a hidden
- * rule `_${target}` carrying the inline content and rewrite the
- * alias's source to point at it.
+ * bare symbol reference to an existing rule or external token,
+ * synthesize a hidden rule `_${target}` carrying the inline content
+ * and rewrite the alias's source to point at it.
  *
  * Before:
  *    alias(choice('u8','u16',...), $.primitive_type)
@@ -968,30 +968,47 @@ function grammarFn(
  * Also: the rules map now has a single named entry per alias target
  * (the `_${target}` source) without adding entries for visible-only
  * kinds — matching tree-sitter's declaration view.
+ *
+ * External scanner tokens (listed in `externals`) are treated the same
+ * as declared rules: they already have parser-assigned symbol IDs and
+ * need no synthetic source. `alias($._line_doc_content, $.doc_comment)`
+ * must NOT produce `_doc_comment` — the source is an external with its
+ * own parser identity; the visible target `doc_comment` is the alias
+ * destination, not a hidden kind.
  */
 function synthesizeInlineAliasSources(
 	rules: Record<string, Rule>,
-	provenanceByKind: Map<string, RuleProvenance>
+	provenanceByKind: Map<string, RuleProvenance>,
+	externals: readonly string[]
 ): void {
+	const externalSet = new Set(externals);
 	const ruleEntries = Object.entries(rules);
 	for (const [name, rule] of ruleEntries) {
-		rules[name] = rewriteInlineAliases(rule, rules, provenanceByKind);
+		rules[name] = rewriteInlineAliases(rule, rules, provenanceByKind, externalSet);
 	}
 }
 
 function rewriteInlineAliases(
 	rule: Rule,
 	rules: Record<string, Rule>,
-	provenanceByKind: Map<string, RuleProvenance>
+	provenanceByKind: Map<string, RuleProvenance>,
+	externals: ReadonlySet<string>
 ): Rule {
 	const recurse = (r: Rule): Rule =>
-		rewriteInlineAliases(r, rules, provenanceByKind);
+		rewriteInlineAliases(r, rules, provenanceByKind, externals);
 	switch (rule.type) {
 		case 'alias':
 			if (rule.named && rule.value) {
 				const inner = rule.content;
-				const isBareSymbolToExistingRule =
-					inner.type === 'symbol' && rules[inner.name] !== undefined;
+				// Treat both declared rules AND external scanner tokens as
+				// "existing" sources — externals already carry parser-assigned
+				// symbol IDs and must not trigger `_${target}` synthesis.
+				// Without this guard, `alias($._line_doc_content, $.doc_comment)`
+				// would synthesize the fictitious hidden kind `_doc_comment`
+				// because `_line_doc_content` is external (not in `rules`).
+				const isBareSymbolToKnownSource =
+					inner.type === 'symbol' &&
+					(rules[inner.name] !== undefined || externals.has(inner.name));
 				// Also skip when the alias TARGET is already a declared
 				// kind: `alias(inlineBody, $.existingKind)` just relabels
 				// the inline body as that existing kind. Tree-sitter
@@ -1000,12 +1017,10 @@ function rewriteInlineAliases(
 				// Synthesizing `_existingKind` would collide with /
 				// over-ride the existing kind's meaning.
 				const targetAlreadyExists = rules[rule.value] !== undefined;
-				if (!targetAlreadyExists) {
+				if (!targetAlreadyExists && !isBareSymbolToKnownSource) {
 					const syntheticHiddenName = `_${rule.value}`;
 					if (!rules[syntheticHiddenName]) {
-						rules[syntheticHiddenName] = isBareSymbolToExistingRule
-							? inner
-							: recurse(rule.content);
+						rules[syntheticHiddenName] = recurse(rule.content);
 						provenanceByKind.set(syntheticHiddenName, 'evaluate-synthesized');
 					}
 					return {
