@@ -2074,6 +2074,52 @@ pub struct LiteralTransport {
 }
 
 #[derive(Debug, Clone)]
+pub enum ExportStatementDefaultTransport {
+    ExportStatementDefaultFromArm(Box<ExportStatementDefaultFromArmTransport>),
+    ExportStatementDefaultDeclArm(Box<ExportStatementDefaultDeclArmTransport>),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let kind_id: u16 = obj.get("$type")?
+            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in ExportStatementDefaultTransport"))?;
+        match kind_id {
+            353 => Ok(Self::ExportStatementDefaultFromArm(Box::new(
+                ExportStatementDefaultFromArmTransport::from_napi_value(env, napi_val)?
+            ))),
+            354 => Ok(Self::ExportStatementDefaultDeclArm(Box::new(
+                ExportStatementDefaultDeclArmTransport::from_napi_value(env, napi_val)?
+            ))),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in ExportStatementDefaultTransport",
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ExportStatementDefaultTransport {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ExportStatementDefaultTransport is receive-only"))
+    }
+}
+
+fn export_statement_default_transport_to_any(t: ExportStatementDefaultTransport) -> Box<AnyTransport> {
+    match t {
+        ExportStatementDefaultTransport::ExportStatementDefaultFromArm(inner) => Box::new(AnyTransport::ExportStatementDefaultFromArm(*inner)),
+        ExportStatementDefaultTransport::ExportStatementDefaultDeclArm(inner) => Box::new(AnyTransport::ExportStatementDefaultDeclArm(*inner)),
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum ExpressionsTransport {
     Expression(Box<ExpressionTransport>),
     SequenceExpression(Box<SequenceExpressionTransport>),
@@ -15071,6 +15117,13 @@ fn render_with_transport(t: &WithTransport) -> Result<String, ::askama::Error> {
 
 fn render_yield_transport(t: &YieldTransport) -> Result<String, ::askama::Error> {
     Ok(t.text.clone())
+}
+
+fn render_export_statement_default_transport(t: &ExportStatementDefaultTransport) -> Result<String, ::askama::Error> {
+    match t {
+        ExportStatementDefaultTransport::ExportStatementDefaultFromArm(inner) => render_export_statement_default_from_arm_transport(inner.as_ref()),
+        ExportStatementDefaultTransport::ExportStatementDefaultDeclArm(inner) => render_export_statement_default_decl_arm_transport(inner.as_ref()),
+    }
 }
 
 fn render_expressions_transport(t: &ExpressionsTransport) -> Result<String, ::askama::Error> {

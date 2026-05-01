@@ -2187,6 +2187,13 @@ function renderTransportSupport(
  * field or children slot types across all assembled nodes. Only these
  * supertypes need per-supertype transport enum emission.
  *
+ * Covers both `projection.nodes` (concrete transport nodes) and the forms
+ * of any polymorph nodes within them. Polymorph form kinds are excluded from
+ * `projection.nodes` by `isConcreteTransportNode`, but their transport structs
+ * are still emitted by `renderPolymorphTransportDefs` — any supertype used in a
+ * form's children slot must also be included here so the enum is declared
+ * before the form struct references it.
+ *
  * @param nodes - assembled nodes (transport projection)
  * @param nodeMap - for classification
  */
@@ -2195,17 +2202,33 @@ function collectUsedSupertypeNames(
 	nodeMap: NodeMap
 ): Set<string> {
 	const used = new Set<string>();
-	for (const node of nodes) {
-		// Check structural fields
-		for (const field of node.structuralFields) {
+
+	/** Accumulate supertype names from a single node's fields + children. */
+	const collectFromNode = (
+		fields: readonly AssembledField[],
+		children: readonly AssembledChild[]
+	): void => {
+		for (const field of fields) {
 			const cls = classifySlotForEmit(field.projection.kinds, nodeMap);
 			if (cls.tag === 'supertype') used.add(cls.supertypeName);
 		}
-		// Check structural children
-		if (node.structuralChildren.length > 0) {
-			const allKinds = [...new Set(node.structuralChildren.flatMap((c) => deriveChildrenKinds(c)))];
+		if (children.length > 0) {
+			const allKinds = [...new Set(children.flatMap((c) => deriveChildrenKinds(c)))];
 			const cls = classifySlotForEmit(allKinds, nodeMap);
 			if (cls.tag === 'supertype') used.add(cls.supertypeName);
+		}
+	};
+
+	for (const node of nodes) {
+		if (node.modelType === 'polymorph' && node.forms.length > 0) {
+			// Polymorph forms own the actual fields/children; the parent has none.
+			// Form kinds are excluded from projection.nodes (polymorphFormKinds),
+			// but their transport structs are emitted — collect from each form.
+			for (const form of node.forms) {
+				collectFromNode(form.fields, form.children);
+			}
+		} else {
+			collectFromNode(node.structuralFields, node.structuralChildren);
 		}
 	}
 	// Transitive closure: supertype enums include sub-supertypes as variants.

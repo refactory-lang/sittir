@@ -94,8 +94,8 @@ export const KindPresenceFlag = {
 	TSGrammar: 1 << 0,
 	/** Kind appears in `node-types.json`. */
 	TSNodeTypes: 1 << 1,
-	/** Kind has a parser symbol — can carry a runtime `$type`. */
-	TSRuntime: 1 << 2
+	/** Kind has a parser symbol — IDs come from `parser.c` internal metadata. */
+	TSInternals: 1 << 2
 } as const;
 export type KindPresenceFlag = number;
 
@@ -117,13 +117,13 @@ export type KindUseFlag = number;
 /**
  * Parser-origin metadata for a kind. Derived from the C symbol name.
  * `parserName` is the prefix-stripped form (the canonical join term);
- * `displayName` is the lossy `ts_symbol_names[]` label, kept for
+ * `symbolName` is the lossy `ts_symbol_names[]` label, kept for
  * diagnostics only.
  */
 export interface KindParserMetadata {
 	readonly cSymbol: string;
 	readonly parserName: string;
-	readonly displayName?: string;
+	readonly symbolName?: string;
 	readonly anon: boolean;
 	readonly aux: boolean;
 	readonly alias: boolean;
@@ -134,7 +134,7 @@ export interface GeneratedMetadata {
 	readonly kindId?: number;
 	readonly fieldId?: number;
 	readonly sourceArtifact: string;
-	/** Presence bitfield (`TSGrammar | TSNodeTypes | TSRuntime`). */
+	/** Presence bitfield (`TSGrammar | TSNodeTypes | TSInternals`). */
 	readonly presence?: KindPresenceFlag;
 	/** Use bitfield (`Readable | Buildable | Renderable`). */
 	readonly uses?: KindUseFlag;

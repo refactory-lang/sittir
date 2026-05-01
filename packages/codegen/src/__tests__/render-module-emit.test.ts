@@ -104,15 +104,19 @@ describe('deriveChildrenKinds', () => {
 		expect(result).toEqual(['identifier']);
 	});
 
-	it('skips unresolved refs', () => {
+	it('includes unresolved refs using their name (mirrors projection.kinds behaviour)', () => {
+		// Children are always stored as unresolved refs in the assembled IR.
+		// deriveChildrenKinds must use the ref's .name (grammar kind string)
+		// so classifySlotForEmit can look up the kind in nodeMap — the same
+		// approach AssembledField.projection.kinds uses in deriveFieldsRaw.
 		const mockChild = {
 			values: [
 				{ kind: 'node-ref', node: { kind: 'identifier' }, multiplicity: 'array' },
-				{ kind: 'node-ref', node: { kind: 'unresolved-ref', name: 'unknown' }, multiplicity: 'array' }
+				{ kind: 'node-ref', node: { kind: 'unresolved-ref', name: '_expression' }, multiplicity: 'array' }
 			]
 		};
 		const result = deriveChildrenKinds(mockChild as unknown as AssembledChild);
-		expect(result).toEqual(['identifier']);
+		expect(result).toEqual(['identifier', '_expression']);
 	});
 });
 
@@ -217,14 +221,15 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 		expect(structBody).toMatch(/pub body: BlockTransport,/);
 	});
 
-	it('function_item.name is Box<AnyTransport> (multi-kind field stays erased)', async () => {
+	it('function_item.name is PathTransport (multi-kind field covered by _path supertype)', async () => {
 		const src = await getRustTemplatesRs();
 		const structBody = extractStructBody(src, 'FunctionItemTransport');
-		// name field has kinds: ["identifier", "metavariable"] — multi → heterogeneous
+		// name field has kinds: ["identifier", "metavariable"] — both are subtypes of
+		// rust's _path supertype → classified as PathTransport (Phase 2).
 		const nameLine = structBody
 			.split('\n')
 			.find((l) => l.trim().startsWith('pub name:'));
-		expect(nameLine).toContain('Box<AnyTransport>');
+		expect(nameLine).toContain('PathTransport');
 	});
 
 	it('render_const_item_transport calls render_identifier_transport for name', async () => {
