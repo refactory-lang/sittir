@@ -9,20 +9,20 @@
 use ::sittir_core::types::KindId;
 
 pub const IDENTIFIER: KindId = KindId(1);
-pub const S_E_M_I: KindId = KindId(2);
+pub const SEMI: KindId = KindId(2);
 pub const IMPORT: KindId = KindId(3);
-pub const D_O_T: KindId = KindId(4);
+pub const DOT: KindId = KindId(4);
 pub const FROM: KindId = KindId(5);
 pub const _FUTURE_U: KindId = KindId(6);
-pub const L_P_A_R_E_N: KindId = KindId(7);
-pub const R_P_A_R_E_N: KindId = KindId(8);
-pub const C_O_M_M_A: KindId = KindId(9);
+pub const LPAREN: KindId = KindId(7);
+pub const RPAREN: KindId = KindId(8);
+pub const COMMA: KindId = KindId(9);
 pub const AS: KindId = KindId(10);
-pub const S_T_A_R: KindId = KindId(11);
+pub const STAR: KindId = KindId(11);
 pub const PRINT: KindId = KindId(12);
-pub const G_T_G_T: KindId = KindId(13);
+pub const GT_GT: KindId = KindId(13);
 pub const ASSERT: KindId = KindId(14);
-pub const C_O_L_O_N_E_Q: KindId = KindId(15);
+pub const COLON_EQ: KindId = KindId(15);
 pub const RETURN: KindId = KindId(16);
 pub const DEL: KindId = KindId(17);
 pub const RAISE: KindId = KindId(18);
@@ -30,7 +30,7 @@ pub const PASS: KindId = KindId(19);
 pub const BREAK: KindId = KindId(20);
 pub const CONTINUE: KindId = KindId(21);
 pub const IF: KindId = KindId(22);
-pub const C_O_L_O_N: KindId = KindId(23);
+pub const COLON: KindId = KindId(23);
 pub const ELIF: KindId = KindId(24);
 pub const ELSE: KindId = KindId(25);
 pub const MATCH: KindId = KindId(26);
@@ -41,60 +41,60 @@ pub const IN: KindId = KindId(30);
 pub const WHILE: KindId = KindId(31);
 pub const TRY: KindId = KindId(32);
 pub const EXCEPT: KindId = KindId(33);
-pub const S_T_A_R2: KindId = KindId(34);
+pub const STAR2: KindId = KindId(34);
 pub const FINALLY: KindId = KindId(35);
 pub const WITH: KindId = KindId(36);
 pub const DEF: KindId = KindId(37);
-pub const D_A_S_H_G_T: KindId = KindId(38);
-pub const S_T_A_R_S_T_A_R: KindId = KindId(39);
+pub const DASH_GT: KindId = KindId(38);
+pub const STAR_STAR: KindId = KindId(39);
 pub const GLOBAL: KindId = KindId(40);
 pub const NONLOCAL: KindId = KindId(41);
 pub const EXEC: KindId = KindId(42);
-pub const E_Q: KindId = KindId(43);
+pub const EQ: KindId = KindId(43);
 pub const CLASS: KindId = KindId(44);
-pub const L_B_R_A_C_K: KindId = KindId(45);
-pub const R_B_R_A_C_K: KindId = KindId(46);
-pub const A_T: KindId = KindId(47);
+pub const LBRACK: KindId = KindId(45);
+pub const RBRACK: KindId = KindId(46);
+pub const AT: KindId = KindId(47);
 pub const _ANONYMOUS: KindId = KindId(48);
-pub const P_I_P_E: KindId = KindId(49);
-pub const L_B_R_A_C_E: KindId = KindId(50);
-pub const R_B_R_A_C_E: KindId = KindId(51);
-pub const P_L_U_S: KindId = KindId(52);
-pub const D_A_S_H: KindId = KindId(53);
+pub const PIPE: KindId = KindId(49);
+pub const LBRACE: KindId = KindId(50);
+pub const RBRACE: KindId = KindId(51);
+pub const PLUS: KindId = KindId(52);
+pub const DASH: KindId = KindId(53);
 pub const NOT: KindId = KindId(54);
 pub const AND: KindId = KindId(55);
 pub const OR: KindId = KindId(56);
-pub const S_L_A_S_H: KindId = KindId(57);
-pub const P_E_R_C_E_N_T: KindId = KindId(58);
-pub const S_L_A_S_H_S_L_A_S_H: KindId = KindId(59);
-pub const A_M_P: KindId = KindId(60);
-pub const C_A_R_E_T: KindId = KindId(61);
-pub const L_T_L_T: KindId = KindId(62);
-pub const T_I_L_D_E: KindId = KindId(63);
+pub const SLASH: KindId = KindId(57);
+pub const PERCENT: KindId = KindId(58);
+pub const SLASH_SLASH: KindId = KindId(59);
+pub const AMP: KindId = KindId(60);
+pub const CARET: KindId = KindId(61);
+pub const LT_LT: KindId = KindId(62);
+pub const TILDE: KindId = KindId(63);
 pub const IS: KindId = KindId(64);
-pub const L_T: KindId = KindId(65);
-pub const L_T_E_Q: KindId = KindId(66);
-pub const E_Q_E_Q: KindId = KindId(67);
-pub const B_A_N_G_E_Q: KindId = KindId(68);
-pub const G_T_E_Q: KindId = KindId(69);
-pub const G_T: KindId = KindId(70);
-pub const L_T_G_T: KindId = KindId(71);
-pub const P_L_U_S_E_Q: KindId = KindId(73);
-pub const D_A_S_H_E_Q: KindId = KindId(74);
-pub const S_T_A_R_E_Q: KindId = KindId(75);
-pub const S_L_A_S_H_E_Q: KindId = KindId(76);
-pub const A_T_E_Q: KindId = KindId(77);
-pub const S_L_A_S_H_S_L_A_S_H_E_Q: KindId = KindId(78);
-pub const P_E_R_C_E_N_T_E_Q: KindId = KindId(79);
-pub const S_T_A_R_S_T_A_R_E_Q: KindId = KindId(80);
-pub const G_T_G_T_E_Q: KindId = KindId(81);
-pub const L_T_L_T_E_Q: KindId = KindId(82);
-pub const A_M_P_E_Q: KindId = KindId(83);
-pub const C_A_R_E_T_E_Q: KindId = KindId(84);
-pub const P_I_P_E_E_Q: KindId = KindId(85);
+pub const LT: KindId = KindId(65);
+pub const LT_EQ: KindId = KindId(66);
+pub const EQ_EQ: KindId = KindId(67);
+pub const BANG_EQ: KindId = KindId(68);
+pub const GT_EQ: KindId = KindId(69);
+pub const GT: KindId = KindId(70);
+pub const LT_GT: KindId = KindId(71);
+pub const PLUS_EQ: KindId = KindId(73);
+pub const DASH_EQ: KindId = KindId(74);
+pub const STAR_EQ: KindId = KindId(75);
+pub const SLASH_EQ: KindId = KindId(76);
+pub const AT_EQ: KindId = KindId(77);
+pub const SLASH_SLASH_EQ: KindId = KindId(78);
+pub const PERCENT_EQ: KindId = KindId(79);
+pub const STAR_STAR_EQ: KindId = KindId(80);
+pub const GT_GT_EQ: KindId = KindId(81);
+pub const LT_LT_EQ: KindId = KindId(82);
+pub const AMP_EQ: KindId = KindId(83);
+pub const CARET_EQ: KindId = KindId(84);
+pub const PIPE_EQ: KindId = KindId(85);
 pub const ELLIPSIS2: KindId = KindId(87);
 pub const ESCAPE_SEQUENCE: KindId = KindId(89);
-pub const B_S_L_A_S_H: KindId = KindId(90);
+pub const BSLASH: KindId = KindId(90);
 pub const FORMAT_SPECIFIER_TOKEN1: KindId = KindId(91);
 pub const TYPE_CONVERSION: KindId = KindId(92);
 pub const INTEGER: KindId = KindId(93);
@@ -295,20 +295,20 @@ pub const _FORMAT_EXPRESSION: KindId = KindId(285);
 pub fn kind_name_from_id(id: KindId) -> &'static str {
     match id.0 {
         1 => "identifier", // "identifier"
-        2 => ";", // "SEMI"
+        2 => ";", // "semi"
         3 => "import", // "import"
-        4 => ".", // "DOT"
+        4 => ".", // "dot"
         5 => "from", // "from"
         6 => "__future__", // "__future__"
-        7 => "(", // "LPAREN"
-        8 => ")", // "RPAREN"
-        9 => ",", // "COMMA"
+        7 => "(", // "lparen"
+        8 => ")", // "rparen"
+        9 => ",", // "comma"
         10 => "as", // "as"
-        11 => "*", // "STAR"
+        11 => "*", // "star"
         12 => "print", // "print"
-        13 => ">>", // "GT_GT"
+        13 => ">>", // "gt_gt"
         14 => "assert", // "assert"
-        15 => ":=", // "COLON_EQ"
+        15 => ":=", // "colon_eq"
         16 => "return", // "return"
         17 => "del", // "del"
         18 => "raise", // "raise"
@@ -316,7 +316,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         20 => "break", // "break"
         21 => "continue", // "continue"
         22 => "if", // "if"
-        23 => ":", // "COLON"
+        23 => ":", // "colon"
         24 => "elif", // "elif"
         25 => "else", // "else"
         26 => "match", // "match"
@@ -327,60 +327,60 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         31 => "while", // "while"
         32 => "try", // "try"
         33 => "except", // "except"
-        34 => "*", // "STAR2"
+        34 => "*", // "star2"
         35 => "finally", // "finally"
         36 => "with", // "with"
         37 => "def", // "def"
-        38 => "->", // "DASH_GT"
-        39 => "**", // "STAR_STAR"
+        38 => "->", // "dash_gt"
+        39 => "**", // "star_star"
         40 => "global", // "global"
         41 => "nonlocal", // "nonlocal"
         42 => "exec", // "exec"
-        43 => "=", // "EQ"
+        43 => "=", // "eq"
         44 => "class", // "class"
-        45 => "[", // "LBRACK"
-        46 => "]", // "RBRACK"
-        47 => "@", // "AT"
+        45 => "[", // "lbrack"
+        46 => "]", // "rbrack"
+        47 => "@", // "at"
         48 => "_", // "_"
-        49 => "|", // "PIPE"
-        50 => "{", // "LBRACE"
-        51 => "}", // "RBRACE"
-        52 => "+", // "PLUS"
-        53 => "-", // "DASH"
+        49 => "|", // "pipe"
+        50 => "{", // "lbrace"
+        51 => "}", // "rbrace"
+        52 => "+", // "plus"
+        53 => "-", // "dash"
         54 => "not", // "not"
         55 => "and", // "and"
         56 => "or", // "or"
-        57 => "/", // "SLASH"
-        58 => "%", // "PERCENT"
-        59 => "//", // "SLASH_SLASH"
-        60 => "&", // "AMP"
-        61 => "^", // "CARET"
-        62 => "<<", // "LT_LT"
-        63 => "~", // "TILDE"
+        57 => "/", // "slash"
+        58 => "%", // "percent"
+        59 => "//", // "slash_slash"
+        60 => "&", // "amp"
+        61 => "^", // "caret"
+        62 => "<<", // "lt_lt"
+        63 => "~", // "tilde"
         64 => "is", // "is"
-        65 => "<", // "LT"
-        66 => "<=", // "LT_EQ"
-        67 => "==", // "EQ_EQ"
-        68 => "!=", // "BANG_EQ"
-        69 => ">=", // "GT_EQ"
-        70 => ">", // "GT"
-        71 => "<>", // "LT_GT"
-        73 => "+=", // "PLUS_EQ"
-        74 => "-=", // "DASH_EQ"
-        75 => "*=", // "STAR_EQ"
-        76 => "/=", // "SLASH_EQ"
-        77 => "@=", // "AT_EQ"
-        78 => "//=", // "SLASH_SLASH_EQ"
-        79 => "%=", // "PERCENT_EQ"
-        80 => "**=", // "STAR_STAR_EQ"
-        81 => ">>=", // "GT_GT_EQ"
-        82 => "<<=", // "LT_LT_EQ"
-        83 => "&=", // "AMP_EQ"
-        84 => "^=", // "CARET_EQ"
-        85 => "|=", // "PIPE_EQ"
+        65 => "<", // "lt"
+        66 => "<=", // "lt_eq"
+        67 => "==", // "eq_eq"
+        68 => "!=", // "bang_eq"
+        69 => ">=", // "gt_eq"
+        70 => ">", // "gt"
+        71 => "<>", // "lt_gt"
+        73 => "+=", // "plus_eq"
+        74 => "-=", // "dash_eq"
+        75 => "*=", // "star_eq"
+        76 => "/=", // "slash_eq"
+        77 => "@=", // "at_eq"
+        78 => "//=", // "slash_slash_eq"
+        79 => "%=", // "percent_eq"
+        80 => "**=", // "star_star_eq"
+        81 => ">>=", // "gt_gt_eq"
+        82 => "<<=", // "lt_lt_eq"
+        83 => "&=", // "amp_eq"
+        84 => "^=", // "caret_eq"
+        85 => "|=", // "pipe_eq"
         87 => "ellipsis", // "ellipsis"
         89 => "escape_sequence", // "escape_sequence"
-        90 => "\\", // "BSLASH"
+        90 => "\\", // "bslash"
         91 => "format_specifier_token1", // "format_specifier_token1"
         92 => "type_conversion", // "type_conversion"
         93 => "integer", // "integer"

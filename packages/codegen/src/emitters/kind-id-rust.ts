@@ -50,6 +50,18 @@ export function toScreamingSnakeCase(memberName: string, rawKind: string): strin
 	// (`_field_identifier` → member `FieldIdentifier` → const `_FIELD_IDENTIFIER`).
 	const prefix = rawKind.startsWith('_') ? '_' : '';
 
+	// Defense for all-uppercase input (e.g. `LPAREN`, `PLUS`): a memberName
+	// with no lowercase letters has no word boundaries to split on. Treat it
+	// as a single token and pass it through. The regex split below assumes
+	// PascalCase (`CallExpression` → `Call_Expression`); applying it to
+	// `LPAREN` would produce `L_P_A_R_E_N`. The catalog now lowercases
+	// `anon_sym_*` names upstream so this branch should rarely trigger;
+	// kept defensively so any other source of uppercase memberName (future
+	// emitters, edge cases) doesn't silently break.
+	if (!/[a-z]/.test(memberName)) {
+		return `${prefix}${memberName}`;
+	}
+
 	// Insert an underscore before each interior uppercase letter, then
 	// upper-case the whole string.
 	const snake = memberName

@@ -379,7 +379,19 @@ function shouldReplaceSymbol(
 
 function deriveSymbolRuntimeName(cName: string): string {
 	if (cName.startsWith('sym_')) return cName.slice('sym_'.length);
-	if (cName.startsWith('anon_sym_')) return cName.slice('anon_sym_'.length);
+	// Anonymous tokens (`anon_sym_LPAREN`, `anon_sym_PLUS`, `anon_sym_RBRACE`)
+	// arrive in parser.c with all-caps tail names. Lowercase them so the
+	// catalog `key` is consistently snake-case across all kinds (aligns with
+	// `call_expression`, `_array_expression_list`, etc.) and the downstream
+	// PascalCase / SCREAMING_SNAKE_CASE conversions produce sane
+	// identifiers. Without this, `LPAREN` stays uppercase, the
+	// `toScreamingSnakeCase` regex inserts `_` before every letter, and the
+	// emitted Rust constant becomes `L_P_A_R_E_N` instead of `LPAREN`.
+	// The original C-side name is preserved in `parser.cSymbol`; the literal
+	// punctuation text is preserved in `parser.displayName`.
+	if (cName.startsWith('anon_sym_')) {
+		return cName.slice('anon_sym_'.length).toLowerCase();
+	}
 	if (cName.startsWith('aux_sym_')) return cName.slice('aux_sym_'.length);
 	// `alias_sym_<target>` is the parser symbol for an aliased kind. The
 	// codegen rule that produces it is the hidden source (leading

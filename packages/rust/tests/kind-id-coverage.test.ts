@@ -35,27 +35,31 @@ describe('kindIdFromName coverage (Phase B)', () => {
 		expect(id).toBe(TSKindId.NeverType);
 	});
 
-	it('resolves anonymous tokens by parser symbol name (PLUS)', () => {
-		// `anon_sym_PLUS` → catalog key `PLUS`, id 10
-		const id = kindIdFromName('PLUS');
+	it('resolves anonymous tokens by parser symbol name (plus)', () => {
+		// `anon_sym_PLUS` → catalog key `plus` (lowercased anon-sym names so
+		// the catalog stays consistently snake-case across all kinds; the
+		// displayName `+` and the parser cSymbol `anon_sym_PLUS` are
+		// preserved on the catalog row).
+		const id = kindIdFromName('plus');
 		expect(typeof id).toBe('number');
-		expect(id).toBe(TSKindId.PLUS);
+		expect(id).toBe(TSKindId.Plus);
 	});
 
 	it('resolves anonymous tokens by displayName (+)', () => {
 		// Tree-sitter emits the literal text `+` on the wire for `value.$type`.
-		// kindIdFromName('+') must resolve to the same id as kindIdFromName('PLUS').
+		// kindIdFromName('+') must resolve to the same id as kindIdFromName('plus').
 		const idByDisplay = kindIdFromName('+');
-		const idByCatalog = kindIdFromName('PLUS');
+		const idByCatalog = kindIdFromName('plus');
 		expect(idByDisplay).toBe(idByCatalog);
 	});
 
 	it('round-trips: kindNameFromId(kindIdFromName(name)) returns canonical name', () => {
-		// Canonical name = catalog `kind` (parser symbol name). For anon tokens
-		// the round-trip drops the displayName alias — `+` → 10 → `"PLUS"`.
+		// Canonical name = catalog `kind` (parser symbol name). Anon-sym names
+		// are lowercased on the catalog side (`anon_sym_PLUS` → `plus`); the
+		// displayName `+` resolves to the same id as the lowercase name.
 		expect(kindNameFromId(kindIdFromName('empty_statement'))).toBe('empty_statement');
-		expect(kindNameFromId(kindIdFromName('PLUS'))).toBe('PLUS');
-		expect(kindNameFromId(kindIdFromName('+'))).toBe('PLUS');
+		expect(kindNameFromId(kindIdFromName('plus'))).toBe('plus');
+		expect(kindNameFromId(kindIdFromName('+'))).toBe('plus');
 	});
 
 	it('throws on genuinely unknown kinds', () => {

@@ -10,11 +10,11 @@ use ::sittir_core::types::KindId;
 
 pub const IDENTIFIER: KindId = KindId(1);
 pub const HASH_BANG_LINE: KindId = KindId(2);
-pub const S_T_A_R: KindId = KindId(3);
+pub const STAR: KindId = KindId(3);
 pub const AS: KindId = KindId(4);
-pub const L_B_R_A_C_E: KindId = KindId(5);
-pub const C_O_M_M_A: KindId = KindId(6);
-pub const R_B_R_A_C_E: KindId = KindId(7);
+pub const LBRACE: KindId = KindId(5);
+pub const COMMA: KindId = KindId(6);
+pub const RBRACE: KindId = KindId(7);
 pub const TYPEOF: KindId = KindId(9);
 pub const FROM: KindId = KindId(11);
 pub const WITH: KindId = KindId(12);
@@ -22,14 +22,14 @@ pub const ASSERT: KindId = KindId(13);
 pub const VAR: KindId = KindId(14);
 pub const LET: KindId = KindId(15);
 pub const CONST: KindId = KindId(16);
-pub const B_A_N_G: KindId = KindId(17);
+pub const BANG: KindId = KindId(17);
 pub const ELSE: KindId = KindId(18);
 pub const IF: KindId = KindId(19);
 pub const SWITCH: KindId = KindId(20);
 pub const FOR: KindId = KindId(21);
-pub const L_P_A_R_E_N: KindId = KindId(22);
-pub const S_E_M_I: KindId = KindId(23);
-pub const R_P_A_R_E_N: KindId = KindId(24);
+pub const LPAREN: KindId = KindId(22);
+pub const SEMI: KindId = KindId(23);
+pub const RPAREN: KindId = KindId(24);
 pub const AWAIT: KindId = KindId(25);
 pub const IN: KindId = KindId(26);
 pub const OF: KindId = KindId(27);
@@ -41,70 +41,70 @@ pub const CONTINUE: KindId = KindId(32);
 pub const DEBUGGER: KindId = KindId(33);
 pub const RETURN: KindId = KindId(34);
 pub const THROW: KindId = KindId(35);
-pub const C_O_L_O_N: KindId = KindId(36);
+pub const COLON: KindId = KindId(36);
 pub const CASE: KindId = KindId(37);
 pub const DEFAULT: KindId = KindId(38);
 pub const CATCH: KindId = KindId(39);
 pub const FINALLY: KindId = KindId(40);
 pub const YIELD: KindId = KindId(41);
-pub const E_Q: KindId = KindId(42);
-pub const L_B_R_A_C_K: KindId = KindId(43);
-pub const R_B_R_A_C_K: KindId = KindId(44);
-pub const D_O_T: KindId = KindId(45);
+pub const EQ: KindId = KindId(42);
+pub const LBRACK: KindId = KindId(43);
+pub const RBRACK: KindId = KindId(44);
+pub const DOT: KindId = KindId(45);
 pub const FUNCTION: KindId = KindId(47);
 pub const ASYNC: KindId = KindId(48);
-pub const E_Q_G_T: KindId = KindId(49);
-pub const Q_M_A_R_K_D_O_T: KindId = KindId(50);
+pub const EQ_GT: KindId = KindId(49);
+pub const QMARK_DOT: KindId = KindId(50);
 pub const NEW: KindId = KindId(51);
-pub const P_L_U_S_E_Q: KindId = KindId(52);
-pub const D_A_S_H_E_Q: KindId = KindId(53);
-pub const S_T_A_R_E_Q: KindId = KindId(54);
-pub const S_L_A_S_H_E_Q: KindId = KindId(55);
-pub const P_E_R_C_E_N_T_E_Q: KindId = KindId(56);
-pub const C_A_R_E_T_E_Q: KindId = KindId(57);
-pub const A_M_P_E_Q: KindId = KindId(58);
-pub const P_I_P_E_E_Q: KindId = KindId(59);
-pub const G_T_G_T_E_Q: KindId = KindId(60);
-pub const G_T_G_T_G_T_E_Q: KindId = KindId(61);
-pub const L_T_L_T_E_Q: KindId = KindId(62);
-pub const S_T_A_R_S_T_A_R_E_Q: KindId = KindId(63);
-pub const A_M_P_A_M_P_E_Q: KindId = KindId(64);
-pub const P_I_P_E_P_I_P_E_E_Q: KindId = KindId(65);
-pub const Q_M_A_R_K_Q_M_A_R_K_E_Q: KindId = KindId(66);
-pub const D_O_T_D_O_T_D_O_T: KindId = KindId(67);
-pub const A_M_P_A_M_P: KindId = KindId(68);
-pub const P_I_P_E_P_I_P_E: KindId = KindId(69);
-pub const G_T_G_T: KindId = KindId(70);
-pub const G_T_G_T_G_T: KindId = KindId(71);
-pub const L_T_L_T: KindId = KindId(72);
-pub const A_M_P: KindId = KindId(73);
-pub const C_A_R_E_T: KindId = KindId(74);
-pub const P_I_P_E: KindId = KindId(75);
-pub const P_L_U_S: KindId = KindId(76);
-pub const D_A_S_H: KindId = KindId(77);
-pub const S_L_A_S_H: KindId = KindId(78);
-pub const P_E_R_C_E_N_T: KindId = KindId(79);
-pub const S_T_A_R_S_T_A_R: KindId = KindId(80);
-pub const L_T: KindId = KindId(81);
-pub const L_T_E_Q: KindId = KindId(82);
-pub const E_Q_E_Q: KindId = KindId(83);
-pub const E_Q_E_Q_E_Q: KindId = KindId(84);
-pub const B_A_N_G_E_Q: KindId = KindId(85);
-pub const B_A_N_G_E_Q_E_Q: KindId = KindId(86);
-pub const G_T_E_Q: KindId = KindId(87);
-pub const G_T: KindId = KindId(88);
-pub const Q_M_A_R_K_Q_M_A_R_K: KindId = KindId(89);
+pub const PLUS_EQ: KindId = KindId(52);
+pub const DASH_EQ: KindId = KindId(53);
+pub const STAR_EQ: KindId = KindId(54);
+pub const SLASH_EQ: KindId = KindId(55);
+pub const PERCENT_EQ: KindId = KindId(56);
+pub const CARET_EQ: KindId = KindId(57);
+pub const AMP_EQ: KindId = KindId(58);
+pub const PIPE_EQ: KindId = KindId(59);
+pub const GT_GT_EQ: KindId = KindId(60);
+pub const GT_GT_GT_EQ: KindId = KindId(61);
+pub const LT_LT_EQ: KindId = KindId(62);
+pub const STAR_STAR_EQ: KindId = KindId(63);
+pub const AMP_AMP_EQ: KindId = KindId(64);
+pub const PIPE_PIPE_EQ: KindId = KindId(65);
+pub const QMARK_QMARK_EQ: KindId = KindId(66);
+pub const DOT_DOT_DOT: KindId = KindId(67);
+pub const AMP_AMP: KindId = KindId(68);
+pub const PIPE_PIPE: KindId = KindId(69);
+pub const GT_GT: KindId = KindId(70);
+pub const GT_GT_GT: KindId = KindId(71);
+pub const LT_LT: KindId = KindId(72);
+pub const AMP: KindId = KindId(73);
+pub const CARET: KindId = KindId(74);
+pub const PIPE: KindId = KindId(75);
+pub const PLUS: KindId = KindId(76);
+pub const DASH: KindId = KindId(77);
+pub const SLASH: KindId = KindId(78);
+pub const PERCENT: KindId = KindId(79);
+pub const STAR_STAR: KindId = KindId(80);
+pub const LT: KindId = KindId(81);
+pub const LT_EQ: KindId = KindId(82);
+pub const EQ_EQ: KindId = KindId(83);
+pub const EQ_EQ_EQ: KindId = KindId(84);
+pub const BANG_EQ: KindId = KindId(85);
+pub const BANG_EQ_EQ: KindId = KindId(86);
+pub const GT_EQ: KindId = KindId(87);
+pub const GT: KindId = KindId(88);
+pub const QMARK_QMARK: KindId = KindId(89);
 pub const INSTANCEOF: KindId = KindId(90);
-pub const T_I_L_D_E: KindId = KindId(91);
+pub const TILDE: KindId = KindId(91);
 pub const VOID: KindId = KindId(92);
 pub const DELETE: KindId = KindId(93);
 pub const UNESCAPED_DOUBLE_STRING_FRAGMENT: KindId = KindId(94);
 pub const UNESCAPED_SINGLE_STRING_FRAGMENT: KindId = KindId(95);
 pub const ESCAPE_SEQUENCE: KindId = KindId(96);
 pub const COMMENT: KindId = KindId(97);
-pub const B_Q_U_O_T_E: KindId = KindId(98);
-pub const D_O_L_L_A_R_L_B_R_A_C_E: KindId = KindId(99);
-pub const S_L_A_S_H2: KindId = KindId(100);
+pub const BQUOTE: KindId = KindId(98);
+pub const DOLLAR_LBRACE: KindId = KindId(99);
+pub const SLASH2: KindId = KindId(100);
 pub const REGEX_PATTERN: KindId = KindId(101);
 pub const REGEX_FLAGS: KindId = KindId(102);
 pub const NUMBER: KindId = KindId(103);
@@ -117,7 +117,7 @@ pub const TRUE: KindId = KindId(109);
 pub const FALSE: KindId = KindId(110);
 pub const NULL: KindId = KindId(111);
 pub const UNDEFINED: KindId = KindId(112);
-pub const A_T: KindId = KindId(113);
+pub const AT: KindId = KindId(113);
 pub const STATIC: KindId = KindId(114);
 pub const GET: KindId = KindId(115);
 pub const SET: KindId = KindId(116);
@@ -132,7 +132,7 @@ pub const ANY: KindId = KindId(125);
 pub const BOOLEAN: KindId = KindId(127);
 pub const SYMBOL: KindId = KindId(129);
 pub const EXPORT: KindId = KindId(130);
-pub const Q_M_A_R_K: KindId = KindId(132);
+pub const QMARK: KindId = KindId(132);
 pub const ABSTRACT: KindId = KindId(133);
 pub const SATISFIES: KindId = KindId(134);
 pub const REQUIRE: KindId = KindId(135);
@@ -141,23 +141,23 @@ pub const IMPLEMENTS: KindId = KindId(137);
 pub const GLOBAL: KindId = KindId(138);
 pub const INTERFACE: KindId = KindId(139);
 pub const ENUM: KindId = KindId(140);
-pub const D_A_S_H_Q_M_A_R_K_C_O_L_O_N: KindId = KindId(141);
-pub const P_L_U_S_Q_M_A_R_K_C_O_L_O_N: KindId = KindId(142);
-pub const Q_M_A_R_K_C_O_L_O_N: KindId = KindId(143);
+pub const DASH_QMARK_COLON: KindId = KindId(141);
+pub const PLUS_QMARK_COLON: KindId = KindId(142);
+pub const QMARK_COLON: KindId = KindId(143);
 pub const INFER: KindId = KindId(145);
 pub const IS: KindId = KindId(146);
 pub const KEYOF: KindId = KindId(147);
 pub const UNIQUE: KindId = KindId(148);
 pub const UNKNOWN: KindId = KindId(149);
 pub const NEVER: KindId = KindId(150);
-pub const L_B_R_A_C_E_P_I_P_E: KindId = KindId(151);
-pub const P_I_P_E_R_B_R_A_C_E: KindId = KindId(152);
+pub const LBRACE_PIPE: KindId = KindId(151);
+pub const PIPE_RBRACE: KindId = KindId(152);
 pub const ACCESSOR: KindId = KindId(153);
 pub const USING: KindId = KindId(154);
-pub const D_Q_U_O_T_E: KindId = KindId(155);
-pub const S_Q_U_O_T_E: KindId = KindId(156);
-pub const P_L_U_S_P_L_U_S: KindId = KindId(157);
-pub const D_A_S_H_D_A_S_H: KindId = KindId(158);
+pub const DQUOTE: KindId = KindId(155);
+pub const SQUOTE: KindId = KindId(156);
+pub const PLUS_PLUS: KindId = KindId(157);
+pub const DASH_DASH: KindId = KindId(158);
 pub const _AUTOMATIC_SEMICOLON: KindId = KindId(159);
 pub const _TEMPLATE_CHARS: KindId = KindId(160);
 pub const _TERNARY_QMARK: KindId = KindId(161);
@@ -437,11 +437,11 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
     match id.0 {
         1 => "identifier", // "identifier"
         2 => "hash_bang_line", // "hash_bang_line"
-        3 => "*", // "STAR"
+        3 => "*", // "star"
         4 => "as", // "as"
-        5 => "{", // "LBRACE"
-        6 => ",", // "COMMA"
-        7 => "}", // "RBRACE"
+        5 => "{", // "lbrace"
+        6 => ",", // "comma"
+        7 => "}", // "rbrace"
         9 => "typeof", // "typeof"
         11 => "from", // "from"
         12 => "with", // "with"
@@ -449,14 +449,14 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         14 => "var", // "var"
         15 => "let", // "let"
         16 => "const", // "const"
-        17 => "!", // "BANG"
+        17 => "!", // "bang"
         18 => "else", // "else"
         19 => "if", // "if"
         20 => "switch", // "switch"
         21 => "for", // "for"
-        22 => "(", // "LPAREN"
-        23 => ";", // "SEMI"
-        24 => ")", // "RPAREN"
+        22 => "(", // "lparen"
+        23 => ";", // "semi"
+        24 => ")", // "rparen"
         25 => "await", // "await"
         26 => "in", // "in"
         27 => "of", // "of"
@@ -468,70 +468,70 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         33 => "debugger", // "debugger"
         34 => "return", // "return"
         35 => "throw", // "throw"
-        36 => ":", // "COLON"
+        36 => ":", // "colon"
         37 => "case", // "case"
         38 => "default", // "default"
         39 => "catch", // "catch"
         40 => "finally", // "finally"
         41 => "yield", // "yield"
-        42 => "=", // "EQ"
-        43 => "[", // "LBRACK"
-        44 => "]", // "RBRACK"
-        45 => ".", // "DOT"
+        42 => "=", // "eq"
+        43 => "[", // "lbrack"
+        44 => "]", // "rbrack"
+        45 => ".", // "dot"
         47 => "function", // "function"
         48 => "async", // "async"
-        49 => "=>", // "EQ_GT"
-        50 => "?.", // "QMARK_DOT"
+        49 => "=>", // "eq_gt"
+        50 => "?.", // "qmark_dot"
         51 => "new", // "new"
-        52 => "+=", // "PLUS_EQ"
-        53 => "-=", // "DASH_EQ"
-        54 => "*=", // "STAR_EQ"
-        55 => "/=", // "SLASH_EQ"
-        56 => "%=", // "PERCENT_EQ"
-        57 => "^=", // "CARET_EQ"
-        58 => "&=", // "AMP_EQ"
-        59 => "|=", // "PIPE_EQ"
-        60 => ">>=", // "GT_GT_EQ"
-        61 => ">>>=", // "GT_GT_GT_EQ"
-        62 => "<<=", // "LT_LT_EQ"
-        63 => "**=", // "STAR_STAR_EQ"
-        64 => "&&=", // "AMP_AMP_EQ"
-        65 => "||=", // "PIPE_PIPE_EQ"
-        66 => "??=", // "QMARK_QMARK_EQ"
-        67 => "...", // "DOT_DOT_DOT"
-        68 => "&&", // "AMP_AMP"
-        69 => "||", // "PIPE_PIPE"
-        70 => ">>", // "GT_GT"
-        71 => ">>>", // "GT_GT_GT"
-        72 => "<<", // "LT_LT"
-        73 => "&", // "AMP"
-        74 => "^", // "CARET"
-        75 => "|", // "PIPE"
-        76 => "+", // "PLUS"
-        77 => "-", // "DASH"
-        78 => "/", // "SLASH"
-        79 => "%", // "PERCENT"
-        80 => "**", // "STAR_STAR"
-        81 => "<", // "LT"
-        82 => "<=", // "LT_EQ"
-        83 => "==", // "EQ_EQ"
-        84 => "===", // "EQ_EQ_EQ"
-        85 => "!=", // "BANG_EQ"
-        86 => "!==", // "BANG_EQ_EQ"
-        87 => ">=", // "GT_EQ"
-        88 => ">", // "GT"
-        89 => "??", // "QMARK_QMARK"
+        52 => "+=", // "plus_eq"
+        53 => "-=", // "dash_eq"
+        54 => "*=", // "star_eq"
+        55 => "/=", // "slash_eq"
+        56 => "%=", // "percent_eq"
+        57 => "^=", // "caret_eq"
+        58 => "&=", // "amp_eq"
+        59 => "|=", // "pipe_eq"
+        60 => ">>=", // "gt_gt_eq"
+        61 => ">>>=", // "gt_gt_gt_eq"
+        62 => "<<=", // "lt_lt_eq"
+        63 => "**=", // "star_star_eq"
+        64 => "&&=", // "amp_amp_eq"
+        65 => "||=", // "pipe_pipe_eq"
+        66 => "??=", // "qmark_qmark_eq"
+        67 => "...", // "dot_dot_dot"
+        68 => "&&", // "amp_amp"
+        69 => "||", // "pipe_pipe"
+        70 => ">>", // "gt_gt"
+        71 => ">>>", // "gt_gt_gt"
+        72 => "<<", // "lt_lt"
+        73 => "&", // "amp"
+        74 => "^", // "caret"
+        75 => "|", // "pipe"
+        76 => "+", // "plus"
+        77 => "-", // "dash"
+        78 => "/", // "slash"
+        79 => "%", // "percent"
+        80 => "**", // "star_star"
+        81 => "<", // "lt"
+        82 => "<=", // "lt_eq"
+        83 => "==", // "eq_eq"
+        84 => "===", // "eq_eq_eq"
+        85 => "!=", // "bang_eq"
+        86 => "!==", // "bang_eq_eq"
+        87 => ">=", // "gt_eq"
+        88 => ">", // "gt"
+        89 => "??", // "qmark_qmark"
         90 => "instanceof", // "instanceof"
-        91 => "~", // "TILDE"
+        91 => "~", // "tilde"
         92 => "void", // "void"
         93 => "delete", // "delete"
         94 => "string_fragment", // "unescaped_double_string_fragment"
         95 => "string_fragment", // "unescaped_single_string_fragment"
         96 => "escape_sequence", // "escape_sequence"
         97 => "comment", // "comment"
-        98 => "`", // "BQUOTE"
-        99 => "${", // "DOLLAR_LBRACE"
-        100 => "/", // "SLASH2"
+        98 => "`", // "bquote"
+        99 => "${", // "dollar_lbrace"
+        100 => "/", // "slash2"
         101 => "regex_pattern", // "regex_pattern"
         102 => "regex_flags", // "regex_flags"
         103 => "number", // "number"
@@ -544,7 +544,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         110 => "false", // "false"
         111 => "null", // "null"
         112 => "undefined", // "undefined"
-        113 => "@", // "AT"
+        113 => "@", // "at"
         114 => "static", // "static"
         115 => "get", // "get"
         116 => "set", // "set"
@@ -559,7 +559,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         127 => "boolean", // "boolean"
         129 => "symbol", // "symbol"
         130 => "export", // "export"
-        132 => "?", // "QMARK"
+        132 => "?", // "qmark"
         133 => "abstract", // "abstract"
         134 => "satisfies", // "satisfies"
         135 => "require", // "require"
@@ -568,23 +568,23 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         138 => "global", // "global"
         139 => "interface", // "interface"
         140 => "enum", // "enum"
-        141 => "-?:", // "DASH_QMARK_COLON"
-        142 => "+?:", // "PLUS_QMARK_COLON"
-        143 => "?:", // "QMARK_COLON"
+        141 => "-?:", // "dash_qmark_colon"
+        142 => "+?:", // "plus_qmark_colon"
+        143 => "?:", // "qmark_colon"
         145 => "infer", // "infer"
         146 => "is", // "is"
         147 => "keyof", // "keyof"
         148 => "unique symbol", // "unique"
         149 => "unknown", // "unknown"
         150 => "never", // "never"
-        151 => "{|", // "LBRACE_PIPE"
-        152 => "|}", // "PIPE_RBRACE"
+        151 => "{|", // "lbrace_pipe"
+        152 => "|}", // "pipe_rbrace"
         153 => "accessor", // "accessor"
         154 => "using", // "using"
-        155 => "\"", // "DQUOTE"
-        156 => "'", // "SQUOTE"
-        157 => "++", // "PLUS_PLUS"
-        158 => "--", // "DASH_DASH"
+        155 => "\"", // "dquote"
+        156 => "'", // "squote"
+        157 => "++", // "plus_plus"
+        158 => "--", // "dash_dash"
         159 => "_automatic_semicolon", // "_automatic_semicolon"
         160 => "string_fragment", // "_template_chars"
         161 => "?", // "_ternary_qmark"
