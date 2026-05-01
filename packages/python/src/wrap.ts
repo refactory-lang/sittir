@@ -1319,13 +1319,13 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_string_content': (d) => ({ ...d, $type: TSKindId._StringContent as number }),
   'escape_interpolation': (d) => ({ ...d, $type: TSKindId.EscapeInterpolation as number }),
   'string_end': (d) => ({ ...d, $type: TSKindId.StringEnd as number }),
+  ']': (d) => d,
+  ')': (d) => d,
+  '}': (d) => d,
   'except': (d) => ({ ...d, $type: TSKindId.Except as number }),
 };
 
 const _aliasTargetToSource: Record<string, string> = {
-  'assignment_eq': '_assignment_eq',
-  'assignment_type': '_assignment_type',
-  'assignment_typed': '_assignment_typed',
   'comprehension_clauses': '_comprehension_clauses',
   'dict_pattern_kv': '_dict_pattern_kv',
   'expression_within_for_in_clause': '_expression_within_for_in_clause',

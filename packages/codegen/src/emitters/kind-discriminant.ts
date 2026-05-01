@@ -96,10 +96,20 @@ export function collectKindEntries(
 ): KindEnumEntry[] {
 	const fullCatalog = toCatalogMap(generatedIdTables.kindIds);
 	const entries: KindEnumEntry[] = [];
+	const seenMembers = new Map<string, string>(); // member → first kind that claimed it
 	for (const kind of allKinds) {
 		const row = fullCatalog.get(kind);
 		if (row === undefined || row.id === undefined) continue;
-		const member = kindIdMemberName(nodeMap, kind);
+		let member = kindIdMemberName(nodeMap, kind);
+		// Disambiguate member-name collisions. Two different catalog keys
+		// can produce the same PascalCase member (e.g. `_literal` typeName
+		// `Literal` and anon token `literal` → `Literal`). Append the
+		// numeric id to the second occurrence so the enum compiles.
+		const existing = seenMembers.get(member);
+		if (existing !== undefined && existing !== kind) {
+			member = `${member}_${row.id}`;
+		}
+		seenMembers.set(member, kind);
 		const symbolName =
 			row.parser?.symbolName !== undefined && row.parser.symbolName !== kind
 				? row.parser.symbolName

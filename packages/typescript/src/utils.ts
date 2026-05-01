@@ -81,14 +81,10 @@ type NativeTransportVariantRule = { readonly variant: string; readonly fields: r
 
 const nativeTransportAliasTargetToSource: Record<string, string> = {
   "automatic_semicolon": "_automatic_semicolon",
-  "call_expression_call": "_call_expression_call",
-  "call_expression_member": "_call_expression_member",
-  "call_expression_template_call": "_call_expression_template_call",
   "class_body_member": "_class_body_member",
   "class_body_method": "_class_body_method",
   "class_body_method_sig": "_class_body_method_sig",
   "destructuring_pattern": "_destructuring_pattern",
-  "export_statement_default": "_export_statement_default",
   "export_statement_default_decl_arm": "_export_statement_default_decl_arm",
   "export_statement_default_decl_arm_default_kw": "_export_statement_default_decl_arm_default_kw",
   "export_statement_default_decl_arm_default_kw_value": "_export_statement_default_decl_arm_default_kw_value",
@@ -103,8 +99,6 @@ const nativeTransportAliasTargetToSource: Record<string, string> = {
   "formal_parameter": "_formal_parameter",
   "function_signature_automatic_semicolon": "_function_signature_automatic_semicolon",
   "import_identifier": "_import_identifier",
-  "import_specifier_as": "_import_specifier_as",
-  "index_signature_colon": "_index_signature_colon",
   "initializer": "_initializer",
   "jsx_attribute_name": "_jsx_attribute_name",
   "jsx_attribute_value": "_jsx_attribute_value",
@@ -117,7 +111,6 @@ const nativeTransportAliasTargetToSource: Record<string, string> = {
   "kw_static_marker": "_kw_static_marker",
   "lhs_expression": "_lhs_expression",
   "module_export_name": "_module_export_name",
-  "parenthesized_expression_typed": "_parenthesized_expression_typed",
   "property_name": "_property_name",
   "public_field_definition_abstract_first": "_public_field_definition_abstract_first",
   "public_field_definition_access_first": "_public_field_definition_access_first",
@@ -139,8 +132,6 @@ const nativeTransportAliasTargetToSource: Record<string, string> = {
   "type_query_member_expression": "_type_query_member_expression",
   "type_query_member_expression_in_type_annotation": "_type_query_member_expression_in_type_annotation",
   "type_query_subscript_expression": "_type_query_subscript_expression",
-  "update_expression_postfix": "_update_expression_postfix",
-  "update_expression_prefix": "_update_expression_prefix",
 };
 
 const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildRule> = {

@@ -4,16 +4,9 @@
 // See emitters/factory-map.ts for semantics of each map.
 {
   "factoryShapes": {
-    "_arrow_function__call_signature": "config",
-    "_arrow_function_parameter": "config",
-    "_call_expression_call": "config",
-    "_call_expression_member": "config",
-    "_call_expression_template_call": "config",
     "_class_body_member": "children",
     "_class_body_method": "config",
     "_class_body_method_sig": "children",
-    "_class_heritage_extends_clause": "children",
-    "_class_heritage_implements_clause": "children",
     "_export_statement_default_decl_arm": "config",
     "_export_statement_default_decl_arm_default_kw": "config",
     "_export_statement_default_decl_arm_default_kw_value": "config",
@@ -21,19 +14,9 @@
     "_export_statement_default_from_arm_clause_from": "config",
     "_export_statement_default_from_arm_ns_from": "config",
     "_export_statement_default_from_arm_star_from": "config",
-    "_export_statement_equals_export": "children",
-    "_export_statement_namespace_export": "children",
-    "_export_statement_type_export": "config",
     "_for_header_let_const_kind": "config",
     "_for_header_lhs": "config",
     "_for_header_var_kind": "config",
-    "_import_clause_default_import": "children",
-    "_import_clause_named_imports": "children",
-    "_import_clause_namespace_import": "children",
-    "_import_specifier_as": "config",
-    "_import_specifier_name": "config",
-    "_index_signature_colon": "config",
-    "_index_signature_mapped_type_clause": "children",
     "_initializer": "config",
     "_kw_abstract_marker": "text",
     "_kw_async_marker": "text",
@@ -42,8 +25,6 @@
     "_kw_static_marker": "text",
     "_lhs_expression": "children",
     "_number": "config",
-    "_parenthesized_expression_sequence": "children",
-    "_parenthesized_expression_typed": "config",
     "_public_field_definition_abstract_first": "config",
     "_public_field_definition_access_first": "config",
     "_public_field_definition_accessor_opt": "config",
@@ -51,8 +32,6 @@
     "_public_field_definition_readonly_first": "config",
     "_public_field_definition_static_mods": "config",
     "_reserved_identifier": "text",
-    "_string_double": "children",
-    "_string_single": "children",
     "_type_identifier": "children",
     "_type_query_call_expression": "config",
     "_type_query_call_expression_in_type_annotation": "config",
@@ -60,8 +39,6 @@
     "_type_query_member_expression": "config",
     "_type_query_member_expression_in_type_annotation": "config",
     "_type_query_subscript_expression": "config",
-    "_update_expression_postfix": "config",
-    "_update_expression_prefix": "config",
     "abstract_class_declaration": "config",
     "abstract_method_signature": "config",
     "accessibility_modifier": "text",
@@ -409,44 +386,11 @@
     }
   },
   "factoryFields": {
-    "_arrow_function__call_signature": [
-      "type_parameters",
-      "parameters",
-      "return_type"
-    ],
-    "_arrow_function_parameter": [
-      "parameter"
-    ],
-    "_call_expression_call": [
-      "function",
-      "type_arguments",
-      "arguments"
-    ],
-    "_call_expression_member": [
-      "function",
-      "type_arguments",
-      "arguments"
-    ],
-    "_call_expression_template_call": [
-      "function",
-      "arguments"
-    ],
     "_export_statement_default_from_arm_star_from": [
       "source"
     ],
     "_for_header_lhs": [
       "left"
-    ],
-    "_import_specifier_as": [
-      "name",
-      "alias"
-    ],
-    "_import_specifier_name": [
-      "name"
-    ],
-    "_index_signature_colon": [
-      "name",
-      "index_type"
     ],
     "_initializer": [
       "value"
@@ -489,14 +433,6 @@
     "_type_query_subscript_expression": [
       "object",
       "index"
-    ],
-    "_update_expression_postfix": [
-      "argument",
-      "operator"
-    ],
-    "_update_expression_prefix": [
-      "operator",
-      "argument"
     ],
     "abstract_class_declaration": [
       "decorator",

@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 239,
+  "nodeCount": 233,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -1632,162 +1632,6 @@
                   "unresolved": true
                 }
               ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "assignment__form_eq",
-      "modelType": "group",
-      "typeName": "AssignmentUFormEq",
-      "factoryName": "assignmentUFormEq",
-      "irKey": "assignmentUFormEq",
-      "hidden": false,
-      "name": "eq",
-      "parentKind": "assignment",
-      "fields": [
-        {
-          "name": "left",
-          "propertyName": "left",
-          "paramName": "left",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_left_hand_side",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_left_hand_side"
-            ]
-          }
-        }
-      ],
-      "children": [
-        {
-          "name": "assignment_eq",
-          "propertyName": "assignmentEq",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_assignment_eq",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "assignment__form_type",
-      "modelType": "group",
-      "typeName": "AssignmentUFormType",
-      "factoryName": "assignmentUFormType",
-      "irKey": "assignmentUFormType",
-      "hidden": false,
-      "name": "type",
-      "parentKind": "assignment",
-      "fields": [
-        {
-          "name": "left",
-          "propertyName": "left",
-          "paramName": "left",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_left_hand_side",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_left_hand_side"
-            ]
-          }
-        }
-      ],
-      "children": [
-        {
-          "name": "assignment_type",
-          "propertyName": "assignmentType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_assignment_type",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "assignment__form_typed",
-      "modelType": "group",
-      "typeName": "AssignmentUFormTyped",
-      "factoryName": "assignmentUFormTyped",
-      "irKey": "assignmentUFormTyped",
-      "hidden": false,
-      "name": "typed",
-      "parentKind": "assignment",
-      "fields": [
-        {
-          "name": "left",
-          "propertyName": "left",
-          "paramName": "left",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_left_hand_side",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_left_hand_side"
-            ]
-          }
-        }
-      ],
-      "children": [
-        {
-          "name": "assignment_typed",
-          "propertyName": "assignmentTyped",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_assignment_typed",
-              "unresolved": true
             }
           ]
         }
@@ -3943,34 +3787,6 @@
                   "unresolved": true
                 }
               ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "expression_statement__form_tuple",
-      "modelType": "group",
-      "typeName": "ExpressionStatementUFormTuple",
-      "factoryName": "expressionStatementUFormTuple",
-      "irKey": "expressionStatementUFormTuple",
-      "hidden": false,
-      "name": "tuple",
-      "parentKind": "expression_statement",
-      "fields": [],
-      "children": [
-        {
-          "name": "expression_statement_tuple",
-          "propertyName": "expressionStatementTuple",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_expression_statement_tuple",
-              "unresolved": true
             }
           ]
         }
@@ -7810,62 +7626,6 @@
                   "unresolved": true
                 }
               ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "with_clause__form_bare",
-      "modelType": "group",
-      "typeName": "WithClauseUFormBare",
-      "factoryName": "withClauseUFormBare",
-      "irKey": "withClauseUFormBare",
-      "hidden": false,
-      "name": "bare",
-      "parentKind": "with_clause",
-      "fields": [],
-      "children": [
-        {
-          "name": "with_clause_bare",
-          "propertyName": "withClauseBare",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_with_clause_bare",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "with_clause__form_paren",
-      "modelType": "group",
-      "typeName": "WithClauseUFormParen",
-      "factoryName": "withClauseUFormParen",
-      "irKey": "withClauseUFormParen",
-      "hidden": false,
-      "name": "paren",
-      "parentKind": "with_clause",
-      "fields": [],
-      "children": [
-        {
-          "name": "with_clause_paren",
-          "propertyName": "withClauseParen",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_with_clause_paren",
-              "unresolved": true
             }
           ]
         }

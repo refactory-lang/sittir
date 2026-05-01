@@ -659,7 +659,7 @@ export const enum TSKindId {
   CapturedPattern = 305,
   ReferencePattern = 306,
   OrPattern = 307,
-  Literal = 308,
+  Literal_308 = 308,
   LiteralPattern = 309,
   NegativeLiteral = 310,
   StringLiteral = 311,
@@ -1494,7 +1494,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "captured_pattern": return TSKindId.CapturedPattern;
     case "reference_pattern": return TSKindId.ReferencePattern;
     case "or_pattern": return TSKindId.OrPattern;
-    case "_literal": return TSKindId.Literal;
+    case "_literal": return TSKindId.Literal_308;
     case "_literal_pattern": return TSKindId.LiteralPattern;
     case "negative_literal": return TSKindId.NegativeLiteral;
     case "string_literal": return TSKindId.StringLiteral;
