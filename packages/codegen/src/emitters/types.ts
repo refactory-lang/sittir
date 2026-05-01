@@ -16,6 +16,7 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
+import { assertNever } from '../polymorph-variant.ts';
 import {
 	collectKindEntries,
 	kindDiscriminantExpr,
@@ -546,9 +547,36 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 			case 'supertype':
 				supertypes.push({ kind, subtypes: node.subtypes });
 				break;
+			case 'token':
+			case 'multi':
+				// Excluded from every category here on purpose: token nodes
+				// are structural-only with no emitted interface, and multi
+				// is a synthetic alternation — neither carries an integer
+				// TSKindId or appears in the type emitter's output.
+				break;
+			default:
+				assertNever(node);
 		}
 	}
 	return { structNodes, leafKinds, supertypes, keywordKinds, leafValueMap };
+}
+
+/**
+ * Return the canonical list of kinds that get a TSKindId integer-enum
+ * entry — struct kinds (branch / container / polymorph / standalone
+ * group) and leaf kinds (leaf / keyword / enum). This is the single
+ * source of truth used by:
+ *
+ *   - this file's own `kindEntries = collectKindEntries(allKinds, ...)`
+ *   - the `is.ts` emitter's runtime `_kindIdByKind` map
+ *
+ * Both consumers MUST receive the same list — drift means a guard or
+ * lookup references a TSKindId member that the integer enum never
+ * received, breaking the generated package's type-check.
+ */
+export function collectAllKinds(nodeMap: NodeMap): readonly string[] {
+	const { structNodes, leafKinds } = collectNodesByCategory(nodeMap);
+	return [...structNodes.map((n) => n.kind), ...leafKinds];
 }
 
 // ---------------------------------------------------------------------------

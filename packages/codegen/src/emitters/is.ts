@@ -24,11 +24,13 @@ import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledSupertype } from '../compiler/node-map.ts';
 import { snakeToCamel } from '../compiler/node-map.ts';
+import { assertNever } from '../polymorph-variant.ts';
 import {
 	collectKindEntries,
 	kindDiscriminantExpr,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
+import { collectAllKinds } from './types.ts';
 
 export interface EmitIsConfig {
 	grammar: string;
@@ -110,29 +112,10 @@ export function emitIs(config: EmitIsConfig): string {
 	// generatedIdTables is present (Phase A KindID migration). Undefined
 	// for legacy callers / unit tests — those fall back to string-only guards.
 	//
-	// IMPORTANT: this list MUST match types.ts's allKinds (structural +
-	// leaf kinds). Including supertypes / unfiltered nodeMap.nodes here
-	// produces extra entries that reference TSKindId members which the
-	// types.ts emitter never wrote to the integer enum, breaking the
-	// type-check on the generated _kindIdByKind map.
-	const allKinds: string[] = [];
-	for (const [kind, node] of nodeMap.nodes) {
-		switch (node.modelType) {
-			case 'branch':
-			case 'container':
-			case 'polymorph':
-			case 'leaf':
-			case 'keyword':
-			case 'enum':
-				allKinds.push(kind);
-				break;
-			case 'group':
-				if (!nodeMap.polymorphFormKinds.has(kind)) allKinds.push(kind);
-				break;
-			// supertypes are intentionally skipped — they have no parser-
-			// symbol and never appear in the TSKindId integer enum.
-		}
-	}
+	// `collectAllKinds` is the single source of truth shared with the
+	// types.ts emitter; both files must consume the same kind list so
+	// `_kindIdByKind` and `TSKindId` agree on which members exist.
+	const allKinds = collectAllKinds(nodeMap);
 	const kindEntries: readonly KindEnumEntry[] | undefined = generatedIdTables
 		? collectKindEntries(allKinds, nodeMap, generatedIdTables)
 		: undefined;
@@ -186,6 +169,21 @@ export function emitIs(config: EmitIsConfig): string {
 				structuralKinds.push({ kind, typeName: node.typeName, guardKey, numericId });
 				break;
 			}
+			case 'leaf':
+			case 'keyword':
+			case 'enum':
+			case 'token':
+			case 'group':
+			case 'multi':
+			case 'supertype':
+				// Per-kind guards exist only for structural kinds (branch /
+				// container / polymorph). Leaves / keywords / enums use shape
+				// guards (isNode / isTree) instead; tokens, groups, multi,
+				// and supertypes have no per-kind guard surface. Supertypes
+				// get their own guards in a separate pass below.
+				break;
+			default:
+				assertNever(node);
 		}
 	}
 
@@ -387,7 +385,7 @@ export function emitIs(config: EmitIsConfig): string {
 			)
 			.join(',\n');
 		lines.push('const _kindIdByKind = new Map<string, number>([');
-		lines.push(entries + (entries.length > 0 ? ',' : ''));
+		lines.push(entries + ',');
 		lines.push(']);');
 		lines.push('');
 	}

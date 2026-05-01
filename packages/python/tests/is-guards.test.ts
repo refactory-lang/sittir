@@ -80,6 +80,16 @@ describe('python Phase A coexistence: numeric and string $type', () => {
 		expect(is.functionDefinition(node)).toBe(true);
 	});
 
+	it('per-kind guard rejects mismatched numeric $type', () => {
+		const node = {
+			$type: TSKindId.ClassDefinition,
+			$source: 'factory',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.functionDefinition(node)).toBe(false);
+	});
+
 	it('is.kind() accepts numeric $type from factory output', () => {
 		const node = {
 			$type: TSKindId.FunctionDefinition,

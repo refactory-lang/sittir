@@ -84,6 +84,16 @@ describe('typescript Phase A coexistence: numeric and string $type', () => {
 		expect(is.classDeclaration(node)).toBe(true);
 	});
 
+	it('per-kind guard rejects mismatched numeric $type', () => {
+		const node = {
+			$type: TSKindId.FunctionDeclaration,
+			$source: 'factory',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.classDeclaration(node)).toBe(false);
+	});
+
 	it('is.kind() accepts numeric $type from factory output', () => {
 		const node = {
 			$type: TSKindId.ClassDeclaration,
