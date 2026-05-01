@@ -12,7 +12,7 @@ crate-type = ["cdylib", "rlib"]
 
 [features]
 default = ["napi-bindings"]
-napi-bindings = ["dep:napi", "dep:napi-derive"]
+napi-bindings = ["dep:napi", "dep:napi-derive", "sittir-core/napi-bindings"]
 
 [dependencies]
 sittir-core = { path = "../sittir-core" }

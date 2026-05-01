@@ -34,7 +34,7 @@ import { compileParser } from './transpile/compile-parser.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { writeJinjaTemplates } from './emitters/templates.ts';
 import { emitRenderModule } from './emitters/render-module.ts';
-import { renderModuleTemplatesDir } from './emitters/render-module-paths.ts';
+import { renderModuleTemplatesDir, renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import {
 	extractParityFixtures,
 	serializeFixtures,
@@ -282,7 +282,7 @@ if (shouldEmitRustRender) {
 	for (const [kind, body] of result.jinjaTemplates.bodies) {
 		templateFiles.push({ filename: `${kind}.jinja`, content: body });
 	}
-	const emit = emitRenderModule(grammar, templateFiles, result.nodeMap);
+	const emit = emitRenderModule(grammar, templateFiles, result.nodeMap, result.generatedIdTables);
 	writeFile(emit.hashRs.path, emit.hashRs.contents);
 	writeFile(emit.hashTs.path, emit.hashTs.contents);
 	writeFile(emit.templatesRs.path, emit.templatesRs.contents);
@@ -338,6 +338,13 @@ if (shouldEmitRustRender) {
 		if (!existing.endsWith('.jinja')) continue;
 		if (!emittedNames.has(existing))
 			rmSync(join(dstTemplatesDir, existing), { force: true });
+	}
+	// Write per-grammar kind_ids.rs (Phase B: KindID runtime migration).
+	// This file exports one pub const per kind matching the TS-side TSKindId enum.
+	if (result.kindIds) {
+		const kindIdsPath = `${renderModuleSrcDir(grammar)}/kind_ids.rs`;
+		writeFile(kindIdsPath, result.kindIds);
+		console.log(`    ${kindIdsPath}`);
 	}
 	console.log(`  → Rust render module regenerated for ${grammar}:`);
 	console.log(`    ${emit.hashRs.path}`);

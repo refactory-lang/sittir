@@ -23,6 +23,7 @@ import { emitFactoryMap } from '../emitters/factory-map.ts';
 import { emitWrap } from '../emitters/wrap.ts';
 import { emitFrom } from '../emitters/from.ts';
 import { emitClientUtils } from '../emitters/client-utils.ts';
+import { emitKindIdRust } from '../emitters/kind-id-rust.ts';
 import { emitIr } from '../emitters/ir.ts';
 import { emitTests } from '../emitters/test.ts';
 import { emitTypeTests } from '../emitters/type-test.ts';
@@ -37,6 +38,7 @@ import { loadGeneratedIdTables } from './generated-metadata.ts';
 import type { NodeMap, IncludeFilter } from './types.ts';
 import type { EmittedTemplates } from '../emitters/templates.ts';
 import type { RoundTripDiagnostic } from '../emitters/suggested.ts';
+import type { GeneratedIdTables } from './generated-metadata.ts'; // exposed via GeneratedFiles
 
 export interface GeneratedFiles {
 	grammar: string;
@@ -66,8 +68,13 @@ export interface GeneratedFiles {
 	suggested: string;
 	/** is.ts — per-grammar type guards (is/assert/isTree/isNode, spec 008 US2) */
 	is: string;
+	/** kind_ids.rs — per-grammar numeric KindId constants for the Rust render crate */
+	kindIds: string;
 	/** The intermediate NodeMap — available for inspection */
 	nodeMap: NodeMap;
+	/** Generated ID tables (from parser.c) — exposed for CLI callers that need
+	 *  to pass them to Rust-render emitters such as emitRenderModule. */
+	generatedIdTables?: GeneratedIdTables;
 }
 
 export interface GenerateConfig {
@@ -167,7 +174,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		}),
 		factoryMap: emitFactoryMap({ grammar: cfg.grammar, nodeMap }),
 		wrap: emitWrap({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
-		utils: emitClientUtils({ nodeMap }),
+		utils: emitClientUtils({ nodeMap, generatedIdTables }),
 		from: emitFrom({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
 		irNamespace: emitIr({ grammar: cfg.grammar, nodeMap }),
 		consts: emitConsts({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
@@ -182,6 +189,10 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			roundTripFailures: cfg.roundTripFailures
 		}),
 		is: emitIs({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
-		nodeMap
+		kindIds: generatedIdTables
+			? emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables })
+			: '',
+		nodeMap,
+		generatedIdTables
 	};
 }

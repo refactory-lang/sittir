@@ -38,6 +38,9 @@ import {
 	collectTransportProjection,
 	type TransportLiteral
 } from './transport-projection.ts';
+import { collectKindEntries, kindIdMemberName, type KindEnumEntry } from './kind-discriminant.ts';
+import { toScreamingSnakeCase } from './kind-id-rust.ts';
+import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 
 /** Grammars the emitter supports. Matches the three per-grammar packages. */
 export type Grammar = 'rust' | 'typescript' | 'python';
@@ -1520,9 +1523,11 @@ function libRsContents(lang: Grammar): string {
 // Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src
 
 pub mod hash;
+pub mod kind_ids;
 pub mod templates;
 
 pub use hash::TEMPLATE_BUNDLE_HASH;
+pub use kind_ids::*;
 pub use templates::{render_dispatch, render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};
 `;
 }
@@ -1573,7 +1578,8 @@ export function emitHashFiles(
 export function emitRenderModule(
 	lang: Grammar,
 	files: readonly TemplateFile[],
-	nodeMap: NodeMap
+	nodeMap: NodeMap,
+	generatedIdTables?: GeneratedIdTables
 ): RustRenderModuleEmit {
 	const { hashRs, hashTs } = emitHashFiles(lang, files);
 	const structs: EmittedStruct[] = [];
@@ -1608,11 +1614,21 @@ export function emitRenderModule(
 		);
 	}
 	const meta = collectMetaData(nodeMap);
+	const hasNumericDispatch = generatedIdTables !== undefined;
 	const templatesRs = [
 		templatesRsHeader(lang),
 		'',
 		'#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]',
 		'',
+		// Phase B: `#[napi(object)]` / `#[napi(js_name)]` proc-macro attrs and the
+		// custom `impl FromNapiValue` blocks are gated behind the napi-bindings
+		// feature.  Struct/field attributes use `#[cfg_attr(feature =
+		// "napi-bindings", napi(...))]` so they compile cleanly without the
+		// feature; but for `cfg_attr` to resolve the `napi` ident when the
+		// feature IS active we still need to import the proc-macro in scope.
+		...(hasNumericDispatch
+			? ['#[cfg(feature = "napi-bindings")]', 'use ::napi_derive::napi;', '']
+			: []),
 		// Askama resolves custom filters by looking for a sibling
 		// `filters` module at the derive-macro's call site. Re-export the
 		// canonical `sittir_core::filters::*` here; flank-aware joins read
@@ -1690,7 +1706,7 @@ export function emitRenderModule(
 		'    };',
 		'}',
 		'',
-		renderTransportSupport(nodeMap, structs, meta),
+		renderTransportSupport(nodeMap, structs, meta, generatedIdTables),
 		'',
 		renderStructDefs(structs),
 		renderDirectSupport(meta),
@@ -1716,30 +1732,24 @@ export function emitRenderModule(
 function renderTransportSupport(
 	nodeMap: NodeMap,
 	structs: EmittedStruct[],
-	meta: MetaData
+	meta: MetaData,
+	generatedIdTables?: GeneratedIdTables
 ): string {
 	const projection = collectTransportProjection(nodeMap);
 	const nodes = projection.nodes;
+
+	// Build kind entries for numeric dispatch when parser.c metadata is available.
+	const allKinds = [...nodeMap.nodes.keys()];
+	const kindEntries: readonly KindEnumEntry[] | undefined = generatedIdTables
+		? collectKindEntries(allKinds, nodeMap, generatedIdTables)
+		: undefined;
+
+	const anyTransportLines = kindEntries
+		? renderAnyTransportWithNapiFromValue(nodes, projection.literals, nodeMap, kindEntries)
+		: renderAnyTransportWithStringTag(nodes, projection.literals);
+
 	return [
-		'#[derive(Debug, Clone, ::serde::Deserialize)]',
-		'#[serde(tag = "$type")]',
-		'pub enum AnyTransport {',
-		...nodes.map((node) => {
-			const variant = rustTransportVariantName(node);
-			const structName = rustTransportStructName(node);
-			return [
-				`    #[serde(rename = ${JSON.stringify(node.kind)})]`,
-				`    ${variant}(${structName}),`
-			].join('\n');
-		}),
-		...projection.literals.map((literal, index) => {
-			const variant = rustLiteralTransportVariantName(literal, index);
-			return [
-				`    #[serde(rename = ${JSON.stringify(literal.kind)})]`,
-				`    ${variant}(LiteralTransport),`
-			].join('\n');
-		}),
-		'}',
+		...anyTransportLines,
 		'',
 		...renderLiteralTransportStruct(projection.literals),
 		'',
@@ -1753,6 +1763,215 @@ function renderTransportSupport(
 		...renderTypedDispatch(structs, nodes, projection.literals, meta),
 		...renderTransportBridge(nodes, projection.literals)
 	].join('\n');
+}
+
+/**
+ * Emit `AnyTransport` with the legacy string-tagged `#[serde(tag = "$type")]` derive.
+ * Used as a fallback when `generatedIdTables` is unavailable (no parser.c).
+ */
+function renderAnyTransportWithStringTag(
+	nodes: readonly AssembledNode[],
+	literals: readonly TransportLiteral[]
+): string[] {
+	return [
+		'#[derive(Debug, Clone, ::serde::Deserialize)]',
+		'#[serde(tag = "$type")]',
+		'pub enum AnyTransport {',
+		...nodes.map((node) => {
+			const variant = rustTransportVariantName(node);
+			const structName = rustTransportStructName(node);
+			return [
+				`    #[serde(rename = ${JSON.stringify(node.kind)})]`,
+				`    ${variant}(${structName}),`
+			].join('\n');
+		}),
+		...literals.map((literal, index) => {
+			const variant = rustLiteralTransportVariantName(literal, index);
+			return [
+				`    #[serde(rename = ${JSON.stringify(literal.kind)})]`,
+				`    ${variant}(LiteralTransport),`
+			].join('\n');
+		}),
+		'}'
+	];
+}
+
+/**
+ * Emit a custom `impl ::napi::bindgen_prelude::FromNapiValue for XxxTransport`
+ * for a polymorph transport enum. Reads the `$variant` property from the JS
+ * object and dispatches to the appropriate form struct.
+ *
+ * @param node - the assembled polymorph node
+ */
+function renderPolymorphTransportFromNapiValue(
+	node: Extract<AssembledNode, { modelType: 'polymorph' }>
+): string[] {
+	const enumName = rustTransportStructName(node);
+	const lines: string[] = [];
+	lines.push(`#[cfg(feature = "napi-bindings")]`);
+	lines.push(`impl ::napi::bindgen_prelude::FromNapiValue for ${enumName} {`);
+	lines.push(`    unsafe fn from_napi_value(`);
+	lines.push(`        env: ::napi::sys::napi_env,`);
+	lines.push(`        napi_val: ::napi::sys::napi_value,`);
+	lines.push(`    ) -> ::napi::Result<Self> {`);
+	lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
+	lines.push(`        let variant: String = obj.get("$variant")?`);
+	lines.push(`            .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;`);
+	lines.push(`        match variant.as_str() {`);
+	for (const form of node.forms) {
+		const formStructName = rustTransportFormStructName(form);
+		const formVariantName = rustTransportFormVariantName(form);
+		lines.push(`            ${JSON.stringify(form.name)} => Ok(Self::${formVariantName}(`);
+		lines.push(`                ${formStructName}::from_napi_value(env, napi_val)?`);
+		lines.push(`            )),`);
+	}
+	lines.push(`            other => Err(::napi::Error::from_reason(format!(`);
+	lines.push(`                "unknown $variant {:?} for ${enumName}",`);
+	lines.push(`                other`);
+	lines.push(`            ))),`);
+	lines.push(`        }`);
+	lines.push(`    }`);
+	lines.push(`}`);
+	lines.push('');
+	return lines;
+}
+
+/**
+ * Emit `AnyTransport` with a custom `FromNapiValue` impl that reads `$type`
+ * as a numeric `u16` KindId directly from the JS object properties (no serde,
+ * no JSON intermediate). Phase B of the KindID runtime migration.
+ *
+ * Per the spec: the `AnyTransport` enum body itself has no serde derives —
+ * only `Debug + Clone`. The custom `FromNapiValue` impl reads `$type` as `u16`
+ * and dispatches to the per-kind struct's `FromNapiValue` (generated by
+ * `#[napi(object)]`). Literals fall back to `LiteralTransport::from_napi_value`.
+ *
+ * Unknown kind IDs produce a napi error with the numeric ID in the message
+ * so that diagnostics can surface useful context.
+ *
+ * DRY constraint: the match arms come from the same `kindEntries` list that
+ * `emitKindIdRust` uses for `kind_ids.rs` constants — both consumers read
+ * from the same source so dispatch and constants stay in sync.
+ *
+ * @param nodes — assembled nodes that appear in the transport projection
+ * @param literals — literal (terminal text-only) transport kinds
+ * @param nodeMap — for `kindIdMemberName` lookups (typeName derivation)
+ * @param kindEntries — entries from the symbol catalog; used for ID→variant dispatch
+ */
+function renderAnyTransportWithNapiFromValue(
+	nodes: readonly AssembledNode[],
+	literals: readonly TransportLiteral[],
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[]
+): string[] {
+	const kindIdByKind = new Map<string, number>(kindEntries.map((e) => [e.kind, e.id]));
+
+	const lines: string[] = [];
+
+	// Enum declaration — no serde Deserialize; napi FromNapiValue added below.
+	lines.push('#[derive(Debug, Clone)]');
+	lines.push('pub enum AnyTransport {');
+	for (const node of nodes) {
+		const variant = rustTransportVariantName(node);
+		const structName = rustTransportStructName(node);
+		lines.push(`    ${variant}(${structName}),`);
+	}
+	for (const [index, literal] of literals.entries()) {
+		const variant = rustLiteralTransportVariantName(literal, index);
+		lines.push(`    ${variant}(LiteralTransport),`);
+	}
+	lines.push('}');
+	lines.push('');
+
+	// Custom FromNapiValue impl — reads $type as u16 from the JS object,
+	// then dispatches to the per-kind struct's FromNapiValue. This eliminates
+	// the serde/JSON intermediate entirely. Gated behind napi-bindings feature
+	// so templates.rs compiles without the napi/napi-derive crates available.
+	lines.push('#[cfg(feature = "napi-bindings")]');
+	lines.push('impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {');
+	lines.push('    unsafe fn from_napi_value(');
+	lines.push('        env: ::napi::sys::napi_env,');
+	lines.push('        napi_val: ::napi::sys::napi_value,');
+	lines.push('    ) -> ::napi::Result<Self> {');
+	lines.push('        // Read the JS object using napi-rs 3 Object API — all per-kind');
+	lines.push('        // struct decoders reuse the same napi_val, each reading their');
+	lines.push('        // own properties directly from the same JS object.');
+	lines.push('        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;');
+	lines.push('        let kind_id: u16 = obj.get("$type")?');
+	lines.push('            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in AnyTransport"))?;');
+	lines.push('        match kind_id {');
+
+	// One match arm per node — each arm delegates to the per-kind struct's
+	// FromNapiValue (generated by #[napi(object)]) over the same napi_val.
+	for (const node of nodes) {
+		const id = kindIdByKind.get(node.kind);
+		if (id === undefined) continue; // no parser symbol — skip
+		const variant = rustTransportVariantName(node);
+		const structName = rustTransportStructName(node);
+		const constName = toScreamingSnakeCase(kindIdMemberName(nodeMap, node.kind), node.kind);
+		lines.push(`            // kind: ${node.kind} (${constName})`);
+		lines.push(`            ${id} => Ok(AnyTransport::${variant}(`);
+		lines.push(`                ${structName}::from_napi_value(env, napi_val)?`);
+		lines.push(`            )),`);
+	}
+
+	// One match arm per literal kind.
+	for (const [index, literal] of literals.entries()) {
+		const id = kindIdByKind.get(literal.kind);
+		if (id === undefined) continue;
+		const variant = rustLiteralTransportVariantName(literal, index);
+		lines.push(`            // literal kind: ${literal.kind} → ${JSON.stringify(literal.text)}`);
+		lines.push(`            ${id} => Ok(AnyTransport::${variant}(`);
+		lines.push(`                LiteralTransport::from_napi_value(env, napi_val)?`);
+		lines.push(`            )),`);
+	}
+
+	lines.push('            other => Err(::napi::Error::from_reason(format!(');
+	lines.push('                "unknown kind id {other} in AnyTransport"');
+	lines.push('            ))),');
+	lines.push('        }');
+	lines.push('    }');
+	lines.push('}');
+
+	// Stub ToNapiValue for AnyTransport — transport is receive-only (JS→Rust);
+	// ToNapiValue is required by #[napi(object)] field bounds on containing structs
+	// but is never called at runtime. Returns JS null as a safe placeholder.
+	lines.push('#[cfg(feature = "napi-bindings")]');
+	lines.push('impl ::napi::bindgen_prelude::ToNapiValue for AnyTransport {');
+	lines.push('    unsafe fn to_napi_value(');
+	lines.push('        env: ::napi::sys::napi_env,');
+	lines.push('        _val: Self,');
+	lines.push('    ) -> ::napi::Result<::napi::sys::napi_value> {');
+	lines.push('        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())');
+	lines.push('    }');
+	lines.push('}');
+	lines.push('');
+
+	// Box<AnyTransport>: FromNapiValue + ToNapiValue — required because
+	// #[napi(object)] per-kind transport structs have Box<AnyTransport> fields
+	// and napi-rs does not provide a blanket impl for Box<T>.
+	lines.push('#[cfg(feature = "napi-bindings")]');
+	lines.push('impl ::napi::bindgen_prelude::FromNapiValue for Box<AnyTransport> {');
+	lines.push('    unsafe fn from_napi_value(');
+	lines.push('        env: ::napi::sys::napi_env,');
+	lines.push('        napi_val: ::napi::sys::napi_value,');
+	lines.push('    ) -> ::napi::Result<Self> {');
+	lines.push('        AnyTransport::from_napi_value(env, napi_val).map(Box::new)');
+	lines.push('    }');
+	lines.push('}');
+	lines.push('');
+	lines.push('#[cfg(feature = "napi-bindings")]');
+	lines.push('impl ::napi::bindgen_prelude::ToNapiValue for Box<AnyTransport> {');
+	lines.push('    unsafe fn to_napi_value(');
+	lines.push('        env: ::napi::sys::napi_env,');
+	lines.push('        val: Self,');
+	lines.push('    ) -> ::napi::Result<::napi::sys::napi_value> {');
+	lines.push('        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, *val)');
+	lines.push('    }');
+	lines.push('}');
+	lines.push('');
+
+	return lines;
 }
 
 /**
@@ -1872,7 +2091,8 @@ function renderTransportBridge(
 		'        false,',
 		'        Some(transport.text),',
 		'        transport.transport_span,',
-		'        transport.transport_node_id,',
+		// transport_node_id is Option<f64> on the wire (JS number); NodeData uses u64.
+		'        transport.transport_node_id.map(|v| v as u64),',
 		'        None,',
 		'        None,',
 		'    ))',
@@ -2014,7 +2234,8 @@ function renderTransportDataToNodeFn(
 	lines.push(`        ${defaultNamed ? 'true' : 'false'},`);
 	lines.push(hasOptionalText ? '        transport.transport_text,' : '        None,');
 	lines.push('        transport.transport_span,');
-	lines.push('        transport.transport_node_id,');
+	// transport_node_id is Option<f64> on the wire (JS number); NodeData uses u64.
+	lines.push('        transport.transport_node_id.map(|v| v as u64),');
 	lines.push('        fields,');
 	lines.push('        children,');
 	lines.push('    ))');
@@ -2048,7 +2269,8 @@ function renderTerminalTransportToNodeFn(node: AssembledNode): string[] {
 		'        true,',
 		'        Some(transport.text),',
 		'        transport.transport_span,',
-		'        transport.transport_node_id,',
+		// transport_node_id is Option<f64> on the wire (JS number); NodeData uses u64.
+		'        transport.transport_node_id.map(|v| v as u64),',
 		'        None,',
 		'        None,',
 		'    ))',
@@ -2062,10 +2284,11 @@ function renderLiteralTransportStruct(
 ): string[] {
 	if (literals.length === 0) return [];
 	return [
-		'#[derive(Debug, Clone, ::serde::Deserialize)]',
+		'#[cfg_attr(feature = "napi-bindings", napi(object))]',
+		'#[derive(Debug, Clone)]',
 		'pub struct LiteralTransport {',
 		...renderTransportMetadataFields(false),
-		'    #[serde(rename = "$text")]',
+		'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]',
 		'    pub text: String,',
 		'}'
 	];
@@ -2087,17 +2310,19 @@ function renderPolymorphTransportDefs(
 	node: Extract<AssembledNode, { modelType: 'polymorph' }>
 ): string[] {
 	const lines: string[] = [];
-	lines.push('#[derive(Debug, Clone, ::serde::Deserialize)]');
-	lines.push('#[serde(tag = "$variant")]');
+	// Polymorph envelope enum: no serde, no napi(object) — custom FromNapiValue
+	// impl below reads $variant and dispatches to the appropriate form struct.
+	lines.push('#[derive(Debug, Clone)]');
 	lines.push(`pub enum ${rustTransportStructName(node)} {`);
 	for (const form of node.forms) {
-		lines.push(`    #[serde(rename = ${JSON.stringify(form.name)})]`);
 		lines.push(
 			`    ${rustTransportFormVariantName(form)}(${rustTransportFormStructName(form)}),`
 		);
 	}
 	lines.push('}');
 	lines.push('');
+	// Custom FromNapiValue impl for the polymorph envelope.
+	lines.push(...renderPolymorphTransportFromNapiValue(node));
 	for (const form of node.forms) {
 		lines.push(
 			...renderTransportDataStruct(
@@ -2118,7 +2343,8 @@ function renderTransportDataStruct(
 	children: readonly AssembledChild[]
 ): string[] {
 	const lines: string[] = [];
-	lines.push('#[derive(Debug, Clone, ::serde::Deserialize)]');
+	lines.push('#[cfg_attr(feature = "napi-bindings", napi(object))]');
+	lines.push('#[derive(Debug, Clone)]');
 	lines.push(`pub struct ${structName} {`);
 	switch (node.modelType) {
 		case 'branch':
@@ -2130,10 +2356,7 @@ function renderTransportDataStruct(
 				lines.push(...renderTransportField(field));
 			}
 			if (children.length > 0) {
-				lines.push('    #[serde(rename = "$children")]');
-				if (!hasRequiredChild(children)) {
-					lines.push('    #[serde(default)]');
-				}
+				lines.push('    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]');
 				lines.push(`    pub children: ${rustTransportChildrenType(children)},`);
 			}
 			break;
@@ -2142,7 +2365,7 @@ function renderTransportDataStruct(
 		case 'token':
 		case 'enum':
 			lines.push(...renderTransportMetadataFields(false));
-			lines.push('    #[serde(rename = "$text")]');
+			lines.push('    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]');
 			lines.push('    pub text: String,');
 			break;
 	}
@@ -2153,22 +2376,25 @@ function renderTransportDataStruct(
 
 function renderTransportMetadataFields(includeText: boolean): string[] {
 	const lines = [
-		'    #[serde(rename = "$source", default)]',
+		'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]',
 		'    pub transport_source: Option<::sittir_core::types::Source>,',
-		'    #[serde(rename = "$named", default)]',
+		'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]',
 		'    pub transport_named: Option<bool>,'
 	];
 	if (includeText) {
 		lines.push(
-			'    #[serde(rename = "$text", default)]',
+			'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]',
 			'    pub transport_text: Option<String>,'
 		);
 	}
 	lines.push(
-		'    #[serde(rename = "$span", default)]',
+		'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]',
 		'    pub transport_span: Option<::sittir_core::types::Span>,',
-		'    #[serde(rename = "$nodeId", default)]',
-		'    pub transport_node_id: Option<u64>,'
+		// napi-rs 3 does not implement FromNapiValue/ToNapiValue for u64 (BigInt-only).
+		// JS passes $nodeId as a plain number (f64). We use f64 here and convert
+		// to u64 in the NodeData bridge (transport_node_data).
+		'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]',
+		'    pub transport_node_id: Option<f64>,'
 	);
 	return lines;
 }
@@ -2177,10 +2403,9 @@ function renderTransportField(field: AssembledField): string[] {
 	const lines: string[] = [];
 	const rustName = rustFieldIdent(field.name);
 	if (rustName !== field.name) {
-		lines.push(`    #[serde(rename = ${JSON.stringify(field.name)})]`);
-	}
-	if (!isRequired(field)) {
-		lines.push('    #[serde(default)]');
+		// Rust keyword renamed to r#kw or kw_ — add napi js_name so the JS side
+		// still uses the original grammar field name.
+		lines.push(`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(field.name)}))]`);
 	}
 	lines.push(`    pub ${rustName}: ${rustTransportFieldType(field)},`);
 	return lines;

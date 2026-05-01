@@ -17,6 +17,9 @@
 
 #![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]
 
+#[cfg(feature = "napi-bindings")]
+use ::napi_derive::napi;
+
 pub mod filters {
     //! Askama resolves custom-filter names by searching for a
     //! sibling `filters` module at the derive-macro site. This
@@ -81,6691 +84,8090 @@ pub mod filters {
     };
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
-#[serde(tag = "$type")]
+#[derive(Debug, Clone)]
 pub enum AnyTransport {
-    #[serde(rename = "_array_expression_list")]
     ArrayExpressionList(ArrayExpressionListTransport),
-    #[serde(rename = "_array_expression_semi")]
     ArrayExpressionSemi(ArrayExpressionSemiTransport),
-    #[serde(rename = "_closure_expression_block")]
     ClosureExpressionBlock(ClosureExpressionBlockTransport),
-    #[serde(rename = "_closure_expression_expr")]
     _ClosureExpressionExpr(_ClosureExpressionExprTransport),
-    #[serde(rename = "_delim_token_tree_brace")]
     _DelimTokenTreeBrace(_DelimTokenTreeBraceTransport),
-    #[serde(rename = "_delim_token_tree_bracket")]
     _DelimTokenTreeBracket(_DelimTokenTreeBracketTransport),
-    #[serde(rename = "_delim_token_tree_paren")]
     _DelimTokenTreeParen(_DelimTokenTreeParenTransport),
-    #[serde(rename = "_doc_comment")]
     DocComment(DocCommentTransport),
-    #[serde(rename = "_expression_statement_block_ending")]
     _ExpressionStatementBlockEnding(_ExpressionStatementBlockEndingTransport),
-    #[serde(rename = "_expression_statement_with_semi")]
     _ExpressionStatementWithSemi(_ExpressionStatementWithSemiTransport),
-    #[serde(rename = "_field_identifier")]
     FieldIdentifier(FieldIdentifierTransport),
-    #[serde(rename = "_field_pattern_named")]
     FieldPatternNamed(FieldPatternNamedTransport),
-    #[serde(rename = "_field_pattern_shorthand")]
     _FieldPatternShorthand(_FieldPatternShorthandTransport),
-    #[serde(rename = "_foreign_mod_item_body")]
     _ForeignModItemBody(_ForeignModItemBodyTransport),
-    #[serde(rename = "_foreign_mod_item_semi")]
     ForeignModItemSemi(ForeignModItemSemiTransport),
-    #[serde(rename = "_function_type_fn_form")]
     FunctionTypeFnForm(FunctionTypeFnFormTransport),
-    #[serde(rename = "_function_type_trait_form")]
     FunctionTypeTraitForm(FunctionTypeTraitFormTransport),
-    #[serde(rename = "_impl_item_body")]
     _ImplItemBody(_ImplItemBodyTransport),
-    #[serde(rename = "_impl_item_semi")]
     ImplItemSemi(ImplItemSemiTransport),
-    #[serde(rename = "_inner_doc_comment_marker")]
     InnerDocCommentMarker(InnerDocCommentMarkerTransport),
-    #[serde(rename = "_kw_async_marker")]
     KwAsyncMarker(KwAsyncMarkerTransport),
-    #[serde(rename = "_kw_move_marker")]
     KwMoveMarker(KwMoveMarkerTransport),
-    #[serde(rename = "_kw_negative")]
     KwNegative(KwNegativeTransport),
-    #[serde(rename = "_kw_operator")]
     KwOperator(KwOperatorTransport),
-    #[serde(rename = "_kw_ref_marker")]
     KwRefMarker(KwRefMarkerTransport),
-    #[serde(rename = "_kw_static_marker")]
     KwStaticMarker(KwStaticMarkerTransport),
-    #[serde(rename = "_kw_unsafe_marker")]
     KwUnsafeMarker(KwUnsafeMarkerTransport),
-    #[serde(rename = "_let_chain")]
     LetChain(LetChainTransport),
-    #[serde(rename = "_line_comment_content")]
     LineCommentContent(LineCommentContentTransport),
-    #[serde(rename = "_line_comment_doc")]
     LineCommentDoc(LineCommentDocTransport),
-    #[serde(rename = "_line_comment_regular_dslash")]
     LineCommentRegularDslash(LineCommentRegularDslashTransport),
-    #[serde(rename = "_macro_definition_brace")]
     _MacroDefinitionBrace(_MacroDefinitionBraceTransport),
-    #[serde(rename = "_macro_definition_bracket")]
     _MacroDefinitionBracket(_MacroDefinitionBracketTransport),
-    #[serde(rename = "_macro_definition_paren")]
     _MacroDefinitionParen(_MacroDefinitionParenTransport),
-    #[serde(rename = "_match_arm_block_ending")]
     _MatchArmBlockEnding(_MatchArmBlockEndingTransport),
-    #[serde(rename = "_match_arm_with_comma")]
     MatchArmWithComma(MatchArmWithCommaTransport),
-    #[serde(rename = "_mod_item_external")]
     ModItemExternal(ModItemExternalTransport),
-    #[serde(rename = "_mod_item_inline")]
     _ModItemInline(_ModItemInlineTransport),
-    #[serde(rename = "_non_special_token")]
     NonSpecialToken(NonSpecialTokenTransport),
-    #[serde(rename = "_or_pattern_binary")]
     OrPatternBinary(OrPatternBinaryTransport),
-    #[serde(rename = "_or_pattern_prefix")]
     OrPatternPrefix(OrPatternPrefixTransport),
-    #[serde(rename = "_outer_doc_comment_marker")]
     OuterDocCommentMarker(OuterDocCommentMarkerTransport),
-    #[serde(rename = "_pointer_type_const")]
     PointerTypeConst(PointerTypeConstTransport),
-    #[serde(rename = "_pointer_type_mut")]
     _PointerTypeMut(_PointerTypeMutTransport),
-    #[serde(rename = "_primitive_type")]
     PrimitiveType(PrimitiveTypeTransport),
-    #[serde(rename = "_range_expression_bare")]
     _RangeExpressionBare(_RangeExpressionBareTransport),
-    #[serde(rename = "_range_expression_binary")]
     RangeExpressionBinary(RangeExpressionBinaryTransport),
-    #[serde(rename = "_range_expression_postfix")]
     RangeExpressionPostfix(RangeExpressionPostfixTransport),
-    #[serde(rename = "_range_expression_prefix")]
     RangeExpressionPrefix(RangeExpressionPrefixTransport),
-    #[serde(rename = "_range_pattern_left_bare")]
     RangePatternLeftBare(RangePatternLeftBareTransport),
-    #[serde(rename = "_range_pattern_left_with_right")]
     RangePatternLeftWithRight(RangePatternLeftWithRightTransport),
-    #[serde(rename = "_range_pattern_prefix")]
     RangePatternPrefix(RangePatternPrefixTransport),
-    #[serde(rename = "_reference_expression_raw_const")]
     ReferenceExpressionRawConst(ReferenceExpressionRawConstTransport),
-    #[serde(rename = "_reference_expression_raw_mut")]
     ReferenceExpressionRawMut(ReferenceExpressionRawMutTransport),
-    #[serde(rename = "_reserved_identifier")]
     ReservedIdentifier(ReservedIdentifierTransport),
-    #[serde(rename = "_shorthand_field_identifier")]
     ShorthandFieldIdentifier(ShorthandFieldIdentifierTransport),
-    #[serde(rename = "_string_content")]
     _StringContent(_StringContentTransport),
-    #[serde(rename = "_struct_item_brace")]
     StructItemBrace(StructItemBraceTransport),
-    #[serde(rename = "_struct_item_tuple")]
     StructItemTuple(StructItemTupleTransport),
-    #[serde(rename = "_struct_item_unit")]
     StructItemUnit(StructItemUnitTransport),
-    #[serde(rename = "_token_tree_brace")]
     _TokenTreeBrace(_TokenTreeBraceTransport),
-    #[serde(rename = "_token_tree_bracket")]
     _TokenTreeBracket(_TokenTreeBracketTransport),
-    #[serde(rename = "_token_tree_paren")]
     _TokenTreeParen(_TokenTreeParenTransport),
-    #[serde(rename = "_token_tree_pattern_brace")]
     _TokenTreePatternBrace(_TokenTreePatternBraceTransport),
-    #[serde(rename = "_token_tree_pattern_bracket")]
     _TokenTreePatternBracket(_TokenTreePatternBracketTransport),
-    #[serde(rename = "_token_tree_pattern_paren")]
     _TokenTreePatternParen(_TokenTreePatternParenTransport),
-    #[serde(rename = "_type_identifier")]
     TypeIdentifier(TypeIdentifierTransport),
-    #[serde(rename = "_visibility_modifier_crate")]
     _VisibilityModifierCrate(_VisibilityModifierCrateTransport),
-    #[serde(rename = "_visibility_modifier_in_path")]
     VisibilityModifierInPath(VisibilityModifierInPathTransport),
-    #[serde(rename = "_visibility_modifier_pub")]
     VisibilityModifierPub(VisibilityModifierPubTransport),
-    #[serde(rename = "_wildcard_pattern")]
     WildcardPattern(WildcardPatternTransport),
-    #[serde(rename = "abstract_type")]
     AbstractType(AbstractTypeTransport),
-    #[serde(rename = "arguments")]
     Arguments(ArgumentsTransport),
-    #[serde(rename = "array_expression")]
     ArrayExpression(ArrayExpressionTransport),
-    #[serde(rename = "array_type")]
     ArrayType(ArrayTypeTransport),
-    #[serde(rename = "assignment_expression")]
     AssignmentExpression(AssignmentExpressionTransport),
-    #[serde(rename = "associated_type")]
     AssociatedType(AssociatedTypeTransport),
-    #[serde(rename = "async_block")]
     AsyncBlock(AsyncBlockTransport),
-    #[serde(rename = "attribute")]
     Attribute(AttributeTransport),
-    #[serde(rename = "attribute_item")]
     AttributeItem(AttributeItemTransport),
-    #[serde(rename = "await_expression")]
     AwaitExpression(AwaitExpressionTransport),
-    #[serde(rename = "base_field_initializer")]
     BaseFieldInitializer(BaseFieldInitializerTransport),
-    #[serde(rename = "binary_expression")]
     BinaryExpression(BinaryExpressionTransport),
-    #[serde(rename = "block")]
     Block(BlockTransport),
-    #[serde(rename = "block_comment")]
     BlockComment(BlockCommentTransport),
-    #[serde(rename = "boolean_literal")]
     BooleanLiteral(BooleanLiteralTransport),
-    #[serde(rename = "bounded_type")]
     BoundedType(BoundedTypeTransport),
-    #[serde(rename = "bracketed_type")]
     BracketedType(BracketedTypeTransport),
-    #[serde(rename = "break_expression")]
     BreakExpression(BreakExpressionTransport),
-    #[serde(rename = "call_expression")]
     CallExpression(CallExpressionTransport),
-    #[serde(rename = "captured_pattern")]
     CapturedPattern(CapturedPatternTransport),
-    #[serde(rename = "char_literal")]
     CharLiteral(CharLiteralTransport),
-    #[serde(rename = "closure_expression_expr")]
     ClosureExpressionExpr(ClosureExpressionExprTransport),
-    #[serde(rename = "closure_expression")]
     ClosureExpression(ClosureExpressionTransport),
-    #[serde(rename = "closure_parameters")]
     ClosureParameters(ClosureParametersTransport),
-    #[serde(rename = "comment")]
     Comment(CommentTransport),
-    #[serde(rename = "compound_assignment_expr")]
     CompoundAssignmentExpr(CompoundAssignmentExprTransport),
-    #[serde(rename = "const_block")]
     ConstBlock(ConstBlockTransport),
-    #[serde(rename = "const_item")]
     ConstItem(ConstItemTransport),
-    #[serde(rename = "const_parameter")]
     ConstParameter(ConstParameterTransport),
-    #[serde(rename = "continue_expression")]
     ContinueExpression(ContinueExpressionTransport),
-    #[serde(rename = "crate")]
     Crate(CrateTransport),
-    #[serde(rename = "declaration_list")]
     DeclarationList(DeclarationListTransport),
-    #[serde(rename = "delim_token_tree_paren")]
     DelimTokenTreeParen(DelimTokenTreeParenTransport),
-    #[serde(rename = "delim_token_tree_bracket")]
     DelimTokenTreeBracket(DelimTokenTreeBracketTransport),
-    #[serde(rename = "delim_token_tree_brace")]
     DelimTokenTreeBrace(DelimTokenTreeBraceTransport),
-    #[serde(rename = "delim_token_tree")]
     DelimTokenTree(DelimTokenTreeTransport),
-    #[serde(rename = "dynamic_type")]
     DynamicType(DynamicTypeTransport),
-    #[serde(rename = "else_clause")]
     ElseClause(ElseClauseTransport),
-    #[serde(rename = "empty_statement")]
     EmptyStatement(EmptyStatementTransport),
-    #[serde(rename = "enum_item")]
     EnumItem(EnumItemTransport),
-    #[serde(rename = "enum_variant")]
     EnumVariant(EnumVariantTransport),
-    #[serde(rename = "enum_variant_list")]
     EnumVariantList(EnumVariantListTransport),
-    #[serde(rename = "escape_sequence")]
     EscapeSequence(EscapeSequenceTransport),
-    #[serde(rename = "expression_statement_with_semi")]
     ExpressionStatementWithSemi(ExpressionStatementWithSemiTransport),
-    #[serde(rename = "expression_statement_block_ending")]
     ExpressionStatementBlockEnding(ExpressionStatementBlockEndingTransport),
-    #[serde(rename = "expression_statement")]
     ExpressionStatement(ExpressionStatementTransport),
-    #[serde(rename = "extern_crate_declaration")]
     ExternCrateDeclaration(ExternCrateDeclarationTransport),
-    #[serde(rename = "extern_modifier")]
     ExternModifier(ExternModifierTransport),
-    #[serde(rename = "field_declaration")]
     FieldDeclaration(FieldDeclarationTransport),
-    #[serde(rename = "field_declaration_list")]
     FieldDeclarationList(FieldDeclarationListTransport),
-    #[serde(rename = "field_expression")]
     FieldExpression(FieldExpressionTransport),
-    #[serde(rename = "field_initializer")]
     FieldInitializer(FieldInitializerTransport),
-    #[serde(rename = "field_initializer_list")]
     FieldInitializerList(FieldInitializerListTransport),
-    #[serde(rename = "field_pattern_shorthand")]
     FieldPatternShorthand(FieldPatternShorthandTransport),
-    #[serde(rename = "field_pattern")]
     FieldPattern(FieldPatternTransport),
-    #[serde(rename = "for_expression")]
     ForExpression(ForExpressionTransport),
-    #[serde(rename = "for_lifetimes")]
     ForLifetimes(ForLifetimesTransport),
-    #[serde(rename = "foreign_mod_item_body")]
     ForeignModItemBody(ForeignModItemBodyTransport),
-    #[serde(rename = "foreign_mod_item")]
     ForeignModItem(ForeignModItemTransport),
-    #[serde(rename = "fragment_specifier")]
     FragmentSpecifier(FragmentSpecifierTransport),
-    #[serde(rename = "function_item")]
     FunctionItem(FunctionItemTransport),
-    #[serde(rename = "function_modifiers")]
     FunctionModifiers(FunctionModifiersTransport),
-    #[serde(rename = "function_signature_item")]
     FunctionSignatureItem(FunctionSignatureItemTransport),
-    #[serde(rename = "function_type")]
     FunctionType(FunctionTypeTransport),
-    #[serde(rename = "gen_block")]
     GenBlock(GenBlockTransport),
-    #[serde(rename = "generic_function")]
     GenericFunction(GenericFunctionTransport),
-    #[serde(rename = "generic_pattern")]
     GenericPattern(GenericPatternTransport),
-    #[serde(rename = "generic_type")]
     GenericType(GenericTypeTransport),
-    #[serde(rename = "generic_type_with_turbofish")]
     GenericTypeWithTurbofish(GenericTypeWithTurbofishTransport),
-    #[serde(rename = "higher_ranked_trait_bound")]
     HigherRankedTraitBound(HigherRankedTraitBoundTransport),
-    #[serde(rename = "identifier")]
     Identifier(IdentifierTransport),
-    #[serde(rename = "if_expression")]
     IfExpression(IfExpressionTransport),
-    #[serde(rename = "impl_item_body")]
     ImplItemBody(ImplItemBodyTransport),
-    #[serde(rename = "impl_item")]
     ImplItem(ImplItemTransport),
-    #[serde(rename = "index_expression")]
     IndexExpression(IndexExpressionTransport),
-    #[serde(rename = "inner_attribute_item")]
     InnerAttributeItem(InnerAttributeItemTransport),
-    #[serde(rename = "integer_literal")]
     IntegerLiteral(IntegerLiteralTransport),
-    #[serde(rename = "label")]
     Label(LabelTransport),
-    #[serde(rename = "last_match_arm")]
     LastMatchArm(LastMatchArmTransport),
-    #[serde(rename = "let_condition")]
     LetCondition(LetConditionTransport),
-    #[serde(rename = "let_declaration")]
     LetDeclaration(LetDeclarationTransport),
-    #[serde(rename = "lifetime")]
     Lifetime(LifetimeTransport),
-    #[serde(rename = "lifetime_parameter")]
     LifetimeParameter(LifetimeParameterTransport),
-    #[serde(rename = "line_comment")]
     LineComment(LineCommentTransport),
-    #[serde(rename = "loop_expression")]
     LoopExpression(LoopExpressionTransport),
-    #[serde(rename = "macro_definition_paren")]
     MacroDefinitionParen(MacroDefinitionParenTransport),
-    #[serde(rename = "macro_definition_bracket")]
     MacroDefinitionBracket(MacroDefinitionBracketTransport),
-    #[serde(rename = "macro_definition_brace")]
     MacroDefinitionBrace(MacroDefinitionBraceTransport),
-    #[serde(rename = "macro_definition")]
     MacroDefinition(MacroDefinitionTransport),
-    #[serde(rename = "macro_invocation")]
     MacroInvocation(MacroInvocationTransport),
-    #[serde(rename = "macro_rule")]
     MacroRule(MacroRuleTransport),
-    #[serde(rename = "match_arm_block_ending")]
     MatchArmBlockEnding(MatchArmBlockEndingTransport),
-    #[serde(rename = "match_arm")]
     MatchArm(MatchArmTransport),
-    #[serde(rename = "match_block")]
     MatchBlock(MatchBlockTransport),
-    #[serde(rename = "match_expression")]
     MatchExpression(MatchExpressionTransport),
-    #[serde(rename = "match_pattern")]
     MatchPattern(MatchPatternTransport),
-    #[serde(rename = "metavariable")]
     Metavariable(MetavariableTransport),
-    #[serde(rename = "mod_item_inline")]
     ModItemInline(ModItemInlineTransport),
-    #[serde(rename = "mod_item")]
     ModItem(ModItemTransport),
-    #[serde(rename = "mut_pattern")]
     MutPattern(MutPatternTransport),
-    #[serde(rename = "mutable_specifier")]
     MutableSpecifier(MutableSpecifierTransport),
-    #[serde(rename = "negative_literal")]
     NegativeLiteral(NegativeLiteralTransport),
-    #[serde(rename = "never_type")]
     NeverType(NeverTypeTransport),
-    #[serde(rename = "or_pattern")]
     OrPattern(OrPatternTransport),
-    #[serde(rename = "ordered_field_declaration_list")]
     OrderedFieldDeclarationList(OrderedFieldDeclarationListTransport),
-    #[serde(rename = "parameter")]
     Parameter(ParameterTransport),
-    #[serde(rename = "parameters")]
     Parameters(ParametersTransport),
-    #[serde(rename = "parenthesized_expression")]
     ParenthesizedExpression(ParenthesizedExpressionTransport),
-    #[serde(rename = "pointer_type_mut")]
     PointerTypeMut(PointerTypeMutTransport),
-    #[serde(rename = "pointer_type")]
     PointerType(PointerTypeTransport),
-    #[serde(rename = "qualified_type")]
     QualifiedType(QualifiedTypeTransport),
-    #[serde(rename = "range_expression_bare")]
     RangeExpressionBare(RangeExpressionBareTransport),
-    #[serde(rename = "range_expression")]
     RangeExpression(RangeExpressionTransport),
-    #[serde(rename = "range_pattern")]
     RangePattern(RangePatternTransport),
-    #[serde(rename = "raw_string_literal")]
     RawStringLiteral(RawStringLiteralTransport),
-    #[serde(rename = "ref_pattern")]
     RefPattern(RefPatternTransport),
-    #[serde(rename = "reference_expression")]
     ReferenceExpression(ReferenceExpressionTransport),
-    #[serde(rename = "reference_pattern")]
     ReferencePattern(ReferencePatternTransport),
-    #[serde(rename = "reference_type")]
     ReferenceType(ReferenceTypeTransport),
-    #[serde(rename = "remaining_field_pattern")]
     RemainingFieldPattern(RemainingFieldPatternTransport),
-    #[serde(rename = "removed_trait_bound")]
     RemovedTraitBound(RemovedTraitBoundTransport),
-    #[serde(rename = "return_expression")]
     ReturnExpression(ReturnExpressionTransport),
-    #[serde(rename = "scoped_identifier")]
     ScopedIdentifier(ScopedIdentifierTransport),
-    #[serde(rename = "scoped_type_identifier")]
     ScopedTypeIdentifier(ScopedTypeIdentifierTransport),
-    #[serde(rename = "scoped_type_identifier_in_expression_position")]
     ScopedTypeIdentifierInExpressionPosition(ScopedTypeIdentifierInExpressionPositionTransport),
-    #[serde(rename = "scoped_use_list")]
     ScopedUseList(ScopedUseListTransport),
-    #[serde(rename = "self")]
     Self_(Self_Transport),
-    #[serde(rename = "self_parameter")]
     SelfParameter(SelfParameterTransport),
-    #[serde(rename = "shebang")]
     Shebang(ShebangTransport),
-    #[serde(rename = "shorthand_field_initializer")]
     ShorthandFieldInitializer(ShorthandFieldInitializerTransport),
-    #[serde(rename = "slice_pattern")]
     SlicePattern(SlicePatternTransport),
-    #[serde(rename = "source_file")]
     SourceFile(SourceFileTransport),
-    #[serde(rename = "static_item")]
     StaticItem(StaticItemTransport),
-    #[serde(rename = "string_literal")]
     StringLiteral(StringLiteralTransport),
-    #[serde(rename = "struct_expression")]
     StructExpression(StructExpressionTransport),
-    #[serde(rename = "struct_item")]
     StructItem(StructItemTransport),
-    #[serde(rename = "struct_pattern")]
     StructPattern(StructPatternTransport),
-    #[serde(rename = "super")]
     Super(SuperTransport),
-    #[serde(rename = "token_binding_pattern")]
     TokenBindingPattern(TokenBindingPatternTransport),
-    #[serde(rename = "token_repetition")]
     TokenRepetition(TokenRepetitionTransport),
-    #[serde(rename = "token_repetition_pattern")]
     TokenRepetitionPattern(TokenRepetitionPatternTransport),
-    #[serde(rename = "token_tree_paren")]
     TokenTreeParen(TokenTreeParenTransport),
-    #[serde(rename = "token_tree_bracket")]
     TokenTreeBracket(TokenTreeBracketTransport),
-    #[serde(rename = "token_tree_brace")]
     TokenTreeBrace(TokenTreeBraceTransport),
-    #[serde(rename = "token_tree")]
     TokenTree(TokenTreeTransport),
-    #[serde(rename = "token_tree_pattern_paren")]
     TokenTreePatternParen(TokenTreePatternParenTransport),
-    #[serde(rename = "token_tree_pattern_bracket")]
     TokenTreePatternBracket(TokenTreePatternBracketTransport),
-    #[serde(rename = "token_tree_pattern_brace")]
     TokenTreePatternBrace(TokenTreePatternBraceTransport),
-    #[serde(rename = "token_tree_pattern")]
     TokenTreePattern(TokenTreePatternTransport),
-    #[serde(rename = "trait_bounds")]
     TraitBounds(TraitBoundsTransport),
-    #[serde(rename = "trait_item")]
     TraitItem(TraitItemTransport),
-    #[serde(rename = "try_block")]
     TryBlock(TryBlockTransport),
-    #[serde(rename = "try_expression")]
     TryExpression(TryExpressionTransport),
-    #[serde(rename = "tuple_expression")]
     TupleExpression(TupleExpressionTransport),
-    #[serde(rename = "tuple_pattern")]
     TuplePattern(TuplePatternTransport),
-    #[serde(rename = "tuple_struct_pattern")]
     TupleStructPattern(TupleStructPatternTransport),
-    #[serde(rename = "tuple_type")]
     TupleType(TupleTypeTransport),
-    #[serde(rename = "type_arguments")]
     TypeArguments(TypeArgumentsTransport),
-    #[serde(rename = "type_binding")]
     TypeBinding(TypeBindingTransport),
-    #[serde(rename = "type_cast_expression")]
     TypeCastExpression(TypeCastExpressionTransport),
-    #[serde(rename = "type_item")]
     TypeItem(TypeItemTransport),
-    #[serde(rename = "type_parameter")]
     TypeParameter(TypeParameterTransport),
-    #[serde(rename = "type_parameters")]
     TypeParameters(TypeParametersTransport),
-    #[serde(rename = "unary_expression")]
     UnaryExpression(UnaryExpressionTransport),
-    #[serde(rename = "union_item")]
     UnionItem(UnionItemTransport),
-    #[serde(rename = "unit_expression")]
     UnitExpression(UnitExpressionTransport),
-    #[serde(rename = "unit_type")]
     UnitType(UnitTypeTransport),
-    #[serde(rename = "unsafe_block")]
     UnsafeBlock(UnsafeBlockTransport),
-    #[serde(rename = "use_as_clause")]
     UseAsClause(UseAsClauseTransport),
-    #[serde(rename = "use_bounds")]
     UseBounds(UseBoundsTransport),
-    #[serde(rename = "use_declaration")]
     UseDeclaration(UseDeclarationTransport),
-    #[serde(rename = "use_list")]
     UseList(UseListTransport),
-    #[serde(rename = "use_wildcard")]
     UseWildcard(UseWildcardTransport),
-    #[serde(rename = "variadic_parameter")]
     VariadicParameter(VariadicParameterTransport),
-    #[serde(rename = "visibility_modifier_crate")]
     VisibilityModifierCrate(VisibilityModifierCrateTransport),
-    #[serde(rename = "visibility_modifier")]
     VisibilityModifier(VisibilityModifierTransport),
-    #[serde(rename = "where_clause")]
     WhereClause(WhereClauseTransport),
-    #[serde(rename = "where_predicate")]
     WherePredicate(WherePredicateTransport),
-    #[serde(rename = "while_expression")]
     WhileExpression(WhileExpressionTransport),
-    #[serde(rename = "yield_expression")]
     YieldExpression(YieldExpressionTransport),
-    #[serde(rename = "string_content")]
     StringContent(StringContentTransport),
-    #[serde(rename = "raw_string_literal_content")]
     RawStringLiteralContent(RawStringLiteralContentTransport),
-    #[serde(rename = "float_literal")]
     FloatLiteral(FloatLiteralTransport),
-    #[serde(rename = "_outer_block_doc_comment_marker")]
     OuterBlockDocCommentMarker(OuterBlockDocCommentMarkerTransport),
-    #[serde(rename = "_inner_block_doc_comment_marker")]
     InnerBlockDocCommentMarker(InnerBlockDocCommentMarkerTransport),
-    #[serde(rename = "_error_sentinel")]
     ErrorSentinel(ErrorSentinelTransport),
-    #[serde(rename = "[")]
     Bracket(BracketTransport),
-    #[serde(rename = "]")]
     CloseBracket(CloseBracketTransport),
-    #[serde(rename = ";")]
     Semi(SemiTransport),
-    #[serde(rename = "->")]
     Arrow(ArrowTransport),
-    #[serde(rename = "_")]
     Anonymous(AnonymousTransport),
-    #[serde(rename = "{")]
     Brace(BraceTransport),
-    #[serde(rename = "}")]
     CloseBrace(CloseBraceTransport),
-    #[serde(rename = "(")]
     Paren(ParenTransport),
-    #[serde(rename = ")")]
     CloseParen(CloseParenTransport),
-    #[serde(rename = ":")]
     Colon(ColonTransport),
-    #[serde(rename = "fn")]
     Fn(FnTransport),
-    #[serde(rename = "!")]
     Bang(BangTransport),
-    #[serde(rename = "async")]
     Async(AsyncTransport),
-    #[serde(rename = "move")]
     Move(MoveTransport),
-    #[serde(rename = "..")]
     Dotdot(DotdotTransport),
-    #[serde(rename = "ref")]
     Ref(RefTransport),
-    #[serde(rename = "static")]
     Static(StaticTransport),
-    #[serde(rename = "unsafe")]
     Unsafe(UnsafeTransport),
-    #[serde(rename = "&&")]
     Andand(AndandTransport),
-    #[serde(rename = ",")]
     Comma(CommaTransport),
-    #[serde(rename = "'")]
     TokSq(TokSqTransport),
-    #[serde(rename = "as")]
     As(AsTransport),
-    #[serde(rename = "await")]
     Await(AwaitTransport),
-    #[serde(rename = "break")]
     Break(BreakTransport),
-    #[serde(rename = "const")]
     Const(ConstTransport),
-    #[serde(rename = "continue")]
     Continue(ContinueTransport),
-    #[serde(rename = "default")]
     Default(DefaultTransport),
-    #[serde(rename = "enum")]
     Enum(EnumTransport),
-    #[serde(rename = "for")]
     For(ForTransport),
-    #[serde(rename = "gen")]
     Gen(GenTransport),
-    #[serde(rename = "if")]
     If(IfTransport),
-    #[serde(rename = "impl")]
     Impl(ImplTransport),
-    #[serde(rename = "let")]
     Let(LetTransport),
-    #[serde(rename = "loop")]
     Loop(LoopTransport),
-    #[serde(rename = "match")]
     Match(MatchTransport),
-    #[serde(rename = "mod")]
     Mod(ModTransport),
-    #[serde(rename = "pub")]
     Pub(PubTransport),
-    #[serde(rename = "return")]
     Return(ReturnTransport),
-    #[serde(rename = "struct")]
     Struct(StructTransport),
-    #[serde(rename = "trait")]
     Trait(TraitTransport),
-    #[serde(rename = "type")]
     Type(TypeTransport),
-    #[serde(rename = "union")]
     Union(UnionTransport),
-    #[serde(rename = "use")]
     Use(UseTransport),
-    #[serde(rename = "where")]
     Where(WhereTransport),
-    #[serde(rename = "while")]
     While(WhileTransport),
-    #[serde(rename = "|")]
     Pipe(PipeTransport),
-    #[serde(rename = "/")]
     Slash(SlashTransport),
-    #[serde(rename = "raw")]
     Raw(RawTransport),
-    #[serde(rename = "in")]
     In(InTransport),
-    #[serde(rename = "=")]
     Eq(EqTransport),
-    #[serde(rename = "#")]
     Hash(HashTransport),
-    #[serde(rename = ".")]
     Dot(DotTransport),
-    #[serde(rename = "||")]
     Oror(OrorTransport),
-    #[serde(rename = "&")]
     Amp(AmpTransport),
-    #[serde(rename = "^")]
     Caret(CaretTransport),
-    #[serde(rename = "/*")]
     TokSlashStar(TokSlashStarTransport),
-    #[serde(rename = "*/")]
     TokStarSlash(TokStarSlashTransport),
-    #[serde(rename = "+")]
     Plus(PlusTransport),
-    #[serde(rename = "<")]
     Lt(LtTransport),
-    #[serde(rename = ">")]
     Gt(GtTransport),
-    #[serde(rename = "@")]
     At(AtTransport),
-    #[serde(rename = "dyn")]
     Dyn(DynTransport),
-    #[serde(rename = "else")]
     Else(ElseTransport),
-    #[serde(rename = "extern")]
     Extern(ExternTransport),
-    #[serde(rename = "=>")]
     FatArrow(FatArrowTransport),
-    #[serde(rename = "mut")]
     Mut(MutTransport),
-    #[serde(rename = "-")]
     Minus(MinusTransport),
-    #[serde(rename = "?")]
     Question(QuestionTransport),
-    #[serde(rename = "\"")]
     TokDq(TokDqTransport),
-    #[serde(rename = "$")]
     TokDollar(TokDollarTransport),
-    #[serde(rename = "try")]
     Try(TryTransport),
-    #[serde(rename = "*")]
     Star(StarTransport),
-    #[serde(rename = "...")]
     Ellipsis(EllipsisTransport),
-    #[serde(rename = "yield")]
     Yield(YieldTransport),
-    #[serde(rename = "..=")]
     Literal0_2e_2e_3d(LiteralTransport),
-    #[serde(rename = "==")]
     Literal1_3d_3d(LiteralTransport),
-    #[serde(rename = "!=")]
     Literal2_21_3d(LiteralTransport),
-    #[serde(rename = "<=")]
     Literal3_3c_3d(LiteralTransport),
-    #[serde(rename = ">=")]
     Literal4_3e_3d(LiteralTransport),
-    #[serde(rename = "<<")]
     Literal5_3c_3c(LiteralTransport),
-    #[serde(rename = ">>")]
     Literal6_3e_3e(LiteralTransport),
-    #[serde(rename = "%")]
     Literal7_25(LiteralTransport),
-    #[serde(rename = "+=")]
     Literal8_2b_3d(LiteralTransport),
-    #[serde(rename = "-=")]
     Literal9_2d_3d(LiteralTransport),
-    #[serde(rename = "*=")]
     Literal10_2a_3d(LiteralTransport),
-    #[serde(rename = "/=")]
     Literal11_2f_3d(LiteralTransport),
-    #[serde(rename = "%=")]
     Literal12_25_3d(LiteralTransport),
-    #[serde(rename = "&=")]
     Literal13_26_3d(LiteralTransport),
-    #[serde(rename = "|=")]
     Literal14_7c_3d(LiteralTransport),
-    #[serde(rename = "^=")]
     Literal15_5e_3d(LiteralTransport),
-    #[serde(rename = "<<=")]
     Literal16_3c_3c_3d(LiteralTransport),
-    #[serde(rename = ">>=")]
     Literal17_3e_3e_3d(LiteralTransport),
-    #[serde(rename = "::")]
     Literal18_3a_3a(LiteralTransport),
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        // Read the JS object using napi-rs 3 Object API — all per-kind
+        // struct decoders reuse the same napi_val, each reading their
+        // own properties directly from the same JS object.
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let kind_id: u16 = obj.get("$type")?
+            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in AnyTransport"))?;
+        match kind_id {
+            // kind: _array_expression_list (_ARRAY_EXPRESSION_LIST)
+            322 => Ok(AnyTransport::ArrayExpressionList(
+                ArrayExpressionListTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _array_expression_semi (_ARRAY_EXPRESSION_SEMI)
+            321 => Ok(AnyTransport::ArrayExpressionSemi(
+                ArrayExpressionSemiTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _closure_expression_block (_CLOSURE_EXPRESSION_BLOCK)
+            323 => Ok(AnyTransport::ClosureExpressionBlock(
+                ClosureExpressionBlockTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _closure_expression_expr (__CLOSURE_EXPRESSION_EXPR)
+            324 => Ok(AnyTransport::_ClosureExpressionExpr(
+                _ClosureExpressionExprTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _delim_token_tree_brace (__DELIM_TOKEN_TREE_BRACE)
+            381 => Ok(AnyTransport::_DelimTokenTreeBrace(
+                _DelimTokenTreeBraceTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _delim_token_tree_bracket (__DELIM_TOKEN_TREE_BRACKET)
+            380 => Ok(AnyTransport::_DelimTokenTreeBracket(
+                _DelimTokenTreeBracketTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _delim_token_tree_paren (__DELIM_TOKEN_TREE_PAREN)
+            379 => Ok(AnyTransport::_DelimTokenTreeParen(
+                _DelimTokenTreeParenTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _expression_statement_block_ending (__EXPRESSION_STATEMENT_BLOCK_ENDING)
+            366 => Ok(AnyTransport::_ExpressionStatementBlockEnding(
+                _ExpressionStatementBlockEndingTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _expression_statement_with_semi (__EXPRESSION_STATEMENT_WITH_SEMI)
+            365 => Ok(AnyTransport::_ExpressionStatementWithSemi(
+                _ExpressionStatementWithSemiTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _field_identifier (_FIELD_IDENTIFIER)
+            414 => Ok(AnyTransport::FieldIdentifier(
+                FieldIdentifierTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _field_pattern_named (_FIELD_PATTERN_NAMED)
+            326 => Ok(AnyTransport::FieldPatternNamed(
+                FieldPatternNamedTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _field_pattern_shorthand (__FIELD_PATTERN_SHORTHAND)
+            325 => Ok(AnyTransport::_FieldPatternShorthand(
+                _FieldPatternShorthandTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _foreign_mod_item_body (__FOREIGN_MOD_ITEM_BODY)
+            368 => Ok(AnyTransport::_ForeignModItemBody(
+                _ForeignModItemBodyTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _foreign_mod_item_semi (_FOREIGN_MOD_ITEM_SEMI)
+            367 => Ok(AnyTransport::ForeignModItemSemi(
+                ForeignModItemSemiTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _function_type_fn_form (_FUNCTION_TYPE_FN_FORM)
+            328 => Ok(AnyTransport::FunctionTypeFnForm(
+                FunctionTypeFnFormTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _function_type_trait_form (_FUNCTION_TYPE_TRAIT_FORM)
+            327 => Ok(AnyTransport::FunctionTypeTraitForm(
+                FunctionTypeTraitFormTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _impl_item_body (__IMPL_ITEM_BODY)
+            329 => Ok(AnyTransport::_ImplItemBody(
+                _ImplItemBodyTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _impl_item_semi (_IMPL_ITEM_SEMI)
+            330 => Ok(AnyTransport::ImplItemSemi(
+                ImplItemSemiTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _kw_move_marker (_KW_MOVE_MARKER)
+            351 => Ok(AnyTransport::KwMoveMarker(
+                KwMoveMarkerTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _kw_negative (_KW_NEGATIVE)
+            357 => Ok(AnyTransport::KwNegative(
+                KwNegativeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _kw_operator (_KW_OPERATOR)
+            360 => Ok(AnyTransport::KwOperator(
+                KwOperatorTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _kw_static_marker (_KW_STATIC_MARKER)
+            352 => Ok(AnyTransport::KwStaticMarker(
+                KwStaticMarkerTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _kw_unsafe_marker (_KW_UNSAFE_MARKER)
+            356 => Ok(AnyTransport::KwUnsafeMarker(
+                KwUnsafeMarkerTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _let_chain (_LET_CHAIN)
+            269 => Ok(AnyTransport::LetChain(
+                LetChainTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _line_comment_content (_LINE_COMMENT_CONTENT)
+            146 => Ok(AnyTransport::LineCommentContent(
+                LineCommentContentTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _line_comment_doc (_LINE_COMMENT_DOC)
+            372 => Ok(AnyTransport::LineCommentDoc(
+                LineCommentDocTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _line_comment_regular_dslash (_LINE_COMMENT_REGULAR_DSLASH)
+            371 => Ok(AnyTransport::LineCommentRegularDslash(
+                LineCommentRegularDslashTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _macro_definition_brace (__MACRO_DEFINITION_BRACE)
+            333 => Ok(AnyTransport::_MacroDefinitionBrace(
+                _MacroDefinitionBraceTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _macro_definition_bracket (__MACRO_DEFINITION_BRACKET)
+            332 => Ok(AnyTransport::_MacroDefinitionBracket(
+                _MacroDefinitionBracketTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _macro_definition_paren (__MACRO_DEFINITION_PAREN)
+            331 => Ok(AnyTransport::_MacroDefinitionParen(
+                _MacroDefinitionParenTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _match_arm_block_ending (__MATCH_ARM_BLOCK_ENDING)
+            370 => Ok(AnyTransport::_MatchArmBlockEnding(
+                _MatchArmBlockEndingTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _match_arm_with_comma (_MATCH_ARM_WITH_COMMA)
+            369 => Ok(AnyTransport::MatchArmWithComma(
+                MatchArmWithCommaTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _mod_item_external (_MOD_ITEM_EXTERNAL)
+            334 => Ok(AnyTransport::ModItemExternal(
+                ModItemExternalTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _mod_item_inline (__MOD_ITEM_INLINE)
+            335 => Ok(AnyTransport::_ModItemInline(
+                _ModItemInlineTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _or_pattern_binary (_OR_PATTERN_BINARY)
+            336 => Ok(AnyTransport::OrPatternBinary(
+                OrPatternBinaryTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _or_pattern_prefix (_OR_PATTERN_PREFIX)
+            337 => Ok(AnyTransport::OrPatternPrefix(
+                OrPatternPrefixTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _pointer_type_const (_POINTER_TYPE_CONST)
+            358 => Ok(AnyTransport::PointerTypeConst(
+                PointerTypeConstTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _pointer_type_mut (__POINTER_TYPE_MUT)
+            359 => Ok(AnyTransport::_PointerTypeMut(
+                _PointerTypeMutTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _range_expression_bare (__RANGE_EXPRESSION_BARE)
+            341 => Ok(AnyTransport::_RangeExpressionBare(
+                _RangeExpressionBareTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _range_expression_binary (_RANGE_EXPRESSION_BINARY)
+            338 => Ok(AnyTransport::RangeExpressionBinary(
+                RangeExpressionBinaryTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _range_expression_postfix (_RANGE_EXPRESSION_POSTFIX)
+            339 => Ok(AnyTransport::RangeExpressionPostfix(
+                RangeExpressionPostfixTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _range_expression_prefix (_RANGE_EXPRESSION_PREFIX)
+            340 => Ok(AnyTransport::RangeExpressionPrefix(
+                RangeExpressionPrefixTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _range_pattern_left_bare (_RANGE_PATTERN_LEFT_BARE)
+            344 => Ok(AnyTransport::RangePatternLeftBare(
+                RangePatternLeftBareTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _range_pattern_left_with_right (_RANGE_PATTERN_LEFT_WITH_RIGHT)
+            343 => Ok(AnyTransport::RangePatternLeftWithRight(
+                RangePatternLeftWithRightTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _range_pattern_prefix (_RANGE_PATTERN_PREFIX)
+            342 => Ok(AnyTransport::RangePatternPrefix(
+                RangePatternPrefixTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _reference_expression_raw_const (_REFERENCE_EXPRESSION_RAW_CONST)
+            361 => Ok(AnyTransport::ReferenceExpressionRawConst(
+                ReferenceExpressionRawConstTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _reference_expression_raw_mut (_REFERENCE_EXPRESSION_RAW_MUT)
+            362 => Ok(AnyTransport::ReferenceExpressionRawMut(
+                ReferenceExpressionRawMutTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _shorthand_field_identifier (_SHORTHAND_FIELD_IDENTIFIER)
+            416 => Ok(AnyTransport::ShorthandFieldIdentifier(
+                ShorthandFieldIdentifierTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _struct_item_brace (_STRUCT_ITEM_BRACE)
+            345 => Ok(AnyTransport::StructItemBrace(
+                StructItemBraceTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _struct_item_tuple (_STRUCT_ITEM_TUPLE)
+            346 => Ok(AnyTransport::StructItemTuple(
+                StructItemTupleTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _struct_item_unit (_STRUCT_ITEM_UNIT)
+            347 => Ok(AnyTransport::StructItemUnit(
+                StructItemUnitTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _token_tree_brace (__TOKEN_TREE_BRACE)
+            378 => Ok(AnyTransport::_TokenTreeBrace(
+                _TokenTreeBraceTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _token_tree_bracket (__TOKEN_TREE_BRACKET)
+            377 => Ok(AnyTransport::_TokenTreeBracket(
+                _TokenTreeBracketTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _token_tree_paren (__TOKEN_TREE_PAREN)
+            376 => Ok(AnyTransport::_TokenTreeParen(
+                _TokenTreeParenTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _token_tree_pattern_brace (__TOKEN_TREE_PATTERN_BRACE)
+            375 => Ok(AnyTransport::_TokenTreePatternBrace(
+                _TokenTreePatternBraceTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _token_tree_pattern_bracket (__TOKEN_TREE_PATTERN_BRACKET)
+            374 => Ok(AnyTransport::_TokenTreePatternBracket(
+                _TokenTreePatternBracketTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _token_tree_pattern_paren (__TOKEN_TREE_PATTERN_PAREN)
+            373 => Ok(AnyTransport::_TokenTreePatternParen(
+                _TokenTreePatternParenTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _type_identifier (_TYPE_IDENTIFIER)
+            417 => Ok(AnyTransport::TypeIdentifier(
+                TypeIdentifierTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _visibility_modifier_crate (__VISIBILITY_MODIFIER_CRATE)
+            348 => Ok(AnyTransport::_VisibilityModifierCrate(
+                _VisibilityModifierCrateTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _visibility_modifier_in_path (_VISIBILITY_MODIFIER_IN_PATH)
+            350 => Ok(AnyTransport::VisibilityModifierInPath(
+                VisibilityModifierInPathTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _visibility_modifier_pub (_VISIBILITY_MODIFIER_PUB)
+            349 => Ok(AnyTransport::VisibilityModifierPub(
+                VisibilityModifierPubTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _wildcard_pattern (_WILDCARD_PATTERN)
+            320 => Ok(AnyTransport::WildcardPattern(
+                WildcardPatternTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: abstract_type (ABSTRACT_TYPE)
+            235 => Ok(AnyTransport::AbstractType(
+                AbstractTypeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: arguments (ARGUMENTS)
+            257 => Ok(AnyTransport::Arguments(
+                ArgumentsTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: array_expression (ARRAY_EXPRESSION)
+            258 => Ok(AnyTransport::ArrayExpression(
+                ArrayExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: array_type (ARRAY_TYPE)
+            220 => Ok(AnyTransport::ArrayType(
+                ArrayTypeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: assignment_expression (ASSIGNMENT_EXPRESSION)
+            251 => Ok(AnyTransport::AssignmentExpression(
+                AssignmentExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: associated_type (ASSOCIATED_TYPE)
+            195 => Ok(AnyTransport::AssociatedType(
+                AssociatedTypeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: async_block (ASYNC_BLOCK)
+            290 => Ok(AnyTransport::AsyncBlock(
+                AsyncBlockTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: attribute (ATTRIBUTE)
+            172 => Ok(AnyTransport::Attribute(
+                AttributeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: attribute_item (ATTRIBUTE_ITEM)
+            170 => Ok(AnyTransport::AttributeItem(
+                AttributeItemTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: await_expression (AWAIT_EXPRESSION)
+            287 => Ok(AnyTransport::AwaitExpression(
+                AwaitExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: base_field_initializer (BASE_FIELD_INITIALIZER)
+            266 => Ok(AnyTransport::BaseFieldInitializer(
+                BaseFieldInitializerTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: binary_expression (BINARY_EXPRESSION)
+            250 => Ok(AnyTransport::BinaryExpression(
+                BinaryExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: block (BLOCK)
+            293 => Ok(AnyTransport::Block(
+                BlockTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: block_comment (BLOCK_COMMENT)
+            318 => Ok(AnyTransport::BlockComment(
+                BlockCommentTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: boolean_literal (BOOLEAN_LITERAL)
+            313 => Ok(AnyTransport::BooleanLiteral(
+                BooleanLiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: bounded_type (BOUNDED_TYPE)
+            228 => Ok(AnyTransport::BoundedType(
+                BoundedTypeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: bracketed_type (BRACKETED_TYPE)
+            217 => Ok(AnyTransport::BracketedType(
+                BracketedTypeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: break_expression (BREAK_EXPRESSION)
+            284 => Ok(AnyTransport::BreakExpression(
+                BreakExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: call_expression (CALL_EXPRESSION)
+            256 => Ok(AnyTransport::CallExpression(
+                CallExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: captured_pattern (CAPTURED_PATTERN)
+            305 => Ok(AnyTransport::CapturedPattern(
+                CapturedPatternTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: char_literal (CHAR_LITERAL)
+            129 => Ok(AnyTransport::CharLiteral(
+                CharLiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: closure_expression (CLOSURE_EXPRESSION)
+            281 => Ok(AnyTransport::ClosureExpression(
+                ClosureExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: closure_parameters (CLOSURE_PARAMETERS)
+            282 => Ok(AnyTransport::ClosureParameters(
+                ClosureParametersTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: compound_assignment_expr (COMPOUND_ASSIGNMENT_EXPR)
+            252 => Ok(AnyTransport::CompoundAssignmentExpr(
+                CompoundAssignmentExprTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: const_block (CONST_BLOCK)
+            280 => Ok(AnyTransport::ConstBlock(
+                ConstBlockTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: const_item (CONST_ITEM)
+            185 => Ok(AnyTransport::ConstItem(
+                ConstItemTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: const_parameter (CONST_PARAMETER)
+            200 => Ok(AnyTransport::ConstParameter(
+                ConstParameterTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: continue_expression (CONTINUE_EXPRESSION)
+            285 => Ok(AnyTransport::ContinueExpression(
+                ContinueExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: crate (CRATE)
+            141 => Ok(AnyTransport::Crate(
+                CrateTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: declaration_list (DECLARATION_LIST)
+            175 => Ok(AnyTransport::DeclarationList(
+                DeclarationListTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: delim_token_tree (DELIM_TOKEN_TREE)
+            240 => Ok(AnyTransport::DelimTokenTree(
+                DelimTokenTreeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: dynamic_type (DYNAMIC_TYPE)
+            236 => Ok(AnyTransport::DynamicType(
+                DynamicTypeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: else_clause (ELSE_CLAUSE)
+            271 => Ok(AnyTransport::ElseClause(
+                ElseClauseTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: empty_statement (EMPTY_STATEMENT)
+            159 => Ok(AnyTransport::EmptyStatement(
+                EmptyStatementTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: enum_item (ENUM_ITEM)
+            178 => Ok(AnyTransport::EnumItem(
+                EnumItemTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: enum_variant (ENUM_VARIANT)
+            180 => Ok(AnyTransport::EnumVariant(
+                EnumVariantTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: enum_variant_list (ENUM_VARIANT_LIST)
+            179 => Ok(AnyTransport::EnumVariantList(
+                EnumVariantListTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: escape_sequence (ESCAPE_SEQUENCE)
+            130 => Ok(AnyTransport::EscapeSequence(
+                EscapeSequenceTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: expression_statement (EXPRESSION_STATEMENT)
+            160 => Ok(AnyTransport::ExpressionStatement(
+                ExpressionStatementTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: extern_crate_declaration (EXTERN_CRATE_DECLARATION)
+            184 => Ok(AnyTransport::ExternCrateDeclaration(
+                ExternCrateDeclarationTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: extern_modifier (EXTERN_MODIFIER)
+            214 => Ok(AnyTransport::ExternModifier(
+                ExternModifierTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: field_declaration (FIELD_DECLARATION)
+            182 => Ok(AnyTransport::FieldDeclaration(
+                FieldDeclarationTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: field_declaration_list (FIELD_DECLARATION_LIST)
+            181 => Ok(AnyTransport::FieldDeclarationList(
+                FieldDeclarationListTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: field_expression (FIELD_EXPRESSION)
+            288 => Ok(AnyTransport::FieldExpression(
+                FieldExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: field_initializer (FIELD_INITIALIZER)
+            265 => Ok(AnyTransport::FieldInitializer(
+                FieldInitializerTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: field_initializer_list (FIELD_INITIALIZER_LIST)
+            263 => Ok(AnyTransport::FieldInitializerList(
+                FieldInitializerListTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: field_pattern (FIELD_PATTERN)
+            300 => Ok(AnyTransport::FieldPattern(
+                FieldPatternTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: for_expression (FOR_EXPRESSION)
+            279 => Ok(AnyTransport::ForExpression(
+                ForExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: for_lifetimes (FOR_LIFETIMES)
+            221 => Ok(AnyTransport::ForLifetimes(
+                ForLifetimesTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: foreign_mod_item (FOREIGN_MOD_ITEM)
+            174 => Ok(AnyTransport::ForeignModItem(
+                ForeignModItemTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: fragment_specifier (FRAGMENT_SPECIFIER)
+            167 => Ok(AnyTransport::FragmentSpecifier(
+                FragmentSpecifierTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: function_item (FUNCTION_ITEM)
+            188 => Ok(AnyTransport::FunctionItem(
+                FunctionItemTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: function_modifiers (FUNCTION_MODIFIERS)
+            190 => Ok(AnyTransport::FunctionModifiers(
+                FunctionModifiersTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: function_signature_item (FUNCTION_SIGNATURE_ITEM)
+            189 => Ok(AnyTransport::FunctionSignatureItem(
+                FunctionSignatureItemTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: function_type (FUNCTION_TYPE)
+            222 => Ok(AnyTransport::FunctionType(
+                FunctionTypeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: gen_block (GEN_BLOCK)
+            291 => Ok(AnyTransport::GenBlock(
+                GenBlockTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: generic_function (GENERIC_FUNCTION)
+            225 => Ok(AnyTransport::GenericFunction(
+                GenericFunctionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: generic_pattern (GENERIC_PATTERN)
+            295 => Ok(AnyTransport::GenericPattern(
+                GenericPatternTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: generic_type (GENERIC_TYPE)
+            226 => Ok(AnyTransport::GenericType(
+                GenericTypeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: generic_type_with_turbofish (GENERIC_TYPE_WITH_TURBOFISH)
+            227 => Ok(AnyTransport::GenericTypeWithTurbofish(
+                GenericTypeWithTurbofishTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: higher_ranked_trait_bound (HIGHER_RANKED_TRAIT_BOUND)
+            197 => Ok(AnyTransport::HigherRankedTraitBound(
+                HigherRankedTraitBoundTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: identifier (IDENTIFIER)
+            1 => Ok(AnyTransport::Identifier(
+                IdentifierTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: if_expression (IF_EXPRESSION)
+            267 => Ok(AnyTransport::IfExpression(
+                IfExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: impl_item (IMPL_ITEM)
+            193 => Ok(AnyTransport::ImplItem(
+                ImplItemTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: index_expression (INDEX_EXPRESSION)
+            286 => Ok(AnyTransport::IndexExpression(
+                IndexExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: inner_attribute_item (INNER_ATTRIBUTE_ITEM)
+            171 => Ok(AnyTransport::InnerAttributeItem(
+                InnerAttributeItemTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: integer_literal (INTEGER_LITERAL)
+            126 => Ok(AnyTransport::IntegerLiteral(
+                IntegerLiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: label (LABEL)
+            283 => Ok(AnyTransport::Label(
+                LabelTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: last_match_arm (LAST_MATCH_ARM)
+            275 => Ok(AnyTransport::LastMatchArm(
+                LastMatchArmTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: let_condition (LET_CONDITION)
+            268 => Ok(AnyTransport::LetCondition(
+                LetConditionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: let_declaration (LET_DECLARATION)
+            203 => Ok(AnyTransport::LetDeclaration(
+                LetDeclarationTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: lifetime (LIFETIME)
+            219 => Ok(AnyTransport::Lifetime(
+                LifetimeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: lifetime_parameter (LIFETIME_PARAMETER)
+            202 => Ok(AnyTransport::LifetimeParameter(
+                LifetimeParameterTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: line_comment (LINE_COMMENT)
+            314 => Ok(AnyTransport::LineComment(
+                LineCommentTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: loop_expression (LOOP_EXPRESSION)
+            278 => Ok(AnyTransport::LoopExpression(
+                LoopExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: macro_definition (MACRO_DEFINITION)
+            161 => Ok(AnyTransport::MacroDefinition(
+                MacroDefinitionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: macro_invocation (MACRO_INVOCATION)
+            239 => Ok(AnyTransport::MacroInvocation(
+                MacroInvocationTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: macro_rule (MACRO_RULE)
+            162 => Ok(AnyTransport::MacroRule(
+                MacroRuleTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: match_arm (MATCH_ARM)
+            274 => Ok(AnyTransport::MatchArm(
+                MatchArmTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: match_block (MATCH_BLOCK)
+            273 => Ok(AnyTransport::MatchBlock(
+                MatchBlockTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: match_expression (MATCH_EXPRESSION)
+            272 => Ok(AnyTransport::MatchExpression(
+                MatchExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: match_pattern (MATCH_PATTERN)
+            276 => Ok(AnyTransport::MatchPattern(
+                MatchPatternTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: metavariable (METAVARIABLE)
+            142 => Ok(AnyTransport::Metavariable(
+                MetavariableTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: mod_item (MOD_ITEM)
+            173 => Ok(AnyTransport::ModItem(
+                ModItemTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: mut_pattern (MUT_PATTERN)
+            302 => Ok(AnyTransport::MutPattern(
+                MutPatternTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: mutable_specifier (MUTABLE_SPECIFIER)
+            120 => Ok(AnyTransport::MutableSpecifier(
+                MutableSpecifierTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: negative_literal (NEGATIVE_LITERAL)
+            310 => Ok(AnyTransport::NegativeLiteral(
+                NegativeLiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: never_type (NEVER_TYPE)
+            234 => Ok(AnyTransport::NeverType(
+                NeverTypeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: or_pattern (OR_PATTERN)
+            307 => Ok(AnyTransport::OrPattern(
+                OrPatternTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: ordered_field_declaration_list (ORDERED_FIELD_DECLARATION_LIST)
+            183 => Ok(AnyTransport::OrderedFieldDeclarationList(
+                OrderedFieldDeclarationListTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: parameter (PARAMETER)
+            213 => Ok(AnyTransport::Parameter(
+                ParameterTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: parameters (PARAMETERS)
+            210 => Ok(AnyTransport::Parameters(
+                ParametersTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: parenthesized_expression (PARENTHESIZED_EXPRESSION)
+            259 => Ok(AnyTransport::ParenthesizedExpression(
+                ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: pointer_type (POINTER_TYPE)
+            233 => Ok(AnyTransport::PointerType(
+                PointerTypeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: qualified_type (QUALIFIED_TYPE)
+            218 => Ok(AnyTransport::QualifiedType(
+                QualifiedTypeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: range_expression (RANGE_EXPRESSION)
+            246 => Ok(AnyTransport::RangeExpression(
+                RangeExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: range_pattern (RANGE_PATTERN)
+            303 => Ok(AnyTransport::RangePattern(
+                RangePatternTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: raw_string_literal (RAW_STRING_LITERAL)
+            312 => Ok(AnyTransport::RawStringLiteral(
+                RawStringLiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: ref_pattern (REF_PATTERN)
+            304 => Ok(AnyTransport::RefPattern(
+                RefPatternTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: reference_expression (REFERENCE_EXPRESSION)
+            249 => Ok(AnyTransport::ReferenceExpression(
+                ReferenceExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: reference_pattern (REFERENCE_PATTERN)
+            306 => Ok(AnyTransport::ReferencePattern(
+                ReferencePatternTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: reference_type (REFERENCE_TYPE)
+            232 => Ok(AnyTransport::ReferenceType(
+                ReferenceTypeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: remaining_field_pattern (REMAINING_FIELD_PATTERN)
+            301 => Ok(AnyTransport::RemainingFieldPattern(
+                RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: removed_trait_bound (REMOVED_TRAIT_BOUND)
+            198 => Ok(AnyTransport::RemovedTraitBound(
+                RemovedTraitBoundTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: return_expression (RETURN_EXPRESSION)
+            254 => Ok(AnyTransport::ReturnExpression(
+                ReturnExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: scoped_identifier (SCOPED_IDENTIFIER)
+            243 => Ok(AnyTransport::ScopedIdentifier(
+                ScopedIdentifierTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: scoped_type_identifier (SCOPED_TYPE_IDENTIFIER)
+            245 => Ok(AnyTransport::ScopedTypeIdentifier(
+                ScopedTypeIdentifierTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: scoped_type_identifier_in_expression_position (SCOPED_TYPE_IDENTIFIER_IN_EXPRESSION_POSITION)
+            244 => Ok(AnyTransport::ScopedTypeIdentifierInExpressionPosition(
+                ScopedTypeIdentifierInExpressionPositionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: scoped_use_list (SCOPED_USE_LIST)
+            206 => Ok(AnyTransport::ScopedUseList(
+                ScopedUseListTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: self (SELF)
+            139 => Ok(AnyTransport::Self_(
+                Self_Transport::from_napi_value(env, napi_val)?
+            )),
+            // kind: self_parameter (SELF_PARAMETER)
+            211 => Ok(AnyTransport::SelfParameter(
+                SelfParameterTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: shebang (SHEBANG)
+            138 => Ok(AnyTransport::Shebang(
+                ShebangTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: shorthand_field_initializer (SHORTHAND_FIELD_INITIALIZER)
+            264 => Ok(AnyTransport::ShorthandFieldInitializer(
+                ShorthandFieldInitializerTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: slice_pattern (SLICE_PATTERN)
+            297 => Ok(AnyTransport::SlicePattern(
+                SlicePatternTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: source_file (SOURCE_FILE)
+            157 => Ok(AnyTransport::SourceFile(
+                SourceFileTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: static_item (STATIC_ITEM)
+            186 => Ok(AnyTransport::StaticItem(
+                StaticItemTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: string_literal (STRING_LITERAL)
+            311 => Ok(AnyTransport::StringLiteral(
+                StringLiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: struct_expression (STRUCT_EXPRESSION)
+            262 => Ok(AnyTransport::StructExpression(
+                StructExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: struct_item (STRUCT_ITEM)
+            176 => Ok(AnyTransport::StructItem(
+                StructItemTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: struct_pattern (STRUCT_PATTERN)
+            299 => Ok(AnyTransport::StructPattern(
+                StructPatternTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: super (SUPER)
+            140 => Ok(AnyTransport::Super(
+                SuperTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: token_binding_pattern (TOKEN_BINDING_PATTERN)
+            165 => Ok(AnyTransport::TokenBindingPattern(
+                TokenBindingPatternTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: token_repetition (TOKEN_REPETITION)
+            169 => Ok(AnyTransport::TokenRepetition(
+                TokenRepetitionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: token_repetition_pattern (TOKEN_REPETITION_PATTERN)
+            166 => Ok(AnyTransport::TokenRepetitionPattern(
+                TokenRepetitionPatternTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: token_tree (TOKEN_TREE)
+            168 => Ok(AnyTransport::TokenTree(
+                TokenTreeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: token_tree_pattern (TOKEN_TREE_PATTERN)
+            164 => Ok(AnyTransport::TokenTreePattern(
+                TokenTreePatternTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: trait_bounds (TRAIT_BOUNDS)
+            196 => Ok(AnyTransport::TraitBounds(
+                TraitBoundsTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: trait_item (TRAIT_ITEM)
+            194 => Ok(AnyTransport::TraitItem(
+                TraitItemTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: try_block (TRY_BLOCK)
+            292 => Ok(AnyTransport::TryBlock(
+                TryBlockTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: try_expression (TRY_EXPRESSION)
+            248 => Ok(AnyTransport::TryExpression(
+                TryExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: tuple_expression (TUPLE_EXPRESSION)
+            260 => Ok(AnyTransport::TupleExpression(
+                TupleExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: tuple_pattern (TUPLE_PATTERN)
+            296 => Ok(AnyTransport::TuplePattern(
+                TuplePatternTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: tuple_struct_pattern (TUPLE_STRUCT_PATTERN)
+            298 => Ok(AnyTransport::TupleStructPattern(
+                TupleStructPatternTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: tuple_type (TUPLE_TYPE)
+            223 => Ok(AnyTransport::TupleType(
+                TupleTypeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: type_arguments (TYPE_ARGUMENTS)
+            230 => Ok(AnyTransport::TypeArguments(
+                TypeArgumentsTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: type_binding (TYPE_BINDING)
+            231 => Ok(AnyTransport::TypeBinding(
+                TypeBindingTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: type_cast_expression (TYPE_CAST_EXPRESSION)
+            253 => Ok(AnyTransport::TypeCastExpression(
+                TypeCastExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: type_item (TYPE_ITEM)
+            187 => Ok(AnyTransport::TypeItem(
+                TypeItemTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: type_parameter (TYPE_PARAMETER)
+            201 => Ok(AnyTransport::TypeParameter(
+                TypeParameterTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: type_parameters (TYPE_PARAMETERS)
+            199 => Ok(AnyTransport::TypeParameters(
+                TypeParametersTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: unary_expression (UNARY_EXPRESSION)
+            247 => Ok(AnyTransport::UnaryExpression(
+                UnaryExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: union_item (UNION_ITEM)
+            177 => Ok(AnyTransport::UnionItem(
+                UnionItemTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: unit_expression (UNIT_EXPRESSION)
+            261 => Ok(AnyTransport::UnitExpression(
+                UnitExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: unit_type (UNIT_TYPE)
+            224 => Ok(AnyTransport::UnitType(
+                UnitTypeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: unsafe_block (UNSAFE_BLOCK)
+            289 => Ok(AnyTransport::UnsafeBlock(
+                UnsafeBlockTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: use_as_clause (USE_AS_CLAUSE)
+            208 => Ok(AnyTransport::UseAsClause(
+                UseAsClauseTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: use_bounds (USE_BOUNDS)
+            229 => Ok(AnyTransport::UseBounds(
+                UseBoundsTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: use_declaration (USE_DECLARATION)
+            204 => Ok(AnyTransport::UseDeclaration(
+                UseDeclarationTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: use_list (USE_LIST)
+            207 => Ok(AnyTransport::UseList(
+                UseListTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: use_wildcard (USE_WILDCARD)
+            209 => Ok(AnyTransport::UseWildcard(
+                UseWildcardTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: variadic_parameter (VARIADIC_PARAMETER)
+            212 => Ok(AnyTransport::VariadicParameter(
+                VariadicParameterTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: visibility_modifier (VISIBILITY_MODIFIER)
+            215 => Ok(AnyTransport::VisibilityModifier(
+                VisibilityModifierTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: where_clause (WHERE_CLAUSE)
+            191 => Ok(AnyTransport::WhereClause(
+                WhereClauseTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: where_predicate (WHERE_PREDICATE)
+            192 => Ok(AnyTransport::WherePredicate(
+                WherePredicateTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: while_expression (WHILE_EXPRESSION)
+            277 => Ok(AnyTransport::WhileExpression(
+                WhileExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: yield_expression (YIELD_EXPRESSION)
+            255 => Ok(AnyTransport::YieldExpression(
+                YieldExpressionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: string_content (STRING_CONTENT)
+            147 => Ok(AnyTransport::StringContent(
+                StringContentTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: raw_string_literal_content (RAW_STRING_LITERAL_CONTENT)
+            149 => Ok(AnyTransport::RawStringLiteralContent(
+                RawStringLiteralContentTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: float_literal (FLOAT_LITERAL)
+            151 => Ok(AnyTransport::FloatLiteral(
+                FloatLiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _outer_block_doc_comment_marker (_OUTER_BLOCK_DOC_COMMENT_MARKER)
+            152 => Ok(AnyTransport::OuterBlockDocCommentMarker(
+                OuterBlockDocCommentMarkerTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _inner_block_doc_comment_marker (_INNER_BLOCK_DOC_COMMENT_MARKER)
+            153 => Ok(AnyTransport::InnerBlockDocCommentMarker(
+                InnerBlockDocCommentMarkerTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _error_sentinel (_ERROR_SENTINEL)
+            156 => Ok(AnyTransport::ErrorSentinel(
+                ErrorSentinelTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _ (_ANONYMOUS)
+            74 => Ok(AnyTransport::Anonymous(
+                AnonymousTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: fn (FN)
+            92 => Ok(AnyTransport::Fn(
+                FnTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: async (ASYNC)
+            85 => Ok(AnyTransport::Async(
+                AsyncTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: move (MOVE)
+            143 => Ok(AnyTransport::Move(
+                MoveTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: ref (REF)
+            125 => Ok(AnyTransport::Ref(
+                RefTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: static (STATIC)
+            103 => Ok(AnyTransport::Static(
+                StaticTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: unsafe (UNSAFE)
+            108 => Ok(AnyTransport::Unsafe(
+                UnsafeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: as (AS)
+            84 => Ok(AnyTransport::As(
+                AsTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: await (AWAIT)
+            86 => Ok(AnyTransport::Await(
+                AwaitTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: break (BREAK)
+            87 => Ok(AnyTransport::Break(
+                BreakTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: const (CONST)
+            88 => Ok(AnyTransport::Const(
+                ConstTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: continue (CONTINUE)
+            89 => Ok(AnyTransport::Continue(
+                ContinueTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: default (DEFAULT)
+            90 => Ok(AnyTransport::Default(
+                DefaultTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: enum (ENUM)
+            91 => Ok(AnyTransport::Enum(
+                EnumTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: for (FOR)
+            93 => Ok(AnyTransport::For(
+                ForTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: gen (GEN)
+            94 => Ok(AnyTransport::Gen(
+                GenTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: if (IF)
+            95 => Ok(AnyTransport::If(
+                IfTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: impl (IMPL)
+            96 => Ok(AnyTransport::Impl(
+                ImplTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: let (LET)
+            97 => Ok(AnyTransport::Let(
+                LetTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: loop (LOOP)
+            98 => Ok(AnyTransport::Loop(
+                LoopTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: match (MATCH)
+            99 => Ok(AnyTransport::Match(
+                MatchTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: mod (MOD)
+            100 => Ok(AnyTransport::Mod(
+                ModTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: pub (PUB)
+            101 => Ok(AnyTransport::Pub(
+                PubTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: return (RETURN)
+            102 => Ok(AnyTransport::Return(
+                ReturnTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: struct (STRUCT)
+            104 => Ok(AnyTransport::Struct(
+                StructTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: trait (TRAIT)
+            105 => Ok(AnyTransport::Trait(
+                TraitTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: type (TYPE)
+            106 => Ok(AnyTransport::Type(
+                TypeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: union (UNION)
+            107 => Ok(AnyTransport::Union(
+                UnionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: use (USE)
+            109 => Ok(AnyTransport::Use(
+                UseTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: where (WHERE)
+            110 => Ok(AnyTransport::Where(
+                WhereTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: while (WHILE)
+            111 => Ok(AnyTransport::While(
+                WhileTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: raw (RAW)
+            121 => Ok(AnyTransport::Raw(
+                RawTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: in (IN)
+            123 => Ok(AnyTransport::In(
+                InTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: dyn (DYN)
+            119 => Ok(AnyTransport::Dyn(
+                DynTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: else (ELSE)
+            117 => Ok(AnyTransport::Else(
+                ElseTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: extern (EXTERN)
+            116 => Ok(AnyTransport::Extern(
+                ExternTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: try (TRY)
+            124 => Ok(AnyTransport::Try(
+                TryTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: yield (YIELD)
+            122 => Ok(AnyTransport::Yield(
+                YieldTransport::from_napi_value(env, napi_val)?
+            )),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown kind id {other} in AnyTransport"
+            ))),
+        }
+    }
+}
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AnyTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AnyTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        AnyTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AnyTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, *val)
+    }
+}
+
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct LiteralTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ArrayExpressionListTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub attributes: Vec<Box<AnyTransport>>,
     pub elements: Vec<Box<AnyTransport>>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ArrayExpressionSemiTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub attributes: Vec<Box<AnyTransport>>,
     pub elements: Box<AnyTransport>,
     pub length: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ClosureExpressionBlockTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub return_type: Option<Box<AnyTransport>>,
     pub body: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _ClosureExpressionExprTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub body: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _DelimTokenTreeBraceTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _DelimTokenTreeBracketTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _DelimTokenTreeParenTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct DocCommentTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _ExpressionStatementBlockEndingTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _ExpressionStatementWithSemiTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct FieldIdentifierTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct FieldPatternNamedTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub name: Box<AnyTransport>,
     pub pattern: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _FieldPatternShorthandTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub name: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _ForeignModItemBodyTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub body: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ForeignModItemSemiTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct FunctionTypeFnFormTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct FunctionTypeTraitFormTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "trait")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "trait"))]
     pub r#trait: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _ImplItemBodyTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub body: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ImplItemSemiTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct InnerDocCommentMarkerTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct KwAsyncMarkerTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct KwMoveMarkerTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct KwNegativeTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct KwOperatorTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct KwRefMarkerTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct KwStaticMarkerTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct KwUnsafeMarkerTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct LetChainTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct LineCommentContentTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct LineCommentDocTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub doc: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct LineCommentRegularDslashTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _MacroDefinitionBraceTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _MacroDefinitionBracketTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _MacroDefinitionParenTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _MatchArmBlockEndingTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub value: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct MatchArmWithCommaTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub value: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ModItemExternalTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _ModItemInlineTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub body: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct NonSpecialTokenTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct OrPatternBinaryTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub left: Box<AnyTransport>,
     pub right: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct OrPatternPrefixTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub right: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct OuterDocCommentMarkerTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct PointerTypeConstTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _PointerTypeMutTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct PrimitiveTypeTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _RangeExpressionBareTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub operator: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct RangeExpressionBinaryTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub start: Box<AnyTransport>,
     pub operator: Box<AnyTransport>,
     pub end: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct RangeExpressionPostfixTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub start: Box<AnyTransport>,
     pub operator: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct RangeExpressionPrefixTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub operator: Box<AnyTransport>,
     pub end: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct RangePatternLeftBareTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct RangePatternLeftWithRightTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub right: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct RangePatternPrefixTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub right: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ReferenceExpressionRawConstTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ReferenceExpressionRawMutTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ReservedIdentifierTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ShorthandFieldIdentifierTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _StringContentTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct StructItemBraceTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub body: Box<AnyTransport>,
-    #[serde(rename = "$children")]
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct StructItemTupleTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub body: Box<AnyTransport>,
-    #[serde(rename = "$children")]
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct StructItemUnitTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _TokenTreeBraceTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _TokenTreeBracketTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _TokenTreeParenTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _TokenTreePatternBraceTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _TokenTreePatternBracketTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _TokenTreePatternParenTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TypeIdentifierTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _VisibilityModifierCrateTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct VisibilityModifierInPathTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "in")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "in"))]
     pub r#in: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct VisibilityModifierPubTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "pub")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "pub"))]
     pub r#pub: Box<AnyTransport>,
-    #[serde(rename = "$children")]
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct WildcardPatternTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct AbstractTypeTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub type_parameters: Option<Box<AnyTransport>>,
-    #[serde(rename = "trait")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "trait"))]
     pub r#trait: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ArgumentsTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
-#[serde(tag = "$variant")]
+#[derive(Debug, Clone)]
 pub enum ArrayExpressionTransport {
-    #[serde(rename = "semi")]
     ArrayExpressionUFormSemi(ArrayExpressionUFormSemiTransport),
-    #[serde(rename = "list")]
     ArrayExpressionUFormList(ArrayExpressionUFormListTransport),
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ArrayExpressionTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let variant: String = obj.get("$variant")?
+            .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
+        match variant.as_str() {
+            "semi" => Ok(Self::ArrayExpressionUFormSemi(
+                ArrayExpressionUFormSemiTransport::from_napi_value(env, napi_val)?
+            )),
+            "list" => Ok(Self::ArrayExpressionUFormList(
+                ArrayExpressionUFormListTransport::from_napi_value(env, napi_val)?
+            )),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $variant {:?} for ArrayExpressionTransport",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ArrayExpressionUFormSemiTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ArrayExpressionUFormListTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ArrayTypeTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub element: Box<AnyTransport>,
-    #[serde(default)]
     pub length: Option<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct AssignmentExpressionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub left: Box<AnyTransport>,
     pub right: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct AssociatedTypeTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub name: Box<AnyTransport>,
-    #[serde(default)]
     pub type_parameters: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub bounds: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub where_clause: Option<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct AsyncBlockTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub move_marker: Option<Box<AnyTransport>>,
     pub block: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct AttributeTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct AttributeItemTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub attribute: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct AwaitExpressionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct BaseFieldInitializerTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct BinaryExpressionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub left: Box<AnyTransport>,
     pub operator: Box<AnyTransport>,
     pub right: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct BlockTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub label: Option<Box<AnyTransport>>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct BlockCommentTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub doc: Option<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct BooleanLiteralTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct BoundedTypeTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub left: Box<AnyTransport>,
     pub right: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct BracketedTypeTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct BreakExpressionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub label: Option<Box<AnyTransport>>,
-    #[serde(rename = "$children")]
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct CallExpressionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub function: Box<AnyTransport>,
     pub arguments: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct CapturedPatternTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub identifier: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct CharLiteralTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ClosureExpressionExprTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub body: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
-#[serde(tag = "$variant")]
+#[derive(Debug, Clone)]
 pub enum ClosureExpressionTransport {
-    #[serde(rename = "block")]
     ClosureExpressionUFormBlock(ClosureExpressionUFormBlockTransport),
-    #[serde(rename = "expr")]
     ClosureExpressionUFormExpr(ClosureExpressionUFormExprTransport),
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ClosureExpressionTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let variant: String = obj.get("$variant")?
+            .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
+        match variant.as_str() {
+            "block" => Ok(Self::ClosureExpressionUFormBlock(
+                ClosureExpressionUFormBlockTransport::from_napi_value(env, napi_val)?
+            )),
+            "expr" => Ok(Self::ClosureExpressionUFormExpr(
+                ClosureExpressionUFormExprTransport::from_napi_value(env, napi_val)?
+            )),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $variant {:?} for ClosureExpressionTransport",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ClosureExpressionUFormBlockTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub static_marker: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub async_marker: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub move_marker: Option<Box<AnyTransport>>,
     pub parameters: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ClosureExpressionUFormExprTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub static_marker: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub async_marker: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub move_marker: Option<Box<AnyTransport>>,
     pub parameters: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ClosureParametersTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct CommentTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct CompoundAssignmentExprTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub left: Box<AnyTransport>,
     pub operator: Box<AnyTransport>,
     pub right: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ConstBlockTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub body: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ConstItemTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: Box<AnyTransport>,
-    #[serde(rename = "type")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
-    #[serde(default)]
     pub value: Option<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ConstParameterTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub name: Box<AnyTransport>,
-    #[serde(rename = "type")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
-    #[serde(default)]
     pub value: Option<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ContinueExpressionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub label: Option<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct CrateTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct DeclarationListTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct DelimTokenTreeParenTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct DelimTokenTreeBracketTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct DelimTokenTreeBraceTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
-#[serde(tag = "$variant")]
+#[derive(Debug, Clone)]
 pub enum DelimTokenTreeTransport {
-    #[serde(rename = "paren")]
     DelimTokenTreeUFormParen(DelimTokenTreeUFormParenTransport),
-    #[serde(rename = "bracket")]
     DelimTokenTreeUFormBracket(DelimTokenTreeUFormBracketTransport),
-    #[serde(rename = "brace")]
     DelimTokenTreeUFormBrace(DelimTokenTreeUFormBraceTransport),
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let variant: String = obj.get("$variant")?
+            .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
+        match variant.as_str() {
+            "paren" => Ok(Self::DelimTokenTreeUFormParen(
+                DelimTokenTreeUFormParenTransport::from_napi_value(env, napi_val)?
+            )),
+            "bracket" => Ok(Self::DelimTokenTreeUFormBracket(
+                DelimTokenTreeUFormBracketTransport::from_napi_value(env, napi_val)?
+            )),
+            "brace" => Ok(Self::DelimTokenTreeUFormBrace(
+                DelimTokenTreeUFormBraceTransport::from_napi_value(env, napi_val)?
+            )),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $variant {:?} for DelimTokenTreeTransport",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct DelimTokenTreeUFormParenTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct DelimTokenTreeUFormBracketTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct DelimTokenTreeUFormBraceTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct DynamicTypeTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "trait")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "trait"))]
     pub r#trait: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ElseClauseTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct EmptyStatementTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct EnumItemTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: Box<AnyTransport>,
-    #[serde(default)]
     pub type_parameters: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub where_clause: Option<Box<AnyTransport>>,
     pub body: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct EnumVariantTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: Box<AnyTransport>,
-    #[serde(default)]
     pub body: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub value: Option<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct EnumVariantListTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct EscapeSequenceTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ExpressionStatementWithSemiTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ExpressionStatementBlockEndingTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
-#[serde(tag = "$variant")]
+#[derive(Debug, Clone)]
 pub enum ExpressionStatementTransport {
-    #[serde(rename = "with_semi")]
     ExpressionStatementUFormWithSemi(ExpressionStatementUFormWithSemiTransport),
-    #[serde(rename = "block_ending")]
     ExpressionStatementUFormBlockEnding(ExpressionStatementUFormBlockEndingTransport),
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let variant: String = obj.get("$variant")?
+            .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
+        match variant.as_str() {
+            "with_semi" => Ok(Self::ExpressionStatementUFormWithSemi(
+                ExpressionStatementUFormWithSemiTransport::from_napi_value(env, napi_val)?
+            )),
+            "block_ending" => Ok(Self::ExpressionStatementUFormBlockEnding(
+                ExpressionStatementUFormBlockEndingTransport::from_napi_value(env, napi_val)?
+            )),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $variant {:?} for ExpressionStatementTransport",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ExpressionStatementUFormWithSemiTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ExpressionStatementUFormBlockEndingTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ExternCrateDeclarationTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
-    #[serde(rename = "crate")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "crate"))]
     pub crate_: Box<AnyTransport>,
     pub name: Box<AnyTransport>,
-    #[serde(default)]
     pub alias: Option<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ExternModifierTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub string_literal: Option<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct FieldDeclarationTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: Box<AnyTransport>,
-    #[serde(rename = "type")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct FieldDeclarationListTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct FieldExpressionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub value: Box<AnyTransport>,
     pub field: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct FieldInitializerTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub field: Box<AnyTransport>,
     pub value: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct FieldInitializerListTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct FieldPatternShorthandTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub name: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
-#[serde(tag = "$variant")]
+#[derive(Debug, Clone)]
 pub enum FieldPatternTransport {
-    #[serde(rename = "shorthand")]
     FieldPatternUFormShorthand(FieldPatternUFormShorthandTransport),
-    #[serde(rename = "named")]
     FieldPatternUFormNamed(FieldPatternUFormNamedTransport),
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for FieldPatternTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let variant: String = obj.get("$variant")?
+            .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
+        match variant.as_str() {
+            "shorthand" => Ok(Self::FieldPatternUFormShorthand(
+                FieldPatternUFormShorthandTransport::from_napi_value(env, napi_val)?
+            )),
+            "named" => Ok(Self::FieldPatternUFormNamed(
+                FieldPatternUFormNamedTransport::from_napi_value(env, napi_val)?
+            )),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $variant {:?} for FieldPatternTransport",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct FieldPatternUFormShorthandTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub ref_marker: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub mutable_specifier: Option<Box<AnyTransport>>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct FieldPatternUFormNamedTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub ref_marker: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub mutable_specifier: Option<Box<AnyTransport>>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ForExpressionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub label: Option<Box<AnyTransport>>,
     pub pattern: Box<AnyTransport>,
     pub value: Box<AnyTransport>,
     pub body: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ForLifetimesTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ForeignModItemBodyTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub body: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
-#[serde(tag = "$variant")]
+#[derive(Debug, Clone)]
 pub enum ForeignModItemTransport {
-    #[serde(rename = "semi")]
     ForeignModItemUFormSemi(ForeignModItemUFormSemiTransport),
-    #[serde(rename = "body")]
     ForeignModItemUFormBody(ForeignModItemUFormBodyTransport),
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ForeignModItemTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let variant: String = obj.get("$variant")?
+            .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
+        match variant.as_str() {
+            "semi" => Ok(Self::ForeignModItemUFormSemi(
+                ForeignModItemUFormSemiTransport::from_napi_value(env, napi_val)?
+            )),
+            "body" => Ok(Self::ForeignModItemUFormBody(
+                ForeignModItemUFormBodyTransport::from_napi_value(env, napi_val)?
+            )),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $variant {:?} for ForeignModItemTransport",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ForeignModItemUFormSemiTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub extern_modifier: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ForeignModItemUFormBodyTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub extern_modifier: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct FragmentSpecifierTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct FunctionItemTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub function_modifiers: Option<Box<AnyTransport>>,
     pub name: Box<AnyTransport>,
-    #[serde(default)]
     pub type_parameters: Option<Box<AnyTransport>>,
     pub parameters: Box<AnyTransport>,
-    #[serde(default)]
     pub return_type: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub where_clause: Option<Box<AnyTransport>>,
     pub body: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct FunctionModifiersTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub modifier: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct FunctionSignatureItemTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub function_modifiers: Option<Box<AnyTransport>>,
     pub name: Box<AnyTransport>,
-    #[serde(default)]
     pub type_parameters: Option<Box<AnyTransport>>,
     pub parameters: Box<AnyTransport>,
-    #[serde(default)]
     pub return_type: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub where_clause: Option<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct FunctionTypeTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub for_lifetimes: Option<Box<AnyTransport>>,
     pub parameters: Box<AnyTransport>,
-    #[serde(default)]
     pub return_type: Option<Box<AnyTransport>>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct GenBlockTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub move_marker: Option<Box<AnyTransport>>,
     pub block: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct GenericFunctionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub function: Box<AnyTransport>,
     pub type_arguments: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct GenericPatternTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub type_arguments: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct GenericTypeTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "type")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
     pub type_arguments: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct GenericTypeWithTurbofishTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "type")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
     pub turbofish: Box<AnyTransport>,
     pub type_arguments: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct HigherRankedTraitBoundTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub type_parameters: Box<AnyTransport>,
-    #[serde(rename = "type")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct IdentifierTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct IfExpressionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub condition: Box<AnyTransport>,
     pub consequence: Box<AnyTransport>,
-    #[serde(default)]
     pub alternative: Option<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ImplItemBodyTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub body: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
-#[serde(tag = "$variant")]
+#[derive(Debug, Clone)]
 pub enum ImplItemTransport {
-    #[serde(rename = "body")]
     ImplItemUFormBody(ImplItemUFormBodyTransport),
-    #[serde(rename = "semi")]
     ImplItemUFormSemi(ImplItemUFormSemiTransport),
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ImplItemTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let variant: String = obj.get("$variant")?
+            .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
+        match variant.as_str() {
+            "body" => Ok(Self::ImplItemUFormBody(
+                ImplItemUFormBodyTransport::from_napi_value(env, napi_val)?
+            )),
+            "semi" => Ok(Self::ImplItemUFormSemi(
+                ImplItemUFormSemiTransport::from_napi_value(env, napi_val)?
+            )),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $variant {:?} for ImplItemTransport",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ImplItemUFormBodyTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub unsafe_marker: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub type_parameters: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub negative: Option<Box<AnyTransport>>,
-    #[serde(rename = "trait")]
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "trait"))]
     pub r#trait: Option<Box<AnyTransport>>,
-    #[serde(rename = "type")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
-    #[serde(default)]
     pub where_clause: Option<Box<AnyTransport>>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ImplItemUFormSemiTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub unsafe_marker: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub type_parameters: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub negative: Option<Box<AnyTransport>>,
-    #[serde(rename = "trait")]
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "trait"))]
     pub r#trait: Option<Box<AnyTransport>>,
-    #[serde(rename = "type")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
-    #[serde(default)]
     pub where_clause: Option<Box<AnyTransport>>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct IndexExpressionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub object: Box<AnyTransport>,
     pub index: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct InnerAttributeItemTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub attribute: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct IntegerLiteralTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct LabelTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub identifier: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct LastMatchArmTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub pattern: Box<AnyTransport>,
     pub value: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct LetConditionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub pattern: Box<AnyTransport>,
     pub value: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct LetDeclarationTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub mutable_specifier: Option<Box<AnyTransport>>,
     pub pattern: Box<AnyTransport>,
-    #[serde(rename = "type")]
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub value: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub alternative: Option<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct LifetimeTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub identifier: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct LifetimeParameterTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub name: Box<AnyTransport>,
-    #[serde(default)]
     pub bounds: Option<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
-#[serde(tag = "$variant")]
+#[derive(Debug, Clone)]
 pub enum LineCommentTransport {
-    #[serde(rename = "regular_dslash")]
     LineCommentUFormRegularDslash(LineCommentUFormRegularDslashTransport),
-    #[serde(rename = "doc")]
     LineCommentUFormDoc(LineCommentUFormDocTransport),
-    #[serde(rename = "content")]
     LineCommentUFormContent(LineCommentUFormContentTransport),
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for LineCommentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let variant: String = obj.get("$variant")?
+            .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
+        match variant.as_str() {
+            "regular_dslash" => Ok(Self::LineCommentUFormRegularDslash(
+                LineCommentUFormRegularDslashTransport::from_napi_value(env, napi_val)?
+            )),
+            "doc" => Ok(Self::LineCommentUFormDoc(
+                LineCommentUFormDocTransport::from_napi_value(env, napi_val)?
+            )),
+            "content" => Ok(Self::LineCommentUFormContent(
+                LineCommentUFormContentTransport::from_napi_value(env, napi_val)?
+            )),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $variant {:?} for LineCommentTransport",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct LineCommentUFormRegularDslashTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct LineCommentUFormDocTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct LineCommentUFormContentTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct LoopExpressionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub label: Option<Box<AnyTransport>>,
     pub body: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct MacroDefinitionParenTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct MacroDefinitionBracketTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct MacroDefinitionBraceTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
-#[serde(tag = "$variant")]
+#[derive(Debug, Clone)]
 pub enum MacroDefinitionTransport {
-    #[serde(rename = "paren")]
     MacroDefinitionUFormParen(MacroDefinitionUFormParenTransport),
-    #[serde(rename = "bracket")]
     MacroDefinitionUFormBracket(MacroDefinitionUFormBracketTransport),
-    #[serde(rename = "brace")]
     MacroDefinitionUFormBrace(MacroDefinitionUFormBraceTransport),
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for MacroDefinitionTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let variant: String = obj.get("$variant")?
+            .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
+        match variant.as_str() {
+            "paren" => Ok(Self::MacroDefinitionUFormParen(
+                MacroDefinitionUFormParenTransport::from_napi_value(env, napi_val)?
+            )),
+            "bracket" => Ok(Self::MacroDefinitionUFormBracket(
+                MacroDefinitionUFormBracketTransport::from_napi_value(env, napi_val)?
+            )),
+            "brace" => Ok(Self::MacroDefinitionUFormBrace(
+                MacroDefinitionUFormBraceTransport::from_napi_value(env, napi_val)?
+            )),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $variant {:?} for MacroDefinitionTransport",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct MacroDefinitionUFormParenTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub name: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct MacroDefinitionUFormBracketTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub name: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct MacroDefinitionUFormBraceTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub name: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct MacroInvocationTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "macro")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "macro"))]
     pub r#macro: Box<AnyTransport>,
     pub token_tree: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct MacroRuleTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub left: Box<AnyTransport>,
     pub right: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct MatchArmBlockEndingTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub value: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
-#[serde(tag = "$variant")]
+#[derive(Debug, Clone)]
 pub enum MatchArmTransport {
-    #[serde(rename = "with_comma")]
     MatchArmUFormWithComma(MatchArmUFormWithCommaTransport),
-    #[serde(rename = "block_ending")]
     MatchArmUFormBlockEnding(MatchArmUFormBlockEndingTransport),
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for MatchArmTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let variant: String = obj.get("$variant")?
+            .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
+        match variant.as_str() {
+            "with_comma" => Ok(Self::MatchArmUFormWithComma(
+                MatchArmUFormWithCommaTransport::from_napi_value(env, napi_val)?
+            )),
+            "block_ending" => Ok(Self::MatchArmUFormBlockEnding(
+                MatchArmUFormBlockEndingTransport::from_napi_value(env, napi_val)?
+            )),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $variant {:?} for MatchArmTransport",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct MatchArmUFormWithCommaTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub pattern: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct MatchArmUFormBlockEndingTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub pattern: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct MatchBlockTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct MatchExpressionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub value: Box<AnyTransport>,
     pub body: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct MatchPatternTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub condition: Option<Box<AnyTransport>>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct MetavariableTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ModItemInlineTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub body: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
-#[serde(tag = "$variant")]
+#[derive(Debug, Clone)]
 pub enum ModItemTransport {
-    #[serde(rename = "external")]
     ModItemUFormExternal(ModItemUFormExternalTransport),
-    #[serde(rename = "inline")]
     ModItemUFormInline(ModItemUFormInlineTransport),
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ModItemTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let variant: String = obj.get("$variant")?
+            .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
+        match variant.as_str() {
+            "external" => Ok(Self::ModItemUFormExternal(
+                ModItemUFormExternalTransport::from_napi_value(env, napi_val)?
+            )),
+            "inline" => Ok(Self::ModItemUFormInline(
+                ModItemUFormInlineTransport::from_napi_value(env, napi_val)?
+            )),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $variant {:?} for ModItemTransport",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ModItemUFormExternalTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ModItemUFormInlineTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct MutPatternTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub mutable_specifier: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct MutableSpecifierTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct NegativeLiteralTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub value: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct NeverTypeTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
-#[serde(tag = "$variant")]
+#[derive(Debug, Clone)]
 pub enum OrPatternTransport {
-    #[serde(rename = "binary")]
     OrPatternUFormBinary(OrPatternUFormBinaryTransport),
-    #[serde(rename = "prefix")]
     OrPatternUFormPrefix(OrPatternUFormPrefixTransport),
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for OrPatternTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let variant: String = obj.get("$variant")?
+            .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
+        match variant.as_str() {
+            "binary" => Ok(Self::OrPatternUFormBinary(
+                OrPatternUFormBinaryTransport::from_napi_value(env, napi_val)?
+            )),
+            "prefix" => Ok(Self::OrPatternUFormPrefix(
+                OrPatternUFormPrefixTransport::from_napi_value(env, napi_val)?
+            )),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $variant {:?} for OrPatternTransport",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct OrPatternUFormBinaryTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct OrPatternUFormPrefixTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct OrderedFieldDeclarationListTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "type")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ParameterTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub mutable_specifier: Option<Box<AnyTransport>>,
     pub pattern: Box<AnyTransport>,
-    #[serde(rename = "type")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ParametersTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ParenthesizedExpressionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct PointerTypeMutTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
-#[serde(tag = "$variant")]
+#[derive(Debug, Clone)]
 pub enum PointerTypeTransport {
-    #[serde(rename = "const")]
     PointerTypeUFormConst(PointerTypeUFormConstTransport),
-    #[serde(rename = "mut")]
     PointerTypeUFormMut(PointerTypeUFormMutTransport),
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for PointerTypeTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let variant: String = obj.get("$variant")?
+            .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
+        match variant.as_str() {
+            "const" => Ok(Self::PointerTypeUFormConst(
+                PointerTypeUFormConstTransport::from_napi_value(env, napi_val)?
+            )),
+            "mut" => Ok(Self::PointerTypeUFormMut(
+                PointerTypeUFormMutTransport::from_napi_value(env, napi_val)?
+            )),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $variant {:?} for PointerTypeTransport",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct PointerTypeUFormConstTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "type")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct PointerTypeUFormMutTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "type")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct QualifiedTypeTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "type")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
     pub alias: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct RangeExpressionBareTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub operator: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
-#[serde(tag = "$variant")]
+#[derive(Debug, Clone)]
 pub enum RangeExpressionTransport {
-    #[serde(rename = "binary")]
     RangeExpressionUFormBinary(RangeExpressionUFormBinaryTransport),
-    #[serde(rename = "postfix")]
     RangeExpressionUFormPostfix(RangeExpressionUFormPostfixTransport),
-    #[serde(rename = "prefix")]
     RangeExpressionUFormPrefix(RangeExpressionUFormPrefixTransport),
-    #[serde(rename = "bare")]
     RangeExpressionUFormBare(RangeExpressionUFormBareTransport),
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for RangeExpressionTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let variant: String = obj.get("$variant")?
+            .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
+        match variant.as_str() {
+            "binary" => Ok(Self::RangeExpressionUFormBinary(
+                RangeExpressionUFormBinaryTransport::from_napi_value(env, napi_val)?
+            )),
+            "postfix" => Ok(Self::RangeExpressionUFormPostfix(
+                RangeExpressionUFormPostfixTransport::from_napi_value(env, napi_val)?
+            )),
+            "prefix" => Ok(Self::RangeExpressionUFormPrefix(
+                RangeExpressionUFormPrefixTransport::from_napi_value(env, napi_val)?
+            )),
+            "bare" => Ok(Self::RangeExpressionUFormBare(
+                RangeExpressionUFormBareTransport::from_napi_value(env, napi_val)?
+            )),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $variant {:?} for RangeExpressionTransport",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct RangeExpressionUFormBinaryTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct RangeExpressionUFormPostfixTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct RangeExpressionUFormPrefixTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct RangeExpressionUFormBareTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
-#[serde(tag = "$variant")]
+#[derive(Debug, Clone)]
 pub enum RangePatternTransport {
-    #[serde(rename = "left_with_right")]
     RangePatternUFormLeftWithRight(RangePatternUFormLeftWithRightTransport),
-    #[serde(rename = "left_bare")]
     RangePatternUFormLeftBare(RangePatternUFormLeftBareTransport),
-    #[serde(rename = "prefix")]
     RangePatternUFormPrefix(RangePatternUFormPrefixTransport),
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for RangePatternTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let variant: String = obj.get("$variant")?
+            .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
+        match variant.as_str() {
+            "left_with_right" => Ok(Self::RangePatternUFormLeftWithRight(
+                RangePatternUFormLeftWithRightTransport::from_napi_value(env, napi_val)?
+            )),
+            "left_bare" => Ok(Self::RangePatternUFormLeftBare(
+                RangePatternUFormLeftBareTransport::from_napi_value(env, napi_val)?
+            )),
+            "prefix" => Ok(Self::RangePatternUFormPrefix(
+                RangePatternUFormPrefixTransport::from_napi_value(env, napi_val)?
+            )),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $variant {:?} for RangePatternTransport",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct RangePatternUFormLeftWithRightTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub left: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct RangePatternUFormLeftBareTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub left: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct RangePatternUFormPrefixTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct RawStringLiteralTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub raw_string_literal_start: Option<Box<AnyTransport>>,
     pub string_content: Box<AnyTransport>,
-    #[serde(default)]
     pub raw_string_literal_end: Option<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct RefPatternTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ReferenceExpressionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub value: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ReferencePatternTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub mutable_specifier: Option<Box<AnyTransport>>,
     pub pattern: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ReferenceTypeTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub lifetime: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub mutable_specifier: Option<Box<AnyTransport>>,
-    #[serde(rename = "type")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct RemainingFieldPatternTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct RemovedTraitBoundTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ReturnExpressionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ScopedIdentifierTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub path: Option<Box<AnyTransport>>,
     pub name: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ScopedTypeIdentifierTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub path: Option<Box<AnyTransport>>,
     pub name: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ScopedTypeIdentifierInExpressionPositionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub path: Option<Box<AnyTransport>>,
     pub name: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ScopedUseListTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub path: Option<Box<AnyTransport>>,
     pub list: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct Self_Transport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct SelfParameterTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub reference: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub lifetime: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub mutable_specifier: Option<Box<AnyTransport>>,
-    #[serde(rename = "self")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "self"))]
     pub self_: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ShebangTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ShorthandFieldInitializerTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub attributes: Vec<Box<AnyTransport>>,
     pub identifier: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct SlicePatternTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct SourceFileTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub shebang: Option<Box<AnyTransport>>,
     pub statements: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct StaticItemTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub mutable_specifier: Option<Box<AnyTransport>>,
     pub name: Box<AnyTransport>,
-    #[serde(rename = "type")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
-    #[serde(default)]
     pub value: Option<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct StringLiteralTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct StructExpressionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub name: Box<AnyTransport>,
     pub body: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
-#[serde(tag = "$variant")]
+#[derive(Debug, Clone)]
 pub enum StructItemTransport {
-    #[serde(rename = "brace")]
     StructItemUFormBrace(StructItemUFormBraceTransport),
-    #[serde(rename = "tuple")]
     StructItemUFormTuple(StructItemUFormTupleTransport),
-    #[serde(rename = "unit")]
     StructItemUFormUnit(StructItemUFormUnitTransport),
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for StructItemTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let variant: String = obj.get("$variant")?
+            .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
+        match variant.as_str() {
+            "brace" => Ok(Self::StructItemUFormBrace(
+                StructItemUFormBraceTransport::from_napi_value(env, napi_val)?
+            )),
+            "tuple" => Ok(Self::StructItemUFormTuple(
+                StructItemUFormTupleTransport::from_napi_value(env, napi_val)?
+            )),
+            "unit" => Ok(Self::StructItemUFormUnit(
+                StructItemUFormUnitTransport::from_napi_value(env, napi_val)?
+            )),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $variant {:?} for StructItemTransport",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct StructItemUFormBraceTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: Box<AnyTransport>,
-    #[serde(default)]
     pub type_parameters: Option<Box<AnyTransport>>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct StructItemUFormTupleTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: Box<AnyTransport>,
-    #[serde(default)]
     pub type_parameters: Option<Box<AnyTransport>>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct StructItemUFormUnitTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: Box<AnyTransport>,
-    #[serde(default)]
     pub type_parameters: Option<Box<AnyTransport>>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct StructPatternTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "type")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct SuperTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TokenBindingPatternTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub name: Box<AnyTransport>,
-    #[serde(rename = "type")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TokenRepetitionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TokenRepetitionPatternTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TokenTreeParenTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TokenTreeBracketTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TokenTreeBraceTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
-#[serde(tag = "$variant")]
+#[derive(Debug, Clone)]
 pub enum TokenTreeTransport {
-    #[serde(rename = "paren")]
     TokenTreeUFormParen(TokenTreeUFormParenTransport),
-    #[serde(rename = "bracket")]
     TokenTreeUFormBracket(TokenTreeUFormBracketTransport),
-    #[serde(rename = "brace")]
     TokenTreeUFormBrace(TokenTreeUFormBraceTransport),
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let variant: String = obj.get("$variant")?
+            .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
+        match variant.as_str() {
+            "paren" => Ok(Self::TokenTreeUFormParen(
+                TokenTreeUFormParenTransport::from_napi_value(env, napi_val)?
+            )),
+            "bracket" => Ok(Self::TokenTreeUFormBracket(
+                TokenTreeUFormBracketTransport::from_napi_value(env, napi_val)?
+            )),
+            "brace" => Ok(Self::TokenTreeUFormBrace(
+                TokenTreeUFormBraceTransport::from_napi_value(env, napi_val)?
+            )),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $variant {:?} for TokenTreeTransport",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TokenTreeUFormParenTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TokenTreeUFormBracketTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TokenTreeUFormBraceTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TokenTreePatternParenTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TokenTreePatternBracketTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TokenTreePatternBraceTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
-#[serde(tag = "$variant")]
+#[derive(Debug, Clone)]
 pub enum TokenTreePatternTransport {
-    #[serde(rename = "paren")]
     TokenTreePatternUFormParen(TokenTreePatternUFormParenTransport),
-    #[serde(rename = "bracket")]
     TokenTreePatternUFormBracket(TokenTreePatternUFormBracketTransport),
-    #[serde(rename = "brace")]
     TokenTreePatternUFormBrace(TokenTreePatternUFormBraceTransport),
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let variant: String = obj.get("$variant")?
+            .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
+        match variant.as_str() {
+            "paren" => Ok(Self::TokenTreePatternUFormParen(
+                TokenTreePatternUFormParenTransport::from_napi_value(env, napi_val)?
+            )),
+            "bracket" => Ok(Self::TokenTreePatternUFormBracket(
+                TokenTreePatternUFormBracketTransport::from_napi_value(env, napi_val)?
+            )),
+            "brace" => Ok(Self::TokenTreePatternUFormBrace(
+                TokenTreePatternUFormBraceTransport::from_napi_value(env, napi_val)?
+            )),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $variant {:?} for TokenTreePatternTransport",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TokenTreePatternUFormParenTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TokenTreePatternUFormBracketTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TokenTreePatternUFormBraceTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TraitBoundsTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TraitItemTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub unsafe_marker: Option<Box<AnyTransport>>,
     pub name: Box<AnyTransport>,
-    #[serde(default)]
     pub type_parameters: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub bounds: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub where_clause: Option<Box<AnyTransport>>,
     pub body: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TryBlockTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub block: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TryExpressionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub value: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TupleExpressionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub attributes: Vec<Box<AnyTransport>>,
-    #[serde(default)]
     pub elements: Option<Vec<Box<AnyTransport>>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TuplePatternTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TupleStructPatternTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "type")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TupleTypeTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TypeArgumentsTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TypeBindingTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub name: Box<AnyTransport>,
-    #[serde(default)]
     pub type_arguments: Option<Box<AnyTransport>>,
-    #[serde(rename = "type")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TypeCastExpressionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub value: Box<AnyTransport>,
-    #[serde(rename = "type")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TypeItemTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: Box<AnyTransport>,
-    #[serde(default)]
     pub type_parameters: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub where_clause: Option<Box<AnyTransport>>,
-    #[serde(rename = "type")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
-    #[serde(default)]
     pub trailing_where_clause: Option<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TypeParameterTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub name: Box<AnyTransport>,
-    #[serde(default)]
     pub bounds: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub default_type: Option<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TypeParametersTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct UnaryExpressionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub operator: Box<AnyTransport>,
     pub operand: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct UnionItemTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: Box<AnyTransport>,
-    #[serde(default)]
     pub type_parameters: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub where_clause: Option<Box<AnyTransport>>,
     pub body: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct UnitExpressionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct UnitTypeTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct UnsafeBlockTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub block: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct UseAsClauseTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub path: Box<AnyTransport>,
     pub alias: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct UseBoundsTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct UseDeclarationTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub argument: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct UseListTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct UseWildcardTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub path: Option<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct VariadicParameterTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub mutable_specifier: Option<Box<AnyTransport>>,
-    #[serde(default)]
     pub pattern: Option<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct VisibilityModifierCrateTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
-#[serde(tag = "$variant")]
+#[derive(Debug, Clone)]
 pub enum VisibilityModifierTransport {
-    #[serde(rename = "in_path")]
     VisibilityModifierUFormInPath(VisibilityModifierUFormInPathTransport),
-    #[serde(rename = "crate")]
     VisibilityModifierUFormCrate(VisibilityModifierUFormCrateTransport),
-    #[serde(rename = "pub")]
     VisibilityModifierUFormPub(VisibilityModifierUFormPubTransport),
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let variant: String = obj.get("$variant")?
+            .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
+        match variant.as_str() {
+            "in_path" => Ok(Self::VisibilityModifierUFormInPath(
+                VisibilityModifierUFormInPathTransport::from_napi_value(env, napi_val)?
+            )),
+            "crate" => Ok(Self::VisibilityModifierUFormCrate(
+                VisibilityModifierUFormCrateTransport::from_napi_value(env, napi_val)?
+            )),
+            "pub" => Ok(Self::VisibilityModifierUFormPub(
+                VisibilityModifierUFormPubTransport::from_napi_value(env, napi_val)?
+            )),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $variant {:?} for VisibilityModifierTransport",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct VisibilityModifierUFormInPathTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct VisibilityModifierUFormCrateTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct VisibilityModifierUFormPubTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct WhereClauseTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct WherePredicateTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub left: Box<AnyTransport>,
     pub bounds: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct WhileExpressionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
     pub label: Option<Box<AnyTransport>>,
     pub condition: Box<AnyTransport>,
     pub body: Box<AnyTransport>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct YieldExpressionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$text", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$children")]
-    #[serde(default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct StringContentTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct RawStringLiteralContentTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct FloatLiteralTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct OuterBlockDocCommentMarkerTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct InnerBlockDocCommentMarkerTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ErrorSentinelTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct BracketTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct CloseBracketTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct SemiTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ArrowTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct AnonymousTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct BraceTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct CloseBraceTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ParenTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct CloseParenTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ColonTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct FnTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct BangTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct AsyncTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct MoveTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct DotdotTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct RefTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct StaticTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct UnsafeTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct AndandTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct CommaTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TokSqTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct AsTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct AwaitTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct BreakTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ConstTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ContinueTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct DefaultTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct EnumTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ForTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct GenTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct IfTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ImplTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct LetTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct LoopTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct MatchTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ModTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct PubTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ReturnTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct StructTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TraitTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TypeTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct UnionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct UseTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct WhereTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct WhileTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct PipeTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct SlashTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct RawTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct InTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct EqTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct HashTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct DotTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct OrorTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct AmpTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct CaretTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TokSlashStarTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TokStarSlashTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct PlusTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct LtTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct GtTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct AtTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct DynTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ElseTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ExternTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct FatArrowTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct MutTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct MinusTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct QuestionTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TokDqTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TokDollarTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TryTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct StarTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct EllipsisTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
-#[derive(Debug, Clone, ::serde::Deserialize)]
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct YieldTransport {
-    #[serde(rename = "$source", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[serde(rename = "$named", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[serde(rename = "$span", default)]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[serde(rename = "$nodeId", default)]
-    pub transport_node_id: Option<u64>,
-    #[serde(rename = "$text")]
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -12123,7 +13525,7 @@ fn literal_transport_to_node(kind: &str, transport: LiteralTransport) -> Result<
         false,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -12497,7 +13899,7 @@ fn transport_to_node_array_expression_list(transport: ArrayExpressionListTranspo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -12517,7 +13919,7 @@ fn transport_to_node_array_expression_semi(transport: ArrayExpressionSemiTranspo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -12538,7 +13940,7 @@ fn transport_to_node_closure_expression_block(transport: ClosureExpressionBlockT
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -12556,7 +13958,7 @@ fn transport_to_node__closure_expression_expr(transport: _ClosureExpressionExprT
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -12573,7 +13975,7 @@ fn transport_to_node__delim_token_tree_brace(transport: _DelimTokenTreeBraceTran
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -12590,7 +13992,7 @@ fn transport_to_node__delim_token_tree_bracket(transport: _DelimTokenTreeBracket
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -12607,7 +14009,7 @@ fn transport_to_node__delim_token_tree_paren(transport: _DelimTokenTreeParenTran
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -12621,7 +14023,7 @@ fn transport_to_node_doc_comment(transport: DocCommentTransport) -> Result<Trans
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -12638,7 +14040,7 @@ fn transport_to_node__expression_statement_block_ending(transport: _ExpressionSt
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -12655,7 +14057,7 @@ fn transport_to_node__expression_statement_with_semi(transport: _ExpressionState
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -12672,7 +14074,7 @@ fn transport_to_node_field_identifier(transport: FieldIdentifierTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -12691,7 +14093,7 @@ fn transport_to_node_field_pattern_named(transport: FieldPatternNamedTransport) 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -12709,7 +14111,7 @@ fn transport_to_node__field_pattern_shorthand(transport: _FieldPatternShorthandT
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -12727,7 +14129,7 @@ fn transport_to_node__foreign_mod_item_body(transport: _ForeignModItemBodyTransp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -12741,7 +14143,7 @@ fn transport_to_node_foreign_mod_item_semi(transport: ForeignModItemSemiTranspor
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -12761,7 +14163,7 @@ fn transport_to_node_function_type_fn_form(transport: FunctionTypeFnFormTranspor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -12779,7 +14181,7 @@ fn transport_to_node_function_type_trait_form(transport: FunctionTypeTraitFormTr
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -12797,7 +14199,7 @@ fn transport_to_node__impl_item_body(transport: _ImplItemBodyTransport) -> Resul
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -12811,7 +14213,7 @@ fn transport_to_node_impl_item_semi(transport: ImplItemSemiTransport) -> Result<
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -12825,7 +14227,7 @@ fn transport_to_node_inner_doc_comment_marker(transport: InnerDocCommentMarkerTr
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -12839,7 +14241,7 @@ fn transport_to_node_kw_async_marker(transport: KwAsyncMarkerTransport) -> Resul
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -12853,7 +14255,7 @@ fn transport_to_node_kw_move_marker(transport: KwMoveMarkerTransport) -> Result<
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -12867,7 +14269,7 @@ fn transport_to_node_kw_negative(transport: KwNegativeTransport) -> Result<Trans
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -12881,7 +14283,7 @@ fn transport_to_node_kw_operator(transport: KwOperatorTransport) -> Result<Trans
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -12895,7 +14297,7 @@ fn transport_to_node_kw_ref_marker(transport: KwRefMarkerTransport) -> Result<Tr
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -12909,7 +14311,7 @@ fn transport_to_node_kw_static_marker(transport: KwStaticMarkerTransport) -> Res
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -12923,7 +14325,7 @@ fn transport_to_node_kw_unsafe_marker(transport: KwUnsafeMarkerTransport) -> Res
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -12940,7 +14342,7 @@ fn transport_to_node_let_chain(transport: LetChainTransport) -> Result<Transport
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -12954,7 +14356,7 @@ fn transport_to_node_line_comment_content(transport: LineCommentContentTransport
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -12972,7 +14374,7 @@ fn transport_to_node_line_comment_doc(transport: LineCommentDocTransport) -> Res
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -12986,7 +14388,7 @@ fn transport_to_node_line_comment_regular_dslash(transport: LineCommentRegularDs
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -13006,7 +14408,7 @@ fn transport_to_node__macro_definition_brace(transport: _MacroDefinitionBraceTra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13026,7 +14428,7 @@ fn transport_to_node__macro_definition_bracket(transport: _MacroDefinitionBracke
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13046,7 +14448,7 @@ fn transport_to_node__macro_definition_paren(transport: _MacroDefinitionParenTra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13064,7 +14466,7 @@ fn transport_to_node__match_arm_block_ending(transport: _MatchArmBlockEndingTran
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13082,7 +14484,7 @@ fn transport_to_node_match_arm_with_comma(transport: MatchArmWithCommaTransport)
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13096,7 +14498,7 @@ fn transport_to_node_mod_item_external(transport: ModItemExternalTransport) -> R
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -13114,7 +14516,7 @@ fn transport_to_node__mod_item_inline(transport: _ModItemInlineTransport) -> Res
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13131,7 +14533,7 @@ fn transport_to_node_non_special_token(transport: NonSpecialTokenTransport) -> R
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13150,7 +14552,7 @@ fn transport_to_node_or_pattern_binary(transport: OrPatternBinaryTransport) -> R
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13168,7 +14570,7 @@ fn transport_to_node_or_pattern_prefix(transport: OrPatternPrefixTransport) -> R
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13182,7 +14584,7 @@ fn transport_to_node_outer_doc_comment_marker(transport: OuterDocCommentMarkerTr
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -13196,7 +14598,7 @@ fn transport_to_node_pointer_type_const(transport: PointerTypeConstTransport) ->
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -13213,7 +14615,7 @@ fn transport_to_node__pointer_type_mut(transport: _PointerTypeMutTransport) -> R
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13227,7 +14629,7 @@ fn transport_to_node_primitive_type(transport: PrimitiveTypeTransport) -> Result
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -13245,7 +14647,7 @@ fn transport_to_node__range_expression_bare(transport: _RangeExpressionBareTrans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13265,7 +14667,7 @@ fn transport_to_node_range_expression_binary(transport: RangeExpressionBinaryTra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13284,7 +14686,7 @@ fn transport_to_node_range_expression_postfix(transport: RangeExpressionPostfixT
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13303,7 +14705,7 @@ fn transport_to_node_range_expression_prefix(transport: RangeExpressionPrefixTra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13317,7 +14719,7 @@ fn transport_to_node_range_pattern_left_bare(transport: RangePatternLeftBareTran
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -13335,7 +14737,7 @@ fn transport_to_node_range_pattern_left_with_right(transport: RangePatternLeftWi
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13353,7 +14755,7 @@ fn transport_to_node_range_pattern_prefix(transport: RangePatternPrefixTransport
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13367,7 +14769,7 @@ fn transport_to_node_reference_expression_raw_const(transport: ReferenceExpressi
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -13384,7 +14786,7 @@ fn transport_to_node_reference_expression_raw_mut(transport: ReferenceExpression
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13401,7 +14803,7 @@ fn transport_to_node_reserved_identifier(transport: ReservedIdentifierTransport)
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13418,7 +14820,7 @@ fn transport_to_node_shorthand_field_identifier(transport: ShorthandFieldIdentif
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13435,7 +14837,7 @@ fn transport_to_node__string_content(transport: _StringContentTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13456,7 +14858,7 @@ fn transport_to_node_struct_item_brace(transport: StructItemBraceTransport) -> R
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13477,7 +14879,7 @@ fn transport_to_node_struct_item_tuple(transport: StructItemTupleTransport) -> R
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13491,7 +14893,7 @@ fn transport_to_node_struct_item_unit(transport: StructItemUnitTransport) -> Res
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -13508,7 +14910,7 @@ fn transport_to_node__token_tree_brace(transport: _TokenTreeBraceTransport) -> R
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13525,7 +14927,7 @@ fn transport_to_node__token_tree_bracket(transport: _TokenTreeBracketTransport) 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13542,7 +14944,7 @@ fn transport_to_node__token_tree_paren(transport: _TokenTreeParenTransport) -> R
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13559,7 +14961,7 @@ fn transport_to_node__token_tree_pattern_brace(transport: _TokenTreePatternBrace
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13576,7 +14978,7 @@ fn transport_to_node__token_tree_pattern_bracket(transport: _TokenTreePatternBra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13593,7 +14995,7 @@ fn transport_to_node__token_tree_pattern_paren(transport: _TokenTreePatternParen
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13610,7 +15012,7 @@ fn transport_to_node_type_identifier(transport: TypeIdentifierTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13627,7 +15029,7 @@ fn transport_to_node__visibility_modifier_crate(transport: _VisibilityModifierCr
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13645,7 +15047,7 @@ fn transport_to_node_visibility_modifier_in_path(transport: VisibilityModifierIn
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13666,7 +15068,7 @@ fn transport_to_node_visibility_modifier_pub(transport: VisibilityModifierPubTra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13680,7 +15082,7 @@ fn transport_to_node_wildcard_pattern(transport: WildcardPatternTransport) -> Re
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -13701,7 +15103,7 @@ fn transport_to_node_abstract_type(transport: AbstractTypeTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13718,7 +15120,7 @@ fn transport_to_node_arguments(transport: ArgumentsTransport) -> Result<Transpor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13742,7 +15144,7 @@ fn transport_to_node_array_expression_uform_semi(transport: ArrayExpressionUForm
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13759,7 +15161,7 @@ fn transport_to_node_array_expression_uform_list(transport: ArrayExpressionUForm
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13780,7 +15182,7 @@ fn transport_to_node_array_type(transport: ArrayTypeTransport) -> Result<Transpo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13799,7 +15201,7 @@ fn transport_to_node_assignment_expression(transport: AssignmentExpressionTransp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13826,7 +15228,7 @@ fn transport_to_node_associated_type(transport: AssociatedTypeTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13847,7 +15249,7 @@ fn transport_to_node_async_block(transport: AsyncBlockTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13864,7 +15266,7 @@ fn transport_to_node_attribute(transport: AttributeTransport) -> Result<Transpor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13882,7 +15284,7 @@ fn transport_to_node_attribute_item(transport: AttributeItemTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13899,7 +15301,7 @@ fn transport_to_node_await_expression(transport: AwaitExpressionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13916,7 +15318,7 @@ fn transport_to_node_base_field_initializer(transport: BaseFieldInitializerTrans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13936,7 +15338,7 @@ fn transport_to_node_binary_expression(transport: BinaryExpressionTransport) -> 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13956,7 +15358,7 @@ fn transport_to_node_block(transport: BlockTransport) -> Result<TransportNodeDat
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13976,7 +15378,7 @@ fn transport_to_node_block_comment(transport: BlockCommentTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -13990,7 +15392,7 @@ fn transport_to_node_boolean_literal(transport: BooleanLiteralTransport) -> Resu
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -14009,7 +15411,7 @@ fn transport_to_node_bounded_type(transport: BoundedTypeTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14026,7 +15428,7 @@ fn transport_to_node_bracketed_type(transport: BracketedTypeTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14049,7 +15451,7 @@ fn transport_to_node_break_expression(transport: BreakExpressionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14068,7 +15470,7 @@ fn transport_to_node_call_expression(transport: CallExpressionTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14086,7 +15488,7 @@ fn transport_to_node_captured_pattern(transport: CapturedPatternTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14100,7 +15502,7 @@ fn transport_to_node_char_literal(transport: CharLiteralTransport) -> Result<Tra
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -14118,7 +15520,7 @@ fn transport_to_node_closure_expression_expr(transport: ClosureExpressionExprTra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14152,7 +15554,7 @@ fn transport_to_node_closure_expression_uform_block(transport: ClosureExpression
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14179,7 +15581,7 @@ fn transport_to_node_closure_expression_uform_expr(transport: ClosureExpressionU
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14196,7 +15598,7 @@ fn transport_to_node_closure_parameters(transport: ClosureParametersTransport) -
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14213,7 +15615,7 @@ fn transport_to_node_comment(transport: CommentTransport) -> Result<TransportNod
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14233,7 +15635,7 @@ fn transport_to_node_compound_assignment_expr(transport: CompoundAssignmentExprT
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14251,7 +15653,7 @@ fn transport_to_node_const_block(transport: ConstBlockTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14276,7 +15678,7 @@ fn transport_to_node_const_item(transport: ConstItemTransport) -> Result<Transpo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14298,7 +15700,7 @@ fn transport_to_node_const_parameter(transport: ConstParameterTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14318,7 +15720,7 @@ fn transport_to_node_continue_expression(transport: ContinueExpressionTransport)
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14332,7 +15734,7 @@ fn transport_to_node_crate(transport: CrateTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -14349,7 +15751,7 @@ fn transport_to_node_declaration_list(transport: DeclarationListTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14366,7 +15768,7 @@ fn transport_to_node_delim_token_tree_paren(transport: DelimTokenTreeParenTransp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14383,7 +15785,7 @@ fn transport_to_node_delim_token_tree_bracket(transport: DelimTokenTreeBracketTr
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14400,7 +15802,7 @@ fn transport_to_node_delim_token_tree_brace(transport: DelimTokenTreeBraceTransp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14425,7 +15827,7 @@ fn transport_to_node_delim_token_tree_uform_paren(transport: DelimTokenTreeUForm
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14442,7 +15844,7 @@ fn transport_to_node_delim_token_tree_uform_bracket(transport: DelimTokenTreeUFo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14459,7 +15861,7 @@ fn transport_to_node_delim_token_tree_uform_brace(transport: DelimTokenTreeUForm
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14477,7 +15879,7 @@ fn transport_to_node_dynamic_type(transport: DynamicTypeTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14494,7 +15896,7 @@ fn transport_to_node_else_clause(transport: ElseClauseTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14508,7 +15910,7 @@ fn transport_to_node_empty_statement(transport: EmptyStatementTransport) -> Resu
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -14536,7 +15938,7 @@ fn transport_to_node_enum_item(transport: EnumItemTransport) -> Result<Transport
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14563,7 +15965,7 @@ fn transport_to_node_enum_variant(transport: EnumVariantTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14580,7 +15982,7 @@ fn transport_to_node_enum_variant_list(transport: EnumVariantListTransport) -> R
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14594,7 +15996,7 @@ fn transport_to_node_escape_sequence(transport: EscapeSequenceTransport) -> Resu
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -14611,7 +16013,7 @@ fn transport_to_node_expression_statement_with_semi(transport: ExpressionStateme
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14628,7 +16030,7 @@ fn transport_to_node_expression_statement_block_ending(transport: ExpressionStat
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14652,7 +16054,7 @@ fn transport_to_node_expression_statement_uform_with_semi(transport: ExpressionS
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14669,7 +16071,7 @@ fn transport_to_node_expression_statement_uform_block_ending(transport: Expressi
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14694,7 +16096,7 @@ fn transport_to_node_extern_crate_declaration(transport: ExternCrateDeclarationT
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14714,7 +16116,7 @@ fn transport_to_node_extern_modifier(transport: ExternModifierTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14736,7 +16138,7 @@ fn transport_to_node_field_declaration(transport: FieldDeclarationTransport) -> 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14753,7 +16155,7 @@ fn transport_to_node_field_declaration_list(transport: FieldDeclarationListTrans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14772,7 +16174,7 @@ fn transport_to_node_field_expression(transport: FieldExpressionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14791,7 +16193,7 @@ fn transport_to_node_field_initializer(transport: FieldInitializerTransport) -> 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14808,7 +16210,7 @@ fn transport_to_node_field_initializer_list(transport: FieldInitializerListTrans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14826,7 +16228,7 @@ fn transport_to_node_field_pattern_shorthand(transport: FieldPatternShorthandTra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14856,7 +16258,7 @@ fn transport_to_node_field_pattern_uform_shorthand(transport: FieldPatternUFormS
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14879,7 +16281,7 @@ fn transport_to_node_field_pattern_uform_named(transport: FieldPatternUFormNamed
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14902,7 +16304,7 @@ fn transport_to_node_for_expression(transport: ForExpressionTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14919,7 +16321,7 @@ fn transport_to_node_for_lifetimes(transport: ForLifetimesTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14937,7 +16339,7 @@ fn transport_to_node_foreign_mod_item_body(transport: ForeignModItemBodyTranspor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14965,7 +16367,7 @@ fn transport_to_node_foreign_mod_item_uform_semi(transport: ForeignModItemUFormS
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -14986,7 +16388,7 @@ fn transport_to_node_foreign_mod_item_uform_body(transport: ForeignModItemUFormB
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15000,7 +16402,7 @@ fn transport_to_node_fragment_specifier(transport: FragmentSpecifierTransport) -
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -15035,7 +16437,7 @@ fn transport_to_node_function_item(transport: FunctionItemTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15053,7 +16455,7 @@ fn transport_to_node_function_modifiers(transport: FunctionModifiersTransport) -
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15087,7 +16489,7 @@ fn transport_to_node_function_signature_item(transport: FunctionSignatureItemTra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15111,7 +16513,7 @@ fn transport_to_node_function_type(transport: FunctionTypeTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15132,7 +16534,7 @@ fn transport_to_node_gen_block(transport: GenBlockTransport) -> Result<Transport
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15151,7 +16553,7 @@ fn transport_to_node_generic_function(transport: GenericFunctionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15169,7 +16571,7 @@ fn transport_to_node_generic_pattern(transport: GenericPatternTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15188,7 +16590,7 @@ fn transport_to_node_generic_type(transport: GenericTypeTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15208,7 +16610,7 @@ fn transport_to_node_generic_type_with_turbofish(transport: GenericTypeWithTurbo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15227,7 +16629,7 @@ fn transport_to_node_higher_ranked_trait_bound(transport: HigherRankedTraitBound
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15241,7 +16643,7 @@ fn transport_to_node_identifier(transport: IdentifierTransport) -> Result<Transp
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -15263,7 +16665,7 @@ fn transport_to_node_if_expression(transport: IfExpressionTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15281,7 +16683,7 @@ fn transport_to_node_impl_item_body(transport: ImplItemBodyTransport) -> Result<
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15321,7 +16723,7 @@ fn transport_to_node_impl_item_uform_body(transport: ImplItemUFormBodyTransport)
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15354,7 +16756,7 @@ fn transport_to_node_impl_item_uform_semi(transport: ImplItemUFormSemiTransport)
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15373,7 +16775,7 @@ fn transport_to_node_index_expression(transport: IndexExpressionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15391,7 +16793,7 @@ fn transport_to_node_inner_attribute_item(transport: InnerAttributeItemTransport
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15405,7 +16807,7 @@ fn transport_to_node_integer_literal(transport: IntegerLiteralTransport) -> Resu
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -15423,7 +16825,7 @@ fn transport_to_node_label(transport: LabelTransport) -> Result<TransportNodeDat
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15442,7 +16844,7 @@ fn transport_to_node_last_match_arm(transport: LastMatchArmTransport) -> Result<
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15461,7 +16863,7 @@ fn transport_to_node_let_condition(transport: LetConditionTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15491,7 +16893,7 @@ fn transport_to_node_let_declaration(transport: LetDeclarationTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15509,7 +16911,7 @@ fn transport_to_node_lifetime(transport: LifetimeTransport) -> Result<TransportN
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15530,7 +16932,7 @@ fn transport_to_node_lifetime_parameter(transport: LifetimeParameterTransport) -
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15555,7 +16957,7 @@ fn transport_to_node_line_comment_uform_regular_dslash(transport: LineCommentUFo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15572,7 +16974,7 @@ fn transport_to_node_line_comment_uform_doc(transport: LineCommentUFormDocTransp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15589,7 +16991,7 @@ fn transport_to_node_line_comment_uform_content(transport: LineCommentUFormConte
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15610,7 +17012,7 @@ fn transport_to_node_loop_expression(transport: LoopExpressionTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15630,7 +17032,7 @@ fn transport_to_node_macro_definition_paren(transport: MacroDefinitionParenTrans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15650,7 +17052,7 @@ fn transport_to_node_macro_definition_bracket(transport: MacroDefinitionBracketT
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15670,7 +17072,7 @@ fn transport_to_node_macro_definition_brace(transport: MacroDefinitionBraceTrans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15696,7 +17098,7 @@ fn transport_to_node_macro_definition_uform_paren(transport: MacroDefinitionUFor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15714,7 +17116,7 @@ fn transport_to_node_macro_definition_uform_bracket(transport: MacroDefinitionUF
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15732,7 +17134,7 @@ fn transport_to_node_macro_definition_uform_brace(transport: MacroDefinitionUFor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15751,7 +17153,7 @@ fn transport_to_node_macro_invocation(transport: MacroInvocationTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15770,7 +17172,7 @@ fn transport_to_node_macro_rule(transport: MacroRuleTransport) -> Result<Transpo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15788,7 +17190,7 @@ fn transport_to_node_match_arm_block_ending(transport: MatchArmBlockEndingTransp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15813,7 +17215,7 @@ fn transport_to_node_match_arm_uform_with_comma(transport: MatchArmUFormWithComm
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15831,7 +17233,7 @@ fn transport_to_node_match_arm_uform_block_ending(transport: MatchArmUFormBlockE
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15851,7 +17253,7 @@ fn transport_to_node_match_block(transport: MatchBlockTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15870,7 +17272,7 @@ fn transport_to_node_match_expression(transport: MatchExpressionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15890,7 +17292,7 @@ fn transport_to_node_match_pattern(transport: MatchPatternTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15904,7 +17306,7 @@ fn transport_to_node_metavariable(transport: MetavariableTransport) -> Result<Tr
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -15922,7 +17324,7 @@ fn transport_to_node_mod_item_inline(transport: ModItemInlineTransport) -> Resul
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15950,7 +17352,7 @@ fn transport_to_node_mod_item_uform_external(transport: ModItemUFormExternalTran
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15971,7 +17373,7 @@ fn transport_to_node_mod_item_uform_inline(transport: ModItemUFormInlineTranspor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -15989,7 +17391,7 @@ fn transport_to_node_mut_pattern(transport: MutPatternTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16003,7 +17405,7 @@ fn transport_to_node_mutable_specifier(transport: MutableSpecifierTransport) -> 
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -16021,7 +17423,7 @@ fn transport_to_node_negative_literal(transport: NegativeLiteralTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16035,7 +17437,7 @@ fn transport_to_node_never_type(transport: NeverTypeTransport) -> Result<Transpo
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -16059,7 +17461,7 @@ fn transport_to_node_or_pattern_uform_binary(transport: OrPatternUFormBinaryTran
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16076,7 +17478,7 @@ fn transport_to_node_or_pattern_uform_prefix(transport: OrPatternUFormPrefixTran
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16094,7 +17496,7 @@ fn transport_to_node_ordered_field_declaration_list(transport: OrderedFieldDecla
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16116,7 +17518,7 @@ fn transport_to_node_parameter(transport: ParameterTransport) -> Result<Transpor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16133,7 +17535,7 @@ fn transport_to_node_parameters(transport: ParametersTransport) -> Result<Transp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16150,7 +17552,7 @@ fn transport_to_node_parenthesized_expression(transport: ParenthesizedExpression
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16167,7 +17569,7 @@ fn transport_to_node_pointer_type_mut(transport: PointerTypeMutTransport) -> Res
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16192,7 +17594,7 @@ fn transport_to_node_pointer_type_uform_const(transport: PointerTypeUFormConstTr
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16210,7 +17612,7 @@ fn transport_to_node_pointer_type_uform_mut(transport: PointerTypeUFormMutTransp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16229,7 +17631,7 @@ fn transport_to_node_qualified_type(transport: QualifiedTypeTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16247,7 +17649,7 @@ fn transport_to_node_range_expression_bare(transport: RangeExpressionBareTranspo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16273,7 +17675,7 @@ fn transport_to_node_range_expression_uform_binary(transport: RangeExpressionUFo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16290,7 +17692,7 @@ fn transport_to_node_range_expression_uform_postfix(transport: RangeExpressionUF
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16307,7 +17709,7 @@ fn transport_to_node_range_expression_uform_prefix(transport: RangeExpressionUFo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16324,7 +17726,7 @@ fn transport_to_node_range_expression_uform_bare(transport: RangeExpressionUForm
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16350,7 +17752,7 @@ fn transport_to_node_range_pattern_uform_left_with_right(transport: RangePattern
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16368,7 +17770,7 @@ fn transport_to_node_range_pattern_uform_left_bare(transport: RangePatternUFormL
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16385,7 +17787,7 @@ fn transport_to_node_range_pattern_uform_prefix(transport: RangePatternUFormPref
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16409,7 +17811,7 @@ fn transport_to_node_raw_string_literal(transport: RawStringLiteralTransport) ->
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16426,7 +17828,7 @@ fn transport_to_node_ref_pattern(transport: RefPatternTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16444,7 +17846,7 @@ fn transport_to_node_reference_expression(transport: ReferenceExpressionTranspor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16465,7 +17867,7 @@ fn transport_to_node_reference_pattern(transport: ReferencePatternTransport) -> 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16489,7 +17891,7 @@ fn transport_to_node_reference_type(transport: ReferenceTypeTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16503,7 +17905,7 @@ fn transport_to_node_remaining_field_pattern(transport: RemainingFieldPatternTra
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -16520,7 +17922,7 @@ fn transport_to_node_removed_trait_bound(transport: RemovedTraitBoundTransport) 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16540,7 +17942,7 @@ fn transport_to_node_return_expression(transport: ReturnExpressionTransport) -> 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16561,7 +17963,7 @@ fn transport_to_node_scoped_identifier(transport: ScopedIdentifierTransport) -> 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16582,7 +17984,7 @@ fn transport_to_node_scoped_type_identifier(transport: ScopedTypeIdentifierTrans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16603,7 +18005,7 @@ fn transport_to_node_scoped_type_identifier_in_expression_position(transport: Sc
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16624,7 +18026,7 @@ fn transport_to_node_scoped_use_list(transport: ScopedUseListTransport) -> Resul
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16638,7 +18040,7 @@ fn transport_to_node_self(transport: Self_Transport) -> Result<TransportNodeData
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -16665,7 +18067,7 @@ fn transport_to_node_self_parameter(transport: SelfParameterTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16679,7 +18081,7 @@ fn transport_to_node_shebang(transport: ShebangTransport) -> Result<TransportNod
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -16698,7 +18100,7 @@ fn transport_to_node_shorthand_field_initializer(transport: ShorthandFieldInitia
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16715,7 +18117,7 @@ fn transport_to_node_slice_pattern(transport: SlicePatternTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16736,7 +18138,7 @@ fn transport_to_node_source_file(transport: SourceFileTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16764,7 +18166,7 @@ fn transport_to_node_static_item(transport: StaticItemTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16781,7 +18183,7 @@ fn transport_to_node_string_literal(transport: StringLiteralTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16800,7 +18202,7 @@ fn transport_to_node_struct_expression(transport: StructExpressionTransport) -> 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16832,7 +18234,7 @@ fn transport_to_node_struct_item_uform_brace(transport: StructItemUFormBraceTran
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16856,7 +18258,7 @@ fn transport_to_node_struct_item_uform_tuple(transport: StructItemUFormTupleTran
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16880,7 +18282,7 @@ fn transport_to_node_struct_item_uform_unit(transport: StructItemUFormUnitTransp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16898,7 +18300,7 @@ fn transport_to_node_struct_pattern(transport: StructPatternTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16912,7 +18314,7 @@ fn transport_to_node_super(transport: SuperTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -16931,7 +18333,7 @@ fn transport_to_node_token_binding_pattern(transport: TokenBindingPatternTranspo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16948,7 +18350,7 @@ fn transport_to_node_token_repetition(transport: TokenRepetitionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16965,7 +18367,7 @@ fn transport_to_node_token_repetition_pattern(transport: TokenRepetitionPatternT
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16982,7 +18384,7 @@ fn transport_to_node_token_tree_paren(transport: TokenTreeParenTransport) -> Res
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -16999,7 +18401,7 @@ fn transport_to_node_token_tree_bracket(transport: TokenTreeBracketTransport) ->
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17016,7 +18418,7 @@ fn transport_to_node_token_tree_brace(transport: TokenTreeBraceTransport) -> Res
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17041,7 +18443,7 @@ fn transport_to_node_token_tree_uform_paren(transport: TokenTreeUFormParenTransp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17058,7 +18460,7 @@ fn transport_to_node_token_tree_uform_bracket(transport: TokenTreeUFormBracketTr
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17075,7 +18477,7 @@ fn transport_to_node_token_tree_uform_brace(transport: TokenTreeUFormBraceTransp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17092,7 +18494,7 @@ fn transport_to_node_token_tree_pattern_paren(transport: TokenTreePatternParenTr
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17109,7 +18511,7 @@ fn transport_to_node_token_tree_pattern_bracket(transport: TokenTreePatternBrack
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17126,7 +18528,7 @@ fn transport_to_node_token_tree_pattern_brace(transport: TokenTreePatternBraceTr
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17151,7 +18553,7 @@ fn transport_to_node_token_tree_pattern_uform_paren(transport: TokenTreePatternU
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17168,7 +18570,7 @@ fn transport_to_node_token_tree_pattern_uform_bracket(transport: TokenTreePatter
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17185,7 +18587,7 @@ fn transport_to_node_token_tree_pattern_uform_brace(transport: TokenTreePatternU
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17202,7 +18604,7 @@ fn transport_to_node_trait_bounds(transport: TraitBoundsTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17236,7 +18638,7 @@ fn transport_to_node_trait_item(transport: TraitItemTransport) -> Result<Transpo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17254,7 +18656,7 @@ fn transport_to_node_try_block(transport: TryBlockTransport) -> Result<Transport
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17272,7 +18674,7 @@ fn transport_to_node_try_expression(transport: TryExpressionTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17293,7 +18695,7 @@ fn transport_to_node_tuple_expression(transport: TupleExpressionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17310,7 +18712,7 @@ fn transport_to_node_tuple_pattern(transport: TuplePatternTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17328,7 +18730,7 @@ fn transport_to_node_tuple_struct_pattern(transport: TupleStructPatternTransport
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17345,7 +18747,7 @@ fn transport_to_node_tuple_type(transport: TupleTypeTransport) -> Result<Transpo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17362,7 +18764,7 @@ fn transport_to_node_type_arguments(transport: TypeArgumentsTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17384,7 +18786,7 @@ fn transport_to_node_type_binding(transport: TypeBindingTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17403,7 +18805,7 @@ fn transport_to_node_type_cast_expression(transport: TypeCastExpressionTransport
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17434,7 +18836,7 @@ fn transport_to_node_type_item(transport: TypeItemTransport) -> Result<Transport
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17458,7 +18860,7 @@ fn transport_to_node_type_parameter(transport: TypeParameterTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17475,7 +18877,7 @@ fn transport_to_node_type_parameters(transport: TypeParametersTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17494,7 +18896,7 @@ fn transport_to_node_unary_expression(transport: UnaryExpressionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17522,7 +18924,7 @@ fn transport_to_node_union_item(transport: UnionItemTransport) -> Result<Transpo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17536,7 +18938,7 @@ fn transport_to_node_unit_expression(transport: UnitExpressionTransport) -> Resu
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -17550,7 +18952,7 @@ fn transport_to_node_unit_type(transport: UnitTypeTransport) -> Result<Transport
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -17568,7 +18970,7 @@ fn transport_to_node_unsafe_block(transport: UnsafeBlockTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17587,7 +18989,7 @@ fn transport_to_node_use_as_clause(transport: UseAsClauseTransport) -> Result<Tr
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17604,7 +19006,7 @@ fn transport_to_node_use_bounds(transport: UseBoundsTransport) -> Result<Transpo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17625,7 +19027,7 @@ fn transport_to_node_use_declaration(transport: UseDeclarationTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17642,7 +19044,7 @@ fn transport_to_node_use_list(transport: UseListTransport) -> Result<TransportNo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17662,7 +19064,7 @@ fn transport_to_node_use_wildcard(transport: UseWildcardTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17685,7 +19087,7 @@ fn transport_to_node_variadic_parameter(transport: VariadicParameterTransport) -
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17702,7 +19104,7 @@ fn transport_to_node_visibility_modifier_crate(transport: VisibilityModifierCrat
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17727,7 +19129,7 @@ fn transport_to_node_visibility_modifier_uform_in_path(transport: VisibilityModi
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17744,7 +19146,7 @@ fn transport_to_node_visibility_modifier_uform_crate(transport: VisibilityModifi
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17761,7 +19163,7 @@ fn transport_to_node_visibility_modifier_uform_pub(transport: VisibilityModifier
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17778,7 +19180,7 @@ fn transport_to_node_where_clause(transport: WhereClauseTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17797,7 +19199,7 @@ fn transport_to_node_where_predicate(transport: WherePredicateTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17819,7 +19221,7 @@ fn transport_to_node_while_expression(transport: WhileExpressionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17839,7 +19241,7 @@ fn transport_to_node_yield_expression(transport: YieldExpressionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
     ))
@@ -17853,7 +19255,7 @@ fn transport_to_node_string_content(transport: StringContentTransport) -> Result
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -17867,7 +19269,7 @@ fn transport_to_node_raw_string_literal_content(transport: RawStringLiteralConte
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -17881,7 +19283,7 @@ fn transport_to_node_float_literal(transport: FloatLiteralTransport) -> Result<T
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -17895,7 +19297,7 @@ fn transport_to_node_outer_block_doc_comment_marker(transport: OuterBlockDocComm
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -17909,7 +19311,7 @@ fn transport_to_node_inner_block_doc_comment_marker(transport: InnerBlockDocComm
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -17923,7 +19325,7 @@ fn transport_to_node_error_sentinel(transport: ErrorSentinelTransport) -> Result
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -17937,7 +19339,7 @@ fn transport_to_node_bracket(transport: BracketTransport) -> Result<TransportNod
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -17951,7 +19353,7 @@ fn transport_to_node_close_bracket(transport: CloseBracketTransport) -> Result<T
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -17965,7 +19367,7 @@ fn transport_to_node_semi(transport: SemiTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -17979,7 +19381,7 @@ fn transport_to_node_arrow(transport: ArrowTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -17993,7 +19395,7 @@ fn transport_to_node_anonymous(transport: AnonymousTransport) -> Result<Transpor
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18007,7 +19409,7 @@ fn transport_to_node_brace(transport: BraceTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18021,7 +19423,7 @@ fn transport_to_node_close_brace(transport: CloseBraceTransport) -> Result<Trans
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18035,7 +19437,7 @@ fn transport_to_node_paren(transport: ParenTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18049,7 +19451,7 @@ fn transport_to_node_close_paren(transport: CloseParenTransport) -> Result<Trans
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18063,7 +19465,7 @@ fn transport_to_node_colon(transport: ColonTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18077,7 +19479,7 @@ fn transport_to_node_fn(transport: FnTransport) -> Result<TransportNodeData, ::a
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18091,7 +19493,7 @@ fn transport_to_node_bang(transport: BangTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18105,7 +19507,7 @@ fn transport_to_node_async(transport: AsyncTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18119,7 +19521,7 @@ fn transport_to_node_move(transport: MoveTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18133,7 +19535,7 @@ fn transport_to_node_dotdot(transport: DotdotTransport) -> Result<TransportNodeD
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18147,7 +19549,7 @@ fn transport_to_node_ref(transport: RefTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18161,7 +19563,7 @@ fn transport_to_node_static(transport: StaticTransport) -> Result<TransportNodeD
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18175,7 +19577,7 @@ fn transport_to_node_unsafe(transport: UnsafeTransport) -> Result<TransportNodeD
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18189,7 +19591,7 @@ fn transport_to_node_andand(transport: AndandTransport) -> Result<TransportNodeD
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18203,7 +19605,7 @@ fn transport_to_node_comma(transport: CommaTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18217,7 +19619,7 @@ fn transport_to_node_tok_sq(transport: TokSqTransport) -> Result<TransportNodeDa
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18231,7 +19633,7 @@ fn transport_to_node_as(transport: AsTransport) -> Result<TransportNodeData, ::a
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18245,7 +19647,7 @@ fn transport_to_node_await(transport: AwaitTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18259,7 +19661,7 @@ fn transport_to_node_break(transport: BreakTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18273,7 +19675,7 @@ fn transport_to_node_const(transport: ConstTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18287,7 +19689,7 @@ fn transport_to_node_continue(transport: ContinueTransport) -> Result<TransportN
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18301,7 +19703,7 @@ fn transport_to_node_default(transport: DefaultTransport) -> Result<TransportNod
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18315,7 +19717,7 @@ fn transport_to_node_enum(transport: EnumTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18329,7 +19731,7 @@ fn transport_to_node_for(transport: ForTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18343,7 +19745,7 @@ fn transport_to_node_gen(transport: GenTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18357,7 +19759,7 @@ fn transport_to_node_if(transport: IfTransport) -> Result<TransportNodeData, ::a
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18371,7 +19773,7 @@ fn transport_to_node_impl(transport: ImplTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18385,7 +19787,7 @@ fn transport_to_node_let(transport: LetTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18399,7 +19801,7 @@ fn transport_to_node_loop(transport: LoopTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18413,7 +19815,7 @@ fn transport_to_node_match(transport: MatchTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18427,7 +19829,7 @@ fn transport_to_node_mod(transport: ModTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18441,7 +19843,7 @@ fn transport_to_node_pub(transport: PubTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18455,7 +19857,7 @@ fn transport_to_node_return(transport: ReturnTransport) -> Result<TransportNodeD
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18469,7 +19871,7 @@ fn transport_to_node_struct(transport: StructTransport) -> Result<TransportNodeD
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18483,7 +19885,7 @@ fn transport_to_node_trait(transport: TraitTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18497,7 +19899,7 @@ fn transport_to_node_type(transport: TypeTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18511,7 +19913,7 @@ fn transport_to_node_union(transport: UnionTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18525,7 +19927,7 @@ fn transport_to_node_use(transport: UseTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18539,7 +19941,7 @@ fn transport_to_node_where(transport: WhereTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18553,7 +19955,7 @@ fn transport_to_node_while(transport: WhileTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18567,7 +19969,7 @@ fn transport_to_node_pipe(transport: PipeTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18581,7 +19983,7 @@ fn transport_to_node_slash(transport: SlashTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18595,7 +19997,7 @@ fn transport_to_node_raw(transport: RawTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18609,7 +20011,7 @@ fn transport_to_node_in(transport: InTransport) -> Result<TransportNodeData, ::a
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18623,7 +20025,7 @@ fn transport_to_node_eq(transport: EqTransport) -> Result<TransportNodeData, ::a
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18637,7 +20039,7 @@ fn transport_to_node_hash(transport: HashTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18651,7 +20053,7 @@ fn transport_to_node_dot(transport: DotTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18665,7 +20067,7 @@ fn transport_to_node_oror(transport: OrorTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18679,7 +20081,7 @@ fn transport_to_node_amp(transport: AmpTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18693,7 +20095,7 @@ fn transport_to_node_caret(transport: CaretTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18707,7 +20109,7 @@ fn transport_to_node_tok_slash_star(transport: TokSlashStarTransport) -> Result<
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18721,7 +20123,7 @@ fn transport_to_node_tok_star_slash(transport: TokStarSlashTransport) -> Result<
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18735,7 +20137,7 @@ fn transport_to_node_plus(transport: PlusTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18749,7 +20151,7 @@ fn transport_to_node_lt(transport: LtTransport) -> Result<TransportNodeData, ::a
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18763,7 +20165,7 @@ fn transport_to_node_gt(transport: GtTransport) -> Result<TransportNodeData, ::a
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18777,7 +20179,7 @@ fn transport_to_node_at(transport: AtTransport) -> Result<TransportNodeData, ::a
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18791,7 +20193,7 @@ fn transport_to_node_dyn(transport: DynTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18805,7 +20207,7 @@ fn transport_to_node_else(transport: ElseTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18819,7 +20221,7 @@ fn transport_to_node_extern(transport: ExternTransport) -> Result<TransportNodeD
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18833,7 +20235,7 @@ fn transport_to_node_fat_arrow(transport: FatArrowTransport) -> Result<Transport
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18847,7 +20249,7 @@ fn transport_to_node_mut(transport: MutTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18861,7 +20263,7 @@ fn transport_to_node_minus(transport: MinusTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18875,7 +20277,7 @@ fn transport_to_node_question(transport: QuestionTransport) -> Result<TransportN
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18889,7 +20291,7 @@ fn transport_to_node_tok_dq(transport: TokDqTransport) -> Result<TransportNodeDa
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18903,7 +20305,7 @@ fn transport_to_node_tok_dollar(transport: TokDollarTransport) -> Result<Transpo
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18917,7 +20319,7 @@ fn transport_to_node_try(transport: TryTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18931,7 +20333,7 @@ fn transport_to_node_star(transport: StarTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18945,7 +20347,7 @@ fn transport_to_node_ellipsis(transport: EllipsisTransport) -> Result<TransportN
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))
@@ -18959,7 +20361,7 @@ fn transport_to_node_yield(transport: YieldTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id,
+        transport.transport_node_id.map(|v| v as u64),
         None,
         None,
     ))

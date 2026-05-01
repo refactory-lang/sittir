@@ -487,13 +487,25 @@ function projectTransportValue(value: unknown, path: string): unknown {
     return { $type: value, $text: value };
   }
   if (!isRecord(value)) return value;
-  if (typeof value.$type !== "number") return value;
+  if (typeof value.$type !== "number" && typeof value.$type !== "string") return value;
+
+  // Resolve the wire kind name (including alias rewriting) first so
+  // all internal routing uses a consistent string key. The numeric
+  // $type is written at the very end — Phase B wire migration.
+  // String $type comes from $source:"ts" NodeData — convert to numeric,
+  // falling back to the string itself for TSGrammar-only inlined kinds.
+  const resolvedKind = nativeTransportType(
+    typeof value.$type === "number"
+      ? kindNameFromId(value.$type as number)
+      : (value.$type as string)
+  );
 
   const projected: Record<string, unknown> = {};
   for (const key of transportMetadataKeys) {
     if (key in value) projected[key] = value[key];
   }
-  projected.$type = nativeTransportType(kindNameFromId(value.$type as number));
+  // Temporarily store string kind for routing; converted to numeric below.
+  projected.$type = resolvedKind;
 
   const fields = value.$fields;
   if (isRecord(fields)) {
@@ -510,8 +522,12 @@ function projectTransportValue(value: unknown, path: string): unknown {
     projected[key] = projectTransportValue(child, `${path}.${key}`);
   }
 
-  projectRawChildrenIntoFields(projected);
-  inferNativeTransportVariant(projected);
+  projectRawChildrenIntoFields(projected, resolvedKind);
+  inferNativeTransportVariant(projected, resolvedKind);
+
+  // Convert $type to numeric at the wire boundary (Phase B).
+  // TSGrammar-only inlined kinds have no parser ID — keep as string.
+  try { projected.$type = kindIdFromName(resolvedKind); } catch { projected.$type = resolvedKind; }
 
   return projected;
 }
@@ -520,8 +536,7 @@ function nativeTransportType(kind: string): string {
   return nativeTransportAliasTargetToSource[kind] ?? kind;
 }
 
-function projectRawChildrenIntoFields(projected: Record<string, unknown>): void {
-  const kind = String(projected.$type);
+function projectRawChildrenIntoFields(projected: Record<string, unknown>, kind: string): void {
   const rules = nativeTransportRawChildFieldRules[kind];
   const children = projected.$children;
   if (!rules || !Array.isArray(children)) return;
@@ -551,9 +566,9 @@ function projectRawChildrenIntoFields(projected: Record<string, unknown>): void 
   }
 }
 
-function inferNativeTransportVariant(projected: Record<string, unknown>): void {
+function inferNativeTransportVariant(projected: Record<string, unknown>, kind: string): void {
   if (typeof projected.$variant === "string") return;
-  const rules = nativeTransportVariantRules[String(projected.$type)];
+  const rules = nativeTransportVariantRules[kind];
   if (!rules) return;
   const matches = rules.filter((rule) => transportVariantMatches(projected, rule));
   if (matches.length === 1) projected.$variant = matches[0]!.variant;
@@ -582,9 +597,18 @@ function transportArrayMatches(value: unknown, alternatives: readonly NativeTran
 }
 
 function transportValueMatches(value: unknown, alternatives: readonly NativeTransportAlternative[]): boolean {
-  if (!isRecord(value) || typeof value.$type !== "string") return false;
+  if (!isRecord(value)) return false;
+  // $type may be a numeric KindId (projected structured node) or a string
+  // (terminal node converted from a literal string via the string fast-path).
+  const vt = value.$type;
+  if (typeof vt !== "string" && typeof vt !== "number") return false;
   return alternatives.some((candidate) => {
-    if (value.$type !== candidate.type) return false;
+    // Compare numeric vs numeric (kindIdFromName converts candidate string kind);
+    // compare string vs string for literal terminals.
+    const typeMatch = typeof vt === "number"
+      ? vt === kindIdFromName(candidate.type)
+      : vt === candidate.type;
+    if (!typeMatch) return false;
     return candidate.text === undefined || value.$text === candidate.text;
   });
 }
@@ -597,1222 +621,1222 @@ function transportValueMatches(value: unknown, alternatives: readonly NativeTran
  */
 export function assertNativeRenderTransport(node: unknown): asserts node is AnyTransport {
   if (!isRecord(node)) throw new TypeError('node must be an object');
-  if (typeof node.$type !== 'string') throw new TypeError('node.$type must be a string');
+  if (typeof node.$type !== 'number' && typeof node.$type !== 'string') throw new TypeError('node.$type must be a KindId (number) or kind string');
   assertDataOnlyObject(node, 'node');
-  switch (node.$type) {
-    case "_arrow_function__call_signature":
+  switch ((node.$type as number | string)) {
+    case 357: // _arrow_function__call_signature
       assert_ArrowFunctionUCallSignatureTransport(node, 'node');
       return;
-    case "_arrow_function_parameter":
+    case 356: // _arrow_function_parameter
       assert_ArrowFunctionParameterTransport(node, 'node');
       return;
-    case "_call_expression_call":
+    case 387: // _call_expression_call
       assertCallExpressionCallTransport(node, 'node');
       return;
-    case "_call_expression_member":
+    case 389: // _call_expression_member
       assertCallExpressionMemberTransport(node, 'node');
       return;
-    case "_call_expression_template_call":
+    case 388: // _call_expression_template_call
       assertCallExpressionTemplateCallTransport(node, 'node');
       return;
-    case "_call_signature":
+    case 228: // _call_signature
       assert_CallSignatureTransport(node, 'node');
       return;
-    case "_class_body_member":
+    case 373: // _class_body_member
       assertClassBodyMemberTransport(node, 'node');
       return;
-    case "_class_body_method":
+    case 371: // _class_body_method
       assertClassBodyMethodTransport(node, 'node');
       return;
-    case "_class_body_method_sig":
+    case 372: // _class_body_method_sig
       assertClassBodyMethodSigTransport(node, 'node');
       return;
-    case "_class_heritage_extends_clause":
+    case 358: // _class_heritage_extends_clause
       assert_ClassHeritageExtendsClauseTransport(node, 'node');
       return;
-    case "_class_heritage_implements_clause":
+    case 359: // _class_heritage_implements_clause
       assert_ClassHeritageImplementsClauseTransport(node, 'node');
       return;
-    case "_export_statement_default_decl_arm":
+    case 354: // _export_statement_default_decl_arm
       assertExportStatementDefaultDeclArmTransport(node, 'node');
       return;
-    case "_export_statement_default_decl_arm_default_kw":
+    case 355: // _export_statement_default_decl_arm_default_kw
       assertExportStatementDefaultDeclArmDefaultKwTransport(node, 'node');
       return;
-    case "_export_statement_default_decl_arm_default_kw_value":
+    case 370: // _export_statement_default_decl_arm_default_kw_value
       assertExportStatementDefaultDeclArmDefaultKwValueTransport(node, 'node');
       return;
-    case "_export_statement_default_from_arm":
+    case 353: // _export_statement_default_from_arm
       assertExportStatementDefaultFromArmTransport(node, 'node');
       return;
-    case "_export_statement_default_from_arm_clause_from":
+    case 369: // _export_statement_default_from_arm_clause_from
       assertExportStatementDefaultFromArmClauseFromTransport(node, 'node');
       return;
-    case "_export_statement_default_from_arm_ns_from":
+    case 368: // _export_statement_default_from_arm_ns_from
       assertExportStatementDefaultFromArmNsFromTransport(node, 'node');
       return;
-    case "_export_statement_default_from_arm_star_from":
+    case 367: // _export_statement_default_from_arm_star_from
       assertExportStatementDefaultFromArmStarFromTransport(node, 'node');
       return;
-    case "_export_statement_equals_export":
+    case 385: // _export_statement_equals_export
       assert_ExportStatementEqualsExportTransport(node, 'node');
       return;
-    case "_export_statement_namespace_export":
+    case 386: // _export_statement_namespace_export
       assert_ExportStatementNamespaceExportTransport(node, 'node');
       return;
-    case "_export_statement_type_export":
+    case 384: // _export_statement_type_export
       assert_ExportStatementTypeExportTransport(node, 'node');
       return;
-    case "_extends_clause_single":
+    case 279: // _extends_clause_single
       assertExtendsClauseSingleTransport(node, 'node');
       return;
-    case "_for_header":
+    case 192: // _for_header
       assertForHeaderTransport(node, 'node');
       return;
-    case "_for_header_let_const_kind":
+    case 376: // _for_header_let_const_kind
       assertForHeaderLetConstKindTransport(node, 'node');
       return;
-    case "_for_header_lhs":
+    case 374: // _for_header_lhs
       assertForHeaderLhsTransport(node, 'node');
       return;
-    case "_for_header_var_kind":
+    case 375: // _for_header_var_kind
       assertForHeaderVarKindTransport(node, 'node');
       return;
-    case "_from_clause":
+    case 176: // _from_clause
       assertFromClauseTransport(node, 'node');
       return;
-    case "_import_clause_default_import":
+    case 362: // _import_clause_default_import
       assert_ImportClauseDefaultImportTransport(node, 'node');
       return;
-    case "_import_clause_named_imports":
+    case 361: // _import_clause_named_imports
       assert_ImportClauseNamedImportsTransport(node, 'node');
       return;
-    case "_import_clause_namespace_import":
+    case 360: // _import_clause_namespace_import
       assert_ImportClauseNamespaceImportTransport(node, 'node');
       return;
-    case "_import_specifier_as":
+    case 364: // _import_specifier_as
       assertImportSpecifierAsTransport(node, 'node');
       return;
-    case "_import_specifier_name":
+    case 363: // _import_specifier_name
       assert_ImportSpecifierNameTransport(node, 'node');
       return;
-    case "_index_signature_colon":
+    case 365: // _index_signature_colon
       assertIndexSignatureColonTransport(node, 'node');
       return;
-    case "_index_signature_mapped_type_clause":
+    case 366: // _index_signature_mapped_type_clause
       assert_IndexSignatureMappedTypeClauseTransport(node, 'node');
       return;
-    case "_initializer":
+    case 239: // _initializer
       assertInitializerTransport(node, 'node');
       return;
-    case "_interface_body":
+    case 418: // _interface_body
       assertInterfaceBodyTransport(node, 'node');
       return;
-    case "_jsx_start_opening_element":
+    case "_jsx_start_opening_element": // _jsx_start_opening_element
       assertJsxStartOpeningElementTransport(node, 'node');
       return;
-    case "_jsx_string":
+    case "_jsx_string": // _jsx_string
       assertJsxStringTransport(node, 'node');
       return;
-    case "_kw_abstract_marker":
+    case 379: // _kw_abstract_marker
       assertKwAbstractMarkerTransport(node, 'node');
       return;
-    case "_kw_async_marker":
+    case "_kw_async_marker": // _kw_async_marker
       assertKwAsyncMarkerTransport(node, 'node');
       return;
-    case "_kw_const_marker":
+    case 380: // _kw_const_marker
       assertKwConstMarkerTransport(node, 'node');
       return;
-    case "_kw_optional_marker":
+    case 377: // _kw_optional_marker
       assertKwOptionalMarkerTransport(node, 'node');
       return;
-    case "_kw_readonly_marker":
+    case "_kw_readonly_marker": // _kw_readonly_marker
       assertKwReadonlyMarkerTransport(node, 'node');
       return;
-    case "_kw_static_marker":
+    case 378: // _kw_static_marker
       assertKwStaticMarkerTransport(node, 'node');
       return;
-    case "_lhs_expression":
+    case "_lhs_expression": // _lhs_expression
       assertLhsExpressionTransport(node, 'node');
       return;
-    case "_module":
+    case 285: // _module
       assert_ModuleTransport(node, 'node');
       return;
-    case "_number":
+    case 331: // _number
       assert_NumberTransport(node, 'node');
       return;
-    case "_parameter_name":
+    case 298: // _parameter_name
       assertParameterNameTransport(node, 'node');
       return;
-    case "_parenthesized_expression_sequence":
+    case 383: // _parenthesized_expression_sequence
       assert_ParenthesizedExpressionSequenceTransport(node, 'node');
       return;
-    case "_parenthesized_expression_typed":
+    case 382: // _parenthesized_expression_typed
       assertParenthesizedExpressionTypedTransport(node, 'node');
       return;
-    case "_property_identifier":
+    case 419: // _property_identifier
       assertPropertyIdentifierTransport(node, 'node');
       return;
-    case "_public_field_definition_abstract_first":
+    case 420: // _public_field_definition_abstract_first
       assertPublicFieldDefinitionAbstractFirstTransport(node, 'node');
       return;
-    case "_public_field_definition_access_first":
+    case 421: // _public_field_definition_access_first
       assertPublicFieldDefinitionAccessFirstTransport(node, 'node');
       return;
-    case "_public_field_definition_accessor_opt":
+    case 422: // _public_field_definition_accessor_opt
       assertPublicFieldDefinitionAccessorOptTransport(node, 'node');
       return;
-    case "_public_field_definition_declare_first":
+    case 423: // _public_field_definition_declare_first
       assertPublicFieldDefinitionDeclareFirstTransport(node, 'node');
       return;
-    case "_public_field_definition_readonly_first":
+    case 424: // _public_field_definition_readonly_first
       assertPublicFieldDefinitionReadonlyFirstTransport(node, 'node');
       return;
-    case "_public_field_definition_static_mods":
+    case 425: // _public_field_definition_static_mods
       assertPublicFieldDefinitionStaticModsTransport(node, 'node');
       return;
-    case "_reserved_identifier":
+    case "_reserved_identifier": // _reserved_identifier
       assertReservedIdentifierTransport(node, 'node');
       return;
-    case "_statement_identifier":
+    case 428: // _statement_identifier
       assertStatementIdentifierTransport(node, 'node');
       return;
-    case "_string_double":
+    case 390: // _string_double
       assert_StringDoubleTransport(node, 'node');
       return;
-    case "_string_fragment":
+    case "_string_fragment": // _string_fragment
       assertStringFragmentTransport(node, 'node');
       return;
-    case "_string_single":
+    case 391: // _string_single
       assert_StringSingleTransport(node, 'node');
       return;
-    case "_this_type":
+    case 429: // _this_type
       assertThisTypeTransport(node, 'node');
       return;
-    case "_type_identifier":
+    case 430: // _type_identifier
       assertTypeIdentifierTransport(node, 'node');
       return;
-    case "_type_query_call_expression":
+    case 324: // _type_query_call_expression
       assertTypeQueryCallExpressionTransport(node, 'node');
       return;
-    case "_type_query_call_expression_in_type_annotation":
+    case 304: // _type_query_call_expression_in_type_annotation
       assertTypeQueryCallExpressionInTypeAnnotationTransport(node, 'node');
       return;
-    case "_type_query_instantiation_expression":
+    case 325: // _type_query_instantiation_expression
       assertTypeQueryInstantiationExpressionTransport(node, 'node');
       return;
-    case "_type_query_member_expression":
+    case 322: // _type_query_member_expression
       assertTypeQueryMemberExpressionTransport(node, 'node');
       return;
-    case "_type_query_member_expression_in_type_annotation":
+    case 303: // _type_query_member_expression_in_type_annotation
       assertTypeQueryMemberExpressionInTypeAnnotationTransport(node, 'node');
       return;
-    case "_type_query_subscript_expression":
+    case 323: // _type_query_subscript_expression
       assertTypeQuerySubscriptExpressionTransport(node, 'node');
       return;
-    case "_update_expression_postfix":
+    case 392: // _update_expression_postfix
       assertUpdateExpressionPostfixTransport(node, 'node');
       return;
-    case "_update_expression_prefix":
+    case 393: // _update_expression_prefix
       assertUpdateExpressionPrefixTransport(node, 'node');
       return;
-    case "abstract_class_declaration":
+    case 282: // abstract_class_declaration
       assertAbstractClassDeclarationTransport(node, 'node');
       return;
-    case "abstract_method_signature":
+    case 270: // abstract_method_signature
       assertAbstractMethodSignatureTransport(node, 'node');
       return;
-    case "accessibility_modifier":
+    case 294: // accessibility_modifier
       assertAccessibilityModifierTransport(node, 'node');
       return;
-    case "adding_type_annotation":
+    case 300: // adding_type_annotation
       assertAddingTypeAnnotationTransport(node, 'node');
       return;
-    case "ambient_declaration":
+    case 281: // ambient_declaration
       assertAmbientDeclarationTransport(node, 'node');
       return;
-    case "arguments":
+    case 252: // arguments
       assertArgumentsTransport(node, 'node');
       return;
-    case "array":
+    case 217: // array
       assertArrayTransport(node, 'node');
       return;
-    case "array_pattern":
+    case 218: // array_pattern
       assertArrayPatternTransport(node, 'node');
       return;
-    case "array_type":
+    case 346: // array_type
       assertArrayTypeTransport(node, 'node');
       return;
-    case "arrow_function_parameter":
+    case "arrow_function_parameter": // arrow_function_parameter
       assertArrowFunctionParameterTransport(node, 'node');
       return;
-    case "arrow_function__call_signature":
+    case "arrow_function__call_signature": // arrow_function__call_signature
       assertArrowFunctionUCallSignatureTransport(node, 'node');
       return;
-    case "arrow_function":
+    case 227: // arrow_function
       assertArrowFunctionTransport(node, 'node');
       return;
-    case "as_expression":
+    case 274: // as_expression
       assertAsExpressionTransport(node, 'node');
       return;
-    case "asserts":
+    case 305: // asserts
       assertAssertsTransport(node, 'node');
       return;
-    case "asserts_annotation":
+    case 306: // asserts_annotation
       assertAssertsAnnotationTransport(node, 'node');
       return;
-    case "assignment_expression":
+    case 236: // assignment_expression
       assertAssignmentExpressionTransport(node, 'node');
       return;
-    case "assignment_pattern":
+    case 215: // assignment_pattern
       assertAssignmentPatternTransport(node, 'node');
       return;
-    case "augmented_assignment_expression":
+    case 238: // augmented_assignment_expression
       assertAugmentedAssignmentExpressionTransport(node, 'node');
       return;
-    case "await_expression":
+    case 233: // await_expression
       assertAwaitExpressionTransport(node, 'node');
       return;
-    case "binary_expression":
+    case 243: // binary_expression
       assertBinaryExpressionTransport(node, 'node');
       return;
-    case "break_statement":
+    case 197: // break_statement
       assertBreakStatementTransport(node, 'node');
       return;
-    case "call_expression":
+    case 231: // call_expression
       assertCallExpressionTransport(node, 'node');
       return;
-    case "call_signature":
+    case 338: // call_signature
       assertCallSignatureTransport(node, 'node');
       return;
-    case "catch_clause":
+    case 207: // catch_clause
       assertCatchClauseTransport(node, 'node');
       return;
-    case "class":
+    case 220: // class
       assertClassTransport(node, 'node');
       return;
-    case "class_body":
+    case 256: // class_body
       assertClassBodyTransport(node, 'node');
       return;
-    case "class_declaration":
+    case 221: // class_declaration
       assertClassDeclarationTransport(node, 'node');
       return;
-    case "class_heritage_extends_clause":
+    case "class_heritage_extends_clause": // class_heritage_extends_clause
       assertClassHeritageExtendsClauseTransport(node, 'node');
       return;
-    case "class_heritage_implements_clause":
+    case "class_heritage_implements_clause": // class_heritage_implements_clause
       assertClassHeritageImplementsClauseTransport(node, 'node');
       return;
-    case "class_heritage":
+    case 222: // class_heritage
       assertClassHeritageTransport(node, 'node');
       return;
-    case "class_static_block":
+    case 258: // class_static_block
       assertClassStaticBlockTransport(node, 'node');
       return;
-    case "comment":
+    case 97: // comment
       assertCommentTransport(node, 'node');
       return;
-    case "computed_property_name":
+    case 265: // computed_property_name
       assertComputedPropertyNameTransport(node, 'node');
       return;
-    case "conditional_type":
+    case 318: // conditional_type
       assertConditionalTypeTransport(node, 'node');
       return;
-    case "constraint":
+    case 343: // constraint
       assertConstraintTransport(node, 'node');
       return;
-    case "construct_signature":
+    case 344: // construct_signature
       assertConstructSignatureTransport(node, 'node');
       return;
-    case "constructor_type":
+    case 313: // constructor_type
       assertConstructorTypeTransport(node, 'node');
       return;
-    case "continue_statement":
+    case 198: // continue_statement
       assertContinueStatementTransport(node, 'node');
       return;
-    case "debugger_statement":
+    case 199: // debugger_statement
       assertDebuggerStatementTransport(node, 'node');
       return;
-    case "decorator":
+    case 253: // decorator
       assertDecoratorTransport(node, 'node');
       return;
-    case "decorator_call_expression":
+    case 255: // decorator_call_expression
       assertDecoratorCallExpressionTransport(node, 'node');
       return;
-    case "decorator_member_expression":
+    case 254: // decorator_member_expression
       assertDecoratorMemberExpressionTransport(node, 'node');
       return;
-    case "decorator_parenthesized_expression":
+    case 272: // decorator_parenthesized_expression
       assertDecoratorParenthesizedExpressionTransport(node, 'node');
       return;
-    case "default_type":
+    case 342: // default_type
       assertDefaultTypeTransport(node, 'node');
       return;
-    case "do_statement":
+    case 194: // do_statement
       assertDoStatementTransport(node, 'node');
       return;
-    case "else_clause":
+    case 187: // else_clause
       assertElseClauseTransport(node, 'node');
       return;
-    case "empty_statement":
+    case 202: // empty_statement
       assertEmptyStatementTransport(node, 'node');
       return;
-    case "enum_assignment":
+    case 292: // enum_assignment
       assertEnumAssignmentTransport(node, 'node');
       return;
-    case "enum_body":
+    case 291: // enum_body
       assertEnumBodyTransport(node, 'node');
       return;
-    case "enum_declaration":
+    case 290: // enum_declaration
       assertEnumDeclarationTransport(node, 'node');
       return;
-    case "escape_sequence":
+    case 96: // escape_sequence
       assertEscapeSequenceTransport(node, 'node');
       return;
-    case "existential_type":
+    case 332: // existential_type
       assertExistentialTypeTransport(node, 'node');
       return;
-    case "export_clause":
+    case 169: // export_clause
       assertExportClauseTransport(node, 'node');
       return;
-    case "export_specifier":
+    case 170: // export_specifier
       assertExportSpecifierTransport(node, 'node');
       return;
-    case "export_statement_type_export":
+    case "export_statement_type_export": // export_statement_type_export
       assertExportStatementTypeExportTransport(node, 'node');
       return;
-    case "export_statement_equals_export":
+    case "export_statement_equals_export": // export_statement_equals_export
       assertExportStatementEqualsExportTransport(node, 'node');
       return;
-    case "export_statement_namespace_export":
+    case "export_statement_namespace_export": // export_statement_namespace_export
       assertExportStatementNamespaceExportTransport(node, 'node');
       return;
-    case "export_statement":
+    case 167: // export_statement
       assertExportStatementTransport(node, 'node');
       return;
-    case "expression_statement":
+    case 182: // expression_statement
       assertExpressionStatementTransport(node, 'node');
       return;
-    case "extends_clause":
+    case 278: // extends_clause
       assertExtendsClauseTransport(node, 'node');
       return;
-    case "extends_type_clause":
+    case 289: // extends_type_clause
       assertExtendsTypeClauseTransport(node, 'node');
       return;
-    case "false":
+    case 110: // false
       assertFalseTransport(node, 'node');
       return;
-    case "field_definition":
+    case "field_definition": // field_definition
       assertFieldDefinitionTransport(node, 'node');
       return;
-    case "finally_clause":
+    case 208: // finally_clause
       assertFinallyClauseTransport(node, 'node');
       return;
-    case "flow_maybe_type":
+    case 333: // flow_maybe_type
       assertFlowMaybeTypeTransport(node, 'node');
       return;
-    case "for_in_statement":
+    case 191: // for_in_statement
       assertForInStatementTransport(node, 'node');
       return;
-    case "for_statement":
+    case 190: // for_statement
       assertForStatementTransport(node, 'node');
       return;
-    case "formal_parameters":
+    case 257: // formal_parameters
       assertFormalParametersTransport(node, 'node');
       return;
-    case "function_declaration":
+    case 224: // function_declaration
       assertFunctionDeclarationTransport(node, 'node');
       return;
-    case "function_expression":
+    case 223: // function_expression
       assertFunctionExpressionTransport(node, 'node');
       return;
-    case "function_signature":
+    case 271: // function_signature
       assertFunctionSignatureTransport(node, 'node');
       return;
-    case "function_type":
+    case 351: // function_type
       assertFunctionTypeTransport(node, 'node');
       return;
-    case "generator_function":
+    case 225: // generator_function
       assertGeneratorFunctionTransport(node, 'node');
       return;
-    case "generator_function_declaration":
+    case 226: // generator_function_declaration
       assertGeneratorFunctionDeclarationTransport(node, 'node');
       return;
-    case "generic_type":
+    case 319: // generic_type
       assertGenericTypeTransport(node, 'node');
       return;
-    case "hash_bang_line":
+    case 2: // hash_bang_line
       assertHashBangLineTransport(node, 'node');
       return;
-    case "html_character_reference":
+    case "html_character_reference": // html_character_reference
       assertHtmlCharacterReferenceTransport(node, 'node');
       return;
-    case "identifier":
+    case 1: // identifier
       assertIdentifierTransport(node, 'node');
       return;
-    case "if_statement":
+    case 188: // if_statement
       assertIfStatementTransport(node, 'node');
       return;
-    case "implements_clause":
+    case 280: // implements_clause
       assertImplementsClauseTransport(node, 'node');
       return;
-    case "import":
+    case 173: // import
       assertImportTransport(node, 'node');
       return;
-    case "import_alias":
+    case 286: // import_alias
       assertImportAliasTransport(node, 'node');
       return;
-    case "import_attribute":
+    case 180: // import_attribute
       assertImportAttributeTransport(node, 'node');
       return;
-    case "import_clause_namespace_import":
+    case "import_clause_namespace_import": // import_clause_namespace_import
       assertImportClauseNamespaceImportTransport(node, 'node');
       return;
-    case "import_clause_named_imports":
+    case "import_clause_named_imports": // import_clause_named_imports
       assertImportClauseNamedImportsTransport(node, 'node');
       return;
-    case "import_clause_default_import":
+    case "import_clause_default_import": // import_clause_default_import
       assertImportClauseDefaultImportTransport(node, 'node');
       return;
-    case "import_clause":
+    case 175: // import_clause
       assertImportClauseTransport(node, 'node');
       return;
-    case "import_require_clause":
+    case 277: // import_require_clause
       assertImportRequireClauseTransport(node, 'node');
       return;
-    case "import_specifier_name":
+    case "import_specifier_name": // import_specifier_name
       assertImportSpecifierNameTransport(node, 'node');
       return;
-    case "import_specifier":
+    case 179: // import_specifier
       assertImportSpecifierTransport(node, 'node');
       return;
-    case "import_statement":
+    case 174: // import_statement
       assertImportStatementTransport(node, 'node');
       return;
-    case "index_signature_mapped_type_clause":
+    case "index_signature_mapped_type_clause": // index_signature_mapped_type_clause
       assertIndexSignatureMappedTypeClauseTransport(node, 'node');
       return;
-    case "index_signature":
+    case 345: // index_signature
       assertIndexSignatureTransport(node, 'node');
       return;
-    case "index_type_query":
+    case 327: // index_type_query
       assertIndexTypeQueryTransport(node, 'node');
       return;
-    case "infer_type":
+    case 317: // infer_type
       assertInferTypeTransport(node, 'node');
       return;
-    case "instantiation_expression":
+    case 276: // instantiation_expression
       assertInstantiationExpressionTransport(node, 'node');
       return;
-    case "interface_declaration":
+    case 288: // interface_declaration
       assertInterfaceDeclarationTransport(node, 'node');
       return;
-    case "internal_module":
+    case 284: // internal_module
       assertInternalModuleTransport(node, 'node');
       return;
-    case "intersection_type":
+    case 350: // intersection_type
       assertIntersectionTypeTransport(node, 'node');
       return;
-    case "jsx_attribute":
+    case "jsx_attribute": // jsx_attribute
       assertJsxAttributeTransport(node, 'node');
       return;
-    case "jsx_closing_element":
+    case "jsx_closing_element": // jsx_closing_element
       assertJsxClosingElementTransport(node, 'node');
       return;
-    case "jsx_element":
+    case "jsx_element": // jsx_element
       assertJsxElementTransport(node, 'node');
       return;
-    case "jsx_expression":
+    case "jsx_expression": // jsx_expression
       assertJsxExpressionTransport(node, 'node');
       return;
-    case "jsx_identifier":
+    case "jsx_identifier": // jsx_identifier
       assertJsxIdentifierTransport(node, 'node');
       return;
-    case "jsx_namespace_name":
+    case "jsx_namespace_name": // jsx_namespace_name
       assertJsxNamespaceNameTransport(node, 'node');
       return;
-    case "jsx_opening_element":
+    case "jsx_opening_element": // jsx_opening_element
       assertJsxOpeningElementTransport(node, 'node');
       return;
-    case "jsx_self_closing_element":
+    case "jsx_self_closing_element": // jsx_self_closing_element
       assertJsxSelfClosingElementTransport(node, 'node');
       return;
-    case "labeled_statement":
+    case 203: // labeled_statement
       assertLabeledStatementTransport(node, 'node');
       return;
-    case "lexical_declaration":
+    case 184: // lexical_declaration
       assertLexicalDeclarationTransport(node, 'node');
       return;
-    case "literal_type":
+    case 330: // literal_type
       assertLiteralTypeTransport(node, 'node');
       return;
-    case "lookup_type":
+    case 328: // lookup_type
       assertLookupTypeTransport(node, 'node');
       return;
-    case "mapped_type_clause":
+    case 329: // mapped_type_clause
       assertMappedTypeClauseTransport(node, 'node');
       return;
-    case "member_expression":
+    case 234: // member_expression
       assertMemberExpressionTransport(node, 'node');
       return;
-    case "meta_property":
+    case 251: // meta_property
       assertMetaPropertyTransport(node, 'node');
       return;
-    case "method_definition":
+    case 261: // method_definition
       assertMethodDefinitionTransport(node, 'node');
       return;
-    case "method_signature":
+    case 269: // method_signature
       assertMethodSignatureTransport(node, 'node');
       return;
-    case "module":
+    case 283: // module
       assertModuleTransport(node, 'node');
       return;
-    case "named_imports":
+    case 178: // named_imports
       assertNamedImportsTransport(node, 'node');
       return;
-    case "namespace_export":
+    case 168: // namespace_export
       assertNamespaceExportTransport(node, 'node');
       return;
-    case "namespace_import":
+    case 177: // namespace_import
       assertNamespaceImportTransport(node, 'node');
       return;
-    case "nested_identifier":
+    case 219: // nested_identifier
       assertNestedIdentifierTransport(node, 'node');
       return;
-    case "nested_type_identifier":
+    case 287: // nested_type_identifier
       assertNestedTypeIdentifierTransport(node, 'node');
       return;
-    case "new_expression":
+    case 232: // new_expression
       assertNewExpressionTransport(node, 'node');
       return;
-    case "non_null_expression":
+    case 268: // non_null_expression
       assertNonNullExpressionTransport(node, 'node');
       return;
-    case "null":
+    case 111: // null
       assertNullTransport(node, 'node');
       return;
-    case "number":
+    case 103: // number
       assertNumberTransport(node, 'node');
       return;
-    case "object":
+    case 213: // object
       assertObjectTransport(node, 'node');
       return;
-    case "object_assignment_pattern":
+    case 216: // object_assignment_pattern
       assertObjectAssignmentPatternTransport(node, 'node');
       return;
-    case "object_pattern":
+    case 214: // object_pattern
       assertObjectPatternTransport(node, 'node');
       return;
-    case "object_type":
+    case 337: // object_type
       assertObjectTypeTransport(node, 'node');
       return;
-    case "omitting_type_annotation":
+    case 299: // omitting_type_annotation
       assertOmittingTypeAnnotationTransport(node, 'node');
       return;
-    case "opting_type_annotation":
+    case 301: // opting_type_annotation
       assertOptingTypeAnnotationTransport(node, 'node');
       return;
-    case "optional_chain":
+    case 230: // optional_chain
       assertOptionalChainTransport(node, 'node');
       return;
-    case "optional_parameter":
+    case 297: // optional_parameter
       assertOptionalParameterTransport(node, 'node');
       return;
-    case "optional_tuple_parameter":
+    case 309: // optional_tuple_parameter
       assertOptionalTupleParameterTransport(node, 'node');
       return;
-    case "optional_type":
+    case 310: // optional_type
       assertOptionalTypeTransport(node, 'node');
       return;
-    case "override_modifier":
+    case 295: // override_modifier
       assertOverrideModifierTransport(node, 'node');
       return;
-    case "pair":
+    case 262: // pair
       assertPairTransport(node, 'node');
       return;
-    case "pair_pattern":
+    case 263: // pair_pattern
       assertPairPatternTransport(node, 'node');
       return;
-    case "parenthesized_expression_sequence":
+    case "parenthesized_expression_sequence": // parenthesized_expression_sequence
       assertParenthesizedExpressionSequenceTransport(node, 'node');
       return;
-    case "parenthesized_expression":
+    case 209: // parenthesized_expression
       assertParenthesizedExpressionTransport(node, 'node');
       return;
-    case "parenthesized_type":
+    case 334: // parenthesized_type
       assertParenthesizedTypeTransport(node, 'node');
       return;
-    case "predefined_type":
+    case 335: // predefined_type
       assertPredefinedTypeTransport(node, 'node');
       return;
-    case "private_property_identifier":
+    case 104: // private_property_identifier
       assertPrivatePropertyIdentifierTransport(node, 'node');
       return;
-    case "program":
+    case 166: // program
       assertProgramTransport(node, 'node');
       return;
-    case "property_signature":
+    case 339: // property_signature
       assertPropertySignatureTransport(node, 'node');
       return;
-    case "public_field_definition":
+    case 266: // public_field_definition
       assertPublicFieldDefinitionTransport(node, 'node');
       return;
-    case "readonly_type":
+    case 348: // readonly_type
       assertReadonlyTypeTransport(node, 'node');
       return;
-    case "regex":
+    case 250: // regex
       assertRegexTransport(node, 'node');
       return;
-    case "regex_flags":
+    case 102: // regex_flags
       assertRegexFlagsTransport(node, 'node');
       return;
-    case "regex_pattern":
+    case 101: // regex_pattern
       assertRegexPatternTransport(node, 'node');
       return;
-    case "required_parameter":
+    case 296: // required_parameter
       assertRequiredParameterTransport(node, 'node');
       return;
-    case "rest_pattern":
+    case 260: // rest_pattern
       assertRestPatternTransport(node, 'node');
       return;
-    case "rest_type":
+    case 311: // rest_type
       assertRestTypeTransport(node, 'node');
       return;
-    case "return_statement":
+    case 200: // return_statement
       assertReturnStatementTransport(node, 'node');
       return;
-    case "satisfies_expression":
+    case 275: // satisfies_expression
       assertSatisfiesExpressionTransport(node, 'node');
       return;
-    case "sequence_expression":
+    case 246: // sequence_expression
       assertSequenceExpressionTransport(node, 'node');
       return;
-    case "spread_element":
+    case 241: // spread_element
       assertSpreadElementTransport(node, 'node');
       return;
-    case "statement_block":
+    case 186: // statement_block
       assertStatementBlockTransport(node, 'node');
       return;
-    case "string_double":
+    case "string_double": // string_double
       assertStringDoubleTransport(node, 'node');
       return;
-    case "string_single":
+    case "string_single": // string_single
       assertStringSingleTransport(node, 'node');
       return;
-    case "string":
+    case 247: // string
       assertStringTransport(node, 'node');
       return;
-    case "subscript_expression":
+    case 235: // subscript_expression
       assertSubscriptExpressionTransport(node, 'node');
       return;
-    case "super":
+    case 108: // super
       assertSuperTransport(node, 'node');
       return;
-    case "switch_body":
+    case 204: // switch_body
       assertSwitchBodyTransport(node, 'node');
       return;
-    case "switch_case":
+    case 205: // switch_case
       assertSwitchCaseTransport(node, 'node');
       return;
-    case "switch_default":
+    case 206: // switch_default
       assertSwitchDefaultTransport(node, 'node');
       return;
-    case "switch_statement":
+    case 189: // switch_statement
       assertSwitchStatementTransport(node, 'node');
       return;
-    case "template_literal_type":
+    case 316: // template_literal_type
       assertTemplateLiteralTypeTransport(node, 'node');
       return;
-    case "template_string":
+    case 248: // template_string
       assertTemplateStringTransport(node, 'node');
       return;
-    case "template_substitution":
+    case 249: // template_substitution
       assertTemplateSubstitutionTransport(node, 'node');
       return;
-    case "template_type":
+    case 315: // template_type
       assertTemplateTypeTransport(node, 'node');
       return;
-    case "ternary_expression":
+    case 242: // ternary_expression
       assertTernaryExpressionTransport(node, 'node');
       return;
-    case "this":
+    case 107: // this
       assertThisTransport(node, 'node');
       return;
-    case "throw_statement":
+    case 201: // throw_statement
       assertThrowStatementTransport(node, 'node');
       return;
-    case "true":
+    case 109: // true
       assertTrueTransport(node, 'node');
       return;
-    case "try_statement":
+    case 195: // try_statement
       assertTryStatementTransport(node, 'node');
       return;
-    case "tuple_parameter":
+    case 308: // tuple_parameter
       assertTupleParameterTransport(node, 'node');
       return;
-    case "tuple_type":
+    case 347: // tuple_type
       assertTupleTypeTransport(node, 'node');
       return;
-    case "type_alias_declaration":
+    case 293: // type_alias_declaration
       assertTypeAliasDeclarationTransport(node, 'node');
       return;
-    case "type_annotation":
+    case 302: // type_annotation
       assertTypeAnnotationTransport(node, 'node');
       return;
-    case "type_arguments":
+    case 336: // type_arguments
       assertTypeArgumentsTransport(node, 'node');
       return;
-    case "type_assertion":
+    case 273: // type_assertion
       assertTypeAssertionTransport(node, 'node');
       return;
-    case "type_parameter":
+    case 341: // type_parameter
       assertTypeParameterTransport(node, 'node');
       return;
-    case "type_parameters":
+    case 340: // type_parameters
       assertTypeParametersTransport(node, 'node');
       return;
-    case "type_predicate":
+    case 320: // type_predicate
       assertTypePredicateTransport(node, 'node');
       return;
-    case "type_predicate_annotation":
+    case 321: // type_predicate_annotation
       assertTypePredicateAnnotationTransport(node, 'node');
       return;
-    case "type_query":
+    case 326: // type_query
       assertTypeQueryTransport(node, 'node');
       return;
-    case "unary_expression":
+    case 244: // unary_expression
       assertUnaryExpressionTransport(node, 'node');
       return;
-    case "undefined":
+    case 112: // undefined
       assertUndefinedTransport(node, 'node');
       return;
-    case "unescaped_double_jsx_string_fragment":
+    case "unescaped_double_jsx_string_fragment": // unescaped_double_jsx_string_fragment
       assertUnescapedDoubleJsxStringFragmentTransport(node, 'node');
       return;
-    case "unescaped_double_string_fragment":
+    case 94: // unescaped_double_string_fragment
       assertUnescapedDoubleStringFragmentTransport(node, 'node');
       return;
-    case "unescaped_single_jsx_string_fragment":
+    case "unescaped_single_jsx_string_fragment": // unescaped_single_jsx_string_fragment
       assertUnescapedSingleJsxStringFragmentTransport(node, 'node');
       return;
-    case "unescaped_single_string_fragment":
+    case 95: // unescaped_single_string_fragment
       assertUnescapedSingleStringFragmentTransport(node, 'node');
       return;
-    case "union_type":
+    case 349: // union_type
       assertUnionTypeTransport(node, 'node');
       return;
-    case "update_expression":
+    case 245: // update_expression
       assertUpdateExpressionTransport(node, 'node');
       return;
-    case "variable_declaration":
+    case 183: // variable_declaration
       assertVariableDeclarationTransport(node, 'node');
       return;
-    case "variable_declarator":
+    case 185: // variable_declarator
       assertVariableDeclaratorTransport(node, 'node');
       return;
-    case "while_statement":
+    case 193: // while_statement
       assertWhileStatementTransport(node, 'node');
       return;
-    case "with_statement":
+    case 196: // with_statement
       assertWithStatementTransport(node, 'node');
       return;
-    case "yield_expression":
+    case 212: // yield_expression
       assertYieldExpressionTransport(node, 'node');
       return;
-    case "_automatic_semicolon":
+    case 159: // _automatic_semicolon
       assertAutomaticSemicolonTransport(node, 'node');
       return;
-    case "_template_chars":
+    case 160: // _template_chars
       assertTemplateCharsTransport(node, 'node');
       return;
-    case "_ternary_qmark":
+    case 161: // _ternary_qmark
       assertTernaryQmarkTransport(node, 'node');
       return;
-    case "html_comment":
+    case 162: // html_comment
       assertHtmlCommentTransport(node, 'node');
       return;
-    case "||":
+    case "||": // ||
       assertOrorTransport(node, 'node');
       return;
-    case "jsx_text":
+    case 163: // jsx_text
       assertJsxTextTransport(node, 'node');
       return;
-    case "_function_signature_automatic_semicolon":
+    case 164: // _function_signature_automatic_semicolon
       assertFunctionSignatureAutomaticSemicolonTransport(node, 'node');
       return;
-    case "__error_recovery":
+    case 165: // __error_recovery
       assertErrorRecoveryTransport(node, 'node');
       return;
-    case "?.":
+    case "?.": // ?.
       assertTokQDotTransport(node, 'node');
       return;
-    case ",":
+    case ",": // ,
       assertCommaTransport(node, 'node');
       return;
-    case "export":
+    case 130: // export
       assertExportTransport(node, 'node');
       return;
-    case "default":
+    case 38: // default
       assertDefaultTransport(node, 'node');
       return;
-    case "*":
+    case "*": // *
       assertStarTransport(node, 'node');
       return;
-    case "=":
+    case "=": // =
       assertEqTransport(node, 'node');
       return;
-    case "as":
+    case 4: // as
       assertAsTransport(node, 'node');
       return;
-    case "namespace":
+    case 118: // namespace
       assertNamespaceTransport(node, 'node');
       return;
-    case "(":
+    case "(": // (
       assertParenTransport(node, 'node');
       return;
-    case ")":
+    case ")": // )
       assertCloseParenTransport(node, 'node');
       return;
-    case "var":
+    case 14: // var
       assertVarTransport(node, 'node');
       return;
-    case "from":
+    case 11: // from
       assertFromTransport(node, 'node');
       return;
-    case ":":
+    case ":": // :
       assertColonTransport(node, 'node');
       return;
-    case "<":
+    case "<": // <
       assertLtTransport(node, 'node');
       return;
-    case "\"":
+    case "\"": // "
       assertTokDqTransport(node, 'node');
       return;
-    case "'":
+    case "'": // '
       assertTokSqTransport(node, 'node');
       return;
-    case "abstract":
+    case 133: // abstract
       assertAbstractTransport(node, 'node');
       return;
-    case "async":
+    case 48: // async
       assertAsyncTransport(node, 'node');
       return;
-    case "const":
+    case 16: // const
       assertConstTransport(node, 'node');
       return;
-    case "?":
+    case "?": // ?
       assertQuestionTransport(node, 'node');
       return;
-    case "readonly":
+    case 123: // readonly
       assertReadonlyTransport(node, 'node');
       return;
-    case "static":
+    case 114: // static
       assertStaticTransport(node, 'node');
       return;
-    case "declare":
+    case 117: // declare
       assertDeclareTransport(node, 'node');
       return;
-    case "accessor":
+    case 153: // accessor
       assertAccessorTransport(node, 'node');
       return;
-    case ".":
+    case ".": // .
       assertDotTransport(node, 'node');
       return;
-    case "[":
+    case "[": // [
       assertBracketTransport(node, 'node');
       return;
-    case "]":
+    case "]": // ]
       assertCloseBracketTransport(node, 'node');
       return;
-    case "+?:":
+    case "+?:": // +?:
       assertTokPlusQColonTransport(node, 'node');
       return;
-    case "global":
+    case 138: // global
       assertGlobalTransport(node, 'node');
       return;
-    case "using":
+    case 154: // using
       assertUsingTransport(node, 'node');
       return;
-    case "await":
+    case 25: // await
       assertAwaitTransport(node, 'node');
       return;
-    case "&&":
+    case "&&": // &&
       assertAndandTransport(node, 'node');
       return;
-    case ">>":
+    case ">>": // >>
       assertShrTransport(node, 'node');
       return;
-    case ">>>":
+    case ">>>": // >>>
       assertTokGtGtGtTransport(node, 'node');
       return;
-    case "<<":
+    case "<<": // <<
       assertShlTransport(node, 'node');
       return;
-    case "&":
+    case "&": // &
       assertAmpTransport(node, 'node');
       return;
-    case "^":
+    case "^": // ^
       assertCaretTransport(node, 'node');
       return;
-    case "|":
+    case "|": // |
       assertPipeTransport(node, 'node');
       return;
-    case "+":
+    case "+": // +
       assertPlusTransport(node, 'node');
       return;
-    case "-":
+    case "-": // -
       assertMinusTransport(node, 'node');
       return;
-    case "/":
+    case "/": // /
       assertSlashTransport(node, 'node');
       return;
-    case "%":
+    case "%": // %
       assertPercentTransport(node, 'node');
       return;
-    case "**":
+    case "**": // **
       assertStarstarTransport(node, 'node');
       return;
-    case "<=":
+    case "<=": // <=
       assertLeTransport(node, 'node');
       return;
-    case "==":
+    case "==": // ==
       assertEqeqTransport(node, 'node');
       return;
-    case "===":
+    case "===": // ===
       assertTokEqEqEqTransport(node, 'node');
       return;
-    case "!=":
+    case "!=": // !=
       assertNeqTransport(node, 'node');
       return;
-    case "!==":
+    case "!==": // !==
       assertTokBangEqEqTransport(node, 'node');
       return;
-    case ">=":
+    case ">=": // >=
       assertGeTransport(node, 'node');
       return;
-    case ">":
+    case ">": // >
       assertGtTransport(node, 'node');
       return;
-    case "??":
+    case "??": // ??
       assertTokQQTransport(node, 'node');
       return;
-    case "instanceof":
+    case 90: // instanceof
       assertInstanceofTransport(node, 'node');
       return;
-    case "in":
+    case 26: // in
       assertInTransport(node, 'node');
       return;
-    case "break":
+    case 31: // break
       assertBreakTransport(node, 'node');
       return;
-    case "catch":
+    case 39: // catch
       assertCatchTransport(node, 'node');
       return;
-    case "{":
+    case "{": // {
       assertBraceTransport(node, 'node');
       return;
-    case ";":
+    case ";": // ;
       assertSemiTransport(node, 'node');
       return;
-    case "}":
+    case "}": // }
       assertCloseBraceTransport(node, 'node');
       return;
-    case "extends":
+    case 136: // extends
       assertExtendsTransport(node, 'node');
       return;
-    case "new":
+    case 51: // new
       assertNewTransport(node, 'node');
       return;
-    case "=>":
+    case "=>": // =>
       assertFatArrowTransport(node, 'node');
       return;
-    case "continue":
+    case 32: // continue
       assertContinueTransport(node, 'node');
       return;
-    case "debugger":
+    case 33: // debugger
       assertDebuggerTransport(node, 'node');
       return;
-    case "@":
+    case "@": // @
       assertAtTransport(node, 'node');
       return;
-    case "do":
+    case 29: // do
       assertDoTransport(node, 'node');
       return;
-    case "while":
+    case 28: // while
       assertWhileTransport(node, 'node');
       return;
-    case "else":
+    case 18: // else
       assertElseTransport(node, 'node');
       return;
-    case "enum":
+    case 140: // enum
       assertEnumTransport(node, 'node');
       return;
-    case "finally":
+    case 40: // finally
       assertFinallyTransport(node, 'node');
       return;
-    case "for":
+    case 21: // for
       assertForTransport(node, 'node');
       return;
-    case "function":
+    case 47: // function
       assertFunctionTransport(node, 'node');
       return;
-    case "if":
+    case 19: // if
       assertIfTransport(node, 'node');
       return;
-    case "implements":
+    case 137: // implements
       assertImplementsTransport(node, 'node');
       return;
-    case "require":
+    case 135: // require
       assertRequireTransport(node, 'node');
       return;
-    case "keyof":
+    case 147: // keyof
       assertKeyofTransport(node, 'node');
       return;
-    case "infer":
+    case 145: // infer
       assertInferTransport(node, 'node');
       return;
-    case "interface":
+    case 139: // interface
       assertInterfaceTransport(node, 'node');
       return;
-    case "</":
+    case "</": // </
       assertTokLtSlashTransport(node, 'node');
       return;
-    case "/>":
+    case "/>": // />
       assertTokSlashGtTransport(node, 'node');
       return;
-    case "!":
+    case "!": // !
       assertBangTransport(node, 'node');
       return;
-    case "-?:":
+    case "-?:": // -?:
       assertTokMinusQColonTransport(node, 'node');
       return;
-    case "?:":
+    case "?:": // ?:
       assertTokQColonTransport(node, 'node');
       return;
-    case "override":
+    case 122: // override
       assertOverrideTransport(node, 'node');
       return;
-    case "...":
+    case "...": // ...
       assertEllipsisTransport(node, 'node');
       return;
-    case "return":
+    case 34: // return
       assertReturnTransport(node, 'node');
       return;
-    case "satisfies":
+    case 134: // satisfies
       assertSatisfiesTransport(node, 'node');
       return;
-    case "case":
+    case 37: // case
       assertCaseTransport(node, 'node');
       return;
-    case "switch":
+    case 20: // switch
       assertSwitchTransport(node, 'node');
       return;
-    case "`":
+    case "`": // `
       assertTokBtTransport(node, 'node');
       return;
-    case "${":
+    case "${": // ${
       assertTokDollarLbrTransport(node, 'node');
       return;
-    case "throw":
+    case 35: // throw
       assertThrowTransport(node, 'node');
       return;
-    case "try":
+    case 30: // try
       assertTryTransport(node, 'node');
       return;
-    case "is":
+    case 146: // is
       assertIsTransport(node, 'node');
       return;
-    case "typeof":
+    case 9: // typeof
       assertTypeofTransport(node, 'node');
       return;
-    case "with":
+    case 12: // with
       assertWithTransport(node, 'node');
       return;
-    case "yield":
+    case 41: // yield
       assertYieldTransport(node, 'node');
       return;
-    case "of":
+    case 27: // of
       assertLiteralTransport(node, 'node', "of", "of");
       return;
-    case "let":
+    case 15: // let
       assertLiteralTransport(node, 'node', "let", "let");
       return;
-    case "++":
+    case 157: // ++
       assertLiteralTransport(node, 'node', "++", "++");
       return;
-    case "--":
+    case 158: // --
       assertLiteralTransport(node, 'node', "--", "--");
       return;
-    case "get":
+    case 115: // get
       assertLiteralTransport(node, 'node', "get", "get");
       return;
-    case "set":
+    case 116: // set
       assertLiteralTransport(node, 'node', "set", "set");
       return;
-    case "+=":
+    case 52: // +=
       assertLiteralTransport(node, 'node', "+=", "+=");
       return;
-    case "-=":
+    case 53: // -=
       assertLiteralTransport(node, 'node', "-=", "-=");
       return;
-    case "*=":
+    case 54: // *=
       assertLiteralTransport(node, 'node', "*=", "*=");
       return;
-    case "/=":
+    case 55: // /=
       assertLiteralTransport(node, 'node', "/=", "/=");
       return;
-    case "%=":
+    case 56: // %=
       assertLiteralTransport(node, 'node', "%=", "%=");
       return;
-    case "^=":
+    case 57: // ^=
       assertLiteralTransport(node, 'node', "^=", "^=");
       return;
-    case "&=":
+    case 58: // &=
       assertLiteralTransport(node, 'node', "&=", "&=");
       return;
-    case "|=":
+    case 59: // |=
       assertLiteralTransport(node, 'node', "|=", "|=");
       return;
-    case ">>=":
+    case 60: // >>=
       assertLiteralTransport(node, 'node', ">>=", ">>=");
       return;
-    case ">>>=":
+    case 61: // >>>=
       assertLiteralTransport(node, 'node', ">>>=", ">>>=");
       return;
-    case "<<=":
+    case 62: // <<=
       assertLiteralTransport(node, 'node', "<<=", "<<=");
       return;
-    case "**=":
+    case 63: // **=
       assertLiteralTransport(node, 'node', "**=", "**=");
       return;
-    case "&&=":
+    case 64: // &&=
       assertLiteralTransport(node, 'node', "&&=", "&&=");
       return;
-    case "||=":
+    case 65: // ||=
       assertLiteralTransport(node, 'node', "||=", "||=");
       return;
-    case "??=":
+    case 66: // ??=
       assertLiteralTransport(node, 'node', "??=", "??=");
       return;
-    case "type":
+    case 307: // type
       assertLiteralTransport(node, 'node', "type", "type");
       return;
-    case "assert":
+    case 13: // assert
       assertLiteralTransport(node, 'node', "assert", "assert");
       return;
-    case "{|":
+    case 151: // {|
       assertLiteralTransport(node, 'node', "{|", "{|");
       return;
-    case "|}":
+    case 152: // |}
       assertLiteralTransport(node, 'node', "|}", "|}");
       return;
-    case "~":
+    case 91: // ~
       assertLiteralTransport(node, 'node', "~", "~");
       return;
-    case "void":
+    case 92: // void
       assertLiteralTransport(node, 'node', "void", "void");
       return;
-    case "delete":
+    case 93: // delete
       assertLiteralTransport(node, 'node', "delete", "delete");
       return;
     default:
@@ -1850,8 +1874,8 @@ function assertDataOnlyObject(value: unknown, path: string): void {
 }
 
 function assertTransportKind(node: Record<string, unknown>, path: string, kind: string): void {
-  if (node.$type !== kind) {
-    throw new TypeError(`${path}.$type must be ${JSON.stringify(kind)}`);
+  if (node.$type !== kindIdFromName(kind)) {
+    throw new TypeError(`${path}.$type must be the KindId for ${JSON.stringify(kind)}`);
   }
 }
 
@@ -1897,16 +1921,19 @@ function assertOptionalMetadata(node: Record<string, unknown>, path: string): vo
 
 function assertTransportValue(value: unknown, path: string, alternatives: readonly { readonly type: string; readonly text?: string }[]): void {
   if (!isRecord(value)) throw new TypeError(`${path} must be a transport node or terminal value`);
-  if (typeof value.$type !== 'string') throw new TypeError(`${path}.$type must be a string`);
+  if (typeof value.$type !== 'number' && typeof value.$type !== 'string') throw new TypeError(`${path}.$type must be a number or string`);
   const accepted = alternatives.some((candidate) => {
-    if (value.$type !== candidate.type) return false;
+    const typeMatch = typeof value.$type === "number"
+      ? value.$type === kindIdFromName(candidate.type)
+      : value.$type === candidate.type;
+    if (!typeMatch) return false;
     return candidate.text === undefined || value.$text === candidate.text;
   });
   if (!accepted) {
     const allowed = alternatives.map((candidate) => candidate.text === undefined ? candidate.type : `${candidate.type}:${candidate.text}`).join(", ");
     throw new TypeError(`${path} must be one of: ${allowed}`);
   }
-  assertNativeRenderTransport(value);
+  if (typeof value.$type === "number") assertNativeRenderTransport(value);
 }
 
 function assertTransportArray(value: unknown, path: string, alternatives: readonly { readonly type: string; readonly text?: string }[]): void {

@@ -91,10 +91,11 @@ impl SittirEngine {
         self.inner.read_node(node_id).map_err(Error::from_reason)
     }
 
+    /// Render a typed transport object (napi-native, numeric `$type`).
+    /// Phase B: `AnyTransport` is decoded by napi-rs directly from the JS
+    /// object — no `serde_json::Value` intermediate.
     #[napi]
-    pub fn render(&self, node: serde_json::Value) -> Result<String> {
-        let transport: AnyTransport = serde_json::from_value(node)
-            .map_err(|e| Error::from_reason(format!("decode transport failed: {e}")))?;
+    pub fn render(&self, transport: AnyTransport) -> Result<String> {
         let (node, canonical) = render_transport_parts(transport)
             .map_err(|e| Error::from_reason(format!("render_transport failed: {e}")))?;
         self.inner

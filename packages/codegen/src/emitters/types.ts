@@ -418,7 +418,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	}
 	lines.push('');
 
-	emitTransportDeclarations(lines, supertypes, nodeMap, generatedTypes);
+	emitTransportDeclarations(lines, supertypes, nodeMap, generatedTypes, kindEntries);
 
 	// Splice in the bitflag const-enum import after the main header imports.
 	// Collected during emit so only consts actually referenced by `Bitflag<>`
@@ -597,7 +597,8 @@ function emitTransportDeclarations(
 	lines: string[],
 	supertypes: { kind: string; subtypes: string[] }[],
 	nodeMap: NodeMap,
-	generatedTypes: Set<string>
+	generatedTypes: Set<string>,
+	kindEntries?: readonly KindEnumEntry[]
 ): void {
 	const projection = collectTransportProjection(nodeMap);
 	const transportNodeKinds = projection.nodeKinds;
@@ -633,7 +634,8 @@ function emitTransportDeclarations(
 					lines,
 					node,
 					nodeMap,
-					transportNodeKinds
+					transportNodeKinds,
+					kindEntries
 				);
 				break;
 			case 'leaf':
@@ -697,10 +699,11 @@ function emitStructuralTransportNamespace(
 	lines: string[],
 	node: StructuralNode,
 	nodeMap: NodeMap,
-	transportNodeKinds: ReadonlySet<string>
+	transportNodeKinds: ReadonlySet<string>,
+	kindEntries?: readonly KindEnumEntry[]
 ): void {
 	if (node.modelType === 'polymorph' && node.forms.length > 0) {
-		emitPolymorphTransportNamespace(lines, node, nodeMap, transportNodeKinds);
+		emitPolymorphTransportNamespace(lines, node, nodeMap, transportNodeKinds, kindEntries);
 		return;
 	}
 	emitTransportInterfaceNamespace(
@@ -711,7 +714,8 @@ function emitStructuralTransportNamespace(
 		node.structuralFields,
 		node.structuralChildren,
 		nodeMap,
-		transportNodeKinds
+		transportNodeKinds,
+		kindEntries
 	);
 }
 
@@ -719,7 +723,8 @@ function emitPolymorphTransportNamespace(
 	lines: string[],
 	node: AssembledPolymorph,
 	nodeMap: NodeMap,
-	transportNodeKinds: ReadonlySet<string>
+	transportNodeKinds: ReadonlySet<string>,
+	kindEntries?: readonly KindEnumEntry[]
 ): void {
 	const formTypeNames: string[] = [];
 	for (const form of node.forms) {
@@ -733,7 +738,8 @@ function emitPolymorphTransportNamespace(
 			form.fields,
 			form.children,
 			nodeMap,
-			transportNodeKinds
+			transportNodeKinds,
+			kindEntries
 		);
 	}
 
@@ -757,11 +763,12 @@ function emitTransportInterfaceNamespace(
 	fields: readonly AssembledField[],
 	children: readonly AssembledChild[],
 	nodeMap: NodeMap,
-	transportNodeKinds: ReadonlySet<string>
+	transportNodeKinds: ReadonlySet<string>,
+	kindEntries?: readonly KindEnumEntry[]
 ): void {
 	lines.push(`export namespace ${typeName} {`);
 	lines.push('  export interface Transport {');
-	lines.push(`    readonly $type: '${kind}';`);
+	lines.push(`    readonly $type: ${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)};`);
 	if (variant !== undefined) {
 		lines.push(`    readonly $variant: '${variant}';`);
 	}

@@ -1,8 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { TEMPLATE_BUNDLE_HASH } from '../src/hash.ts';
+import { TSKindId } from '../src/types.ts';
 
+// Phase B: $type is a numeric TSKindId (not a string) on the native wire.
 const identifier = {
-	$type: 'identifier',
+	$type: TSKindId.Identifier,
 	$source: 'factory',
 	$named: true,
 	$text: 'x'
@@ -83,7 +85,8 @@ describe('boundary', () => {
 		);
 
 		const { render } = await import('../src/boundary.ts');
-		expect(render(identifier)).toBe('ok:identifier');
+		// Phase B: $type is numeric on the wire; TSKindId.Identifier = 1
+		expect(render(identifier)).toBe(`ok:${TSKindId.Identifier}`);
 		expect(renderSpy).toHaveBeenCalledWith(identifier);
 	});
 
@@ -103,6 +106,7 @@ describe('boundary', () => {
 		);
 
 		const { render } = await import('../src/boundary.ts');
+		// Phase B: string $type from $source:"ts" is normalized to numeric at the wire boundary.
 		const rawSourceFile = {
 			$type: 'source_file',
 			$source: 'ts',
@@ -112,11 +116,13 @@ describe('boundary', () => {
 			]
 		} as const;
 
-		expect(render(rawSourceFile)).toBe('ok:source_file');
+		// After projection: $type is TSKindId.SourceFile (157)
+		expect(render(rawSourceFile)).toBe(`ok:${TSKindId.SourceFile}`);
 		expect(renderSpy).toHaveBeenCalledWith(
 			expect.objectContaining({
-				$type: 'source_file',
+				$type: TSKindId.SourceFile,
 				statements: [
+					// empty_statement has no numeric TSKindId — kept as string
 					expect.objectContaining({ $type: 'empty_statement', $text: ';' })
 				]
 			})
@@ -139,6 +145,7 @@ describe('boundary', () => {
 		);
 
 		const { render } = await import('../src/boundary.ts');
+		// Phase B: string $type normalized to numeric during projection.
 		const rawArrayExpression = {
 			$type: 'array_expression',
 			$source: 'ts',
@@ -153,15 +160,17 @@ describe('boundary', () => {
 			]
 		} as const;
 
-		expect(render(rawArrayExpression)).toBe('ok:array_expression');
+		// After projection: $type is TSKindId.ArrayExpression (258)
+		expect(render(rawArrayExpression)).toBe(`ok:${TSKindId.ArrayExpression}`);
 		expect(renderSpy).toHaveBeenCalledWith(
 			expect.objectContaining({
-				$type: 'array_expression',
+				$type: TSKindId.ArrayExpression,
 				$variant: 'list',
 				$children: [
 					expect.objectContaining({
-						$type: '_array_expression_list',
-						elements: [expect.objectContaining({ $type: 'identifier' })]
+						// array_expression_list aliases to _array_expression_list → TSKindId.ArrayExpressionList
+						$type: TSKindId.ArrayExpressionList,
+						elements: [expect.objectContaining({ $type: TSKindId.Identifier })]
 					})
 				]
 			})
@@ -188,7 +197,7 @@ describe('boundary', () => {
 		);
 		const { render } = await import('../src/boundary.ts');
 		const invalidNode = {
-			$type: 'arguments',
+			$type: TSKindId.Arguments,
 			$source: 'factory',
 			$named: true,
 			$children: [identifier, 'oops']

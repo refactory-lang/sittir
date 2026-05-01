@@ -6751,7 +6751,7 @@ export interface LiteralTransport<K extends string, V extends string = K> extend
 
 export namespace _ArrowFunctionUCallSignature {
   export interface Transport {
-    readonly $type: '_arrow_function__call_signature';
+    readonly $type: TSKindId._ArrowFunctionUCallSignature;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -6765,7 +6765,7 @@ export namespace _ArrowFunctionUCallSignature {
 
 export namespace _ArrowFunctionParameter {
   export interface Transport {
-    readonly $type: '_arrow_function_parameter';
+    readonly $type: TSKindId._ArrowFunctionParameter;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -6777,7 +6777,7 @@ export namespace _ArrowFunctionParameter {
 
 export namespace CallExpressionCall {
   export interface Transport {
-    readonly $type: '_call_expression_call';
+    readonly $type: TSKindId.CallExpressionCall;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -6791,7 +6791,7 @@ export namespace CallExpressionCall {
 
 export namespace CallExpressionMember {
   export interface Transport {
-    readonly $type: '_call_expression_member';
+    readonly $type: TSKindId.CallExpressionMember;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -6805,7 +6805,7 @@ export namespace CallExpressionMember {
 
 export namespace CallExpressionTemplateCall {
   export interface Transport {
-    readonly $type: '_call_expression_template_call';
+    readonly $type: TSKindId.CallExpressionTemplateCall;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -6818,7 +6818,7 @@ export namespace CallExpressionTemplateCall {
 
 export namespace _CallSignature {
   export interface Transport {
-    readonly $type: '_call_signature';
+    readonly $type: TSKindId._CallSignature;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -6832,7 +6832,7 @@ export namespace _CallSignature {
 
 export namespace ClassBodyMember {
   export interface Transport {
-    readonly $type: '_class_body_member';
+    readonly $type: TSKindId.ClassBodyMember;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -6844,7 +6844,7 @@ export namespace ClassBodyMember {
 
 export namespace ClassBodyMethod {
   export interface Transport {
-    readonly $type: '_class_body_method';
+    readonly $type: TSKindId.ClassBodyMethod;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -6857,7 +6857,7 @@ export namespace ClassBodyMethod {
 
 export namespace ClassBodyMethodSig {
   export interface Transport {
-    readonly $type: '_class_body_method_sig';
+    readonly $type: TSKindId.ClassBodyMethodSig;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -6869,7 +6869,7 @@ export namespace ClassBodyMethodSig {
 
 export namespace _ClassHeritageExtendsClause {
   export interface Transport {
-    readonly $type: '_class_heritage_extends_clause';
+    readonly $type: TSKindId._ClassHeritageExtendsClause;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -6881,7 +6881,7 @@ export namespace _ClassHeritageExtendsClause {
 
 export namespace _ClassHeritageImplementsClause {
   export interface Transport {
-    readonly $type: '_class_heritage_implements_clause';
+    readonly $type: TSKindId._ClassHeritageImplementsClause;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -6893,7 +6893,7 @@ export namespace _ClassHeritageImplementsClause {
 
 export namespace ExportStatementDefaultDeclArm {
   export interface Transport {
-    readonly $type: '_export_statement_default_decl_arm';
+    readonly $type: TSKindId.ExportStatementDefaultDeclArm;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -6906,7 +6906,7 @@ export namespace ExportStatementDefaultDeclArm {
 
 export namespace ExportStatementDefaultDeclArmDefaultKw {
   export interface Transport {
-    readonly $type: '_export_statement_default_decl_arm_default_kw';
+    readonly $type: TSKindId.ExportStatementDefaultDeclArmDefaultKw;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -6918,7 +6918,7 @@ export namespace ExportStatementDefaultDeclArmDefaultKw {
 
 export namespace ExportStatementDefaultDeclArmDefaultKwValue {
   export interface Transport {
-    readonly $type: '_export_statement_default_decl_arm_default_kw_value';
+    readonly $type: TSKindId.ExportStatementDefaultDeclArmDefaultKwValue;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -6931,7 +6931,7 @@ export namespace ExportStatementDefaultDeclArmDefaultKwValue {
 
 export namespace ExportStatementDefaultFromArm {
   export interface Transport {
-    readonly $type: '_export_statement_default_from_arm';
+    readonly $type: TSKindId.ExportStatementDefaultFromArm;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -6943,7 +6943,7 @@ export namespace ExportStatementDefaultFromArm {
 
 export namespace ExportStatementDefaultFromArmClauseFrom {
   export interface Transport {
-    readonly $type: '_export_statement_default_from_arm_clause_from';
+    readonly $type: TSKindId.ExportStatementDefaultFromArmClauseFrom;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -6956,7 +6956,7 @@ export namespace ExportStatementDefaultFromArmClauseFrom {
 
 export namespace ExportStatementDefaultFromArmNsFrom {
   export interface Transport {
-    readonly $type: '_export_statement_default_from_arm_ns_from';
+    readonly $type: TSKindId.ExportStatementDefaultFromArmNsFrom;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -6969,7 +6969,7 @@ export namespace ExportStatementDefaultFromArmNsFrom {
 
 export namespace ExportStatementDefaultFromArmStarFrom {
   export interface Transport {
-    readonly $type: '_export_statement_default_from_arm_star_from';
+    readonly $type: TSKindId.ExportStatementDefaultFromArmStarFrom;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -6981,7 +6981,7 @@ export namespace ExportStatementDefaultFromArmStarFrom {
 
 export namespace _ExportStatementEqualsExport {
   export interface Transport {
-    readonly $type: '_export_statement_equals_export';
+    readonly $type: TSKindId._ExportStatementEqualsExport;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -6993,7 +6993,7 @@ export namespace _ExportStatementEqualsExport {
 
 export namespace _ExportStatementNamespaceExport {
   export interface Transport {
-    readonly $type: '_export_statement_namespace_export';
+    readonly $type: TSKindId._ExportStatementNamespaceExport;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7005,7 +7005,7 @@ export namespace _ExportStatementNamespaceExport {
 
 export namespace _ExportStatementTypeExport {
   export interface Transport {
-    readonly $type: '_export_statement_type_export';
+    readonly $type: TSKindId._ExportStatementTypeExport;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7018,7 +7018,7 @@ export namespace _ExportStatementTypeExport {
 
 export namespace ExtendsClauseSingle {
   export interface Transport {
-    readonly $type: '_extends_clause_single';
+    readonly $type: TSKindId.ExtendsClauseSingle;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7031,7 +7031,7 @@ export namespace ExtendsClauseSingle {
 
 export namespace ForHeader {
   export interface Transport {
-    readonly $type: '_for_header';
+    readonly $type: TSKindId.ForHeader;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7045,7 +7045,7 @@ export namespace ForHeader {
 
 export namespace ForHeaderLetConstKind {
   export interface Transport {
-    readonly $type: '_for_header_let_const_kind';
+    readonly $type: TSKindId.ForHeaderLetConstKind;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7059,7 +7059,7 @@ export namespace ForHeaderLetConstKind {
 
 export namespace ForHeaderLhs {
   export interface Transport {
-    readonly $type: '_for_header_lhs';
+    readonly $type: TSKindId.ForHeaderLhs;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7071,7 +7071,7 @@ export namespace ForHeaderLhs {
 
 export namespace ForHeaderVarKind {
   export interface Transport {
-    readonly $type: '_for_header_var_kind';
+    readonly $type: TSKindId.ForHeaderVarKind;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7085,7 +7085,7 @@ export namespace ForHeaderVarKind {
 
 export namespace FromClause {
   export interface Transport {
-    readonly $type: '_from_clause';
+    readonly $type: TSKindId.FromClause;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7097,7 +7097,7 @@ export namespace FromClause {
 
 export namespace _ImportClauseDefaultImport {
   export interface Transport {
-    readonly $type: '_import_clause_default_import';
+    readonly $type: TSKindId._ImportClauseDefaultImport;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7109,7 +7109,7 @@ export namespace _ImportClauseDefaultImport {
 
 export namespace _ImportClauseNamedImports {
   export interface Transport {
-    readonly $type: '_import_clause_named_imports';
+    readonly $type: TSKindId._ImportClauseNamedImports;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7121,7 +7121,7 @@ export namespace _ImportClauseNamedImports {
 
 export namespace _ImportClauseNamespaceImport {
   export interface Transport {
-    readonly $type: '_import_clause_namespace_import';
+    readonly $type: TSKindId._ImportClauseNamespaceImport;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7133,7 +7133,7 @@ export namespace _ImportClauseNamespaceImport {
 
 export namespace ImportSpecifierAs {
   export interface Transport {
-    readonly $type: '_import_specifier_as';
+    readonly $type: TSKindId.ImportSpecifierAs;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7146,7 +7146,7 @@ export namespace ImportSpecifierAs {
 
 export namespace _ImportSpecifierName {
   export interface Transport {
-    readonly $type: '_import_specifier_name';
+    readonly $type: TSKindId._ImportSpecifierName;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7158,7 +7158,7 @@ export namespace _ImportSpecifierName {
 
 export namespace IndexSignatureColon {
   export interface Transport {
-    readonly $type: '_index_signature_colon';
+    readonly $type: TSKindId.IndexSignatureColon;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7171,7 +7171,7 @@ export namespace IndexSignatureColon {
 
 export namespace _IndexSignatureMappedTypeClause {
   export interface Transport {
-    readonly $type: '_index_signature_mapped_type_clause';
+    readonly $type: TSKindId._IndexSignatureMappedTypeClause;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7183,7 +7183,7 @@ export namespace _IndexSignatureMappedTypeClause {
 
 export namespace Initializer {
   export interface Transport {
-    readonly $type: '_initializer';
+    readonly $type: TSKindId.Initializer;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7195,7 +7195,7 @@ export namespace Initializer {
 
 export namespace InterfaceBody {
   export interface Transport {
-    readonly $type: '_interface_body';
+    readonly $type: TSKindId.InterfaceBody;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7207,7 +7207,7 @@ export namespace InterfaceBody {
 
 export namespace JsxStartOpeningElement {
   export interface Transport {
-    readonly $type: '_jsx_start_opening_element';
+    readonly $type: "_jsx_start_opening_element";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7221,7 +7221,7 @@ export namespace JsxStartOpeningElement {
 
 export namespace JsxString {
   export interface Transport {
-    readonly $type: '_jsx_string';
+    readonly $type: "_jsx_string";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7257,7 +7257,7 @@ export namespace KwStaticMarker {
 
 export namespace LhsExpression {
   export interface Transport {
-    readonly $type: '_lhs_expression';
+    readonly $type: "_lhs_expression";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7269,7 +7269,7 @@ export namespace LhsExpression {
 
 export namespace _Module {
   export interface Transport {
-    readonly $type: '_module';
+    readonly $type: TSKindId._Module;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7282,7 +7282,7 @@ export namespace _Module {
 
 export namespace _Number {
   export interface Transport {
-    readonly $type: '_number';
+    readonly $type: TSKindId._Number;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7295,7 +7295,7 @@ export namespace _Number {
 
 export namespace ParameterName {
   export interface Transport {
-    readonly $type: '_parameter_name';
+    readonly $type: TSKindId.ParameterName;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7310,7 +7310,7 @@ export namespace ParameterName {
 
 export namespace _ParenthesizedExpressionSequence {
   export interface Transport {
-    readonly $type: '_parenthesized_expression_sequence';
+    readonly $type: TSKindId._ParenthesizedExpressionSequence;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7322,7 +7322,7 @@ export namespace _ParenthesizedExpressionSequence {
 
 export namespace ParenthesizedExpressionTyped {
   export interface Transport {
-    readonly $type: '_parenthesized_expression_typed';
+    readonly $type: TSKindId.ParenthesizedExpressionTyped;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7335,7 +7335,7 @@ export namespace ParenthesizedExpressionTyped {
 
 export namespace PropertyIdentifier {
   export interface Transport {
-    readonly $type: '_property_identifier';
+    readonly $type: TSKindId.PropertyIdentifier;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7347,7 +7347,7 @@ export namespace PropertyIdentifier {
 
 export namespace PublicFieldDefinitionAbstractFirst {
   export interface Transport {
-    readonly $type: '_public_field_definition_abstract_first';
+    readonly $type: TSKindId.PublicFieldDefinitionAbstractFirst;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7360,7 +7360,7 @@ export namespace PublicFieldDefinitionAbstractFirst {
 
 export namespace PublicFieldDefinitionAccessFirst {
   export interface Transport {
-    readonly $type: '_public_field_definition_access_first';
+    readonly $type: TSKindId.PublicFieldDefinitionAccessFirst;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7373,7 +7373,7 @@ export namespace PublicFieldDefinitionAccessFirst {
 
 export namespace PublicFieldDefinitionAccessorOpt {
   export interface Transport {
-    readonly $type: '_public_field_definition_accessor_opt';
+    readonly $type: TSKindId.PublicFieldDefinitionAccessorOpt;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7385,7 +7385,7 @@ export namespace PublicFieldDefinitionAccessorOpt {
 
 export namespace PublicFieldDefinitionDeclareFirst {
   export interface Transport {
-    readonly $type: '_public_field_definition_declare_first';
+    readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7397,7 +7397,7 @@ export namespace PublicFieldDefinitionDeclareFirst {
 
 export namespace PublicFieldDefinitionReadonlyFirst {
   export interface Transport {
-    readonly $type: '_public_field_definition_readonly_first';
+    readonly $type: TSKindId.PublicFieldDefinitionReadonlyFirst;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7410,7 +7410,7 @@ export namespace PublicFieldDefinitionReadonlyFirst {
 
 export namespace PublicFieldDefinitionStaticMods {
   export interface Transport {
-    readonly $type: '_public_field_definition_static_mods';
+    readonly $type: TSKindId.PublicFieldDefinitionStaticMods;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7428,7 +7428,7 @@ export namespace ReservedIdentifier {
 
 export namespace StatementIdentifier {
   export interface Transport {
-    readonly $type: '_statement_identifier';
+    readonly $type: TSKindId.StatementIdentifier;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7440,7 +7440,7 @@ export namespace StatementIdentifier {
 
 export namespace _StringDouble {
   export interface Transport {
-    readonly $type: '_string_double';
+    readonly $type: TSKindId._StringDouble;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7452,7 +7452,7 @@ export namespace _StringDouble {
 
 export namespace StringFragment {
   export interface Transport {
-    readonly $type: '_string_fragment';
+    readonly $type: "_string_fragment";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7464,7 +7464,7 @@ export namespace StringFragment {
 
 export namespace _StringSingle {
   export interface Transport {
-    readonly $type: '_string_single';
+    readonly $type: TSKindId._StringSingle;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7476,7 +7476,7 @@ export namespace _StringSingle {
 
 export namespace ThisType {
   export interface Transport {
-    readonly $type: '_this_type';
+    readonly $type: TSKindId.ThisType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7488,7 +7488,7 @@ export namespace ThisType {
 
 export namespace TypeIdentifier {
   export interface Transport {
-    readonly $type: '_type_identifier';
+    readonly $type: TSKindId.TypeIdentifier;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7500,7 +7500,7 @@ export namespace TypeIdentifier {
 
 export namespace TypeQueryCallExpression {
   export interface Transport {
-    readonly $type: '_type_query_call_expression';
+    readonly $type: TSKindId.TypeQueryCallExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7513,7 +7513,7 @@ export namespace TypeQueryCallExpression {
 
 export namespace TypeQueryCallExpressionInTypeAnnotation {
   export interface Transport {
-    readonly $type: '_type_query_call_expression_in_type_annotation';
+    readonly $type: TSKindId.TypeQueryCallExpressionInTypeAnnotation;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7526,7 +7526,7 @@ export namespace TypeQueryCallExpressionInTypeAnnotation {
 
 export namespace TypeQueryInstantiationExpression {
   export interface Transport {
-    readonly $type: '_type_query_instantiation_expression';
+    readonly $type: TSKindId.TypeQueryInstantiationExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7539,7 +7539,7 @@ export namespace TypeQueryInstantiationExpression {
 
 export namespace TypeQueryMemberExpression {
   export interface Transport {
-    readonly $type: '_type_query_member_expression';
+    readonly $type: TSKindId.TypeQueryMemberExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7552,7 +7552,7 @@ export namespace TypeQueryMemberExpression {
 
 export namespace TypeQueryMemberExpressionInTypeAnnotation {
   export interface Transport {
-    readonly $type: '_type_query_member_expression_in_type_annotation';
+    readonly $type: TSKindId.TypeQueryMemberExpressionInTypeAnnotation;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7565,7 +7565,7 @@ export namespace TypeQueryMemberExpressionInTypeAnnotation {
 
 export namespace TypeQuerySubscriptExpression {
   export interface Transport {
-    readonly $type: '_type_query_subscript_expression';
+    readonly $type: TSKindId.TypeQuerySubscriptExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7578,7 +7578,7 @@ export namespace TypeQuerySubscriptExpression {
 
 export namespace UpdateExpressionPostfix {
   export interface Transport {
-    readonly $type: '_update_expression_postfix';
+    readonly $type: TSKindId.UpdateExpressionPostfix;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7591,7 +7591,7 @@ export namespace UpdateExpressionPostfix {
 
 export namespace UpdateExpressionPrefix {
   export interface Transport {
-    readonly $type: '_update_expression_prefix';
+    readonly $type: TSKindId.UpdateExpressionPrefix;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7604,7 +7604,7 @@ export namespace UpdateExpressionPrefix {
 
 export namespace AbstractClassDeclaration {
   export interface Transport {
-    readonly $type: 'abstract_class_declaration';
+    readonly $type: TSKindId.AbstractClassDeclaration;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7620,7 +7620,7 @@ export namespace AbstractClassDeclaration {
 
 export namespace AbstractMethodSignature {
   export interface Transport {
-    readonly $type: 'abstract_method_signature';
+    readonly $type: TSKindId.AbstractMethodSignature;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7643,7 +7643,7 @@ export namespace AccessibilityModifier {
 
 export namespace AddingTypeAnnotation {
   export interface Transport {
-    readonly $type: 'adding_type_annotation';
+    readonly $type: TSKindId.AddingTypeAnnotation;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7655,7 +7655,7 @@ export namespace AddingTypeAnnotation {
 
 export namespace AmbientDeclaration {
   export interface Transport {
-    readonly $type: 'ambient_declaration';
+    readonly $type: TSKindId.AmbientDeclaration;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7667,7 +7667,7 @@ export namespace AmbientDeclaration {
 
 export namespace Arguments {
   export interface Transport {
-    readonly $type: 'arguments';
+    readonly $type: TSKindId.Arguments;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7679,7 +7679,7 @@ export namespace Arguments {
 
 export namespace Array {
   export interface Transport {
-    readonly $type: 'array';
+    readonly $type: TSKindId.Array;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7691,7 +7691,7 @@ export namespace Array {
 
 export namespace ArrayPattern {
   export interface Transport {
-    readonly $type: 'array_pattern';
+    readonly $type: TSKindId.ArrayPattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7703,7 +7703,7 @@ export namespace ArrayPattern {
 
 export namespace ArrayType {
   export interface Transport {
-    readonly $type: 'array_type';
+    readonly $type: TSKindId.ArrayType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7715,7 +7715,7 @@ export namespace ArrayType {
 
 export namespace ArrowFunctionParameter {
   export interface Transport {
-    readonly $type: 'arrow_function_parameter';
+    readonly $type: "arrow_function_parameter";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7727,7 +7727,7 @@ export namespace ArrowFunctionParameter {
 
 export namespace ArrowFunctionUCallSignature {
   export interface Transport {
-    readonly $type: 'arrow_function__call_signature';
+    readonly $type: "arrow_function__call_signature";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7741,7 +7741,7 @@ export namespace ArrowFunctionUCallSignature {
 
 export namespace ArrowFunctionUFormParameter {
   export interface Transport {
-    readonly $type: 'arrow_function';
+    readonly $type: TSKindId.ArrowFunction;
     readonly $variant: 'parameter';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -7756,7 +7756,7 @@ export namespace ArrowFunctionUFormParameter {
 
 export namespace ArrowFunctionUFormUCallSignature {
   export interface Transport {
-    readonly $type: 'arrow_function';
+    readonly $type: TSKindId.ArrowFunction;
     readonly $variant: '_call_signature';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -7775,7 +7775,7 @@ export namespace ArrowFunction {
 
 export namespace AsExpression {
   export interface Transport {
-    readonly $type: 'as_expression';
+    readonly $type: TSKindId.AsExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7788,7 +7788,7 @@ export namespace AsExpression {
 
 export namespace Asserts {
   export interface Transport {
-    readonly $type: 'asserts';
+    readonly $type: TSKindId.Asserts;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7800,7 +7800,7 @@ export namespace Asserts {
 
 export namespace AssertsAnnotation {
   export interface Transport {
-    readonly $type: 'asserts_annotation';
+    readonly $type: TSKindId.AssertsAnnotation;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7812,7 +7812,7 @@ export namespace AssertsAnnotation {
 
 export namespace AssignmentExpression {
   export interface Transport {
-    readonly $type: 'assignment_expression';
+    readonly $type: TSKindId.AssignmentExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7826,7 +7826,7 @@ export namespace AssignmentExpression {
 
 export namespace AssignmentPattern {
   export interface Transport {
-    readonly $type: 'assignment_pattern';
+    readonly $type: TSKindId.AssignmentPattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7839,7 +7839,7 @@ export namespace AssignmentPattern {
 
 export namespace AugmentedAssignmentExpression {
   export interface Transport {
-    readonly $type: 'augmented_assignment_expression';
+    readonly $type: TSKindId.AugmentedAssignmentExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7853,7 +7853,7 @@ export namespace AugmentedAssignmentExpression {
 
 export namespace AwaitExpression {
   export interface Transport {
-    readonly $type: 'await_expression';
+    readonly $type: TSKindId.AwaitExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7865,7 +7865,7 @@ export namespace AwaitExpression {
 
 export namespace BinaryExpression {
   export interface Transport {
-    readonly $type: 'binary_expression';
+    readonly $type: TSKindId.BinaryExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7879,7 +7879,7 @@ export namespace BinaryExpression {
 
 export namespace BreakStatement {
   export interface Transport {
-    readonly $type: 'break_statement';
+    readonly $type: TSKindId.BreakStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7892,7 +7892,7 @@ export namespace BreakStatement {
 
 export namespace CallExpressionUFormCall {
   export interface Transport {
-    readonly $type: 'call_expression';
+    readonly $type: TSKindId.CallExpression;
     readonly $variant: 'call';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -7905,7 +7905,7 @@ export namespace CallExpressionUFormCall {
 
 export namespace CallExpressionUFormTemplateCall {
   export interface Transport {
-    readonly $type: 'call_expression';
+    readonly $type: TSKindId.CallExpression;
     readonly $variant: 'template_call';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -7918,7 +7918,7 @@ export namespace CallExpressionUFormTemplateCall {
 
 export namespace CallExpressionUFormMember {
   export interface Transport {
-    readonly $type: 'call_expression';
+    readonly $type: TSKindId.CallExpression;
     readonly $variant: 'member';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -7935,7 +7935,7 @@ export namespace CallExpression {
 
 export namespace CallSignature {
   export interface Transport {
-    readonly $type: 'call_signature';
+    readonly $type: TSKindId.CallSignature;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7949,7 +7949,7 @@ export namespace CallSignature {
 
 export namespace CatchClause {
   export interface Transport {
-    readonly $type: 'catch_clause';
+    readonly $type: TSKindId.CatchClause;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7963,7 +7963,7 @@ export namespace CatchClause {
 
 export namespace Class {
   export interface Transport {
-    readonly $type: 'class';
+    readonly $type: TSKindId.Class;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7979,7 +7979,7 @@ export namespace Class {
 
 export namespace ClassBody {
   export interface Transport {
-    readonly $type: 'class_body';
+    readonly $type: TSKindId.ClassBody;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -7991,7 +7991,7 @@ export namespace ClassBody {
 
 export namespace ClassDeclaration {
   export interface Transport {
-    readonly $type: 'class_declaration';
+    readonly $type: TSKindId.ClassDeclaration;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8008,7 +8008,7 @@ export namespace ClassDeclaration {
 
 export namespace ClassHeritageExtendsClause {
   export interface Transport {
-    readonly $type: 'class_heritage_extends_clause';
+    readonly $type: "class_heritage_extends_clause";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8020,7 +8020,7 @@ export namespace ClassHeritageExtendsClause {
 
 export namespace ClassHeritageImplementsClause {
   export interface Transport {
-    readonly $type: 'class_heritage_implements_clause';
+    readonly $type: "class_heritage_implements_clause";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8032,7 +8032,7 @@ export namespace ClassHeritageImplementsClause {
 
 export namespace ClassHeritageUFormExtendsClause {
   export interface Transport {
-    readonly $type: 'class_heritage';
+    readonly $type: TSKindId.ClassHeritage;
     readonly $variant: 'extends_clause';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -8045,7 +8045,7 @@ export namespace ClassHeritageUFormExtendsClause {
 
 export namespace ClassHeritageUFormImplementsClause {
   export interface Transport {
-    readonly $type: 'class_heritage';
+    readonly $type: TSKindId.ClassHeritage;
     readonly $variant: 'implements_clause';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -8062,7 +8062,7 @@ export namespace ClassHeritage {
 
 export namespace ClassStaticBlock {
   export interface Transport {
-    readonly $type: 'class_static_block';
+    readonly $type: TSKindId.ClassStaticBlock;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8079,7 +8079,7 @@ export namespace Comment {
 
 export namespace ComputedPropertyName {
   export interface Transport {
-    readonly $type: 'computed_property_name';
+    readonly $type: TSKindId.ComputedPropertyName;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8091,7 +8091,7 @@ export namespace ComputedPropertyName {
 
 export namespace ConditionalType {
   export interface Transport {
-    readonly $type: 'conditional_type';
+    readonly $type: TSKindId.ConditionalType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8106,7 +8106,7 @@ export namespace ConditionalType {
 
 export namespace Constraint {
   export interface Transport {
-    readonly $type: 'constraint';
+    readonly $type: TSKindId.Constraint;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8118,7 +8118,7 @@ export namespace Constraint {
 
 export namespace ConstructSignature {
   export interface Transport {
-    readonly $type: 'construct_signature';
+    readonly $type: TSKindId.ConstructSignature;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8133,7 +8133,7 @@ export namespace ConstructSignature {
 
 export namespace ConstructorType {
   export interface Transport {
-    readonly $type: 'constructor_type';
+    readonly $type: TSKindId.ConstructorType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8148,7 +8148,7 @@ export namespace ConstructorType {
 
 export namespace ContinueStatement {
   export interface Transport {
-    readonly $type: 'continue_statement';
+    readonly $type: TSKindId.ContinueStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8161,7 +8161,7 @@ export namespace ContinueStatement {
 
 export namespace DebuggerStatement {
   export interface Transport {
-    readonly $type: 'debugger_statement';
+    readonly $type: TSKindId.DebuggerStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8173,7 +8173,7 @@ export namespace DebuggerStatement {
 
 export namespace Decorator {
   export interface Transport {
-    readonly $type: 'decorator';
+    readonly $type: TSKindId.Decorator;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8185,7 +8185,7 @@ export namespace Decorator {
 
 export namespace DecoratorCallExpression {
   export interface Transport {
-    readonly $type: 'decorator_call_expression';
+    readonly $type: TSKindId.DecoratorCallExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8199,7 +8199,7 @@ export namespace DecoratorCallExpression {
 
 export namespace DecoratorMemberExpression {
   export interface Transport {
-    readonly $type: 'decorator_member_expression';
+    readonly $type: TSKindId.DecoratorMemberExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8212,7 +8212,7 @@ export namespace DecoratorMemberExpression {
 
 export namespace DecoratorParenthesizedExpression {
   export interface Transport {
-    readonly $type: 'decorator_parenthesized_expression';
+    readonly $type: TSKindId.DecoratorParenthesizedExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8224,7 +8224,7 @@ export namespace DecoratorParenthesizedExpression {
 
 export namespace DefaultType {
   export interface Transport {
-    readonly $type: 'default_type';
+    readonly $type: TSKindId.DefaultType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8236,7 +8236,7 @@ export namespace DefaultType {
 
 export namespace DoStatement {
   export interface Transport {
-    readonly $type: 'do_statement';
+    readonly $type: TSKindId.DoStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8250,7 +8250,7 @@ export namespace DoStatement {
 
 export namespace ElseClause {
   export interface Transport {
-    readonly $type: 'else_clause';
+    readonly $type: TSKindId.ElseClause;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8266,7 +8266,7 @@ export namespace EmptyStatement {
 
 export namespace EnumAssignment {
   export interface Transport {
-    readonly $type: 'enum_assignment';
+    readonly $type: TSKindId.EnumAssignment;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8279,7 +8279,7 @@ export namespace EnumAssignment {
 
 export namespace EnumBody {
   export interface Transport {
-    readonly $type: 'enum_body';
+    readonly $type: TSKindId.EnumBody;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8291,7 +8291,7 @@ export namespace EnumBody {
 
 export namespace EnumDeclaration {
   export interface Transport {
-    readonly $type: 'enum_declaration';
+    readonly $type: TSKindId.EnumDeclaration;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8313,7 +8313,7 @@ export namespace ExistentialType {
 
 export namespace ExportClause {
   export interface Transport {
-    readonly $type: 'export_clause';
+    readonly $type: TSKindId.ExportClause;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8325,7 +8325,7 @@ export namespace ExportClause {
 
 export namespace ExportSpecifier {
   export interface Transport {
-    readonly $type: 'export_specifier';
+    readonly $type: TSKindId.ExportSpecifier;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8339,7 +8339,7 @@ export namespace ExportSpecifier {
 
 export namespace ExportStatementTypeExport {
   export interface Transport {
-    readonly $type: 'export_statement_type_export';
+    readonly $type: "export_statement_type_export";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8352,7 +8352,7 @@ export namespace ExportStatementTypeExport {
 
 export namespace ExportStatementEqualsExport {
   export interface Transport {
-    readonly $type: 'export_statement_equals_export';
+    readonly $type: "export_statement_equals_export";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8364,7 +8364,7 @@ export namespace ExportStatementEqualsExport {
 
 export namespace ExportStatementNamespaceExport {
   export interface Transport {
-    readonly $type: 'export_statement_namespace_export';
+    readonly $type: "export_statement_namespace_export";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8376,7 +8376,7 @@ export namespace ExportStatementNamespaceExport {
 
 export namespace ExportStatementUFormDefault {
   export interface Transport {
-    readonly $type: 'export_statement';
+    readonly $type: TSKindId.ExportStatement;
     readonly $variant: 'default';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -8389,7 +8389,7 @@ export namespace ExportStatementUFormDefault {
 
 export namespace ExportStatementUFormTypeExport {
   export interface Transport {
-    readonly $type: 'export_statement';
+    readonly $type: TSKindId.ExportStatement;
     readonly $variant: 'type_export';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -8402,7 +8402,7 @@ export namespace ExportStatementUFormTypeExport {
 
 export namespace ExportStatementUFormEqualsExport {
   export interface Transport {
-    readonly $type: 'export_statement';
+    readonly $type: TSKindId.ExportStatement;
     readonly $variant: 'equals_export';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -8415,7 +8415,7 @@ export namespace ExportStatementUFormEqualsExport {
 
 export namespace ExportStatementUFormNamespaceExport {
   export interface Transport {
-    readonly $type: 'export_statement';
+    readonly $type: TSKindId.ExportStatement;
     readonly $variant: 'namespace_export';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -8432,7 +8432,7 @@ export namespace ExportStatement {
 
 export namespace ExpressionStatement {
   export interface Transport {
-    readonly $type: 'expression_statement';
+    readonly $type: TSKindId.ExpressionStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8445,7 +8445,7 @@ export namespace ExpressionStatement {
 
 export namespace ExtendsClause {
   export interface Transport {
-    readonly $type: 'extends_clause';
+    readonly $type: TSKindId.ExtendsClause;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8458,7 +8458,7 @@ export namespace ExtendsClause {
 
 export namespace ExtendsTypeClause {
   export interface Transport {
-    readonly $type: 'extends_type_clause';
+    readonly $type: TSKindId.ExtendsTypeClause;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8474,7 +8474,7 @@ export namespace False {
 
 export namespace FieldDefinition {
   export interface Transport {
-    readonly $type: 'field_definition';
+    readonly $type: "field_definition";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8489,7 +8489,7 @@ export namespace FieldDefinition {
 
 export namespace FinallyClause {
   export interface Transport {
-    readonly $type: 'finally_clause';
+    readonly $type: TSKindId.FinallyClause;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8501,7 +8501,7 @@ export namespace FinallyClause {
 
 export namespace FlowMaybeType {
   export interface Transport {
-    readonly $type: 'flow_maybe_type';
+    readonly $type: TSKindId.FlowMaybeType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8513,7 +8513,7 @@ export namespace FlowMaybeType {
 
 export namespace ForInStatement {
   export interface Transport {
-    readonly $type: 'for_in_statement';
+    readonly $type: TSKindId.ForInStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8529,7 +8529,7 @@ export namespace ForInStatement {
 
 export namespace ForStatement {
   export interface Transport {
-    readonly $type: 'for_statement';
+    readonly $type: TSKindId.ForStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8544,7 +8544,7 @@ export namespace ForStatement {
 
 export namespace FormalParameters {
   export interface Transport {
-    readonly $type: 'formal_parameters';
+    readonly $type: TSKindId.FormalParameters;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8556,7 +8556,7 @@ export namespace FormalParameters {
 
 export namespace FunctionDeclaration {
   export interface Transport {
-    readonly $type: 'function_declaration';
+    readonly $type: TSKindId.FunctionDeclaration;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8574,7 +8574,7 @@ export namespace FunctionDeclaration {
 
 export namespace FunctionExpression {
   export interface Transport {
-    readonly $type: 'function_expression';
+    readonly $type: TSKindId.FunctionExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8591,7 +8591,7 @@ export namespace FunctionExpression {
 
 export namespace FunctionSignature {
   export interface Transport {
-    readonly $type: 'function_signature';
+    readonly $type: TSKindId.FunctionSignature;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8608,7 +8608,7 @@ export namespace FunctionSignature {
 
 export namespace FunctionType {
   export interface Transport {
-    readonly $type: 'function_type';
+    readonly $type: TSKindId.FunctionType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8622,7 +8622,7 @@ export namespace FunctionType {
 
 export namespace GeneratorFunction {
   export interface Transport {
-    readonly $type: 'generator_function';
+    readonly $type: TSKindId.GeneratorFunction;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8639,7 +8639,7 @@ export namespace GeneratorFunction {
 
 export namespace GeneratorFunctionDeclaration {
   export interface Transport {
-    readonly $type: 'generator_function_declaration';
+    readonly $type: TSKindId.GeneratorFunctionDeclaration;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8657,7 +8657,7 @@ export namespace GeneratorFunctionDeclaration {
 
 export namespace GenericType {
   export interface Transport {
-    readonly $type: 'generic_type';
+    readonly $type: TSKindId.GenericType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8682,7 +8682,7 @@ export namespace Identifier {
 
 export namespace IfStatement {
   export interface Transport {
-    readonly $type: 'if_statement';
+    readonly $type: TSKindId.IfStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8696,7 +8696,7 @@ export namespace IfStatement {
 
 export namespace ImplementsClause {
   export interface Transport {
-    readonly $type: 'implements_clause';
+    readonly $type: TSKindId.ImplementsClause;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8712,7 +8712,7 @@ export namespace Import {
 
 export namespace ImportAlias {
   export interface Transport {
-    readonly $type: 'import_alias';
+    readonly $type: TSKindId.ImportAlias;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8726,7 +8726,7 @@ export namespace ImportAlias {
 
 export namespace ImportAttribute {
   export interface Transport {
-    readonly $type: 'import_attribute';
+    readonly $type: TSKindId.ImportAttribute;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8738,7 +8738,7 @@ export namespace ImportAttribute {
 
 export namespace ImportClauseNamespaceImport {
   export interface Transport {
-    readonly $type: 'import_clause_namespace_import';
+    readonly $type: "import_clause_namespace_import";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8750,7 +8750,7 @@ export namespace ImportClauseNamespaceImport {
 
 export namespace ImportClauseNamedImports {
   export interface Transport {
-    readonly $type: 'import_clause_named_imports';
+    readonly $type: "import_clause_named_imports";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8762,7 +8762,7 @@ export namespace ImportClauseNamedImports {
 
 export namespace ImportClauseDefaultImport {
   export interface Transport {
-    readonly $type: 'import_clause_default_import';
+    readonly $type: "import_clause_default_import";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8774,7 +8774,7 @@ export namespace ImportClauseDefaultImport {
 
 export namespace ImportClauseUFormNamespaceImport {
   export interface Transport {
-    readonly $type: 'import_clause';
+    readonly $type: TSKindId.ImportClause;
     readonly $variant: 'namespace_import';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -8787,7 +8787,7 @@ export namespace ImportClauseUFormNamespaceImport {
 
 export namespace ImportClauseUFormNamedImports {
   export interface Transport {
-    readonly $type: 'import_clause';
+    readonly $type: TSKindId.ImportClause;
     readonly $variant: 'named_imports';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -8800,7 +8800,7 @@ export namespace ImportClauseUFormNamedImports {
 
 export namespace ImportClauseUFormDefaultImport {
   export interface Transport {
-    readonly $type: 'import_clause';
+    readonly $type: TSKindId.ImportClause;
     readonly $variant: 'default_import';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -8817,7 +8817,7 @@ export namespace ImportClause {
 
 export namespace ImportRequireClause {
   export interface Transport {
-    readonly $type: 'import_require_clause';
+    readonly $type: TSKindId.ImportRequireClause;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8830,7 +8830,7 @@ export namespace ImportRequireClause {
 
 export namespace ImportSpecifierName {
   export interface Transport {
-    readonly $type: 'import_specifier_name';
+    readonly $type: "import_specifier_name";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8842,7 +8842,7 @@ export namespace ImportSpecifierName {
 
 export namespace ImportSpecifierUFormName {
   export interface Transport {
-    readonly $type: 'import_specifier';
+    readonly $type: TSKindId.ImportSpecifier;
     readonly $variant: 'name';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -8856,7 +8856,7 @@ export namespace ImportSpecifierUFormName {
 
 export namespace ImportSpecifierUFormAs {
   export interface Transport {
-    readonly $type: 'import_specifier';
+    readonly $type: TSKindId.ImportSpecifier;
     readonly $variant: 'as';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -8874,7 +8874,7 @@ export namespace ImportSpecifier {
 
 export namespace ImportStatement {
   export interface Transport {
-    readonly $type: 'import_statement';
+    readonly $type: TSKindId.ImportStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8889,7 +8889,7 @@ export namespace ImportStatement {
 
 export namespace IndexSignatureMappedTypeClause {
   export interface Transport {
-    readonly $type: 'index_signature_mapped_type_clause';
+    readonly $type: "index_signature_mapped_type_clause";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8901,7 +8901,7 @@ export namespace IndexSignatureMappedTypeClause {
 
 export namespace IndexSignatureUFormColon {
   export interface Transport {
-    readonly $type: 'index_signature';
+    readonly $type: TSKindId.IndexSignature;
     readonly $variant: 'colon';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -8916,7 +8916,7 @@ export namespace IndexSignatureUFormColon {
 
 export namespace IndexSignatureUFormMappedTypeClause {
   export interface Transport {
-    readonly $type: 'index_signature';
+    readonly $type: TSKindId.IndexSignature;
     readonly $variant: 'mapped_type_clause';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -8935,7 +8935,7 @@ export namespace IndexSignature {
 
 export namespace IndexTypeQuery {
   export interface Transport {
-    readonly $type: 'index_type_query';
+    readonly $type: TSKindId.IndexTypeQuery;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8947,7 +8947,7 @@ export namespace IndexTypeQuery {
 
 export namespace InferType {
   export interface Transport {
-    readonly $type: 'infer_type';
+    readonly $type: TSKindId.InferType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8960,7 +8960,7 @@ export namespace InferType {
 
 export namespace InstantiationExpression {
   export interface Transport {
-    readonly $type: 'instantiation_expression';
+    readonly $type: TSKindId.InstantiationExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8973,7 +8973,7 @@ export namespace InstantiationExpression {
 
 export namespace InterfaceDeclaration {
   export interface Transport {
-    readonly $type: 'interface_declaration';
+    readonly $type: TSKindId.InterfaceDeclaration;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -8988,7 +8988,7 @@ export namespace InterfaceDeclaration {
 
 export namespace InternalModule {
   export interface Transport {
-    readonly $type: 'internal_module';
+    readonly $type: TSKindId.InternalModule;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9001,7 +9001,7 @@ export namespace InternalModule {
 
 export namespace IntersectionType {
   export interface Transport {
-    readonly $type: 'intersection_type';
+    readonly $type: TSKindId.IntersectionType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9014,7 +9014,7 @@ export namespace IntersectionType {
 
 export namespace JsxAttribute {
   export interface Transport {
-    readonly $type: 'jsx_attribute';
+    readonly $type: "jsx_attribute";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9026,7 +9026,7 @@ export namespace JsxAttribute {
 
 export namespace JsxClosingElement {
   export interface Transport {
-    readonly $type: 'jsx_closing_element';
+    readonly $type: "jsx_closing_element";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9038,7 +9038,7 @@ export namespace JsxClosingElement {
 
 export namespace JsxElement {
   export interface Transport {
-    readonly $type: 'jsx_element';
+    readonly $type: "jsx_element";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9052,7 +9052,7 @@ export namespace JsxElement {
 
 export namespace JsxExpression {
   export interface Transport {
-    readonly $type: 'jsx_expression';
+    readonly $type: "jsx_expression";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9068,7 +9068,7 @@ export namespace JsxIdentifier {
 
 export namespace JsxNamespaceName {
   export interface Transport {
-    readonly $type: 'jsx_namespace_name';
+    readonly $type: "jsx_namespace_name";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9080,7 +9080,7 @@ export namespace JsxNamespaceName {
 
 export namespace JsxOpeningElement {
   export interface Transport {
-    readonly $type: 'jsx_opening_element';
+    readonly $type: "jsx_opening_element";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9094,7 +9094,7 @@ export namespace JsxOpeningElement {
 
 export namespace JsxSelfClosingElement {
   export interface Transport {
-    readonly $type: 'jsx_self_closing_element';
+    readonly $type: "jsx_self_closing_element";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9108,7 +9108,7 @@ export namespace JsxSelfClosingElement {
 
 export namespace LabeledStatement {
   export interface Transport {
-    readonly $type: 'labeled_statement';
+    readonly $type: TSKindId.LabeledStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9121,7 +9121,7 @@ export namespace LabeledStatement {
 
 export namespace LexicalDeclaration {
   export interface Transport {
-    readonly $type: 'lexical_declaration';
+    readonly $type: TSKindId.LexicalDeclaration;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9135,7 +9135,7 @@ export namespace LexicalDeclaration {
 
 export namespace LiteralType {
   export interface Transport {
-    readonly $type: 'literal_type';
+    readonly $type: TSKindId.LiteralType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9147,7 +9147,7 @@ export namespace LiteralType {
 
 export namespace LookupType {
   export interface Transport {
-    readonly $type: 'lookup_type';
+    readonly $type: TSKindId.LookupType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9160,7 +9160,7 @@ export namespace LookupType {
 
 export namespace MappedTypeClause {
   export interface Transport {
-    readonly $type: 'mapped_type_clause';
+    readonly $type: TSKindId.MappedTypeClause;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9174,7 +9174,7 @@ export namespace MappedTypeClause {
 
 export namespace MemberExpression {
   export interface Transport {
-    readonly $type: 'member_expression';
+    readonly $type: TSKindId.MemberExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9191,7 +9191,7 @@ export namespace MetaProperty {
 
 export namespace MethodDefinition {
   export interface Transport {
-    readonly $type: 'method_definition';
+    readonly $type: TSKindId.MethodDefinition;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9214,7 +9214,7 @@ export namespace MethodDefinition {
 
 export namespace MethodSignature {
   export interface Transport {
-    readonly $type: 'method_signature';
+    readonly $type: TSKindId.MethodSignature;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9236,7 +9236,7 @@ export namespace MethodSignature {
 
 export namespace Module {
   export interface Transport {
-    readonly $type: 'module';
+    readonly $type: TSKindId.Module;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9249,7 +9249,7 @@ export namespace Module {
 
 export namespace NamedImports {
   export interface Transport {
-    readonly $type: 'named_imports';
+    readonly $type: TSKindId.NamedImports;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9261,7 +9261,7 @@ export namespace NamedImports {
 
 export namespace NamespaceExport {
   export interface Transport {
-    readonly $type: 'namespace_export';
+    readonly $type: TSKindId.NamespaceExport;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9273,7 +9273,7 @@ export namespace NamespaceExport {
 
 export namespace NamespaceImport {
   export interface Transport {
-    readonly $type: 'namespace_import';
+    readonly $type: TSKindId.NamespaceImport;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9285,7 +9285,7 @@ export namespace NamespaceImport {
 
 export namespace NestedIdentifier {
   export interface Transport {
-    readonly $type: 'nested_identifier';
+    readonly $type: TSKindId.NestedIdentifier;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9298,7 +9298,7 @@ export namespace NestedIdentifier {
 
 export namespace NestedTypeIdentifier {
   export interface Transport {
-    readonly $type: 'nested_type_identifier';
+    readonly $type: TSKindId.NestedTypeIdentifier;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9311,7 +9311,7 @@ export namespace NestedTypeIdentifier {
 
 export namespace NewExpression {
   export interface Transport {
-    readonly $type: 'new_expression';
+    readonly $type: TSKindId.NewExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9325,7 +9325,7 @@ export namespace NewExpression {
 
 export namespace NonNullExpression {
   export interface Transport {
-    readonly $type: 'non_null_expression';
+    readonly $type: TSKindId.NonNullExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9345,7 +9345,7 @@ export namespace Number {
 
 export namespace Object {
   export interface Transport {
-    readonly $type: 'object';
+    readonly $type: TSKindId.Object;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9357,7 +9357,7 @@ export namespace Object {
 
 export namespace ObjectAssignmentPattern {
   export interface Transport {
-    readonly $type: 'object_assignment_pattern';
+    readonly $type: TSKindId.ObjectAssignmentPattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9370,7 +9370,7 @@ export namespace ObjectAssignmentPattern {
 
 export namespace ObjectPattern {
   export interface Transport {
-    readonly $type: 'object_pattern';
+    readonly $type: TSKindId.ObjectPattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9382,7 +9382,7 @@ export namespace ObjectPattern {
 
 export namespace ObjectType {
   export interface Transport {
-    readonly $type: 'object_type';
+    readonly $type: TSKindId.ObjectType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9396,7 +9396,7 @@ export namespace ObjectType {
 
 export namespace OmittingTypeAnnotation {
   export interface Transport {
-    readonly $type: 'omitting_type_annotation';
+    readonly $type: TSKindId.OmittingTypeAnnotation;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9408,7 +9408,7 @@ export namespace OmittingTypeAnnotation {
 
 export namespace OptingTypeAnnotation {
   export interface Transport {
-    readonly $type: 'opting_type_annotation';
+    readonly $type: TSKindId.OptingTypeAnnotation;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9424,7 +9424,7 @@ export namespace OptionalChain {
 
 export namespace OptionalParameter {
   export interface Transport {
-    readonly $type: 'optional_parameter';
+    readonly $type: TSKindId.OptionalParameter;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9441,7 +9441,7 @@ export namespace OptionalParameter {
 
 export namespace OptionalTupleParameter {
   export interface Transport {
-    readonly $type: 'optional_tuple_parameter';
+    readonly $type: TSKindId.OptionalTupleParameter;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9454,7 +9454,7 @@ export namespace OptionalTupleParameter {
 
 export namespace OptionalType {
   export interface Transport {
-    readonly $type: 'optional_type';
+    readonly $type: TSKindId.OptionalType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9470,7 +9470,7 @@ export namespace OverrideModifier {
 
 export namespace Pair {
   export interface Transport {
-    readonly $type: 'pair';
+    readonly $type: TSKindId.Pair;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9483,7 +9483,7 @@ export namespace Pair {
 
 export namespace PairPattern {
   export interface Transport {
-    readonly $type: 'pair_pattern';
+    readonly $type: TSKindId.PairPattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9496,7 +9496,7 @@ export namespace PairPattern {
 
 export namespace ParenthesizedExpressionSequence {
   export interface Transport {
-    readonly $type: 'parenthesized_expression_sequence';
+    readonly $type: "parenthesized_expression_sequence";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9508,7 +9508,7 @@ export namespace ParenthesizedExpressionSequence {
 
 export namespace ParenthesizedExpressionUFormTyped {
   export interface Transport {
-    readonly $type: 'parenthesized_expression';
+    readonly $type: TSKindId.ParenthesizedExpression;
     readonly $variant: 'typed';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -9521,7 +9521,7 @@ export namespace ParenthesizedExpressionUFormTyped {
 
 export namespace ParenthesizedExpressionUFormSequence {
   export interface Transport {
-    readonly $type: 'parenthesized_expression';
+    readonly $type: TSKindId.ParenthesizedExpression;
     readonly $variant: 'sequence';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -9538,7 +9538,7 @@ export namespace ParenthesizedExpression {
 
 export namespace ParenthesizedType {
   export interface Transport {
-    readonly $type: 'parenthesized_type';
+    readonly $type: TSKindId.ParenthesizedType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9558,7 +9558,7 @@ export namespace PrivatePropertyIdentifier {
 
 export namespace Program {
   export interface Transport {
-    readonly $type: 'program';
+    readonly $type: TSKindId.Program;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9571,7 +9571,7 @@ export namespace Program {
 
 export namespace PropertySignature {
   export interface Transport {
-    readonly $type: 'property_signature';
+    readonly $type: TSKindId.PropertySignature;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9589,7 +9589,7 @@ export namespace PropertySignature {
 
 export namespace PublicFieldDefinition {
   export interface Transport {
-    readonly $type: 'public_field_definition';
+    readonly $type: TSKindId.PublicFieldDefinition;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9606,7 +9606,7 @@ export namespace PublicFieldDefinition {
 
 export namespace ReadonlyType {
   export interface Transport {
-    readonly $type: 'readonly_type';
+    readonly $type: TSKindId.ReadonlyType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9618,7 +9618,7 @@ export namespace ReadonlyType {
 
 export namespace Regex {
   export interface Transport {
-    readonly $type: 'regex';
+    readonly $type: TSKindId.Regex;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9639,7 +9639,7 @@ export namespace RegexPattern {
 
 export namespace RequiredParameter {
   export interface Transport {
-    readonly $type: 'required_parameter';
+    readonly $type: TSKindId.RequiredParameter;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9656,7 +9656,7 @@ export namespace RequiredParameter {
 
 export namespace RestPattern {
   export interface Transport {
-    readonly $type: 'rest_pattern';
+    readonly $type: TSKindId.RestPattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9668,7 +9668,7 @@ export namespace RestPattern {
 
 export namespace RestType {
   export interface Transport {
-    readonly $type: 'rest_type';
+    readonly $type: TSKindId.RestType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9680,7 +9680,7 @@ export namespace RestType {
 
 export namespace ReturnStatement {
   export interface Transport {
-    readonly $type: 'return_statement';
+    readonly $type: TSKindId.ReturnStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9693,7 +9693,7 @@ export namespace ReturnStatement {
 
 export namespace SatisfiesExpression {
   export interface Transport {
-    readonly $type: 'satisfies_expression';
+    readonly $type: TSKindId.SatisfiesExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9706,7 +9706,7 @@ export namespace SatisfiesExpression {
 
 export namespace SequenceExpression {
   export interface Transport {
-    readonly $type: 'sequence_expression';
+    readonly $type: TSKindId.SequenceExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9718,7 +9718,7 @@ export namespace SequenceExpression {
 
 export namespace SpreadElement {
   export interface Transport {
-    readonly $type: 'spread_element';
+    readonly $type: TSKindId.SpreadElement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9730,7 +9730,7 @@ export namespace SpreadElement {
 
 export namespace StatementBlock {
   export interface Transport {
-    readonly $type: 'statement_block';
+    readonly $type: TSKindId.StatementBlock;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9743,7 +9743,7 @@ export namespace StatementBlock {
 
 export namespace StringDouble {
   export interface Transport {
-    readonly $type: 'string_double';
+    readonly $type: "string_double";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9755,7 +9755,7 @@ export namespace StringDouble {
 
 export namespace StringSingle {
   export interface Transport {
-    readonly $type: 'string_single';
+    readonly $type: "string_single";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9767,7 +9767,7 @@ export namespace StringSingle {
 
 export namespace StringUFormDouble {
   export interface Transport {
-    readonly $type: 'string';
+    readonly $type: TSKindId.String;
     readonly $variant: 'double';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -9780,7 +9780,7 @@ export namespace StringUFormDouble {
 
 export namespace StringUFormSingle {
   export interface Transport {
-    readonly $type: 'string';
+    readonly $type: TSKindId.String;
     readonly $variant: 'single';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -9797,7 +9797,7 @@ export namespace String {
 
 export namespace SubscriptExpression {
   export interface Transport {
-    readonly $type: 'subscript_expression';
+    readonly $type: TSKindId.SubscriptExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9815,7 +9815,7 @@ export namespace Super {
 
 export namespace SwitchBody {
   export interface Transport {
-    readonly $type: 'switch_body';
+    readonly $type: TSKindId.SwitchBody;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9827,7 +9827,7 @@ export namespace SwitchBody {
 
 export namespace SwitchCase {
   export interface Transport {
-    readonly $type: 'switch_case';
+    readonly $type: TSKindId.SwitchCase;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9840,7 +9840,7 @@ export namespace SwitchCase {
 
 export namespace SwitchDefault {
   export interface Transport {
-    readonly $type: 'switch_default';
+    readonly $type: TSKindId.SwitchDefault;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9852,7 +9852,7 @@ export namespace SwitchDefault {
 
 export namespace SwitchStatement {
   export interface Transport {
-    readonly $type: 'switch_statement';
+    readonly $type: TSKindId.SwitchStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9865,7 +9865,7 @@ export namespace SwitchStatement {
 
 export namespace TemplateLiteralType {
   export interface Transport {
-    readonly $type: 'template_literal_type';
+    readonly $type: TSKindId.TemplateLiteralType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9877,7 +9877,7 @@ export namespace TemplateLiteralType {
 
 export namespace TemplateString {
   export interface Transport {
-    readonly $type: 'template_string';
+    readonly $type: TSKindId.TemplateString;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9889,7 +9889,7 @@ export namespace TemplateString {
 
 export namespace TemplateSubstitution {
   export interface Transport {
-    readonly $type: 'template_substitution';
+    readonly $type: TSKindId.TemplateSubstitution;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9901,7 +9901,7 @@ export namespace TemplateSubstitution {
 
 export namespace TemplateType {
   export interface Transport {
-    readonly $type: 'template_type';
+    readonly $type: TSKindId.TemplateType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9913,7 +9913,7 @@ export namespace TemplateType {
 
 export namespace TernaryExpression {
   export interface Transport {
-    readonly $type: 'ternary_expression';
+    readonly $type: TSKindId.TernaryExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9931,7 +9931,7 @@ export namespace This {
 
 export namespace ThrowStatement {
   export interface Transport {
-    readonly $type: 'throw_statement';
+    readonly $type: TSKindId.ThrowStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9948,7 +9948,7 @@ export namespace True {
 
 export namespace TryStatement {
   export interface Transport {
-    readonly $type: 'try_statement';
+    readonly $type: TSKindId.TryStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9962,7 +9962,7 @@ export namespace TryStatement {
 
 export namespace TupleParameter {
   export interface Transport {
-    readonly $type: 'tuple_parameter';
+    readonly $type: TSKindId.TupleParameter;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9975,7 +9975,7 @@ export namespace TupleParameter {
 
 export namespace TupleType {
   export interface Transport {
-    readonly $type: 'tuple_type';
+    readonly $type: TSKindId.TupleType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -9987,7 +9987,7 @@ export namespace TupleType {
 
 export namespace TypeAliasDeclaration {
   export interface Transport {
-    readonly $type: 'type_alias_declaration';
+    readonly $type: TSKindId.TypeAliasDeclaration;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -10002,7 +10002,7 @@ export namespace TypeAliasDeclaration {
 
 export namespace TypeAnnotation {
   export interface Transport {
-    readonly $type: 'type_annotation';
+    readonly $type: TSKindId.TypeAnnotation;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -10014,7 +10014,7 @@ export namespace TypeAnnotation {
 
 export namespace TypeArguments {
   export interface Transport {
-    readonly $type: 'type_arguments';
+    readonly $type: TSKindId.TypeArguments;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -10026,7 +10026,7 @@ export namespace TypeArguments {
 
 export namespace TypeAssertion {
   export interface Transport {
-    readonly $type: 'type_assertion';
+    readonly $type: TSKindId.TypeAssertion;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -10039,7 +10039,7 @@ export namespace TypeAssertion {
 
 export namespace TypeParameter {
   export interface Transport {
-    readonly $type: 'type_parameter';
+    readonly $type: TSKindId.TypeParameter;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -10054,7 +10054,7 @@ export namespace TypeParameter {
 
 export namespace TypeParameters {
   export interface Transport {
-    readonly $type: 'type_parameters';
+    readonly $type: TSKindId.TypeParameters;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -10066,7 +10066,7 @@ export namespace TypeParameters {
 
 export namespace TypePredicate {
   export interface Transport {
-    readonly $type: 'type_predicate';
+    readonly $type: TSKindId.TypePredicate;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -10079,7 +10079,7 @@ export namespace TypePredicate {
 
 export namespace TypePredicateAnnotation {
   export interface Transport {
-    readonly $type: 'type_predicate_annotation';
+    readonly $type: TSKindId.TypePredicateAnnotation;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -10091,7 +10091,7 @@ export namespace TypePredicateAnnotation {
 
 export namespace TypeQuery {
   export interface Transport {
-    readonly $type: 'type_query';
+    readonly $type: TSKindId.TypeQuery;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -10103,7 +10103,7 @@ export namespace TypeQuery {
 
 export namespace UnaryExpression {
   export interface Transport {
-    readonly $type: 'unary_expression';
+    readonly $type: TSKindId.UnaryExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -10136,7 +10136,7 @@ export namespace UnescapedSingleStringFragment {
 
 export namespace UnionType {
   export interface Transport {
-    readonly $type: 'union_type';
+    readonly $type: TSKindId.UnionType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -10149,7 +10149,7 @@ export namespace UnionType {
 
 export namespace UpdateExpressionUFormPostfix {
   export interface Transport {
-    readonly $type: 'update_expression';
+    readonly $type: TSKindId.UpdateExpression;
     readonly $variant: 'postfix';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -10162,7 +10162,7 @@ export namespace UpdateExpressionUFormPostfix {
 
 export namespace UpdateExpressionUFormPrefix {
   export interface Transport {
-    readonly $type: 'update_expression';
+    readonly $type: TSKindId.UpdateExpression;
     readonly $variant: 'prefix';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -10179,7 +10179,7 @@ export namespace UpdateExpression {
 
 export namespace VariableDeclaration {
   export interface Transport {
-    readonly $type: 'variable_declaration';
+    readonly $type: TSKindId.VariableDeclaration;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -10192,7 +10192,7 @@ export namespace VariableDeclaration {
 
 export namespace VariableDeclarator {
   export interface Transport {
-    readonly $type: 'variable_declarator';
+    readonly $type: TSKindId.VariableDeclarator;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -10206,7 +10206,7 @@ export namespace VariableDeclarator {
 
 export namespace WhileStatement {
   export interface Transport {
-    readonly $type: 'while_statement';
+    readonly $type: TSKindId.WhileStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -10219,7 +10219,7 @@ export namespace WhileStatement {
 
 export namespace WithStatement {
   export interface Transport {
-    readonly $type: 'with_statement';
+    readonly $type: TSKindId.WithStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -10232,7 +10232,7 @@ export namespace WithStatement {
 
 export namespace YieldExpression {
   export interface Transport {
-    readonly $type: 'yield_expression';
+    readonly $type: TSKindId.YieldExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;

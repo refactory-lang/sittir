@@ -7,11 +7,3669 @@ export declare class SittirEngine {
   findAndRead(source: string, pattern: string): string
   parseAndRead(source: string): string
   readNode(nodeId: number): string
-  render(node: any): string
+  /**
+   * Render a typed transport object (napi-native, numeric `$type`).
+   * Phase B: `AnyTransport` is decoded by napi-rs directly from the JS
+   * object — no `serde_json::Value` intermediate.
+   */
+  render(transport: AnyTransport): string
   applyEdits(source: string, edits: Array<Edit>): string
   dispose(): void
 }
 
+export interface AbstractClassDeclarationTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  decorator: Array<Box<AnyTransport>>
+  name: Box<AnyTransport>
+  typeParameters?: Box<AnyTransport>
+  classHeritage?: Box<AnyTransport>
+  body: Box<AnyTransport>
+}
+
+export interface AbstractMethodSignatureTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  accessibilityModifier?: Box<AnyTransport>
+  overrideModifier?: Box<AnyTransport>
+  accessorKind?: Box<AnyTransport>
+  name: Box<AnyTransport>
+  optionalMarker?: Box<AnyTransport>
+  typeParameters?: Box<AnyTransport>
+  parameters: Box<AnyTransport>
+  returnType?: Box<AnyTransport>
+}
+
+export interface AbstractTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface AccessibilityModifierTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface AccessorTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface AddingTypeAnnotationTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  type: Box<AnyTransport>
+}
+
+export interface AmbientDeclarationTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  declaration: Box<AnyTransport>
+}
+
+export interface AmpTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface AndandTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface ArgumentsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ArrayPatternTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ArrayTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ArrayTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  primaryType: Box<AnyTransport>
+}
+
+export interface ArrowFunctionParameterTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  parameter: Box<AnyTransport>
+}
+
+export interface ArrowFunctionParameterTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  parameter: Box<AnyTransport>
+}
+
+export interface ArrowFunctionUCallSignatureTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  typeParameters?: Box<AnyTransport>
+  parameters: Box<AnyTransport>
+  returnType?: Box<AnyTransport>
+}
+
+export interface ArrowFunctionUCallSignatureTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  typeParameters?: Box<AnyTransport>
+  parameters: Box<AnyTransport>
+  returnType?: Box<AnyTransport>
+}
+
+export interface ArrowFunctionUFormParameterTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  asyncMarker?: Box<AnyTransport>
+  body: Box<AnyTransport>
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ArrowFunctionUFormUCallSignatureTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  asyncMarker?: Box<AnyTransport>
+  body: Box<AnyTransport>
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface AsExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  expression: Box<AnyTransport>
+  typeAnnotation: Box<AnyTransport>
+}
+
+export interface AssertsAnnotationTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  asserts: Box<AnyTransport>
+}
+
+export interface AssertsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface AssignmentExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  usingMarker?: Box<AnyTransport>
+  left: Box<AnyTransport>
+  right: Box<AnyTransport>
+}
+
+export interface AssignmentPatternTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  left: Box<AnyTransport>
+  right: Box<AnyTransport>
+}
+
+export interface AsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface AsyncTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface AtTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface AugmentedAssignmentExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  left: Box<AnyTransport>
+  operator: Box<AnyTransport>
+  right: Box<AnyTransport>
+}
+
+export interface AutomaticSemicolonTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface AwaitExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  expression: Box<AnyTransport>
+}
+
+export interface AwaitTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface BangTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface BinaryExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  left: Box<AnyTransport>
+  operator: Box<AnyTransport>
+  right: Box<AnyTransport>
+}
+
+export interface BraceTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface BracketTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface BreakStatementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  label?: Box<AnyTransport>
+  semicolon: Box<AnyTransport>
+}
+
+export interface BreakTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface CallExpressionCallTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  function: Box<AnyTransport>
+  typeArguments?: Box<AnyTransport>
+  arguments: Box<AnyTransport>
+}
+
+export interface CallExpressionMemberTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  function: Box<AnyTransport>
+  typeArguments?: Box<AnyTransport>
+  arguments: Box<AnyTransport>
+}
+
+export interface CallExpressionTemplateCallTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  function: Box<AnyTransport>
+  arguments: Box<AnyTransport>
+}
+
+export interface CallExpressionUFormCallTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface CallExpressionUFormMemberTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface CallExpressionUFormTemplateCallTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface CallSignatureTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  typeParameters?: Box<AnyTransport>
+  parameters: Box<AnyTransport>
+  returnType?: Box<AnyTransport>
+}
+
+export interface CallSignatureTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  typeParameters?: Box<AnyTransport>
+  parameters: Box<AnyTransport>
+  returnType?: Box<AnyTransport>
+}
+
+export interface CaretTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface CaseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface CatchClauseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  parameter?: Box<AnyTransport>
+  type?: Box<AnyTransport>
+  body: Box<AnyTransport>
+}
+
+export interface CatchTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface ClassBodyMemberTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ClassBodyMethodSigTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ClassBodyMethodTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  decorator: Array<Box<AnyTransport>>
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ClassBodyTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ClassDeclarationTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  decorator: Array<Box<AnyTransport>>
+  name: Box<AnyTransport>
+  typeParameters?: Box<AnyTransport>
+  classHeritage?: Box<AnyTransport>
+  body: Box<AnyTransport>
+  automaticSemicolon?: Box<AnyTransport>
+}
+
+export interface ClassHeritageExtendsClauseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ClassHeritageExtendsClauseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ClassHeritageImplementsClauseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ClassHeritageImplementsClauseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ClassHeritageUFormExtendsClauseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ClassHeritageUFormImplementsClauseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ClassStaticBlockTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  body: Box<AnyTransport>
+  '$children'?: Array<Box<AnyTransport>>
+}
+
+export interface ClassTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  decorator: Array<Box<AnyTransport>>
+  name?: Box<AnyTransport>
+  typeParameters?: Box<AnyTransport>
+  classHeritage?: Box<AnyTransport>
+  body: Box<AnyTransport>
+}
+
+export interface CloseBraceTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface CloseBracketTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface CloseParenTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface ColonTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface CommaTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface CommentTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface ComputedPropertyNameTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  expression: Box<AnyTransport>
+}
+
+export interface ConditionalTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  left: Box<AnyTransport>
+  right: Box<AnyTransport>
+  consequence: Box<AnyTransport>
+  alternative: Box<AnyTransport>
+}
+
+export interface ConstraintTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  type: Box<AnyTransport>
+}
+
+export interface ConstructorTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  abstractMarker?: Box<AnyTransport>
+  typeParameters?: Box<AnyTransport>
+  parameters: Box<AnyTransport>
+  type: Box<AnyTransport>
+}
+
+export interface ConstructSignatureTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  abstractMarker?: Box<AnyTransport>
+  typeParameters?: Box<AnyTransport>
+  parameters: Box<AnyTransport>
+  type?: Box<AnyTransport>
+}
+
+export interface ConstTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface ContinueStatementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  label?: Box<AnyTransport>
+  semicolon: Box<AnyTransport>
+}
+
+export interface ContinueTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface DebuggerStatementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  semicolon: Box<AnyTransport>
+}
+
+export interface DebuggerTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface DeclareTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface DecoratorCallExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  function: Box<AnyTransport>
+  typeArguments?: Box<AnyTransport>
+  arguments: Box<AnyTransport>
+}
+
+export interface DecoratorMemberExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  object: Box<AnyTransport>
+  property: Box<AnyTransport>
+}
+
+export interface DecoratorParenthesizedExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface DecoratorTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface DefaultTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface DefaultTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  type: Box<AnyTransport>
+}
+
+export interface DoStatementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  body: Box<AnyTransport>
+  condition: Box<AnyTransport>
+  semicolon?: Box<AnyTransport>
+}
+
+export interface DoTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface DotTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface EllipsisTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface ElseClauseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  statement: Box<AnyTransport>
+}
+
+export interface ElseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface EmptyStatementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
 export interface EngineOptions {
   format?: string
+}
+
+export interface EnumAssignmentTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  name: Box<AnyTransport>
+  value: Box<AnyTransport>
+}
+
+export interface EnumBodyTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface EnumDeclarationTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  constMarker?: Box<AnyTransport>
+  name: Box<AnyTransport>
+  body: Box<AnyTransport>
+}
+
+export interface EnumTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface EqeqTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface EqTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface ErrorRecoveryTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface EscapeSequenceTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface ExistentialTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface ExportClauseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ExportSpecifierTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  exportKind?: Box<AnyTransport>
+  name: Box<AnyTransport>
+  alias?: Box<AnyTransport>
+}
+
+export interface ExportStatementDefaultDeclArmDefaultKwTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ExportStatementDefaultDeclArmDefaultKwValueTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  value: Box<AnyTransport>
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ExportStatementDefaultDeclArmTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  decorator: Array<Box<AnyTransport>>
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ExportStatementDefaultFromArmClauseFromTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  source: Box<AnyTransport>
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ExportStatementDefaultFromArmNsFromTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  source: Box<AnyTransport>
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ExportStatementDefaultFromArmStarFromTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  source: Box<AnyTransport>
+}
+
+export interface ExportStatementDefaultFromArmTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ExportStatementEqualsExportTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ExportStatementEqualsExportTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ExportStatementNamespaceExportTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ExportStatementNamespaceExportTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ExportStatementTypeExportTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  source?: Box<AnyTransport>
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ExportStatementTypeExportTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  source?: Box<AnyTransport>
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ExportStatementUFormDefaultTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ExportStatementUFormEqualsExportTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ExportStatementUFormNamespaceExportTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ExportStatementUFormTypeExportTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ExportTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface ExpressionStatementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  semicolon: Box<AnyTransport>
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ExtendsClauseSingleTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  value: Box<AnyTransport>
+  typeArguments?: Box<AnyTransport>
+}
+
+export interface ExtendsClauseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  value: Array<Box<AnyTransport>>
+  typeArguments?: Box<AnyTransport>
+}
+
+export interface ExtendsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface ExtendsTypeClauseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  type: Array<Box<AnyTransport>>
+}
+
+export interface FalseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface FatArrowTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface FieldDefinitionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  decorator: Array<Box<AnyTransport>>
+  staticMarker?: Box<AnyTransport>
+  property: Box<AnyTransport>
+  value?: Box<AnyTransport>
+}
+
+export interface FinallyClauseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  body: Box<AnyTransport>
+}
+
+export interface FinallyTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface FlowMaybeTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  primaryType: Box<AnyTransport>
+}
+
+export interface ForHeaderLetConstKindTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  kind: Box<AnyTransport>
+  left: Box<AnyTransport>
+  '$children'?: Array<Box<AnyTransport>>
+}
+
+export interface ForHeaderLhsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  left: Box<AnyTransport>
+}
+
+export interface ForHeaderTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  operator: Box<AnyTransport>
+  right: Box<AnyTransport>
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ForHeaderVarKindTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  kind: Box<AnyTransport>
+  left: Box<AnyTransport>
+  '$children'?: Array<Box<AnyTransport>>
+}
+
+export interface ForInStatementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  awaitMarker?: Box<AnyTransport>
+  operator: Box<AnyTransport>
+  right: Box<AnyTransport>
+  body: Box<AnyTransport>
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface FormalParametersTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ForStatementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  initializer: Box<AnyTransport>
+  condition: Box<AnyTransport>
+  increment?: Box<AnyTransport>
+  body: Box<AnyTransport>
+}
+
+export interface ForTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface FromClauseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  source: Box<AnyTransport>
+}
+
+export interface FromTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface FunctionDeclarationTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  asyncMarker?: Box<AnyTransport>
+  name: Box<AnyTransport>
+  typeParameters?: Box<AnyTransport>
+  parameters: Box<AnyTransport>
+  returnType?: Box<AnyTransport>
+  body: Box<AnyTransport>
+  '$children'?: Array<Box<AnyTransport>>
+}
+
+export interface FunctionExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  asyncMarker?: Box<AnyTransport>
+  name?: Box<AnyTransport>
+  typeParameters?: Box<AnyTransport>
+  parameters: Box<AnyTransport>
+  returnType?: Box<AnyTransport>
+  body: Box<AnyTransport>
+}
+
+export interface FunctionSignatureAutomaticSemicolonTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface FunctionSignatureTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  asyncMarker?: Box<AnyTransport>
+  name: Box<AnyTransport>
+  typeParameters?: Box<AnyTransport>
+  parameters: Box<AnyTransport>
+  returnType?: Box<AnyTransport>
+  semicolon: Box<AnyTransport>
+}
+
+export interface FunctionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface FunctionTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  typeParameters?: Box<AnyTransport>
+  parameters: Box<AnyTransport>
+  returnType: Box<AnyTransport>
+}
+
+export interface GeneratorFunctionDeclarationTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  asyncMarker?: Box<AnyTransport>
+  name: Box<AnyTransport>
+  typeParameters?: Box<AnyTransport>
+  parameters: Box<AnyTransport>
+  returnType?: Box<AnyTransport>
+  body: Box<AnyTransport>
+  '$children'?: Array<Box<AnyTransport>>
+}
+
+export interface GeneratorFunctionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  asyncMarker?: Box<AnyTransport>
+  name?: Box<AnyTransport>
+  typeParameters?: Box<AnyTransport>
+  parameters: Box<AnyTransport>
+  returnType?: Box<AnyTransport>
+  body: Box<AnyTransport>
+}
+
+export interface GenericTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  name: Box<AnyTransport>
+  typeArguments: Box<AnyTransport>
+}
+
+export interface GeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface GlobalTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface GtTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface HashBangLineTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface HtmlCharacterReferenceTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface HtmlCommentTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface IdentifierTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface IfStatementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  condition: Box<AnyTransport>
+  consequence: Box<AnyTransport>
+  alternative?: Box<AnyTransport>
+}
+
+export interface IfTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface ImplementsClauseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ImplementsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface ImportAliasTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  name: Box<AnyTransport>
+  value: Box<AnyTransport>
+  semicolon: Box<AnyTransport>
+}
+
+export interface ImportAttributeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  object: Box<AnyTransport>
+}
+
+export interface ImportClauseDefaultImportTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ImportClauseDefaultImportTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ImportClauseNamedImportsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ImportClauseNamedImportsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ImportClauseNamespaceImportTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ImportClauseNamespaceImportTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ImportClauseUFormDefaultImportTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ImportClauseUFormNamedImportsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ImportClauseUFormNamespaceImportTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ImportRequireClauseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  identifier: Box<AnyTransport>
+  source: Box<AnyTransport>
+}
+
+export interface ImportSpecifierAsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  name: Box<AnyTransport>
+  alias: Box<AnyTransport>
+}
+
+export interface ImportSpecifierNameTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  name: Box<AnyTransport>
+}
+
+export interface ImportSpecifierNameTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  name: Box<AnyTransport>
+}
+
+export interface ImportSpecifierUFormAsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  importKind?: Box<AnyTransport>
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ImportSpecifierUFormNameTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  importKind?: Box<AnyTransport>
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ImportStatementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  importClause?: Box<AnyTransport>
+  fromClause: Box<AnyTransport>
+  importAttribute?: Box<AnyTransport>
+  semicolon: Box<AnyTransport>
+}
+
+export interface ImportTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface IndexSignatureColonTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  name: Box<AnyTransport>
+  indexType: Box<AnyTransport>
+}
+
+export interface IndexSignatureMappedTypeClauseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface IndexSignatureMappedTypeClauseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface IndexSignatureUFormColonTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  sign?: Box<AnyTransport>
+  type: Box<AnyTransport>
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface IndexSignatureUFormMappedTypeClauseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  sign?: Box<AnyTransport>
+  type: Box<AnyTransport>
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface IndexTypeQueryTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  primaryType: Box<AnyTransport>
+}
+
+export interface InferTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface InferTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  typeIdentifier: Box<AnyTransport>
+  type?: Box<AnyTransport>
+}
+
+export interface InitializerTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  value: Box<AnyTransport>
+}
+
+export interface InstanceofTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface InstantiationExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  expression: Box<AnyTransport>
+  typeArguments: Box<AnyTransport>
+}
+
+export interface InterfaceBodyTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface InterfaceDeclarationTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  name: Box<AnyTransport>
+  typeParameters?: Box<AnyTransport>
+  extendsTypeClause?: Box<AnyTransport>
+  body: Box<AnyTransport>
+}
+
+export interface InterfaceTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface InternalModuleTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  name: Box<AnyTransport>
+  body?: Box<AnyTransport>
+}
+
+export interface IntersectionTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  left?: Box<AnyTransport>
+  right: Box<AnyTransport>
+}
+
+export interface InTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface IsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface JsxAttributeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface JsxClosingElementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  name?: Box<AnyTransport>
+}
+
+export interface JsxElementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  openTag: Box<AnyTransport>
+  closeTag: Box<AnyTransport>
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface JsxExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children'?: Array<Box<AnyTransport>>
+}
+
+export interface JsxIdentifierTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface JsxNamespaceNameTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface JsxOpeningElementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  name?: Box<AnyTransport>
+  typeArguments?: Box<AnyTransport>
+  attribute: Array<Box<AnyTransport>>
+}
+
+export interface JsxSelfClosingElementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  name?: Box<AnyTransport>
+  typeArguments?: Box<AnyTransport>
+  attribute: Array<Box<AnyTransport>>
+}
+
+export interface JsxStartOpeningElementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  name?: Box<AnyTransport>
+  typeArguments?: Box<AnyTransport>
+  attribute: Array<Box<AnyTransport>>
+}
+
+export interface JsxStringTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface JsxTextTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface KeyofTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface KwAbstractMarkerTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface KwAsyncMarkerTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface KwConstMarkerTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface KwOptionalMarkerTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface KwReadonlyMarkerTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface KwStaticMarkerTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface LabeledStatementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  label: Box<AnyTransport>
+  body: Box<AnyTransport>
+}
+
+export interface LeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface LexicalDeclarationTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  kind: Box<AnyTransport>
+  declarators: Array<Box<AnyTransport>>
+  semicolon: Box<AnyTransport>
+}
+
+export interface LhsExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface LiteralTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface LiteralTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface LookupTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  primaryType: Box<AnyTransport>
+  indexType: Box<AnyTransport>
+}
+
+export interface LtTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface MappedTypeClauseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  name: Box<AnyTransport>
+  type: Box<AnyTransport>
+  alias?: Box<AnyTransport>
+}
+
+export interface MemberExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  object: Box<AnyTransport>
+  property: Box<AnyTransport>
+}
+
+export interface MetaPropertyTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface MethodDefinitionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  accessibilityModifier?: Box<AnyTransport>
+  staticMarker?: Box<AnyTransport>
+  overrideModifier?: Box<AnyTransport>
+  readonlyMarker?: Box<AnyTransport>
+  asyncMarker?: Box<AnyTransport>
+  accessorKind?: Box<AnyTransport>
+  name: Box<AnyTransport>
+  optionalMarker?: Box<AnyTransport>
+  typeParameters?: Box<AnyTransport>
+  parameters: Box<AnyTransport>
+  returnType?: Box<AnyTransport>
+  body: Box<AnyTransport>
+}
+
+export interface MethodSignatureTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  accessibilityModifier?: Box<AnyTransport>
+  staticMarker?: Box<AnyTransport>
+  overrideModifier?: Box<AnyTransport>
+  readonlyMarker?: Box<AnyTransport>
+  asyncMarker?: Box<AnyTransport>
+  accessorKind?: Box<AnyTransport>
+  name: Box<AnyTransport>
+  optionalMarker?: Box<AnyTransport>
+  typeParameters?: Box<AnyTransport>
+  parameters: Box<AnyTransport>
+  returnType?: Box<AnyTransport>
+}
+
+export interface MinusTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface ModuleTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  name: Box<AnyTransport>
+  body?: Box<AnyTransport>
+}
+
+export interface ModuleTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  name: Box<AnyTransport>
+  body?: Box<AnyTransport>
+}
+
+export interface NamedImportsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface NamespaceExportTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface NamespaceImportTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  identifier: Box<AnyTransport>
+}
+
+export interface NamespaceTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface NeqTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface NestedIdentifierTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  object: Box<AnyTransport>
+  property: Box<AnyTransport>
+}
+
+export interface NestedTypeIdentifierTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  module: Box<AnyTransport>
+  name: Box<AnyTransport>
+}
+
+export interface NewExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  constructor: Box<AnyTransport>
+  typeArguments?: Box<AnyTransport>
+  arguments?: Box<AnyTransport>
+}
+
+export interface NewTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface NonNullExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  expression: Box<AnyTransport>
+}
+
+export interface NullTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface NumberTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  operator: Box<AnyTransport>
+  argument: Box<AnyTransport>
+}
+
+export interface NumberTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface ObjectAssignmentPatternTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  left: Box<AnyTransport>
+  right: Box<AnyTransport>
+}
+
+export interface ObjectPatternTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children'?: Array<Box<AnyTransport>>
+}
+
+export interface ObjectTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children'?: Array<Box<AnyTransport>>
+}
+
+export interface ObjectTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  opening: Box<AnyTransport>
+  members?: Array<Box<AnyTransport>>
+  closing: Box<AnyTransport>
+}
+
+export interface OmittingTypeAnnotationTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  type: Box<AnyTransport>
+}
+
+export interface OptingTypeAnnotationTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  type: Box<AnyTransport>
+}
+
+export interface OptionalChainTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface OptionalParameterTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  decorator: Array<Box<AnyTransport>>
+  readonlyMarker?: Box<AnyTransport>
+  pattern: Box<AnyTransport>
+  type?: Box<AnyTransport>
+  value?: Box<AnyTransport>
+  '$children'?: Array<Box<AnyTransport>>
+}
+
+export interface OptionalTupleParameterTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  name: Box<AnyTransport>
+  type: Box<AnyTransport>
+}
+
+export interface OptionalTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  type: Box<AnyTransport>
+}
+
+export interface OrorTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface OverrideModifierTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface OverrideTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface PairPatternTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  key: Box<AnyTransport>
+  value: Box<AnyTransport>
+}
+
+export interface PairTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  key: Box<AnyTransport>
+  value: Box<AnyTransport>
+}
+
+export interface ParameterNameTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  decorator: Array<Box<AnyTransport>>
+  readonlyMarker?: Box<AnyTransport>
+  pattern: Box<AnyTransport>
+  '$children'?: Array<Box<AnyTransport>>
+}
+
+export interface ParenthesizedExpressionSequenceTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ParenthesizedExpressionSequenceTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ParenthesizedExpressionTypedTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  type?: Box<AnyTransport>
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ParenthesizedExpressionUFormSequenceTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ParenthesizedExpressionUFormTypedTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ParenthesizedTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  type: Box<AnyTransport>
+}
+
+export interface ParenTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface PercentTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface PipeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface PlusTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface PredefinedTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface PrivatePropertyIdentifierTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface ProgramTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  hashBangLine?: Box<AnyTransport>
+  statements: Array<Box<AnyTransport>>
+}
+
+export interface PropertyIdentifierTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface PropertySignatureTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  accessibilityModifier?: Box<AnyTransport>
+  staticMarker?: Box<AnyTransport>
+  overrideModifier?: Box<AnyTransport>
+  readonlyMarker?: Box<AnyTransport>
+  name: Box<AnyTransport>
+  optionalMarker?: Box<AnyTransport>
+  type?: Box<AnyTransport>
+}
+
+export interface PublicFieldDefinitionAbstractFirstTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  abstractMarker: Box<AnyTransport>
+  readonlyMarker?: Box<AnyTransport>
+}
+
+export interface PublicFieldDefinitionAccessFirstTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  declareMarker?: Box<AnyTransport>
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface PublicFieldDefinitionAccessorOptTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  accessorMarker: Box<AnyTransport>
+}
+
+export interface PublicFieldDefinitionDeclareFirstTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children'?: Array<Box<AnyTransport>>
+}
+
+export interface PublicFieldDefinitionReadonlyFirstTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  readonlyMarker: Box<AnyTransport>
+  abstractMarker?: Box<AnyTransport>
+}
+
+export interface PublicFieldDefinitionStaticModsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  staticMarker: Box<AnyTransport>
+  readonlyMarker?: Box<AnyTransport>
+  '$children'?: Array<Box<AnyTransport>>
+}
+
+export interface PublicFieldDefinitionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  decorator: Array<Box<AnyTransport>>
+  name: Box<AnyTransport>
+  optionalityMarker?: Box<AnyTransport>
+  type?: Box<AnyTransport>
+  value?: Box<AnyTransport>
+  '$children'?: Array<Box<AnyTransport>>
+}
+
+export interface QuestionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface ReadonlyTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface ReadonlyTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  type: Box<AnyTransport>
+}
+
+export interface RegexFlagsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface RegexPatternTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface RegexTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  pattern: Box<AnyTransport>
+  flags?: Box<AnyTransport>
+}
+
+export interface RequiredParameterTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  decorator: Array<Box<AnyTransport>>
+  readonlyMarker?: Box<AnyTransport>
+  pattern: Box<AnyTransport>
+  type?: Box<AnyTransport>
+  value?: Box<AnyTransport>
+  '$children'?: Array<Box<AnyTransport>>
+}
+
+export interface RequireTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface ReservedIdentifierTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface RestPatternTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface RestTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  type: Box<AnyTransport>
+}
+
+export interface ReturnStatementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  semicolon: Box<AnyTransport>
+  '$children'?: Array<Box<AnyTransport>>
+}
+
+export interface ReturnTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface SatisfiesExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  expression: Box<AnyTransport>
+  typeAnnotation: Box<AnyTransport>
+}
+
+export interface SatisfiesTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface SemiTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface SequenceExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ShlTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface ShrTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface SlashTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface SpreadElementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  expression: Box<AnyTransport>
+}
+
+export interface StarstarTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface StarTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface StatementBlockTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  statements: Array<Box<AnyTransport>>
+  automaticSemicolon?: Box<AnyTransport>
+}
+
+export interface StatementIdentifierTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface StaticTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface StringDoubleTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface StringDoubleTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface StringFragmentTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface StringSingleTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface StringSingleTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface StringUFormDoubleTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface StringUFormSingleTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface SubscriptExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  object: Box<AnyTransport>
+  optionalChain?: Box<AnyTransport>
+  index: Box<AnyTransport>
+}
+
+export interface SuperTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface SwitchBodyTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface SwitchCaseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  value: Box<AnyTransport>
+  body: Array<Box<AnyTransport>>
+}
+
+export interface SwitchDefaultTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  body: Array<Box<AnyTransport>>
+}
+
+export interface SwitchStatementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  value: Box<AnyTransport>
+  body: Box<AnyTransport>
+}
+
+export interface SwitchTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface TemplateCharsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface TemplateLiteralTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface TemplateStringTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface TemplateSubstitutionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface TemplateTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface TernaryExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  condition: Box<AnyTransport>
+  consequence: Box<AnyTransport>
+  alternative: Box<AnyTransport>
+}
+
+export interface TernaryQmarkTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface ThisTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface ThisTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ThrowStatementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  semicolon: Box<AnyTransport>
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface ThrowTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface TokBangEqEqTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface TokBtTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface TokDollarLbrTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface TokDqTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface TokEqEqEqTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface TokGtGtGtTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface TokLtSlashTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface TokMinusQColonTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface TokPlusQColonTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface TokQColonTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface TokQDotTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface TokQqTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface TokSlashGtTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface TokSqTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface TrueTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface TryStatementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  body: Box<AnyTransport>
+  handler?: Box<AnyTransport>
+  finalizer?: Box<AnyTransport>
+}
+
+export interface TryTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface TupleParameterTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  name: Box<AnyTransport>
+  type: Box<AnyTransport>
+}
+
+export interface TupleTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface TypeAliasDeclarationTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  name: Box<AnyTransport>
+  typeParameters?: Box<AnyTransport>
+  value: Box<AnyTransport>
+  semicolon: Box<AnyTransport>
+}
+
+export interface TypeAnnotationTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  type: Box<AnyTransport>
+}
+
+export interface TypeArgumentsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface TypeAssertionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  typeArguments: Box<AnyTransport>
+  expression: Box<AnyTransport>
+}
+
+export interface TypeIdentifierTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface TypeofTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface TypeParametersTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface TypeParameterTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  constMarker?: Box<AnyTransport>
+  name: Box<AnyTransport>
+  constraint?: Box<AnyTransport>
+  value?: Box<AnyTransport>
+}
+
+export interface TypePredicateAnnotationTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  typePredicate: Box<AnyTransport>
+}
+
+export interface TypePredicateTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  name: Box<AnyTransport>
+  type: Box<AnyTransport>
+}
+
+export interface TypeQueryCallExpressionInTypeAnnotationTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  function: Box<AnyTransport>
+  arguments: Box<AnyTransport>
+}
+
+export interface TypeQueryCallExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  function: Box<AnyTransport>
+  arguments: Box<AnyTransport>
+}
+
+export interface TypeQueryInstantiationExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  function: Box<AnyTransport>
+  typeArguments: Box<AnyTransport>
+}
+
+export interface TypeQueryMemberExpressionInTypeAnnotationTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  object: Box<AnyTransport>
+  property: Box<AnyTransport>
+}
+
+export interface TypeQueryMemberExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  object: Box<AnyTransport>
+  property: Box<AnyTransport>
+}
+
+export interface TypeQuerySubscriptExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  object: Box<AnyTransport>
+  index: Box<AnyTransport>
+}
+
+export interface TypeQueryTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface UnaryExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  operator: Box<AnyTransport>
+  argument: Box<AnyTransport>
+}
+
+export interface UndefinedTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface UnescapedDoubleJsxStringFragmentTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface UnescapedDoubleStringFragmentTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface UnescapedSingleJsxStringFragmentTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface UnescapedSingleStringFragmentTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface UnionTypeTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  left?: Box<AnyTransport>
+  right: Box<AnyTransport>
+}
+
+export interface UpdateExpressionPostfixTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  argument: Box<AnyTransport>
+  operator: Box<AnyTransport>
+}
+
+export interface UpdateExpressionPrefixTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  operator: Box<AnyTransport>
+  argument: Box<AnyTransport>
+}
+
+export interface UpdateExpressionUFormPostfixTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface UpdateExpressionUFormPrefixTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  '$children': Array<Box<AnyTransport>>
+}
+
+export interface UsingTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface VariableDeclarationTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  declarators: Array<Box<AnyTransport>>
+  semicolon: Box<AnyTransport>
+}
+
+export interface VariableDeclaratorTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  name: Box<AnyTransport>
+  type?: Box<AnyTransport>
+  value?: Box<AnyTransport>
+}
+
+export interface VarTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface WhileStatementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  condition: Box<AnyTransport>
+  body: Box<AnyTransport>
+}
+
+export interface WhileTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface WithStatementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  object: Box<AnyTransport>
+  body: Box<AnyTransport>
+}
+
+export interface WithTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface YieldExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeId'?: number
+  expression?: Box<AnyTransport>
+}
+
+export interface YieldTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
 }

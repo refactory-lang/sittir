@@ -2,7 +2,9 @@
 // Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src
 
 pub mod hash;
+pub mod kind_ids;
 pub mod templates;
 
 pub use hash::TEMPLATE_BUNDLE_HASH;
+pub use kind_ids::*;
 pub use templates::{render_dispatch, render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};

@@ -25,6 +25,7 @@
 //! boundary and would be serialized dead weight on every hop
 //! (Constitution Principle X exception, documented in data-model.md §1).
 
+#[cfg(feature = "napi-bindings")]
 use napi_derive::napi;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -114,6 +115,11 @@ pub struct NodeData {
 /// tree; `Sg` = ast-grep path; `Factory` = constructed on the TS side.
 ///
 /// Serialized as `"ts"` / `"sg"` / `"factory"` (rename_all = lowercase).
+/// `#[napi(string_enum)]` (gated on napi-bindings feature) adds
+/// `FromNapiValue` / `ToNapiValue` via napi-rs string enum mapping.
+/// The feature gate prevents napi C-symbol leakage into sittir-core
+/// test binaries that build without Node.js.
+#[cfg_attr(feature = "napi-bindings", napi(string_enum))]
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum Source {
@@ -135,6 +141,11 @@ pub enum FieldValue {
 
 /// Byte-range for a `NodeData` within its source string. `start`/`end`
 /// are UTF-8 byte offsets (ast-grep / tree-sitter convention).
+/// `#[napi(object)]` (gated on napi-bindings feature) adds
+/// `FromNapiValue` / `ToNapiValue` so transport structs can include
+/// `Option<Span>` fields. Feature gate prevents napi C-symbol leakage
+/// into sittir-core test binaries.
+#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Span {
     pub start: u32,
@@ -143,12 +154,12 @@ pub struct Span {
 
 /// A single replacement against a source string. Napi boundary type.
 ///
-/// `#[napi(object)]` auto-generates the N-API mapping with camelCase
-/// field renaming — TS side sees `{ startPos, endPos, insertedText }`
-/// per contracts/napi-api.md. `serde` mirrors that with camelCase so
-/// `apply_edits` can accept JSON payloads in the TS-forced-backend
-/// round-trip path.
-#[napi(object)]
+/// `#[napi(object)]` (gated on napi-bindings feature) auto-generates
+/// the N-API mapping with camelCase field renaming — TS side sees
+/// `{ startPos, endPos, insertedText }` per contracts/napi-api.md.
+/// `serde` mirrors that with camelCase so `apply_edits` can accept
+/// JSON payloads in the TS-forced-backend round-trip path.
+#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Edit {

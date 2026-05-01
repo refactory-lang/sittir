@@ -3638,7 +3638,7 @@ export interface LiteralTransport<K extends string, V extends string = K> extend
 
 export namespace _AsPattern {
   export interface Transport {
-    readonly $type: '_as_pattern';
+    readonly $type: TSKindId._AsPattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3650,7 +3650,7 @@ export namespace _AsPattern {
 
 export namespace AsPatternTarget {
   export interface Transport {
-    readonly $type: '_as_pattern_target';
+    readonly $type: TSKindId.AsPatternTarget;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3662,7 +3662,7 @@ export namespace AsPatternTarget {
 
 export namespace AssignmentEq {
   export interface Transport {
-    readonly $type: '_assignment_eq';
+    readonly $type: TSKindId.AssignmentEq;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3674,7 +3674,7 @@ export namespace AssignmentEq {
 
 export namespace AssignmentType {
   export interface Transport {
-    readonly $type: '_assignment_type';
+    readonly $type: TSKindId.AssignmentType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3686,7 +3686,7 @@ export namespace AssignmentType {
 
 export namespace AssignmentTyped {
   export interface Transport {
-    readonly $type: '_assignment_typed';
+    readonly $type: TSKindId.AssignmentTyped;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3699,7 +3699,7 @@ export namespace AssignmentTyped {
 
 export namespace ComprehensionClauses {
   export interface Transport {
-    readonly $type: '_comprehension_clauses';
+    readonly $type: TSKindId.ComprehensionClauses;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3711,7 +3711,7 @@ export namespace ComprehensionClauses {
 
 export namespace FormatExpression {
   export interface Transport {
-    readonly $type: '_format_expression';
+    readonly $type: TSKindId.FormatExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3723,7 +3723,7 @@ export namespace FormatExpression {
 
 export namespace ImportList {
   export interface Transport {
-    readonly $type: '_import_list';
+    readonly $type: TSKindId.ImportList;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3739,7 +3739,7 @@ export namespace IsNot {
 
 export namespace KeyValuePattern {
   export interface Transport {
-    readonly $type: '_key_value_pattern';
+    readonly $type: TSKindId.KeyValuePattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3756,7 +3756,7 @@ export namespace KwAsyncMarker {
 
 export namespace _ListPattern {
   export interface Transport {
-    readonly $type: '_list_pattern';
+    readonly $type: TSKindId._ListPattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3768,7 +3768,7 @@ export namespace _ListPattern {
 
 export namespace MatchBlock {
   export interface Transport {
-    readonly $type: '_match_block';
+    readonly $type: TSKindId.MatchBlock;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3780,7 +3780,7 @@ export namespace MatchBlock {
 
 export namespace MatchBlockBlock {
   export interface Transport {
-    readonly $type: '_match_block_block';
+    readonly $type: TSKindId.MatchBlockBlock;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3800,7 +3800,7 @@ export namespace NotIn {
 
 export namespace SimplePatternNegative {
   export interface Transport {
-    readonly $type: '_simple_pattern_negative';
+    readonly $type: TSKindId.SimplePatternNegative;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3812,7 +3812,7 @@ export namespace SimplePatternNegative {
 
 export namespace SimpleStatements {
   export interface Transport {
-    readonly $type: '_simple_statements';
+    readonly $type: TSKindId.SimpleStatements;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3824,7 +3824,7 @@ export namespace SimpleStatements {
 
 export namespace Suite {
   export interface Transport {
-    readonly $type: '_suite';
+    readonly $type: "_suite";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3836,7 +3836,7 @@ export namespace Suite {
 
 export namespace _TuplePattern {
   export interface Transport {
-    readonly $type: '_tuple_pattern';
+    readonly $type: TSKindId._TuplePattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3848,7 +3848,7 @@ export namespace _TuplePattern {
 
 export namespace _WithClauseParen {
   export interface Transport {
-    readonly $type: '_with_clause_paren';
+    readonly $type: TSKindId._WithClauseParen;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3860,7 +3860,7 @@ export namespace _WithClauseParen {
 
 export namespace AliasedImport {
   export interface Transport {
-    readonly $type: 'aliased_import';
+    readonly $type: TSKindId.AliasedImport;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3873,7 +3873,7 @@ export namespace AliasedImport {
 
 export namespace ArgumentList {
   export interface Transport {
-    readonly $type: 'argument_list';
+    readonly $type: TSKindId.ArgumentList;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3885,7 +3885,7 @@ export namespace ArgumentList {
 
 export namespace AsPattern {
   export interface Transport {
-    readonly $type: 'as_pattern';
+    readonly $type: TSKindId.AsPattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3898,7 +3898,7 @@ export namespace AsPattern {
 
 export namespace AssertStatement {
   export interface Transport {
-    readonly $type: 'assert_statement';
+    readonly $type: TSKindId.AssertStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3910,7 +3910,7 @@ export namespace AssertStatement {
 
 export namespace AssignmentUFormEq {
   export interface Transport {
-    readonly $type: 'assignment';
+    readonly $type: TSKindId.Assignment;
     readonly $variant: 'eq';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -3924,7 +3924,7 @@ export namespace AssignmentUFormEq {
 
 export namespace AssignmentUFormType {
   export interface Transport {
-    readonly $type: 'assignment';
+    readonly $type: TSKindId.Assignment;
     readonly $variant: 'type';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -3938,7 +3938,7 @@ export namespace AssignmentUFormType {
 
 export namespace AssignmentUFormTyped {
   export interface Transport {
-    readonly $type: 'assignment';
+    readonly $type: TSKindId.Assignment;
     readonly $variant: 'typed';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -3956,7 +3956,7 @@ export namespace Assignment {
 
 export namespace Attribute {
   export interface Transport {
-    readonly $type: 'attribute';
+    readonly $type: TSKindId.Attribute;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3969,7 +3969,7 @@ export namespace Attribute {
 
 export namespace AugmentedAssignment {
   export interface Transport {
-    readonly $type: 'augmented_assignment';
+    readonly $type: TSKindId.AugmentedAssignment;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3983,7 +3983,7 @@ export namespace AugmentedAssignment {
 
 export namespace Await {
   export interface Transport {
-    readonly $type: 'await';
+    readonly $type: TSKindId.Await;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -3995,7 +3995,7 @@ export namespace Await {
 
 export namespace BinaryOperator {
   export interface Transport {
-    readonly $type: 'binary_operator';
+    readonly $type: TSKindId.BinaryOperator;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4009,7 +4009,7 @@ export namespace BinaryOperator {
 
 export namespace Block {
   export interface Transport {
-    readonly $type: 'block';
+    readonly $type: TSKindId.Block;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4021,7 +4021,7 @@ export namespace Block {
 
 export namespace BooleanOperator {
   export interface Transport {
-    readonly $type: 'boolean_operator';
+    readonly $type: TSKindId.BooleanOperator;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4039,7 +4039,7 @@ export namespace BreakStatement {
 
 export namespace Call {
   export interface Transport {
-    readonly $type: 'call';
+    readonly $type: TSKindId.Call;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4052,7 +4052,7 @@ export namespace Call {
 
 export namespace CaseClause {
   export interface Transport {
-    readonly $type: 'case_clause';
+    readonly $type: TSKindId.CaseClause;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4066,7 +4066,7 @@ export namespace CaseClause {
 
 export namespace CasePattern {
   export interface Transport {
-    readonly $type: 'case_pattern';
+    readonly $type: TSKindId.CasePattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4078,7 +4078,7 @@ export namespace CasePattern {
 
 export namespace Chevron {
   export interface Transport {
-    readonly $type: 'chevron';
+    readonly $type: TSKindId.Chevron;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4090,7 +4090,7 @@ export namespace Chevron {
 
 export namespace ClassDefinition {
   export interface Transport {
-    readonly $type: 'class_definition';
+    readonly $type: TSKindId.ClassDefinition;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4105,7 +4105,7 @@ export namespace ClassDefinition {
 
 export namespace ClassPattern {
   export interface Transport {
-    readonly $type: 'class_pattern';
+    readonly $type: TSKindId.ClassPattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4122,7 +4122,7 @@ export namespace Comment {
 
 export namespace ComparisonOperator {
   export interface Transport {
-    readonly $type: 'comparison_operator';
+    readonly $type: TSKindId.ComparisonOperator;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4135,7 +4135,7 @@ export namespace ComparisonOperator {
 
 export namespace ComplexPattern {
   export interface Transport {
-    readonly $type: 'complex_pattern';
+    readonly $type: TSKindId.ComplexPattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4149,7 +4149,7 @@ export namespace ComplexPattern {
 
 export namespace ConcatenatedString {
   export interface Transport {
-    readonly $type: 'concatenated_string';
+    readonly $type: TSKindId.ConcatenatedString;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4161,7 +4161,7 @@ export namespace ConcatenatedString {
 
 export namespace ConditionalExpression {
   export interface Transport {
-    readonly $type: 'conditional_expression';
+    readonly $type: TSKindId.ConditionalExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4175,7 +4175,7 @@ export namespace ConditionalExpression {
 
 export namespace ConstrainedType {
   export interface Transport {
-    readonly $type: 'constrained_type';
+    readonly $type: TSKindId.ConstrainedType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4192,7 +4192,7 @@ export namespace ContinueStatement {
 
 export namespace DecoratedDefinition {
   export interface Transport {
-    readonly $type: 'decorated_definition';
+    readonly $type: TSKindId.DecoratedDefinition;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4205,7 +4205,7 @@ export namespace DecoratedDefinition {
 
 export namespace Decorator {
   export interface Transport {
-    readonly $type: 'decorator';
+    readonly $type: TSKindId.Decorator;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4218,7 +4218,7 @@ export namespace Decorator {
 
 export namespace DefaultParameter {
   export interface Transport {
-    readonly $type: 'default_parameter';
+    readonly $type: TSKindId.DefaultParameter;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4231,7 +4231,7 @@ export namespace DefaultParameter {
 
 export namespace DeleteStatement {
   export interface Transport {
-    readonly $type: 'delete_statement';
+    readonly $type: TSKindId.DeleteStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4243,7 +4243,7 @@ export namespace DeleteStatement {
 
 export namespace DictPattern {
   export interface Transport {
-    readonly $type: 'dict_pattern';
+    readonly $type: TSKindId.DictPattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4255,7 +4255,7 @@ export namespace DictPattern {
 
 export namespace Dictionary {
   export interface Transport {
-    readonly $type: 'dictionary';
+    readonly $type: TSKindId.Dictionary;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4267,7 +4267,7 @@ export namespace Dictionary {
 
 export namespace DictionaryComprehension {
   export interface Transport {
-    readonly $type: 'dictionary_comprehension';
+    readonly $type: TSKindId.DictionaryComprehension;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4280,7 +4280,7 @@ export namespace DictionaryComprehension {
 
 export namespace DictionarySplat {
   export interface Transport {
-    readonly $type: 'dictionary_splat';
+    readonly $type: TSKindId.DictionarySplat;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4292,7 +4292,7 @@ export namespace DictionarySplat {
 
 export namespace DictionarySplatPattern {
   export interface Transport {
-    readonly $type: 'dictionary_splat_pattern';
+    readonly $type: TSKindId.DictionarySplatPattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4304,7 +4304,7 @@ export namespace DictionarySplatPattern {
 
 export namespace DottedName {
   export interface Transport {
-    readonly $type: 'dotted_name';
+    readonly $type: TSKindId.DottedName;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4316,7 +4316,7 @@ export namespace DottedName {
 
 export namespace ElifClause {
   export interface Transport {
-    readonly $type: 'elif_clause';
+    readonly $type: TSKindId.ElifClause;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4333,7 +4333,7 @@ export namespace Ellipsis2 {
 
 export namespace ElseClause {
   export interface Transport {
-    readonly $type: 'else_clause';
+    readonly $type: TSKindId.ElseClause;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4349,7 +4349,7 @@ export namespace EscapeSequence {
 
 export namespace ExceptClause {
   export interface Transport {
-    readonly $type: 'except_clause';
+    readonly $type: TSKindId.ExceptClause;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4363,7 +4363,7 @@ export namespace ExceptClause {
 
 export namespace ExecStatement {
   export interface Transport {
-    readonly $type: 'exec_statement';
+    readonly $type: TSKindId.ExecStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4376,7 +4376,7 @@ export namespace ExecStatement {
 
 export namespace ExpressionList {
   export interface Transport {
-    readonly $type: 'expression_list';
+    readonly $type: TSKindId.ExpressionList;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4388,7 +4388,7 @@ export namespace ExpressionList {
 
 export namespace ExpressionStatementTuple {
   export interface Transport {
-    readonly $type: 'expression_statement_tuple';
+    readonly $type: "expression_statement_tuple";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4400,7 +4400,7 @@ export namespace ExpressionStatementTuple {
 
 export namespace ExpressionStatementUFormTuple {
   export interface Transport {
-    readonly $type: 'expression_statement';
+    readonly $type: TSKindId.ExpressionStatement;
     readonly $variant: 'tuple';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -4421,7 +4421,7 @@ export namespace False {
 
 export namespace FinallyClause {
   export interface Transport {
-    readonly $type: 'finally_clause';
+    readonly $type: TSKindId.FinallyClause;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4437,7 +4437,7 @@ export namespace Float {
 
 export namespace ForInClause {
   export interface Transport {
-    readonly $type: 'for_in_clause';
+    readonly $type: TSKindId.ForInClause;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4451,7 +4451,7 @@ export namespace ForInClause {
 
 export namespace ForStatement {
   export interface Transport {
-    readonly $type: 'for_statement';
+    readonly $type: TSKindId.ForStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4467,7 +4467,7 @@ export namespace ForStatement {
 
 export namespace FormatSpecifier {
   export interface Transport {
-    readonly $type: 'format_specifier';
+    readonly $type: TSKindId.FormatSpecifier;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4479,7 +4479,7 @@ export namespace FormatSpecifier {
 
 export namespace FunctionDefinition {
   export interface Transport {
-    readonly $type: 'function_definition';
+    readonly $type: TSKindId.FunctionDefinition;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4496,7 +4496,7 @@ export namespace FunctionDefinition {
 
 export namespace FutureImportStatement {
   export interface Transport {
-    readonly $type: 'future_import_statement';
+    readonly $type: TSKindId.FutureImportStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4508,7 +4508,7 @@ export namespace FutureImportStatement {
 
 export namespace GeneratorExpression {
   export interface Transport {
-    readonly $type: 'generator_expression';
+    readonly $type: TSKindId.GeneratorExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4521,7 +4521,7 @@ export namespace GeneratorExpression {
 
 export namespace GenericType {
   export interface Transport {
-    readonly $type: 'generic_type';
+    readonly $type: TSKindId.GenericType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4534,7 +4534,7 @@ export namespace GenericType {
 
 export namespace GlobalStatement {
   export interface Transport {
-    readonly $type: 'global_statement';
+    readonly $type: TSKindId.GlobalStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4550,7 +4550,7 @@ export namespace Identifier {
 
 export namespace IfClause {
   export interface Transport {
-    readonly $type: 'if_clause';
+    readonly $type: TSKindId.IfClause;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4562,7 +4562,7 @@ export namespace IfClause {
 
 export namespace IfStatement {
   export interface Transport {
-    readonly $type: 'if_statement';
+    readonly $type: TSKindId.IfStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4576,7 +4576,7 @@ export namespace IfStatement {
 
 export namespace ImportFromStatement {
   export interface Transport {
-    readonly $type: 'import_from_statement';
+    readonly $type: TSKindId.ImportFromStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4593,7 +4593,7 @@ export namespace ImportPrefix {
 
 export namespace ImportStatement {
   export interface Transport {
-    readonly $type: 'import_statement';
+    readonly $type: TSKindId.ImportStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4609,7 +4609,7 @@ export namespace Integer {
 
 export namespace Interpolation {
   export interface Transport {
-    readonly $type: 'interpolation';
+    readonly $type: TSKindId.Interpolation;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4623,7 +4623,7 @@ export namespace Interpolation {
 
 export namespace KeywordArgument {
   export interface Transport {
-    readonly $type: 'keyword_argument';
+    readonly $type: TSKindId.KeywordArgument;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4636,7 +4636,7 @@ export namespace KeywordArgument {
 
 export namespace KeywordPattern {
   export interface Transport {
-    readonly $type: 'keyword_pattern';
+    readonly $type: TSKindId.KeywordPattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4653,7 +4653,7 @@ export namespace KeywordSeparator {
 
 export namespace Lambda {
   export interface Transport {
-    readonly $type: 'lambda';
+    readonly $type: TSKindId.Lambda;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4666,7 +4666,7 @@ export namespace Lambda {
 
 export namespace LambdaParameters {
   export interface Transport {
-    readonly $type: 'lambda_parameters';
+    readonly $type: TSKindId.LambdaParameters;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4678,7 +4678,7 @@ export namespace LambdaParameters {
 
 export namespace LambdaWithinForInClause {
   export interface Transport {
-    readonly $type: 'lambda_within_for_in_clause';
+    readonly $type: TSKindId.LambdaWithinForInClause;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4695,7 +4695,7 @@ export namespace LineContinuation {
 
 export namespace List {
   export interface Transport {
-    readonly $type: 'list';
+    readonly $type: TSKindId.List;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4707,7 +4707,7 @@ export namespace List {
 
 export namespace ListComprehension {
   export interface Transport {
-    readonly $type: 'list_comprehension';
+    readonly $type: TSKindId.ListComprehension;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4720,7 +4720,7 @@ export namespace ListComprehension {
 
 export namespace ListPattern {
   export interface Transport {
-    readonly $type: 'list_pattern';
+    readonly $type: TSKindId.ListPattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4732,7 +4732,7 @@ export namespace ListPattern {
 
 export namespace ListSplat {
   export interface Transport {
-    readonly $type: 'list_splat';
+    readonly $type: TSKindId.ListSplat;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4744,7 +4744,7 @@ export namespace ListSplat {
 
 export namespace ListSplatPattern {
   export interface Transport {
-    readonly $type: 'list_splat_pattern';
+    readonly $type: TSKindId.ListSplatPattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4756,7 +4756,7 @@ export namespace ListSplatPattern {
 
 export namespace MatchStatement {
   export interface Transport {
-    readonly $type: 'match_statement';
+    readonly $type: TSKindId.MatchStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4769,7 +4769,7 @@ export namespace MatchStatement {
 
 export namespace MemberType {
   export interface Transport {
-    readonly $type: 'member_type';
+    readonly $type: TSKindId.MemberType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4782,7 +4782,7 @@ export namespace MemberType {
 
 export namespace Module {
   export interface Transport {
-    readonly $type: 'module';
+    readonly $type: TSKindId.Module;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4794,7 +4794,7 @@ export namespace Module {
 
 export namespace NamedExpression {
   export interface Transport {
-    readonly $type: 'named_expression';
+    readonly $type: TSKindId.NamedExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4811,7 +4811,7 @@ export namespace None {
 
 export namespace NonlocalStatement {
   export interface Transport {
-    readonly $type: 'nonlocal_statement';
+    readonly $type: TSKindId.NonlocalStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4823,7 +4823,7 @@ export namespace NonlocalStatement {
 
 export namespace NotOperator {
   export interface Transport {
-    readonly $type: 'not_operator';
+    readonly $type: TSKindId.NotOperator;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4835,7 +4835,7 @@ export namespace NotOperator {
 
 export namespace Pair {
   export interface Transport {
-    readonly $type: 'pair';
+    readonly $type: TSKindId.Pair;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4848,7 +4848,7 @@ export namespace Pair {
 
 export namespace Parameters {
   export interface Transport {
-    readonly $type: 'parameters';
+    readonly $type: TSKindId.Parameters;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4860,7 +4860,7 @@ export namespace Parameters {
 
 export namespace ParenthesizedExpression {
   export interface Transport {
-    readonly $type: 'parenthesized_expression';
+    readonly $type: TSKindId.ParenthesizedExpression;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4872,7 +4872,7 @@ export namespace ParenthesizedExpression {
 
 export namespace ParenthesizedListSplat {
   export interface Transport {
-    readonly $type: 'parenthesized_list_splat';
+    readonly $type: TSKindId.ParenthesizedListSplat;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4888,7 +4888,7 @@ export namespace PassStatement {
 
 export namespace PatternList {
   export interface Transport {
-    readonly $type: 'pattern_list';
+    readonly $type: TSKindId.PatternList;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4904,7 +4904,7 @@ export namespace PositionalSeparator {
 
 export namespace PrintStatement {
   export interface Transport {
-    readonly $type: 'print_statement';
+    readonly $type: TSKindId.PrintStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4917,7 +4917,7 @@ export namespace PrintStatement {
 
 export namespace RaiseStatement {
   export interface Transport {
-    readonly $type: 'raise_statement';
+    readonly $type: TSKindId.RaiseStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4930,7 +4930,7 @@ export namespace RaiseStatement {
 
 export namespace RelativeImport {
   export interface Transport {
-    readonly $type: 'relative_import';
+    readonly $type: TSKindId.RelativeImport;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4943,7 +4943,7 @@ export namespace RelativeImport {
 
 export namespace ReturnStatement {
   export interface Transport {
-    readonly $type: 'return_statement';
+    readonly $type: TSKindId.ReturnStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4955,7 +4955,7 @@ export namespace ReturnStatement {
 
 export namespace Set {
   export interface Transport {
-    readonly $type: 'set';
+    readonly $type: TSKindId.Set;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4967,7 +4967,7 @@ export namespace Set {
 
 export namespace SetComprehension {
   export interface Transport {
-    readonly $type: 'set_comprehension';
+    readonly $type: TSKindId.SetComprehension;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4980,7 +4980,7 @@ export namespace SetComprehension {
 
 export namespace Slice {
   export interface Transport {
-    readonly $type: 'slice';
+    readonly $type: TSKindId.Slice;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4994,7 +4994,7 @@ export namespace Slice {
 
 export namespace SplatPattern {
   export interface Transport {
-    readonly $type: 'splat_pattern';
+    readonly $type: TSKindId.SplatPattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -5007,7 +5007,7 @@ export namespace SplatPattern {
 
 export namespace SplatType {
   export interface Transport {
-    readonly $type: 'splat_type';
+    readonly $type: TSKindId.SplatType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -5019,7 +5019,7 @@ export namespace SplatType {
 
 export namespace String {
   export interface Transport {
-    readonly $type: 'string';
+    readonly $type: TSKindId.String;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -5033,7 +5033,7 @@ export namespace String {
 
 export namespace StringContent {
   export interface Transport {
-    readonly $type: 'string_content';
+    readonly $type: TSKindId.StringContent;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -5045,7 +5045,7 @@ export namespace StringContent {
 
 export namespace Subscript {
   export interface Transport {
-    readonly $type: 'subscript';
+    readonly $type: TSKindId.Subscript;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -5062,7 +5062,7 @@ export namespace True {
 
 export namespace TryStatement {
   export interface Transport {
-    readonly $type: 'try_statement';
+    readonly $type: TSKindId.TryStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -5077,7 +5077,7 @@ export namespace TryStatement {
 
 export namespace Tuple {
   export interface Transport {
-    readonly $type: 'tuple';
+    readonly $type: TSKindId.Tuple;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -5089,7 +5089,7 @@ export namespace Tuple {
 
 export namespace TuplePattern {
   export interface Transport {
-    readonly $type: 'tuple_pattern';
+    readonly $type: TSKindId.TuplePattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -5101,7 +5101,7 @@ export namespace TuplePattern {
 
 export namespace Type {
   export interface Transport {
-    readonly $type: 'type';
+    readonly $type: TSKindId.Type;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -5113,7 +5113,7 @@ export namespace Type {
 
 export namespace TypeAliasStatement {
   export interface Transport {
-    readonly $type: 'type_alias_statement';
+    readonly $type: TSKindId.TypeAliasStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -5131,7 +5131,7 @@ export namespace TypeConversion {
 
 export namespace TypeParameter {
   export interface Transport {
-    readonly $type: 'type_parameter';
+    readonly $type: TSKindId.TypeParameter;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -5143,7 +5143,7 @@ export namespace TypeParameter {
 
 export namespace TypedDefaultParameter {
   export interface Transport {
-    readonly $type: 'typed_default_parameter';
+    readonly $type: TSKindId.TypedDefaultParameter;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -5157,7 +5157,7 @@ export namespace TypedDefaultParameter {
 
 export namespace TypedParameter {
   export interface Transport {
-    readonly $type: 'typed_parameter';
+    readonly $type: TSKindId.TypedParameter;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -5170,7 +5170,7 @@ export namespace TypedParameter {
 
 export namespace UnaryOperator {
   export interface Transport {
-    readonly $type: 'unary_operator';
+    readonly $type: TSKindId.UnaryOperator;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -5183,7 +5183,7 @@ export namespace UnaryOperator {
 
 export namespace UnionPattern {
   export interface Transport {
-    readonly $type: 'union_pattern';
+    readonly $type: TSKindId.UnionPattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -5195,7 +5195,7 @@ export namespace UnionPattern {
 
 export namespace UnionType {
   export interface Transport {
-    readonly $type: 'union_type';
+    readonly $type: TSKindId.UnionType;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -5208,7 +5208,7 @@ export namespace UnionType {
 
 export namespace WhileStatement {
   export interface Transport {
-    readonly $type: 'while_statement';
+    readonly $type: TSKindId.WhileStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -5226,7 +5226,7 @@ export namespace WildcardImport {
 
 export namespace WithClauseBare {
   export interface Transport {
-    readonly $type: 'with_clause_bare';
+    readonly $type: "with_clause_bare";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -5238,7 +5238,7 @@ export namespace WithClauseBare {
 
 export namespace WithClauseParen {
   export interface Transport {
-    readonly $type: 'with_clause_paren';
+    readonly $type: "with_clause_paren";
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -5250,7 +5250,7 @@ export namespace WithClauseParen {
 
 export namespace WithClauseUFormBare {
   export interface Transport {
-    readonly $type: 'with_clause';
+    readonly $type: TSKindId.WithClause;
     readonly $variant: 'bare';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -5263,7 +5263,7 @@ export namespace WithClauseUFormBare {
 
 export namespace WithClauseUFormParen {
   export interface Transport {
-    readonly $type: 'with_clause';
+    readonly $type: TSKindId.WithClause;
     readonly $variant: 'paren';
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
@@ -5280,7 +5280,7 @@ export namespace WithClause {
 
 export namespace WithItem {
   export interface Transport {
-    readonly $type: 'with_item';
+    readonly $type: TSKindId.WithItem;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -5292,7 +5292,7 @@ export namespace WithItem {
 
 export namespace WithStatement {
   export interface Transport {
-    readonly $type: 'with_statement';
+    readonly $type: TSKindId.WithStatement;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -5306,7 +5306,7 @@ export namespace WithStatement {
 
 export namespace Yield {
   export interface Transport {
-    readonly $type: 'yield';
+    readonly $type: TSKindId.Yield;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
