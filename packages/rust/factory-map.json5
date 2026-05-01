@@ -4,63 +4,21 @@
 // See emitters/factory-map.ts for semantics of each map.
 {
   "factoryShapes": {
-    "_array_expression_list": "config",
-    "_array_expression_semi": "config",
-    "_closure_expression_block": "config",
-    "_closure_expression_expr": "config",
-    "_delim_token_tree_brace": "children",
-    "_delim_token_tree_bracket": "children",
-    "_delim_token_tree_paren": "children",
-    "_expression_statement_block_ending": "children",
-    "_expression_statement_with_semi": "children",
     "_field_identifier": "children",
-    "_field_pattern_named": "config",
-    "_field_pattern_shorthand": "config",
-    "_foreign_mod_item_body": "config",
     "_function_type_fn_form": "children",
     "_function_type_trait_form": "config",
-    "_impl_item_body": "config",
     "_kw_async_marker": "text",
     "_kw_move_marker": "text",
     "_kw_ref_marker": "text",
     "_kw_static_marker": "text",
     "_kw_unsafe_marker": "text",
     "_let_chain": "children",
-    "_line_comment_content": "text",
-    "_line_comment_doc": "config",
-    "_line_comment_regular_dslash": "text",
-    "_macro_definition_brace": "children",
-    "_macro_definition_bracket": "children",
-    "_macro_definition_paren": "children",
-    "_match_arm_block_ending": "config",
-    "_match_arm_with_comma": "config",
-    "_mod_item_inline": "config",
-    "_or_pattern_binary": "config",
-    "_or_pattern_prefix": "config",
-    "_pointer_type_const": "text",
-    "_pointer_type_mut": "children",
     "_primitive_type": "text",
-    "_range_expression_bare": "config",
-    "_range_expression_binary": "config",
-    "_range_expression_postfix": "config",
-    "_range_expression_prefix": "config",
-    "_range_pattern_left_with_right": "config",
-    "_range_pattern_prefix": "config",
     "_reference_expression_raw_const": "text",
     "_reference_expression_raw_mut": "children",
     "_reserved_identifier": "children",
-    "_struct_item_brace": "config",
-    "_struct_item_tuple": "config",
-    "_token_tree_brace": "children",
-    "_token_tree_bracket": "children",
-    "_token_tree_paren": "children",
-    "_token_tree_pattern_brace": "children",
-    "_token_tree_pattern_bracket": "children",
-    "_token_tree_pattern_paren": "children",
     "_type_identifier": "children",
-    "_visibility_modifier_crate": "children",
     "_visibility_modifier_in_path": "config",
-    "_visibility_modifier_pub": "config",
     "abstract_type": "config",
     "arguments": "children",
     "array_expression": "config",
@@ -320,74 +278,8 @@
     }
   },
   "factoryFields": {
-    "_array_expression_semi": [
-      "attributes",
-      "elements",
-      "length"
-    ],
-    "_closure_expression_block": [
-      "return_type",
-      "body"
-    ],
-    "_closure_expression_expr": [
-      "body"
-    ],
-    "_field_pattern_named": [
-      "name",
-      "pattern"
-    ],
-    "_field_pattern_shorthand": [
-      "name"
-    ],
-    "_foreign_mod_item_body": [
-      "body"
-    ],
     "_function_type_trait_form": [
       "trait"
-    ],
-    "_impl_item_body": [
-      "body"
-    ],
-    "_line_comment_doc": [
-      "doc"
-    ],
-    "_match_arm_block_ending": [
-      "value"
-    ],
-    "_match_arm_with_comma": [
-      "value"
-    ],
-    "_mod_item_inline": [
-      "body"
-    ],
-    "_or_pattern_binary": [
-      "left",
-      "right"
-    ],
-    "_or_pattern_prefix": [
-      "right"
-    ],
-    "_range_expression_bare": [
-      "operator"
-    ],
-    "_range_expression_binary": [
-      "start",
-      "operator",
-      "end"
-    ],
-    "_range_expression_postfix": [
-      "start",
-      "operator"
-    ],
-    "_range_expression_prefix": [
-      "operator",
-      "end"
-    ],
-    "_range_pattern_left_with_right": [
-      "right"
-    ],
-    "_range_pattern_prefix": [
-      "right"
     ],
     "abstract_type": [
       "type_parameters",

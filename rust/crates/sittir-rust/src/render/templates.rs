@@ -785,6 +785,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             129 => Ok(AnyTransport::CharLiteral(
                 CharLiteralTransport::from_napi_value(env, napi_val)?
             )),
+            // kind: closure_expression_expr (CLOSURE_EXPRESSION_EXPR)
+            324 => Ok(AnyTransport::ClosureExpressionExpr(
+                ClosureExpressionExprTransport::from_napi_value(env, napi_val)?
+            )),
             // kind: closure_expression (CLOSURE_EXPRESSION)
             281 => Ok(AnyTransport::ClosureExpression(
                 ClosureExpressionTransport::from_napi_value(env, napi_val)?
@@ -821,6 +825,18 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             175 => Ok(AnyTransport::DeclarationList(
                 DeclarationListTransport::from_napi_value(env, napi_val)?
             )),
+            // kind: delim_token_tree_paren (DELIM_TOKEN_TREE_PAREN)
+            379 => Ok(AnyTransport::DelimTokenTreeParen(
+                DelimTokenTreeParenTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: delim_token_tree_bracket (DELIM_TOKEN_TREE_BRACKET)
+            380 => Ok(AnyTransport::DelimTokenTreeBracket(
+                DelimTokenTreeBracketTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: delim_token_tree_brace (DELIM_TOKEN_TREE_BRACE)
+            381 => Ok(AnyTransport::DelimTokenTreeBrace(
+                DelimTokenTreeBraceTransport::from_napi_value(env, napi_val)?
+            )),
             // kind: delim_token_tree (DELIM_TOKEN_TREE)
             240 => Ok(AnyTransport::DelimTokenTree(
                 DelimTokenTreeTransport::from_napi_value(env, napi_val)?
@@ -852,6 +868,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             // kind: escape_sequence (ESCAPE_SEQUENCE)
             130 => Ok(AnyTransport::EscapeSequence(
                 EscapeSequenceTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: expression_statement_with_semi (EXPRESSION_STATEMENT_WITH_SEMI)
+            365 => Ok(AnyTransport::ExpressionStatementWithSemi(
+                ExpressionStatementWithSemiTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: expression_statement_block_ending (EXPRESSION_STATEMENT_BLOCK_ENDING)
+            366 => Ok(AnyTransport::ExpressionStatementBlockEnding(
+                ExpressionStatementBlockEndingTransport::from_napi_value(env, napi_val)?
             )),
             // kind: expression_statement (EXPRESSION_STATEMENT)
             160 => Ok(AnyTransport::ExpressionStatement(
@@ -885,6 +909,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             263 => Ok(AnyTransport::FieldInitializerList(
                 FieldInitializerListTransport::from_napi_value(env, napi_val)?
             )),
+            // kind: field_pattern_shorthand (FIELD_PATTERN_SHORTHAND)
+            325 => Ok(AnyTransport::FieldPatternShorthand(
+                FieldPatternShorthandTransport::from_napi_value(env, napi_val)?
+            )),
             // kind: field_pattern (FIELD_PATTERN)
             300 => Ok(AnyTransport::FieldPattern(
                 FieldPatternTransport::from_napi_value(env, napi_val)?
@@ -896,6 +924,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             // kind: for_lifetimes (FOR_LIFETIMES)
             221 => Ok(AnyTransport::ForLifetimes(
                 ForLifetimesTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: foreign_mod_item_body (FOREIGN_MOD_ITEM_BODY)
+            368 => Ok(AnyTransport::ForeignModItemBody(
+                ForeignModItemBodyTransport::from_napi_value(env, napi_val)?
             )),
             // kind: foreign_mod_item (FOREIGN_MOD_ITEM)
             174 => Ok(AnyTransport::ForeignModItem(
@@ -953,6 +985,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             267 => Ok(AnyTransport::IfExpression(
                 IfExpressionTransport::from_napi_value(env, napi_val)?
             )),
+            // kind: impl_item_body (IMPL_ITEM_BODY)
+            329 => Ok(AnyTransport::ImplItemBody(
+                ImplItemBodyTransport::from_napi_value(env, napi_val)?
+            )),
             // kind: impl_item (IMPL_ITEM)
             193 => Ok(AnyTransport::ImplItem(
                 ImplItemTransport::from_napi_value(env, napi_val)?
@@ -1001,6 +1037,18 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             278 => Ok(AnyTransport::LoopExpression(
                 LoopExpressionTransport::from_napi_value(env, napi_val)?
             )),
+            // kind: macro_definition_paren (MACRO_DEFINITION_PAREN)
+            331 => Ok(AnyTransport::MacroDefinitionParen(
+                MacroDefinitionParenTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: macro_definition_bracket (MACRO_DEFINITION_BRACKET)
+            332 => Ok(AnyTransport::MacroDefinitionBracket(
+                MacroDefinitionBracketTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: macro_definition_brace (MACRO_DEFINITION_BRACE)
+            333 => Ok(AnyTransport::MacroDefinitionBrace(
+                MacroDefinitionBraceTransport::from_napi_value(env, napi_val)?
+            )),
             // kind: macro_definition (MACRO_DEFINITION)
             161 => Ok(AnyTransport::MacroDefinition(
                 MacroDefinitionTransport::from_napi_value(env, napi_val)?
@@ -1012,6 +1060,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             // kind: macro_rule (MACRO_RULE)
             162 => Ok(AnyTransport::MacroRule(
                 MacroRuleTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: match_arm_block_ending (MATCH_ARM_BLOCK_ENDING)
+            370 => Ok(AnyTransport::MatchArmBlockEnding(
+                MatchArmBlockEndingTransport::from_napi_value(env, napi_val)?
             )),
             // kind: match_arm (MATCH_ARM)
             274 => Ok(AnyTransport::MatchArm(
@@ -1032,6 +1084,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             // kind: metavariable (METAVARIABLE)
             142 => Ok(AnyTransport::Metavariable(
                 MetavariableTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: mod_item_inline (MOD_ITEM_INLINE)
+            335 => Ok(AnyTransport::ModItemInline(
+                ModItemInlineTransport::from_napi_value(env, napi_val)?
             )),
             // kind: mod_item (MOD_ITEM)
             173 => Ok(AnyTransport::ModItem(
@@ -1073,6 +1129,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             259 => Ok(AnyTransport::ParenthesizedExpression(
                 ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
             )),
+            // kind: pointer_type_mut (POINTER_TYPE_MUT)
+            359 => Ok(AnyTransport::PointerTypeMut(
+                PointerTypeMutTransport::from_napi_value(env, napi_val)?
+            )),
             // kind: pointer_type (POINTER_TYPE)
             233 => Ok(AnyTransport::PointerType(
                 PointerTypeTransport::from_napi_value(env, napi_val)?
@@ -1080,6 +1140,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             // kind: qualified_type (QUALIFIED_TYPE)
             218 => Ok(AnyTransport::QualifiedType(
                 QualifiedTypeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: range_expression_bare (RANGE_EXPRESSION_BARE)
+            341 => Ok(AnyTransport::RangeExpressionBare(
+                RangeExpressionBareTransport::from_napi_value(env, napi_val)?
             )),
             // kind: range_expression (RANGE_EXPRESSION)
             246 => Ok(AnyTransport::RangeExpression(
@@ -1197,9 +1261,33 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             166 => Ok(AnyTransport::TokenRepetitionPattern(
                 TokenRepetitionPatternTransport::from_napi_value(env, napi_val)?
             )),
+            // kind: token_tree_paren (TOKEN_TREE_PAREN)
+            376 => Ok(AnyTransport::TokenTreeParen(
+                TokenTreeParenTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: token_tree_bracket (TOKEN_TREE_BRACKET)
+            377 => Ok(AnyTransport::TokenTreeBracket(
+                TokenTreeBracketTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: token_tree_brace (TOKEN_TREE_BRACE)
+            378 => Ok(AnyTransport::TokenTreeBrace(
+                TokenTreeBraceTransport::from_napi_value(env, napi_val)?
+            )),
             // kind: token_tree (TOKEN_TREE)
             168 => Ok(AnyTransport::TokenTree(
                 TokenTreeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: token_tree_pattern_paren (TOKEN_TREE_PATTERN_PAREN)
+            373 => Ok(AnyTransport::TokenTreePatternParen(
+                TokenTreePatternParenTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: token_tree_pattern_bracket (TOKEN_TREE_PATTERN_BRACKET)
+            374 => Ok(AnyTransport::TokenTreePatternBracket(
+                TokenTreePatternBracketTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: token_tree_pattern_brace (TOKEN_TREE_PATTERN_BRACE)
+            375 => Ok(AnyTransport::TokenTreePatternBrace(
+                TokenTreePatternBraceTransport::from_napi_value(env, napi_val)?
             )),
             // kind: token_tree_pattern (TOKEN_TREE_PATTERN)
             164 => Ok(AnyTransport::TokenTreePattern(
@@ -1305,6 +1393,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             212 => Ok(AnyTransport::VariadicParameter(
                 VariadicParameterTransport::from_napi_value(env, napi_val)?
             )),
+            // kind: visibility_modifier_crate (VISIBILITY_MODIFIER_CRATE)
+            348 => Ok(AnyTransport::VisibilityModifierCrate(
+                VisibilityModifierCrateTransport::from_napi_value(env, napi_val)?
+            )),
             // kind: visibility_modifier (VISIBILITY_MODIFIER)
             215 => Ok(AnyTransport::VisibilityModifier(
                 VisibilityModifierTransport::from_napi_value(env, napi_val)?
@@ -1353,13 +1445,53 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             156 => Ok(AnyTransport::ErrorSentinel(
                 ErrorSentinelTransport::from_napi_value(env, napi_val)?
             )),
+            // kind: [ (BRACKET)
+            112 => Ok(AnyTransport::Bracket(
+                BracketTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: ] (CLOSE_BRACKET)
+            113 => Ok(AnyTransport::CloseBracket(
+                CloseBracketTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: ; (SEMI)
+            2 => Ok(AnyTransport::Semi(
+                SemiTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: -> (ARROW)
+            81 => Ok(AnyTransport::Arrow(
+                ArrowTransport::from_napi_value(env, napi_val)?
+            )),
             // kind: _ (_ANONYMOUS)
             74 => Ok(AnyTransport::Anonymous(
                 AnonymousTransport::from_napi_value(env, napi_val)?
             )),
+            // kind: { (BRACE)
+            114 => Ok(AnyTransport::Brace(
+                BraceTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: } (CLOSE_BRACE)
+            115 => Ok(AnyTransport::CloseBrace(
+                CloseBraceTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: ( (PAREN)
+            7 => Ok(AnyTransport::Paren(
+                ParenTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: ) (CLOSE_PAREN)
+            8 => Ok(AnyTransport::CloseParen(
+                CloseParenTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: : (COLON)
+            5 => Ok(AnyTransport::Colon(
+                ColonTransport::from_napi_value(env, napi_val)?
+            )),
             // kind: fn (FN)
             92 => Ok(AnyTransport::Fn(
                 FnTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: ! (BANG)
+            49 => Ok(AnyTransport::Bang(
+                BangTransport::from_napi_value(env, napi_val)?
             )),
             // kind: async (ASYNC)
             85 => Ok(AnyTransport::Async(
@@ -1368,6 +1500,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             // kind: move (MOVE)
             143 => Ok(AnyTransport::Move(
                 MoveTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: .. (DOTDOT)
+            76 => Ok(AnyTransport::Dotdot(
+                DotdotTransport::from_napi_value(env, napi_val)?
             )),
             // kind: ref (REF)
             125 => Ok(AnyTransport::Ref(
@@ -1380,6 +1516,18 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             // kind: unsafe (UNSAFE)
             108 => Ok(AnyTransport::Unsafe(
                 UnsafeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: && (ANDAND)
+            52 => Ok(AnyTransport::Andand(
+                AndandTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: , (COMMA)
+            79 => Ok(AnyTransport::Comma(
+                CommaTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: ' (TOK_SQ)
+            83 => Ok(AnyTransport::TokSq(
+                TokSqTransport::from_napi_value(env, napi_val)?
             )),
             // kind: as (AS)
             84 => Ok(AnyTransport::As(
@@ -1477,6 +1625,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             111 => Ok(AnyTransport::While(
                 WhileTransport::from_napi_value(env, napi_val)?
             )),
+            // kind: | (PIPE)
+            51 => Ok(AnyTransport::Pipe(
+                PipeTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: / (SLASH)
+            46 => Ok(AnyTransport::Slash(
+                SlashTransport::from_napi_value(env, napi_val)?
+            )),
             // kind: raw (RAW)
             121 => Ok(AnyTransport::Raw(
                 RawTransport::from_napi_value(env, napi_val)?
@@ -1484,6 +1640,54 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             // kind: in (IN)
             123 => Ok(AnyTransport::In(
                 InTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: = (EQ)
+            66 => Ok(AnyTransport::Eq(
+                EqTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: # (HASH)
+            82 => Ok(AnyTransport::Hash(
+                HashTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: . (DOT)
+            75 => Ok(AnyTransport::Dot(
+                DotTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: || (OROR)
+            53 => Ok(AnyTransport::Oror(
+                OrorTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: & (AMP)
+            50 => Ok(AnyTransport::Amp(
+                AmpTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: ^ (CARET)
+            48 => Ok(AnyTransport::Caret(
+                CaretTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: /* (TOK_SLASH_STAR)
+            136 => Ok(AnyTransport::TokSlashStar(
+                TokSlashStarTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: */ (TOK_STAR_SLASH)
+            137 => Ok(AnyTransport::TokStarSlash(
+                TokStarSlashTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: + (PLUS)
+            10 => Ok(AnyTransport::Plus(
+                PlusTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: < (LT)
+            70 => Ok(AnyTransport::Lt(
+                LtTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: > (GT)
+            69 => Ok(AnyTransport::Gt(
+                GtTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: @ (AT)
+            73 => Ok(AnyTransport::At(
+                AtTransport::from_napi_value(env, napi_val)?
             )),
             // kind: dyn (DYN)
             119 => Ok(AnyTransport::Dyn(
@@ -1497,13 +1701,117 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             116 => Ok(AnyTransport::Extern(
                 ExternTransport::from_napi_value(env, napi_val)?
             )),
+            // kind: => (FAT_ARROW)
+            4 => Ok(AnyTransport::FatArrow(
+                FatArrowTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: - (MINUS)
+            45 => Ok(AnyTransport::Minus(
+                MinusTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: ? (QUESTION)
+            12 => Ok(AnyTransport::Question(
+                QuestionTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: " (TOK_DQ)
+            127 => Ok(AnyTransport::TokDq(
+                TokDqTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: $ (TOK_DOLLAR)
+            6 => Ok(AnyTransport::TokDollar(
+                TokDollarTransport::from_napi_value(env, napi_val)?
+            )),
             // kind: try (TRY)
             124 => Ok(AnyTransport::Try(
                 TryTransport::from_napi_value(env, napi_val)?
             )),
+            // kind: * (STAR)
+            11 => Ok(AnyTransport::Star(
+                StarTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: ... (ELLIPSIS)
+            77 => Ok(AnyTransport::Ellipsis(
+                EllipsisTransport::from_napi_value(env, napi_val)?
+            )),
             // kind: yield (YIELD)
             122 => Ok(AnyTransport::Yield(
                 YieldTransport::from_napi_value(env, napi_val)?
+            )),
+            // literal kind: ..= → "..="
+            78 => Ok(AnyTransport::Literal0_2e_2e_3d(
+                LiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // literal kind: == → "=="
+            67 => Ok(AnyTransport::Literal1_3d_3d(
+                LiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // literal kind: != → "!="
+            68 => Ok(AnyTransport::Literal2_21_3d(
+                LiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // literal kind: <= → "<="
+            72 => Ok(AnyTransport::Literal3_3c_3d(
+                LiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // literal kind: >= → ">="
+            71 => Ok(AnyTransport::Literal4_3e_3d(
+                LiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // literal kind: << → "<<"
+            54 => Ok(AnyTransport::Literal5_3c_3c(
+                LiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // literal kind: >> → ">>"
+            55 => Ok(AnyTransport::Literal6_3e_3e(
+                LiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // literal kind: % → "%"
+            47 => Ok(AnyTransport::Literal7_25(
+                LiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // literal kind: += → "+="
+            56 => Ok(AnyTransport::Literal8_2b_3d(
+                LiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // literal kind: -= → "-="
+            57 => Ok(AnyTransport::Literal9_2d_3d(
+                LiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // literal kind: *= → "*="
+            58 => Ok(AnyTransport::Literal10_2a_3d(
+                LiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // literal kind: /= → "/="
+            59 => Ok(AnyTransport::Literal11_2f_3d(
+                LiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // literal kind: %= → "%="
+            60 => Ok(AnyTransport::Literal12_25_3d(
+                LiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // literal kind: &= → "&="
+            62 => Ok(AnyTransport::Literal13_26_3d(
+                LiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // literal kind: |= → "|="
+            63 => Ok(AnyTransport::Literal14_7c_3d(
+                LiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // literal kind: ^= → "^="
+            61 => Ok(AnyTransport::Literal15_5e_3d(
+                LiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // literal kind: <<= → "<<="
+            64 => Ok(AnyTransport::Literal16_3c_3c_3d(
+                LiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // literal kind: >>= → ">>="
+            65 => Ok(AnyTransport::Literal17_3e_3e_3d(
+                LiteralTransport::from_napi_value(env, napi_val)?
+            )),
+            // literal kind: :: → "::"
+            80 => Ok(AnyTransport::Literal18_3a_3a(
+                LiteralTransport::from_napi_value(env, napi_val)?
             )),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {other} in AnyTransport"
@@ -10079,179 +10387,63 @@ impl ::askama::FastWritable for Renderable<'_> {
 }
 
 fn render_array_expression_list_transport(node: &ArrayExpressionListTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_attribute_item_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let attributes_strings: Vec<String> = node.attributes.iter()
-        .map(|t| render_attribute_item_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let attributes_buf: Vec<::sittir_core::filters::Renderable<'_>> = attributes_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let elements_strings: Vec<String> = node.elements.iter()
-        .map(|t| render_expression_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let elements_buf: Vec<::sittir_core::filters::Renderable<'_>> = elements_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = ArrayExpressionListTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        attributes: ::sittir_core::filters::ListNonterminalView {
-            items: attributes_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        elements: ::sittir_core::filters::ListNonterminalView {
-            items: elements_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&render_attribute_item_transport(child)?);
+    }
+    Ok(out)
 }
 
 fn render_array_expression_semi_transport(node: &ArrayExpressionSemiTransport) -> Result<String, ::askama::Error> {
-    let attributes_strings: Vec<String> = node.attributes.iter()
-        .map(|t| render_attribute_item_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let attributes_buf: Vec<::sittir_core::filters::Renderable<'_>> = attributes_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let elements_text = render_expression_transport(&node.elements)?;
-    let length_text = render_expression_transport(&node.length)?;
-    let template = ArrayExpressionSemiTemplate {
-        attributes: ::sittir_core::filters::ListNonterminalView {
-            items: attributes_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        elements: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(elements_text.as_str())),
-        length: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(length_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render_closure_expression_block_transport(node: &ClosureExpressionBlockTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_block_transport(&node.body)?;
-    let return_type_text = if let Some(v) = &node.return_type {
-        render__type_transport(v)?
-    } else {
-        String::new()
-    };
-    let template = ClosureExpressionBlockTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
-        return_type: if node.return_type.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(return_type_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render__closure_expression_expr_transport(node: &_ClosureExpressionExprTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_expression_transport(&node.body)?;
-    let template = _ClosureExpressionExprTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render__delim_token_tree_brace_transport(node: &_DelimTokenTreeBraceTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_delim_tokens_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _DelimTokenTreeBraceTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&render_delim_tokens_transport(child)?);
+    }
+    Ok(out)
 }
 
 fn render__delim_token_tree_bracket_transport(node: &_DelimTokenTreeBracketTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_delim_tokens_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _DelimTokenTreeBracketTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&render_delim_tokens_transport(child)?);
+    }
+    Ok(out)
 }
 
 fn render__delim_token_tree_paren_transport(node: &_DelimTokenTreeParenTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_delim_tokens_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _DelimTokenTreeParenTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&render_delim_tokens_transport(child)?);
+    }
+    Ok(out)
 }
 
 fn render__expression_statement_block_ending_transport(node: &_ExpressionStatementBlockEndingTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_expression_ending_with_block_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _ExpressionStatementBlockEndingTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&render_expression_ending_with_block_transport(child)?);
+    }
+    Ok(out)
 }
 
 fn render__expression_statement_with_semi_transport(node: &_ExpressionStatementWithSemiTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_expression_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _ExpressionStatementWithSemiTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&render_expression_transport(child)?);
+    }
+    Ok(out)
 }
 
 fn render_field_identifier_transport(node: &FieldIdentifierTransport) -> Result<String, ::askama::Error> {
@@ -10273,29 +10465,15 @@ fn render_field_identifier_transport(node: &FieldIdentifierTransport) -> Result<
 }
 
 fn render_field_pattern_named_transport(node: &FieldPatternNamedTransport) -> Result<String, ::askama::Error> {
-    let name_text = render_field_identifier_transport(&node.name)?;
-    let pattern_text = render_pattern_transport(&node.pattern)?;
-    let template = FieldPatternNamedTemplate {
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
-        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(pattern_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render__field_pattern_shorthand_transport(node: &_FieldPatternShorthandTransport) -> Result<String, ::askama::Error> {
-    let name_text = render_identifier_transport(&node.name)?;
-    let template = _FieldPatternShorthandTemplate {
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render__foreign_mod_item_body_transport(node: &_ForeignModItemBodyTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_declaration_list_transport(&node.body)?;
-    let template = _ForeignModItemBodyTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render_foreign_mod_item_semi_transport(t: &ForeignModItemSemiTransport) -> Result<String, ::askama::Error> {
@@ -10330,11 +10508,7 @@ fn render_function_type_trait_form_transport(node: &FunctionTypeTraitFormTranspo
 }
 
 fn render__impl_item_body_transport(node: &_ImplItemBodyTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_declaration_list_transport(&node.body)?;
-    let template = _ImplItemBodyTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render_impl_item_semi_transport(t: &ImplItemSemiTransport) -> Result<String, ::askama::Error> {
@@ -10396,13 +10570,7 @@ fn render_line_comment_content_transport(t: &LineCommentContentTransport) -> Res
 }
 
 fn render_line_comment_doc_transport(node: &LineCommentDocTransport) -> Result<String, ::askama::Error> {
-    let doc_text = render_line_doc_content_transport(&node.doc)?;
-    let template = LineCommentDocTemplate {
-        doc: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(doc_text.as_str())),
-        inner: ::sittir_core::filters::OptionalNonterminalView::Missing,
-        outer: ::sittir_core::filters::OptionalNonterminalView::Missing,
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render_line_comment_regular_dslash_transport(t: &LineCommentRegularDslashTransport) -> Result<String, ::askama::Error> {
@@ -10410,76 +10578,41 @@ fn render_line_comment_regular_dslash_transport(t: &LineCommentRegularDslashTran
 }
 
 fn render__macro_definition_brace_transport(node: &_MacroDefinitionBraceTransport) -> Result<String, ::askama::Error> {
-    let children_owned = node.children.as_deref().unwrap_or(&[]);
-    let children_strings: Vec<String> = children_owned.iter()
-        .map(|t| render_macro_rule_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _MacroDefinitionBraceTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    if let Some(children) = &node.children {
+        for child in children.iter() {
+            out.push_str(&render_macro_rule_transport(child)?);
+        }
+    }
+    Ok(out)
 }
 
 fn render__macro_definition_bracket_transport(node: &_MacroDefinitionBracketTransport) -> Result<String, ::askama::Error> {
-    let children_owned = node.children.as_deref().unwrap_or(&[]);
-    let children_strings: Vec<String> = children_owned.iter()
-        .map(|t| render_macro_rule_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _MacroDefinitionBracketTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    if let Some(children) = &node.children {
+        for child in children.iter() {
+            out.push_str(&render_macro_rule_transport(child)?);
+        }
+    }
+    Ok(out)
 }
 
 fn render__macro_definition_paren_transport(node: &_MacroDefinitionParenTransport) -> Result<String, ::askama::Error> {
-    let children_owned = node.children.as_deref().unwrap_or(&[]);
-    let children_strings: Vec<String> = children_owned.iter()
-        .map(|t| render_macro_rule_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _MacroDefinitionParenTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    if let Some(children) = &node.children {
+        for child in children.iter() {
+            out.push_str(&render_macro_rule_transport(child)?);
+        }
+    }
+    Ok(out)
 }
 
 fn render__match_arm_block_ending_transport(node: &_MatchArmBlockEndingTransport) -> Result<String, ::askama::Error> {
-    let value_text = render_expression_ending_with_block_transport(&node.value)?;
-    let template = _MatchArmBlockEndingTemplate {
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render_match_arm_with_comma_transport(node: &MatchArmWithCommaTransport) -> Result<String, ::askama::Error> {
-    let value_text = render_expression_transport(&node.value)?;
-    let template = MatchArmWithCommaTemplate {
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render_mod_item_external_transport(t: &ModItemExternalTransport) -> Result<String, ::askama::Error> {
@@ -10487,11 +10620,7 @@ fn render_mod_item_external_transport(t: &ModItemExternalTransport) -> Result<St
 }
 
 fn render__mod_item_inline_transport(node: &_ModItemInlineTransport) -> Result<String, ::askama::Error> {
-    let body_text = render_declaration_list_transport(&node.body)?;
-    let template = _ModItemInlineTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render_non_special_token_transport(node: &NonSpecialTokenTransport) -> Result<String, ::askama::Error> {
@@ -10503,21 +10632,11 @@ fn render_non_special_token_transport(node: &NonSpecialTokenTransport) -> Result
 }
 
 fn render_or_pattern_binary_transport(node: &OrPatternBinaryTransport) -> Result<String, ::askama::Error> {
-    let left_text = render_pattern_transport(&node.left)?;
-    let right_text = render_pattern_transport(&node.right)?;
-    let template = OrPatternBinaryTemplate {
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(right_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render_or_pattern_prefix_transport(node: &OrPatternPrefixTransport) -> Result<String, ::askama::Error> {
-    let right_text = render_pattern_transport(&node.right)?;
-    let template = OrPatternPrefixTemplate {
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(right_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render_outer_line_doc_comment_marker_transport(t: &OuterLineDocCommentMarkerTransport) -> Result<String, ::askama::Error> {
@@ -10529,21 +10648,11 @@ fn render_pointer_type_const_transport(t: &PointerTypeConstTransport) -> Result<
 }
 
 fn render__pointer_type_mut_transport(node: &_PointerTypeMutTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_mutable_specifier_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _PointerTypeMutTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&render_mutable_specifier_transport(child)?);
+    }
+    Ok(out)
 }
 
 fn render_primitive_type_transport(t: &PrimitiveTypeTransport) -> Result<String, ::askama::Error> {
@@ -10551,43 +10660,19 @@ fn render_primitive_type_transport(t: &PrimitiveTypeTransport) -> Result<String,
 }
 
 fn render__range_expression_bare_transport(node: &_RangeExpressionBareTransport) -> Result<String, ::askama::Error> {
-    let operator_text = render_kw_operator_transport(&node.operator)?;
-    let template = _RangeExpressionBareTemplate {
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operator_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render_range_expression_binary_transport(node: &RangeExpressionBinaryTransport) -> Result<String, ::askama::Error> {
-    let end_text = render_expression_transport(&node.end)?;
-    let operator_text = render_transport_dispatch(node.operator.as_ref())?;
-    let start_text = render_expression_transport(&node.start)?;
-    let template = RangeExpressionBinaryTemplate {
-        end: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(end_text.as_str())),
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operator_text.as_str())),
-        start: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(start_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render_range_expression_postfix_transport(node: &RangeExpressionPostfixTransport) -> Result<String, ::askama::Error> {
-    let operator_text = render_kw_operator_transport(&node.operator)?;
-    let start_text = render_expression_transport(&node.start)?;
-    let template = RangeExpressionPostfixTemplate {
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operator_text.as_str())),
-        start: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(start_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render_range_expression_prefix_transport(node: &RangeExpressionPrefixTransport) -> Result<String, ::askama::Error> {
-    let end_text = render_expression_transport(&node.end)?;
-    let operator_text = render_kw_operator_transport(&node.operator)?;
-    let template = RangeExpressionPrefixTemplate {
-        end: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(end_text.as_str())),
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operator_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render_range_pattern_left_bare_transport(t: &RangePatternLeftBareTransport) -> Result<String, ::askama::Error> {
@@ -10595,19 +10680,11 @@ fn render_range_pattern_left_bare_transport(t: &RangePatternLeftBareTransport) -
 }
 
 fn render_range_pattern_left_with_right_transport(node: &RangePatternLeftWithRightTransport) -> Result<String, ::askama::Error> {
-    let right_text = render_transport_dispatch(node.right.as_ref())?;
-    let template = RangePatternLeftWithRightTemplate {
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(right_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render_range_pattern_prefix_transport(node: &RangePatternPrefixTransport) -> Result<String, ::askama::Error> {
-    let right_text = render_transport_dispatch(node.right.as_ref())?;
-    let template = RangePatternPrefixTemplate {
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(right_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render_reference_expression_raw_const_transport(t: &ReferenceExpressionRawConstTransport) -> Result<String, ::askama::Error> {
@@ -10651,45 +10728,23 @@ fn render_reserved_identifier_transport(node: &ReservedIdentifierTransport) -> R
 }
 
 fn render_struct_item_brace_transport(node: &StructItemBraceTransport) -> Result<String, ::askama::Error> {
-    let children_owned = node.children.as_deref().unwrap_or(&[]);
-    let children_strings: Vec<String> = children_owned.iter()
-        .map(|t| render_where_clause_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let body_text = render_field_declaration_list_transport(&node.body)?;
-    let template = StructItemBraceTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
-    };
-    template.render()
+    let mut out = String::new();
+    if let Some(children) = &node.children {
+        for child in children.iter() {
+            out.push_str(&render_where_clause_transport(child)?);
+        }
+    }
+    Ok(out)
 }
 
 fn render_struct_item_tuple_transport(node: &StructItemTupleTransport) -> Result<String, ::askama::Error> {
-    let children_owned = node.children.as_deref().unwrap_or(&[]);
-    let children_strings: Vec<String> = children_owned.iter()
-        .map(|t| render_where_clause_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let body_text = render_ordered_field_declaration_list_transport(&node.body)?;
-    let template = StructItemTupleTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
-    };
-    template.render()
+    let mut out = String::new();
+    if let Some(children) = &node.children {
+        for child in children.iter() {
+            out.push_str(&render_where_clause_transport(child)?);
+        }
+    }
+    Ok(out)
 }
 
 fn render_struct_item_unit_transport(t: &StructItemUnitTransport) -> Result<String, ::askama::Error> {
@@ -10697,111 +10752,51 @@ fn render_struct_item_unit_transport(t: &StructItemUnitTransport) -> Result<Stri
 }
 
 fn render__token_tree_brace_transport(node: &_TokenTreeBraceTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_tokens_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _TokenTreeBraceTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&render_tokens_transport(child)?);
+    }
+    Ok(out)
 }
 
 fn render__token_tree_bracket_transport(node: &_TokenTreeBracketTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_tokens_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _TokenTreeBracketTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&render_tokens_transport(child)?);
+    }
+    Ok(out)
 }
 
 fn render__token_tree_paren_transport(node: &_TokenTreeParenTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_tokens_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _TokenTreeParenTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&render_tokens_transport(child)?);
+    }
+    Ok(out)
 }
 
 fn render__token_tree_pattern_brace_transport(node: &_TokenTreePatternBraceTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_token_pattern_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _TokenTreePatternBraceTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&render_token_pattern_transport(child)?);
+    }
+    Ok(out)
 }
 
 fn render__token_tree_pattern_bracket_transport(node: &_TokenTreePatternBracketTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_token_pattern_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _TokenTreePatternBracketTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&render_token_pattern_transport(child)?);
+    }
+    Ok(out)
 }
 
 fn render__token_tree_pattern_paren_transport(node: &_TokenTreePatternParenTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_token_pattern_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _TokenTreePatternParenTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&render_token_pattern_transport(child)?);
+    }
+    Ok(out)
 }
 
 fn render_type_identifier_transport(node: &TypeIdentifierTransport) -> Result<String, ::askama::Error> {
@@ -10823,21 +10818,11 @@ fn render_type_identifier_transport(node: &TypeIdentifierTransport) -> Result<St
 }
 
 fn render__visibility_modifier_crate_transport(node: &_VisibilityModifierCrateTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_crate_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _VisibilityModifierCrateTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&render_crate_transport(child)?);
+    }
+    Ok(out)
 }
 
 fn render_visibility_modifier_in_path_transport(node: &VisibilityModifierInPathTransport) -> Result<String, ::askama::Error> {
@@ -10861,24 +10846,13 @@ fn render_visibility_modifier_in_path_transport(node: &VisibilityModifierInPathT
 }
 
 fn render_visibility_modifier_pub_transport(node: &VisibilityModifierPubTransport) -> Result<String, ::askama::Error> {
-    let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
-    let children_strings: Vec<String> = children_owned.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let r#pub_text = render_transport_dispatch(node.r#pub.as_ref())?;
-    let template = VisibilityModifierPubTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        r#pub: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#pub_text.as_str())),
-    };
-    template.render()
+    let mut out = String::new();
+    if let Some(children) = &node.children {
+        for child in children.iter() {
+            out.push_str(&render_transport_dispatch(child.as_ref())?);
+        }
+    }
+    Ok(out)
 }
 
 fn render_wildcard_pattern_transport(t: &WildcardPatternTransport) -> Result<String, ::askama::Error> {
@@ -16046,25 +16020,25 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::Star(data) => transport_to_node_star(data),
         AnyTransport::Ellipsis(data) => transport_to_node_ellipsis(data),
         AnyTransport::Yield(data) => transport_to_node_yield(data),
-        AnyTransport::Literal0_2e_2e_3d(data) => literal_transport_to_node(TransportKindId(0) /* "..=" — no parser symbol */, data),
-        AnyTransport::Literal1_3d_3d(data) => literal_transport_to_node(TransportKindId(0) /* "==" — no parser symbol */, data),
-        AnyTransport::Literal2_21_3d(data) => literal_transport_to_node(TransportKindId(0) /* "!=" — no parser symbol */, data),
-        AnyTransport::Literal3_3c_3d(data) => literal_transport_to_node(TransportKindId(0) /* "<=" — no parser symbol */, data),
-        AnyTransport::Literal4_3e_3d(data) => literal_transport_to_node(TransportKindId(0) /* ">=" — no parser symbol */, data),
-        AnyTransport::Literal5_3c_3c(data) => literal_transport_to_node(TransportKindId(0) /* "<<" — no parser symbol */, data),
-        AnyTransport::Literal6_3e_3e(data) => literal_transport_to_node(TransportKindId(0) /* ">>" — no parser symbol */, data),
-        AnyTransport::Literal7_25(data) => literal_transport_to_node(TransportKindId(0) /* "%" — no parser symbol */, data),
-        AnyTransport::Literal8_2b_3d(data) => literal_transport_to_node(TransportKindId(0) /* "+=" — no parser symbol */, data),
-        AnyTransport::Literal9_2d_3d(data) => literal_transport_to_node(TransportKindId(0) /* "-=" — no parser symbol */, data),
-        AnyTransport::Literal10_2a_3d(data) => literal_transport_to_node(TransportKindId(0) /* "*=" — no parser symbol */, data),
-        AnyTransport::Literal11_2f_3d(data) => literal_transport_to_node(TransportKindId(0) /* "/=" — no parser symbol */, data),
-        AnyTransport::Literal12_25_3d(data) => literal_transport_to_node(TransportKindId(0) /* "%=" — no parser symbol */, data),
-        AnyTransport::Literal13_26_3d(data) => literal_transport_to_node(TransportKindId(0) /* "&=" — no parser symbol */, data),
-        AnyTransport::Literal14_7c_3d(data) => literal_transport_to_node(TransportKindId(0) /* "|=" — no parser symbol */, data),
-        AnyTransport::Literal15_5e_3d(data) => literal_transport_to_node(TransportKindId(0) /* "^=" — no parser symbol */, data),
-        AnyTransport::Literal16_3c_3c_3d(data) => literal_transport_to_node(TransportKindId(0) /* "<<=" — no parser symbol */, data),
-        AnyTransport::Literal17_3e_3e_3d(data) => literal_transport_to_node(TransportKindId(0) /* ">>=" — no parser symbol */, data),
-        AnyTransport::Literal18_3a_3a(data) => literal_transport_to_node(TransportKindId(0) /* "::" — no parser symbol */, data),
+        AnyTransport::Literal0_2e_2e_3d(data) => literal_transport_to_node(TransportKindId(78) /* "..=" */, data),
+        AnyTransport::Literal1_3d_3d(data) => literal_transport_to_node(TransportKindId(67) /* "==" */, data),
+        AnyTransport::Literal2_21_3d(data) => literal_transport_to_node(TransportKindId(68) /* "!=" */, data),
+        AnyTransport::Literal3_3c_3d(data) => literal_transport_to_node(TransportKindId(72) /* "<=" */, data),
+        AnyTransport::Literal4_3e_3d(data) => literal_transport_to_node(TransportKindId(71) /* ">=" */, data),
+        AnyTransport::Literal5_3c_3c(data) => literal_transport_to_node(TransportKindId(54) /* "<<" */, data),
+        AnyTransport::Literal6_3e_3e(data) => literal_transport_to_node(TransportKindId(55) /* ">>" */, data),
+        AnyTransport::Literal7_25(data) => literal_transport_to_node(TransportKindId(47) /* "%" */, data),
+        AnyTransport::Literal8_2b_3d(data) => literal_transport_to_node(TransportKindId(56) /* "+=" */, data),
+        AnyTransport::Literal9_2d_3d(data) => literal_transport_to_node(TransportKindId(57) /* "-=" */, data),
+        AnyTransport::Literal10_2a_3d(data) => literal_transport_to_node(TransportKindId(58) /* "*=" */, data),
+        AnyTransport::Literal11_2f_3d(data) => literal_transport_to_node(TransportKindId(59) /* "/=" */, data),
+        AnyTransport::Literal12_25_3d(data) => literal_transport_to_node(TransportKindId(60) /* "%=" */, data),
+        AnyTransport::Literal13_26_3d(data) => literal_transport_to_node(TransportKindId(62) /* "&=" */, data),
+        AnyTransport::Literal14_7c_3d(data) => literal_transport_to_node(TransportKindId(63) /* "|=" */, data),
+        AnyTransport::Literal15_5e_3d(data) => literal_transport_to_node(TransportKindId(61) /* "^=" */, data),
+        AnyTransport::Literal16_3c_3c_3d(data) => literal_transport_to_node(TransportKindId(64) /* "<<=" */, data),
+        AnyTransport::Literal17_3e_3e_3d(data) => literal_transport_to_node(TransportKindId(65) /* ">>=" */, data),
+        AnyTransport::Literal18_3a_3a(data) => literal_transport_to_node(TransportKindId(80) /* "::" */, data),
     }
 }
 
@@ -17648,7 +17622,7 @@ fn transport_to_node_closure_expression_expr(transport: ClosureExpressionExprTra
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        TransportKindId(0) /* "closure_expression_expr" — no parser symbol */,
+        TransportKindId(324) /* "closure_expression_expr" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -17896,7 +17870,7 @@ fn transport_to_node_delim_token_tree_paren(transport: DelimTokenTreeParenTransp
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| delim_tokens_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
-        TransportKindId(0) /* "delim_token_tree_paren" — no parser symbol */,
+        TransportKindId(379) /* "delim_token_tree_paren" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -17913,7 +17887,7 @@ fn transport_to_node_delim_token_tree_bracket(transport: DelimTokenTreeBracketTr
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| delim_tokens_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
-        TransportKindId(0) /* "delim_token_tree_bracket" — no parser symbol */,
+        TransportKindId(380) /* "delim_token_tree_bracket" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -17930,7 +17904,7 @@ fn transport_to_node_delim_token_tree_brace(transport: DelimTokenTreeBraceTransp
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| delim_tokens_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
-        TransportKindId(0) /* "delim_token_tree_brace" — no parser symbol */,
+        TransportKindId(381) /* "delim_token_tree_brace" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18141,7 +18115,7 @@ fn transport_to_node_expression_statement_with_semi(transport: ExpressionStateme
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
-        TransportKindId(0) /* "expression_statement_with_semi" — no parser symbol */,
+        TransportKindId(365) /* "expression_statement_with_semi" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18158,7 +18132,7 @@ fn transport_to_node_expression_statement_block_ending(transport: ExpressionStat
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| expression_ending_with_block_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
-        TransportKindId(0) /* "expression_statement_block_ending" — no parser symbol */,
+        TransportKindId(366) /* "expression_statement_block_ending" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18356,7 +18330,7 @@ fn transport_to_node_field_pattern_shorthand(transport: FieldPatternShorthandTra
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        TransportKindId(0) /* "field_pattern_shorthand" — no parser symbol */,
+        TransportKindId(325) /* "field_pattern_shorthand" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18467,7 +18441,7 @@ fn transport_to_node_foreign_mod_item_body(transport: ForeignModItemBodyTranspor
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        TransportKindId(0) /* "foreign_mod_item_body" — no parser symbol */,
+        TransportKindId(368) /* "foreign_mod_item_body" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18811,7 +18785,7 @@ fn transport_to_node_impl_item_body(transport: ImplItemBodyTransport) -> Result<
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        TransportKindId(0) /* "impl_item_body" — no parser symbol */,
+        TransportKindId(329) /* "impl_item_body" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19160,7 +19134,7 @@ fn transport_to_node_macro_definition_paren(transport: MacroDefinitionParenTrans
         None => None,
     };
     Ok(transport_node_data(
-        TransportKindId(0) /* "macro_definition_paren" — no parser symbol */,
+        TransportKindId(331) /* "macro_definition_paren" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19180,7 +19154,7 @@ fn transport_to_node_macro_definition_bracket(transport: MacroDefinitionBracketT
         None => None,
     };
     Ok(transport_node_data(
-        TransportKindId(0) /* "macro_definition_bracket" — no parser symbol */,
+        TransportKindId(332) /* "macro_definition_bracket" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19200,7 +19174,7 @@ fn transport_to_node_macro_definition_brace(transport: MacroDefinitionBraceTrans
         None => None,
     };
     Ok(transport_node_data(
-        TransportKindId(0) /* "macro_definition_brace" — no parser symbol */,
+        TransportKindId(333) /* "macro_definition_brace" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19318,7 +19292,7 @@ fn transport_to_node_match_arm_block_ending(transport: MatchArmBlockEndingTransp
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        TransportKindId(0) /* "match_arm_block_ending" — no parser symbol */,
+        TransportKindId(370) /* "match_arm_block_ending" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19452,7 +19426,7 @@ fn transport_to_node_mod_item_inline(transport: ModItemInlineTransport) -> Resul
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        TransportKindId(0) /* "mod_item_inline" — no parser symbol */,
+        TransportKindId(335) /* "mod_item_inline" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19697,7 +19671,7 @@ fn transport_to_node_pointer_type_mut(transport: PointerTypeMutTransport) -> Res
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::MutableSpecifier(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
-        TransportKindId(0) /* "pointer_type_mut" — no parser symbol */,
+        TransportKindId(359) /* "pointer_type_mut" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19777,7 +19751,7 @@ fn transport_to_node_range_expression_bare(transport: RangeExpressionBareTranspo
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
-        TransportKindId(0) /* "range_expression_bare" — no parser symbol */,
+        TransportKindId(341) /* "range_expression_bare" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20512,7 +20486,7 @@ fn transport_to_node_token_tree_paren(transport: TokenTreeParenTransport) -> Res
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| tokens_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
-        TransportKindId(0) /* "token_tree_paren" — no parser symbol */,
+        TransportKindId(376) /* "token_tree_paren" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20529,7 +20503,7 @@ fn transport_to_node_token_tree_bracket(transport: TokenTreeBracketTransport) ->
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| tokens_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
-        TransportKindId(0) /* "token_tree_bracket" — no parser symbol */,
+        TransportKindId(377) /* "token_tree_bracket" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20546,7 +20520,7 @@ fn transport_to_node_token_tree_brace(transport: TokenTreeBraceTransport) -> Res
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| tokens_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
-        TransportKindId(0) /* "token_tree_brace" — no parser symbol */,
+        TransportKindId(378) /* "token_tree_brace" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20622,7 +20596,7 @@ fn transport_to_node_token_tree_pattern_paren(transport: TokenTreePatternParenTr
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| token_pattern_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
-        TransportKindId(0) /* "token_tree_pattern_paren" — no parser symbol */,
+        TransportKindId(373) /* "token_tree_pattern_paren" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20639,7 +20613,7 @@ fn transport_to_node_token_tree_pattern_bracket(transport: TokenTreePatternBrack
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| token_pattern_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
-        TransportKindId(0) /* "token_tree_pattern_bracket" — no parser symbol */,
+        TransportKindId(374) /* "token_tree_pattern_bracket" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20656,7 +20630,7 @@ fn transport_to_node_token_tree_pattern_brace(transport: TokenTreePatternBraceTr
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| token_pattern_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
-        TransportKindId(0) /* "token_tree_pattern_brace" — no parser symbol */,
+        TransportKindId(375) /* "token_tree_pattern_brace" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21232,7 +21206,7 @@ fn transport_to_node_visibility_modifier_crate(transport: VisibilityModifierCrat
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::Crate(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
-        TransportKindId(0) /* "visibility_modifier_crate" — no parser symbol */,
+        TransportKindId(348) /* "visibility_modifier_crate" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21481,7 +21455,7 @@ fn transport_to_node_error_sentinel(transport: ErrorSentinelTransport) -> Result
 
 fn transport_to_node_bracket(transport: BracketTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "[" — no parser symbol */,
+        TransportKindId(112) /* "[" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21495,7 +21469,7 @@ fn transport_to_node_bracket(transport: BracketTransport) -> Result<TransportNod
 
 fn transport_to_node_close_bracket(transport: CloseBracketTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "]" — no parser symbol */,
+        TransportKindId(113) /* "]" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21509,7 +21483,7 @@ fn transport_to_node_close_bracket(transport: CloseBracketTransport) -> Result<T
 
 fn transport_to_node_semi(transport: SemiTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* ";" — no parser symbol */,
+        TransportKindId(2) /* ";" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21523,7 +21497,7 @@ fn transport_to_node_semi(transport: SemiTransport) -> Result<TransportNodeData,
 
 fn transport_to_node_arrow(transport: ArrowTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "->" — no parser symbol */,
+        TransportKindId(81) /* "->" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21551,7 +21525,7 @@ fn transport_to_node_anonymous(transport: AnonymousTransport) -> Result<Transpor
 
 fn transport_to_node_brace(transport: BraceTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "{" — no parser symbol */,
+        TransportKindId(114) /* "{" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21565,7 +21539,7 @@ fn transport_to_node_brace(transport: BraceTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_close_brace(transport: CloseBraceTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "}" — no parser symbol */,
+        TransportKindId(115) /* "}" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21579,7 +21553,7 @@ fn transport_to_node_close_brace(transport: CloseBraceTransport) -> Result<Trans
 
 fn transport_to_node_paren(transport: ParenTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "(" — no parser symbol */,
+        TransportKindId(7) /* "(" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21593,7 +21567,7 @@ fn transport_to_node_paren(transport: ParenTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_close_paren(transport: CloseParenTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* ")" — no parser symbol */,
+        TransportKindId(8) /* ")" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21607,7 +21581,7 @@ fn transport_to_node_close_paren(transport: CloseParenTransport) -> Result<Trans
 
 fn transport_to_node_colon(transport: ColonTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* ":" — no parser symbol */,
+        TransportKindId(5) /* ":" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21635,7 +21609,7 @@ fn transport_to_node_fn(transport: FnTransport) -> Result<TransportNodeData, ::a
 
 fn transport_to_node_bang(transport: BangTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "!" — no parser symbol */,
+        TransportKindId(49) /* "!" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21677,7 +21651,7 @@ fn transport_to_node_move(transport: MoveTransport) -> Result<TransportNodeData,
 
 fn transport_to_node_dotdot(transport: DotdotTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* ".." — no parser symbol */,
+        TransportKindId(76) /* ".." */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21733,7 +21707,7 @@ fn transport_to_node_unsafe(transport: UnsafeTransport) -> Result<TransportNodeD
 
 fn transport_to_node_andand(transport: AndandTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "&&" — no parser symbol */,
+        TransportKindId(52) /* "&&" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21747,7 +21721,7 @@ fn transport_to_node_andand(transport: AndandTransport) -> Result<TransportNodeD
 
 fn transport_to_node_comma(transport: CommaTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "," — no parser symbol */,
+        TransportKindId(79) /* "," */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21761,7 +21735,7 @@ fn transport_to_node_comma(transport: CommaTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_tok_sq(transport: TokSqTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "'" — no parser symbol */,
+        TransportKindId(83) /* "'" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22111,7 +22085,7 @@ fn transport_to_node_while(transport: WhileTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_pipe(transport: PipeTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "|" — no parser symbol */,
+        TransportKindId(51) /* "|" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22125,7 +22099,7 @@ fn transport_to_node_pipe(transport: PipeTransport) -> Result<TransportNodeData,
 
 fn transport_to_node_slash(transport: SlashTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "/" — no parser symbol */,
+        TransportKindId(46) /* "/" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22167,7 +22141,7 @@ fn transport_to_node_in(transport: InTransport) -> Result<TransportNodeData, ::a
 
 fn transport_to_node_eq(transport: EqTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "=" — no parser symbol */,
+        TransportKindId(66) /* "=" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22181,7 +22155,7 @@ fn transport_to_node_eq(transport: EqTransport) -> Result<TransportNodeData, ::a
 
 fn transport_to_node_hash(transport: HashTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "#" — no parser symbol */,
+        TransportKindId(82) /* "#" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22195,7 +22169,7 @@ fn transport_to_node_hash(transport: HashTransport) -> Result<TransportNodeData,
 
 fn transport_to_node_dot(transport: DotTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "." — no parser symbol */,
+        TransportKindId(75) /* "." */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22209,7 +22183,7 @@ fn transport_to_node_dot(transport: DotTransport) -> Result<TransportNodeData, :
 
 fn transport_to_node_oror(transport: OrorTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "||" — no parser symbol */,
+        TransportKindId(53) /* "||" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22223,7 +22197,7 @@ fn transport_to_node_oror(transport: OrorTransport) -> Result<TransportNodeData,
 
 fn transport_to_node_amp(transport: AmpTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "&" — no parser symbol */,
+        TransportKindId(50) /* "&" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22237,7 +22211,7 @@ fn transport_to_node_amp(transport: AmpTransport) -> Result<TransportNodeData, :
 
 fn transport_to_node_caret(transport: CaretTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "^" — no parser symbol */,
+        TransportKindId(48) /* "^" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22251,7 +22225,7 @@ fn transport_to_node_caret(transport: CaretTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_tok_slash_star(transport: TokSlashStarTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "/ *" — no parser symbol */,
+        TransportKindId(136) /* "/ *" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22265,7 +22239,7 @@ fn transport_to_node_tok_slash_star(transport: TokSlashStarTransport) -> Result<
 
 fn transport_to_node_tok_star_slash(transport: TokStarSlashTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "* /" — no parser symbol */,
+        TransportKindId(137) /* "* /" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22279,7 +22253,7 @@ fn transport_to_node_tok_star_slash(transport: TokStarSlashTransport) -> Result<
 
 fn transport_to_node_plus(transport: PlusTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "+" — no parser symbol */,
+        TransportKindId(10) /* "+" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22293,7 +22267,7 @@ fn transport_to_node_plus(transport: PlusTransport) -> Result<TransportNodeData,
 
 fn transport_to_node_lt(transport: LtTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "<" — no parser symbol */,
+        TransportKindId(70) /* "<" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22307,7 +22281,7 @@ fn transport_to_node_lt(transport: LtTransport) -> Result<TransportNodeData, ::a
 
 fn transport_to_node_gt(transport: GtTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* ">" — no parser symbol */,
+        TransportKindId(69) /* ">" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22321,7 +22295,7 @@ fn transport_to_node_gt(transport: GtTransport) -> Result<TransportNodeData, ::a
 
 fn transport_to_node_at(transport: AtTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "@" — no parser symbol */,
+        TransportKindId(73) /* "@" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22377,7 +22351,7 @@ fn transport_to_node_extern(transport: ExternTransport) -> Result<TransportNodeD
 
 fn transport_to_node_fat_arrow(transport: FatArrowTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "=>" — no parser symbol */,
+        TransportKindId(4) /* "=>" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22405,7 +22379,7 @@ fn transport_to_node_mut(transport: MutTransport) -> Result<TransportNodeData, :
 
 fn transport_to_node_minus(transport: MinusTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "-" — no parser symbol */,
+        TransportKindId(45) /* "-" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22419,7 +22393,7 @@ fn transport_to_node_minus(transport: MinusTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_question(transport: QuestionTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "?" — no parser symbol */,
+        TransportKindId(12) /* "?" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22433,7 +22407,7 @@ fn transport_to_node_question(transport: QuestionTransport) -> Result<TransportN
 
 fn transport_to_node_tok_dq(transport: TokDqTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "\"" — no parser symbol */,
+        TransportKindId(127) /* "\"" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22447,7 +22421,7 @@ fn transport_to_node_tok_dq(transport: TokDqTransport) -> Result<TransportNodeDa
 
 fn transport_to_node_tok_dollar(transport: TokDollarTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "$" — no parser symbol */,
+        TransportKindId(6) /* "$" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22475,7 +22449,7 @@ fn transport_to_node_try(transport: TryTransport) -> Result<TransportNodeData, :
 
 fn transport_to_node_star(transport: StarTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "*" — no parser symbol */,
+        TransportKindId(11) /* "*" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22489,7 +22463,7 @@ fn transport_to_node_star(transport: StarTransport) -> Result<TransportNodeData,
 
 fn transport_to_node_ellipsis(transport: EllipsisTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "..." — no parser symbol */,
+        TransportKindId(77) /* "..." */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22535,87 +22509,9 @@ pub fn render_transport(transport: AnyTransport) -> Result<String, ::askama::Err
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_array_expression_list.jinja", escape = "none")]
-pub struct ArrayExpressionListTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub attributes: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub elements: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_array_expression_semi.jinja", escape = "none")]
-pub struct ArrayExpressionSemiTemplate<'a> {
-    pub attributes: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub elements: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub length: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_closure_expression_block.jinja", escape = "none")]
-pub struct ClosureExpressionBlockTemplate<'a> {
-    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub return_type: ::sittir_core::filters::OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_closure_expression_expr.jinja", escape = "none")]
-pub struct _ClosureExpressionExprTemplate<'a> {
-    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_delim_token_tree_brace.jinja", escape = "none")]
-pub struct _DelimTokenTreeBraceTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_delim_token_tree_bracket.jinja", escape = "none")]
-pub struct _DelimTokenTreeBracketTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_delim_token_tree_paren.jinja", escape = "none")]
-pub struct _DelimTokenTreeParenTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_expression_statement_block_ending.jinja", escape = "none")]
-pub struct _ExpressionStatementBlockEndingTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_expression_statement_with_semi.jinja", escape = "none")]
-pub struct _ExpressionStatementWithSemiTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_field_identifier.jinja", escape = "none")]
 pub struct FieldIdentifierTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_field_pattern_named.jinja", escape = "none")]
-pub struct FieldPatternNamedTemplate<'a> {
-    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub pattern: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_field_pattern_shorthand.jinja", escape = "none")]
-pub struct _FieldPatternShorthandTemplate<'a> {
-    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_foreign_mod_item_body.jinja", escape = "none")]
-pub struct _ForeignModItemBodyTemplate<'a> {
-    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -22631,118 +22527,9 @@ pub struct FunctionTypeTraitFormTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_impl_item_body.jinja", escape = "none")]
-pub struct _ImplItemBodyTemplate<'a> {
-    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_let_chain.jinja", escape = "none")]
 pub struct LetChainTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_line_comment_doc.jinja", escape = "none")]
-pub struct LineCommentDocTemplate<'a> {
-    pub doc: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub inner: ::sittir_core::filters::OptionalNonterminalView<'a>,
-    pub outer: ::sittir_core::filters::OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_macro_definition_brace.jinja", escape = "none")]
-pub struct _MacroDefinitionBraceTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_macro_definition_bracket.jinja", escape = "none")]
-pub struct _MacroDefinitionBracketTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_macro_definition_paren.jinja", escape = "none")]
-pub struct _MacroDefinitionParenTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_match_arm_block_ending.jinja", escape = "none")]
-pub struct _MatchArmBlockEndingTemplate<'a> {
-    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_match_arm_with_comma.jinja", escape = "none")]
-pub struct MatchArmWithCommaTemplate<'a> {
-    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_mod_item_inline.jinja", escape = "none")]
-pub struct _ModItemInlineTemplate<'a> {
-    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_or_pattern_binary.jinja", escape = "none")]
-pub struct OrPatternBinaryTemplate<'a> {
-    pub left: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_or_pattern_prefix.jinja", escape = "none")]
-pub struct OrPatternPrefixTemplate<'a> {
-    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_pointer_type_mut.jinja", escape = "none")]
-pub struct _PointerTypeMutTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_range_expression_bare.jinja", escape = "none")]
-pub struct _RangeExpressionBareTemplate<'a> {
-    pub operator: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_range_expression_binary.jinja", escape = "none")]
-pub struct RangeExpressionBinaryTemplate<'a> {
-    pub end: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub operator: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub start: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_range_expression_postfix.jinja", escape = "none")]
-pub struct RangeExpressionPostfixTemplate<'a> {
-    pub operator: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub start: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_range_expression_prefix.jinja", escape = "none")]
-pub struct RangeExpressionPrefixTemplate<'a> {
-    pub end: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub operator: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_range_pattern_left_with_right.jinja", escape = "none")]
-pub struct RangePatternLeftWithRightTemplate<'a> {
-    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_range_pattern_prefix.jinja", escape = "none")]
-pub struct RangePatternPrefixTemplate<'a> {
-    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -22758,64 +22545,8 @@ pub struct ReservedIdentifierTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_struct_item_brace.jinja", escape = "none")]
-pub struct StructItemBraceTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_struct_item_tuple.jinja", escape = "none")]
-pub struct StructItemTupleTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_token_tree_brace.jinja", escape = "none")]
-pub struct _TokenTreeBraceTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_token_tree_bracket.jinja", escape = "none")]
-pub struct _TokenTreeBracketTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_token_tree_paren.jinja", escape = "none")]
-pub struct _TokenTreeParenTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_token_tree_pattern_brace.jinja", escape = "none")]
-pub struct _TokenTreePatternBraceTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_token_tree_pattern_bracket.jinja", escape = "none")]
-pub struct _TokenTreePatternBracketTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_token_tree_pattern_paren.jinja", escape = "none")]
-pub struct _TokenTreePatternParenTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_type_identifier.jinja", escape = "none")]
 pub struct TypeIdentifierTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_visibility_modifier_crate.jinja", escape = "none")]
-pub struct _VisibilityModifierCrateTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
@@ -22824,13 +22555,6 @@ pub struct _VisibilityModifierCrateTemplate<'a> {
 pub struct VisibilityModifierInPathTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub r#in: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_visibility_modifier_pub.jinja", escape = "none")]
-pub struct VisibilityModifierPubTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub r#pub: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -24063,6 +23787,54 @@ fn separator_for(kind_id: u16) -> &'static str {
 
 fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str> {
     match (parent_id, child_id) {
+        (258, 322) => Some("semi"), // ("array_expression", "array_expression_list")
+        (258, 321) => Some("semi"), // ("array_expression", "array_expression_semi")
+        (281, 323) => Some("block"), // ("closure_expression", "closure_expression_block")
+        (281, 324) => Some("block"), // ("closure_expression", "closure_expression_expr")
+        (240, 381) => Some("paren"), // ("delim_token_tree", "delim_token_tree_brace")
+        (240, 380) => Some("paren"), // ("delim_token_tree", "delim_token_tree_bracket")
+        (240, 379) => Some("paren"), // ("delim_token_tree", "delim_token_tree_paren")
+        (160, 366) => Some("with_semi"), // ("expression_statement", "expression_statement_block_ending")
+        (160, 365) => Some("with_semi"), // ("expression_statement", "expression_statement_with_semi")
+        (300, 326) => Some("shorthand"), // ("field_pattern", "field_pattern_named")
+        (300, 325) => Some("shorthand"), // ("field_pattern", "field_pattern_shorthand")
+        (174, 368) => Some("semi"), // ("foreign_mod_item", "foreign_mod_item_body")
+        (174, 367) => Some("semi"), // ("foreign_mod_item", "foreign_mod_item_semi")
+        (193, 329) => Some("body"), // ("impl_item", "impl_item_body")
+        (193, 330) => Some("body"), // ("impl_item", "impl_item_semi")
+        (314, 146) => Some("regular_dslash"), // ("line_comment", "line_comment_content")
+        (314, 372) => Some("regular_dslash"), // ("line_comment", "line_comment_doc")
+        (314, 371) => Some("regular_dslash"), // ("line_comment", "line_comment_regular_dslash")
+        (161, 333) => Some("paren"), // ("macro_definition", "macro_definition_brace")
+        (161, 332) => Some("paren"), // ("macro_definition", "macro_definition_bracket")
+        (161, 331) => Some("paren"), // ("macro_definition", "macro_definition_paren")
+        (274, 370) => Some("with_comma"), // ("match_arm", "match_arm_block_ending")
+        (274, 369) => Some("with_comma"), // ("match_arm", "match_arm_with_comma")
+        (173, 334) => Some("external"), // ("mod_item", "mod_item_external")
+        (173, 335) => Some("external"), // ("mod_item", "mod_item_inline")
+        (307, 336) => Some("binary"), // ("or_pattern", "or_pattern_binary")
+        (307, 337) => Some("binary"), // ("or_pattern", "or_pattern_prefix")
+        (233, 358) => Some("const"), // ("pointer_type", "pointer_type_const")
+        (233, 359) => Some("const"), // ("pointer_type", "pointer_type_mut")
+        (246, 341) => Some("binary"), // ("range_expression", "range_expression_bare")
+        (246, 338) => Some("binary"), // ("range_expression", "range_expression_binary")
+        (246, 339) => Some("binary"), // ("range_expression", "range_expression_postfix")
+        (246, 340) => Some("binary"), // ("range_expression", "range_expression_prefix")
+        (303, 344) => Some("left_with_right"), // ("range_pattern", "range_pattern_left_bare")
+        (303, 343) => Some("left_with_right"), // ("range_pattern", "range_pattern_left_with_right")
+        (303, 342) => Some("left_with_right"), // ("range_pattern", "range_pattern_prefix")
+        (176, 345) => Some("brace"), // ("struct_item", "struct_item_brace")
+        (176, 346) => Some("brace"), // ("struct_item", "struct_item_tuple")
+        (176, 347) => Some("brace"), // ("struct_item", "struct_item_unit")
+        (168, 378) => Some("paren"), // ("token_tree", "token_tree_brace")
+        (168, 377) => Some("paren"), // ("token_tree", "token_tree_bracket")
+        (168, 376) => Some("paren"), // ("token_tree", "token_tree_paren")
+        (164, 375) => Some("paren"), // ("token_tree_pattern", "token_tree_pattern_brace")
+        (164, 374) => Some("paren"), // ("token_tree_pattern", "token_tree_pattern_bracket")
+        (164, 373) => Some("paren"), // ("token_tree_pattern", "token_tree_pattern_paren")
+        (215, 348) => Some("in_path"), // ("visibility_modifier", "visibility_modifier_crate")
+        (215, 350) => Some("in_path"), // ("visibility_modifier", "visibility_modifier_in_path")
+        (215, 349) => Some("in_path"), // ("visibility_modifier", "visibility_modifier_pub")
         _ => None,
     }
 }
@@ -24355,148 +24127,6 @@ fn token_shaped_fallback(node: &NodeData) -> Result<String, ::askama::Error> {
     ))
 }
 
-fn render_hidden_array_expression_list(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["attributes", "elements"])?;
-    let field_0 = resolve_field(node, "attributes", true)?;
-    let field_1 = resolve_field(node, "elements", true)?;
-    let children_renderables = children.renderable_items();
-    let field_0_renderables = field_0.renderable_items();
-    let field_1_renderables = field_1.renderable_items();
-    let template = ArrayExpressionListTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-        attributes: ::sittir_core::filters::ListNonterminalView {
-            items: field_0_renderables.as_slice(),
-            separator: field_0.separator,
-            leading: field_0.leading_sep,
-            trailing: field_0.trailing_sep,
-        },
-        elements: ::sittir_core::filters::ListNonterminalView {
-            items: field_1_renderables.as_slice(),
-            separator: field_1.separator,
-            leading: field_1.leading_sep,
-            trailing: field_1.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_array_expression_semi(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["attributes", "elements", "length"])?;
-    let field_0 = resolve_field(node, "attributes", true)?;
-    let field_1 = resolve_field(node, "elements", true)?;
-    let field_2 = resolve_field(node, "length", true)?;
-    let field_0_renderables = field_0.renderable_items();
-    let template = ArrayExpressionSemiTemplate {
-        attributes: ::sittir_core::filters::ListNonterminalView {
-            items: field_0_renderables.as_slice(),
-            separator: field_0.separator,
-            leading: field_0.leading_sep,
-            trailing: field_0.trailing_sep,
-        },
-        elements: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-        length: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_closure_expression_block(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["body", "return_type"])?;
-    let field_0 = resolve_field(node, "body", true)?;
-    let field_1 = resolve_field(node, "return_type", false)?;
-    let template = ClosureExpressionBlockTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        return_type: match field_1.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_closure_expression_expr(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["body"])?;
-    let field_0 = resolve_field(node, "body", true)?;
-    let template = _ClosureExpressionExprTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_delim_token_tree_brace(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _DelimTokenTreeBraceTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_delim_token_tree_bracket(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _DelimTokenTreeBracketTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_delim_token_tree_paren(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _DelimTokenTreeParenTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_expression_statement_block_ending(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _ExpressionStatementBlockEndingTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_expression_statement_with_semi(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _ExpressionStatementWithSemiTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
 fn render_hidden_field_identifier(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
@@ -24507,35 +24137,6 @@ fn render_hidden_field_identifier(node: &NodeData) -> Result<String, ::askama::E
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-    };
-    template.render()
-}
-
-fn render_hidden_field_pattern_named(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["name", "pattern"])?;
-    let field_0 = resolve_field(node, "name", true)?;
-    let field_1 = resolve_field(node, "pattern", true)?;
-    let template = FieldPatternNamedTemplate {
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_field_pattern_shorthand(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["name"])?;
-    let field_0 = resolve_field(node, "name", true)?;
-    let template = _FieldPatternShorthandTemplate {
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_foreign_mod_item_body(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["body"])?;
-    let field_0 = resolve_field(node, "body", true)?;
-    let template = _ForeignModItemBodyTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -24563,15 +24164,6 @@ fn render_hidden_function_type_trait_form(node: &NodeData) -> Result<String, ::a
     template.render()
 }
 
-fn render_hidden_impl_item_body(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["body"])?;
-    let field_0 = resolve_field(node, "body", true)?;
-    let template = _ImplItemBodyTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-    };
-    template.render()
-}
-
 fn render_hidden_let_chain(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
@@ -24582,190 +24174,6 @@ fn render_hidden_let_chain(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-    };
-    template.render()
-}
-
-fn render_hidden_line_comment_doc(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["doc", "inner", "outer"])?;
-    let field_0 = resolve_field(node, "doc", true)?;
-    let field_1 = resolve_field(node, "inner", false)?;
-    let field_2 = resolve_field(node, "outer", false)?;
-    let template = LineCommentDocTemplate {
-        doc: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        inner: match field_1.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-        },
-        outer: match field_2.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_macro_definition_brace(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _MacroDefinitionBraceTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_macro_definition_bracket(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _MacroDefinitionBracketTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_macro_definition_paren(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _MacroDefinitionParenTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_match_arm_block_ending(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["value"])?;
-    let field_0 = resolve_field(node, "value", true)?;
-    let template = _MatchArmBlockEndingTemplate {
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_match_arm_with_comma(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["value"])?;
-    let field_0 = resolve_field(node, "value", true)?;
-    let template = MatchArmWithCommaTemplate {
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_mod_item_inline(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["body"])?;
-    let field_0 = resolve_field(node, "body", true)?;
-    let template = _ModItemInlineTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_or_pattern_binary(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["left", "right"])?;
-    let field_0 = resolve_field(node, "left", true)?;
-    let field_1 = resolve_field(node, "right", true)?;
-    let template = OrPatternBinaryTemplate {
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_or_pattern_prefix(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["right"])?;
-    let field_0 = resolve_field(node, "right", true)?;
-    let template = OrPatternPrefixTemplate {
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_pointer_type_mut(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _PointerTypeMutTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_range_expression_bare(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["operator"])?;
-    let field_0 = resolve_field(node, "operator", true)?;
-    let template = _RangeExpressionBareTemplate {
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_range_expression_binary(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["end", "operator", "start"])?;
-    let field_0 = resolve_field(node, "end", true)?;
-    let field_1 = resolve_field(node, "operator", true)?;
-    let field_2 = resolve_field(node, "start", true)?;
-    let template = RangeExpressionBinaryTemplate {
-        end: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-        start: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_range_expression_postfix(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["operator", "start"])?;
-    let field_0 = resolve_field(node, "operator", true)?;
-    let field_1 = resolve_field(node, "start", true)?;
-    let template = RangeExpressionPostfixTemplate {
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        start: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_range_expression_prefix(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["end", "operator"])?;
-    let field_0 = resolve_field(node, "end", true)?;
-    let field_1 = resolve_field(node, "operator", true)?;
-    let template = RangeExpressionPrefixTemplate {
-        end: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_range_pattern_left_with_right(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["right"])?;
-    let field_0 = resolve_field(node, "right", true)?;
-    let template = RangePatternLeftWithRightTemplate {
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_range_pattern_prefix(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["right"])?;
-    let field_0 = resolve_field(node, "right", true)?;
-    let template = RangePatternPrefixTemplate {
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -24798,140 +24206,10 @@ fn render_hidden_reserved_identifier(node: &NodeData) -> Result<String, ::askama
     template.render()
 }
 
-fn render_hidden_struct_item_brace(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["body"])?;
-    let field_0 = resolve_field(node, "body", true)?;
-    let children_renderables = children.renderable_items();
-    let template = StructItemBraceTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_struct_item_tuple(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["body"])?;
-    let field_0 = resolve_field(node, "body", true)?;
-    let children_renderables = children.renderable_items();
-    let template = StructItemTupleTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_token_tree_brace(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _TokenTreeBraceTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_token_tree_bracket(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _TokenTreeBracketTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_token_tree_paren(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _TokenTreeParenTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_token_tree_pattern_brace(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _TokenTreePatternBraceTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_token_tree_pattern_bracket(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _TokenTreePatternBracketTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_token_tree_pattern_paren(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _TokenTreePatternParenTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
 fn render_hidden_type_identifier(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = TypeIdentifierTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_visibility_modifier_crate(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _VisibilityModifierCrateTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
@@ -24954,22 +24232,6 @@ fn render_hidden_visibility_modifier_in_path(node: &NodeData) -> Result<String, 
             trailing: children.trailing_sep,
         },
         r#in: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_visibility_modifier_pub(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["pub"])?;
-    let field_0 = resolve_field(node, "pub", true)?;
-    let children_renderables = children.renderable_items();
-    let template = VisibilityModifierPubTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-        r#pub: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -27523,52 +26785,13 @@ pub fn render_dispatch(node: &::sittir_core::types::NodeData) -> Result<String, 
         }
     }
     match node.type_.0 {
-        322 => render_hidden_array_expression_list(node), // "_array_expression_list"
-        321 => render_hidden_array_expression_semi(node), // "_array_expression_semi"
-        323 => render_hidden_closure_expression_block(node), // "_closure_expression_block"
-        324 => render_hidden_closure_expression_expr(node), // "_closure_expression_expr"
-        381 => render_hidden_delim_token_tree_brace(node), // "_delim_token_tree_brace"
-        380 => render_hidden_delim_token_tree_bracket(node), // "_delim_token_tree_bracket"
-        379 => render_hidden_delim_token_tree_paren(node), // "_delim_token_tree_paren"
-        366 => render_hidden_expression_statement_block_ending(node), // "_expression_statement_block_ending"
-        365 => render_hidden_expression_statement_with_semi(node), // "_expression_statement_with_semi"
-        414 => render_hidden_field_identifier(node), // "_field_identifier"
-        326 => render_hidden_field_pattern_named(node), // "_field_pattern_named"
-        325 => render_hidden_field_pattern_shorthand(node), // "_field_pattern_shorthand"
-        368 => render_hidden_foreign_mod_item_body(node), // "_foreign_mod_item_body"
-        328 => render_hidden_function_type_fn_form(node), // "_function_type_fn_form"
-        327 => render_hidden_function_type_trait_form(node), // "_function_type_trait_form"
-        329 => render_hidden_impl_item_body(node), // "_impl_item_body"
+        414 => render_hidden_field_identifier(node), // "_field_identifier" | "field_identifier"
+        328 => render_hidden_function_type_fn_form(node), // "_function_type_fn_form" | "function_type_fn_form"
+        327 => render_hidden_function_type_trait_form(node), // "_function_type_trait_form" | "function_type_trait_form"
         269 => render_hidden_let_chain(node), // "_let_chain"
-        372 => render_hidden_line_comment_doc(node), // "_line_comment_doc"
-        333 => render_hidden_macro_definition_brace(node), // "_macro_definition_brace"
-        332 => render_hidden_macro_definition_bracket(node), // "_macro_definition_bracket"
-        331 => render_hidden_macro_definition_paren(node), // "_macro_definition_paren"
-        370 => render_hidden_match_arm_block_ending(node), // "_match_arm_block_ending"
-        369 => render_hidden_match_arm_with_comma(node), // "_match_arm_with_comma"
-        335 => render_hidden_mod_item_inline(node), // "_mod_item_inline"
-        336 => render_hidden_or_pattern_binary(node), // "_or_pattern_binary"
-        337 => render_hidden_or_pattern_prefix(node), // "_or_pattern_prefix"
-        359 => render_hidden_pointer_type_mut(node), // "_pointer_type_mut"
-        341 => render_hidden_range_expression_bare(node), // "_range_expression_bare"
-        338 => render_hidden_range_expression_binary(node), // "_range_expression_binary"
-        339 => render_hidden_range_expression_postfix(node), // "_range_expression_postfix"
-        340 => render_hidden_range_expression_prefix(node), // "_range_expression_prefix"
-        343 => render_hidden_range_pattern_left_with_right(node), // "_range_pattern_left_with_right"
-        342 => render_hidden_range_pattern_prefix(node), // "_range_pattern_prefix"
-        362 => render_hidden_reference_expression_raw_mut(node), // "_reference_expression_raw_mut"
-        345 => render_hidden_struct_item_brace(node), // "_struct_item_brace"
-        346 => render_hidden_struct_item_tuple(node), // "_struct_item_tuple"
-        378 => render_hidden_token_tree_brace(node), // "_token_tree_brace"
-        377 => render_hidden_token_tree_bracket(node), // "_token_tree_bracket"
-        376 => render_hidden_token_tree_paren(node), // "_token_tree_paren"
-        375 => render_hidden_token_tree_pattern_brace(node), // "_token_tree_pattern_brace"
-        374 => render_hidden_token_tree_pattern_bracket(node), // "_token_tree_pattern_bracket"
-        373 => render_hidden_token_tree_pattern_paren(node), // "_token_tree_pattern_paren"
-        417 => render_hidden_type_identifier(node), // "_type_identifier"
-        348 => render_hidden_visibility_modifier_crate(node), // "_visibility_modifier_crate"
-        350 => render_hidden_visibility_modifier_in_path(node), // "_visibility_modifier_in_path"
-        349 => render_hidden_visibility_modifier_pub(node), // "_visibility_modifier_pub"
+        362 => render_hidden_reference_expression_raw_mut(node), // "_reference_expression_raw_mut" | "reference_expression_raw_mut"
+        417 => render_hidden_type_identifier(node), // "_type_identifier" | "type_identifier"
+        350 => render_hidden_visibility_modifier_in_path(node), // "_visibility_modifier_in_path" | "visibility_modifier_in_path"
         235 => render_abstract_type(node), // "abstract_type"
         257 => render_arguments(node), // "arguments"
         258 => render_array_expression(node), // "array_expression"
@@ -27588,6 +26811,7 @@ pub fn render_dispatch(node: &::sittir_core::types::NodeData) -> Result<String, 
         284 => render_break_expression(node), // "break_expression"
         256 => render_call_expression(node), // "call_expression"
         305 => render_captured_pattern(node), // "captured_pattern"
+        324 => render_closure_expression_expr(node), // "closure_expression_expr"
         281 => render_closure_expression(node), // "closure_expression"
         282 => render_closure_parameters(node), // "closure_parameters"
         252 => render_compound_assignment_expr(node), // "compound_assignment_expr"
@@ -27596,12 +26820,17 @@ pub fn render_dispatch(node: &::sittir_core::types::NodeData) -> Result<String, 
         200 => render_const_parameter(node), // "const_parameter"
         285 => render_continue_expression(node), // "continue_expression"
         175 => render_declaration_list(node), // "declaration_list"
+        381 => render_delim_token_tree_brace(node), // "delim_token_tree_brace"
+        380 => render_delim_token_tree_bracket(node), // "delim_token_tree_bracket"
+        379 => render_delim_token_tree_paren(node), // "delim_token_tree_paren"
         240 => render_delim_token_tree(node), // "delim_token_tree"
         236 => render_dynamic_type(node), // "dynamic_type"
         271 => render_else_clause(node), // "else_clause"
         178 => render_enum_item(node), // "enum_item"
         179 => render_enum_variant_list(node), // "enum_variant_list"
         180 => render_enum_variant(node), // "enum_variant"
+        366 => render_expression_statement_block_ending(node), // "expression_statement_block_ending"
+        365 => render_expression_statement_with_semi(node), // "expression_statement_with_semi"
         160 => render_expression_statement(node), // "expression_statement"
         184 => render_extern_crate_declaration(node), // "extern_crate_declaration"
         214 => render_extern_modifier(node), // "extern_modifier"
@@ -27610,9 +26839,11 @@ pub fn render_dispatch(node: &::sittir_core::types::NodeData) -> Result<String, 
         288 => render_field_expression(node), // "field_expression"
         263 => render_field_initializer_list(node), // "field_initializer_list"
         265 => render_field_initializer(node), // "field_initializer"
+        325 => render_field_pattern_shorthand(node), // "field_pattern_shorthand"
         300 => render_field_pattern(node), // "field_pattern"
         279 => render_for_expression(node), // "for_expression"
         221 => render_for_lifetimes(node), // "for_lifetimes"
+        368 => render_foreign_mod_item_body(node), // "foreign_mod_item_body"
         174 => render_foreign_mod_item(node), // "foreign_mod_item"
         188 => render_function_item(node), // "function_item"
         190 => render_function_modifiers(node), // "function_modifiers"
@@ -27625,6 +26856,7 @@ pub fn render_dispatch(node: &::sittir_core::types::NodeData) -> Result<String, 
         226 => render_generic_type(node), // "generic_type"
         197 => render_higher_ranked_trait_bound(node), // "higher_ranked_trait_bound"
         267 => render_if_expression(node), // "if_expression"
+        329 => render_impl_item_body(node), // "impl_item_body"
         193 => render_impl_item(node), // "impl_item"
         286 => render_index_expression(node), // "index_expression"
         171 => render_inner_attribute_item(node), // "inner_attribute_item"
@@ -27636,13 +26868,18 @@ pub fn render_dispatch(node: &::sittir_core::types::NodeData) -> Result<String, 
         219 => render_lifetime(node), // "lifetime"
         314 => render_line_comment(node), // "line_comment"
         278 => render_loop_expression(node), // "loop_expression"
+        333 => render_macro_definition_brace(node), // "macro_definition_brace"
+        332 => render_macro_definition_bracket(node), // "macro_definition_bracket"
+        331 => render_macro_definition_paren(node), // "macro_definition_paren"
         161 => render_macro_definition(node), // "macro_definition"
         239 => render_macro_invocation(node), // "macro_invocation"
         162 => render_macro_rule(node), // "macro_rule"
+        370 => render_match_arm_block_ending(node), // "match_arm_block_ending"
         274 => render_match_arm(node), // "match_arm"
         273 => render_match_block(node), // "match_block"
         272 => render_match_expression(node), // "match_expression"
         276 => render_match_pattern(node), // "match_pattern"
+        335 => render_mod_item_inline(node), // "mod_item_inline"
         173 => render_mod_item(node), // "mod_item"
         302 => render_mut_pattern(node), // "mut_pattern"
         310 => render_negative_literal(node), // "negative_literal"
@@ -27651,8 +26888,10 @@ pub fn render_dispatch(node: &::sittir_core::types::NodeData) -> Result<String, 
         213 => render_parameter(node), // "parameter"
         210 => render_parameters(node), // "parameters"
         259 => render_parenthesized_expression(node), // "parenthesized_expression"
+        359 => render_pointer_type_mut(node), // "pointer_type_mut"
         233 => render_pointer_type(node), // "pointer_type"
         218 => render_qualified_type(node), // "qualified_type"
+        341 => render_range_expression_bare(node), // "range_expression_bare"
         246 => render_range_expression(node), // "range_expression"
         303 => render_range_pattern(node), // "range_pattern"
         312 => render_raw_string_literal(node), // "raw_string_literal"
@@ -27678,6 +26917,12 @@ pub fn render_dispatch(node: &::sittir_core::types::NodeData) -> Result<String, 
         165 => render_token_binding_pattern(node), // "token_binding_pattern"
         166 => render_token_repetition_pattern(node), // "token_repetition_pattern"
         169 => render_token_repetition(node), // "token_repetition"
+        378 => render_token_tree_brace(node), // "token_tree_brace"
+        377 => render_token_tree_bracket(node), // "token_tree_bracket"
+        376 => render_token_tree_paren(node), // "token_tree_paren"
+        375 => render_token_tree_pattern_brace(node), // "token_tree_pattern_brace"
+        374 => render_token_tree_pattern_bracket(node), // "token_tree_pattern_bracket"
+        373 => render_token_tree_pattern_paren(node), // "token_tree_pattern_paren"
         164 => render_token_tree_pattern(node), // "token_tree_pattern"
         168 => render_token_tree(node), // "token_tree"
         196 => render_trait_bounds(node), // "trait_bounds"
@@ -27703,6 +26948,7 @@ pub fn render_dispatch(node: &::sittir_core::types::NodeData) -> Result<String, 
         207 => render_use_list(node), // "use_list"
         209 => render_use_wildcard(node), // "use_wildcard"
         212 => render_variadic_parameter(node), // "variadic_parameter"
+        348 => render_visibility_modifier_crate(node), // "visibility_modifier_crate"
         215 => render_visibility_modifier(node), // "visibility_modifier"
         191 => render_where_clause(node), // "where_clause"
         192 => render_where_predicate(node), // "where_predicate"
