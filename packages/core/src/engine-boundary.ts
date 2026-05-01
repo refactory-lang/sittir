@@ -11,4 +11,9 @@ export type {
 	ParseAndReadResult,
 	JsEngineOptions
 } from './engine.ts';
-export { assertNativeNodeData, isNativeNodeData } from './native-boundary.ts';
+export {
+	assertRenderableNodeData,
+	isRenderableNodeData,
+	assertNativeNodeData,
+	isNativeNodeData
+} from './native-boundary.ts';

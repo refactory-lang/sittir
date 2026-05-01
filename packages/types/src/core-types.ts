@@ -102,23 +102,6 @@ export interface AnyNodeData {
 	$format?: FormatRecord;
 }
 
-export type NativeFieldValue =
-	| NativeNodeData
-	| readonly NativeNodeData[]
-	| string;
-
-export interface NativeNodeData {
-	/** Phase D: numeric KindId, same as AnyNodeData.$type. */
-	readonly $type: number;
-	readonly $source: 'ts' | 'sg' | 'factory';
-	readonly $named: boolean;
-	readonly $fields?: { readonly [key: string]: NativeFieldValue };
-	readonly $children?: readonly NativeNodeData[];
-	readonly $text?: string;
-	readonly $span?: { readonly start: number; readonly end: number };
-	readonly $nodeId?: NodeId;
-}
-
 // ---------------------------------------------------------------------------
 // YAML render templates — ast-grep-style $VARIABLE syntax
 // ---------------------------------------------------------------------------

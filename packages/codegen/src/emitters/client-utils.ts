@@ -589,7 +589,7 @@ function emitNativeTransportAssertions(
 		' * This intentionally validates the generated transport shape here instead of'
 	);
 	lines.push(
-		' * routing through the generic @sittir/core NativeNodeData validator.'
+		' * routing through the generic @sittir/core assertRenderableNodeData validator.'
 	);
 	lines.push(' */');
 	lines.push(

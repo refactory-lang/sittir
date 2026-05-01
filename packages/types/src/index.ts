@@ -24,8 +24,6 @@ import type { CamelCase } from 'type-fest';
 
 export type {
 	AnyNodeData,
-	NativeNodeData,
-	NativeFieldValue,
 	NodeId,
 	NodeFieldValue,
 	NodeChildValue,
