@@ -250,6 +250,7 @@ const outDir = cliArgs.outputDir;
 
 // Write source files
 writeFile(join(outDir, 'grammar.ts'), result.grammar);
+writeFile(join(outDir, 'engine.ts'), result.engine);
 writeFile(join(outDir, 'types.ts'), result.types);
 writeFile(join(outDir, 'factories.ts'), result.factories);
 writeFile(join(outDir, 'wrap.ts'), result.wrap);

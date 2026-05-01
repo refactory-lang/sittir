@@ -34,6 +34,7 @@ import { emitIndex } from '../emitters/index-file.ts';
 import { emitSuggested } from '../emitters/suggested.ts';
 import { emitIs } from '../emitters/is.ts';
 import { emitNodeModel } from '../emitters/node-model.ts';
+import { emitEngine } from '../emitters/engine.ts';
 import { loadGeneratedIdTables } from './generated-metadata.ts';
 
 import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';
@@ -44,6 +45,8 @@ import type { GeneratedIdTables } from './generated-metadata.ts'; // exposed via
 export interface GeneratedFiles {
 	grammar: string;
 	types: string;
+	/** engine.ts — thin wrapper around createGrammarEngine from @sittir/core/engine */
+	engine: string;
 	/** Per-rule `.jinja` files (feature 011). `EmittedTemplates.bodies`
 	 *  is keyed by rule kind with the full file contents (incl.
 	 *  `@generated` header). Separator / flank metadata lives INLINE
@@ -180,6 +183,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// directly. No side-channel map plumbing, no NodeMap→Hydrated adapter.
 	return {
 		grammar: emitGrammar({ grammar: cfg.grammar }),
+		engine: emitEngine({ grammar: cfg.grammar }),
 		types: emitTypes({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
 		jinjaTemplates: emitJinjaTemplates({ grammar: cfg.grammar, nodeMap }),
 		factories: emitFactories({
