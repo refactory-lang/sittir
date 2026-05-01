@@ -2258,15 +2258,15 @@ function collectUsedSupertypeNames(
 
 /**
  * Build a `Map<string, number>` from `kindEntries` for O(1) lookup by kind.
- * Also indexes `displayName` when present so literal kinds (e.g. `"+"`)
+ * Also indexes `symbolName` when present so literal kinds (e.g. `"+"`)
  * resolve the same way as their parser-symbol names (`PLUS`).
  */
 function buildKindIdByKind(kindEntries: readonly KindEnumEntry[]): ReadonlyMap<string, number> {
 	const map = new Map<string, number>();
 	for (const e of kindEntries) {
 		map.set(e.kind, e.id);
-		if (e.displayName !== undefined && !map.has(e.displayName)) {
-			map.set(e.displayName, e.id);
+		if (e.symbolName !== undefined && !map.has(e.symbolName)) {
+			map.set(e.symbolName, e.id);
 		}
 	}
 	return map;
@@ -2564,17 +2564,17 @@ function renderAnyTransportWithNapiFromValue(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[]
 ): string[] {
-	// Index by both `kind` (canonical catalog name) and `displayName` (anon-token
+	// Index by both `kind` (canonical catalog name) and `symbolName` (anon-token
 	// literal text). Literal arms are keyed by `literal.kind`, which for
 	// component literals carries the literal text (`"+"`) rather than the
-	// parser-symbol name (`"PLUS"`). Without the displayName index, `+` and
+	// parser-symbol name (`"PLUS"`). Without the symbolName index, `+` and
 	// other operator-token literals would fall through to `id === undefined` and
 	// silently skip — leaving the dispatch incomplete.
 	const kindIdByKind = new Map<string, number>();
 	for (const e of kindEntries) {
 		kindIdByKind.set(e.kind, e.id);
-		if (e.displayName !== undefined && !kindIdByKind.has(e.displayName)) {
-			kindIdByKind.set(e.displayName, e.id);
+		if (e.symbolName !== undefined && !kindIdByKind.has(e.symbolName)) {
+			kindIdByKind.set(e.symbolName, e.id);
 		}
 	}
 
