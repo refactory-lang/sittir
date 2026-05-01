@@ -1355,9 +1355,9 @@ function renderTypedDispatch(
 	// callers of that function. The impl delegates to render_transport_dispatch
 	// so the full per-kind dispatch is still exercised — just via the trait.
 	lines.push(`impl ::sittir_core::types::RenderableTransport for AnyTransport {`);
-	lines.push(`    fn render_into<W: ::std::fmt::Write + ?Sized>(`);
+	lines.push(`    fn render_into(`);
 	lines.push(`        &self,`);
-	lines.push(`        dest: &mut W,`);
+	lines.push(`        dest: &mut dyn ::std::fmt::Write,`);
 	lines.push(`    ) -> Result<(), ::askama::Error> {`);
 	lines.push(`        let s = render_transport_dispatch(self)?;`);
 	lines.push(`        dest.write_str(&s).map_err(::askama::Error::from)`);
@@ -1665,12 +1665,17 @@ function renderTypedFormFn(
 }
 
 /**
- * Emit the two-step Rust boilerplate that converts a list-shaped transport
- * slot into a `*_buf: Vec<Renderable>` ready for `ListNonterminalView`.
+ * Emit the Rust boilerplate that converts a list-shaped transport slot into a
+ * `*_buf: Vec<Renderable>` ready for `ListNonterminalView`.
  *
- * For concrete slots the element is already a typed struct reference —
- * no `as_ref()` Box deref needed. For heterogeneous (fallback) slots the
- * existing Box deref applies.
+ * For **concrete / supertype** slots: renders each element to a `String` first,
+ * then borrows as `Renderable::Text`. Two allocations per list item but fully
+ * sound for typed transport references.
+ *
+ * For **heterogeneous** slots (`Box<AnyTransport>`): emits
+ * `Renderable::Transport(t.as_ref())` directly — zero intermediate String
+ * allocation. The `Renderable::Transport` variant streams into any
+ * `FastWritable` destination via `RenderableTransport::render_into`.
  *
  * @param ident - Rust identifier base (e.g. `"children"`, `"parameters"`).
  * @param required - When `true`, the slot is a required Vec; when `false`
@@ -1686,27 +1691,38 @@ function emitListSlotBuffer(
 	cls: SlotClass = { tag: 'heterogeneous' }
 ): string[] {
 	const lines: string[] = [];
-	// For concrete slots the element is `&ConcreteType` (no Box).
-	// For heterogeneous slots the element is `Box<AnyTransport>` (needs .as_ref()).
-	const isErased = cls.tag === 'heterogeneous';
-	const itemExpr = isErased ? 't.as_ref()' : 't';
+	const C = '::sittir_core::filters::';
+
+	if (cls.tag === 'heterogeneous') {
+		// Zero-allocation path: wrap each Box<AnyTransport> as Renderable::Transport.
+		if (required) {
+			lines.push(`    let ${ident}_buf: Vec<${C}Renderable<'_>> = node.${ident}.iter()`);
+			lines.push(`        .map(|t| ${C}Renderable::Transport(t.as_ref()))`);
+			lines.push(`        .collect();`);
+		} else {
+			lines.push(`    let ${ident}_owned: &[Box<AnyTransport>] = node.${ident}.as_deref().unwrap_or(&[]);`);
+			lines.push(`    let ${ident}_buf: Vec<${C}Renderable<'_>> = ${ident}_owned.iter()`);
+			lines.push(`        .map(|t| ${C}Renderable::Transport(t.as_ref()))`);
+			lines.push(`        .collect();`);
+		}
+		return lines;
+	}
+
+	// Concrete / supertype path: render to String, then borrow as Text.
+	const itemExpr = 't';
 	const renderCall = buildSlotRenderCall(cls, itemExpr);
 	if (required) {
 		lines.push(`    let ${ident}_strings: Vec<String> = node.${ident}.iter()`);
 		lines.push(`        .map(|t| ${renderCall})`);
 		lines.push(`        .collect::<Result<Vec<_>, _>>()?;`);
 	} else {
-		if (isErased) {
-			lines.push(`    let ${ident}_owned: &[Box<AnyTransport>] = node.${ident}.as_deref().unwrap_or(&[]);`);
-		} else {
-			lines.push(`    let ${ident}_owned = node.${ident}.as_deref().unwrap_or(&[]);`);
-		}
+		lines.push(`    let ${ident}_owned = node.${ident}.as_deref().unwrap_or(&[]);`);
 		lines.push(`    let ${ident}_strings: Vec<String> = ${ident}_owned.iter()`);
 		lines.push(`        .map(|t| ${renderCall})`);
 		lines.push(`        .collect::<Result<Vec<_>, _>>()?;`);
 	}
-	lines.push(`    let ${ident}_buf: Vec<::sittir_core::filters::Renderable<'_>> = ${ident}_strings.iter()`);
-	lines.push(`        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))`);
+	lines.push(`    let ${ident}_buf: Vec<${C}Renderable<'_>> = ${ident}_strings.iter()`);
+	lines.push(`        .map(|s| ${C}Renderable::Text(s.as_str()))`);
 	lines.push(`        .collect();`);
 	return lines;
 }
@@ -1777,6 +1793,10 @@ function buildTypedTemplateBody(
 		// Single-valued 'field' view: rendered inline in template construction below.
 	}
 
+	// Pre-render pass: only for non-heterogeneous single-value fields.
+	// Heterogeneous (Box<AnyTransport>) fields are handled inline in the template
+	// construction block via Renderable::Transport — no intermediate String needed.
+
 	// Render scalar fields to owned Strings (will be borrowed in the template literal).
 	for (const f of struct.fields) {
 		if (f.view !== 'scalar') continue;
@@ -1784,18 +1804,16 @@ function buildTypedTemplateBody(
 		const rIdent = rustFieldIdent(f.name);
 		const kinds = fieldKindsByName.get(f.name) ?? [];
 		const cls = classify(kinds);
-		const isErased = cls.tag === 'heterogeneous';
+		if (cls.tag === 'heterogeneous') continue; // handled inline via Transport variant
 		if (f.required) {
-			const expr = isErased ? `node.${rIdent}.as_ref()` : `&node.${rIdent}`;
 			lines.push(
-				`    let ${rIdent}_text = ${buildSlotRenderCall(cls, expr)}?;`
+				`    let ${rIdent}_text = ${buildSlotRenderCall(cls, `&node.${rIdent}`)}?;`
 			);
 		} else {
 			lines.push(
 				`    let ${rIdent}_text = if let Some(v) = &node.${rIdent} {`
 			);
-			const expr = isErased ? `v.as_ref()` : `v`;
-			lines.push(`        ${buildSlotRenderCall(cls, expr)}?`);
+			lines.push(`        ${buildSlotRenderCall(cls, 'v')}?`);
 			lines.push(`    } else {`);
 			lines.push(`        String::new()`);
 			lines.push(`    };`);
@@ -1809,18 +1827,16 @@ function buildTypedTemplateBody(
 		const rIdent = rustFieldIdent(f.name);
 		const kinds = fieldKindsByName.get(f.name) ?? [];
 		const cls = classify(kinds);
-		const isErased = cls.tag === 'heterogeneous';
+		if (cls.tag === 'heterogeneous') continue; // handled inline via Transport variant
 		if (f.required) {
-			const expr = isErased ? `node.${rIdent}.as_ref()` : `&node.${rIdent}`;
 			lines.push(
-				`    let ${rIdent}_rendered = ${buildSlotRenderCall(cls, expr)}?;`
+				`    let ${rIdent}_rendered = ${buildSlotRenderCall(cls, `&node.${rIdent}`)}?;`
 			);
 		} else {
 			lines.push(
 				`    let ${rIdent}_rendered = match &node.${rIdent} {`
 			);
-			const expr = isErased ? `v.as_ref()` : `v`;
-			lines.push(`        Some(v) => Some(${buildSlotRenderCall(cls, expr)}?),`);
+			lines.push(`        Some(v) => Some(${buildSlotRenderCall(cls, 'v')}?),`);
 			lines.push(`        None => None,`);
 			lines.push(`    };`);
 		}
@@ -1850,6 +1866,9 @@ function buildTypedTemplateBody(
 	for (const f of struct.fields) {
 		const rIdent = rustFieldIdent(f.name);
 		const C = '::sittir_core::filters::';
+		const kinds = fieldKindsByName.get(f.name) ?? [];
+		const cls = classify(kinds);
+		const isErased = cls.tag === 'heterogeneous';
 		if (f.view === 'list' || (f.view === 'field' && f.multiple)) {
 			// Always-list slot. Empty list when transport-field absent.
 			const items = f.hasTransportField ? `${rIdent}_buf.as_slice()` : '&[]';
@@ -1860,30 +1879,49 @@ function buildTypedTemplateBody(
 			lines.push(`            trailing: false,`);
 			lines.push(`        },`);
 		} else if (f.required) {
-			// Required scalar (view='scalar' or view='field' single required).
-			if (f.view === 'scalar' && f.hasTransportField) {
+			// Required single-value slot (view='scalar' or view='field', non-list).
+			if (!f.hasTransportField) {
+				// Virtual presentation slot — no backing transport field.
+				lines.push(
+					`        ${rIdent}: ${C}SingleNonterminalView(${C}Renderable::Text("")),`
+				);
+			} else if (isErased) {
+				// Heterogeneous (Box<AnyTransport>) — zero-allocation Transport variant.
+				lines.push(
+					`        ${rIdent}: ${C}SingleNonterminalView(${C}Renderable::Transport(node.${rIdent}.as_ref())),`
+				);
+			} else if (f.view === 'scalar') {
 				lines.push(
 					`        ${rIdent}: ${C}SingleNonterminalView(${C}Renderable::Text(${rIdent}_text.as_str())),`
 				);
-			} else if (f.hasTransportField) {
+			} else {
 				// view='field' single required — pre-rendered to String.
 				lines.push(
 					`        ${rIdent}: ${C}SingleNonterminalView(${C}Renderable::Text(${rIdent}_rendered.as_str())),`
 				);
-			} else {
-				// Virtual presentation slot — no backing transport field. Wrap
-				// empty Text since SingleNonterminalView has no Missing variant.
-				lines.push(
-					`        ${rIdent}: ${C}SingleNonterminalView(${C}Renderable::Text("")),`
-				);
 			}
 		} else {
-			// Optional scalar (view='scalar' optional, or view='field' single optional).
-			if (f.view === 'scalar' && f.hasTransportField) {
+			// Optional single-value slot.
+			if (!f.hasTransportField) {
+				lines.push(`        ${rIdent}: ${C}OptionalNonterminalView::Missing,`);
+			} else if (isErased) {
+				// Heterogeneous (Box<AnyTransport>) — zero-allocation Transport variant.
+				lines.push(
+					`        ${rIdent}: match &node.${rIdent} {`
+				);
+				lines.push(
+					`            Some(v) => ${C}OptionalNonterminalView::Present(${C}Renderable::Transport(v.as_ref())),`
+				);
+				lines.push(
+					`            None => ${C}OptionalNonterminalView::Missing,`
+				);
+				lines.push(`        },`);
+			} else if (f.view === 'scalar') {
 				lines.push(
 					`        ${rIdent}: if node.${rIdent}.is_some() { ${C}OptionalNonterminalView::Present(${C}Renderable::Text(${rIdent}_text.as_str())) } else { ${C}OptionalNonterminalView::Missing },`
 				);
-			} else if (f.hasTransportField) {
+			} else {
+				// view='field' single optional — pre-rendered to Option<String>.
 				lines.push(`        ${rIdent}: match &${rIdent}_rendered {`);
 				lines.push(
 					`            Some(s) => ${C}OptionalNonterminalView::Present(${C}Renderable::Text(s.as_str())),`
@@ -1892,8 +1930,6 @@ function buildTypedTemplateBody(
 					`            None => ${C}OptionalNonterminalView::Missing,`
 				);
 				lines.push(`        },`);
-			} else {
-				lines.push(`        ${rIdent}: ${C}OptionalNonterminalView::Missing,`);
 			}
 		}
 	}
@@ -2519,9 +2555,9 @@ function emitSupertypeTransportEnum(
 	// references are fine at Rust module scope).
 	const supertypeRenderFn = `render_${rustSnakeIdent(supertypeNode.typeName)}_transport`;
 	lines.push(`impl ::sittir_core::types::RenderableTransport for ${enumName} {`);
-	lines.push(`    fn render_into<W: ::std::fmt::Write + ?Sized>(`);
+	lines.push(`    fn render_into(`);
 	lines.push(`        &self,`);
-	lines.push(`        dest: &mut W,`);
+	lines.push(`        dest: &mut dyn ::std::fmt::Write,`);
 	lines.push(`    ) -> Result<(), ::askama::Error> {`);
 	lines.push(`        let s = ${supertypeRenderFn}(self)?;`);
 	lines.push(`        dest.write_str(&s).map_err(::askama::Error::from)`);
@@ -3245,9 +3281,9 @@ function renderLiteralTransportStruct(
 		// RenderableTransport for LiteralTransport — returns the text field directly.
 		// render_literal_transport takes (_kind, t) so we inline the body here.
 		'impl ::sittir_core::types::RenderableTransport for LiteralTransport {',
-		'    fn render_into<W: ::std::fmt::Write + ?Sized>(',
+		'    fn render_into(',
 		'        &self,',
-		'        dest: &mut W,',
+		'        dest: &mut dyn ::std::fmt::Write,',
 		'    ) -> Result<(), ::askama::Error> {',
 		'        dest.write_str(&self.text).map_err(::askama::Error::from)',
 		'    }',
@@ -3291,9 +3327,9 @@ function renderPolymorphTransportDefs(
 	const polymorphStructName = rustTransportStructName(node);
 	const polymorphRenderFn = rustTypedRenderFnName(node.typeName);
 	lines.push(`impl ::sittir_core::types::RenderableTransport for ${polymorphStructName} {`);
-	lines.push(`    fn render_into<W: ::std::fmt::Write + ?Sized>(`);
+	lines.push(`    fn render_into(`);
 	lines.push(`        &self,`);
-	lines.push(`        dest: &mut W,`);
+	lines.push(`        dest: &mut dyn ::std::fmt::Write,`);
 	lines.push(`    ) -> Result<(), ::askama::Error> {`);
 	lines.push(`        let s = ${polymorphRenderFn}(self)?;`);
 	lines.push(`        dest.write_str(&s).map_err(::askama::Error::from)`);
@@ -3357,9 +3393,9 @@ function renderTransportDataStruct(
 	// struct; forward references are fine in Rust.
 	const renderFn = rustTypedRenderFnName(node.typeName);
 	lines.push(`impl ::sittir_core::types::RenderableTransport for ${structName} {`);
-	lines.push(`    fn render_into<W: ::std::fmt::Write + ?Sized>(`);
+	lines.push(`    fn render_into(`);
 	lines.push(`        &self,`);
-	lines.push(`        dest: &mut W,`);
+	lines.push(`        dest: &mut dyn ::std::fmt::Write,`);
 	lines.push(`    ) -> Result<(), ::askama::Error> {`);
 	lines.push(`        let s = ${renderFn}(self)?;`);
 	lines.push(`        dest.write_str(&s).map_err(::askama::Error::from)`);

@@ -179,17 +179,21 @@ pub struct Edit {
 /// intermediate `String`. The `render_to_string` provided default allocates
 /// once (for the output) rather than pre-allocating per child.
 ///
+/// Object-safe by design: `render_into` takes `&mut dyn std::fmt::Write`
+/// rather than a generic `W`, so the trait can be used as `dyn
+/// RenderableTransport` in heterogeneous template struct fields (the
+/// `Renderable::Transport` variant in `sittir_core::filters`).
+///
 /// Codegen emits `impl RenderableTransport for <Kind>Transport` for every
 /// kind, delegating to the per-kind `render_<kind>_transport` function. The
 /// `AnyTransport` enum also implements this trait by delegating to
-/// `render_transport_dispatch`, so heterogeneous (type-erased) slots can call
-/// `t.as_ref().render_to_string()?` without going through the 400-arm match
-/// at every call site.
+/// `render_transport_dispatch`, enabling zero-copy streaming through
+/// `Renderable::Transport(&node.field as &dyn RenderableTransport)`.
 pub trait RenderableTransport {
     /// Render this transport value into `dest`.
-    fn render_into<W: std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn std::fmt::Write,
     ) -> Result<(), ::askama::Error>;
 
     /// Convenience: render to a fresh `String`. Calls `render_into` once.

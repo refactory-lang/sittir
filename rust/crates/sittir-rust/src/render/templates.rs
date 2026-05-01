@@ -1868,9 +1868,9 @@ pub struct LiteralTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for LiteralTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         dest.write_str(&self.text).map_err(::askama::Error::from)
     }
@@ -2148,9 +2148,9 @@ fn condition_transport_to_any(t: ConditionTransport) -> Box<AnyTransport> {
 }
 
 impl ::sittir_core::types::RenderableTransport for ConditionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_condition_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -2299,9 +2299,9 @@ fn declaration_statement_transport_to_any(t: DeclarationStatementTransport) -> B
 }
 
 impl ::sittir_core::types::RenderableTransport for DeclarationStatementTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_declaration_statement_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -2405,9 +2405,9 @@ fn delim_tokens_transport_to_any(t: DelimTokensTransport) -> Box<AnyTransport> {
 }
 
 impl ::sittir_core::types::RenderableTransport for DelimTokensTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_delim_tokens_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -2676,9 +2676,9 @@ fn expression_transport_to_any(t: ExpressionTransport) -> Box<AnyTransport> {
 }
 
 impl ::sittir_core::types::RenderableTransport for ExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -2777,9 +2777,9 @@ fn expression_ending_with_block_transport_to_any(t: ExpressionEndingWithBlockTra
 }
 
 impl ::sittir_core::types::RenderableTransport for ExpressionEndingWithBlockTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_expression_ending_with_block_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -3043,9 +3043,9 @@ fn expression_except_range_transport_to_any(t: ExpressionExceptRangeTransport) -
 }
 
 impl ::sittir_core::types::RenderableTransport for ExpressionExceptRangeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_expression_except_range_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -3119,9 +3119,9 @@ fn path_transport_to_any(t: PathTransport) -> Box<AnyTransport> {
 }
 
 impl ::sittir_core::types::RenderableTransport for PathTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_path_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -3285,9 +3285,9 @@ fn pattern_transport_to_any(t: PatternTransport) -> Box<AnyTransport> {
 }
 
 impl ::sittir_core::types::RenderableTransport for PatternTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_pattern_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -3441,9 +3441,9 @@ fn statement_transport_to_any(t: StatementTransport) -> Box<AnyTransport> {
 }
 
 impl ::sittir_core::types::RenderableTransport for StatementTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_statement_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -3562,9 +3562,9 @@ fn token_pattern_transport_to_any(t: TokenPatternTransport) -> Box<AnyTransport>
 }
 
 impl ::sittir_core::types::RenderableTransport for TokenPatternTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_token_pattern_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -3678,9 +3678,9 @@ fn tokens_transport_to_any(t: TokensTransport) -> Box<AnyTransport> {
 }
 
 impl ::sittir_core::types::RenderableTransport for TokensTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_tokens_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -3806,9 +3806,9 @@ fn _type_transport_to_any(t: _TypeTransport) -> Box<AnyTransport> {
 }
 
 impl ::sittir_core::types::RenderableTransport for _TypeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__type_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -3902,9 +3902,9 @@ fn use_clause_transport_to_any(t: UseClauseTransport) -> Box<AnyTransport> {
 }
 
 impl ::sittir_core::types::RenderableTransport for UseClauseTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_use_clause_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -3932,9 +3932,9 @@ pub struct ArrayExpressionListTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ArrayExpressionListTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_array_expression_list_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -3960,9 +3960,9 @@ pub struct ArrayExpressionSemiTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ArrayExpressionSemiTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_array_expression_semi_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -3987,9 +3987,9 @@ pub struct ClosureExpressionBlockTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ClosureExpressionBlockTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_closure_expression_block_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4013,9 +4013,9 @@ pub struct _ClosureExpressionExprTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for _ClosureExpressionExprTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__closure_expression_expr_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4040,9 +4040,9 @@ pub struct _DelimTokenTreeBraceTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for _DelimTokenTreeBraceTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__delim_token_tree_brace_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4067,9 +4067,9 @@ pub struct _DelimTokenTreeBracketTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for _DelimTokenTreeBracketTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__delim_token_tree_bracket_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4094,9 +4094,9 @@ pub struct _DelimTokenTreeParenTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for _DelimTokenTreeParenTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__delim_token_tree_paren_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4121,9 +4121,9 @@ pub struct _ExpressionStatementBlockEndingTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for _ExpressionStatementBlockEndingTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__expression_statement_block_ending_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4148,9 +4148,9 @@ pub struct _ExpressionStatementWithSemiTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for _ExpressionStatementWithSemiTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__expression_statement_with_semi_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4175,9 +4175,9 @@ pub struct FieldIdentifierTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for FieldIdentifierTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_field_identifier_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4202,9 +4202,9 @@ pub struct FieldPatternNamedTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for FieldPatternNamedTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_field_pattern_named_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4228,9 +4228,9 @@ pub struct _FieldPatternShorthandTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for _FieldPatternShorthandTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__field_pattern_shorthand_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4254,9 +4254,9 @@ pub struct _ForeignModItemBodyTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for _ForeignModItemBodyTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__foreign_mod_item_body_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4279,9 +4279,9 @@ pub struct ForeignModItemSemiTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ForeignModItemSemiTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_foreign_mod_item_semi_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4306,9 +4306,9 @@ pub struct FunctionTypeFnFormTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for FunctionTypeFnFormTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_function_type_fn_form_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4333,9 +4333,9 @@ pub struct FunctionTypeTraitFormTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for FunctionTypeTraitFormTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_function_type_trait_form_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4359,9 +4359,9 @@ pub struct _ImplItemBodyTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for _ImplItemBodyTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__impl_item_body_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4384,9 +4384,9 @@ pub struct ImplItemSemiTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ImplItemSemiTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_impl_item_semi_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4409,9 +4409,9 @@ pub struct InnerLineDocCommentMarkerTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for InnerLineDocCommentMarkerTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_inner_line_doc_comment_marker_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4434,9 +4434,9 @@ pub struct KwAsyncMarkerTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for KwAsyncMarkerTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_kw_async_marker_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4459,9 +4459,9 @@ pub struct KwMoveMarkerTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for KwMoveMarkerTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_kw_move_marker_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4484,9 +4484,9 @@ pub struct KwNegativeTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for KwNegativeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_kw_negative_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4509,9 +4509,9 @@ pub struct KwOperatorTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for KwOperatorTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_kw_operator_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4534,9 +4534,9 @@ pub struct KwRefMarkerTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for KwRefMarkerTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_kw_ref_marker_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4559,9 +4559,9 @@ pub struct KwStaticMarkerTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for KwStaticMarkerTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_kw_static_marker_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4584,9 +4584,9 @@ pub struct KwUnsafeMarkerTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for KwUnsafeMarkerTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_kw_unsafe_marker_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4611,9 +4611,9 @@ pub struct LetChainTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for LetChainTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_let_chain_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4636,9 +4636,9 @@ pub struct LineCommentContentTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for LineCommentContentTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_line_comment_content_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4662,9 +4662,9 @@ pub struct LineCommentDocTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for LineCommentDocTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_line_comment_doc_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4687,9 +4687,9 @@ pub struct LineCommentRegularDslashTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for LineCommentRegularDslashTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_line_comment_regular_dslash_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4714,9 +4714,9 @@ pub struct _MacroDefinitionBraceTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for _MacroDefinitionBraceTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__macro_definition_brace_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4741,9 +4741,9 @@ pub struct _MacroDefinitionBracketTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for _MacroDefinitionBracketTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__macro_definition_bracket_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4768,9 +4768,9 @@ pub struct _MacroDefinitionParenTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for _MacroDefinitionParenTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__macro_definition_paren_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4794,9 +4794,9 @@ pub struct _MatchArmBlockEndingTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for _MatchArmBlockEndingTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__match_arm_block_ending_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4820,9 +4820,9 @@ pub struct MatchArmWithCommaTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MatchArmWithCommaTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_match_arm_with_comma_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4845,9 +4845,9 @@ pub struct ModItemExternalTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ModItemExternalTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_mod_item_external_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4871,9 +4871,9 @@ pub struct _ModItemInlineTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for _ModItemInlineTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__mod_item_inline_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4898,9 +4898,9 @@ pub struct NonSpecialTokenTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for NonSpecialTokenTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_non_special_token_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4925,9 +4925,9 @@ pub struct OrPatternBinaryTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for OrPatternBinaryTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_or_pattern_binary_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4951,9 +4951,9 @@ pub struct OrPatternPrefixTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for OrPatternPrefixTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_or_pattern_prefix_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -4976,9 +4976,9 @@ pub struct OuterLineDocCommentMarkerTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for OuterLineDocCommentMarkerTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_outer_line_doc_comment_marker_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5001,9 +5001,9 @@ pub struct PointerTypeConstTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for PointerTypeConstTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_pointer_type_const_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5028,9 +5028,9 @@ pub struct _PointerTypeMutTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for _PointerTypeMutTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__pointer_type_mut_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5053,9 +5053,9 @@ pub struct PrimitiveTypeTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for PrimitiveTypeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_primitive_type_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5079,9 +5079,9 @@ pub struct _RangeExpressionBareTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for _RangeExpressionBareTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__range_expression_bare_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5107,9 +5107,9 @@ pub struct RangeExpressionBinaryTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for RangeExpressionBinaryTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_range_expression_binary_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5134,9 +5134,9 @@ pub struct RangeExpressionPostfixTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for RangeExpressionPostfixTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_range_expression_postfix_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5161,9 +5161,9 @@ pub struct RangeExpressionPrefixTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for RangeExpressionPrefixTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_range_expression_prefix_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5186,9 +5186,9 @@ pub struct RangePatternLeftBareTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for RangePatternLeftBareTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_range_pattern_left_bare_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5212,9 +5212,9 @@ pub struct RangePatternLeftWithRightTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for RangePatternLeftWithRightTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_range_pattern_left_with_right_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5238,9 +5238,9 @@ pub struct RangePatternPrefixTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for RangePatternPrefixTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_range_pattern_prefix_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5263,9 +5263,9 @@ pub struct ReferenceExpressionRawConstTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ReferenceExpressionRawConstTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_reference_expression_raw_const_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5290,9 +5290,9 @@ pub struct ReferenceExpressionRawMutTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ReferenceExpressionRawMutTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_reference_expression_raw_mut_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5317,9 +5317,9 @@ pub struct ReservedIdentifierTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ReservedIdentifierTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_reserved_identifier_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5345,9 +5345,9 @@ pub struct StructItemBraceTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for StructItemBraceTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_struct_item_brace_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5373,9 +5373,9 @@ pub struct StructItemTupleTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for StructItemTupleTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_struct_item_tuple_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5398,9 +5398,9 @@ pub struct StructItemUnitTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for StructItemUnitTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_struct_item_unit_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5425,9 +5425,9 @@ pub struct _TokenTreeBraceTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for _TokenTreeBraceTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__token_tree_brace_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5452,9 +5452,9 @@ pub struct _TokenTreeBracketTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for _TokenTreeBracketTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__token_tree_bracket_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5479,9 +5479,9 @@ pub struct _TokenTreeParenTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for _TokenTreeParenTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__token_tree_paren_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5506,9 +5506,9 @@ pub struct _TokenTreePatternBraceTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for _TokenTreePatternBraceTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__token_tree_pattern_brace_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5533,9 +5533,9 @@ pub struct _TokenTreePatternBracketTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for _TokenTreePatternBracketTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__token_tree_pattern_bracket_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5560,9 +5560,9 @@ pub struct _TokenTreePatternParenTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for _TokenTreePatternParenTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__token_tree_pattern_paren_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5587,9 +5587,9 @@ pub struct TypeIdentifierTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TypeIdentifierTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_type_identifier_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5614,9 +5614,9 @@ pub struct _VisibilityModifierCrateTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for _VisibilityModifierCrateTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render__visibility_modifier_crate_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5643,9 +5643,9 @@ pub struct VisibilityModifierInPathTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for VisibilityModifierInPathTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_visibility_modifier_in_path_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5672,9 +5672,9 @@ pub struct VisibilityModifierPubTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for VisibilityModifierPubTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_visibility_modifier_pub_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5697,9 +5697,9 @@ pub struct WildcardPatternTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for WildcardPatternTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_wildcard_pattern_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5725,9 +5725,9 @@ pub struct AbstractTypeTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for AbstractTypeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_abstract_type_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5752,9 +5752,9 @@ pub struct ArgumentsTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ArgumentsTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_arguments_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5792,9 +5792,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ArrayExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_array_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5819,9 +5819,9 @@ pub struct ArrayExpressionUFormSemiTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ArrayExpressionUFormSemiTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_array_expression_uform_semi_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5846,9 +5846,9 @@ pub struct ArrayExpressionUFormListTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ArrayExpressionUFormListTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_array_expression_uform_list_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5873,9 +5873,9 @@ pub struct ArrayTypeTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ArrayTypeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_array_type_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5900,9 +5900,9 @@ pub struct AssignmentExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for AssignmentExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_assignment_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5929,9 +5929,9 @@ pub struct AssociatedTypeTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for AssociatedTypeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_associated_type_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5956,9 +5956,9 @@ pub struct AsyncBlockTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for AsyncBlockTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_async_block_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -5983,9 +5983,9 @@ pub struct AttributeTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for AttributeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_attribute_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6009,9 +6009,9 @@ pub struct AttributeItemTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for AttributeItemTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_attribute_item_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6036,9 +6036,9 @@ pub struct AwaitExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for AwaitExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_await_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6063,9 +6063,9 @@ pub struct BaseFieldInitializerTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for BaseFieldInitializerTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_base_field_initializer_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6091,9 +6091,9 @@ pub struct BinaryExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for BinaryExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_binary_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6119,9 +6119,9 @@ pub struct BlockTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for BlockTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_block_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6145,9 +6145,9 @@ pub struct BlockCommentTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for BlockCommentTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_block_comment_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6170,9 +6170,9 @@ pub struct BooleanLiteralTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for BooleanLiteralTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_boolean_literal_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6197,9 +6197,9 @@ pub struct BoundedTypeTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for BoundedTypeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_bounded_type_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6224,9 +6224,9 @@ pub struct BracketedTypeTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for BracketedTypeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_bracketed_type_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6252,9 +6252,9 @@ pub struct BreakExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for BreakExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_break_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6279,9 +6279,9 @@ pub struct CallExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for CallExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_call_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6307,9 +6307,9 @@ pub struct CapturedPatternTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for CapturedPatternTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_captured_pattern_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6332,9 +6332,9 @@ pub struct CharLiteralTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for CharLiteralTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_char_literal_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6358,9 +6358,9 @@ pub struct ClosureExpressionExprTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ClosureExpressionExprTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_closure_expression_expr_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6398,9 +6398,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClosureExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ClosureExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_closure_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6429,9 +6429,9 @@ pub struct ClosureExpressionUFormBlockTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ClosureExpressionUFormBlockTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_closure_expression_uform_block_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6460,9 +6460,9 @@ pub struct ClosureExpressionUFormExprTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ClosureExpressionUFormExprTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_closure_expression_uform_expr_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6487,9 +6487,9 @@ pub struct ClosureParametersTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ClosureParametersTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_closure_parameters_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6514,9 +6514,9 @@ pub struct CommentTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for CommentTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_comment_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6542,9 +6542,9 @@ pub struct CompoundAssignmentExprTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for CompoundAssignmentExprTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_compound_assignment_expr_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6568,9 +6568,9 @@ pub struct ConstBlockTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ConstBlockTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_const_block_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6598,9 +6598,9 @@ pub struct ConstItemTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ConstItemTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_const_item_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6627,9 +6627,9 @@ pub struct ConstParameterTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ConstParameterTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_const_parameter_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6653,9 +6653,9 @@ pub struct ContinueExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ContinueExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_continue_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6678,9 +6678,9 @@ pub struct CrateTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for CrateTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_crate_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6705,9 +6705,9 @@ pub struct DeclarationListTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for DeclarationListTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_declaration_list_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6732,9 +6732,9 @@ pub struct DelimTokenTreeParenTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for DelimTokenTreeParenTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_delim_token_tree_paren_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6759,9 +6759,9 @@ pub struct DelimTokenTreeBracketTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for DelimTokenTreeBracketTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_delim_token_tree_bracket_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6786,9 +6786,9 @@ pub struct DelimTokenTreeBraceTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for DelimTokenTreeBraceTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_delim_token_tree_brace_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6830,9 +6830,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for DelimTokenTreeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_delim_token_tree_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6857,9 +6857,9 @@ pub struct DelimTokenTreeUFormParenTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for DelimTokenTreeUFormParenTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_delim_token_tree_uform_paren_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6884,9 +6884,9 @@ pub struct DelimTokenTreeUFormBracketTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for DelimTokenTreeUFormBracketTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_delim_token_tree_uform_bracket_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6911,9 +6911,9 @@ pub struct DelimTokenTreeUFormBraceTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for DelimTokenTreeUFormBraceTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_delim_token_tree_uform_brace_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6938,9 +6938,9 @@ pub struct DynamicTypeTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for DynamicTypeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_dynamic_type_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6965,9 +6965,9 @@ pub struct ElseClauseTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ElseClauseTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_else_clause_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -6990,9 +6990,9 @@ pub struct EmptyStatementTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for EmptyStatementTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_empty_statement_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7020,9 +7020,9 @@ pub struct EnumItemTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for EnumItemTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_enum_item_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7049,9 +7049,9 @@ pub struct EnumVariantTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for EnumVariantTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_enum_variant_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7076,9 +7076,9 @@ pub struct EnumVariantListTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for EnumVariantListTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_enum_variant_list_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7101,9 +7101,9 @@ pub struct EscapeSequenceTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for EscapeSequenceTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_escape_sequence_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7128,9 +7128,9 @@ pub struct ExpressionStatementWithSemiTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ExpressionStatementWithSemiTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_expression_statement_with_semi_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7155,9 +7155,9 @@ pub struct ExpressionStatementBlockEndingTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ExpressionStatementBlockEndingTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_expression_statement_block_ending_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7195,9 +7195,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ExpressionStatementTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_expression_statement_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7222,9 +7222,9 @@ pub struct ExpressionStatementUFormWithSemiTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ExpressionStatementUFormWithSemiTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_expression_statement_uform_with_semi_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7249,9 +7249,9 @@ pub struct ExpressionStatementUFormBlockEndingTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ExpressionStatementUFormBlockEndingTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_expression_statement_uform_block_ending_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7279,9 +7279,9 @@ pub struct ExternCrateDeclarationTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ExternCrateDeclarationTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_extern_crate_declaration_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7305,9 +7305,9 @@ pub struct ExternModifierTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ExternModifierTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_extern_modifier_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7334,9 +7334,9 @@ pub struct FieldDeclarationTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for FieldDeclarationTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_field_declaration_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7361,9 +7361,9 @@ pub struct FieldDeclarationListTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for FieldDeclarationListTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_field_declaration_list_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7388,9 +7388,9 @@ pub struct FieldExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for FieldExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_field_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7417,9 +7417,9 @@ pub struct FieldInitializerTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for FieldInitializerTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_field_initializer_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7444,9 +7444,9 @@ pub struct FieldInitializerListTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for FieldInitializerListTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_field_initializer_list_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7470,9 +7470,9 @@ pub struct FieldPatternShorthandTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for FieldPatternShorthandTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_field_pattern_shorthand_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7510,9 +7510,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for FieldPatternTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for FieldPatternTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_field_pattern_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7539,9 +7539,9 @@ pub struct FieldPatternUFormShorthandTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for FieldPatternUFormShorthandTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_field_pattern_uform_shorthand_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7568,9 +7568,9 @@ pub struct FieldPatternUFormNamedTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for FieldPatternUFormNamedTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_field_pattern_uform_named_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7597,9 +7597,9 @@ pub struct ForExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ForExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_for_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7624,9 +7624,9 @@ pub struct ForLifetimesTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ForLifetimesTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_for_lifetimes_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7650,9 +7650,9 @@ pub struct ForeignModItemBodyTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ForeignModItemBodyTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_foreign_mod_item_body_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7690,9 +7690,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForeignModItemTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ForeignModItemTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_foreign_mod_item_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7719,9 +7719,9 @@ pub struct ForeignModItemUFormSemiTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ForeignModItemUFormSemiTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_foreign_mod_item_uform_semi_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7748,9 +7748,9 @@ pub struct ForeignModItemUFormBodyTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ForeignModItemUFormBodyTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_foreign_mod_item_uform_body_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7773,9 +7773,9 @@ pub struct FragmentSpecifierTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for FragmentSpecifierTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_fragment_specifier_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7806,9 +7806,9 @@ pub struct FunctionItemTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for FunctionItemTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_function_item_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7832,9 +7832,9 @@ pub struct FunctionModifiersTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for FunctionModifiersTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_function_modifiers_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7864,9 +7864,9 @@ pub struct FunctionSignatureItemTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for FunctionSignatureItemTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_function_signature_item_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7894,9 +7894,9 @@ pub struct FunctionTypeTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for FunctionTypeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_function_type_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7921,9 +7921,9 @@ pub struct GenBlockTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for GenBlockTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_gen_block_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7948,9 +7948,9 @@ pub struct GenericFunctionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for GenericFunctionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_generic_function_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -7976,9 +7976,9 @@ pub struct GenericPatternTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for GenericPatternTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_generic_pattern_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8004,9 +8004,9 @@ pub struct GenericTypeTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for GenericTypeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_generic_type_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8033,9 +8033,9 @@ pub struct GenericTypeWithTurbofishTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for GenericTypeWithTurbofishTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_generic_type_with_turbofish_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8061,9 +8061,9 @@ pub struct HigherRankedTraitBoundTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for HigherRankedTraitBoundTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_higher_ranked_trait_bound_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8086,9 +8086,9 @@ pub struct IdentifierTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for IdentifierTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_identifier_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8114,9 +8114,9 @@ pub struct IfExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for IfExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_if_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8140,9 +8140,9 @@ pub struct ImplItemBodyTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ImplItemBodyTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_impl_item_body_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8180,9 +8180,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplItemTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ImplItemTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_impl_item_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8215,9 +8215,9 @@ pub struct ImplItemUFormBodyTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ImplItemUFormBodyTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_impl_item_uform_body_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8250,9 +8250,9 @@ pub struct ImplItemUFormSemiTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ImplItemUFormSemiTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_impl_item_uform_semi_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8277,9 +8277,9 @@ pub struct IndexExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for IndexExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_index_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8303,9 +8303,9 @@ pub struct InnerAttributeItemTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for InnerAttributeItemTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_inner_attribute_item_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8328,9 +8328,9 @@ pub struct IntegerLiteralTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for IntegerLiteralTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_integer_literal_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8354,9 +8354,9 @@ pub struct LabelTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for LabelTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_label_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8383,9 +8383,9 @@ pub struct LastMatchArmTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for LastMatchArmTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_last_match_arm_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8410,9 +8410,9 @@ pub struct LetConditionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for LetConditionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_let_condition_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8441,9 +8441,9 @@ pub struct LetDeclarationTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for LetDeclarationTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_let_declaration_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8467,9 +8467,9 @@ pub struct LifetimeTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for LifetimeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_lifetime_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8494,9 +8494,9 @@ pub struct LifetimeParameterTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for LifetimeParameterTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_lifetime_parameter_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8538,9 +8538,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineCommentTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for LineCommentTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_line_comment_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8565,9 +8565,9 @@ pub struct LineCommentUFormRegularDslashTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for LineCommentUFormRegularDslashTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_line_comment_uform_regular_dslash_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8592,9 +8592,9 @@ pub struct LineCommentUFormDocTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for LineCommentUFormDocTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_line_comment_uform_doc_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8619,9 +8619,9 @@ pub struct LineCommentUFormContentTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for LineCommentUFormContentTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_line_comment_uform_content_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8646,9 +8646,9 @@ pub struct LoopExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for LoopExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_loop_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8673,9 +8673,9 @@ pub struct MacroDefinitionParenTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MacroDefinitionParenTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_macro_definition_paren_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8700,9 +8700,9 @@ pub struct MacroDefinitionBracketTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MacroDefinitionBracketTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_macro_definition_bracket_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8727,9 +8727,9 @@ pub struct MacroDefinitionBraceTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MacroDefinitionBraceTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_macro_definition_brace_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8771,9 +8771,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for MacroDefinitionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MacroDefinitionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_macro_definition_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8799,9 +8799,9 @@ pub struct MacroDefinitionUFormParenTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MacroDefinitionUFormParenTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_macro_definition_uform_paren_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8827,9 +8827,9 @@ pub struct MacroDefinitionUFormBracketTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MacroDefinitionUFormBracketTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_macro_definition_uform_bracket_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8855,9 +8855,9 @@ pub struct MacroDefinitionUFormBraceTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MacroDefinitionUFormBraceTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_macro_definition_uform_brace_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8883,9 +8883,9 @@ pub struct MacroInvocationTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MacroInvocationTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_macro_invocation_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8910,9 +8910,9 @@ pub struct MacroRuleTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MacroRuleTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_macro_rule_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8936,9 +8936,9 @@ pub struct MatchArmBlockEndingTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MatchArmBlockEndingTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_match_arm_block_ending_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -8976,9 +8976,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchArmTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MatchArmTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_match_arm_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9004,9 +9004,9 @@ pub struct MatchArmUFormWithCommaTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MatchArmUFormWithCommaTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_match_arm_uform_with_comma_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9032,9 +9032,9 @@ pub struct MatchArmUFormBlockEndingTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MatchArmUFormBlockEndingTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_match_arm_uform_block_ending_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9059,9 +9059,9 @@ pub struct MatchBlockTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MatchBlockTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_match_block_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9086,9 +9086,9 @@ pub struct MatchExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MatchExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_match_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9114,9 +9114,9 @@ pub struct MatchPatternTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MatchPatternTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_match_pattern_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9139,9 +9139,9 @@ pub struct MetavariableTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MetavariableTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_metavariable_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9165,9 +9165,9 @@ pub struct ModItemInlineTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ModItemInlineTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_mod_item_inline_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9205,9 +9205,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModItemTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ModItemTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_mod_item_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9234,9 +9234,9 @@ pub struct ModItemUFormExternalTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ModItemUFormExternalTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_mod_item_uform_external_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9263,9 +9263,9 @@ pub struct ModItemUFormInlineTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ModItemUFormInlineTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_mod_item_uform_inline_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9291,9 +9291,9 @@ pub struct MutPatternTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MutPatternTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_mut_pattern_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9316,9 +9316,9 @@ pub struct MutableSpecifierTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MutableSpecifierTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_mutable_specifier_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9342,9 +9342,9 @@ pub struct NegativeLiteralTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for NegativeLiteralTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_negative_literal_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9367,9 +9367,9 @@ pub struct NeverTypeTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for NeverTypeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_never_type_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9407,9 +9407,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for OrPatternTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for OrPatternTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_or_pattern_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9434,9 +9434,9 @@ pub struct OrPatternUFormBinaryTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for OrPatternUFormBinaryTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_or_pattern_uform_binary_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9461,9 +9461,9 @@ pub struct OrPatternUFormPrefixTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for OrPatternUFormPrefixTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_or_pattern_uform_prefix_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9488,9 +9488,9 @@ pub struct OrderedFieldDeclarationListTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for OrderedFieldDeclarationListTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_ordered_field_declaration_list_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9517,9 +9517,9 @@ pub struct ParameterTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ParameterTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_parameter_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9544,9 +9544,9 @@ pub struct ParametersTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ParametersTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_parameters_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9571,9 +9571,9 @@ pub struct ParenthesizedExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ParenthesizedExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_parenthesized_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9598,9 +9598,9 @@ pub struct PointerTypeMutTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for PointerTypeMutTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_pointer_type_mut_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9638,9 +9638,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PointerTypeTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for PointerTypeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_pointer_type_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9667,9 +9667,9 @@ pub struct PointerTypeUFormConstTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for PointerTypeUFormConstTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_pointer_type_uform_const_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9696,9 +9696,9 @@ pub struct PointerTypeUFormMutTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for PointerTypeUFormMutTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_pointer_type_uform_mut_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9724,9 +9724,9 @@ pub struct QualifiedTypeTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for QualifiedTypeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_qualified_type_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9750,9 +9750,9 @@ pub struct RangeExpressionBareTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for RangeExpressionBareTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_range_expression_bare_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9798,9 +9798,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangeExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for RangeExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_range_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9825,9 +9825,9 @@ pub struct RangeExpressionUFormBinaryTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for RangeExpressionUFormBinaryTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_range_expression_uform_binary_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9852,9 +9852,9 @@ pub struct RangeExpressionUFormPostfixTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for RangeExpressionUFormPostfixTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_range_expression_uform_postfix_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9879,9 +9879,9 @@ pub struct RangeExpressionUFormPrefixTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for RangeExpressionUFormPrefixTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_range_expression_uform_prefix_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9906,9 +9906,9 @@ pub struct RangeExpressionUFormBareTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for RangeExpressionUFormBareTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_range_expression_uform_bare_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9950,9 +9950,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for RangePatternTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_range_pattern_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -9978,9 +9978,9 @@ pub struct RangePatternUFormLeftWithRightTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for RangePatternUFormLeftWithRightTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_range_pattern_uform_left_with_right_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10006,9 +10006,9 @@ pub struct RangePatternUFormLeftBareTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for RangePatternUFormLeftBareTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_range_pattern_uform_left_bare_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10033,9 +10033,9 @@ pub struct RangePatternUFormPrefixTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for RangePatternUFormPrefixTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_range_pattern_uform_prefix_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10061,9 +10061,9 @@ pub struct RawStringLiteralTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for RawStringLiteralTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_raw_string_literal_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10088,9 +10088,9 @@ pub struct RefPatternTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for RefPatternTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_ref_pattern_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10116,9 +10116,9 @@ pub struct ReferenceExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ReferenceExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_reference_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10143,9 +10143,9 @@ pub struct ReferencePatternTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ReferencePatternTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_reference_pattern_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10172,9 +10172,9 @@ pub struct ReferenceTypeTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ReferenceTypeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_reference_type_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10197,9 +10197,9 @@ pub struct RemainingFieldPatternTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for RemainingFieldPatternTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_remaining_field_pattern_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10224,9 +10224,9 @@ pub struct RemovedTraitBoundTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for RemovedTraitBoundTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_removed_trait_bound_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10251,9 +10251,9 @@ pub struct ReturnExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ReturnExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_return_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10278,9 +10278,9 @@ pub struct ScopedIdentifierTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ScopedIdentifierTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_scoped_identifier_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10305,9 +10305,9 @@ pub struct ScopedTypeIdentifierTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ScopedTypeIdentifierTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_scoped_type_identifier_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10332,9 +10332,9 @@ pub struct ScopedTypeIdentifierInExpressionPositionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ScopedTypeIdentifierInExpressionPositionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_scoped_type_identifier_in_expression_position_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10359,9 +10359,9 @@ pub struct ScopedUseListTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ScopedUseListTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_scoped_use_list_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10384,9 +10384,9 @@ pub struct Self_Transport {
 }
 
 impl ::sittir_core::types::RenderableTransport for Self_Transport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_self_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10414,9 +10414,9 @@ pub struct SelfParameterTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for SelfParameterTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_self_parameter_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10439,9 +10439,9 @@ pub struct ShebangTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ShebangTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_shebang_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10466,9 +10466,9 @@ pub struct ShorthandFieldInitializerTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ShorthandFieldInitializerTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_shorthand_field_initializer_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10493,9 +10493,9 @@ pub struct SlicePatternTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for SlicePatternTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_slice_pattern_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10520,9 +10520,9 @@ pub struct SourceFileTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for SourceFileTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_source_file_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10551,9 +10551,9 @@ pub struct StaticItemTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for StaticItemTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_static_item_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10578,9 +10578,9 @@ pub struct StringLiteralTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for StringLiteralTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_string_literal_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10605,9 +10605,9 @@ pub struct StructExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for StructExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_struct_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10649,9 +10649,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructItemTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for StructItemTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_struct_item_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10679,9 +10679,9 @@ pub struct StructItemUFormBraceTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for StructItemUFormBraceTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_struct_item_uform_brace_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10709,9 +10709,9 @@ pub struct StructItemUFormTupleTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for StructItemUFormTupleTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_struct_item_uform_tuple_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10739,9 +10739,9 @@ pub struct StructItemUFormUnitTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for StructItemUFormUnitTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_struct_item_uform_unit_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10768,9 +10768,9 @@ pub struct StructPatternTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for StructPatternTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_struct_pattern_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10793,9 +10793,9 @@ pub struct SuperTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for SuperTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_super_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10821,9 +10821,9 @@ pub struct TokenBindingPatternTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TokenBindingPatternTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_token_binding_pattern_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10848,9 +10848,9 @@ pub struct TokenRepetitionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TokenRepetitionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_token_repetition_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10875,9 +10875,9 @@ pub struct TokenRepetitionPatternTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TokenRepetitionPatternTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_token_repetition_pattern_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10902,9 +10902,9 @@ pub struct TokenTreeParenTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TokenTreeParenTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_token_tree_paren_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10929,9 +10929,9 @@ pub struct TokenTreeBracketTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TokenTreeBracketTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_token_tree_bracket_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -10956,9 +10956,9 @@ pub struct TokenTreeBraceTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TokenTreeBraceTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_token_tree_brace_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11000,9 +11000,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TokenTreeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_token_tree_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11027,9 +11027,9 @@ pub struct TokenTreeUFormParenTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TokenTreeUFormParenTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_token_tree_uform_paren_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11054,9 +11054,9 @@ pub struct TokenTreeUFormBracketTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TokenTreeUFormBracketTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_token_tree_uform_bracket_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11081,9 +11081,9 @@ pub struct TokenTreeUFormBraceTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TokenTreeUFormBraceTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_token_tree_uform_brace_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11108,9 +11108,9 @@ pub struct TokenTreePatternParenTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TokenTreePatternParenTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_token_tree_pattern_paren_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11135,9 +11135,9 @@ pub struct TokenTreePatternBracketTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TokenTreePatternBracketTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_token_tree_pattern_bracket_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11162,9 +11162,9 @@ pub struct TokenTreePatternBraceTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TokenTreePatternBraceTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_token_tree_pattern_brace_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11206,9 +11206,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TokenTreePatternTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_token_tree_pattern_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11233,9 +11233,9 @@ pub struct TokenTreePatternUFormParenTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TokenTreePatternUFormParenTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_token_tree_pattern_uform_paren_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11260,9 +11260,9 @@ pub struct TokenTreePatternUFormBracketTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TokenTreePatternUFormBracketTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_token_tree_pattern_uform_bracket_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11287,9 +11287,9 @@ pub struct TokenTreePatternUFormBraceTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TokenTreePatternUFormBraceTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_token_tree_pattern_uform_brace_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11314,9 +11314,9 @@ pub struct TraitBoundsTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TraitBoundsTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_trait_bounds_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11346,9 +11346,9 @@ pub struct TraitItemTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TraitItemTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_trait_item_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11372,9 +11372,9 @@ pub struct TryBlockTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TryBlockTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_try_block_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11398,9 +11398,9 @@ pub struct TryExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TryExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_try_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11425,9 +11425,9 @@ pub struct TupleExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TupleExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_tuple_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11452,9 +11452,9 @@ pub struct TuplePatternTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TuplePatternTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_tuple_pattern_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11481,9 +11481,9 @@ pub struct TupleStructPatternTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TupleStructPatternTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_tuple_struct_pattern_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11508,9 +11508,9 @@ pub struct TupleTypeTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TupleTypeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_tuple_type_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11535,9 +11535,9 @@ pub struct TypeArgumentsTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TypeArgumentsTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_type_arguments_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11564,9 +11564,9 @@ pub struct TypeBindingTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TypeBindingTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_type_binding_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11592,9 +11592,9 @@ pub struct TypeCastExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TypeCastExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_type_cast_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11624,9 +11624,9 @@ pub struct TypeItemTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TypeItemTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_type_item_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11652,9 +11652,9 @@ pub struct TypeParameterTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TypeParameterTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_type_parameter_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11679,9 +11679,9 @@ pub struct TypeParametersTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TypeParametersTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_type_parameters_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11706,9 +11706,9 @@ pub struct UnaryExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for UnaryExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_unary_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11736,9 +11736,9 @@ pub struct UnionItemTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for UnionItemTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_union_item_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11761,9 +11761,9 @@ pub struct UnitExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for UnitExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_unit_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11786,9 +11786,9 @@ pub struct UnitTypeTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for UnitTypeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_unit_type_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11812,9 +11812,9 @@ pub struct UnsafeBlockTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for UnsafeBlockTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_unsafe_block_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11839,9 +11839,9 @@ pub struct UseAsClauseTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for UseAsClauseTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_use_as_clause_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11866,9 +11866,9 @@ pub struct UseBoundsTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for UseBoundsTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_use_bounds_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11893,9 +11893,9 @@ pub struct UseDeclarationTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for UseDeclarationTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_use_declaration_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11920,9 +11920,9 @@ pub struct UseListTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for UseListTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_use_list_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11946,9 +11946,9 @@ pub struct UseWildcardTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for UseWildcardTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_use_wildcard_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -11973,9 +11973,9 @@ pub struct VariadicParameterTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for VariadicParameterTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_variadic_parameter_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12000,9 +12000,9 @@ pub struct VisibilityModifierCrateTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for VisibilityModifierCrateTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_visibility_modifier_crate_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12044,9 +12044,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for VisibilityModifierTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_visibility_modifier_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12071,9 +12071,9 @@ pub struct VisibilityModifierUFormInPathTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for VisibilityModifierUFormInPathTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_visibility_modifier_uform_in_path_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12098,9 +12098,9 @@ pub struct VisibilityModifierUFormCrateTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for VisibilityModifierUFormCrateTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_visibility_modifier_uform_crate_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12125,9 +12125,9 @@ pub struct VisibilityModifierUFormPubTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for VisibilityModifierUFormPubTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_visibility_modifier_uform_pub_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12152,9 +12152,9 @@ pub struct WhereClauseTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for WhereClauseTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_where_clause_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12179,9 +12179,9 @@ pub struct WherePredicateTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for WherePredicateTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_where_predicate_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12207,9 +12207,9 @@ pub struct WhileExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for WhileExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_while_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12234,9 +12234,9 @@ pub struct YieldExpressionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for YieldExpressionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_yield_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12259,9 +12259,9 @@ pub struct StringContentTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for StringContentTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_string_content_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12284,9 +12284,9 @@ pub struct RawStringLiteralContentTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for RawStringLiteralContentTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_raw_string_literal_content_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12309,9 +12309,9 @@ pub struct FloatLiteralTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for FloatLiteralTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_float_literal_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12334,9 +12334,9 @@ pub struct OuterBlockDocCommentMarkerTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for OuterBlockDocCommentMarkerTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_outer_block_doc_comment_marker_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12359,9 +12359,9 @@ pub struct InnerBlockDocCommentMarkerTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for InnerBlockDocCommentMarkerTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_inner_block_doc_comment_marker_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12384,9 +12384,9 @@ pub struct LineDocContentTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for LineDocContentTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_line_doc_content_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12409,9 +12409,9 @@ pub struct ErrorSentinelTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ErrorSentinelTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_error_sentinel_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12434,9 +12434,9 @@ pub struct BracketTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for BracketTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_bracket_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12459,9 +12459,9 @@ pub struct CloseBracketTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for CloseBracketTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_close_bracket_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12484,9 +12484,9 @@ pub struct SemiTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for SemiTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_semi_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12509,9 +12509,9 @@ pub struct ArrowTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ArrowTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_arrow_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12534,9 +12534,9 @@ pub struct AnonymousTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for AnonymousTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_anonymous_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12559,9 +12559,9 @@ pub struct BraceTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for BraceTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_brace_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12584,9 +12584,9 @@ pub struct CloseBraceTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for CloseBraceTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_close_brace_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12609,9 +12609,9 @@ pub struct ParenTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ParenTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_paren_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12634,9 +12634,9 @@ pub struct CloseParenTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for CloseParenTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_close_paren_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12659,9 +12659,9 @@ pub struct ColonTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ColonTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_colon_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12684,9 +12684,9 @@ pub struct FnTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for FnTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_fn_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12709,9 +12709,9 @@ pub struct BangTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for BangTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_bang_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12734,9 +12734,9 @@ pub struct AsyncTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for AsyncTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_async_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12759,9 +12759,9 @@ pub struct MoveTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MoveTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_move_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12784,9 +12784,9 @@ pub struct DotdotTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for DotdotTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_dotdot_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12809,9 +12809,9 @@ pub struct RefTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for RefTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_ref_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12834,9 +12834,9 @@ pub struct StaticTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for StaticTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_static_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12859,9 +12859,9 @@ pub struct UnsafeTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for UnsafeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_unsafe_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12884,9 +12884,9 @@ pub struct AndandTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for AndandTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_andand_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12909,9 +12909,9 @@ pub struct CommaTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for CommaTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_comma_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12934,9 +12934,9 @@ pub struct TokSqTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TokSqTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_tok_sq_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12959,9 +12959,9 @@ pub struct AsTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for AsTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_as_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -12984,9 +12984,9 @@ pub struct AwaitTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for AwaitTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_await_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13009,9 +13009,9 @@ pub struct BreakTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for BreakTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_break_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13034,9 +13034,9 @@ pub struct ConstTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ConstTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_const_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13059,9 +13059,9 @@ pub struct ContinueTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ContinueTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_continue_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13084,9 +13084,9 @@ pub struct DefaultTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for DefaultTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_default_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13109,9 +13109,9 @@ pub struct EnumTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for EnumTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_enum_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13134,9 +13134,9 @@ pub struct ForTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ForTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_for_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13159,9 +13159,9 @@ pub struct GenTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for GenTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_gen_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13184,9 +13184,9 @@ pub struct IfTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for IfTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_if_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13209,9 +13209,9 @@ pub struct ImplTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ImplTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_impl_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13234,9 +13234,9 @@ pub struct LetTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for LetTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_let_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13259,9 +13259,9 @@ pub struct LoopTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for LoopTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_loop_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13284,9 +13284,9 @@ pub struct MatchTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MatchTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_match_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13309,9 +13309,9 @@ pub struct ModTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ModTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_mod_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13334,9 +13334,9 @@ pub struct PubTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for PubTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_pub_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13359,9 +13359,9 @@ pub struct ReturnTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ReturnTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_return_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13384,9 +13384,9 @@ pub struct StructTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for StructTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_struct_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13409,9 +13409,9 @@ pub struct TraitTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TraitTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_trait_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13434,9 +13434,9 @@ pub struct TypeTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TypeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_type_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13459,9 +13459,9 @@ pub struct UnionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for UnionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_union_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13484,9 +13484,9 @@ pub struct UseTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for UseTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_use_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13509,9 +13509,9 @@ pub struct WhereTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for WhereTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_where_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13534,9 +13534,9 @@ pub struct WhileTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for WhileTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_while_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13559,9 +13559,9 @@ pub struct PipeTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for PipeTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_pipe_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13584,9 +13584,9 @@ pub struct SlashTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for SlashTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_slash_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13609,9 +13609,9 @@ pub struct RawTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for RawTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_raw_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13634,9 +13634,9 @@ pub struct InTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for InTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_in_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13659,9 +13659,9 @@ pub struct EqTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for EqTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_eq_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13684,9 +13684,9 @@ pub struct HashTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for HashTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_hash_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13709,9 +13709,9 @@ pub struct DotTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for DotTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_dot_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13734,9 +13734,9 @@ pub struct OrorTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for OrorTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_oror_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13759,9 +13759,9 @@ pub struct AmpTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for AmpTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_amp_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13784,9 +13784,9 @@ pub struct CaretTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for CaretTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_caret_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13809,9 +13809,9 @@ pub struct TokSlashStarTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TokSlashStarTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_tok_slash_star_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13834,9 +13834,9 @@ pub struct TokStarSlashTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TokStarSlashTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_tok_star_slash_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13859,9 +13859,9 @@ pub struct PlusTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for PlusTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_plus_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13884,9 +13884,9 @@ pub struct LtTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for LtTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_lt_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13909,9 +13909,9 @@ pub struct GtTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for GtTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_gt_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13934,9 +13934,9 @@ pub struct AtTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for AtTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_at_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13959,9 +13959,9 @@ pub struct DynTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for DynTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_dyn_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -13984,9 +13984,9 @@ pub struct ElseTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ElseTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_else_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -14009,9 +14009,9 @@ pub struct ExternTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for ExternTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_extern_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -14034,9 +14034,9 @@ pub struct FatArrowTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for FatArrowTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_fat_arrow_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -14059,9 +14059,9 @@ pub struct MutTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MutTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_mut_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -14084,9 +14084,9 @@ pub struct MinusTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for MinusTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_minus_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -14109,9 +14109,9 @@ pub struct QuestionTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for QuestionTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_question_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -14134,9 +14134,9 @@ pub struct TokDqTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TokDqTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_tok_dq_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -14159,9 +14159,9 @@ pub struct TokDollarTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TokDollarTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_tok_dollar_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -14184,9 +14184,9 @@ pub struct TryTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for TryTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_try_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -14209,9 +14209,9 @@ pub struct StarTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for StarTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_star_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -14234,9 +14234,9 @@ pub struct EllipsisTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for EllipsisTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_ellipsis_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -14259,9 +14259,9 @@ pub struct YieldTransport {
 }
 
 impl ::sittir_core::types::RenderableTransport for YieldTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_yield_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
@@ -14411,9 +14411,8 @@ fn render_function_type_fn_form_transport(node: &FunctionTypeFnFormTransport) ->
 }
 
 fn render_function_type_trait_form_transport(node: &FunctionTypeTraitFormTransport) -> Result<String, ::askama::Error> {
-    let r#trait_text = node.r#trait.as_ref().render_to_string()?;
     let template = FunctionTypeTraitFormTemplate {
-        r#trait: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#trait_text.as_str())),
+        r#trait: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.r#trait.as_ref())),
     };
     template.render()
 }
@@ -14459,11 +14458,8 @@ fn render_kw_unsafe_marker_transport(t: &KwUnsafeMarkerTransport) -> Result<Stri
 }
 
 fn render_let_chain_transport(node: &LetChainTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| t.as_ref().render_to_string())
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
     let template = LetChainTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -14743,7 +14739,6 @@ fn render_visibility_modifier_in_path_transport(node: &VisibilityModifierInPathT
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let r#in_text = node.r#in.as_ref().render_to_string()?;
     let template = VisibilityModifierInPathTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -14751,7 +14746,7 @@ fn render_visibility_modifier_in_path_transport(node: &VisibilityModifierInPathT
             leading: false,
             trailing: false,
         },
-        r#in: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#in_text.as_str())),
+        r#in: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.r#in.as_ref())),
     };
     template.render()
 }
@@ -14771,25 +14766,21 @@ fn render_wildcard_pattern_transport(t: &WildcardPatternTransport) -> Result<Str
 }
 
 fn render_abstract_type_transport(node: &AbstractTypeTransport) -> Result<String, ::askama::Error> {
-    let r#trait_text = node.r#trait.as_ref().render_to_string()?;
     let type_parameters_text = if let Some(v) = &node.type_parameters {
         render_type_parameters_transport(v)?
     } else {
         String::new()
     };
     let template = AbstractTypeTemplate {
-        r#trait: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#trait_text.as_str())),
+        r#trait: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.r#trait.as_ref())),
         type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
 
 fn render_arguments_transport(node: &ArgumentsTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| t.as_ref().render_to_string())
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
     let template = ArgumentsTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -14975,22 +14966,18 @@ fn render_base_field_initializer_transport(node: &BaseFieldInitializerTransport)
 
 fn render_binary_expression_transport(node: &BinaryExpressionTransport) -> Result<String, ::askama::Error> {
     let left_text = render_expression_transport(&node.left)?;
-    let operator_text = node.operator.as_ref().render_to_string()?;
     let right_text = render_expression_transport(&node.right)?;
     let template = BinaryExpressionTemplate {
         left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operator_text.as_str())),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.operator.as_ref())),
         right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(right_text.as_str())),
     };
     template.render()
 }
 
 fn render_block_transport(node: &BlockTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| t.as_ref().render_to_string())
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
     let label_text = if let Some(v) = &node.label {
         render_label_transport(v)?
@@ -15010,13 +14997,11 @@ fn render_block_transport(node: &BlockTransport) -> Result<String, ::askama::Err
 }
 
 fn render_block_comment_transport(node: &BlockCommentTransport) -> Result<String, ::askama::Error> {
-    let doc_text = if let Some(v) = &node.doc {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let template = BlockCommentTemplate {
-        doc: if node.doc.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(doc_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        doc: match &node.doc {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
         inner: ::sittir_core::filters::OptionalNonterminalView::Missing,
         outer: ::sittir_core::filters::OptionalNonterminalView::Missing,
     };
@@ -15029,8 +15014,6 @@ fn render_boolean_literal_transport(t: &BooleanLiteralTransport) -> Result<Strin
 
 fn render_bounded_type_transport(node: &BoundedTypeTransport) -> Result<String, ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = Vec::new();
-    let left_text = node.left.as_ref().render_to_string()?;
-    let right_text = node.right.as_ref().render_to_string()?;
     let template = BoundedTypeTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -15038,18 +15021,15 @@ fn render_bounded_type_transport(node: &BoundedTypeTransport) -> Result<String, 
             leading: false,
             trailing: false,
         },
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(right_text.as_str())),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.left.as_ref())),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.right.as_ref())),
     };
     template.render()
 }
 
 fn render_bracketed_type_transport(node: &BracketedTypeTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| t.as_ref().render_to_string())
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
     let template = BracketedTypeTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -15213,11 +15193,8 @@ fn render_closure_expression_uform_expr_transport(node: &ClosureExpressionUFormE
 }
 
 fn render_closure_parameters_transport(node: &ClosureParametersTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| t.as_ref().render_to_string())
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
     let template = ClosureParametersTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -15231,11 +15208,8 @@ fn render_closure_parameters_transport(node: &ClosureParametersTransport) -> Res
 }
 
 fn render_comment_transport(node: &CommentTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| t.as_ref().render_to_string())
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
     let template = CommentTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -15250,11 +15224,10 @@ fn render_comment_transport(node: &CommentTransport) -> Result<String, ::askama:
 
 fn render_compound_assignment_expr_transport(node: &CompoundAssignmentExprTransport) -> Result<String, ::askama::Error> {
     let left_text = render_expression_transport(&node.left)?;
-    let operator_text = node.operator.as_ref().render_to_string()?;
     let right_text = render_expression_transport(&node.right)?;
     let template = CompoundAssignmentExprTemplate {
         left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operator_text.as_str())),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.operator.as_ref())),
         right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(right_text.as_str())),
     };
     template.render()
@@ -15276,16 +15249,14 @@ fn render_const_item_transport(node: &ConstItemTransport) -> Result<String, ::as
     } else {
         String::new()
     };
-    let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let template = ConstItemTemplate {
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
         r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
         value: if node.value.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(value_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
-        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: match &node.visibility_modifier {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
     };
     template.render()
 }
@@ -15293,15 +15264,13 @@ fn render_const_item_transport(node: &ConstItemTransport) -> Result<String, ::as
 fn render_const_parameter_transport(node: &ConstParameterTransport) -> Result<String, ::askama::Error> {
     let name_text = render_identifier_transport(&node.name)?;
     let r#type_text = render__type_transport(&node.r#type)?;
-    let value_text = if let Some(v) = &node.value {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let template = ConstParameterTemplate {
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
         r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
-        value: if node.value.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(value_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        value: match &node.value {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
     };
     template.render()
 }
@@ -15457,9 +15426,8 @@ fn render_delim_token_tree_uform_brace_transport(node: &DelimTokenTreeUFormBrace
 }
 
 fn render_dynamic_type_transport(node: &DynamicTypeTransport) -> Result<String, ::askama::Error> {
-    let r#trait_text = node.r#trait.as_ref().render_to_string()?;
     let template = DynamicTypeTemplate {
-        r#trait: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#trait_text.as_str())),
+        r#trait: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.r#trait.as_ref())),
     };
     template.render()
 }
@@ -15494,11 +15462,6 @@ fn render_enum_item_transport(node: &EnumItemTransport) -> Result<String, ::aska
     } else {
         String::new()
     };
-    let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let where_clause_text = if let Some(v) = &node.where_clause {
         render_where_clause_transport(v)?
     } else {
@@ -15508,44 +15471,40 @@ fn render_enum_item_transport(node: &EnumItemTransport) -> Result<String, ::aska
         body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
         type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
-        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: match &node.visibility_modifier {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
         where_clause: if node.where_clause.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(where_clause_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
 
 fn render_enum_variant_transport(node: &EnumVariantTransport) -> Result<String, ::askama::Error> {
-    let body_text = if let Some(v) = &node.body {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let name_text = render_identifier_transport(&node.name)?;
     let value_text = if let Some(v) = &node.value {
         render_expression_transport(v)?
     } else {
         String::new()
     };
-    let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let template = EnumVariantTemplate {
-        body: if node.body.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(body_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        body: match &node.body {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
         value: if node.value.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(value_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
-        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: match &node.visibility_modifier {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
     };
     template.render()
 }
 
 fn render_enum_variant_list_transport(node: &EnumVariantListTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| t.as_ref().render_to_string())
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
     let template = EnumVariantListTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -15649,16 +15608,14 @@ fn render_extern_crate_declaration_transport(node: &ExternCrateDeclarationTransp
     };
     let crate__text = render_crate_transport(&node.crate_)?;
     let name_text = render_identifier_transport(&node.name)?;
-    let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let template = ExternCrateDeclarationTemplate {
         alias: if node.alias.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(alias_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
         crate_: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(crate__text.as_str())),
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
-        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: match &node.visibility_modifier {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
     };
     template.render()
 }
@@ -15678,25 +15635,20 @@ fn render_extern_modifier_transport(node: &ExternModifierTransport) -> Result<St
 fn render_field_declaration_transport(node: &FieldDeclarationTransport) -> Result<String, ::askama::Error> {
     let name_text = render_field_identifier_transport(&node.name)?;
     let r#type_text = render__type_transport(&node.r#type)?;
-    let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let template = FieldDeclarationTemplate {
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
         r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
-        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: match &node.visibility_modifier {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
     };
     template.render()
 }
 
 fn render_field_declaration_list_transport(node: &FieldDeclarationListTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| t.as_ref().render_to_string())
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
     let template = FieldDeclarationListTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -15710,10 +15662,9 @@ fn render_field_declaration_list_transport(node: &FieldDeclarationListTransport)
 }
 
 fn render_field_expression_transport(node: &FieldExpressionTransport) -> Result<String, ::askama::Error> {
-    let field_text = node.field.as_ref().render_to_string()?;
     let value_text = render_expression_transport(&node.value)?;
     let template = FieldExpressionTemplate {
-        field: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_text.as_str())),
+        field: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.field.as_ref())),
         value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
     };
     template.render()
@@ -15726,7 +15677,6 @@ fn render_field_initializer_transport(node: &FieldInitializerTransport) -> Resul
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let field_text = node.field.as_ref().render_to_string()?;
     let value_text = render_expression_transport(&node.value)?;
     let template = FieldInitializerTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -15735,18 +15685,15 @@ fn render_field_initializer_transport(node: &FieldInitializerTransport) -> Resul
             leading: false,
             trailing: false,
         },
-        field: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_text.as_str())),
+        field: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.field.as_ref())),
         value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
     };
     template.render()
 }
 
 fn render_field_initializer_list_transport(node: &FieldInitializerListTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| t.as_ref().render_to_string())
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
     let template = FieldInitializerListTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -15893,11 +15840,6 @@ fn render_foreign_mod_item_uform_semi_transport(node: &ForeignModItemUFormSemiTr
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let extern_modifier_text = render_extern_modifier_transport(&node.extern_modifier)?;
-    let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let template = ForeignModItemTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -15906,7 +15848,10 @@ fn render_foreign_mod_item_uform_semi_transport(node: &ForeignModItemUFormSemiTr
             trailing: false,
         },
         extern_modifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(extern_modifier_text.as_str())),
-        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: match &node.visibility_modifier {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
     };
     template.render()
 }
@@ -15919,11 +15864,6 @@ fn render_foreign_mod_item_uform_body_transport(node: &ForeignModItemUFormBodyTr
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let extern_modifier_text = render_extern_modifier_transport(&node.extern_modifier)?;
-    let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let template = ForeignModItemTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -15932,7 +15872,10 @@ fn render_foreign_mod_item_uform_body_transport(node: &ForeignModItemUFormBodyTr
             trailing: false,
         },
         extern_modifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(extern_modifier_text.as_str())),
-        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: match &node.visibility_modifier {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
     };
     template.render()
 }
@@ -15960,11 +15903,6 @@ fn render_function_item_transport(node: &FunctionItemTransport) -> Result<String
     } else {
         String::new()
     };
-    let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let where_clause_text = if let Some(v) = &node.where_clause {
         render_where_clause_transport(v)?
     } else {
@@ -15977,7 +15915,10 @@ fn render_function_item_transport(node: &FunctionItemTransport) -> Result<String
         parameters: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(parameters_text.as_str())),
         return_type: if node.return_type.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(return_type_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
         type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
-        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: match &node.visibility_modifier {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
         where_clause: if node.where_clause.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(where_clause_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
@@ -16026,11 +15967,6 @@ fn render_function_signature_item_transport(node: &FunctionSignatureItemTranspor
     } else {
         String::new()
     };
-    let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let where_clause_text = if let Some(v) = &node.where_clause {
         render_where_clause_transport(v)?
     } else {
@@ -16042,18 +15978,18 @@ fn render_function_signature_item_transport(node: &FunctionSignatureItemTranspor
         parameters: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(parameters_text.as_str())),
         return_type: if node.return_type.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(return_type_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
         type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
-        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: match &node.visibility_modifier {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
         where_clause: if node.where_clause.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(where_clause_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
 }
 
 fn render_function_type_transport(node: &FunctionTypeTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| t.as_ref().render_to_string())
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
     let for_lifetimes_text = if let Some(v) = &node.for_lifetimes {
         render_for_lifetimes_transport(v)?
@@ -16125,22 +16061,19 @@ fn render_generic_pattern_transport(node: &GenericPatternTransport) -> Result<St
 }
 
 fn render_generic_type_transport(node: &GenericTypeTransport) -> Result<String, ::askama::Error> {
-    let r#type_text = node.r#type.as_ref().render_to_string()?;
     let type_arguments_text = render_type_arguments_transport(&node.type_arguments)?;
     let template = GenericTypeTemplate {
-        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.r#type.as_ref())),
         type_arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(type_arguments_text.as_str())),
     };
     template.render()
 }
 
 fn render_generic_type_with_turbofish_transport(node: &GenericTypeWithTurbofishTransport) -> Result<String, ::askama::Error> {
-    let turbofish_text = node.turbofish.as_ref().render_to_string()?;
-    let r#type_text = node.r#type.as_ref().render_to_string()?;
     let type_arguments_text = render_type_arguments_transport(&node.type_arguments)?;
     let template = GenericTypeWithTurbofishTemplate {
-        turbofish: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(turbofish_text.as_str())),
-        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
+        turbofish: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.turbofish.as_ref())),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.r#type.as_ref())),
         type_arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(type_arguments_text.as_str())),
     };
     template.render()
@@ -16203,11 +16136,6 @@ fn render_impl_item_uform_body_transport(node: &ImplItemUFormBodyTransport) -> R
     } else {
         String::new()
     };
-    let r#trait_text = if let Some(v) = &node.r#trait {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let r#type_text = render__type_transport(&node.r#type)?;
     let type_parameters_text = if let Some(v) = &node.type_parameters {
         render_type_parameters_transport(v)?
@@ -16232,7 +16160,10 @@ fn render_impl_item_uform_body_transport(node: &ImplItemUFormBodyTransport) -> R
             trailing: false,
         },
         negative: if node.negative.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(negative_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
-        r#trait: if node.r#trait.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(r#trait_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        r#trait: match &node.r#trait {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
         r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
         type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
         unsafe_marker: if node.unsafe_marker.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(unsafe_marker_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
@@ -16253,11 +16184,6 @@ fn render_impl_item_uform_semi_transport(node: &ImplItemUFormSemiTransport) -> R
     } else {
         String::new()
     };
-    let r#trait_text = if let Some(v) = &node.r#trait {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let r#type_text = render__type_transport(&node.r#type)?;
     let type_parameters_text = if let Some(v) = &node.type_parameters {
         render_type_parameters_transport(v)?
@@ -16282,7 +16208,10 @@ fn render_impl_item_uform_semi_transport(node: &ImplItemUFormSemiTransport) -> R
             trailing: false,
         },
         negative: if node.negative.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(negative_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
-        r#trait: if node.r#trait.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(r#trait_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        r#trait: match &node.r#trait {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
         r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
         type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
         unsafe_marker: if node.unsafe_marker.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(unsafe_marker_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
@@ -16555,7 +16484,6 @@ fn render_macro_definition_uform_paren_transport(node: &MacroDefinitionUFormPare
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let name_text = node.name.as_ref().render_to_string()?;
     let template = MacroDefinitionTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -16563,7 +16491,7 @@ fn render_macro_definition_uform_paren_transport(node: &MacroDefinitionUFormPare
             leading: false,
             trailing: false,
         },
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.name.as_ref())),
     };
     template.render()
 }
@@ -16575,7 +16503,6 @@ fn render_macro_definition_uform_bracket_transport(node: &MacroDefinitionUFormBr
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let name_text = node.name.as_ref().render_to_string()?;
     let template = MacroDefinitionTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -16583,7 +16510,7 @@ fn render_macro_definition_uform_bracket_transport(node: &MacroDefinitionUFormBr
             leading: false,
             trailing: false,
         },
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.name.as_ref())),
     };
     template.render()
 }
@@ -16595,7 +16522,6 @@ fn render_macro_definition_uform_brace_transport(node: &MacroDefinitionUFormBrac
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let name_text = node.name.as_ref().render_to_string()?;
     let template = MacroDefinitionTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -16603,27 +16529,23 @@ fn render_macro_definition_uform_brace_transport(node: &MacroDefinitionUFormBrac
             leading: false,
             trailing: false,
         },
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.name.as_ref())),
     };
     template.render()
 }
 
 fn render_macro_invocation_transport(node: &MacroInvocationTransport) -> Result<String, ::askama::Error> {
-    let r#macro_text = node.r#macro.as_ref().render_to_string()?;
-    let token_tree_text = node.token_tree.as_ref().render_to_string()?;
     let template = MacroInvocationTemplate {
-        r#macro: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#macro_text.as_str())),
-        token_tree: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(token_tree_text.as_str())),
+        r#macro: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.r#macro.as_ref())),
+        token_tree: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.token_tree.as_ref())),
     };
     template.render()
 }
 
 fn render_macro_rule_transport(node: &MacroRuleTransport) -> Result<String, ::askama::Error> {
-    let left_text = node.left.as_ref().render_to_string()?;
-    let right_text = node.right.as_ref().render_to_string()?;
     let template = MacroRuleTemplate {
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(right_text.as_str())),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.left.as_ref())),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.right.as_ref())),
     };
     template.render()
 }
@@ -16644,11 +16566,8 @@ fn render_match_arm_transport(t: &MatchArmTransport) -> Result<String, ::askama:
 }
 
 fn render_match_arm_uform_with_comma_transport(node: &MatchArmUFormWithCommaTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| t.as_ref().render_to_string())
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
     let pattern_text = render_match_pattern_transport(&node.pattern)?;
     let template = MatchArmTemplate {
@@ -16664,11 +16583,8 @@ fn render_match_arm_uform_with_comma_transport(node: &MatchArmUFormWithCommaTran
 }
 
 fn render_match_arm_uform_block_ending_transport(node: &MatchArmUFormBlockEndingTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| t.as_ref().render_to_string())
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
     let pattern_text = render_match_pattern_transport(&node.pattern)?;
     let template = MatchArmTemplate {
@@ -16685,11 +16601,8 @@ fn render_match_arm_uform_block_ending_transport(node: &MatchArmUFormBlockEnding
 
 fn render_match_block_transport(node: &MatchBlockTransport) -> Result<String, ::askama::Error> {
     let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
-    let children_strings: Vec<String> = children_owned.iter()
-        .map(|t| t.as_ref().render_to_string())
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_owned.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
     let template = MatchBlockTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -16763,11 +16676,6 @@ fn render_mod_item_uform_external_transport(node: &ModItemUFormExternalTransport
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let name_text = render_identifier_transport(&node.name)?;
-    let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let template = ModItemTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -16776,7 +16684,10 @@ fn render_mod_item_uform_external_transport(node: &ModItemUFormExternalTransport
             trailing: false,
         },
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
-        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: match &node.visibility_modifier {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
     };
     template.render()
 }
@@ -16789,11 +16700,6 @@ fn render_mod_item_uform_inline_transport(node: &ModItemUFormInlineTransport) ->
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let name_text = render_identifier_transport(&node.name)?;
-    let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let template = ModItemTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -16802,7 +16708,10 @@ fn render_mod_item_uform_inline_transport(node: &ModItemUFormInlineTransport) ->
             trailing: false,
         },
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
-        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: match &node.visibility_modifier {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
     };
     template.render()
 }
@@ -16833,7 +16742,6 @@ fn render_mutable_specifier_transport(t: &MutableSpecifierTransport) -> Result<S
 
 fn render_negative_literal_transport(node: &NegativeLiteralTransport) -> Result<String, ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = Vec::new();
-    let value_text = node.value.as_ref().render_to_string()?;
     let template = NegativeLiteralTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -16841,7 +16749,7 @@ fn render_negative_literal_transport(node: &NegativeLiteralTransport) -> Result<
             leading: false,
             trailing: false,
         },
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.value.as_ref())),
     };
     template.render()
 }
@@ -16924,22 +16832,18 @@ fn render_parameter_transport(node: &ParameterTransport) -> Result<String, ::ask
     } else {
         String::new()
     };
-    let pattern_text = node.pattern.as_ref().render_to_string()?;
     let r#type_text = render__type_transport(&node.r#type)?;
     let template = ParameterTemplate {
         mutable_specifier: if node.mutable_specifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(mutable_specifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
-        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(pattern_text.as_str())),
+        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.pattern.as_ref())),
         r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
     };
     template.render()
 }
 
 fn render_parameters_transport(node: &ParametersTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| t.as_ref().render_to_string())
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
     let template = ParametersTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -17149,7 +17053,6 @@ fn render_range_pattern_uform_left_with_right_transport(node: &RangePatternUForm
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let left_text = node.left.as_ref().render_to_string()?;
     let template = RangePatternTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -17157,7 +17060,7 @@ fn render_range_pattern_uform_left_with_right_transport(node: &RangePatternUForm
             leading: false,
             trailing: false,
         },
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.left.as_ref())),
     };
     template.render()
 }
@@ -17169,7 +17072,6 @@ fn render_range_pattern_uform_left_bare_transport(node: &RangePatternUFormLeftBa
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let left_text = node.left.as_ref().render_to_string()?;
     let template = RangePatternTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -17177,7 +17079,7 @@ fn render_range_pattern_uform_left_bare_transport(node: &RangePatternUFormLeftBa
             leading: false,
             trailing: false,
         },
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.left.as_ref())),
     };
     template.render()
 }
@@ -17227,11 +17129,8 @@ fn render_ref_pattern_transport(node: &RefPatternTransport) -> Result<String, ::
 }
 
 fn render_reference_expression_transport(node: &ReferenceExpressionTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| t.as_ref().render_to_string())
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
     let value_text = render_expression_transport(&node.value)?;
     let template = ReferenceExpressionTemplate {
@@ -17323,42 +17222,36 @@ fn render_return_expression_transport(node: &ReturnExpressionTransport) -> Resul
 
 fn render_scoped_identifier_transport(node: &ScopedIdentifierTransport) -> Result<String, ::askama::Error> {
     let name_text = render_path_transport(&node.name)?;
-    let path_text = if let Some(v) = &node.path {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let template = ScopedIdentifierTemplate {
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
-        path: if node.path.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(path_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        path: match &node.path {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
     };
     template.render()
 }
 
 fn render_scoped_type_identifier_transport(node: &ScopedTypeIdentifierTransport) -> Result<String, ::askama::Error> {
     let name_text = render_type_identifier_transport(&node.name)?;
-    let path_text = if let Some(v) = &node.path {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let template = ScopedTypeIdentifierTemplate {
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
-        path: if node.path.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(path_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        path: match &node.path {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
     };
     template.render()
 }
 
 fn render_scoped_type_identifier_in_expression_position_transport(node: &ScopedTypeIdentifierInExpressionPositionTransport) -> Result<String, ::askama::Error> {
     let name_text = render_type_identifier_transport(&node.name)?;
-    let path_text = if let Some(v) = &node.path {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let template = ScopedTypeIdentifierInExpressionPositionTemplate {
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
-        path: if node.path.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(path_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        path: match &node.path {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
     };
     template.render()
 }
@@ -17392,16 +17285,14 @@ fn render_self_parameter_transport(node: &SelfParameterTransport) -> Result<Stri
     } else {
         String::new()
     };
-    let reference_text = if let Some(v) = &node.reference {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let self__text = render_self_transport(&node.self_)?;
     let template = SelfParameterTemplate {
         lifetime: if node.lifetime.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(lifetime_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
         mutable_specifier: if node.mutable_specifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(mutable_specifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
-        reference: if node.reference.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(reference_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        reference: match &node.reference {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
         self_: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(self__text.as_str())),
     };
     template.render()
@@ -17474,11 +17365,6 @@ fn render_source_file_transport(node: &SourceFileTransport) -> Result<String, ::
 }
 
 fn render_static_item_transport(node: &StaticItemTransport) -> Result<String, ::askama::Error> {
-    let mutable_specifier_text = if let Some(v) = &node.mutable_specifier {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let name_text = render_identifier_transport(&node.name)?;
     let r#type_text = render__type_transport(&node.r#type)?;
     let value_text = if let Some(v) = &node.value {
@@ -17486,28 +17372,26 @@ fn render_static_item_transport(node: &StaticItemTransport) -> Result<String, ::
     } else {
         String::new()
     };
-    let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let template = StaticItemTemplate {
-        mutable_specifier: if node.mutable_specifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(mutable_specifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        mutable_specifier: match &node.mutable_specifier {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
         ref_marker: ::sittir_core::filters::OptionalNonterminalView::Missing,
         r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
         value: if node.value.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(value_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
-        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: match &node.visibility_modifier {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
     };
     template.render()
 }
 
 fn render_string_literal_transport(node: &StringLiteralTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| t.as_ref().render_to_string())
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
     let template = StringLiteralTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -17522,10 +17406,9 @@ fn render_string_literal_transport(node: &StringLiteralTransport) -> Result<Stri
 
 fn render_struct_expression_transport(node: &StructExpressionTransport) -> Result<String, ::askama::Error> {
     let body_text = render_field_initializer_list_transport(&node.body)?;
-    let name_text = node.name.as_ref().render_to_string()?;
     let template = StructExpressionTemplate {
         body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.name.as_ref())),
     };
     template.render()
 }
@@ -17551,11 +17434,6 @@ fn render_struct_item_uform_brace_transport(node: &StructItemUFormBraceTransport
     } else {
         String::new()
     };
-    let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let template = StructItemTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -17565,7 +17443,10 @@ fn render_struct_item_uform_brace_transport(node: &StructItemUFormBraceTransport
         },
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
         type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
-        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: match &node.visibility_modifier {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
     };
     template.render()
 }
@@ -17583,11 +17464,6 @@ fn render_struct_item_uform_tuple_transport(node: &StructItemUFormTupleTransport
     } else {
         String::new()
     };
-    let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let template = StructItemTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -17597,7 +17473,10 @@ fn render_struct_item_uform_tuple_transport(node: &StructItemUFormTupleTransport
         },
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
         type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
-        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: match &node.visibility_modifier {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
     };
     template.render()
 }
@@ -17615,11 +17494,6 @@ fn render_struct_item_uform_unit_transport(node: &StructItemUFormUnitTransport) 
     } else {
         String::new()
     };
-    let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let template = StructItemTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -17629,19 +17503,18 @@ fn render_struct_item_uform_unit_transport(node: &StructItemUFormUnitTransport) 
         },
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
         type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
-        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: match &node.visibility_modifier {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
     };
     template.render()
 }
 
 fn render_struct_pattern_transport(node: &StructPatternTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| t.as_ref().render_to_string())
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
-    let r#type_text = node.r#type.as_ref().render_to_string()?;
     let template = StructPatternTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -17649,7 +17522,7 @@ fn render_struct_pattern_transport(node: &StructPatternTransport) -> Result<Stri
             leading: false,
             trailing: false,
         },
-        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.r#type.as_ref())),
     };
     template.render()
 }
@@ -17937,11 +17810,8 @@ fn render_token_tree_pattern_uform_brace_transport(node: &TokenTreePatternUFormB
 }
 
 fn render_trait_bounds_transport(node: &TraitBoundsTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| t.as_ref().render_to_string())
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
     let template = TraitBoundsTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -17972,11 +17842,6 @@ fn render_trait_item_transport(node: &TraitItemTransport) -> Result<String, ::as
     } else {
         String::new()
     };
-    let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let where_clause_text = if let Some(v) = &node.where_clause {
         render_where_clause_transport(v)?
     } else {
@@ -17988,7 +17853,10 @@ fn render_trait_item_transport(node: &TraitItemTransport) -> Result<String, ::as
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
         type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
         unsafe_marker: if node.unsafe_marker.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(unsafe_marker_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
-        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: match &node.visibility_modifier {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
         where_clause: if node.where_clause.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(where_clause_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
@@ -18042,11 +17910,8 @@ fn render_tuple_expression_transport(node: &TupleExpressionTransport) -> Result<
 }
 
 fn render_tuple_pattern_transport(node: &TuplePatternTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| t.as_ref().render_to_string())
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
     let template = TuplePatternTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -18066,7 +17931,6 @@ fn render_tuple_struct_pattern_transport(node: &TupleStructPatternTransport) -> 
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let r#type_text = node.r#type.as_ref().render_to_string()?;
     let template = TupleStructPatternTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -18074,7 +17938,7 @@ fn render_tuple_struct_pattern_transport(node: &TupleStructPatternTransport) -> 
             leading: false,
             trailing: false,
         },
-        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.r#type.as_ref())),
     };
     template.render()
 }
@@ -18098,11 +17962,8 @@ fn render_tuple_type_transport(node: &TupleTypeTransport) -> Result<String, ::as
 }
 
 fn render_type_arguments_transport(node: &TypeArgumentsTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| t.as_ref().render_to_string())
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
     let template = TypeArgumentsTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -18154,11 +18015,6 @@ fn render_type_item_transport(node: &TypeItemTransport) -> Result<String, ::aska
     } else {
         String::new()
     };
-    let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let where_clause_text = if let Some(v) = &node.where_clause {
         render_where_clause_transport(v)?
     } else {
@@ -18169,7 +18025,10 @@ fn render_type_item_transport(node: &TypeItemTransport) -> Result<String, ::aska
         trailing_where_clause: if node.trailing_where_clause.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(trailing_where_clause_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
         r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(r#type_text.as_str())),
         type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
-        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: match &node.visibility_modifier {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
         where_clause: if node.where_clause.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(where_clause_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
@@ -18196,11 +18055,8 @@ fn render_type_parameter_transport(node: &TypeParameterTransport) -> Result<Stri
 }
 
 fn render_type_parameters_transport(node: &TypeParametersTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| t.as_ref().render_to_string())
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
     let template = TypeParametersTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -18215,10 +18071,9 @@ fn render_type_parameters_transport(node: &TypeParametersTransport) -> Result<St
 
 fn render_unary_expression_transport(node: &UnaryExpressionTransport) -> Result<String, ::askama::Error> {
     let operand_text = render_expression_transport(&node.operand)?;
-    let operator_text = node.operator.as_ref().render_to_string()?;
     let template = UnaryExpressionTemplate {
         operand: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operand_text.as_str())),
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operator_text.as_str())),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.operator.as_ref())),
     };
     template.render()
 }
@@ -18231,11 +18086,6 @@ fn render_union_item_transport(node: &UnionItemTransport) -> Result<String, ::as
     } else {
         String::new()
     };
-    let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let where_clause_text = if let Some(v) = &node.where_clause {
         render_where_clause_transport(v)?
     } else {
@@ -18245,7 +18095,10 @@ fn render_union_item_transport(node: &UnionItemTransport) -> Result<String, ::as
         body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
         type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
-        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: match &node.visibility_modifier {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
         where_clause: if node.where_clause.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(where_clause_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
     };
     template.render()
@@ -18278,11 +18131,8 @@ fn render_use_as_clause_transport(node: &UseAsClauseTransport) -> Result<String,
 }
 
 fn render_use_bounds_transport(node: &UseBoundsTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| t.as_ref().render_to_string())
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
     let template = UseBoundsTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -18297,14 +18147,12 @@ fn render_use_bounds_transport(node: &UseBoundsTransport) -> Result<String, ::as
 
 fn render_use_declaration_transport(node: &UseDeclarationTransport) -> Result<String, ::askama::Error> {
     let argument_text = render_use_clause_transport(&node.argument)?;
-    let visibility_modifier_text = if let Some(v) = &node.visibility_modifier {
-        v.as_ref().render_to_string()?
-    } else {
-        String::new()
-    };
     let template = UseDeclarationTemplate {
         argument: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(argument_text.as_str())),
-        visibility_modifier: if node.visibility_modifier.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(visibility_modifier_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
+        visibility_modifier: match &node.visibility_modifier {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
     };
     template.render()
 }
@@ -18457,10 +18305,9 @@ fn render_where_clause_transport(node: &WhereClauseTransport) -> Result<String, 
 
 fn render_where_predicate_transport(node: &WherePredicateTransport) -> Result<String, ::askama::Error> {
     let bounds_text = render_trait_bounds_transport(&node.bounds)?;
-    let left_text = node.left.as_ref().render_to_string()?;
     let template = WherePredicateTemplate {
         bounds: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(bounds_text.as_str())),
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.left.as_ref())),
     };
     template.render()
 }
@@ -19535,9 +19382,9 @@ pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::a
 }
 
 impl ::sittir_core::types::RenderableTransport for AnyTransport {
-    fn render_into<W: ::std::fmt::Write + ?Sized>(
+    fn render_into(
         &self,
-        dest: &mut W,
+        dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_transport_dispatch(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)

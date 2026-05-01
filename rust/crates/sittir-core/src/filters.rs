@@ -42,12 +42,25 @@ pub fn lower(s: &str) -> Result<String, askama::Error> {
 /// via newtype wrappers; sittir-core itself only carries the grammar-agnostic
 /// variants. Keep the family closed and explicit (no trait objects at the
 /// public boundary).
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone, Copy)]
 pub enum Renderable<'a> {
     /// Final, render-ready text.
     Text(&'a str),
     /// Streaming join over a borrowed slice of `Renderable`s.
     Joined(Joined<'a>),
+    /// Heterogeneous slot value — streams via `RenderableTransport::render_into`
+    /// without an intermediate `String` allocation.
+    Transport(&'a dyn crate::types::RenderableTransport),
+}
+
+impl std::fmt::Debug for Renderable<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Text(s) => f.debug_tuple("Text").field(s).finish(),
+            Self::Joined(j) => f.debug_tuple("Joined").field(j).finish(),
+            Self::Transport(_) => f.debug_tuple("Transport").field(&"<dyn RenderableTransport>").finish(),
+        }
+    }
 }
 
 impl std::fmt::Display for Renderable<'_> {
@@ -55,6 +68,7 @@ impl std::fmt::Display for Renderable<'_> {
         match self {
             Self::Text(s) => f.write_str(s),
             Self::Joined(j) => std::fmt::Display::fmt(j, f),
+            Self::Transport(t) => t.render_into(f).map_err(|_| std::fmt::Error),
         }
     }
 }
@@ -68,8 +82,31 @@ impl ::askama::FastWritable for Renderable<'_> {
         match self {
             Self::Text(s) => dest.write_str(s).map_err(::askama::Error::from),
             Self::Joined(j) => j.write_into(dest, values),
+            Self::Transport(t) => write_transport_into(*t, dest),
         }
     }
+}
+
+/// Bridge `RenderableTransport::render_into` (which takes `&mut dyn Write`)
+/// from a generic `FastWritable::write_into` context (which has `W: Write +
+/// ?Sized`). When `W` is `?Sized` (e.g. `dyn Write`), `&mut W` cannot be
+/// directly coerced to `&mut dyn Write` in a generic context. This sized
+/// wrapper bridges the gap: `WriteForwarder<W>` is always `Sized` (it holds a
+/// pointer), so it can be coerced to `&mut dyn Write`.
+fn write_transport_into<W: std::fmt::Write + ?Sized>(
+    t: &dyn crate::types::RenderableTransport,
+    dest: &mut W,
+) -> Result<(), ::askama::Error> {
+    struct WriteForwarder<'a, W: ?Sized>(&'a mut W);
+    impl<W: std::fmt::Write + ?Sized> std::fmt::Write for WriteForwarder<'_, W> {
+        fn write_str(&mut self, s: &str) -> std::fmt::Result {
+            self.0.write_str(s)
+        }
+        fn write_fmt(&mut self, args: std::fmt::Arguments<'_>) -> std::fmt::Result {
+            self.0.write_fmt(args)
+        }
+    }
+    t.render_into(&mut WriteForwarder(dest))
 }
 
 /// Streaming join wrapper. Borrows a slice of [`Renderable`]s and a separator,
