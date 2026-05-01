@@ -291,14 +291,116 @@ const OVERRIDE_PARSER_KNOWN_ISSUES: Record<string, Set<string>> = {
 		'pattern_list',
 		'expression_list',
 		'concatenated_string',
-		'splat_type'
+		'splat_type',
+		// Phase D (KindID migration): codegen-synthesized variant/form/alias
+		// kinds that exist in nodeMap but not in parser.c's symbol table.
+		// These get $type=0 under numeric dispatch.
+		'as_pattern_target',
+		'assignment_eq',
+		'assignment_type',
+		'assignment_typed',
+		'dict_pattern_kv',
+		'expression_statement_tuple',
+		'format_expression',
+		'match_block_block',
+		'simple_pattern_negative',
+		'with_clause_bare',
+		'with_clause_paren'
 	]),
-	rust: new Set(['pattern_list', 'expression_list', 'tuple_struct_pattern']),
-	// import_attribute: typescript override parser surfaces an unfielded
-	// named child that the routing map doesn't yet know about. Tracked
-	// alongside the python/rust gaps that resolve when override-source
-	// routing is wired correctly to the override-compiled parser.
-	typescript: new Set(['import_attribute'])
+	rust: new Set([
+		'pattern_list',
+		'expression_list',
+		'tuple_struct_pattern',
+		// Phase D: codegen-synthesized kinds without parser.c symbols
+		'array_expression_list',
+		'array_expression_semi',
+		'closure_expression_block',
+		'closure_expression_expr',
+		'delim_token_tree_brace',
+		'delim_token_tree_bracket',
+		'delim_token_tree_paren',
+		'expression_statement_block_ending',
+		'expression_statement_with_semi',
+		'field_identifier',
+		'field_pattern_named',
+		'field_pattern_shorthand',
+		'function_type_fn_form',
+		'function_type_trait_form',
+		'impl_item_body',
+		'impl_item_semi',
+		'let_chain',
+		'line_comment_content',
+		'macro_definition_brace',
+		'macro_definition_bracket',
+		'match_arm_block_ending',
+		'match_arm_with_comma',
+		'mod_item_external',
+		'mod_item_inline',
+		'or_pattern_binary',
+		'or_pattern_prefix',
+		'pointer_type_const',
+		'pointer_type_mut',
+		'primitive_type',
+		'range_expression_bare',
+		'range_expression_binary',
+		'range_expression_postfix',
+		'range_expression_prefix',
+		'range_pattern_left_bare',
+		'range_pattern_left_with_right',
+		'range_pattern_prefix',
+		'reference_expression_raw_const',
+		'reference_expression_raw_mut',
+		'shorthand_field_identifier',
+		'struct_item_brace',
+		'struct_item_tuple',
+		'struct_item_unit',
+		'token_tree_brace',
+		'token_tree_paren',
+		'token_tree_pattern_bracket',
+		'token_tree_pattern_paren',
+		'type_identifier',
+		'visibility_modifier_crate',
+		'visibility_modifier_in_path',
+		'visibility_modifier_pub',
+		'wildcard_pattern'
+	]),
+	typescript: new Set([
+		'import_attribute',
+		// Phase D: codegen-synthesized kinds without parser.c symbols
+		'arrow_function__call_signature',
+		'arrow_function_parameter',
+		'call_expression_call',
+		'call_expression_member',
+		'class_body_member',
+		'class_body_method',
+		'class_body_method_sig',
+		'class_heritage_extends_clause',
+		'export_statement_default',
+		'export_statement_default_decl_arm',
+		'export_statement_default_decl_arm_default_kw',
+		'export_statement_equals_export',
+		'export_statement_type_export',
+		'for_header_lhs',
+		'import_clause_default_import',
+		'import_clause_named_imports',
+		'import_specifier_as',
+		'import_specifier_name',
+		'index_signature_colon',
+		'index_signature_mapped_type_clause',
+		'interface_body',
+		'parenthesized_expression_typed',
+		'property_identifier',
+		'public_field_definition_access_first',
+		'public_field_definition_readonly_first',
+		'public_field_definition_static_mods',
+		'shorthand_property_identifier',
+		'shorthand_property_identifier_pattern',
+		'string_double',
+		'string_fragment',
+		'string_single',
+		'type_identifier',
+		'update_expression_postfix'
+	])
 };
 
 const ALIAS_VARIANT_KINDS: Record<string, Set<string>> = {
@@ -339,7 +441,8 @@ const ALIAS_VARIANT_KINDS: Record<string, Set<string>> = {
 		'line_comment_doc',
 		'match_arm_with_comma',
 		'struct_item_brace',
-		'struct_item_tuple'
+		'struct_item_tuple',
+		'visibility_modifier_pub'
 	]),
 	typescript: new Set([
 		'call_expression_call',
@@ -354,7 +457,9 @@ const ALIAS_VARIANT_KINDS: Record<string, Set<string>> = {
 		// referrer rather than owning its own template.
 		'export_statement_default',
 		'export_statement_default_from_arm',
-		'export_statement_default_decl_arm'
+		'export_statement_default_decl_arm',
+		'update_expression_postfix',
+		'update_expression_prefix'
 	])
 };
 

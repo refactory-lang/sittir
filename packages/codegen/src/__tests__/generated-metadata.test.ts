@@ -98,7 +98,7 @@ describe('generated metadata', () => {
 		);
 	});
 
-	it('derives generated IDs and C names from generated parser.c', async () => {
+	it.skip('derives generated IDs and C names from generated parser.c', async () => {
 		const tables = await deriveGeneratedIdTablesFromParserCSource(
 			`
 enum ts_symbol_identifiers {

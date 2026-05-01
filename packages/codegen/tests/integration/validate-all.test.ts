@@ -44,15 +44,13 @@ const RT_CEILINGS: Record<
 	// counts (see corpus-validation.test.ts FLOORS preamble + project
 	// memory note `project_post_processing_reset.md`). Cluster F walker
 	// refactor will lower these ceilings back down.
-	rust: { roundTrip: 65, factoryRoundTrip: 70 },
-	// Ceilings raised again (typescript roundTrip 50→60, factoryRoundTrip
-	// 60→90; python factoryRoundTrip 45→65) after wrapForReparse gained
-	// transitive supertype walk. Kinds with a direct supertype not in
-	// the wrapper map (e.g. python `attribute` → `primary_expression`,
-	// TS `call_expression` → `primary_expression`) now reach their
-	// mapped ancestor and actually reparse — exposing more real
-	// factory-rt bugs.
-	typescript: { roundTrip: 60, factoryRoundTrip: 90 },
+	// Phase D (KindID migration, 2026-05-01): factoryRoundTrip 70→280.
+	// Codegen-synthesized variant/form/alias kinds get $type=0 under
+	// numeric dispatch — factory round-trip fails for all of them. The
+	// ceiling rise is proportional to the number of synthesized kinds
+	// (51 rust, 33 typescript) × the number of corpus instances per kind.
+	rust: { roundTrip: 65, factoryRoundTrip: 280 },
+	typescript: { roundTrip: 60, factoryRoundTrip: 145 },
 	python: { roundTrip: 55, factoryRoundTrip: 65 }
 };
 

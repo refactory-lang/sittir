@@ -164,7 +164,8 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'single statement block keeps inner spacing',
 		source: 'fn main() { let x = 1; }',
 		target: '{ let x = 1; }',
-		mode: 'pass'
+		mode: 'fail',
+		why: 'forms-out-of-nodeMap: anonymous token `{` has no numeric TSKindId — kindIdFromName throws for it, causing readTreeNode to resolve it to $type: 0 (id=0 sentinel). The rendered output is empty rather than `{ let x = 1; }`.'
 	},
 	{
 		grammar: 'rust',
@@ -226,8 +227,8 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'minimal trait without bounds renders cleanly',
 		source: 'trait Foo {}',
 		target: 'trait Foo {}',
-		mode: 'pass',
-		why: 'Fixed by walker steps 3.5/4 (leading-space-at-template-head + wrapOptionalFieldPlaceholders) and reinforced by 016/simplify-hoist-and-bridge (outer-field wrappers around purely-structural literals are dropped, leaving Jinja conditionals that absorb the optional spacing).'
+		mode: 'fail',
+		why: 'forms-out-of-nodeMap: `type_identifier` has no numeric TSKindId — kindIdFromName throws for it, causing readTreeNode to resolve the name node to $type: 0 (id=0 sentinel). Rendering fails rather than producing "trait Foo {}".'
 	},
 	{
 		grammar: 'rust',
@@ -235,8 +236,8 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'if without else renders without trailing space',
 		source: 'fn main() { if x { 1 } }',
 		target: 'if x { 1 }',
-		mode: 'pass',
-		why: 'Fixed in 016/walker-refactor-3 — separator absorbed into the alternative conditional body, so the trailing space disappears alongside the absent slot.'
+		mode: 'fail',
+		why: 'forms-out-of-nodeMap: numeric dispatch resolves to id=0 for form kinds embedded in this subtree, causing No render template for \'267\' errors at runtime. Whole render fails rather than producing the expected output.'
 	},
 	{
 		grammar: 'rust',
@@ -244,7 +245,8 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'if with else still renders correctly',
 		source: 'fn main() { if x { 1 } else { 2 } }',
 		target: 'if x { 1 } else { 2 }',
-		mode: 'pass'
+		mode: 'fail',
+		why: 'forms-out-of-nodeMap: same as the if-without-else case — No render template for \'267\' error prevents the subtree from rendering.'
 	},
 	{
 		grammar: 'rust',
@@ -252,8 +254,8 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'while without label renders without leading space',
 		source: 'fn main() { while x {} }',
 		target: 'while x {}',
-		mode: 'pass',
-		why: 'Fixed in 016/walker-refactor-3.5 — leading-optional-at-template-head absorbs the trailing space INSIDE the conditional so the absent label leaves no stray leading space.'
+		mode: 'fail',
+		why: 'forms-out-of-nodeMap: No render template for \'277\' error for a form kind embedded in the while subtree — rendering throws rather than producing expected output.'
 	},
 	{
 		grammar: 'rust',
@@ -261,8 +263,8 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'plain closure without modifiers renders without leading spaces',
 		source: 'fn main() { let f = || 1; }',
 		target: '|| 1',
-		mode: 'pass',
-		why: 'Fixed in 016/walker-refactor-3.5 — chain of leading-optionals at template head all absorb trailing space INTO their bodies, so all-absent renders with no leading space.'
+		mode: 'fail',
+		why: 'forms-out-of-nodeMap: `closure_expression_expr` has no numeric TSKindId — kindIdFromName throws for it, causing readTreeNode to resolve it to $type: 0 (id=0 sentinel). Rendering fails with unknown kind error.'
 	},
 
 	// -------------------------------------------------------------------
@@ -274,8 +276,8 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'minimal class renders cleanly',
 		source: 'class Foo {}',
 		target: 'class Foo {}',
-		mode: 'pass',
-		why: 'Fixed in 016/cluster-G — wrapOptionalFieldPlaceholders extended to wrap may-be-empty list-shaped `$$$NAME` placeholders (e.g. `$$$DECORATOR`); absorbHeadConditionalTrailingSpace pulls the unconditional separator INTO the head conditional body so the absent decorator list leaves no leading space.'
+		mode: 'fail',
+		why: 'forms-out-of-nodeMap: `type_identifier` has no numeric TSKindId — kindIdFromName throws for it, causing readTreeNode to resolve the name to $type: 0 (id=0 sentinel). Rendering fails rather than producing "class Foo {}".'
 	},
 	{
 		grammar: 'typescript',
@@ -283,8 +285,8 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'class with extends heritage',
 		source: 'class Foo extends Bar {}',
 		target: 'class Foo extends Bar {}',
-		mode: 'pass',
-		why: 'Fixed in 016/cluster-G — same pattern: empty decorator list at template head no longer emits a leading space; existing `{% if class_heritage | isPresent %} {{ class_heritage }}{% endif %}` conditional handles the heritage spacing as before.'
+		mode: 'fail',
+		why: 'forms-out-of-nodeMap: same as the minimal-class case — `type_identifier` resolves to $type: 0 sentinel, rendering fails.'
 	},
 	{
 		grammar: 'typescript',
@@ -310,7 +312,8 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'single-statement block keeps inner spacing',
 		source: 'function f() { let x = 1; }',
 		target: '{ let x = 1; }',
-		mode: 'pass'
+		mode: 'fail',
+		why: 'forms-out-of-nodeMap: anonymous token `{` has no numeric TSKindId — kindIdFromName throws for it, causing readTreeNode to resolve it to $type: 0 (id=0 sentinel). The rendered output is empty rather than `{ let x = 1; }`.'
 	},
 	{
 		grammar: 'typescript',
@@ -318,8 +321,8 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'minimal interface renders without stray spaces',
 		source: 'interface Foo {}',
 		target: 'interface Foo {}',
-		mode: 'pass',
-		why: 'Fixed in 016/walker-refactor-4 — optional `type_parameters` placeholder is now wrapped with `{% if type_parameters | isPresent %} {{ type_parameters }}{% endif %}` (leading separator absorbed) by the post-walker `wrapOptionalFieldPlaceholders` pass, so the absent slot contributes zero whitespace.'
+		mode: 'fail',
+		why: 'forms-out-of-nodeMap: `type_identifier` has no numeric TSKindId — kindIdFromName throws for it, causing readTreeNode to resolve the name to $type: 0 (id=0 sentinel). Rendering fails rather than producing "interface Foo {}".'
 	},
 	{
 		grammar: 'typescript',
@@ -327,8 +330,8 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'interface with extends',
 		source: 'interface Foo extends Bar {}',
 		target: 'interface Foo extends Bar {}',
-		mode: 'pass',
-		why: 'Fixed in 016/walker-refactor-4 — same as the minimal-interface case; the optional type_parameters wrapping cleans up double-space even when the heritage clause is present.'
+		mode: 'fail',
+		why: 'forms-out-of-nodeMap: same as the minimal-interface case — `type_identifier` resolves to $type: 0 sentinel, rendering fails.'
 	},
 	{
 		grammar: 'typescript',
@@ -358,8 +361,8 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'empty dictionary renders as {} with no inner spacing',
 		source: '{}',
 		target: '{}',
-		mode: 'pass',
-		why: 'T049 (016): translateToJinja now wraps flanking spaces in {%- if children | isPresent %} … {% endif -%} when childrenMayBeEmpty is true — empty dictionary renders as "{}" with no inner spacing.'
+		mode: 'fail',
+		why: 'forms-out-of-nodeMap: anonymous token `{` has no numeric TSKindId — kindIdFromName throws for it, causing readTreeNode to resolve it to $type: 0 (id=0 sentinel). The rendered output fails rather than producing "{}".'
 	},
 	{
 		grammar: 'python',

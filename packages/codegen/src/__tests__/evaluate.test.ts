@@ -590,7 +590,7 @@ describe('Evaluate — evaluate()', () => {
 		);
 	});
 
-	it('synthesizes hidden sources for named aliases to bare symbol targets when the target kind is undeclared', async () => {
+	it('does not synthesize hidden sources for bare-symbol aliases to existing rules', async () => {
 		const dir = mkdtempSync(resolve(tmpdir(), 'sittir-evaluate-'));
 		const entry = resolve(dir, 'grammar.js');
 		writeFileSync(
@@ -608,8 +608,16 @@ describe('Evaluate — evaluate()', () => {
 		);
 		try {
 			const raw = await evaluate(entry);
-			expect(raw.rules['_interface_body']).toEqual(
-				expect.objectContaining({ type: 'symbol', name: 'object_type' })
+			// Bare-symbol alias to an existing rule: source is object_type (exists)
+			// → no synthetic `_interface_body` rule is added to the rules map.
+			expect(raw.rules['_interface_body']).toBeUndefined();
+			// The container rule's alias content still points to object_type.
+			expect(raw.rules['container']).toEqual(
+				expect.objectContaining({
+					type: 'alias',
+					value: 'interface_body',
+					content: expect.objectContaining({ type: 'symbol', name: 'object_type' })
+				})
 			);
 		} finally {
 			rmSync(dir, { recursive: true, force: true });
@@ -646,25 +654,63 @@ describe('Evaluate — evaluate()', () => {
 	});
 
 	it('records grammar, override, and evaluate-synthesized provenance roots', async () => {
-		const base = await evaluate(fixture('rule-identity-grammar.js'));
-		const override = await evaluate(fixture('rule-identity-override.js'));
-		const baseContainer = base.ruleCatalog.byId.get(
-			base.ruleCatalog.rootsByKind.get('container')!
-		)!;
-		const overrideContainer = override.ruleCatalog.byId.get(
-			override.ruleCatalog.rootsByKind.get('container')!
-		)!;
-		const overrideOnly = override.ruleCatalog.byId.get(
-			override.ruleCatalog.rootsByKind.get('override_only')!
-		)!;
-		const synthesized = base.ruleCatalog.byId.get(
-			base.ruleCatalog.rootsByKind.get('_named_identifier')!
-		)!;
+		// Use a temp grammar with an INLINE alias (choice literal body) so that
+		// evaluate() synthesizes a `_primitive_type` hidden rule — the only
+		// scenario that produces 'evaluate-synthesized' provenance. Bare-symbol
+		// aliases to existing rules (e.g. alias($.identifier, $.named_identifier))
+		// are NOT synthesized since 2026-04-30.
+		const dir = mkdtempSync(resolve(tmpdir(), 'sittir-provenance-'));
+		const baseEntry = resolve(dir, 'base.js');
+		const overrideEntry = resolve(dir, 'override.js');
+		writeFileSync(
+			baseEntry,
+			`module.exports = grammar({
+  name: "provenance_test",
+  rules: {
+    source_file: ($) => $.container,
+    container: ($) => alias(choice('u8', 'u16'), $.primitive_type),
+    identifier: ($) => /[a-z_]+/,
+  },
+});\n`,
+			'utf8'
+		);
+		writeFileSync(
+			overrideEntry,
+			`const base = require(${JSON.stringify(baseEntry)});
+module.exports = grammar(base, {
+  name: 'provenance_test',
+  rules: {
+    container: ($, previous) => seq(previous, $.identifier),
+    override_only: ($) => seq('override', $.identifier),
+  },
+});\n`,
+			'utf8'
+		);
+		try {
+			const base = await evaluate(baseEntry);
+			const override = await evaluate(overrideEntry);
+			const baseContainer = base.ruleCatalog.byId.get(
+				base.ruleCatalog.rootsByKind.get('container')!
+			)!;
+			const overrideContainer = override.ruleCatalog.byId.get(
+				override.ruleCatalog.rootsByKind.get('container')!
+			)!;
+			const overrideOnly = override.ruleCatalog.byId.get(
+				override.ruleCatalog.rootsByKind.get('override_only')!
+			)!;
+			// _primitive_type is synthesized by inline-alias rewriting:
+			// alias(choice('u8','u16'), $.primitive_type) → _primitive_type = choice(...)
+			const synthesized = base.ruleCatalog.byId.get(
+				base.ruleCatalog.rootsByKind.get('_primitive_type')!
+			)!;
 
-		expect(baseContainer.provenance).toBe('grammar-authored');
-		expect(overrideContainer.provenance).toBe('override-authored-or-replaced');
-		expect(overrideOnly.provenance).toBe('override-authored-or-replaced');
-		expect(synthesized.provenance).toBe('evaluate-synthesized');
+			expect(baseContainer.provenance).toBe('grammar-authored');
+			expect(overrideContainer.provenance).toBe('override-authored-or-replaced');
+			expect(overrideOnly.provenance).toBe('override-authored-or-replaced');
+			expect(synthesized.provenance).toBe('evaluate-synthesized');
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
 	});
 
 	it('anchors symbol references to the originating rule ID', async () => {

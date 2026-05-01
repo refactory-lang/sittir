@@ -57,7 +57,7 @@ describe('KindId emission', () => {
 
 		expect(contents).toContain('export const enum TSKindId {');
 		expect(contents).toContain('$type: TSKindId.CallExpression;');
-		expect(contents).toContain('export function kindNameFromId(');
+		expect(contents).toContain('export const KIND_NAMES: ReadonlyMap<number, string>');
 		expect(contents).toContain('export function kindIdFromName(');
 		// The CONCRETE interface uses numeric discriminant.
 		expect(contents).toContain('export interface CallExpression {');

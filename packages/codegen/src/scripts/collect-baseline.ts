@@ -37,7 +37,7 @@ import { validateFrom } from '../validate/from.ts';
 import { validateRoundTrip } from '../validate/roundtrip.ts';
 import { validateTemplateCoverage } from '../validate/template-coverage.ts';
 import { renderModuleFixturesPath } from '../emitters/render-module-paths.ts';
-import { loadKindNameFromId } from '../validate/common.ts';
+import { loadKindNames } from '../validate/common.ts';
 
 // ---------------------------------------------------------------------------
 // Schema types — see contracts/baseline-json.md
@@ -239,15 +239,13 @@ async function buildParityRenderer(
 	const core = (await import('@sittir/core')) as {
 		createRenderer: (
 			templatesPath: string,
-			options?: { kindNameFromId?: (id: number) => string | undefined }
+			options?: { kindNames?: ReadonlyMap<number, string> }
 		) => {
 			render: (node: unknown) => string;
 		};
 	};
-	// Phase D: numeric $type requires a kindNameFromId resolver so the
-	// template lookup can convert the id to a template file name.
-	const kindNameFromId = await loadKindNameFromId(grammar);
-	const r = core.createRenderer(templatesPathFor(grammar), { kindNameFromId });
+	const kindNames = await loadKindNames(grammar);
+	const r = core.createRenderer(templatesPathFor(grammar), { kindNames });
 	return { render: r.render.bind(r) };
 }
 

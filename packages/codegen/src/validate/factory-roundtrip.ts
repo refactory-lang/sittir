@@ -258,6 +258,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	fieldAliasMap: Record<string, Record<string, string>>;
 	factoryFields: Record<string, readonly string[]>;
 	polymorphVariants: PolymorphVariantMap;
+	kindNames: ReadonlyMap<number, string> | undefined;
 	kindNameFromId: ((id: number) => string | undefined) | undefined;
 	kindIdFromName: ((name: string) => number | undefined) | undefined;
 	importFailure: { message: string } | null;
@@ -280,6 +281,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			fieldAliasMap,
 			factoryFields,
 			polymorphVariants,
+			kindNames,
 			kindNameFromId,
 			kindIdFromName,
 			importFailure: null
@@ -335,6 +337,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			fieldAliasMap,
 			factoryFields,
 			polymorphVariants,
+			kindNames,
 			kindNameFromId,
 			kindIdFromName,
 			importFailure: null
@@ -348,6 +351,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			fieldAliasMap,
 			factoryFields,
 			polymorphVariants,
+			kindNames,
 			kindNameFromId,
 			kindIdFromName,
 			importFailure: { message }
@@ -669,6 +673,7 @@ export async function validateFactoryRoundTrip(
 		fieldAliasMap,
 		factoryFields,
 		polymorphVariants,
+		kindNames,
 		kindNameFromId,
 		kindIdFromName,
 		importFailure

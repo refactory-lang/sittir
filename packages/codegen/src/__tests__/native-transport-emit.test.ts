@@ -358,8 +358,10 @@ describe('native transport emission', () => {
 		expect(types).toContain(
 			'readonly $children?: readonly [Identifier.Transport];'
 		);
+		// Phase 1/2 typed transport: single-kind children use concrete type
+		// instead of Box<AnyTransport>.
 		expect(rust).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: Option<Vec<Box<AnyTransport>>>,'
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: Option<Vec<IdentifierTransport>>,'
 		);
 	});
 
@@ -383,9 +385,12 @@ describe('native transport emission', () => {
 		expect(contents).toContain(
 			'assertNativeRenderTransport(node: unknown): asserts node is AnyTransport'
 		);
-		expect(contents).toContain('case "call_expression":');
-		expect(contents).toContain('case "identifier":');
-		expect(contents).toContain('assertCallExpressionTransport(node,');
+		// Per-kind assert functions are emitted even without generatedIdTables.
+		// The switch cases in assertNativeRenderTransport use numeric KindIds
+		// (require generatedIdTables); without them only the default branch exists.
+		// The per-kind validator functions are still defined (used when a call
+		// site has a numeric case via generatedIdTables).
+		expect(contents).toContain('function assertCallExpressionTransport(');
 		expect(contents).toContain(
 			'assertTransportValue(node["callee"], `${path}.callee`, [{"type":"identifier"},{"type":"call_expression"}] as const);'
 		);
@@ -394,10 +399,6 @@ describe('native transport emission', () => {
 		);
 		expect(contents).toContain(
 			'assertTransportValue(node["operator"], `${path}.operator`, [{"type":"operator","text":"+"},{"type":"operator","text":"-"}] as const);'
-		);
-		expect(contents).toContain('case ";":');
-		expect(contents).toContain(
-			'assertLiteralTransport(node, \'node\', ";", ";");'
 		);
 		expect(contents).toContain(
 			'assertTransportValue(node["semicolon"], `${path}.semicolon`, [{"type":";","text":";"}] as const);'
@@ -423,7 +424,9 @@ describe('native transport emission', () => {
 	it('emits polymorph transport validators that dispatch on the form variant', () => {
 		const contents = emitClientUtils({ nodeMap: makePolymorphNodeMap() });
 
-		expect(contents).toContain('case "expression":');
+		// Numeric switch cases in assertNativeRenderTransport require generatedIdTables;
+		// without them the switch only has a default branch. The per-form dispatch
+		// still lives inside the per-kind assert function via switch(node.$variant).
 		expect(contents).toContain('switch (node.$variant)');
 		expect(contents).toContain('case "left_form":');
 		expect(contents).toContain(
@@ -467,8 +470,10 @@ describe('native transport emission', () => {
 		expect(emitted.templatesRs.contents).toContain(
 			'pub struct CallExpressionTransport'
 		);
+		// Phase 1/2 typed transport: single-kind fields use concrete types.
+		// callee references _expression (supertype) → ExpressionTransport.
 		expect(emitted.templatesRs.contents).toContain(
-			'pub callee: Box<AnyTransport>,'
+			'pub callee: ExpressionTransport,'
 		);
 		expect(emitted.templatesRs.contents).toContain(
 			'#[serde(rename = ";")]\n    Literal0_3b(LiteralTransport),'
@@ -536,8 +541,9 @@ describe('native transport emission', () => {
 		const end = emitted.templatesRs.contents.indexOf('}', start);
 		const structBody = emitted.templatesRs.contents.slice(start, end);
 
+		// Phase 1/2 typed transport: single-kind children use concrete type.
 		expect(structBody).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: Vec<Box<AnyTransport>>,'
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: Vec<IdentifierTransport>,'
 		);
 		expect(structBody).not.toContain(
 			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: Option<'
@@ -603,8 +609,8 @@ describe('native transport emission', () => {
 		);
 		expect(types).toContain('  | True.Transport');
 		expect(types).not.toContain('TerminalTransport<"True", "True">');
-		expect(utils).toContain('case "true":');
-		expect(utils).not.toContain('case "True":');
+		// Numeric switch cases in assertNativeRenderTransport require
+		// generatedIdTables; without them neither "true" nor "True" appears.
 		expect(rust).toContain(
 			'#[serde(rename = "true")]\n    True(TrueTransport),'
 		);
@@ -641,9 +647,9 @@ describe('native transport emission', () => {
 		expect(types).toContain('export namespace Path');
 		expect(types).toContain('export type Transport = Identifier.Transport;');
 		expect(types).toContain('  | LiteralTransport<"::", "::">');
-		expect(utils).toContain('case "::":');
-		expect(utils).toContain(
-			'assertLiteralTransport(node, \'node\', "::", "::");'
-		);
+		// Numeric switch cases in assertNativeRenderTransport require
+		// generatedIdTables; without them the "::" literal case is not emitted.
+		// The assertLiteralTransport helper function is still defined for use
+		// when generatedIdTables are provided.
 	});
 });

@@ -167,7 +167,19 @@ export async function validateFrom(
 	// Phase D: $type is numeric — load both resolvers.
 	// kindIdFromName (name→id): for treeHandle JS-side reads and findNativeNodeId's kindId variant.
 	// kindNameFromId (id→name): for findNativeNodeId's id-to-kind comparison.
-	const kindIdFromName = await loadKindIdFromName(grammar);
+	// The generated kindIdFromName throws on missing entries; wrap it so
+	// readNode's resolveKindId falls back to the zero sentinel instead of
+	// propagating a TypeError for form kinds not in the numeric catalog.
+	const rawKindIdFromName = await loadKindIdFromName(grammar);
+	const kindIdFromName = rawKindIdFromName
+		? (name: string): number | undefined => {
+				try {
+					return rawKindIdFromName(name);
+				} catch {
+					return undefined;
+				}
+			}
+		: rawKindIdFromName;
 	const kindNameFromId = await loadKindNameFromId(grammar);
 
 	// Import from() + factory + wrap modules. `.from()` expects a fluent
