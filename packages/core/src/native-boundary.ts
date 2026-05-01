@@ -91,6 +91,23 @@ function assertNativeChildren(value: unknown, path: string): void {
 	}
 }
 
+/**
+ * Allowed NativeNodeData property keys. Any other key holding a non-serializable
+ * value (e.g. a function method like `render`) is rejected at the boundary.
+ */
+const ALLOWED_NATIVE_KEYS = new Set([
+	'$type',
+	'$source',
+	'$named',
+	'$fields',
+	'$children',
+	'$text',
+	'$span',
+	'$nodeId',
+	'$variant', // accepted (stripped by native; carried by factory/wrap nodes)
+	'$format' // rejected below with a dedicated error
+]);
+
 function assertNativeNodeDataInternal(
 	value: unknown,
 	path: string
@@ -98,7 +115,20 @@ function assertNativeNodeDataInternal(
 	if (!isRecord(value)) {
 		throw new TypeError(`${path} must be an object, got ${describe(value)}`);
 	}
-	assertString(value.$type, `${path}.$type`);
+	// Reject any property whose value is a function or whose key is unknown
+	// and non-serializable — methods like `render()` can't cross the napi boundary.
+	for (const [key, v] of Object.entries(value)) {
+		if (typeof v === 'function') {
+			throw new TypeError(
+				`${path}.${key} is a function — only plain data objects can cross the native render boundary`
+			);
+		}
+	}
+	// Phase D: $type is numeric (TSKindId). Accept both string (hidden/synthetic
+	// kinds) and number for compatibility with the string | number union.
+	if (typeof value.$type !== 'number' && typeof value.$type !== 'string') {
+		throw new TypeError(`${path}.$type must be a number or string, got ${describe(value.$type)}`);
+	}
 	assertNativeSource(value.$source, `${path}.$source`);
 	assertBoolean(value.$named, `${path}.$named`);
 	if (value.$format !== undefined) {

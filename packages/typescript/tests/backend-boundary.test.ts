@@ -1,8 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { TEMPLATE_BUNDLE_HASH } from '../src/hash.ts';
+import { TSKindId } from '../src/types.ts';
 
+// Phase D: $type is a numeric TSKindId (not a string) on the native wire.
 const identifier = {
-	$type: 'identifier',
+	$type: TSKindId.Identifier,
 	$source: 'factory',
 	$named: true,
 	$text: 'x'
@@ -83,8 +85,17 @@ describe('boundary', () => {
 		);
 
 		const { render } = await import('../src/boundary.ts');
-		expect(render(identifier)).toBe('ok:identifier');
-		expect(renderSpy).toHaveBeenCalledWith(identifier);
+		// Phase D: $type is numeric on the wire; TSKindId.Identifier = 1
+		// Phase D: $source is capitalized at the transport boundary ('factory' → 'Factory')
+		expect(render(identifier)).toBe(`ok:${TSKindId.Identifier}`);
+		expect(renderSpy).toHaveBeenCalledWith(
+			expect.objectContaining({
+				$type: TSKindId.Identifier,
+				$source: 'Factory',
+				$named: true,
+				$text: 'x'
+			})
+		);
 	});
 
 	it('rejects payloads that do not satisfy the native wire contract', async () => {
@@ -107,7 +118,7 @@ describe('boundary', () => {
 		);
 		const { render } = await import('../src/boundary.ts');
 		const invalidNode = {
-			$type: 'arguments',
+			$type: TSKindId.Arguments,
 			$source: 'factory',
 			$named: true,
 			$children: [identifier, 'oops']

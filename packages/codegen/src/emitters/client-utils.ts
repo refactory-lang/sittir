@@ -231,22 +231,37 @@ function emitNativeTransportProjection(lines: string[], nodeMap: NodeMap, kindEn
 	lines.push('    return { $type: value, $text: value };');
 	lines.push('  }');
 	lines.push('  if (!isRecord(value)) return value;');
-	lines.push('  if (typeof value.$type !== "number" && typeof value.$type !== "string") return value;');
+	lines.push('  // Phase D: $type must be numeric (TSKindId). However, factory-constructed');
+	lines.push('  // children can carry a string kind name when kindIdFromName was not invoked');
+	lines.push('  // (e.g. generated nodes.test.ts fixtures with `as any`). Attempt resolution');
+	lines.push('  // via kindIdFromName so the full projection pipeline runs.');
+	lines.push('  let numericType: number | undefined;');
+	lines.push('  if (typeof value.$type === "number") {');
+	lines.push('    numericType = value.$type;');
+	lines.push('  } else if (typeof value.$type === "string") {');
+	lines.push('    try {');
+	lines.push('      const kindStr = nativeTransportType(value.$type);');
+	lines.push('      numericType = kindIdFromName(kindStr);');
+	lines.push('    } catch {');
+	lines.push('      // Unknown kind name — cannot project, return as-is.');
+	lines.push('    }');
+	lines.push('  }');
+	lines.push('  if (numericType === undefined) return value;');
 	lines.push('');
-	lines.push('  // Resolve the wire kind name (including alias rewriting) first so');
-	lines.push('  // all internal routing uses a consistent string key. The numeric');
-	lines.push('  // $type is written at the very end — Phase B wire migration.');
-	lines.push('  // String $type comes from $source:"ts" NodeData — convert to numeric,');
-	lines.push('  // falling back to the string itself for TSGrammar-only inlined kinds.');
-	lines.push('  const resolvedKind = nativeTransportType(');
-	lines.push('    typeof value.$type === "number"');
-	lines.push('      ? kindNameFromId(value.$type as number)');
-	lines.push('      : (value.$type as string)');
-	lines.push('  );');
+	lines.push('  // Resolve the wire kind name (including alias rewriting) for internal');
+	lines.push('  // routing. $type is always numeric in Phase D.');
+	lines.push('  const resolvedKind = nativeTransportType(kindNameFromId(numericType));');
 	lines.push('');
 	lines.push('  const projected: Record<string, unknown> = {};');
 	lines.push('  for (const key of transportMetadataKeys) {');
 	lines.push('    if (key in value) projected[key] = value[key];');
+	lines.push('  }');
+	lines.push('  // Phase D: napi-rs #[napi(string_enum)] uses PascalCase variant names');
+	lines.push("  // ('Ts', 'Sg', 'Factory'), but the TS/serde side uses lowercase ('ts',");
+	lines.push("  // 'sg', 'factory'). Capitalize at the transport boundary.");
+	lines.push("  if (typeof projected.$source === 'string') {");
+	lines.push('    const s = projected.$source;');
+	lines.push("    projected.$source = s.charAt(0).toUpperCase() + s.slice(1);");
 	lines.push('  }');
 	lines.push('  // Temporarily store string kind for routing; converted to numeric below.');
 	lines.push('  projected.$type = resolvedKind;');
@@ -273,16 +288,7 @@ function emitNativeTransportProjection(lines: string[], nodeMap: NodeMap, kindEn
 	lines.push('  projectRawChildrenIntoFields(projected, resolvedKind);');
 	lines.push('  inferNativeTransportVariant(projected, resolvedKind);');
 	lines.push('');
-	lines.push('  // Convert $type to numeric at the wire boundary (Phase B).');
-	lines.push('  // After the kindIdFromName coverage extension, every parser-symbol-bearing');
-	lines.push('  // kind resolves — the try/catch fallback only fires for genuinely TSGrammar-only');
-	lines.push('  // inlined rules (which never reach the wire). Warn loudly if it does fire so');
-	lines.push('  // wire-shape regressions surface immediately rather than silently degrading.');
-	lines.push('  try { projected.$type = kindIdFromName(resolvedKind); } catch {');
-	lines.push('    // eslint-disable-next-line no-console');
-	lines.push('    console.warn(`[sittir] projectTransportValue: kind "${resolvedKind}" has no TSKindId — keeping string $type. This kind is TSGrammar-only or the catalog is missing an entry.`);');
-	lines.push('    projected.$type = resolvedKind;');
-	lines.push('  }');
+	lines.push('  projected.$type = kindIdFromName(resolvedKind);');
 	lines.push('');
 	lines.push('  return projected;');
 	lines.push('}');
@@ -592,28 +598,16 @@ function emitNativeTransportAssertions(
 	lines.push(
 		"  if (!isRecord(node)) throw new TypeError('node must be an object');"
 	);
-	if (kindIdByKind) {
-		// Phase B: top-level and named-field child transports use numeric $type.
-		// Anonymous-token / TSGrammar-only inlined kinds (e.g. empty_statement, doc_comment)
-		// have no parser ID and keep a string $type — accept both so recursive calls
-		// from assertTransportValue (which handles literal/inline child kinds) don't fail.
-		lines.push(
-			"  if (typeof node.$type !== 'number' && typeof node.$type !== 'string') throw new TypeError('node.$type must be a KindId (number) or kind string');"
-		);
-	} else {
-		lines.push(
-			"  if (typeof node.$type !== 'string') throw new TypeError('node.$type must be a string');"
-		);
-	}
+	// Phase D: $type is always numeric.
+	lines.push(
+		"  if (typeof node.$type !== 'number') throw new TypeError('node.$type must be a KindId (number)');"
+	);
 	lines.push("  assertDataOnlyObject(node, 'node');");
 
-	// Compute the case expressions for all transport variants up-front so we can
-	// detect whether there's a mix of numeric and string cases. A mix occurs when
-	// some kinds have parser symbols (numeric) and others are TSGrammar-only
-	// inlined rules (string fallback). In that case, cast the switch discriminant
-	// to `number | string` to avoid TS2678 ("Type 'string' is not comparable to
-	// type 'number'") — string cases are unreachable at runtime when the wire
-	// enforces numeric $type, but TS sees them as type errors without the cast.
+	// Build case expressions. All case IDs should be numeric in Phase D; any kind
+	// without a parser ID (TSGrammar-only inlined rule) cannot reach the wire, so
+	// we assert — if a case has no numeric ID, fall back to the string as a sentinel
+	// so the generated code still compiles (it will hit the default throw at runtime).
 	const nodeCaseEntries: Array<{ caseExpr: string; kind: string; typeName: string }> = [];
 	for (const node of validators) {
 		const id = kindIdByKind?.get(node.kind);
@@ -630,12 +624,9 @@ function emitNativeTransportAssertions(
 		literalCaseEntries.push({ caseExpr, kind: literal.kind, text: literal.text });
 	}
 
-	// When numeric dispatch is active, check if any case still uses a string fallback.
-	// A string case in a number-discriminant switch is unreachable but causes TS2678.
-	// Cast the discriminant so TS accepts both flavours; the runtime behaviour
-	// is identical (the string cases are never reached when the wire enforces numeric $type).
+	// If any entry still has a string case expression (TSGrammar-only sentinel),
+	// cast the discriminant to avoid TS2678 — these are unreachable at runtime.
 	const hasStringFallback =
-		kindIdByKind !== undefined &&
 		[...nodeCaseEntries, ...literalCaseEntries].some((e) => e.caseExpr.startsWith('"'));
 	const switchExpr = hasStringFallback ? '(node.$type as number | string)' : 'node.$type';
 
@@ -708,18 +699,11 @@ function emitNativeTransportAssertions(
 	lines.push(
 		'function assertTransportKind(node: Record<string, unknown>, path: string, kind: string): void {'
 	);
-	if (kindIdByKind) {
-		// Phase B: $type is numeric on the wire; compare against kindIdFromName.
-		lines.push('  if (node.$type !== kindIdFromName(kind)) {');
-		lines.push(
-			'    throw new TypeError(`${path}.$type must be the KindId for ${JSON.stringify(kind)}`);'
-		);
-	} else {
-		lines.push('  if (node.$type !== kind) {');
-		lines.push(
-			'    throw new TypeError(`${path}.$type must be ${JSON.stringify(kind)}`);'
-		);
-	}
+	// Phase D: $type is always numeric.
+	lines.push('  if (node.$type !== kindIdFromName(kind)) {');
+	lines.push(
+		'    throw new TypeError(`${path}.$type must be the KindId for ${JSON.stringify(kind)}`);'
+	);
 	lines.push('  }');
 	lines.push('}');
 	lines.push('');
@@ -776,8 +760,15 @@ function emitNativeTransportAssertions(
 		'function assertOptionalMetadata(node: Record<string, unknown>, path: string): void {'
 	);
 	lines.push('  const source = node.$source;');
+	// Phase D: napi-rs #[napi(string_enum)] maps Rust PascalCase variants to JS
+	// ('Ts', 'Sg', 'Factory'). The TS/serde side uses lowercase ('ts', 'sg',
+	// 'factory'). projectTransportValue capitalizes before sending to Rust; the
+	// JS-side validator accepts both cases.
 	lines.push(
-		"  if (source !== undefined && source !== 'ts' && source !== 'sg' && source !== 'factory') {"
+		"  if (source !== undefined && source !== 'ts' && source !== 'sg' && source !== 'factory' &&"
+	);
+	lines.push(
+		"      source !== 'Ts' && source !== 'Sg' && source !== 'Factory') {"
 	);
 	lines.push(
 		'    throw new TypeError(`${path}.$source must be ts, sg, or factory`);'
@@ -799,23 +790,18 @@ function emitNativeTransportAssertions(
 	lines.push(
 		'  if (!isRecord(value)) throw new TypeError(`${path} must be a transport node or terminal value`);'
 	);
-	if (kindIdByKind) {
-		// Phase B: $type is numeric on the wire; accept both number (structured) and string (literal terminal).
-		lines.push(
-			"  if (typeof value.$type !== 'number' && typeof value.$type !== 'string') throw new TypeError(`${path}.$type must be a number or string`);"
-		);
-		lines.push('  const accepted = alternatives.some((candidate) => {');
-		lines.push('    const typeMatch = typeof value.$type === "number"');
-		lines.push('      ? value.$type === kindIdFromName(candidate.type)');
-		lines.push('      : value.$type === candidate.type;');
-		lines.push('    if (!typeMatch) return false;');
-	} else {
-		lines.push(
-			"  if (typeof value.$type !== 'string') throw new TypeError(`${path}.$type must be a string`);"
-		);
-		lines.push('  const accepted = alternatives.some((candidate) => {');
-		lines.push('    if (value.$type !== candidate.type) return false;');
-	}
+	// Phase D: structured nodes have numeric $type; anonymous-token terminals
+	// (e.g., bare ";" converted to { $type: ";", $text: ";" }) keep a string $type.
+	// Accept both at the child level; only recurse into assertNativeRenderTransport
+	// for structured (numeric) nodes.
+	lines.push(
+		"  if (typeof value.$type !== 'number' && typeof value.$type !== 'string') throw new TypeError(`${path}.$type must be a number or string`);"
+	);
+	lines.push('  const accepted = alternatives.some((candidate) => {');
+	lines.push('    const typeMatch = typeof value.$type === "number"');
+	lines.push('      ? value.$type === kindIdFromName(candidate.type)');
+	lines.push('      : value.$type === candidate.type;');
+	lines.push('    if (!typeMatch) return false;');
 	lines.push(
 		'    return candidate.text === undefined || value.$text === candidate.text;'
 	);
@@ -826,14 +812,9 @@ function emitNativeTransportAssertions(
 	);
 	lines.push('    throw new TypeError(`${path} must be one of: ${allowed}`);');
 	lines.push('  }');
-	if (kindIdByKind) {
-		// Phase B: only recurse into assertNativeRenderTransport for structured
-		// (numeric $type) nodes. String-$type values are anonymous-token terminals
-		// (e.g., empty_statement = ";") — their kind+text match above is sufficient.
-		lines.push('  if (typeof value.$type === "number") assertNativeRenderTransport(value);');
-	} else {
-		lines.push('  assertNativeRenderTransport(value);');
-	}
+	// Only recurse into assertNativeRenderTransport for structured (numeric $type) nodes.
+	// String-$type values are anonymous-token terminals — kind+text match above is sufficient.
+	lines.push('  if (typeof value.$type === "number") assertNativeRenderTransport(value);');
 	lines.push('}');
 	lines.push('');
 	lines.push(

@@ -14,6 +14,8 @@ import type { AnyNodeData, NodeId } from '@sittir/types';
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
+	loadKindIdFromName,
+	loadKindNameFromId,
 	buildReadHandle,
 	findFirst,
 	findNativeNodeId,
@@ -162,6 +164,12 @@ export async function validateFrom(
 	const parser = new Parser();
 	parser.setLanguage(lang);
 
+	// Phase D: $type is numeric — load both resolvers.
+	// kindIdFromName (name→id): for treeHandle JS-side reads and findNativeNodeId's kindId variant.
+	// kindNameFromId (id→name): for findNativeNodeId's id-to-kind comparison.
+	const kindIdFromName = await loadKindIdFromName(grammar);
+	const kindNameFromId = await loadKindNameFromId(grammar);
+
 	// Import from() + factory + wrap modules. `.from()` expects a fluent
 	// NodeData (from factory output OR readTreeNode wrap) OR a camelCase
 	// loose bag — per spec 008 US3, bare `readNode` output isn't a
@@ -232,12 +240,12 @@ export async function validateFrom(
 			const node1 = findFirst(tree1.rootNode, kind);
 			if (!node1) continue;
 
-			const handle = buildReadHandle(grammar, tree1, entry.source, backend);
+			const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
 			// Native engine Rust-heap IDs differ from WASM linear-memory IDs.
 			// Resolve via the native data tree; if the kind is an alias target
 			// the native engine emits under a different rule name, skip rather
 			// than fall back to a mismatched WASM ID.
-			const nativeId = findNativeNodeId(handle, kind);
+			const nativeId = findNativeNodeId(handle, kind, kindNameFromId);
 			if (nativeId === null && handle.read) continue;
 			const nodeId = nativeId ?? (node1.id as NodeId);
 			// Use readTreeNode (wrapped via per-kind dispatch) when available,

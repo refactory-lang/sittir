@@ -497,7 +497,7 @@ export type FluentNode<K extends string, C = unknown> = {
  * ```
  */
 export type RuntimeNodeOf<T> = T extends {
-	readonly $type: infer _K extends string | number;
+	readonly $type: infer _K extends number;
 }
 	? Simplify<
 			{
@@ -520,7 +520,7 @@ export type RuntimeNodeOf<T> = T extends {
  * FluentNodeOf<T> — RuntimeNodeOf + fluent setters (camelCase setter names
  * derived from snake_case field names via SetterKey/CamelCase).
  */
-export type FluentNodeOf<T> = T extends { readonly $type: string | number }
+export type FluentNodeOf<T> = T extends { readonly $type: number }
 	? RuntimeNodeOf<T> & FluentSetters<FieldsOf<T>, never, RuntimeNodeOf<T>>
 	: never;
 
@@ -876,7 +876,7 @@ type IsUnion<T, B = T> = T extends unknown
 	: never;
 
 /** True when T is a single concrete node type (literal `$type`), false when a union. */
-type IsSingleType<T> = [T] extends [{ readonly $type: string | number }]
+type IsSingleType<T> = [T] extends [{ readonly $type: number }]
 	? IsUnion<T> extends true
 		? false
 		: true
@@ -926,7 +926,7 @@ type IsHomogeneous<T, NsMap> = [NsMap] extends [never]
 	? false
 	: keyof NsMap extends never
 		? false
-		: [T] extends [{ readonly $type: string | number }]
+		: [T] extends [{ readonly $type: number }]
 			? Equals<
 					UnionOfArmsLoose<T, NsMap>,
 					UnionToIntersection<UnionOfArmsLoose<T, NsMap>>
@@ -1052,7 +1052,7 @@ type WidenValue<
 							| T
 							| (K extends keyof Strings ? Strings[K] : string)
 							| (K extends keyof Scalars ? Scalars[K] : never)
-					: [T] extends [{ readonly $type: string | number }]
+					: [T] extends [{ readonly $type: number }]
 						? // Branch(es) — decide single/homogeneous/heterogeneous ONCE for the
 							// whole union, then emit accordingly.
 							IsSingleType<T> extends true

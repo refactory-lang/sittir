@@ -37,6 +37,7 @@ import { validateFrom } from '../validate/from.ts';
 import { validateRoundTrip } from '../validate/roundtrip.ts';
 import { validateTemplateCoverage } from '../validate/template-coverage.ts';
 import { renderModuleFixturesPath } from '../emitters/render-module-paths.ts';
+import { loadKindNameFromId } from '../validate/common.ts';
 
 // ---------------------------------------------------------------------------
 // Schema types — see contracts/baseline-json.md
@@ -139,13 +140,13 @@ function uniqSorted(values: Iterable<string>): string[] {
 interface RenderFixture {
 	readonly kind: 'render';
 	readonly grammar: string;
-	readonly input: { readonly $type: string; readonly [k: string]: unknown };
+	readonly input: { readonly $type: number; readonly [k: string]: unknown };
 	readonly expectedOutput: string;
 }
 
 interface ParityFixtureLike {
 	readonly kind: string;
-	readonly input?: { readonly $type?: string };
+	readonly input?: { readonly $type?: number };
 }
 
 function loadRenderFixtures(grammar: Grammar): RenderFixture[] {
@@ -153,7 +154,7 @@ function loadRenderFixtures(grammar: Grammar): RenderFixture[] {
 	const all = JSON.parse(raw) as ParityFixtureLike[];
 	return all.filter(
 		(f): f is RenderFixture =>
-			f.kind === 'render' && typeof f.input?.$type === 'string'
+			f.kind === 'render' && typeof f.input?.$type === 'number'
 	);
 }
 
@@ -236,11 +237,17 @@ async function buildParityRenderer(
 	// Lazy import of @sittir/core's createRenderer — keeps the module
 	// import-cheap when the test target only exercises the type shape.
 	const core = (await import('@sittir/core')) as {
-		createRenderer: (templatesPath: string) => {
+		createRenderer: (
+			templatesPath: string,
+			options?: { kindNameFromId?: (id: number) => string | undefined }
+		) => {
 			render: (node: unknown) => string;
 		};
 	};
-	const r = core.createRenderer(templatesPathFor(grammar));
+	// Phase D: numeric $type requires a kindNameFromId resolver so the
+	// template lookup can convert the id to a template file name.
+	const kindNameFromId = await loadKindNameFromId(grammar);
+	const r = core.createRenderer(templatesPathFor(grammar), { kindNameFromId });
 	return { render: r.render.bind(r) };
 }
 
@@ -255,8 +262,8 @@ export async function collectParityFixtures(
 	let pass = 0;
 	// Map insertion order matches fixture-file declaration order — keep
 	// the failure-id values in that order, then re-key with sorted keys
-	// when serialising.
-	const failingByKind = new Map<string, string[]>();
+	// when serialising. Phase D: $type is numeric; map on numeric keys.
+	const failingByKind = new Map<number, string[]>();
 
 	fixtures.forEach((fx, idx) => {
 		let actual: string;
@@ -279,13 +286,12 @@ export async function collectParityFixtures(
 		failingByKind.set(kind, existing);
 	});
 
-	// Re-key the map with sorted kind names. Value arrays stay in
-	// insertion order, which IS fixture-file declaration order
-	// because we iterated `fixtures` in order. Determinism rule:
-	// sorted keys, fixture-order values.
+	// Re-key the map with sorted numeric kind IDs converted to strings.
+	// Value arrays stay in insertion order (fixture-file declaration order).
+	// Determinism rule: sorted numeric keys, fixture-order values.
 	const sortedFailingByKind: Record<string, string[]> = {};
-	for (const k of [...failingByKind.keys()].sort()) {
-		sortedFailingByKind[k] = failingByKind.get(k)!;
+	for (const k of [...failingByKind.keys()].sort((a, b) => a - b)) {
+		sortedFailingByKind[String(k)] = failingByKind.get(k)!;
 	}
 
 	return {

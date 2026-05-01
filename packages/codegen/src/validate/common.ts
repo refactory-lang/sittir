@@ -172,7 +172,11 @@ export function adaptNode(node: TS.Node): AnyTreeNode {
 	};
 }
 
-export function treeHandle(tree: TS.Tree, source?: string): TreeHandle {
+export function treeHandle(
+	tree: TS.Tree,
+	source?: string,
+	kindIdFromName?: (kind: string) => number | undefined
+): TreeHandle {
 	const nodeMap = new Map<number, TS.Node>();
 	function collect(node: TS.Node) {
 		nodeMap.set(node.id, node);
@@ -183,6 +187,8 @@ export function treeHandle(tree: TS.Tree, source?: string): TreeHandle {
 	// TS handles use nodeById/rootNode directly in readNode(). No `read`
 	// method is set here — native handles set `read` so readNode() dispatches
 	// through the napi engine without a JS-side tree walk.
+	// Phase D: kindIdFromName is required for JS-side reads (readNode emits
+	// numeric $type). Supply it from the grammar's types module.
 	const handle: TreeHandle = {
 		rootNode: adaptNode(tree.rootNode),
 		nodeById: (id: NodeId) => {
@@ -190,7 +196,8 @@ export function treeHandle(tree: TS.Tree, source?: string): TreeHandle {
 			if (!node) throw new Error(`Node ${id} not found`);
 			return adaptNode(node);
 		},
-		source
+		source,
+		kindIdFromName
 	};
 	return handle;
 }
@@ -313,7 +320,8 @@ export function buildReadHandle(
 	grammar: string,
 	tree: TS.Tree,
 	source: string,
-	backend?: 'native' | 'typescript'
+	backend?: 'native' | 'typescript',
+	kindIdFromName?: (kind: string) => number | undefined
 ): TreeHandle {
 	const effectiveBackend = backend ?? process.env.SITTIR_BACKEND;
 	if (effectiveBackend === 'native') {
@@ -325,7 +333,7 @@ export function buildReadHandle(
 		}
 		return nativeTreeHandle(engine, source);
 	}
-	return treeHandle(tree, source);
+	return treeHandle(tree, source, kindIdFromName);
 }
 
 /**
@@ -341,13 +349,18 @@ export function buildReadHandle(
  */
 export function findNativeNodeId(
 	handle: TreeHandle,
-	kind: string
+	kind: string,
+	kindNameFromId?: (id: number) => string | undefined
 ): NodeId | null {
 	if (!handle.read) return null;
 	const root = handle.read();
 
 	function walk(d: AnyNodeData): NodeId | null {
-		if (d.$type === kind && d.$nodeId !== undefined) return d.$nodeId;
+		// $type may be numeric (parser.c-derived) or string (hidden/synthetic kind).
+		const nodeKind = typeof d.$type === 'number'
+			? (kindNameFromId?.(d.$type) ?? String(d.$type))
+			: d.$type;
+		if (nodeKind === kind && d.$nodeId !== undefined) return d.$nodeId;
 		const fields = d.$fields;
 		if (fields) {
 			for (const v of Object.values(fields)) {
@@ -766,7 +779,7 @@ export function walkWrappedTree(
 }
 
 export interface WrappedNodeData {
-	readonly $type: string;
+	readonly $type: number;
 	readonly $nodeId?: NodeId;
 	readonly [k: string]: unknown;
 }
@@ -774,8 +787,65 @@ function isWrappedNodeData(v: unknown): v is WrappedNodeData {
 	return (
 		!!v &&
 		typeof v === 'object' &&
-		typeof (v as { $type?: unknown }).$type === 'string'
+		typeof (v as { $type?: unknown }).$type === 'number'
 	);
+}
+
+/** Relative path from codegen/src/validate to language package types.ts */
+const TYPES_MODULE_PATHS: Record<string, string> = {
+	rust: '../../../rust/src/types.ts',
+	typescript: '../../../typescript/src/types.ts',
+	python: '../../../python/src/types.ts'
+};
+
+/**
+ * Load the grammar package's `kindNameFromId` resolver for Phase D numeric
+ * `$type` support. Returns a safe wrapper that returns `undefined` on unknown
+ * ids rather than throwing.
+ */
+export async function loadKindNameFromId(
+	grammar: string
+): Promise<((id: number) => string | undefined) | undefined> {
+	const typesModulePath = TYPES_MODULE_PATHS[grammar];
+	if (!typesModulePath) return undefined;
+	try {
+		const typesModule = await import(
+			new URL(typesModulePath, import.meta.url).pathname
+		);
+		const rawFn = typesModule.kindNameFromId as
+			| ((id: number) => string)
+			| undefined;
+		if (!rawFn) return undefined;
+		return (id: number) => {
+			try {
+				return rawFn(id);
+			} catch {
+				return undefined;
+			}
+		};
+	} catch {
+		return undefined;
+	}
+}
+
+/**
+ * Load the grammar package's `kindIdFromName` resolver for Phase D numeric
+ * `$type` support. Returns the raw function (which throws on unknown names)
+ * so callers can wrap it in try/catch as needed.
+ */
+export async function loadKindIdFromName(
+	grammar: string
+): Promise<((name: string) => number) | undefined> {
+	const typesModulePath = TYPES_MODULE_PATHS[grammar];
+	if (!typesModulePath) return undefined;
+	try {
+		const typesModule = await import(
+			new URL(typesModulePath, import.meta.url).pathname
+		);
+		return typesModule.kindIdFromName as ((name: string) => number) | undefined;
+	} catch {
+		return undefined;
+	}
 }
 
 /**
@@ -875,12 +945,14 @@ export interface NodeToConfigOpts {
 	readonly _fieldName?: string;
 	/** Internal recursion guard — set by the helper, not the caller. */
 	readonly _depth?: number;
+	/** Phase D: resolver for numeric $type → string kind name. Required when
+	 * input nodes carry numeric $type (readNode output post-Phase-D). */
+	readonly kindNameFromId?: (id: number) => string | undefined;
 }
 
 interface ReadNodeLike {
-	// Phase A: AnyNodeData.$type is string | number (factory outputs numeric TSKindId,
-	// readNode outputs string kind name). Validators feed readNode output here (string),
-	// but must accept the widened type to satisfy structural compatibility with AnyNodeData.
+	// $type is numeric (TSKindId) for parser.c-derived kinds; string for
+	// hidden/synthetic kinds (e.g. "_suite") that have no parser.c entry.
 	readonly $type?: string | number;
 	readonly $text?: string;
 	readonly $nodeId?: NodeId;
@@ -1000,17 +1072,32 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 			// back to the shallow entry we already have.
 		}
 	}
-	// Validator feeds readNode output ($type is always string kind name).
-	// Cast: AnyNodeData.$type is string | number in Phase A.
-	const rawKind = (drilled.$type ?? c.$type) as string | undefined;
+	// $type may be numeric (TSKindId) or string (hidden/synthetic kind).
+	const rawTypeId = drilled.$type ?? c.$type;
+	const rawKind = rawTypeId !== undefined
+		? (typeof rawTypeId === 'number'
+			? (opts.kindNameFromId?.(rawTypeId) ?? String(rawTypeId))
+			: rawTypeId)
+		: undefined;
 	if (!rawKind) return drilled;
-	const kind = resolveAliasedKind(
+	let kind = resolveAliasedKind(
 		rawKind,
 		_parentKind,
 		_fieldName,
 		fieldAliasMap
 	);
-	const factory = factoryMap![kind];
+	let factory = factoryMap![kind];
+	// Phase D: kindNameFromId returns the canonical form (e.g. '_type_identifier')
+	// but factoryMap is keyed by the tree-sitter visible name ('type_identifier').
+	// If the factory lookup fails and kind starts with '_', try the stripped form.
+	if (!factory && kind.startsWith('_')) {
+		const strippedKind = kind.slice(1);
+		const strippedFactory = factoryMap![strippedKind];
+		if (strippedFactory) {
+			kind = strippedKind;
+			factory = strippedFactory;
+		}
+	}
 	if (!factory) return drilled; // hidden / unfactoryable kind — pass through
 	const shape = factoryShapes?.[kind] ?? 'config';
 	// 'text' shape: leaf factory takes a bare string.
@@ -1100,9 +1187,12 @@ export function nodeToConfig(
 	opts: NodeToConfigOpts = {}
 ): Record<string, unknown> {
 	const out: Record<string, unknown> = {};
-	// Validator feeds readNode output ($type is always string kind name).
-	// Cast: AnyNodeData.$type is string | number in Phase A.
-	const parentKind = data.$type as string | undefined;
+	// $type may be numeric (TSKindId) or string (hidden/synthetic kind).
+	const parentKind = data.$type !== undefined
+		? (typeof data.$type === 'number'
+			? (opts.kindNameFromId?.(data.$type) ?? String(data.$type))
+			: data.$type)
+		: undefined;
 	if (data.$fields) {
 		for (const [k, v] of Object.entries(data.$fields)) {
 			if (v === undefined) continue;
@@ -1160,7 +1250,7 @@ export function nodeToConfig(
 	if (parentKind && opts.polymorphVariants) {
 		const desc = opts.polymorphVariants[parentKind];
 		if (desc && !('$variant' in out)) {
-			const v = inferPolymorphVariant(desc, data, out, parentKind);
+			const v = inferPolymorphVariant(desc, data, out, parentKind, opts.kindNameFromId);
 			if (v !== undefined) out.$variant = v;
 		}
 	}
@@ -1183,11 +1273,12 @@ function inferPolymorphVariant(
 	desc: PolymorphVariantDescriptor,
 	data: ReadNodeLike,
 	derivedConfig: Record<string, unknown>,
-	parentKind: string
+	parentKind: string,
+	kindNameFromId?: (id: number) => string | undefined
 ): string | undefined {
 	switch (desc.source) {
 		case 'override':
-			return inferFromChildKind(desc.childKind, data, parentKind);
+			return inferFromChildKind(desc.childKind, data, parentKind, kindNameFromId);
 		case 'promoted':
 			return inferFromFieldPresence(desc.fields, derivedConfig, parentKind);
 		default:
@@ -1203,16 +1294,41 @@ function inferPolymorphVariant(
 function inferFromChildKind(
 	childKind: Readonly<Record<string, string>>,
 	data: ReadNodeLike,
-	parentKind: string
+	parentKind: string,
+	kindNameFromId?: (id: number) => string | undefined
 ): string | undefined {
 	const firstChild = data.$children?.find(
 		(c) =>
 			c != null &&
 			typeof c === 'object' &&
 			(c as { $named?: boolean }).$named !== false
-	) as { $type?: string } | undefined;
-	const kind = firstChild?.$type;
-	if (kind && kind in childKind) return childKind[kind];
+	) as { $type?: string | number } | undefined;
+	const rawType = firstChild?.$type;
+	// Phase D: $type is numeric (TSKindId) or string (hidden/synthetic kind).
+	// Resolve to a kind-name string for childKind map lookup.
+	let kind: string | undefined;
+	if (rawType === undefined) {
+		kind = undefined;
+	} else if (typeof rawType === 'number') {
+		kind = kindNameFromId?.(rawType) ?? String(rawType);
+	} else {
+		// String $type: tree-sitter reports hidden rules WITHOUT the leading
+		// underscore (e.g. 'expression_statement_with_semi'), but kindNameFromId
+		// may return the canonical underscore form (e.g.
+		// '_expression_statement_with_semi'). Normalize to strip any leading
+		// underscore for the childKind map lookup, which uses the visible name.
+		kind = rawType;
+	}
+	if (kind) {
+		// Try exact match first (e.g. for visible kinds or already-stripped names).
+		if (kind in childKind) return childKind[kind];
+		// Tree-sitter strips leading underscore from hidden rule names when
+		// reporting node.type, but kindNameFromId may have already returned the
+		// canonical form with underscore. Try stripping the leading underscore
+		// as a fallback.
+		const stripped = kind.startsWith('_') ? kind.slice(1) : undefined;
+		if (stripped && stripped in childKind) return childKind[stripped];
+	}
 	console.warn(
 		`[nodeToConfig] polymorph '${parentKind}' (source=override): no variant matched first child kind '${kind ?? '<none>'}'. ` +
 			`Known: [${Object.keys(childKind).join(', ')}]`

@@ -28,6 +28,7 @@ import { assertNever } from '../polymorph-variant.ts';
 import {
 	collectKindEntries,
 	kindDiscriminantExpr,
+	kindIdMemberName,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import { collectAllKinds } from './types.ts';
@@ -140,7 +141,9 @@ export function emitIs(config: EmitIsConfig): string {
 		kind: string;
 		typeName: string;
 		guardKey: string;
-		/** Numeric TSKindId (Phase A coexistence); undefined = string-only guard. */
+		/** TSKindId enum member name (e.g. 'FunctionItem'); present when kindEntries available. */
+		member?: string;
+		/** Numeric TSKindId; undefined when kind has no parser symbol. */
 		numericId?: number;
 	}> = [];
 	const usedCamelKeys = new Set<string>();
@@ -168,7 +171,8 @@ export function emitIs(config: EmitIsConfig): string {
 					);
 				}
 				usedCamelKeys.add(guardKey);
-				structuralKinds.push({ kind, typeName: node.typeName, guardKey, numericId });
+				const member = kindEntries ? kindIdMemberName(nodeMap, kind) : undefined;
+				structuralKinds.push({ kind, typeName: node.typeName, guardKey, member, numericId });
 				break;
 			}
 			case 'leaf':
@@ -273,13 +277,20 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push('// IsGuards — per-kind + supertype type-narrowing guards.');
 	lines.push('export interface IsGuards {');
 	for (const s of structuralKinds) {
+		const narrowType = s.member ? `TSKindId.${s.member}` : 'number';
 		lines.push(
-			`    ${s.guardKey}<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '${s.kind}' };`
+			`    ${s.guardKey}<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: ${narrowType} };`
 		);
 	}
 	lines.push(
-		`    kind<K extends keyof NamespaceMap>(v: { readonly $type: string | number }, kind: K): v is { readonly $type: K & string };`
+		`    kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };`
 	);
+	// Supertype guards accept `string | number` $type because the supertype union
+	// may include Terminal<K> leaf types (e.g. Identifier, True, False) whose
+	// $type is a string literal. The parameter must be wide enough to satisfy
+	// TS2677 ("type predicate's type must be assignable to its parameter's type").
+	// The runtime guard body (_sg) only matches numeric IDs in Phase D, so
+	// passing a string-$type value safely returns false.
 	for (const s of supertypes) {
 		lines.push(
 			`    ${s.guardKey}(v: { readonly $type: string | number }): v is ${s.typeName};`
@@ -294,12 +305,13 @@ export function emitIs(config: EmitIsConfig): string {
 	);
 	lines.push('export interface AssertGuards {');
 	for (const s of structuralKinds) {
+		const narrowType = s.member ? `TSKindId.${s.member}` : 'number';
 		lines.push(
-			`    ${s.guardKey}(v: { readonly $type: string | number }): asserts v is { readonly $type: '${s.kind}' };`
+			`    ${s.guardKey}(v: { readonly $type: number }): asserts v is { readonly $type: ${narrowType} };`
 		);
 	}
 	lines.push(
-		`    kind<K extends keyof NamespaceMap>(v: { readonly $type: string | number }, kind: K): asserts v is { readonly $type: K & string };`
+		`    kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };`
 	);
 	for (const s of supertypes) {
 		lines.push(
@@ -311,30 +323,23 @@ export function emitIs(config: EmitIsConfig): string {
 
 	// Runtime construction.
 	if (kindEntries) {
-		// Phase A coexistence: guards compare both numeric TSKindId and string
-		// kind-name. Factories/wrap emit numeric $type; readNode still emits
-		// string. Both shapes must be accepted until Phase D removes the string
-		// arm once all producers switch to numeric.
+		// Phase D: all producers emit numeric $type. Guards compare numeric
+		// TSKindId only — the string-comparison arm has been removed.
+		lines.push('// Runtime: kind guards compare numeric TSKindId only (Phase D).');
 		lines.push(
-			'// Runtime: kind guards accept both numeric (factory/wrap) and string (readNode)'
+			'function _g(id: number): (v: { readonly $type: number }) => boolean {'
 		);
-		lines.push(
-			'// $type during Phase A coexistence. Phase D removes the string arm.'
-		);
-		lines.push(
-			'function _g(k: string, id: number): (v: { readonly $type: string | number }) => boolean {'
-		);
-		lines.push('    return (v) => v.$type === id || v.$type === k;');
+		lines.push('    return (v) => v.$type === id;');
 		lines.push('}');
 		lines.push(
-			'function _sg(ks: ReadonlySet<string>, ids: ReadonlySet<number>): (v: { readonly $type: string | number }) => boolean {'
+			'function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boolean {'
 		);
-		lines.push(
-			'    return (v) => typeof v.$type === \'number\' ? ids.has(v.$type) : ks.has(v.$type);'
-		);
+		lines.push('    return (v) => ids.has(v.$type);');
 		lines.push('}');
 	} else {
-		// Legacy / unit-test callers without generatedIdTables: string-only.
+		// Legacy / unit-test callers without generatedIdTables: string-only
+		// fallback. This path is only reached in tests that bypass the full
+		// codegen pipeline and do not supply generatedIdTables.
 		lines.push(
 			'// Runtime: kind guards = string equality; supertype guards = Set.has.'
 		);
@@ -342,32 +347,34 @@ export function emitIs(config: EmitIsConfig): string {
 			'// Building from literal string arrays keeps the runtime footprint minimal.'
 		);
 		lines.push(
-			'function _g(k: string): (v: { readonly $type: string | number }) => boolean {'
+			'function _g(k: string): (v: { readonly $type: number }) => boolean {'
 		);
-		lines.push('    return (v) => v.$type === k;');
+		lines.push('    return (v) => (v.$type as unknown) === k;');
 		lines.push('}');
 		lines.push(
-			'function _sg(ks: ReadonlySet<string>): (v: { readonly $type: string | number }) => boolean {'
+			'function _sg(ks: ReadonlySet<string>): (v: { readonly $type: number }) => boolean {'
 		);
-		// v.$type may be a number (Phase A numeric discriminant) — Set<string>.has
-		// only accepts string, so cast. If $type is numeric, has() returns false
-		// (correct: string-keyed supertype sets don't contain numeric members).
-		lines.push('    return (v) => ks.has(v.$type as string);');
+		lines.push('    return (v) => ks.has(v.$type as unknown as string);');
 		lines.push('}');
 	}
 	lines.push('');
 
 	// Per-supertype Sets, one per supertype. Declared before `is` so the
 	// object-literal construction can reference them.
+	// Phase D: when kindEntries is present, only the numeric id set is needed.
+	// The string-name set is kept for the legacy no-kindEntries path only.
 	for (const s of supertypes) {
-		const members = s.memberKinds.map((k) => JSON.stringify(k)).join(', ');
-		lines.push(
-			`const _supertype_${s.guardKey} = new Set<string>([${members}]);`
-		);
-		if (kindEntries && s.memberIds.length > 0) {
-			const ids = s.memberIds.join(', ');
+		if (kindEntries) {
+			if (s.memberIds.length > 0) {
+				const ids = s.memberIds.join(', ');
+				lines.push(
+					`const _supertype_${s.guardKey}_ids = new Set<number>([${ids}]);`
+				);
+			}
+		} else {
+			const members = s.memberKinds.map((k) => JSON.stringify(k)).join(', ');
 			lines.push(
-				`const _supertype_${s.guardKey}_ids = new Set<number>([${ids}]);`
+				`const _supertype_${s.guardKey} = new Set<string>([${members}]);`
 			);
 		}
 	}
@@ -396,40 +403,36 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push('export const is = {');
 	for (const s of structuralKinds) {
 		if (kindEntries && s.numericId !== undefined) {
-			// Phase A coexistence: compare numeric TSKindId first, then string.
+			// Phase D: numeric-only comparison.
 			const expr = kindDiscriminantExpr(s.kind, nodeMap, kindEntries);
-			lines.push(`    ${s.guardKey}: _g(${JSON.stringify(s.kind)}, ${expr}),`);
+			lines.push(`    ${s.guardKey}: _g(${expr}),`);
 		} else {
 			lines.push(`    ${s.guardKey}: _g(${JSON.stringify(s.kind)}),`);
 		}
 	}
 	if (kindEntries) {
-		// Phase A coexistence: kind() must accept numeric $type. Translate
-		// the string kind-name `k` to its numeric TSKindId via the map and
-		// compare both. Falls through to `false` when `k` is not a known
-		// kind (TSGrammar-only or genuinely unknown).
+		// Phase D: kind() compares only numeric $type via the map lookup.
 		lines.push(
-			`    kind: (v: { readonly $type: string | number }, k: string): boolean => {`
+			`    kind: (v: { readonly $type: number }, k: string): boolean => {`
 		);
-		lines.push(`        if (v.$type === k) return true;`);
 		lines.push(`        const id = _kindIdByKind.get(k);`);
 		lines.push(`        return id !== undefined && v.$type === id;`);
 		lines.push(`    },`);
 	} else {
-		// Legacy / unit-test callers without generatedIdTables: string-only.
+		// Legacy / unit-test callers without generatedIdTables: string equality.
 		lines.push(
-			`    kind: (v: { readonly $type: string | number }, k: string): boolean => v.$type === k,`
+			`    kind: (v: { readonly $type: number }, k: string): boolean => (v.$type as unknown) === k,`
 		);
 	}
 	for (const s of supertypes) {
 		if (kindEntries && s.memberIds.length > 0) {
 			lines.push(
-				`    ${s.guardKey}: _sg(_supertype_${s.guardKey}, _supertype_${s.guardKey}_ids),`
+				`    ${s.guardKey}: _sg(_supertype_${s.guardKey}_ids),`
 			);
 		} else if (kindEntries) {
 			// All member kinds are TSGrammar-only; emit with empty id set.
 			lines.push(
-				`    ${s.guardKey}: _sg(_supertype_${s.guardKey}, new Set<number>()),`
+				`    ${s.guardKey}: _sg(new Set<number>()),`
 			);
 		} else {
 			lines.push(`    ${s.guardKey}: _sg(_supertype_${s.guardKey}),`);
@@ -511,11 +514,8 @@ export function emitIs(config: EmitIsConfig): string {
 	);
 	lines.push('}');
 	lines.push('');
-	lines.push(
-		'export function isNode<T extends { readonly $type: K }, K extends keyof NamespaceMap & string>('
-	);
-	lines.push('    v: T,');
-	lines.push(`): v is T & NamespaceMap[K]['Node'];`);
+	// isNode accepts string | number $type: hidden/synthetic kinds (e.g. "_suite")
+	// have no parser.c entry and emit string $type; AnyNodeData.$type: string | number.
 	lines.push(
 		'export function isNode(v: { readonly $type: string | number }): v is AnyNodeData;'
 	);

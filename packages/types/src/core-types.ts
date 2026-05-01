@@ -53,18 +53,15 @@ export type NodeId = number & { readonly [nodeIdBrand]: true };
  */
 export interface AnyNodeData {
 	/**
-	 * Kind discriminant.
+	 * Kind discriminant. Numeric (TSKindId.X) for parser.c-derived kinds
+	 * (all named and anonymous tokens that appear in the parse tree).
+	 * String for synthetic/hidden kinds (e.g., `"_suite"`) that have no
+	 * parser.c entry and therefore no numeric KindId.
 	 *
-	 * **Phase A (current):** factory / wrap outputs carry a numeric
-	 * `TSKindId.X` value; `readNode` (`$source: 'ts'`) still carries
-	 * a string kind name. Both shapes are structurally valid `AnyNodeData`.
-	 *
-	 * **End state (Phase B+):** all producers emit numeric `TSKindId`. The
-	 * string branch will be removed once `readNode` and every other string
-	 * producer are updated.
-	 *
-	 * Use `isNodeData(v)` (checks `typeof v.$type === 'number'`) to
-	 * distinguish factory/wrap output from raw `readNode` output.
+	 * Per the KindID runtime migration design (Phase D, 2026-04-30):
+	 * runtime objects carry the parser.c-derived numeric ID wherever
+	 * possible. String $type is retained only for hidden/synthetic kinds
+	 * that tree-sitter inlines away (no parser.c symbol, no TSKindId).
 	 */
 	$type: string | number;
 	/** Which producer emitted this node. */
@@ -111,7 +108,8 @@ export type NativeFieldValue =
 	| string;
 
 export interface NativeNodeData {
-	readonly $type: string;
+	/** Phase D: numeric KindId, same as AnyNodeData.$type. */
+	readonly $type: number;
 	readonly $source: 'ts' | 'sg' | 'factory';
 	readonly $named: boolean;
 	readonly $fields?: { readonly [key: string]: NativeFieldValue };
@@ -183,15 +181,9 @@ export interface RulesConfig {
 	};
 	rules: Record<string, TemplateRule>;
 	/**
-	 * Optional resolver for numeric `$type` values produced by Phase A/B
-	 * factory/wrap output. When `node.$type` is a number, the Nunjucks render
+	 * Required resolver for numeric `$type` values. The Nunjucks render
 	 * engine calls this resolver to recover the string kind name for template
-	 * file lookup.
-	 *
-	 * Required during the Phase A/B coexistence period (factory/wrap output
-	 * carries numeric TSKindId while readNode still emits string kind names).
-	 * Removable in Phase D when all producers flip to numeric and the render
-	 * engine is updated to key templates by numeric id.
+	 * file lookup (templates are keyed by `<kind>.jinja`).
 	 *
 	 * Returning `undefined` causes the engine to throw a descriptive error
 	 * identifying the unknown numeric id.

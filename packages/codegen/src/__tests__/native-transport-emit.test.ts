@@ -282,7 +282,7 @@ describe('native transport emission', () => {
 
 		expect(transportSection).toContain('export namespace CallExpression');
 		expect(transportSection).toContain('export interface Transport');
-		expect(transportSection).toContain("readonly $type: 'call_expression';");
+		expect(transportSection).toContain('readonly $type: "call_expression";');
 		expect(transportSection).toContain(
 			'readonly callee: Expression.Transport;'
 		);
@@ -359,7 +359,7 @@ describe('native transport emission', () => {
 			'readonly $children?: readonly [Identifier.Transport];'
 		);
 		expect(rust).toContain(
-			'#[serde(rename = "$children")]\n    #[serde(default)]\n    pub children: Option<Vec<Box<AnyTransport>>>,'
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: Option<Vec<Box<AnyTransport>>>,'
 		);
 	});
 
@@ -370,8 +370,8 @@ describe('native transport emission', () => {
 			'export function toNativeRenderTransport(node: unknown): AnyTransport'
 		);
 		expect(contents).toContain('const fields = value.$fields;');
-		expect(contents).toContain('projectRawChildrenIntoFields(projected);');
-		expect(contents).toContain('inferNativeTransportVariant(projected);');
+		expect(contents).toContain('projectRawChildrenIntoFields(projected, resolvedKind);');
+		expect(contents).toContain('inferNativeTransportVariant(projected, resolvedKind);');
 		expect(contents).toContain('const nativeTransportAliasTargetToSource');
 		expect(contents).toContain('const nativeTransportRawChildFieldRules');
 		expect(contents).toContain('const nativeTransportVariantRules');
@@ -489,7 +489,7 @@ describe('native transport emission', () => {
 			'renderable native transport bridge pending'
 		);
 		expect(emitted.libRs.contents).toContain(
-			'pub use templates::{render_dispatch, render_transport, render_transport_parts, AnyTransport};'
+			'pub use templates::{render_dispatch, render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};'
 		);
 		expect(emitted.templatesRs.contents).not.toContain(
 			'AnyTransport::NodeData'
@@ -537,10 +537,10 @@ describe('native transport emission', () => {
 		const structBody = emitted.templatesRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[serde(rename = "$children")]\n    pub children: Vec<Box<AnyTransport>>,'
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: Vec<Box<AnyTransport>>,'
 		);
 		expect(structBody).not.toContain(
-			'#[serde(rename = "$children")]\n    #[serde(default)]'
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: Option<'
 		);
 	});
 
@@ -559,11 +559,16 @@ describe('native transport emission', () => {
 		expect(emitted.templatesRs.contents).toContain(
 			'pub enum ExpressionTransport'
 		);
+		// Phase D: polymorph transport uses custom FromNapiValue dispatch on "$variant"
+		// instead of serde tag (napi-bindings take over the JS boundary in Phase B/C).
 		expect(emitted.templatesRs.contents).toContain(
-			'#[serde(tag = "$variant")]'
+			'impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport'
 		);
 		expect(emitted.templatesRs.contents).toContain(
-			'#[serde(rename = "left_form")]\n    ExpressionUFormLeft(ExpressionUFormLeftTransport),'
+			'"left_form" => Ok(Self::ExpressionUFormLeft('
+		);
+		expect(emitted.templatesRs.contents).toContain(
+			'ExpressionUFormLeft(ExpressionUFormLeftTransport),'
 		);
 		expect(emitted.templatesRs.contents).toContain(
 			'pub struct ExpressionUFormLeftTransport'

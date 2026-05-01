@@ -259,6 +259,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	factoryFields: Record<string, readonly string[]>;
 	polymorphVariants: PolymorphVariantMap;
 	kindNameFromId: ((id: number) => string | undefined) | undefined;
+	kindIdFromName: ((name: string) => number | undefined) | undefined;
 	importFailure: { message: string } | null;
 }> {
 	const factoryModulePath = FACTORY_MODULE_PATHS[grammar];
@@ -269,6 +270,8 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	let polymorphVariants: PolymorphVariantMap = {};
 	let kindNameFromId: ((id: number) => string | undefined) | undefined =
 		undefined;
+	let kindIdFromName: ((name: string) => number | undefined) | undefined =
+		undefined;
 	if (!factoryModulePath) {
 		return {
 			factoryMap,
@@ -277,6 +280,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			factoryFields,
 			polymorphVariants,
 			kindNameFromId,
+			kindIdFromName,
 			importFailure: null
 		};
 	}
@@ -302,21 +306,33 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 				const typesModule = await import(
 					new URL(typesModulePath, import.meta.url).pathname
 				);
-				const rawFn = typesModule.kindNameFromId as
+				const rawIdFn = typesModule.kindNameFromId as
 					| ((id: number) => string)
 					| undefined;
-				if (rawFn) {
+				if (rawIdFn) {
 					kindNameFromId = (id: number) => {
 						try {
-							return rawFn(id);
+							return rawIdFn(id);
+						} catch {
+							return undefined;
+						}
+					};
+				}
+				const rawNameFn = typesModule.kindIdFromName as
+					| ((name: string) => number)
+					| undefined;
+				if (rawNameFn) {
+					kindIdFromName = (name: string) => {
+						try {
+							return rawNameFn(name);
 						} catch {
 							return undefined;
 						}
 					};
 				}
 			} catch {
-				// types module unavailable — kindNameFromId stays undefined.
-				// Renders will fail with a clear error if numeric $type is encountered.
+				// types module unavailable — resolvers stay undefined.
+				// Reads will fail with a clear error if numeric $type is encountered.
 			}
 		}
 		return {
@@ -326,6 +342,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			factoryFields,
 			polymorphVariants,
 			kindNameFromId,
+			kindIdFromName,
 			importFailure: null
 		};
 	} catch (e) {
@@ -338,6 +355,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			factoryFields,
 			polymorphVariants,
 			kindNameFromId,
+			kindIdFromName,
 			importFailure: { message }
 		};
 	}
@@ -475,7 +493,8 @@ function buildFactoryNodeData(
 		message: string;
 		input?: string;
 		rendered?: string;
-	}[]
+	}[],
+	kindNameFromId?: (id: number) => string | undefined
 ): AnyNodeData | null {
 	if (!readData.$fields && !readData.$children) {
 		// Leaf — render its text directly by preserving the original.
@@ -496,9 +515,10 @@ function buildFactoryNodeData(
 						factoryShapes,
 						fieldAliasMap,
 						factoryFields,
-						polymorphVariants
+						polymorphVariants,
+						kindNameFromId
 					})
-				: nodeToConfig(readData, { polymorphVariants });
+				: nodeToConfig(readData, { polymorphVariants, kindNameFromId });
 			return factory(config) as AnyNodeData;
 		} else if (shape === 'text') {
 			// $TEXT-templated branch/container (e.g. rust
@@ -656,6 +676,7 @@ export async function validateFactoryRoundTrip(
 		factoryFields,
 		polymorphVariants,
 		kindNameFromId,
+		kindIdFromName,
 		importFailure
 	} = await loadFactoryModuleForGrammar(grammar);
 
@@ -709,14 +730,18 @@ export async function validateFactoryRoundTrip(
 		const tree1 = parser.parse(entry.source) as TSTree;
 		if (tree1.rootNode.hasError) continue;
 
-		const handle = buildReadHandle(grammar, tree1, entry.source, backend);
+		const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
 		const kinds = new Set(collectKinds(tree1.rootNode));
 		const nodeIdToEffectiveType = new Map<number, string>();
 		if (readTreeNodeFn) {
 			const wrappedRoot = readTreeNodeFn(handle);
 			walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {
-				if (w.$nodeId != null) nodeIdToEffectiveType.set(w.$nodeId, w.$type);
-				kinds.add(w.$type);
+				// Phase D: $type is numeric; resolve to string kind name for
+				// ruleKinds.has() and nodeIdToEffectiveType string-keyed maps.
+				const kindStr = kindNameFromId ? kindNameFromId(w.$type) : undefined;
+				if (kindStr === undefined) return; // unknown id — skip
+				if (w.$nodeId != null) nodeIdToEffectiveType.set(w.$nodeId, kindStr);
+				kinds.add(kindStr);
 			});
 		}
 		for (const kind of kinds) {
@@ -741,18 +766,34 @@ export async function validateFactoryRoundTrip(
 			// underlying rule name (e.g. `with_clause_bare` → `with_clause`),
 			// findNativeNodeId returns null — skip rather than fall back to a
 			// mismatched WASM ID.
-			const nativeId = findNativeNodeId(handle, kind);
+			const nativeId = findNativeNodeId(handle, kind, kindNameFromId);
 			if (nativeId === null && handle.read) continue;
 			const rawReadData = readNode(handle, nativeId ?? (node1.id as NodeId));
+			// $type may be numeric (TSKindId) or string (hidden/synthetic kind).
+			const rawKindName = typeof rawReadData.$type === 'number' && kindNameFromId
+				? kindNameFromId(rawReadData.$type)
+				: typeof rawReadData.$type === 'string'
+					? rawReadData.$type
+					: undefined;
+			// canonicalKind: sittir internal form, may have leading underscore
+			// (e.g. '_type_identifier') or may have an alias suffix
+			// ('scoped_type_identifier_in_expression_position'). Used for factory
+			// lookup and error reporting.
+			const canonicalKind = rawKindName ?? String(rawReadData.$type);
+			// targetKind: tree-sitter visible form used for locateNodeInReparsedTree.
+			// Phase D: kindNameFromId may return a canonical form that differs from
+			// tree-sitter's node.type (e.g. '_type_identifier' vs 'type_identifier',
+			// or 'scoped_type_identifier_in_expression_position' vs
+			// 'scoped_type_identifier'). Use node1.type as the ground truth — it's
+			// the actual string tree-sitter reported for this node.
+			const targetKind = node1.type;
 			const effective = nodeIdToEffectiveType.get(node1.id);
-			const readData =
-				effective && effective !== rawReadData.$type
-					? { ...rawReadData, $type: effective }
-					: rawReadData;
-			// Validator feeds readNode output (string $type). Cast: AnyNodeData.$type
-			// is string | number in Phase A but readNode always emits string kind names.
-			const renderedKind = readData.$type as string;
-			const targetKind = rawReadData.$type as string;
+			// Apply alias rewriting only when effective kind differs from the canonical kind.
+			const readData = effective && effective !== canonicalKind
+				? { ...rawReadData, $type: rawReadData.$type }
+				: rawReadData;
+			// renderedKind: canonical form used for factory lookup and error messages.
+			const renderedKind = effective ?? canonicalKind;
 
 			const factoryData = buildFactoryNodeData(
 				readData,
@@ -765,7 +806,8 @@ export async function validateFactoryRoundTrip(
 				handle,
 				entry.name,
 				inputSource,
-				errors
+				errors,
+				kindNameFromId
 			);
 			if (factoryData === null) continue;
 

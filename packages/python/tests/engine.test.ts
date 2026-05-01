@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { TSKindId } from '../src/types.ts';
 
 describe('engine', () => {
 	afterEach(() => {
@@ -49,7 +50,7 @@ describe('engine', () => {
 						parseAndRead(_source: string): string {
 							return JSON.stringify({
 								nodeData: {
-									$type: 'identifier',
+									$type: TSKindId.Identifier,
 									$source: 'ts',
 									$named: true,
 									$text: 'x'
@@ -59,7 +60,7 @@ describe('engine', () => {
 						}
 						readNode(_nodeId: number): string {
 							return JSON.stringify({
-								$type: 'identifier',
+								$type: TSKindId.Identifier,
 								$source: 'ts',
 								$named: true,
 								$text: 'x'
@@ -114,7 +115,7 @@ describe('engine', () => {
 		const engine = createEngine();
 
 		const node = {
-			$type: 'identifier',
+			$type: 1 as const, // TSKindId.Identifier = 1 (see packages/python/src/types.ts)
 			$source: 'factory' as const,
 			$named: true,
 			$text: 'x'
@@ -153,7 +154,7 @@ describe('engine', () => {
 						parseAndRead(_source: string): string {
 							return JSON.stringify({
 								nodeData: {
-									$type: 'identifier',
+									$type: TSKindId.Identifier,
 									$source: 'ts',
 									$named: true,
 									$text: 'x'
@@ -163,7 +164,7 @@ describe('engine', () => {
 						}
 						readNode(_nodeId: number): string {
 							return JSON.stringify({
-								$type: 'identifier',
+								$type: TSKindId.Identifier,
 								$source: 'ts',
 								$named: true,
 								$text: 'x'

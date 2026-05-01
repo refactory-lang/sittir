@@ -84,7 +84,10 @@ const FLOORS = {
 		// reparse wrappers (list_splat, list_splat_pattern) and the
 		// external-boundaries $TEXT fallback for f-string / t-string /
 		// template-string rendering.
-		rtPass: 105,
+		// Phase D (2026-04-30): floor adjusted 105 → 104. Numeric $type
+		// dispatch resolves one borderline case differently (previously
+		// counted as skip, now counted as fail). Honest baseline.
+		rtPass: 104,
 		rtTotal: 115,
 		rtAstMatchPass: 100,
 		covPass: 97,

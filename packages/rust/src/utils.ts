@@ -573,22 +573,37 @@ function projectTransportValue(value: unknown, path: string): unknown {
     return { $type: value, $text: value };
   }
   if (!isRecord(value)) return value;
-  if (typeof value.$type !== "number" && typeof value.$type !== "string") return value;
+  // Phase D: $type must be numeric (TSKindId). However, factory-constructed
+  // children can carry a string kind name when kindIdFromName was not invoked
+  // (e.g. generated nodes.test.ts fixtures with `as any`). Attempt resolution
+  // via kindIdFromName so the full projection pipeline runs.
+  let numericType: number | undefined;
+  if (typeof value.$type === "number") {
+    numericType = value.$type;
+  } else if (typeof value.$type === "string") {
+    try {
+      const kindStr = nativeTransportType(value.$type);
+      numericType = kindIdFromName(kindStr);
+    } catch {
+      // Unknown kind name — cannot project, return as-is.
+    }
+  }
+  if (numericType === undefined) return value;
 
-  // Resolve the wire kind name (including alias rewriting) first so
-  // all internal routing uses a consistent string key. The numeric
-  // $type is written at the very end — Phase B wire migration.
-  // String $type comes from $source:"ts" NodeData — convert to numeric,
-  // falling back to the string itself for TSGrammar-only inlined kinds.
-  const resolvedKind = nativeTransportType(
-    typeof value.$type === "number"
-      ? kindNameFromId(value.$type as number)
-      : (value.$type as string)
-  );
+  // Resolve the wire kind name (including alias rewriting) for internal
+  // routing. $type is always numeric in Phase D.
+  const resolvedKind = nativeTransportType(kindNameFromId(numericType));
 
   const projected: Record<string, unknown> = {};
   for (const key of transportMetadataKeys) {
     if (key in value) projected[key] = value[key];
+  }
+  // Phase D: napi-rs #[napi(string_enum)] uses PascalCase variant names
+  // ('Ts', 'Sg', 'Factory'), but the TS/serde side uses lowercase ('ts',
+  // 'sg', 'factory'). Capitalize at the transport boundary.
+  if (typeof projected.$source === 'string') {
+    const s = projected.$source;
+    projected.$source = s.charAt(0).toUpperCase() + s.slice(1);
   }
   // Temporarily store string kind for routing; converted to numeric below.
   projected.$type = resolvedKind;
@@ -611,16 +626,7 @@ function projectTransportValue(value: unknown, path: string): unknown {
   projectRawChildrenIntoFields(projected, resolvedKind);
   inferNativeTransportVariant(projected, resolvedKind);
 
-  // Convert $type to numeric at the wire boundary (Phase B).
-  // After the kindIdFromName coverage extension, every parser-symbol-bearing
-  // kind resolves — the try/catch fallback only fires for genuinely TSGrammar-only
-  // inlined rules (which never reach the wire). Warn loudly if it does fire so
-  // wire-shape regressions surface immediately rather than silently degrading.
-  try { projected.$type = kindIdFromName(resolvedKind); } catch {
-    // eslint-disable-next-line no-console
-    console.warn(`[sittir] projectTransportValue: kind "${resolvedKind}" has no TSKindId — keeping string $type. This kind is TSGrammar-only or the catalog is missing an entry.`);
-    projected.$type = resolvedKind;
-  }
+  projected.$type = kindIdFromName(resolvedKind);
 
   return projected;
 }
@@ -714,7 +720,7 @@ function transportValueMatches(value: unknown, alternatives: readonly NativeTran
  */
 export function assertNativeRenderTransport(node: unknown): asserts node is AnyTransport {
   if (!isRecord(node)) throw new TypeError('node must be an object');
-  if (typeof node.$type !== 'number' && typeof node.$type !== 'string') throw new TypeError('node.$type must be a KindId (number) or kind string');
+  if (typeof node.$type !== 'number') throw new TypeError('node.$type must be a KindId (number)');
   assertDataOnlyObject(node, 'node');
   switch ((node.$type as number | string)) {
     case 322: // _array_expression_list
@@ -1836,7 +1842,8 @@ function assertOptionalSpan(value: unknown, path: string): void {
 
 function assertOptionalMetadata(node: Record<string, unknown>, path: string): void {
   const source = node.$source;
-  if (source !== undefined && source !== 'ts' && source !== 'sg' && source !== 'factory') {
+  if (source !== undefined && source !== 'ts' && source !== 'sg' && source !== 'factory' &&
+      source !== 'Ts' && source !== 'Sg' && source !== 'Factory') {
     throw new TypeError(`${path}.$source must be ts, sg, or factory`);
   }
   assertOptionalBoolean(node.$named, `${path}.$named`);

@@ -216,11 +216,13 @@ describe('emitKindIdRust', () => {
 			generatedIdTables
 		});
 
-		// Visible kinds should be emitted; hidden kind is filtered (not in nodeMap.nodes).
+		// Visible kinds should be emitted.
 		expect(out).toContain('pub const CALL_EXPRESSION: KindId = KindId(17);');
 		expect(out).toContain('pub const IDENTIFIER: KindId = KindId(3);');
-		// _field_identifier is NOT in nodeMap.nodes so it should not appear.
-		expect(out).not.toContain('_FIELD_IDENTIFIER');
+		// _field_identifier is in generatedIdTables.kindIds (catalog superset);
+		// emitKindIdRust sources from the catalog so AnyTransport dispatch matches.
+		// Hidden alias-source kinds with parser symbols are included (Phase B coverage fix).
+		expect(out).toContain('pub const _FIELD_IDENTIFIER: KindId = KindId(4);');
 	});
 
 	it('preserves leading underscore in toScreamingSnakeCase conversion', async () => {

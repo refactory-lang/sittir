@@ -16,6 +16,8 @@ import { loadRawEntries } from './node-types-loader.ts';
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
+	loadKindNameFromId,
+	loadKindIdFromName,
 	buildReadHandle,
 	findFirst,
 	findNativeNodeId,
@@ -57,7 +59,7 @@ import {
 function _deepReadNode(
 	tree: TreeHandle,
 	nodeId: NodeId | undefined,
-	deepReadKinds: ReadonlySet<string>
+	deepReadKinds: ReadonlySet<number>
 ): ReturnType<typeof readNode> {
 	const data = readNode(tree, nodeId);
 	// NodeChildValue / NodeFieldValue widened to AnyNodeData | string | number.
@@ -70,9 +72,9 @@ function _deepReadNode(
 		isNodeData(entry) &&
 		entry.$named === true &&
 		typeof entry.$nodeId === 'number' &&
-		// Validator feeds readNode output ($type is always string kind name).
-		// Cast: AnyNodeData.$type is string | number in Phase A.
-		deepReadKinds.has(entry.$type as string);
+		// $type is numeric for parser.c-derived kinds; hidden kinds have string $type.
+		// deepReadKinds is Set<number> — only numeric entries can be drilled.
+		typeof entry.$type === 'number' && deepReadKinds.has(entry.$type);
 	if (data.$children) {
 		const drilled = data.$children.map((c) =>
 			shouldDrill(c) ? _deepReadNode(tree, c.$nodeId, deepReadKinds) : c
@@ -341,11 +343,13 @@ function discoverAliasSourceKinds(
 	kinds: Set<string>,
 	grammar: string,
 	source: string,
-	backend?: 'native' | 'typescript'
+	kindNameFromId: ((id: number) => string | undefined) | undefined,
+	backend?: 'native' | 'typescript',
+	kindIdFromName?: (kind: string) => number | undefined
 ): Map<number, string> {
 	const nodeIdToEffectiveType = new Map<number, string>();
 	if (readTreeNodeFn) {
-		const handle = buildReadHandle(grammar, tree, source, backend);
+		const handle = buildReadHandle(grammar, tree, source, backend, kindIdFromName);
 		const wrappedRoot = readTreeNodeFn(handle) as WrappedNodeData;
 		walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {
 			// Cluster I (016): skip anonymous tokens. The wrap layer
@@ -361,8 +365,11 @@ function discoverAliasSourceKinds(
 			// `findFirst`, which both restrict to named nodes for the
 			// same reason.
 			if (w.$named === false) return;
-			if (w.$nodeId != null) nodeIdToEffectiveType.set(w.$nodeId, w.$type);
-			kinds.add(w.$type);
+			// Phase D: $type is numeric; resolve to string kind name.
+			const kindStr = kindNameFromId ? kindNameFromId(w.$type) : undefined;
+			if (kindStr === undefined) return; // unknown id — skip
+			if (w.$nodeId != null) nodeIdToEffectiveType.set(w.$nodeId, kindStr);
+			kinds.add(kindStr);
 		});
 	}
 	return nodeIdToEffectiveType;
@@ -466,17 +473,32 @@ function resolveAllNodesForKind(
 function applyAliasResolution(
 	rawData: ReturnType<typeof readNode>,
 	nodeId: number,
-	nodeIdToEffectiveType: Map<number, string>
+	nodeIdToEffectiveType: Map<number, string>,
+	kindNameFromId: ((id: number) => string | undefined) | undefined,
+	/** The tree-sitter visible kind name (node.type). Used as targetKind
+	 * for post-reparse node lookup, since tree-sitter strips leading
+	 * underscores and uses the pre-alias name. When absent, falls back
+	 * to resolving from rawData.$type via kindNameFromId. */
+	tsVisibleKind?: string
 ): { data: typeof rawData; renderedKind: string; targetKind: string } {
+	// $type may be numeric (TSKindId) or string (hidden/synthetic kind). Resolve to
+	// a string kind name for renderedKind / template lookup.
+	const canonicalKind = typeof rawData.$type === 'number'
+		? (kindNameFromId?.(rawData.$type) ?? String(rawData.$type))
+		: rawData.$type;
 	const effective = nodeIdToEffectiveType.get(nodeId);
+	// Apply alias rewriting only when the effective kind differs from the canonical kind.
 	const data =
-		effective && effective !== rawData.$type
-			? { ...rawData, $type: effective }
+		effective && effective !== canonicalKind
+			? { ...rawData, $type: rawData.$type }
 			: rawData;
-	// Validator feeds readNode output ($type is always string kind name).
-	// Cast: AnyNodeData.$type is string | number in Phase A.
-	const renderedKind = data.$type as string;
-	const targetKind = rawData.$type as string;
+	const renderedKind = effective ?? canonicalKind;
+	// targetKind: used for post-reparse node.type lookup (tree-sitter visible form).
+	// Phase D: kindNameFromId may return canonical sittir forms that differ from
+	// tree-sitter's node.type (e.g. '_type_identifier' vs 'type_identifier',
+	// 'scoped_type_identifier_in_expression_position' vs 'scoped_type_identifier').
+	// Use the tree-sitter visible name as the ground truth when available.
+	const targetKind = tsVisibleKind ?? canonicalKind;
 	return { data, renderedKind, targetKind };
 }
 
@@ -584,7 +606,10 @@ export async function validateRoundTrip(
 	parser.setLanguage(lang);
 
 	const rawEntries = loadRawEntries(grammar);
-	const { render } = createRenderer(templatesPath);
+	// Phase D: load kindNameFromId to resolve numeric $type for template lookup
+	// and for validator string-keyed maps (ruleKinds, nodeIdToEffectiveType).
+	const kindNameFromId = await loadKindNameFromId(grammar);
+	const { render } = createRenderer(templatesPath, { kindNameFromId });
 	// `ruleKinds` was historically derived from config.rules (from the
 	// YAML). For the Jinja path (directory of `.jinja` files), derive
 	// the kind set from the on-disk file listing. Works uniformly for
@@ -593,7 +618,27 @@ export async function validateRoundTrip(
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
 	const readTreeNodeFn = await loadReadTreeNode(grammar);
-	const deepReadKinds = await loadVariantAdoptedKinds(grammar);
+	const deepReadKindNames = await loadVariantAdoptedKinds(grammar);
+	const rawKindIdFromName = await loadKindIdFromName(grammar);
+	// Wrap so unknown kind names return undefined (instead of throwing).
+	// The generated kindIdFromName throws on missing entries; readNode's
+	// resolveKindId falls back to the string kind only when the function
+	// returns undefined, not when it throws.
+	const kindIdFromName = rawKindIdFromName
+		? (name: string): number | undefined => {
+			try { return rawKindIdFromName(name); }
+			catch { return undefined; }
+		}
+		: rawKindIdFromName;
+	// Phase D: $type is numeric; translate string kind names to numeric IDs for
+	// _deepReadNode's Set<number> membership check.
+	const deepReadKinds: ReadonlySet<number> = kindIdFromName
+		? new Set(
+				[...deepReadKindNames]
+					.map((k) => kindIdFromName(k))
+					.filter((id): id is number => id !== undefined)
+		  )
+		: new Set<number>();
 
 	const entries = loadCorpusEntries(grammar);
 	const errors: {
@@ -632,7 +677,9 @@ export async function validateRoundTrip(
 				kinds,
 				grammar,
 				entry.source,
-				backend
+				kindNameFromId,
+				backend,
+				kindIdFromName
 			);
 			const testableKinds = [...kinds].filter((k) => ruleKinds.has(k));
 
@@ -670,7 +717,7 @@ export async function validateRoundTrip(
 				const kindAstMismatches: typeof astMismatches = [];
 
 				for (const node1 of candidates) {
-					const handle = buildReadHandle(grammar, tree1, entry.source, backend);
+					const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
 					// Shallow read — RT validator relies on the $text
 					// short-circuit: readNode returns a NodeData with
 					// $text=source-span, render() falls through to emit
@@ -686,13 +733,15 @@ export async function validateRoundTrip(
 					// Native engine IDs differ from WASM IDs; skip alias-
 					// target kinds the native engine emits under a different
 					// rule name rather than falling back to a mismatched ID.
-					const nativeId = findNativeNodeId(handle, kind);
+					const nativeId = findNativeNodeId(handle, kind, kindNameFromId);
 					if (nativeId === null && handle.read) continue;
 					const rawData = readNode(handle, nativeId ?? (node1.id as NodeId));
 					const { data, renderedKind, targetKind } = applyAliasResolution(
 						rawData,
 						node1.id,
-						nodeIdToEffectiveType
+						nodeIdToEffectiveType,
+						kindNameFromId,
+						node1.type
 					);
 
 					try {
@@ -700,13 +749,15 @@ export async function validateRoundTrip(
 						const rendered = render(data);
 
 						// Wrap for reparse using supertype context
+						// Pass the original string-named deepReadKindNames to wrapForReparse
+						// (which uses string kind names internally), not the numeric deepReadKinds.
 						const wrapped = wrapForReparse(
 							rendered,
 							renderedKind,
 							grammar,
 							kindToSupertypes,
 							{
-								adoptedVariantKinds: deepReadKinds,
+								adoptedVariantKinds: deepReadKindNames,
 								targetKind
 							}
 						);

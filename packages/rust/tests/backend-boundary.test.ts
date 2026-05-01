@@ -86,8 +86,16 @@ describe('boundary', () => {
 
 		const { render } = await import('../src/boundary.ts');
 		// Phase B: $type is numeric on the wire; TSKindId.Identifier = 1
+		// Phase D: $source is capitalized at the transport boundary ('factory' → 'Factory')
 		expect(render(identifier)).toBe(`ok:${TSKindId.Identifier}`);
-		expect(renderSpy).toHaveBeenCalledWith(identifier);
+		expect(renderSpy).toHaveBeenCalledWith(
+			expect.objectContaining({
+				$type: TSKindId.Identifier,
+				$source: 'Factory',
+				$named: true,
+				$text: 'x'
+			})
+		);
 	});
 
 	it('normalizes raw parsed children into native transport fields', async () => {
@@ -106,19 +114,17 @@ describe('boundary', () => {
 		);
 
 		const { render } = await import('../src/boundary.ts');
-		// Phase B: string $type from $source:"ts" is normalized to numeric at the wire boundary.
+		// Phase D: $type must be numeric (TSKindId). String coexistence removed.
 		const rawSourceFile = {
-			$type: 'source_file',
+			$type: TSKindId.SourceFile,
 			$source: 'ts',
 			$named: true,
 			$children: [
-				{ $type: 'empty_statement', $source: 'ts', $named: true, $text: ';' }
+				{ $type: TSKindId.EmptyStatement, $source: 'ts', $named: true, $text: ';' }
 			]
 		} as const;
 
-		// After projection: $type is TSKindId.SourceFile (157). Children of
-		// $source:"ts" raw nodes also resolve to numeric IDs after the
-		// kindIdFromName coverage extension — `empty_statement` → 159.
+		// $type is TSKindId.SourceFile (157). Children carry TSKindId.EmptyStatement.
 		expect(render(rawSourceFile)).toBe(`ok:${TSKindId.SourceFile}`);
 		expect(renderSpy).toHaveBeenCalledWith(
 			expect.objectContaining({
@@ -149,14 +155,14 @@ describe('boundary', () => {
 		);
 
 		const { render } = await import('../src/boundary.ts');
-		// Phase B: string $type normalized to numeric during projection.
+		// Phase D: $type must be numeric (TSKindId). String coexistence removed.
 		const rawArrayExpression = {
-			$type: 'array_expression',
+			$type: TSKindId.ArrayExpression,
 			$source: 'ts',
 			$named: true,
 			$children: [
 				{
-					$type: 'array_expression_list',
+					$type: TSKindId.ArrayExpressionList,
 					$source: 'ts',
 					$named: true,
 					$children: [identifier]

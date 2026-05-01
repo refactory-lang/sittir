@@ -36,186 +36,186 @@ import type {
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
-    ArrowFunction_CallSignature<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_arrow_function__call_signature' };
-    ArrowFunctionParameter<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_arrow_function_parameter' };
-    ClassBodyMember<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_class_body_member' };
-    ClassBodyMethodSig<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_class_body_method_sig' };
-    ClassHeritageExtendsClause<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_class_heritage_extends_clause' };
-    ClassHeritageImplementsClause<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_class_heritage_implements_clause' };
-    ExportStatementDefaultFromArm<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_export_statement_default_from_arm' };
-    ExportStatementDefaultFromArmClauseFrom<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_export_statement_default_from_arm_clause_from' };
-    ExportStatementDefaultFromArmNsFrom<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_export_statement_default_from_arm_ns_from' };
-    ExportStatementDefaultFromArmStarFrom<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_export_statement_default_from_arm_star_from' };
-    ExportStatementEqualsExport<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_export_statement_equals_export' };
-    ExportStatementNamespaceExport<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_export_statement_namespace_export' };
-    ExportStatementTypeExport<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_export_statement_type_export' };
-    ForHeaderLhs<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_for_header_lhs' };
-    ImportClauseDefaultImport<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_import_clause_default_import' };
-    ImportClauseNamedImports<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_import_clause_named_imports' };
-    ImportClauseNamespaceImport<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_import_clause_namespace_import' };
-    ImportSpecifierName<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_import_specifier_name' };
-    IndexSignatureMappedTypeClause<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_index_signature_mapped_type_clause' };
-    InterfaceBody<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_interface_body' };
-    ParenthesizedExpressionSequence<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_parenthesized_expression_sequence' };
-    PropertyIdentifier<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_property_identifier' };
-    PublicFieldDefinitionAccessorOpt<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_public_field_definition_accessor_opt' };
-    PublicFieldDefinitionDeclareFirst<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_public_field_definition_declare_first' };
-    StatementIdentifier<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_statement_identifier' };
-    StringDouble<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_string_double' };
-    StringSingle<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_string_single' };
-    ThisType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_this_type' };
-    TypeIdentifier<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '_type_identifier' };
-    abstractClassDeclaration<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'abstract_class_declaration' };
-    abstractMethodSignature<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'abstract_method_signature' };
-    addingTypeAnnotation<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'adding_type_annotation' };
-    ambientDeclaration<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'ambient_declaration' };
-    arguments<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'arguments' };
-    array<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'array' };
-    arrayPattern<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'array_pattern' };
-    arrayType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'array_type' };
-    arrowFunction<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'arrow_function' };
-    asExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'as_expression' };
-    asserts<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'asserts' };
-    assertsAnnotation<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'asserts_annotation' };
-    assignmentExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'assignment_expression' };
-    assignmentPattern<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'assignment_pattern' };
-    augmentedAssignmentExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'augmented_assignment_expression' };
-    awaitExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'await_expression' };
-    binaryExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'binary_expression' };
-    breakStatement<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'break_statement' };
-    callExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'call_expression' };
-    callSignature<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'call_signature' };
-    catchClause<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'catch_clause' };
-    class_<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'class' };
-    classBody<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'class_body' };
-    classDeclaration<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'class_declaration' };
-    classHeritage<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'class_heritage' };
-    classStaticBlock<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'class_static_block' };
-    computedPropertyName<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'computed_property_name' };
-    conditionalType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'conditional_type' };
-    constraint<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'constraint' };
-    constructSignature<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'construct_signature' };
-    constructorType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'constructor_type' };
-    continueStatement<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'continue_statement' };
-    debuggerStatement<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'debugger_statement' };
-    decorator<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'decorator' };
-    decoratorCallExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'decorator_call_expression' };
-    decoratorMemberExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'decorator_member_expression' };
-    decoratorParenthesizedExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'decorator_parenthesized_expression' };
-    defaultType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'default_type' };
-    doStatement<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'do_statement' };
-    elseClause<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'else_clause' };
-    enumAssignment<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'enum_assignment' };
-    enumBody<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'enum_body' };
-    enumDeclaration<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'enum_declaration' };
-    exportClause<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'export_clause' };
-    exportSpecifier<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'export_specifier' };
-    exportStatement<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'export_statement' };
-    expressionStatement<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'expression_statement' };
-    extendsClause<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'extends_clause' };
-    extendsTypeClause<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'extends_type_clause' };
-    finallyClause<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'finally_clause' };
-    flowMaybeType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'flow_maybe_type' };
-    forInStatement<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'for_in_statement' };
-    forStatement<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'for_statement' };
-    formalParameters<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'formal_parameters' };
-    functionDeclaration<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'function_declaration' };
-    functionExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'function_expression' };
-    functionSignature<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'function_signature' };
-    functionType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'function_type' };
-    generatorFunction<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'generator_function' };
-    generatorFunctionDeclaration<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'generator_function_declaration' };
-    genericType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'generic_type' };
-    ifStatement<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'if_statement' };
-    implementsClause<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'implements_clause' };
-    importAlias<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'import_alias' };
-    importAttribute<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'import_attribute' };
-    importClause<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'import_clause' };
-    importRequireClause<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'import_require_clause' };
-    importSpecifier<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'import_specifier' };
-    importStatement<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'import_statement' };
-    indexSignature<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'index_signature' };
-    indexTypeQuery<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'index_type_query' };
-    inferType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'infer_type' };
-    instantiationExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'instantiation_expression' };
-    interfaceDeclaration<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'interface_declaration' };
-    internalModule<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'internal_module' };
-    intersectionType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'intersection_type' };
-    labeledStatement<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'labeled_statement' };
-    lexicalDeclaration<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'lexical_declaration' };
-    literalType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'literal_type' };
-    lookupType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'lookup_type' };
-    mappedTypeClause<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'mapped_type_clause' };
-    memberExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'member_expression' };
-    methodDefinition<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'method_definition' };
-    methodSignature<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'method_signature' };
-    module<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'module' };
-    namedImports<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'named_imports' };
-    namespaceExport<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'namespace_export' };
-    namespaceImport<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'namespace_import' };
-    nestedIdentifier<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'nested_identifier' };
-    nestedTypeIdentifier<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'nested_type_identifier' };
-    newExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'new_expression' };
-    nonNullExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'non_null_expression' };
-    object<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'object' };
-    objectAssignmentPattern<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'object_assignment_pattern' };
-    objectPattern<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'object_pattern' };
-    objectType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'object_type' };
-    omittingTypeAnnotation<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'omitting_type_annotation' };
-    optingTypeAnnotation<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'opting_type_annotation' };
-    optionalParameter<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'optional_parameter' };
-    optionalTupleParameter<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'optional_tuple_parameter' };
-    optionalType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'optional_type' };
-    pair<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'pair' };
-    pairPattern<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'pair_pattern' };
-    parenthesizedExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'parenthesized_expression' };
-    parenthesizedType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'parenthesized_type' };
-    program<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'program' };
-    propertySignature<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'property_signature' };
-    publicFieldDefinition<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'public_field_definition' };
-    readonlyType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'readonly_type' };
-    regex<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'regex' };
-    requiredParameter<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'required_parameter' };
-    restPattern<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'rest_pattern' };
-    restType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'rest_type' };
-    returnStatement<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'return_statement' };
-    satisfiesExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'satisfies_expression' };
-    sequenceExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'sequence_expression' };
-    spreadElement<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'spread_element' };
-    statementBlock<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'statement_block' };
-    string<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'string' };
-    subscriptExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'subscript_expression' };
-    switchBody<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'switch_body' };
-    switchCase<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'switch_case' };
-    switchDefault<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'switch_default' };
-    switchStatement<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'switch_statement' };
-    templateLiteralType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'template_literal_type' };
-    templateString<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'template_string' };
-    templateSubstitution<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'template_substitution' };
-    templateType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'template_type' };
-    ternaryExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'ternary_expression' };
-    throwStatement<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'throw_statement' };
-    tryStatement<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'try_statement' };
-    tupleParameter<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'tuple_parameter' };
-    tupleType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'tuple_type' };
-    typeAliasDeclaration<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'type_alias_declaration' };
-    typeAnnotation<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'type_annotation' };
-    typeArguments<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'type_arguments' };
-    typeAssertion<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'type_assertion' };
-    typeParameter<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'type_parameter' };
-    typeParameters<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'type_parameters' };
-    typePredicate<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'type_predicate' };
-    typePredicateAnnotation<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'type_predicate_annotation' };
-    typeQuery<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'type_query' };
-    unaryExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'unary_expression' };
-    unionType<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'union_type' };
-    updateExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'update_expression' };
-    variableDeclaration<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'variable_declaration' };
-    variableDeclarator<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'variable_declarator' };
-    whileStatement<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'while_statement' };
-    withStatement<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'with_statement' };
-    yieldExpression<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: 'yield_expression' };
-    kind<K extends keyof NamespaceMap>(v: { readonly $type: string | number }, kind: K): v is { readonly $type: K & string };
+    ArrowFunction_CallSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ArrowFunctionUCallSignature };
+    ArrowFunctionParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ArrowFunctionParameter };
+    ClassBodyMember<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassBodyMember };
+    ClassBodyMethodSig<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassBodyMethodSig };
+    ClassHeritageExtendsClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ClassHeritageExtendsClause };
+    ClassHeritageImplementsClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ClassHeritageImplementsClause };
+    ExportStatementDefaultFromArm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArm };
+    ExportStatementDefaultFromArmClauseFrom<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArmClauseFrom };
+    ExportStatementDefaultFromArmNsFrom<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArmNsFrom };
+    ExportStatementDefaultFromArmStarFrom<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArmStarFrom };
+    ExportStatementEqualsExport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ExportStatementEqualsExport };
+    ExportStatementNamespaceExport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ExportStatementNamespaceExport };
+    ExportStatementTypeExport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ExportStatementTypeExport };
+    ForHeaderLhs<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForHeaderLhs };
+    ImportClauseDefaultImport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ImportClauseDefaultImport };
+    ImportClauseNamedImports<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ImportClauseNamedImports };
+    ImportClauseNamespaceImport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ImportClauseNamespaceImport };
+    ImportSpecifierName<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ImportSpecifierName };
+    IndexSignatureMappedTypeClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._IndexSignatureMappedTypeClause };
+    InterfaceBody<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.InterfaceBody };
+    ParenthesizedExpressionSequence<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ParenthesizedExpressionSequence };
+    PropertyIdentifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PropertyIdentifier };
+    PublicFieldDefinitionAccessorOpt<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PublicFieldDefinitionAccessorOpt };
+    PublicFieldDefinitionDeclareFirst<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
+    StatementIdentifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StatementIdentifier };
+    StringDouble<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._StringDouble };
+    StringSingle<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._StringSingle };
+    ThisType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ThisType };
+    TypeIdentifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeIdentifier };
+    abstractClassDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AbstractClassDeclaration };
+    abstractMethodSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AbstractMethodSignature };
+    addingTypeAnnotation<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AddingTypeAnnotation };
+    ambientDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AmbientDeclaration };
+    arguments<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Arguments };
+    array<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Array };
+    arrayPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArrayPattern };
+    arrayType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArrayType };
+    arrowFunction<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArrowFunction };
+    asExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AsExpression };
+    asserts<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Asserts };
+    assertsAnnotation<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AssertsAnnotation };
+    assignmentExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AssignmentExpression };
+    assignmentPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AssignmentPattern };
+    augmentedAssignmentExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AugmentedAssignmentExpression };
+    awaitExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AwaitExpression };
+    binaryExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BinaryExpression };
+    breakStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BreakStatement };
+    callExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CallExpression };
+    callSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CallSignature };
+    catchClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CatchClause };
+    class_<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Class };
+    classBody<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassBody };
+    classDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassDeclaration };
+    classHeritage<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassHeritage };
+    classStaticBlock<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassStaticBlock };
+    computedPropertyName<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ComputedPropertyName };
+    conditionalType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ConditionalType };
+    constraint<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Constraint };
+    constructSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ConstructSignature };
+    constructorType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ConstructorType };
+    continueStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ContinueStatement };
+    debuggerStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DebuggerStatement };
+    decorator<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Decorator };
+    decoratorCallExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DecoratorCallExpression };
+    decoratorMemberExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DecoratorMemberExpression };
+    decoratorParenthesizedExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DecoratorParenthesizedExpression };
+    defaultType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DefaultType };
+    doStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DoStatement };
+    elseClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ElseClause };
+    enumAssignment<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.EnumAssignment };
+    enumBody<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.EnumBody };
+    enumDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.EnumDeclaration };
+    exportClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportClause };
+    exportSpecifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportSpecifier };
+    exportStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatement };
+    expressionStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExpressionStatement };
+    extendsClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExtendsClause };
+    extendsTypeClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExtendsTypeClause };
+    finallyClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FinallyClause };
+    flowMaybeType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FlowMaybeType };
+    forInStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForInStatement };
+    forStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForStatement };
+    formalParameters<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FormalParameters };
+    functionDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionDeclaration };
+    functionExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionExpression };
+    functionSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionSignature };
+    functionType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionType };
+    generatorFunction<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.GeneratorFunction };
+    generatorFunctionDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.GeneratorFunctionDeclaration };
+    genericType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.GenericType };
+    ifStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.IfStatement };
+    implementsClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImplementsClause };
+    importAlias<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportAlias };
+    importAttribute<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportAttribute };
+    importClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportClause };
+    importRequireClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportRequireClause };
+    importSpecifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportSpecifier };
+    importStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportStatement };
+    indexSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.IndexSignature };
+    indexTypeQuery<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.IndexTypeQuery };
+    inferType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.InferType };
+    instantiationExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.InstantiationExpression };
+    interfaceDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.InterfaceDeclaration };
+    internalModule<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.InternalModule };
+    intersectionType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.IntersectionType };
+    labeledStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LabeledStatement };
+    lexicalDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LexicalDeclaration };
+    literalType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LiteralType };
+    lookupType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LookupType };
+    mappedTypeClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MappedTypeClause };
+    memberExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MemberExpression };
+    methodDefinition<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MethodDefinition };
+    methodSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MethodSignature };
+    module<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Module };
+    namedImports<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.NamedImports };
+    namespaceExport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.NamespaceExport };
+    namespaceImport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.NamespaceImport };
+    nestedIdentifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.NestedIdentifier };
+    nestedTypeIdentifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.NestedTypeIdentifier };
+    newExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.NewExpression };
+    nonNullExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.NonNullExpression };
+    object<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Object };
+    objectAssignmentPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ObjectAssignmentPattern };
+    objectPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ObjectPattern };
+    objectType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ObjectType };
+    omittingTypeAnnotation<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.OmittingTypeAnnotation };
+    optingTypeAnnotation<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.OptingTypeAnnotation };
+    optionalParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.OptionalParameter };
+    optionalTupleParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.OptionalTupleParameter };
+    optionalType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.OptionalType };
+    pair<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pair };
+    pairPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PairPattern };
+    parenthesizedExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ParenthesizedExpression };
+    parenthesizedType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ParenthesizedType };
+    program<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Program };
+    propertySignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PropertySignature };
+    publicFieldDefinition<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PublicFieldDefinition };
+    readonlyType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ReadonlyType };
+    regex<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Regex };
+    requiredParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RequiredParameter };
+    restPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RestPattern };
+    restType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RestType };
+    returnStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ReturnStatement };
+    satisfiesExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SatisfiesExpression };
+    sequenceExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SequenceExpression };
+    spreadElement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SpreadElement };
+    statementBlock<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StatementBlock };
+    string<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.String };
+    subscriptExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SubscriptExpression };
+    switchBody<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SwitchBody };
+    switchCase<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SwitchCase };
+    switchDefault<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SwitchDefault };
+    switchStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SwitchStatement };
+    templateLiteralType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TemplateLiteralType };
+    templateString<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TemplateString };
+    templateSubstitution<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TemplateSubstitution };
+    templateType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TemplateType };
+    ternaryExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TernaryExpression };
+    throwStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ThrowStatement };
+    tryStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TryStatement };
+    tupleParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TupleParameter };
+    tupleType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TupleType };
+    typeAliasDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeAliasDeclaration };
+    typeAnnotation<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeAnnotation };
+    typeArguments<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeArguments };
+    typeAssertion<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeAssertion };
+    typeParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeParameter };
+    typeParameters<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeParameters };
+    typePredicate<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypePredicate };
+    typePredicateAnnotation<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypePredicateAnnotation };
+    typeQuery<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeQuery };
+    unaryExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UnaryExpression };
+    unionType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UnionType };
+    updateExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UpdateExpression };
+    variableDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.VariableDeclaration };
+    variableDeclarator<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.VariableDeclarator };
+    whileStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WhileStatement };
+    withStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WithStatement };
+    yieldExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.YieldExpression };
+    kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
     destructuringPattern(v: { readonly $type: string | number }): v is DestructuringPattern;
     exportStatementDefault(v: { readonly $type: string | number }): v is ExportStatementDefault;
     expressions(v: { readonly $type: string | number }): v is Expressions;
@@ -246,186 +246,186 @@ export interface IsGuards {
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
 export interface AssertGuards {
-    ArrowFunction_CallSignature(v: { readonly $type: string | number }): asserts v is { readonly $type: '_arrow_function__call_signature' };
-    ArrowFunctionParameter(v: { readonly $type: string | number }): asserts v is { readonly $type: '_arrow_function_parameter' };
-    ClassBodyMember(v: { readonly $type: string | number }): asserts v is { readonly $type: '_class_body_member' };
-    ClassBodyMethodSig(v: { readonly $type: string | number }): asserts v is { readonly $type: '_class_body_method_sig' };
-    ClassHeritageExtendsClause(v: { readonly $type: string | number }): asserts v is { readonly $type: '_class_heritage_extends_clause' };
-    ClassHeritageImplementsClause(v: { readonly $type: string | number }): asserts v is { readonly $type: '_class_heritage_implements_clause' };
-    ExportStatementDefaultFromArm(v: { readonly $type: string | number }): asserts v is { readonly $type: '_export_statement_default_from_arm' };
-    ExportStatementDefaultFromArmClauseFrom(v: { readonly $type: string | number }): asserts v is { readonly $type: '_export_statement_default_from_arm_clause_from' };
-    ExportStatementDefaultFromArmNsFrom(v: { readonly $type: string | number }): asserts v is { readonly $type: '_export_statement_default_from_arm_ns_from' };
-    ExportStatementDefaultFromArmStarFrom(v: { readonly $type: string | number }): asserts v is { readonly $type: '_export_statement_default_from_arm_star_from' };
-    ExportStatementEqualsExport(v: { readonly $type: string | number }): asserts v is { readonly $type: '_export_statement_equals_export' };
-    ExportStatementNamespaceExport(v: { readonly $type: string | number }): asserts v is { readonly $type: '_export_statement_namespace_export' };
-    ExportStatementTypeExport(v: { readonly $type: string | number }): asserts v is { readonly $type: '_export_statement_type_export' };
-    ForHeaderLhs(v: { readonly $type: string | number }): asserts v is { readonly $type: '_for_header_lhs' };
-    ImportClauseDefaultImport(v: { readonly $type: string | number }): asserts v is { readonly $type: '_import_clause_default_import' };
-    ImportClauseNamedImports(v: { readonly $type: string | number }): asserts v is { readonly $type: '_import_clause_named_imports' };
-    ImportClauseNamespaceImport(v: { readonly $type: string | number }): asserts v is { readonly $type: '_import_clause_namespace_import' };
-    ImportSpecifierName(v: { readonly $type: string | number }): asserts v is { readonly $type: '_import_specifier_name' };
-    IndexSignatureMappedTypeClause(v: { readonly $type: string | number }): asserts v is { readonly $type: '_index_signature_mapped_type_clause' };
-    InterfaceBody(v: { readonly $type: string | number }): asserts v is { readonly $type: '_interface_body' };
-    ParenthesizedExpressionSequence(v: { readonly $type: string | number }): asserts v is { readonly $type: '_parenthesized_expression_sequence' };
-    PropertyIdentifier(v: { readonly $type: string | number }): asserts v is { readonly $type: '_property_identifier' };
-    PublicFieldDefinitionAccessorOpt(v: { readonly $type: string | number }): asserts v is { readonly $type: '_public_field_definition_accessor_opt' };
-    PublicFieldDefinitionDeclareFirst(v: { readonly $type: string | number }): asserts v is { readonly $type: '_public_field_definition_declare_first' };
-    StatementIdentifier(v: { readonly $type: string | number }): asserts v is { readonly $type: '_statement_identifier' };
-    StringDouble(v: { readonly $type: string | number }): asserts v is { readonly $type: '_string_double' };
-    StringSingle(v: { readonly $type: string | number }): asserts v is { readonly $type: '_string_single' };
-    ThisType(v: { readonly $type: string | number }): asserts v is { readonly $type: '_this_type' };
-    TypeIdentifier(v: { readonly $type: string | number }): asserts v is { readonly $type: '_type_identifier' };
-    abstractClassDeclaration(v: { readonly $type: string | number }): asserts v is { readonly $type: 'abstract_class_declaration' };
-    abstractMethodSignature(v: { readonly $type: string | number }): asserts v is { readonly $type: 'abstract_method_signature' };
-    addingTypeAnnotation(v: { readonly $type: string | number }): asserts v is { readonly $type: 'adding_type_annotation' };
-    ambientDeclaration(v: { readonly $type: string | number }): asserts v is { readonly $type: 'ambient_declaration' };
-    arguments(v: { readonly $type: string | number }): asserts v is { readonly $type: 'arguments' };
-    array(v: { readonly $type: string | number }): asserts v is { readonly $type: 'array' };
-    arrayPattern(v: { readonly $type: string | number }): asserts v is { readonly $type: 'array_pattern' };
-    arrayType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'array_type' };
-    arrowFunction(v: { readonly $type: string | number }): asserts v is { readonly $type: 'arrow_function' };
-    asExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'as_expression' };
-    asserts(v: { readonly $type: string | number }): asserts v is { readonly $type: 'asserts' };
-    assertsAnnotation(v: { readonly $type: string | number }): asserts v is { readonly $type: 'asserts_annotation' };
-    assignmentExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'assignment_expression' };
-    assignmentPattern(v: { readonly $type: string | number }): asserts v is { readonly $type: 'assignment_pattern' };
-    augmentedAssignmentExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'augmented_assignment_expression' };
-    awaitExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'await_expression' };
-    binaryExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'binary_expression' };
-    breakStatement(v: { readonly $type: string | number }): asserts v is { readonly $type: 'break_statement' };
-    callExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'call_expression' };
-    callSignature(v: { readonly $type: string | number }): asserts v is { readonly $type: 'call_signature' };
-    catchClause(v: { readonly $type: string | number }): asserts v is { readonly $type: 'catch_clause' };
-    class_(v: { readonly $type: string | number }): asserts v is { readonly $type: 'class' };
-    classBody(v: { readonly $type: string | number }): asserts v is { readonly $type: 'class_body' };
-    classDeclaration(v: { readonly $type: string | number }): asserts v is { readonly $type: 'class_declaration' };
-    classHeritage(v: { readonly $type: string | number }): asserts v is { readonly $type: 'class_heritage' };
-    classStaticBlock(v: { readonly $type: string | number }): asserts v is { readonly $type: 'class_static_block' };
-    computedPropertyName(v: { readonly $type: string | number }): asserts v is { readonly $type: 'computed_property_name' };
-    conditionalType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'conditional_type' };
-    constraint(v: { readonly $type: string | number }): asserts v is { readonly $type: 'constraint' };
-    constructSignature(v: { readonly $type: string | number }): asserts v is { readonly $type: 'construct_signature' };
-    constructorType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'constructor_type' };
-    continueStatement(v: { readonly $type: string | number }): asserts v is { readonly $type: 'continue_statement' };
-    debuggerStatement(v: { readonly $type: string | number }): asserts v is { readonly $type: 'debugger_statement' };
-    decorator(v: { readonly $type: string | number }): asserts v is { readonly $type: 'decorator' };
-    decoratorCallExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'decorator_call_expression' };
-    decoratorMemberExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'decorator_member_expression' };
-    decoratorParenthesizedExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'decorator_parenthesized_expression' };
-    defaultType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'default_type' };
-    doStatement(v: { readonly $type: string | number }): asserts v is { readonly $type: 'do_statement' };
-    elseClause(v: { readonly $type: string | number }): asserts v is { readonly $type: 'else_clause' };
-    enumAssignment(v: { readonly $type: string | number }): asserts v is { readonly $type: 'enum_assignment' };
-    enumBody(v: { readonly $type: string | number }): asserts v is { readonly $type: 'enum_body' };
-    enumDeclaration(v: { readonly $type: string | number }): asserts v is { readonly $type: 'enum_declaration' };
-    exportClause(v: { readonly $type: string | number }): asserts v is { readonly $type: 'export_clause' };
-    exportSpecifier(v: { readonly $type: string | number }): asserts v is { readonly $type: 'export_specifier' };
-    exportStatement(v: { readonly $type: string | number }): asserts v is { readonly $type: 'export_statement' };
-    expressionStatement(v: { readonly $type: string | number }): asserts v is { readonly $type: 'expression_statement' };
-    extendsClause(v: { readonly $type: string | number }): asserts v is { readonly $type: 'extends_clause' };
-    extendsTypeClause(v: { readonly $type: string | number }): asserts v is { readonly $type: 'extends_type_clause' };
-    finallyClause(v: { readonly $type: string | number }): asserts v is { readonly $type: 'finally_clause' };
-    flowMaybeType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'flow_maybe_type' };
-    forInStatement(v: { readonly $type: string | number }): asserts v is { readonly $type: 'for_in_statement' };
-    forStatement(v: { readonly $type: string | number }): asserts v is { readonly $type: 'for_statement' };
-    formalParameters(v: { readonly $type: string | number }): asserts v is { readonly $type: 'formal_parameters' };
-    functionDeclaration(v: { readonly $type: string | number }): asserts v is { readonly $type: 'function_declaration' };
-    functionExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'function_expression' };
-    functionSignature(v: { readonly $type: string | number }): asserts v is { readonly $type: 'function_signature' };
-    functionType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'function_type' };
-    generatorFunction(v: { readonly $type: string | number }): asserts v is { readonly $type: 'generator_function' };
-    generatorFunctionDeclaration(v: { readonly $type: string | number }): asserts v is { readonly $type: 'generator_function_declaration' };
-    genericType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'generic_type' };
-    ifStatement(v: { readonly $type: string | number }): asserts v is { readonly $type: 'if_statement' };
-    implementsClause(v: { readonly $type: string | number }): asserts v is { readonly $type: 'implements_clause' };
-    importAlias(v: { readonly $type: string | number }): asserts v is { readonly $type: 'import_alias' };
-    importAttribute(v: { readonly $type: string | number }): asserts v is { readonly $type: 'import_attribute' };
-    importClause(v: { readonly $type: string | number }): asserts v is { readonly $type: 'import_clause' };
-    importRequireClause(v: { readonly $type: string | number }): asserts v is { readonly $type: 'import_require_clause' };
-    importSpecifier(v: { readonly $type: string | number }): asserts v is { readonly $type: 'import_specifier' };
-    importStatement(v: { readonly $type: string | number }): asserts v is { readonly $type: 'import_statement' };
-    indexSignature(v: { readonly $type: string | number }): asserts v is { readonly $type: 'index_signature' };
-    indexTypeQuery(v: { readonly $type: string | number }): asserts v is { readonly $type: 'index_type_query' };
-    inferType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'infer_type' };
-    instantiationExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'instantiation_expression' };
-    interfaceDeclaration(v: { readonly $type: string | number }): asserts v is { readonly $type: 'interface_declaration' };
-    internalModule(v: { readonly $type: string | number }): asserts v is { readonly $type: 'internal_module' };
-    intersectionType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'intersection_type' };
-    labeledStatement(v: { readonly $type: string | number }): asserts v is { readonly $type: 'labeled_statement' };
-    lexicalDeclaration(v: { readonly $type: string | number }): asserts v is { readonly $type: 'lexical_declaration' };
-    literalType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'literal_type' };
-    lookupType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'lookup_type' };
-    mappedTypeClause(v: { readonly $type: string | number }): asserts v is { readonly $type: 'mapped_type_clause' };
-    memberExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'member_expression' };
-    methodDefinition(v: { readonly $type: string | number }): asserts v is { readonly $type: 'method_definition' };
-    methodSignature(v: { readonly $type: string | number }): asserts v is { readonly $type: 'method_signature' };
-    module(v: { readonly $type: string | number }): asserts v is { readonly $type: 'module' };
-    namedImports(v: { readonly $type: string | number }): asserts v is { readonly $type: 'named_imports' };
-    namespaceExport(v: { readonly $type: string | number }): asserts v is { readonly $type: 'namespace_export' };
-    namespaceImport(v: { readonly $type: string | number }): asserts v is { readonly $type: 'namespace_import' };
-    nestedIdentifier(v: { readonly $type: string | number }): asserts v is { readonly $type: 'nested_identifier' };
-    nestedTypeIdentifier(v: { readonly $type: string | number }): asserts v is { readonly $type: 'nested_type_identifier' };
-    newExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'new_expression' };
-    nonNullExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'non_null_expression' };
-    object(v: { readonly $type: string | number }): asserts v is { readonly $type: 'object' };
-    objectAssignmentPattern(v: { readonly $type: string | number }): asserts v is { readonly $type: 'object_assignment_pattern' };
-    objectPattern(v: { readonly $type: string | number }): asserts v is { readonly $type: 'object_pattern' };
-    objectType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'object_type' };
-    omittingTypeAnnotation(v: { readonly $type: string | number }): asserts v is { readonly $type: 'omitting_type_annotation' };
-    optingTypeAnnotation(v: { readonly $type: string | number }): asserts v is { readonly $type: 'opting_type_annotation' };
-    optionalParameter(v: { readonly $type: string | number }): asserts v is { readonly $type: 'optional_parameter' };
-    optionalTupleParameter(v: { readonly $type: string | number }): asserts v is { readonly $type: 'optional_tuple_parameter' };
-    optionalType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'optional_type' };
-    pair(v: { readonly $type: string | number }): asserts v is { readonly $type: 'pair' };
-    pairPattern(v: { readonly $type: string | number }): asserts v is { readonly $type: 'pair_pattern' };
-    parenthesizedExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'parenthesized_expression' };
-    parenthesizedType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'parenthesized_type' };
-    program(v: { readonly $type: string | number }): asserts v is { readonly $type: 'program' };
-    propertySignature(v: { readonly $type: string | number }): asserts v is { readonly $type: 'property_signature' };
-    publicFieldDefinition(v: { readonly $type: string | number }): asserts v is { readonly $type: 'public_field_definition' };
-    readonlyType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'readonly_type' };
-    regex(v: { readonly $type: string | number }): asserts v is { readonly $type: 'regex' };
-    requiredParameter(v: { readonly $type: string | number }): asserts v is { readonly $type: 'required_parameter' };
-    restPattern(v: { readonly $type: string | number }): asserts v is { readonly $type: 'rest_pattern' };
-    restType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'rest_type' };
-    returnStatement(v: { readonly $type: string | number }): asserts v is { readonly $type: 'return_statement' };
-    satisfiesExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'satisfies_expression' };
-    sequenceExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'sequence_expression' };
-    spreadElement(v: { readonly $type: string | number }): asserts v is { readonly $type: 'spread_element' };
-    statementBlock(v: { readonly $type: string | number }): asserts v is { readonly $type: 'statement_block' };
-    string(v: { readonly $type: string | number }): asserts v is { readonly $type: 'string' };
-    subscriptExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'subscript_expression' };
-    switchBody(v: { readonly $type: string | number }): asserts v is { readonly $type: 'switch_body' };
-    switchCase(v: { readonly $type: string | number }): asserts v is { readonly $type: 'switch_case' };
-    switchDefault(v: { readonly $type: string | number }): asserts v is { readonly $type: 'switch_default' };
-    switchStatement(v: { readonly $type: string | number }): asserts v is { readonly $type: 'switch_statement' };
-    templateLiteralType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'template_literal_type' };
-    templateString(v: { readonly $type: string | number }): asserts v is { readonly $type: 'template_string' };
-    templateSubstitution(v: { readonly $type: string | number }): asserts v is { readonly $type: 'template_substitution' };
-    templateType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'template_type' };
-    ternaryExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'ternary_expression' };
-    throwStatement(v: { readonly $type: string | number }): asserts v is { readonly $type: 'throw_statement' };
-    tryStatement(v: { readonly $type: string | number }): asserts v is { readonly $type: 'try_statement' };
-    tupleParameter(v: { readonly $type: string | number }): asserts v is { readonly $type: 'tuple_parameter' };
-    tupleType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'tuple_type' };
-    typeAliasDeclaration(v: { readonly $type: string | number }): asserts v is { readonly $type: 'type_alias_declaration' };
-    typeAnnotation(v: { readonly $type: string | number }): asserts v is { readonly $type: 'type_annotation' };
-    typeArguments(v: { readonly $type: string | number }): asserts v is { readonly $type: 'type_arguments' };
-    typeAssertion(v: { readonly $type: string | number }): asserts v is { readonly $type: 'type_assertion' };
-    typeParameter(v: { readonly $type: string | number }): asserts v is { readonly $type: 'type_parameter' };
-    typeParameters(v: { readonly $type: string | number }): asserts v is { readonly $type: 'type_parameters' };
-    typePredicate(v: { readonly $type: string | number }): asserts v is { readonly $type: 'type_predicate' };
-    typePredicateAnnotation(v: { readonly $type: string | number }): asserts v is { readonly $type: 'type_predicate_annotation' };
-    typeQuery(v: { readonly $type: string | number }): asserts v is { readonly $type: 'type_query' };
-    unaryExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'unary_expression' };
-    unionType(v: { readonly $type: string | number }): asserts v is { readonly $type: 'union_type' };
-    updateExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'update_expression' };
-    variableDeclaration(v: { readonly $type: string | number }): asserts v is { readonly $type: 'variable_declaration' };
-    variableDeclarator(v: { readonly $type: string | number }): asserts v is { readonly $type: 'variable_declarator' };
-    whileStatement(v: { readonly $type: string | number }): asserts v is { readonly $type: 'while_statement' };
-    withStatement(v: { readonly $type: string | number }): asserts v is { readonly $type: 'with_statement' };
-    yieldExpression(v: { readonly $type: string | number }): asserts v is { readonly $type: 'yield_expression' };
-    kind<K extends keyof NamespaceMap>(v: { readonly $type: string | number }, kind: K): asserts v is { readonly $type: K & string };
+    ArrowFunction_CallSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ArrowFunctionUCallSignature };
+    ArrowFunctionParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ArrowFunctionParameter };
+    ClassBodyMember(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassBodyMember };
+    ClassBodyMethodSig(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassBodyMethodSig };
+    ClassHeritageExtendsClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ClassHeritageExtendsClause };
+    ClassHeritageImplementsClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ClassHeritageImplementsClause };
+    ExportStatementDefaultFromArm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArm };
+    ExportStatementDefaultFromArmClauseFrom(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArmClauseFrom };
+    ExportStatementDefaultFromArmNsFrom(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArmNsFrom };
+    ExportStatementDefaultFromArmStarFrom(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArmStarFrom };
+    ExportStatementEqualsExport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ExportStatementEqualsExport };
+    ExportStatementNamespaceExport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ExportStatementNamespaceExport };
+    ExportStatementTypeExport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ExportStatementTypeExport };
+    ForHeaderLhs(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ForHeaderLhs };
+    ImportClauseDefaultImport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ImportClauseDefaultImport };
+    ImportClauseNamedImports(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ImportClauseNamedImports };
+    ImportClauseNamespaceImport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ImportClauseNamespaceImport };
+    ImportSpecifierName(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ImportSpecifierName };
+    IndexSignatureMappedTypeClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._IndexSignatureMappedTypeClause };
+    InterfaceBody(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.InterfaceBody };
+    ParenthesizedExpressionSequence(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ParenthesizedExpressionSequence };
+    PropertyIdentifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PropertyIdentifier };
+    PublicFieldDefinitionAccessorOpt(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PublicFieldDefinitionAccessorOpt };
+    PublicFieldDefinitionDeclareFirst(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
+    StatementIdentifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StatementIdentifier };
+    StringDouble(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._StringDouble };
+    StringSingle(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._StringSingle };
+    ThisType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ThisType };
+    TypeIdentifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeIdentifier };
+    abstractClassDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AbstractClassDeclaration };
+    abstractMethodSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AbstractMethodSignature };
+    addingTypeAnnotation(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AddingTypeAnnotation };
+    ambientDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AmbientDeclaration };
+    arguments(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Arguments };
+    array(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Array };
+    arrayPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArrayPattern };
+    arrayType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArrayType };
+    arrowFunction(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArrowFunction };
+    asExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AsExpression };
+    asserts(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Asserts };
+    assertsAnnotation(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AssertsAnnotation };
+    assignmentExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AssignmentExpression };
+    assignmentPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AssignmentPattern };
+    augmentedAssignmentExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AugmentedAssignmentExpression };
+    awaitExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AwaitExpression };
+    binaryExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.BinaryExpression };
+    breakStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.BreakStatement };
+    callExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.CallExpression };
+    callSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.CallSignature };
+    catchClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.CatchClause };
+    class_(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Class };
+    classBody(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassBody };
+    classDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassDeclaration };
+    classHeritage(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassHeritage };
+    classStaticBlock(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassStaticBlock };
+    computedPropertyName(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ComputedPropertyName };
+    conditionalType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ConditionalType };
+    constraint(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Constraint };
+    constructSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ConstructSignature };
+    constructorType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ConstructorType };
+    continueStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ContinueStatement };
+    debuggerStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DebuggerStatement };
+    decorator(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Decorator };
+    decoratorCallExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DecoratorCallExpression };
+    decoratorMemberExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DecoratorMemberExpression };
+    decoratorParenthesizedExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DecoratorParenthesizedExpression };
+    defaultType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DefaultType };
+    doStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DoStatement };
+    elseClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ElseClause };
+    enumAssignment(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.EnumAssignment };
+    enumBody(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.EnumBody };
+    enumDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.EnumDeclaration };
+    exportClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportClause };
+    exportSpecifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportSpecifier };
+    exportStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatement };
+    expressionStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExpressionStatement };
+    extendsClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExtendsClause };
+    extendsTypeClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExtendsTypeClause };
+    finallyClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FinallyClause };
+    flowMaybeType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FlowMaybeType };
+    forInStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ForInStatement };
+    forStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ForStatement };
+    formalParameters(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FormalParameters };
+    functionDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionDeclaration };
+    functionExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionExpression };
+    functionSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionSignature };
+    functionType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionType };
+    generatorFunction(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.GeneratorFunction };
+    generatorFunctionDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.GeneratorFunctionDeclaration };
+    genericType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.GenericType };
+    ifStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.IfStatement };
+    implementsClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImplementsClause };
+    importAlias(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportAlias };
+    importAttribute(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportAttribute };
+    importClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportClause };
+    importRequireClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportRequireClause };
+    importSpecifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportSpecifier };
+    importStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportStatement };
+    indexSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.IndexSignature };
+    indexTypeQuery(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.IndexTypeQuery };
+    inferType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.InferType };
+    instantiationExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.InstantiationExpression };
+    interfaceDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.InterfaceDeclaration };
+    internalModule(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.InternalModule };
+    intersectionType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.IntersectionType };
+    labeledStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LabeledStatement };
+    lexicalDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LexicalDeclaration };
+    literalType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LiteralType };
+    lookupType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LookupType };
+    mappedTypeClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MappedTypeClause };
+    memberExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MemberExpression };
+    methodDefinition(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MethodDefinition };
+    methodSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MethodSignature };
+    module(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Module };
+    namedImports(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.NamedImports };
+    namespaceExport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.NamespaceExport };
+    namespaceImport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.NamespaceImport };
+    nestedIdentifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.NestedIdentifier };
+    nestedTypeIdentifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.NestedTypeIdentifier };
+    newExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.NewExpression };
+    nonNullExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.NonNullExpression };
+    object(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Object };
+    objectAssignmentPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectAssignmentPattern };
+    objectPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectPattern };
+    objectType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectType };
+    omittingTypeAnnotation(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.OmittingTypeAnnotation };
+    optingTypeAnnotation(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.OptingTypeAnnotation };
+    optionalParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.OptionalParameter };
+    optionalTupleParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.OptionalTupleParameter };
+    optionalType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.OptionalType };
+    pair(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Pair };
+    pairPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PairPattern };
+    parenthesizedExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ParenthesizedExpression };
+    parenthesizedType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ParenthesizedType };
+    program(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Program };
+    propertySignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PropertySignature };
+    publicFieldDefinition(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PublicFieldDefinition };
+    readonlyType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ReadonlyType };
+    regex(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Regex };
+    requiredParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RequiredParameter };
+    restPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RestPattern };
+    restType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RestType };
+    returnStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ReturnStatement };
+    satisfiesExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SatisfiesExpression };
+    sequenceExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SequenceExpression };
+    spreadElement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SpreadElement };
+    statementBlock(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StatementBlock };
+    string(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.String };
+    subscriptExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SubscriptExpression };
+    switchBody(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SwitchBody };
+    switchCase(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SwitchCase };
+    switchDefault(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SwitchDefault };
+    switchStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SwitchStatement };
+    templateLiteralType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TemplateLiteralType };
+    templateString(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TemplateString };
+    templateSubstitution(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TemplateSubstitution };
+    templateType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TemplateType };
+    ternaryExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TernaryExpression };
+    throwStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ThrowStatement };
+    tryStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TryStatement };
+    tupleParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TupleParameter };
+    tupleType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TupleType };
+    typeAliasDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeAliasDeclaration };
+    typeAnnotation(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeAnnotation };
+    typeArguments(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeArguments };
+    typeAssertion(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeAssertion };
+    typeParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeParameter };
+    typeParameters(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeParameters };
+    typePredicate(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypePredicate };
+    typePredicateAnnotation(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypePredicateAnnotation };
+    typeQuery(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeQuery };
+    unaryExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UnaryExpression };
+    unionType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UnionType };
+    updateExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UpdateExpression };
+    variableDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.VariableDeclaration };
+    variableDeclarator(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.VariableDeclarator };
+    whileStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WhileStatement };
+    withStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WithStatement };
+    yieldExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.YieldExpression };
+    kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
     destructuringPattern(v: { readonly $type: string | number }): asserts v is DestructuringPattern;
     exportStatementDefault(v: { readonly $type: string | number }): asserts v is ExportStatementDefault;
     expressions(v: { readonly $type: string | number }): asserts v is Expressions;
@@ -454,63 +454,36 @@ export interface AssertGuards {
     type(v: { readonly $type: string | number }): asserts v is Type;
 }
 
-// Runtime: kind guards accept both numeric (factory/wrap) and string (readNode)
-// $type during Phase A coexistence. Phase D removes the string arm.
-function _g(k: string, id: number): (v: { readonly $type: string | number }) => boolean {
-    return (v) => v.$type === id || v.$type === k;
+// Runtime: kind guards compare numeric TSKindId only (Phase D).
+function _g(id: number): (v: { readonly $type: number }) => boolean {
+    return (v) => v.$type === id;
 }
-function _sg(ks: ReadonlySet<string>, ids: ReadonlySet<number>): (v: { readonly $type: string | number }) => boolean {
-    return (v) => typeof v.$type === 'number' ? ids.has(v.$type) : ks.has(v.$type);
+function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boolean {
+    return (v) => ids.has(v.$type);
 }
 
-const _supertype_destructuringPattern = new Set<string>(["object_pattern", "array_pattern"]);
 const _supertype_destructuringPattern_ids = new Set<number>([214, 218]);
-const _supertype_exportStatementDefault = new Set<string>(["_export_statement_default_from_arm", "_export_statement_default_decl_arm"]);
 const _supertype_exportStatementDefault_ids = new Set<number>([353, 354]);
-const _supertype_expressions = new Set<string>(["expression", "sequence_expression"]);
 const _supertype_expressions_ids = new Set<number>([246]);
-const _supertype_formalParameter = new Set<string>(["required_parameter", "optional_parameter"]);
 const _supertype_formalParameter_ids = new Set<number>([296, 297]);
-const _supertype_identifier = new Set<string>(["undefined", "identifier"]);
 const _supertype_identifier_ids = new Set<number>([112, 1]);
-const _supertype_importIdentifier = new Set<string>(["identifier"]);
 const _supertype_importIdentifier_ids = new Set<number>([1]);
-const _supertype_jsxAttribute = new Set<string>(["jsx_attribute", "jsx_expression"]);
-const _supertype_jsxAttributeName = new Set<string>(["identifier", "jsx_namespace_name"]);
 const _supertype_jsxAttributeName_ids = new Set<number>([1]);
-const _supertype_jsxAttributeValue = new Set<string>(["_jsx_string", "jsx_expression", "jsx_element", "jsx_self_closing_element"]);
-const _supertype_jsxChild = new Set<string>(["jsx_text", "html_character_reference", "jsx_element", "jsx_self_closing_element", "jsx_expression"]);
 const _supertype_jsxChild_ids = new Set<number>([163]);
-const _supertype_jsxElement = new Set<string>(["jsx_element", "jsx_self_closing_element"]);
-const _supertype_jsxElementName = new Set<string>(["jsx_identifier", "identifier", "nested_identifier", "jsx_namespace_name"]);
 const _supertype_jsxElementName_ids = new Set<number>([1, 219]);
-const _supertype_jsxIdentifier = new Set<string>(["jsx_identifier", "identifier"]);
 const _supertype_jsxIdentifier_ids = new Set<number>([1]);
-const _supertype_moduleExportName = new Set<string>(["identifier", "string"]);
 const _supertype_moduleExportName_ids = new Set<number>([1, 247]);
-const _supertype_propertyName = new Set<string>(["identifier", "private_property_identifier", "string", "number", "computed_property_name"]);
 const _supertype_propertyName_ids = new Set<number>([1, 104, 247, 103, 265]);
-const _supertype_semicolon = new Set<string>(["_automatic_semicolon"]);
 const _supertype_semicolon_ids = new Set<number>([159]);
-const _supertype_shorthandPropertyIdentifier = new Set<string>(["identifier", "_reserved_identifier"]);
 const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1]);
-const _supertype_shorthandPropertyIdentifierPattern = new Set<string>(["identifier", "_reserved_identifier"]);
 const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1]);
-const _supertype_tupleTypeMember = new Set<string>(["tuple_parameter", "optional_tuple_parameter", "optional_type", "rest_type", "type"]);
 const _supertype_tupleTypeMember_ids = new Set<number>([308, 309, 310, 311]);
-const _supertype_declaration = new Set<string>(["function_signature", "abstract_class_declaration", "module", "internal_module", "type_alias_declaration", "enum_declaration", "interface_declaration", "import_alias", "ambient_declaration"]);
 const _supertype_declaration_ids = new Set<number>([271, 282, 283, 284, 293, 290, 288, 286, 281]);
-const _supertype_expression = new Set<string>(["as_expression", "satisfies_expression", "instantiation_expression", "internal_module", "type_assertion", "primary_expression", "assignment_expression", "augmented_assignment_expression", "await_expression", "unary_expression", "binary_expression", "ternary_expression", "update_expression", "new_expression", "yield_expression"]);
 const _supertype_expression_ids = new Set<number>([274, 275, 276, 284, 273, 236, 238, 233, 244, 243, 242, 245, 232, 212]);
-const _supertype_pattern = new Set<string>(["member_expression", "subscript_expression", "undefined", "identifier", "object_pattern", "array_pattern", "non_null_expression", "rest_pattern"]);
 const _supertype_pattern_ids = new Set<number>([234, 235, 112, 1, 214, 218, 268, 260]);
-const _supertype_primaryExpression = new Set<string>(["non_null_expression"]);
 const _supertype_primaryExpression_ids = new Set<number>([268]);
-const _supertype_primaryType = new Set<string>(["parenthesized_type", "predefined_type", "_type_identifier", "nested_type_identifier", "generic_type", "object_type", "array_type", "tuple_type", "flow_maybe_type", "type_query", "index_type_query", "this", "existential_type", "literal_type", "lookup_type", "conditional_type", "template_literal_type", "intersection_type", "union_type"]);
 const _supertype_primaryType_ids = new Set<number>([334, 335, 430, 287, 319, 337, 346, 347, 333, 326, 327, 107, 330, 328, 318, 316, 350, 349]);
-const _supertype_statement = new Set<string>(["export_statement", "import_statement", "debugger_statement", "expression_statement", "declaration", "statement_block", "if_statement", "switch_statement", "for_statement", "for_in_statement", "while_statement", "do_statement", "try_statement", "with_statement", "break_statement", "continue_statement", "return_statement", "throw_statement", "empty_statement", "labeled_statement"]);
 const _supertype_statement_ids = new Set<number>([167, 174, 199, 182, 186, 188, 189, 190, 191, 193, 194, 195, 196, 197, 198, 200, 201, 203]);
-const _supertype_type = new Set<string>(["primary_type", "function_type", "readonly_type", "constructor_type", "infer_type", "_type_query_member_expression_in_type_annotation", "_type_query_call_expression_in_type_annotation"]);
 const _supertype_type_ids = new Set<number>([351, 348, 313, 317, 303, 304]);
 
 const _kindIdByKind = new Map<string, number>([
@@ -807,216 +780,215 @@ const _kindIdByKind = new Map<string, number>([
 ]);
 
 export const is = {
-    ArrowFunction_CallSignature: _g("_arrow_function__call_signature", TSKindId._ArrowFunctionUCallSignature),
-    ArrowFunctionParameter: _g("_arrow_function_parameter", TSKindId._ArrowFunctionParameter),
-    ClassBodyMember: _g("_class_body_member", TSKindId.ClassBodyMember),
-    ClassBodyMethodSig: _g("_class_body_method_sig", TSKindId.ClassBodyMethodSig),
-    ClassHeritageExtendsClause: _g("_class_heritage_extends_clause", TSKindId._ClassHeritageExtendsClause),
-    ClassHeritageImplementsClause: _g("_class_heritage_implements_clause", TSKindId._ClassHeritageImplementsClause),
-    ExportStatementDefaultFromArm: _g("_export_statement_default_from_arm", TSKindId.ExportStatementDefaultFromArm),
-    ExportStatementDefaultFromArmClauseFrom: _g("_export_statement_default_from_arm_clause_from", TSKindId.ExportStatementDefaultFromArmClauseFrom),
-    ExportStatementDefaultFromArmNsFrom: _g("_export_statement_default_from_arm_ns_from", TSKindId.ExportStatementDefaultFromArmNsFrom),
-    ExportStatementDefaultFromArmStarFrom: _g("_export_statement_default_from_arm_star_from", TSKindId.ExportStatementDefaultFromArmStarFrom),
-    ExportStatementEqualsExport: _g("_export_statement_equals_export", TSKindId._ExportStatementEqualsExport),
-    ExportStatementNamespaceExport: _g("_export_statement_namespace_export", TSKindId._ExportStatementNamespaceExport),
-    ExportStatementTypeExport: _g("_export_statement_type_export", TSKindId._ExportStatementTypeExport),
-    ForHeaderLhs: _g("_for_header_lhs", TSKindId.ForHeaderLhs),
-    ImportClauseDefaultImport: _g("_import_clause_default_import", TSKindId._ImportClauseDefaultImport),
-    ImportClauseNamedImports: _g("_import_clause_named_imports", TSKindId._ImportClauseNamedImports),
-    ImportClauseNamespaceImport: _g("_import_clause_namespace_import", TSKindId._ImportClauseNamespaceImport),
-    ImportSpecifierName: _g("_import_specifier_name", TSKindId._ImportSpecifierName),
-    IndexSignatureMappedTypeClause: _g("_index_signature_mapped_type_clause", TSKindId._IndexSignatureMappedTypeClause),
-    InterfaceBody: _g("_interface_body", TSKindId.InterfaceBody),
-    ParenthesizedExpressionSequence: _g("_parenthesized_expression_sequence", TSKindId._ParenthesizedExpressionSequence),
-    PropertyIdentifier: _g("_property_identifier", TSKindId.PropertyIdentifier),
-    PublicFieldDefinitionAccessorOpt: _g("_public_field_definition_accessor_opt", TSKindId.PublicFieldDefinitionAccessorOpt),
-    PublicFieldDefinitionDeclareFirst: _g("_public_field_definition_declare_first", TSKindId.PublicFieldDefinitionDeclareFirst),
-    StatementIdentifier: _g("_statement_identifier", TSKindId.StatementIdentifier),
-    StringDouble: _g("_string_double", TSKindId._StringDouble),
-    StringSingle: _g("_string_single", TSKindId._StringSingle),
-    ThisType: _g("_this_type", TSKindId.ThisType),
-    TypeIdentifier: _g("_type_identifier", TSKindId.TypeIdentifier),
-    abstractClassDeclaration: _g("abstract_class_declaration", TSKindId.AbstractClassDeclaration),
-    abstractMethodSignature: _g("abstract_method_signature", TSKindId.AbstractMethodSignature),
-    addingTypeAnnotation: _g("adding_type_annotation", TSKindId.AddingTypeAnnotation),
-    ambientDeclaration: _g("ambient_declaration", TSKindId.AmbientDeclaration),
-    arguments: _g("arguments", TSKindId.Arguments),
-    array: _g("array", TSKindId.Array),
-    arrayPattern: _g("array_pattern", TSKindId.ArrayPattern),
-    arrayType: _g("array_type", TSKindId.ArrayType),
-    arrowFunction: _g("arrow_function", TSKindId.ArrowFunction),
-    asExpression: _g("as_expression", TSKindId.AsExpression),
-    asserts: _g("asserts", TSKindId.Asserts),
-    assertsAnnotation: _g("asserts_annotation", TSKindId.AssertsAnnotation),
-    assignmentExpression: _g("assignment_expression", TSKindId.AssignmentExpression),
-    assignmentPattern: _g("assignment_pattern", TSKindId.AssignmentPattern),
-    augmentedAssignmentExpression: _g("augmented_assignment_expression", TSKindId.AugmentedAssignmentExpression),
-    awaitExpression: _g("await_expression", TSKindId.AwaitExpression),
-    binaryExpression: _g("binary_expression", TSKindId.BinaryExpression),
-    breakStatement: _g("break_statement", TSKindId.BreakStatement),
-    callExpression: _g("call_expression", TSKindId.CallExpression),
-    callSignature: _g("call_signature", TSKindId.CallSignature),
-    catchClause: _g("catch_clause", TSKindId.CatchClause),
-    class_: _g("class", TSKindId.Class),
-    classBody: _g("class_body", TSKindId.ClassBody),
-    classDeclaration: _g("class_declaration", TSKindId.ClassDeclaration),
-    classHeritage: _g("class_heritage", TSKindId.ClassHeritage),
-    classStaticBlock: _g("class_static_block", TSKindId.ClassStaticBlock),
-    computedPropertyName: _g("computed_property_name", TSKindId.ComputedPropertyName),
-    conditionalType: _g("conditional_type", TSKindId.ConditionalType),
-    constraint: _g("constraint", TSKindId.Constraint),
-    constructSignature: _g("construct_signature", TSKindId.ConstructSignature),
-    constructorType: _g("constructor_type", TSKindId.ConstructorType),
-    continueStatement: _g("continue_statement", TSKindId.ContinueStatement),
-    debuggerStatement: _g("debugger_statement", TSKindId.DebuggerStatement),
-    decorator: _g("decorator", TSKindId.Decorator),
-    decoratorCallExpression: _g("decorator_call_expression", TSKindId.DecoratorCallExpression),
-    decoratorMemberExpression: _g("decorator_member_expression", TSKindId.DecoratorMemberExpression),
-    decoratorParenthesizedExpression: _g("decorator_parenthesized_expression", TSKindId.DecoratorParenthesizedExpression),
-    defaultType: _g("default_type", TSKindId.DefaultType),
-    doStatement: _g("do_statement", TSKindId.DoStatement),
-    elseClause: _g("else_clause", TSKindId.ElseClause),
-    enumAssignment: _g("enum_assignment", TSKindId.EnumAssignment),
-    enumBody: _g("enum_body", TSKindId.EnumBody),
-    enumDeclaration: _g("enum_declaration", TSKindId.EnumDeclaration),
-    exportClause: _g("export_clause", TSKindId.ExportClause),
-    exportSpecifier: _g("export_specifier", TSKindId.ExportSpecifier),
-    exportStatement: _g("export_statement", TSKindId.ExportStatement),
-    expressionStatement: _g("expression_statement", TSKindId.ExpressionStatement),
-    extendsClause: _g("extends_clause", TSKindId.ExtendsClause),
-    extendsTypeClause: _g("extends_type_clause", TSKindId.ExtendsTypeClause),
-    finallyClause: _g("finally_clause", TSKindId.FinallyClause),
-    flowMaybeType: _g("flow_maybe_type", TSKindId.FlowMaybeType),
-    forInStatement: _g("for_in_statement", TSKindId.ForInStatement),
-    forStatement: _g("for_statement", TSKindId.ForStatement),
-    formalParameters: _g("formal_parameters", TSKindId.FormalParameters),
-    functionDeclaration: _g("function_declaration", TSKindId.FunctionDeclaration),
-    functionExpression: _g("function_expression", TSKindId.FunctionExpression),
-    functionSignature: _g("function_signature", TSKindId.FunctionSignature),
-    functionType: _g("function_type", TSKindId.FunctionType),
-    generatorFunction: _g("generator_function", TSKindId.GeneratorFunction),
-    generatorFunctionDeclaration: _g("generator_function_declaration", TSKindId.GeneratorFunctionDeclaration),
-    genericType: _g("generic_type", TSKindId.GenericType),
-    ifStatement: _g("if_statement", TSKindId.IfStatement),
-    implementsClause: _g("implements_clause", TSKindId.ImplementsClause),
-    importAlias: _g("import_alias", TSKindId.ImportAlias),
-    importAttribute: _g("import_attribute", TSKindId.ImportAttribute),
-    importClause: _g("import_clause", TSKindId.ImportClause),
-    importRequireClause: _g("import_require_clause", TSKindId.ImportRequireClause),
-    importSpecifier: _g("import_specifier", TSKindId.ImportSpecifier),
-    importStatement: _g("import_statement", TSKindId.ImportStatement),
-    indexSignature: _g("index_signature", TSKindId.IndexSignature),
-    indexTypeQuery: _g("index_type_query", TSKindId.IndexTypeQuery),
-    inferType: _g("infer_type", TSKindId.InferType),
-    instantiationExpression: _g("instantiation_expression", TSKindId.InstantiationExpression),
-    interfaceDeclaration: _g("interface_declaration", TSKindId.InterfaceDeclaration),
-    internalModule: _g("internal_module", TSKindId.InternalModule),
-    intersectionType: _g("intersection_type", TSKindId.IntersectionType),
-    labeledStatement: _g("labeled_statement", TSKindId.LabeledStatement),
-    lexicalDeclaration: _g("lexical_declaration", TSKindId.LexicalDeclaration),
-    literalType: _g("literal_type", TSKindId.LiteralType),
-    lookupType: _g("lookup_type", TSKindId.LookupType),
-    mappedTypeClause: _g("mapped_type_clause", TSKindId.MappedTypeClause),
-    memberExpression: _g("member_expression", TSKindId.MemberExpression),
-    methodDefinition: _g("method_definition", TSKindId.MethodDefinition),
-    methodSignature: _g("method_signature", TSKindId.MethodSignature),
-    module: _g("module", TSKindId.Module),
-    namedImports: _g("named_imports", TSKindId.NamedImports),
-    namespaceExport: _g("namespace_export", TSKindId.NamespaceExport),
-    namespaceImport: _g("namespace_import", TSKindId.NamespaceImport),
-    nestedIdentifier: _g("nested_identifier", TSKindId.NestedIdentifier),
-    nestedTypeIdentifier: _g("nested_type_identifier", TSKindId.NestedTypeIdentifier),
-    newExpression: _g("new_expression", TSKindId.NewExpression),
-    nonNullExpression: _g("non_null_expression", TSKindId.NonNullExpression),
-    object: _g("object", TSKindId.Object),
-    objectAssignmentPattern: _g("object_assignment_pattern", TSKindId.ObjectAssignmentPattern),
-    objectPattern: _g("object_pattern", TSKindId.ObjectPattern),
-    objectType: _g("object_type", TSKindId.ObjectType),
-    omittingTypeAnnotation: _g("omitting_type_annotation", TSKindId.OmittingTypeAnnotation),
-    optingTypeAnnotation: _g("opting_type_annotation", TSKindId.OptingTypeAnnotation),
-    optionalParameter: _g("optional_parameter", TSKindId.OptionalParameter),
-    optionalTupleParameter: _g("optional_tuple_parameter", TSKindId.OptionalTupleParameter),
-    optionalType: _g("optional_type", TSKindId.OptionalType),
-    pair: _g("pair", TSKindId.Pair),
-    pairPattern: _g("pair_pattern", TSKindId.PairPattern),
-    parenthesizedExpression: _g("parenthesized_expression", TSKindId.ParenthesizedExpression),
-    parenthesizedType: _g("parenthesized_type", TSKindId.ParenthesizedType),
-    program: _g("program", TSKindId.Program),
-    propertySignature: _g("property_signature", TSKindId.PropertySignature),
-    publicFieldDefinition: _g("public_field_definition", TSKindId.PublicFieldDefinition),
-    readonlyType: _g("readonly_type", TSKindId.ReadonlyType),
-    regex: _g("regex", TSKindId.Regex),
-    requiredParameter: _g("required_parameter", TSKindId.RequiredParameter),
-    restPattern: _g("rest_pattern", TSKindId.RestPattern),
-    restType: _g("rest_type", TSKindId.RestType),
-    returnStatement: _g("return_statement", TSKindId.ReturnStatement),
-    satisfiesExpression: _g("satisfies_expression", TSKindId.SatisfiesExpression),
-    sequenceExpression: _g("sequence_expression", TSKindId.SequenceExpression),
-    spreadElement: _g("spread_element", TSKindId.SpreadElement),
-    statementBlock: _g("statement_block", TSKindId.StatementBlock),
-    string: _g("string", TSKindId.String),
-    subscriptExpression: _g("subscript_expression", TSKindId.SubscriptExpression),
-    switchBody: _g("switch_body", TSKindId.SwitchBody),
-    switchCase: _g("switch_case", TSKindId.SwitchCase),
-    switchDefault: _g("switch_default", TSKindId.SwitchDefault),
-    switchStatement: _g("switch_statement", TSKindId.SwitchStatement),
-    templateLiteralType: _g("template_literal_type", TSKindId.TemplateLiteralType),
-    templateString: _g("template_string", TSKindId.TemplateString),
-    templateSubstitution: _g("template_substitution", TSKindId.TemplateSubstitution),
-    templateType: _g("template_type", TSKindId.TemplateType),
-    ternaryExpression: _g("ternary_expression", TSKindId.TernaryExpression),
-    throwStatement: _g("throw_statement", TSKindId.ThrowStatement),
-    tryStatement: _g("try_statement", TSKindId.TryStatement),
-    tupleParameter: _g("tuple_parameter", TSKindId.TupleParameter),
-    tupleType: _g("tuple_type", TSKindId.TupleType),
-    typeAliasDeclaration: _g("type_alias_declaration", TSKindId.TypeAliasDeclaration),
-    typeAnnotation: _g("type_annotation", TSKindId.TypeAnnotation),
-    typeArguments: _g("type_arguments", TSKindId.TypeArguments),
-    typeAssertion: _g("type_assertion", TSKindId.TypeAssertion),
-    typeParameter: _g("type_parameter", TSKindId.TypeParameter),
-    typeParameters: _g("type_parameters", TSKindId.TypeParameters),
-    typePredicate: _g("type_predicate", TSKindId.TypePredicate),
-    typePredicateAnnotation: _g("type_predicate_annotation", TSKindId.TypePredicateAnnotation),
-    typeQuery: _g("type_query", TSKindId.TypeQuery),
-    unaryExpression: _g("unary_expression", TSKindId.UnaryExpression),
-    unionType: _g("union_type", TSKindId.UnionType),
-    updateExpression: _g("update_expression", TSKindId.UpdateExpression),
-    variableDeclaration: _g("variable_declaration", TSKindId.VariableDeclaration),
-    variableDeclarator: _g("variable_declarator", TSKindId.VariableDeclarator),
-    whileStatement: _g("while_statement", TSKindId.WhileStatement),
-    withStatement: _g("with_statement", TSKindId.WithStatement),
-    yieldExpression: _g("yield_expression", TSKindId.YieldExpression),
-    kind: (v: { readonly $type: string | number }, k: string): boolean => {
-        if (v.$type === k) return true;
+    ArrowFunction_CallSignature: _g(TSKindId._ArrowFunctionUCallSignature),
+    ArrowFunctionParameter: _g(TSKindId._ArrowFunctionParameter),
+    ClassBodyMember: _g(TSKindId.ClassBodyMember),
+    ClassBodyMethodSig: _g(TSKindId.ClassBodyMethodSig),
+    ClassHeritageExtendsClause: _g(TSKindId._ClassHeritageExtendsClause),
+    ClassHeritageImplementsClause: _g(TSKindId._ClassHeritageImplementsClause),
+    ExportStatementDefaultFromArm: _g(TSKindId.ExportStatementDefaultFromArm),
+    ExportStatementDefaultFromArmClauseFrom: _g(TSKindId.ExportStatementDefaultFromArmClauseFrom),
+    ExportStatementDefaultFromArmNsFrom: _g(TSKindId.ExportStatementDefaultFromArmNsFrom),
+    ExportStatementDefaultFromArmStarFrom: _g(TSKindId.ExportStatementDefaultFromArmStarFrom),
+    ExportStatementEqualsExport: _g(TSKindId._ExportStatementEqualsExport),
+    ExportStatementNamespaceExport: _g(TSKindId._ExportStatementNamespaceExport),
+    ExportStatementTypeExport: _g(TSKindId._ExportStatementTypeExport),
+    ForHeaderLhs: _g(TSKindId.ForHeaderLhs),
+    ImportClauseDefaultImport: _g(TSKindId._ImportClauseDefaultImport),
+    ImportClauseNamedImports: _g(TSKindId._ImportClauseNamedImports),
+    ImportClauseNamespaceImport: _g(TSKindId._ImportClauseNamespaceImport),
+    ImportSpecifierName: _g(TSKindId._ImportSpecifierName),
+    IndexSignatureMappedTypeClause: _g(TSKindId._IndexSignatureMappedTypeClause),
+    InterfaceBody: _g(TSKindId.InterfaceBody),
+    ParenthesizedExpressionSequence: _g(TSKindId._ParenthesizedExpressionSequence),
+    PropertyIdentifier: _g(TSKindId.PropertyIdentifier),
+    PublicFieldDefinitionAccessorOpt: _g(TSKindId.PublicFieldDefinitionAccessorOpt),
+    PublicFieldDefinitionDeclareFirst: _g(TSKindId.PublicFieldDefinitionDeclareFirst),
+    StatementIdentifier: _g(TSKindId.StatementIdentifier),
+    StringDouble: _g(TSKindId._StringDouble),
+    StringSingle: _g(TSKindId._StringSingle),
+    ThisType: _g(TSKindId.ThisType),
+    TypeIdentifier: _g(TSKindId.TypeIdentifier),
+    abstractClassDeclaration: _g(TSKindId.AbstractClassDeclaration),
+    abstractMethodSignature: _g(TSKindId.AbstractMethodSignature),
+    addingTypeAnnotation: _g(TSKindId.AddingTypeAnnotation),
+    ambientDeclaration: _g(TSKindId.AmbientDeclaration),
+    arguments: _g(TSKindId.Arguments),
+    array: _g(TSKindId.Array),
+    arrayPattern: _g(TSKindId.ArrayPattern),
+    arrayType: _g(TSKindId.ArrayType),
+    arrowFunction: _g(TSKindId.ArrowFunction),
+    asExpression: _g(TSKindId.AsExpression),
+    asserts: _g(TSKindId.Asserts),
+    assertsAnnotation: _g(TSKindId.AssertsAnnotation),
+    assignmentExpression: _g(TSKindId.AssignmentExpression),
+    assignmentPattern: _g(TSKindId.AssignmentPattern),
+    augmentedAssignmentExpression: _g(TSKindId.AugmentedAssignmentExpression),
+    awaitExpression: _g(TSKindId.AwaitExpression),
+    binaryExpression: _g(TSKindId.BinaryExpression),
+    breakStatement: _g(TSKindId.BreakStatement),
+    callExpression: _g(TSKindId.CallExpression),
+    callSignature: _g(TSKindId.CallSignature),
+    catchClause: _g(TSKindId.CatchClause),
+    class_: _g(TSKindId.Class),
+    classBody: _g(TSKindId.ClassBody),
+    classDeclaration: _g(TSKindId.ClassDeclaration),
+    classHeritage: _g(TSKindId.ClassHeritage),
+    classStaticBlock: _g(TSKindId.ClassStaticBlock),
+    computedPropertyName: _g(TSKindId.ComputedPropertyName),
+    conditionalType: _g(TSKindId.ConditionalType),
+    constraint: _g(TSKindId.Constraint),
+    constructSignature: _g(TSKindId.ConstructSignature),
+    constructorType: _g(TSKindId.ConstructorType),
+    continueStatement: _g(TSKindId.ContinueStatement),
+    debuggerStatement: _g(TSKindId.DebuggerStatement),
+    decorator: _g(TSKindId.Decorator),
+    decoratorCallExpression: _g(TSKindId.DecoratorCallExpression),
+    decoratorMemberExpression: _g(TSKindId.DecoratorMemberExpression),
+    decoratorParenthesizedExpression: _g(TSKindId.DecoratorParenthesizedExpression),
+    defaultType: _g(TSKindId.DefaultType),
+    doStatement: _g(TSKindId.DoStatement),
+    elseClause: _g(TSKindId.ElseClause),
+    enumAssignment: _g(TSKindId.EnumAssignment),
+    enumBody: _g(TSKindId.EnumBody),
+    enumDeclaration: _g(TSKindId.EnumDeclaration),
+    exportClause: _g(TSKindId.ExportClause),
+    exportSpecifier: _g(TSKindId.ExportSpecifier),
+    exportStatement: _g(TSKindId.ExportStatement),
+    expressionStatement: _g(TSKindId.ExpressionStatement),
+    extendsClause: _g(TSKindId.ExtendsClause),
+    extendsTypeClause: _g(TSKindId.ExtendsTypeClause),
+    finallyClause: _g(TSKindId.FinallyClause),
+    flowMaybeType: _g(TSKindId.FlowMaybeType),
+    forInStatement: _g(TSKindId.ForInStatement),
+    forStatement: _g(TSKindId.ForStatement),
+    formalParameters: _g(TSKindId.FormalParameters),
+    functionDeclaration: _g(TSKindId.FunctionDeclaration),
+    functionExpression: _g(TSKindId.FunctionExpression),
+    functionSignature: _g(TSKindId.FunctionSignature),
+    functionType: _g(TSKindId.FunctionType),
+    generatorFunction: _g(TSKindId.GeneratorFunction),
+    generatorFunctionDeclaration: _g(TSKindId.GeneratorFunctionDeclaration),
+    genericType: _g(TSKindId.GenericType),
+    ifStatement: _g(TSKindId.IfStatement),
+    implementsClause: _g(TSKindId.ImplementsClause),
+    importAlias: _g(TSKindId.ImportAlias),
+    importAttribute: _g(TSKindId.ImportAttribute),
+    importClause: _g(TSKindId.ImportClause),
+    importRequireClause: _g(TSKindId.ImportRequireClause),
+    importSpecifier: _g(TSKindId.ImportSpecifier),
+    importStatement: _g(TSKindId.ImportStatement),
+    indexSignature: _g(TSKindId.IndexSignature),
+    indexTypeQuery: _g(TSKindId.IndexTypeQuery),
+    inferType: _g(TSKindId.InferType),
+    instantiationExpression: _g(TSKindId.InstantiationExpression),
+    interfaceDeclaration: _g(TSKindId.InterfaceDeclaration),
+    internalModule: _g(TSKindId.InternalModule),
+    intersectionType: _g(TSKindId.IntersectionType),
+    labeledStatement: _g(TSKindId.LabeledStatement),
+    lexicalDeclaration: _g(TSKindId.LexicalDeclaration),
+    literalType: _g(TSKindId.LiteralType),
+    lookupType: _g(TSKindId.LookupType),
+    mappedTypeClause: _g(TSKindId.MappedTypeClause),
+    memberExpression: _g(TSKindId.MemberExpression),
+    methodDefinition: _g(TSKindId.MethodDefinition),
+    methodSignature: _g(TSKindId.MethodSignature),
+    module: _g(TSKindId.Module),
+    namedImports: _g(TSKindId.NamedImports),
+    namespaceExport: _g(TSKindId.NamespaceExport),
+    namespaceImport: _g(TSKindId.NamespaceImport),
+    nestedIdentifier: _g(TSKindId.NestedIdentifier),
+    nestedTypeIdentifier: _g(TSKindId.NestedTypeIdentifier),
+    newExpression: _g(TSKindId.NewExpression),
+    nonNullExpression: _g(TSKindId.NonNullExpression),
+    object: _g(TSKindId.Object),
+    objectAssignmentPattern: _g(TSKindId.ObjectAssignmentPattern),
+    objectPattern: _g(TSKindId.ObjectPattern),
+    objectType: _g(TSKindId.ObjectType),
+    omittingTypeAnnotation: _g(TSKindId.OmittingTypeAnnotation),
+    optingTypeAnnotation: _g(TSKindId.OptingTypeAnnotation),
+    optionalParameter: _g(TSKindId.OptionalParameter),
+    optionalTupleParameter: _g(TSKindId.OptionalTupleParameter),
+    optionalType: _g(TSKindId.OptionalType),
+    pair: _g(TSKindId.Pair),
+    pairPattern: _g(TSKindId.PairPattern),
+    parenthesizedExpression: _g(TSKindId.ParenthesizedExpression),
+    parenthesizedType: _g(TSKindId.ParenthesizedType),
+    program: _g(TSKindId.Program),
+    propertySignature: _g(TSKindId.PropertySignature),
+    publicFieldDefinition: _g(TSKindId.PublicFieldDefinition),
+    readonlyType: _g(TSKindId.ReadonlyType),
+    regex: _g(TSKindId.Regex),
+    requiredParameter: _g(TSKindId.RequiredParameter),
+    restPattern: _g(TSKindId.RestPattern),
+    restType: _g(TSKindId.RestType),
+    returnStatement: _g(TSKindId.ReturnStatement),
+    satisfiesExpression: _g(TSKindId.SatisfiesExpression),
+    sequenceExpression: _g(TSKindId.SequenceExpression),
+    spreadElement: _g(TSKindId.SpreadElement),
+    statementBlock: _g(TSKindId.StatementBlock),
+    string: _g(TSKindId.String),
+    subscriptExpression: _g(TSKindId.SubscriptExpression),
+    switchBody: _g(TSKindId.SwitchBody),
+    switchCase: _g(TSKindId.SwitchCase),
+    switchDefault: _g(TSKindId.SwitchDefault),
+    switchStatement: _g(TSKindId.SwitchStatement),
+    templateLiteralType: _g(TSKindId.TemplateLiteralType),
+    templateString: _g(TSKindId.TemplateString),
+    templateSubstitution: _g(TSKindId.TemplateSubstitution),
+    templateType: _g(TSKindId.TemplateType),
+    ternaryExpression: _g(TSKindId.TernaryExpression),
+    throwStatement: _g(TSKindId.ThrowStatement),
+    tryStatement: _g(TSKindId.TryStatement),
+    tupleParameter: _g(TSKindId.TupleParameter),
+    tupleType: _g(TSKindId.TupleType),
+    typeAliasDeclaration: _g(TSKindId.TypeAliasDeclaration),
+    typeAnnotation: _g(TSKindId.TypeAnnotation),
+    typeArguments: _g(TSKindId.TypeArguments),
+    typeAssertion: _g(TSKindId.TypeAssertion),
+    typeParameter: _g(TSKindId.TypeParameter),
+    typeParameters: _g(TSKindId.TypeParameters),
+    typePredicate: _g(TSKindId.TypePredicate),
+    typePredicateAnnotation: _g(TSKindId.TypePredicateAnnotation),
+    typeQuery: _g(TSKindId.TypeQuery),
+    unaryExpression: _g(TSKindId.UnaryExpression),
+    unionType: _g(TSKindId.UnionType),
+    updateExpression: _g(TSKindId.UpdateExpression),
+    variableDeclaration: _g(TSKindId.VariableDeclaration),
+    variableDeclarator: _g(TSKindId.VariableDeclarator),
+    whileStatement: _g(TSKindId.WhileStatement),
+    withStatement: _g(TSKindId.WithStatement),
+    yieldExpression: _g(TSKindId.YieldExpression),
+    kind: (v: { readonly $type: number }, k: string): boolean => {
         const id = _kindIdByKind.get(k);
         return id !== undefined && v.$type === id;
     },
-    destructuringPattern: _sg(_supertype_destructuringPattern, _supertype_destructuringPattern_ids),
-    exportStatementDefault: _sg(_supertype_exportStatementDefault, _supertype_exportStatementDefault_ids),
-    expressions: _sg(_supertype_expressions, _supertype_expressions_ids),
-    formalParameter: _sg(_supertype_formalParameter, _supertype_formalParameter_ids),
-    identifier: _sg(_supertype_identifier, _supertype_identifier_ids),
-    importIdentifier: _sg(_supertype_importIdentifier, _supertype_importIdentifier_ids),
-    jsxAttribute: _sg(_supertype_jsxAttribute, new Set<number>()),
-    jsxAttributeName: _sg(_supertype_jsxAttributeName, _supertype_jsxAttributeName_ids),
-    jsxAttributeValue: _sg(_supertype_jsxAttributeValue, new Set<number>()),
-    jsxChild: _sg(_supertype_jsxChild, _supertype_jsxChild_ids),
-    jsxElement: _sg(_supertype_jsxElement, new Set<number>()),
-    jsxElementName: _sg(_supertype_jsxElementName, _supertype_jsxElementName_ids),
-    jsxIdentifier: _sg(_supertype_jsxIdentifier, _supertype_jsxIdentifier_ids),
-    moduleExportName: _sg(_supertype_moduleExportName, _supertype_moduleExportName_ids),
-    propertyName: _sg(_supertype_propertyName, _supertype_propertyName_ids),
-    semicolon: _sg(_supertype_semicolon, _supertype_semicolon_ids),
-    shorthandPropertyIdentifier: _sg(_supertype_shorthandPropertyIdentifier, _supertype_shorthandPropertyIdentifier_ids),
-    shorthandPropertyIdentifierPattern: _sg(_supertype_shorthandPropertyIdentifierPattern, _supertype_shorthandPropertyIdentifierPattern_ids),
-    tupleTypeMember: _sg(_supertype_tupleTypeMember, _supertype_tupleTypeMember_ids),
-    declaration: _sg(_supertype_declaration, _supertype_declaration_ids),
-    expression: _sg(_supertype_expression, _supertype_expression_ids),
-    pattern: _sg(_supertype_pattern, _supertype_pattern_ids),
-    primaryExpression: _sg(_supertype_primaryExpression, _supertype_primaryExpression_ids),
-    primaryType: _sg(_supertype_primaryType, _supertype_primaryType_ids),
-    statement: _sg(_supertype_statement, _supertype_statement_ids),
-    type: _sg(_supertype_type, _supertype_type_ids),
+    destructuringPattern: _sg(_supertype_destructuringPattern_ids),
+    exportStatementDefault: _sg(_supertype_exportStatementDefault_ids),
+    expressions: _sg(_supertype_expressions_ids),
+    formalParameter: _sg(_supertype_formalParameter_ids),
+    identifier: _sg(_supertype_identifier_ids),
+    importIdentifier: _sg(_supertype_importIdentifier_ids),
+    jsxAttribute: _sg(new Set<number>()),
+    jsxAttributeName: _sg(_supertype_jsxAttributeName_ids),
+    jsxAttributeValue: _sg(new Set<number>()),
+    jsxChild: _sg(_supertype_jsxChild_ids),
+    jsxElement: _sg(new Set<number>()),
+    jsxElementName: _sg(_supertype_jsxElementName_ids),
+    jsxIdentifier: _sg(_supertype_jsxIdentifier_ids),
+    moduleExportName: _sg(_supertype_moduleExportName_ids),
+    propertyName: _sg(_supertype_propertyName_ids),
+    semicolon: _sg(_supertype_semicolon_ids),
+    shorthandPropertyIdentifier: _sg(_supertype_shorthandPropertyIdentifier_ids),
+    shorthandPropertyIdentifierPattern: _sg(_supertype_shorthandPropertyIdentifierPattern_ids),
+    tupleTypeMember: _sg(_supertype_tupleTypeMember_ids),
+    declaration: _sg(_supertype_declaration_ids),
+    expression: _sg(_supertype_expression_ids),
+    pattern: _sg(_supertype_pattern_ids),
+    primaryExpression: _sg(_supertype_primaryExpression_ids),
+    primaryType: _sg(_supertype_primaryType_ids),
+    statement: _sg(_supertype_statement_ids),
+    type: _sg(_supertype_type_ids),
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
@@ -1262,9 +1234,6 @@ export function isTree(v: unknown): boolean {
     return typeof (v as { range?: unknown })?.range === 'function';
 }
 
-export function isNode<T extends { readonly $type: K }, K extends keyof NamespaceMap & string>(
-    v: T,
-): v is T & NamespaceMap[K]['Node'];
 export function isNode(v: { readonly $type: string | number }): v is AnyNodeData;
 export function isNode(v: { readonly $type: string | number }): boolean {
     const o = v as { $fields?: unknown; $text?: unknown };

@@ -34,6 +34,8 @@ import { createRenderer } from '@sittir/core';
 import {
 	loadLanguageForGrammar,
 	loadReadTreeNode,
+	loadKindIdFromName,
+	loadKindNameFromId,
 	treeHandle,
 	findFirst
 } from '../validate/common.ts';
@@ -51,12 +53,18 @@ function templatesDirFor(grammar: Grammar): string {
 	);
 }
 
-const renderers: Partial<Record<Grammar, ReturnType<typeof createRenderer>>> =
-	{};
-function rendererFor(grammar: Grammar): ReturnType<typeof createRenderer> {
+const renderers: Partial<
+	Record<Grammar, ReturnType<typeof createRenderer>>
+> = {};
+async function rendererFor(
+	grammar: Grammar
+): Promise<ReturnType<typeof createRenderer>> {
 	const cached = renderers[grammar];
 	if (cached) return cached;
-	const r = createRenderer(templatesDirFor(grammar));
+	const kindNameFromId = await loadKindNameFromId(grammar);
+	const r = createRenderer(templatesDirFor(grammar), {
+		kindNameFromId: kindNameFromId ?? undefined
+	});
 	renderers[grammar] = r;
 	return r;
 }
@@ -95,10 +103,12 @@ async function parseAndRender(
 		throw new Error(`parseAndRender: no readTreeNode loader for ${grammar}`);
 	}
 
-	const handle = treeHandle(tree, source);
+	const kindIdFromName = await loadKindIdFromName(grammar);
+	const handle = treeHandle(tree, source, kindIdFromName ?? undefined);
 	const nodeData = readTreeNodeFn(handle, target.id) as AnyNodeData;
 
-	const rendered = rendererFor(grammar).render(nodeData);
+	const renderer = await rendererFor(grammar);
+	const rendered = renderer.render(nodeData);
 	return { rendered, nodeData };
 }
 

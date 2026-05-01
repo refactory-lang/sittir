@@ -1,8 +1,11 @@
 /**
  * is × shape guard composition + assert throw behavior (spec 008 SC-006, SC-007).
  *
- * - Type-level: `is.functionItem(v) && isTree(v)` narrows to FunctionItem.Tree.
- * - Runtime: `is.functionItem(v)` returns true only on 'function_item' type.
+ * Phase D (2026-04-30): guards compare numeric TSKindId only.
+ * String $type values are no longer accepted by per-kind or is.kind() guards.
+ *
+ * - Type-level: `is.functionItem(v) && isNode(v)` narrows to FunctionItem.
+ * - Runtime: `is.functionItem(v)` returns true only on TSKindId.FunctionItem.
  * - Runtime: `assert.functionItem(wrong)` throws TypeError with expected+actual.
  */
 
@@ -11,80 +14,54 @@ import { is, isTree, isNode, assert } from '../src/index.ts';
 import { TSKindId } from '../src/types.ts';
 import type { FunctionItem } from '../src/index.ts';
 
-type Equals<A, B> =
-	(<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2
-		? true
-		: false;
-
-function expectTrue<_T extends true>(): void {}
-
 describe('is / isTree / isNode guard composition', () => {
-	it('is.functionItem narrows the $type discriminant', () => {
-		const v: { $type: string } = { $type: 'function_item' };
-		if (is.functionItem(v)) {
-			// Type-level: v.$type narrowed to 'function_item'
-			expectTrue<Equals<typeof v.$type, 'function_item'>>();
-		} else {
+	it('is.functionItem narrows the $type discriminant to numeric TSKindId', () => {
+		const v = { $type: TSKindId.FunctionItem, $fields: {} as FunctionItem['$fields'] } as FunctionItem;
+		if (!is.functionItem(v)) {
 			throw new Error('is.functionItem should have returned true');
 		}
+		// v.$type is now narrowed to TSKindId.FunctionItem (numeric)
+		expect(v.$type).toBe(TSKindId.FunctionItem);
 	});
 
 	it('is.functionItem returns false for non-matching kinds', () => {
-		expect(is.functionItem({ $type: 'block' })).toBe(false);
-		expect(is.functionItem({ $type: 'identifier' })).toBe(false);
+		expect(is.functionItem({ $type: TSKindId.Block })).toBe(false);
+		expect(is.functionItem({ $type: TSKindId.Identifier })).toBe(false);
 	});
 
-	it('is.kind generic form narrows identically to named form', () => {
-		const v: { $type: string } = { $type: 'block' };
-		if (is.kind(v, 'block')) {
-			expectTrue<Equals<typeof v.$type, 'block'>>();
-		}
-		expect(is.kind({ $type: 'function_item' }, 'function_item')).toBe(true);
-		expect(is.kind({ $type: 'block' }, 'function_item')).toBe(false);
+	it('is.kind generic form accepts kind name strings', () => {
+		// is.kind() narrows to { $type: number } broadly (not to a specific literal).
+		expect(is.kind({ $type: TSKindId.FunctionItem }, 'function_item')).toBe(true);
+		expect(is.kind({ $type: TSKindId.Block }, 'function_item')).toBe(false);
 	});
 
 	it('isNode returns true for NodeData shapes, false for loose bags', () => {
-		// Using `as unknown as ...` so the test exercises the generic
-		// fallback overload, not the kind-narrowing overload (which
-		// requires a known NamespaceMap key at authoring time).
 		expect(
-			isNode({ $type: 'identifier', $text: 'foo' } as unknown as {
-				readonly $type: string;
-			})
+			isNode({ $type: TSKindId.Identifier, $text: 'foo' } as { readonly $type: number })
 		).toBe(true);
 		expect(
-			isNode({ $type: 'block', $fields: {} } as unknown as {
-				readonly $type: string;
-			})
+			isNode({ $type: TSKindId.Block, $fields: {} } as { readonly $type: number })
 		).toBe(true);
 		// Loose bag without $fields or $text — looks like a config object.
 		expect(
-			isNode({ $type: 'function_item' } as unknown as {
-				readonly $type: string;
-			})
+			isNode({ $type: TSKindId.FunctionItem })
 		).toBe(false);
 	});
 
 	it('isTree returns true only when a range() method is present', () => {
 		const withRange = {
-			$type: 'function_item',
+			$type: TSKindId.FunctionItem,
 			range: () => ({ start: { index: 0 }, end: { index: 1 } })
 		};
-		const withoutRange = { $type: 'function_item', $fields: {} };
+		const withoutRange = { $type: TSKindId.FunctionItem, $fields: {} };
 		expect(isTree(withRange)).toBe(true);
 		expect(isTree(withoutRange)).toBe(false);
 	});
 
 	it('kind × shape composition narrows to NamespaceMap projection', () => {
-		// Phase A: FunctionItem.$type is TSKindId.FunctionItem (numeric). The
-		// string-keyed IsGuards.functionItem narrowing (`v is T & { $type: 'function_item' }`)
-		// intersects with the numeric concrete interface discriminant — resulting in
-		// `$type: TSKindId.FunctionItem & 'function_item'` after narrowing, which is
-		// `never`. The type-level Equals assertion is deferred to Phase B when IsGuards
-		// migrates to numeric discriminant narrowing. Runtime narrowing still works.
 		const v: FunctionItem = {
-			$type: 'function_item',
-			$fields: {}
+			$type: TSKindId.FunctionItem,
+			$fields: {} as FunctionItem['$fields']
 		} as unknown as FunctionItem;
 		if (is.functionItem(v) && isNode(v)) {
 			// Runtime path executes — structural narrowing via isNode verified.
@@ -95,48 +72,46 @@ describe('is / isTree / isNode guard composition', () => {
 
 describe('assert throw behavior', () => {
 	it('assert.functionItem throws TypeError with expected+actual on mismatch', () => {
-		expect(() => assert.functionItem({ $type: 'block' })).toThrow(TypeError);
-		expect(() => assert.functionItem({ $type: 'block' })).toThrow(
-			/^assert\.functionItem: expected type 'functionItem', got 'block'$/
+		expect(() => assert.functionItem({ $type: TSKindId.Block })).toThrow(TypeError);
+		expect(() => assert.functionItem({ $type: TSKindId.Block })).toThrow(
+			/assert\.functionItem: expected type 'functionItem', got/
 		);
 	});
 
 	it('assert.functionItem passes silently on matching kind', () => {
-		expect(() => assert.functionItem({ $type: 'function_item' })).not.toThrow();
+		expect(() => assert.functionItem({ $type: TSKindId.FunctionItem })).not.toThrow();
 	});
 
 	it('assert.kind throws with kind name in message', () => {
-		expect(() => assert.kind({ $type: 'block' }, 'function_item')).toThrow(
+		expect(() => assert.kind({ $type: TSKindId.Block }, 'function_item')).toThrow(
 			TypeError
 		);
 	});
 });
 
 /**
- * Phase A coexistence — guards must accept BOTH numeric `$type` (factory /
- * wrap output) AND string `$type` (readNode output) until Phase D removes
- * the string arm. These tests are the regression check for the dual-form
- * `_g(k, id)` and the `is.kind()` map lookup.
+ * Phase D: all producers emit numeric $type. String-based guards are removed.
+ * Guards compare numeric TSKindId only. String $type returns false.
  */
-describe('Phase A coexistence: numeric and string $type', () => {
+describe('Phase D: numeric-only $type guards', () => {
 	it('per-kind guard accepts numeric $type from factory output', () => {
 		const node = {
 			$type: TSKindId.FunctionItem,
 			$source: 'factory',
 			$named: true,
 			$fields: {}
-		} as unknown as { readonly $type: string | number };
+		} as const;
 		expect(is.functionItem(node)).toBe(true);
 	});
 
-	it('per-kind guard accepts string $type from readNode output', () => {
+	it('per-kind guard rejects string $type (Phase D — string arm removed)', () => {
 		const node = {
 			$type: 'function_item',
 			$source: 'ts',
 			$named: true,
 			$fields: {}
 		} as unknown as { readonly $type: string | number };
-		expect(is.functionItem(node)).toBe(true);
+		expect(is.functionItem(node as { readonly $type: number })).toBe(false);
 	});
 
 	it('per-kind guard rejects mismatched numeric $type', () => {
@@ -145,7 +120,7 @@ describe('Phase A coexistence: numeric and string $type', () => {
 			$source: 'factory',
 			$named: true,
 			$fields: {}
-		} as unknown as { readonly $type: string | number };
+		} as const;
 		expect(is.functionItem(node)).toBe(false);
 	});
 
@@ -155,18 +130,18 @@ describe('Phase A coexistence: numeric and string $type', () => {
 			$source: 'factory',
 			$named: true,
 			$fields: {}
-		} as unknown as { readonly $type: string | number };
+		} as const;
 		expect(is.kind(node, 'function_item')).toBe(true);
 	});
 
-	it('is.kind() accepts string $type from readNode output', () => {
+	it('is.kind() rejects string $type (Phase D — string arm removed)', () => {
 		const node = {
 			$type: 'function_item',
 			$source: 'ts',
 			$named: true,
 			$fields: {}
 		} as unknown as { readonly $type: string | number };
-		expect(is.kind(node, 'function_item')).toBe(true);
+		expect(is.kind(node as { readonly $type: number }, 'function_item')).toBe(false);
 	});
 
 	it('is.kind() rejects mismatched numeric $type', () => {
@@ -175,7 +150,7 @@ describe('Phase A coexistence: numeric and string $type', () => {
 			$source: 'factory',
 			$named: true,
 			$fields: {}
-		} as unknown as { readonly $type: string | number };
+		} as const;
 		expect(is.kind(node, 'function_item')).toBe(false);
 	});
 
@@ -186,18 +161,20 @@ describe('Phase A coexistence: numeric and string $type', () => {
 			$source: 'factory',
 			$named: true,
 			$fields: {}
-		} as unknown as { readonly $type: string | number };
+		} as const;
 		expect(is.expression(node)).toBe(true);
 	});
 
-	it('supertype guard accepts string $type member from readNode', () => {
+	it('supertype guard rejects string $type (Phase D — numeric-only set)', () => {
 		const node = {
 			$type: 'binary_expression',
 			$source: 'ts',
 			$named: true,
 			$fields: {}
-		} as unknown as { readonly $type: string | number };
-		expect(is.expression(node)).toBe(true);
+		} as const;
+		// Supertype guards accept string | number parameter, but the runtime
+		// set is numeric-only in Phase D — string values return false.
+		expect(is.expression(node)).toBe(false);
 	});
 
 	it('assert.functionItem passes on numeric $type from factory', () => {
@@ -206,7 +183,7 @@ describe('Phase A coexistence: numeric and string $type', () => {
 			$source: 'factory',
 			$named: true,
 			$fields: {}
-		} as unknown as { readonly $type: string | number };
+		} as const;
 		expect(() => assert.functionItem(node)).not.toThrow();
 	});
 });
