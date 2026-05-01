@@ -3413,7 +3413,7 @@ export interface ScopedIdentifier {
 }
 
 export interface ScopedTypeIdentifier {
-  readonly $type: TSKindId.ScopedTypeIdentifierInExpressionPosition;
+  readonly $type: TSKindId.ScopedTypeIdentifier;
   readonly $fields: {
     readonly path?: Path | GenericTypeWithTurbofish | BracketedType;
     readonly name: TypeIdentifier;
@@ -9572,7 +9572,7 @@ export namespace ScopedIdentifier {
 
 export namespace ScopedTypeIdentifier {
   export interface Transport {
-    readonly $type: TSKindId.ScopedTypeIdentifierInExpressionPosition;
+    readonly $type: TSKindId.ScopedTypeIdentifier;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;

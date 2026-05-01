@@ -583,13 +583,6 @@ export function wrapExpressionList(data: _NodeData, tree: TreeHandle): WrappedNo
   } as unknown as WrappedNode<ExpressionList>;
 }
 
-export function wrapExpressionStatementTuple(data: _NodeData, tree: TreeHandle): WrappedNode<ExpressionStatementTuple> {
-  return {
-    ...data,
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<ExpressionStatementTuple>;
-}
-
 export function wrapExpressionStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ExpressionStatement> {
   return {
     ...data,
@@ -1150,20 +1143,6 @@ export function wrapWhileStatement(data: _NodeData, tree: TreeHandle): WrappedNo
   } as unknown as WrappedNode<WhileStatement>;
 }
 
-export function wrapWithClauseBare(data: _NodeData, tree: TreeHandle): WrappedNode<WithClauseBare> {
-  return {
-    ...data,
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<WithClauseBare>;
-}
-
-export function wrapWithClauseParen(data: _NodeData, tree: TreeHandle): WrappedNode<WithClauseParen> {
-  return {
-    ...data,
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<WithClauseParen>;
-}
-
 export function wrapWithClause(data: _NodeData, tree: TreeHandle): WrappedNode<WithClause> {
   return {
     ...data,
@@ -1255,7 +1234,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'except_clause': (d, t) => wrapExceptClause(d, t),
   'exec_statement': (d, t) => wrapExecStatement(d, t),
   'expression_list': (d, t) => wrapExpressionList(d, t),
-  'expression_statement_tuple': (d, t) => wrapExpressionStatementTuple(d, t),
   'expression_statement': (d, t) => wrapExpressionStatement(d, t),
   'false': (d) => ({ ...d, $type: TSKindId.False as number }),
   'finally_clause': (d, t) => wrapFinallyClause(d, t),
@@ -1326,8 +1304,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'union_pattern': (d, t) => wrapUnionPattern(d, t),
   'union_type': (d, t) => wrapUnionType(d, t),
   'while_statement': (d, t) => wrapWhileStatement(d, t),
-  'with_clause_bare': (d, t) => wrapWithClauseBare(d, t),
-  'with_clause_paren': (d, t) => wrapWithClauseParen(d, t),
   'with_clause': (d, t) => wrapWithClause(d, t),
   'with_item': (d, t) => wrapWithItem(d, t),
   'with_statement': (d, t) => wrapWithStatement(d, t),

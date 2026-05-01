@@ -123,21 +123,34 @@ export function findKindEntry(
 	kindEntries: readonly KindEnumEntry[],
 	kind: string
 ): KindEnumEntry | undefined {
-	return kindEntries.find((e) => e.kind === kind || e.displayName === kind);
+	// Prefer an exact kind match (catalog key) over a displayName match so that
+	// visible kinds (e.g. `as_pattern`, id=185) are never shadowed by a hidden
+	// source kind whose displayName happens to equal the visible kind's name
+	// (e.g. `_as_pattern`, id=165, displayName="as_pattern").
+	return (
+		kindEntries.find((e) => e.kind === kind) ??
+		kindEntries.find((e) => e.displayName === kind)
+	);
 }
 
 /**
  * Return true when a kind has a parser symbol in the catalog — matches on
- * either the catalog key or the display name (see `findKindEntry`).
+ * the catalog key (`entry.kind`) only, NOT on `entry.displayName`.
+ *
+ * Using `entry.kind` only prevents phantom kinds (TSGrammar-only inlined
+ * rules) from being treated as real kinds via a coincidental displayName
+ * match. Transport alternative lists must only include kinds that have a
+ * parser symbol so `kindIdFromName` is always safe to call at runtime.
  *
  * @param kindEntries - The catalog entries from `collectKindEntries`.
  * @param kind - The nodeMap kind name to check.
  */
 export function hasCatalogEntry(
-	kindEntries: readonly KindEnumEntry[],
+	kindEntries: readonly KindEnumEntry[] | undefined,
 	kind: string
 ): boolean {
-	return findKindEntry(kindEntries, kind) !== undefined;
+	if (!kindEntries) return false;
+	return kindEntries.some((e) => e.kind === kind);
 }
 
 /**

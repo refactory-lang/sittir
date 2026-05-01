@@ -26,7 +26,7 @@ describe('argument_list', () => {
 describe('as_pattern', () => {
   it('factory produces correct type', () => {
     const node = ir.asPattern({ expression: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, alias: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe(TSKindId._AsPattern);
+    expect(node.$type).toBe(TSKindId.AsPattern);
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
@@ -112,7 +112,7 @@ describe('binary_operator', () => {
 describe('block', () => {
   it('factory produces correct type', () => {
     const node = ir.block();
-    expect(node.$type).toBe(TSKindId.MatchBlock);
+    expect(node.$type).toBe(TSKindId.Block);
     expect(node.$source).toBe('factory');
   });
 });
@@ -445,14 +445,6 @@ describe('expression_list', () => {
   });
 });
 
-describe('expression_statement_tuple', () => {
-  it('factory produces correct type', () => {
-    const node = ir.expressionStatementTuple({ type: "expression" } as never);
-    expect(node.$type).toBe(TSKindId._ExpressionStatementTuple);
-    expect(node.$source).toBe('factory');
-  });
-});
-
 describe('expression_statement', () => {
   it('factory produces correct type', () => {
     const node = ir.expressionStatement({});
@@ -754,7 +746,7 @@ describe('list_comprehension', () => {
 describe('list_pattern', () => {
   it('factory produces correct type', () => {
     const node = ir.listPattern();
-    expect(node.$type).toBe(TSKindId._ListPattern);
+    expect(node.$type).toBe(TSKindId.ListPattern);
     expect(node.$source).toBe('factory');
   });
 });
@@ -1069,7 +1061,7 @@ describe('tuple', () => {
 describe('tuple_pattern', () => {
   it('factory produces correct type', () => {
     const node = ir.tuplePattern();
-    expect(node.$type).toBe(TSKindId._TuplePattern);
+    expect(node.$type).toBe(TSKindId.TuplePattern);
     expect(node.$source).toBe('factory');
   });
 });
@@ -1167,22 +1159,6 @@ describe('while_statement', () => {
   it('render produces non-empty string', () => {
     const node = ir.whileStatement({ condition: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('with_clause_bare', () => {
-  it('factory produces correct type', () => {
-    const node = ir.withClauseBare({ type: "with_item" } as never);
-    expect(node.$type).toBe(TSKindId._WithClauseBare);
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('with_clause_paren', () => {
-  it('factory produces correct type', () => {
-    const node = ir.withClauseParen({ type: "with_item" } as never);
-    expect(node.$type).toBe(TSKindId._WithClauseParen);
-    expect(node.$source).toBe('factory');
   });
 });
 

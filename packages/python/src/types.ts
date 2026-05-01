@@ -1449,7 +1449,7 @@ export interface ArgumentList {
 }
 
 export interface AsPattern {
-  readonly $type: TSKindId._AsPattern;
+  readonly $type: TSKindId.AsPattern;
   readonly $fields: {
     readonly expression: Expression;
     readonly alias: AsPatternTarget;
@@ -1523,7 +1523,7 @@ export interface BinaryOperator {
 }
 
 export interface Block {
-  readonly $type: TSKindId.MatchBlock;
+  readonly $type: TSKindId.Block;
   readonly $children: readonly (Statement)[];
 }
 
@@ -1897,7 +1897,7 @@ export interface ListComprehension {
 }
 
 export interface ListPattern {
-  readonly $type: TSKindId._ListPattern;
+  readonly $type: TSKindId.ListPattern;
   readonly $children: readonly (Pattern)[];
 }
 
@@ -2086,7 +2086,7 @@ export interface Tuple {
 }
 
 export interface TuplePattern {
-  readonly $type: TSKindId._TuplePattern;
+  readonly $type: TSKindId.TuplePattern;
   readonly $children: readonly (Pattern)[];
 }
 
@@ -4264,7 +4264,7 @@ export namespace ArgumentList {
 
 export namespace AsPattern {
   export interface Transport {
-    readonly $type: TSKindId._AsPattern;
+    readonly $type: TSKindId.AsPattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -4388,7 +4388,7 @@ export namespace BinaryOperator {
 
 export namespace Block {
   export interface Transport {
-    readonly $type: TSKindId.MatchBlock;
+    readonly $type: TSKindId.Block;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -5099,7 +5099,7 @@ export namespace ListComprehension {
 
 export namespace ListPattern {
   export interface Transport {
-    readonly $type: TSKindId._ListPattern;
+    readonly $type: TSKindId.ListPattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
@@ -5468,7 +5468,7 @@ export namespace Tuple {
 
 export namespace TuplePattern {
   export interface Transport {
-    readonly $type: TSKindId._TuplePattern;
+    readonly $type: TSKindId.TuplePattern;
     readonly $source?: 'ts' | 'sg' | 'factory';
     readonly $named?: boolean;
     readonly $text?: string;
