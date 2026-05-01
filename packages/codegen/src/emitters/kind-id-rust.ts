@@ -46,9 +46,14 @@ export interface EmitKindIdRustConfig {
  *   `'_FIELD_IDENTIFIER'`.
  */
 export function toScreamingSnakeCase(memberName: string, rawKind: string): string {
-	// Re-attach leading underscore when the original grammar kind is hidden
-	// (`_field_identifier` → member `FieldIdentifier` → const `_FIELD_IDENTIFIER`).
-	const prefix = rawKind.startsWith('_') ? '_' : '';
+	// `rawKind` is the source of truth for leading underscores (hidden-kind
+	// marker — `_field_identifier`, `_call_signature`). The grammar may
+	// produce a typeName that already carries the underscore (`_CallSignature`)
+	// — that would double up if both were preserved (`__CALL_SIGNATURE`).
+	// Strip leading underscores from `memberName` before processing, then
+	// re-attach exactly as many as `rawKind` carried.
+	const prefix = rawKind.match(/^_+/)?.[0] ?? '';
+	const cleaned = memberName.replace(/^_+/, '');
 
 	// Defense for all-uppercase input (e.g. `LPAREN`, `PLUS`): a memberName
 	// with no lowercase letters has no word boundaries to split on. Treat it
@@ -58,13 +63,13 @@ export function toScreamingSnakeCase(memberName: string, rawKind: string): strin
 	// `anon_sym_*` names upstream so this branch should rarely trigger;
 	// kept defensively so any other source of uppercase memberName (future
 	// emitters, edge cases) doesn't silently break.
-	if (!/[a-z]/.test(memberName)) {
-		return `${prefix}${memberName}`;
+	if (!/[a-z]/.test(cleaned)) {
+		return `${prefix}${cleaned}`;
 	}
 
 	// Insert an underscore before each interior uppercase letter, then
 	// upper-case the whole string.
-	const snake = memberName
+	const snake = cleaned
 		.replace(/([A-Z])/g, '_$1')
 		.replace(/^_/, '') // remove leading underscore added by replace
 		.toUpperCase();
