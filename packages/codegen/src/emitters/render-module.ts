@@ -1319,15 +1319,9 @@ function renderTypedDispatch(
 		lines.push(...emitSupertypeRenderHelper(node as AssembledSupertype, nodeMap));
 	}
 
-	// ---- render_literal_transport ----------------------------------------
-	lines.push(
-		`fn render_literal_transport(_kind: &str, t: &LiteralTransport) -> Result<String, ::askama::Error> {`
-	);
-	lines.push(`    Ok(t.text.clone())`);
-	lines.push(`}`);
-	lines.push('');
-
 	// ---- render_transport_dispatch ---------------------------------------
+	// Literal token arms use the static text known at codegen time — no
+	// heap allocation and no call through render_literal_transport.
 	lines.push(
 		`pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::askama::Error> {`
 	);
@@ -1341,8 +1335,10 @@ function renderTypedDispatch(
 	}
 	for (const [index, literal] of literals.entries()) {
 		const variant = rustLiteralTransportVariantName(literal, index);
+		// Literal text is a compile-time constant — use it directly and skip
+		// the LiteralTransport heap-String clone entirely.
 		lines.push(
-			`        AnyTransport::${variant}(t) => render_literal_transport(${JSON.stringify(literal.kind)}, t),`
+			`        AnyTransport::${variant}(_) => Ok(${JSON.stringify(literal.text)}.to_string()),`
 		);
 	}
 	lines.push(`    }`);
@@ -1810,13 +1806,12 @@ function buildTypedTemplateBody(
 				`    let ${rIdent}_text = ${buildSlotRenderCall(cls, `&node.${rIdent}`)}?;`
 			);
 		} else {
+			// Use Option<String> so the None arm never allocates — same pattern as
+			// the 'field' view below.  Template construction uses `match` on this
+			// value; the `String::new()` allocation is dead code there anyway.
 			lines.push(
-				`    let ${rIdent}_text = if let Some(v) = &node.${rIdent} {`
+				`    let ${rIdent}_text = node.${rIdent}.as_ref().map(|v| ${buildSlotRenderCall(cls, 'v')}).transpose()?;`
 			);
-			lines.push(`        ${buildSlotRenderCall(cls, 'v')}?`);
-			lines.push(`    } else {`);
-			lines.push(`        String::new()`);
-			lines.push(`    };`);
 		}
 	}
 
@@ -1917,9 +1912,16 @@ function buildTypedTemplateBody(
 				);
 				lines.push(`        },`);
 			} else if (f.view === 'scalar') {
+				// Optional scalar — pre-rendered to Option<String>; match avoids a
+				// redundant is_some() check and the now-defunct String::new() None arm.
+				lines.push(`        ${rIdent}: match &${rIdent}_text {`);
 				lines.push(
-					`        ${rIdent}: if node.${rIdent}.is_some() { ${C}OptionalNonterminalView::Present(${C}Renderable::Text(${rIdent}_text.as_str())) } else { ${C}OptionalNonterminalView::Missing },`
+					`            Some(s) => ${C}OptionalNonterminalView::Present(${C}Renderable::Text(s.as_str())),`
 				);
+				lines.push(
+					`            None => ${C}OptionalNonterminalView::Missing,`
+				);
+				lines.push(`        },`);
 			} else {
 				// view='field' single optional — pre-rendered to Option<String>.
 				lines.push(`        ${rIdent}: match &${rIdent}_rendered {`);
