@@ -91,23 +91,6 @@ function assertNativeChildren(value: unknown, path: string): void {
 	}
 }
 
-/**
- * Allowed NativeNodeData property keys. Any other key holding a non-serializable
- * value (e.g. a function method like `render`) is rejected at the boundary.
- */
-const ALLOWED_NATIVE_KEYS = new Set([
-	'$type',
-	'$source',
-	'$named',
-	'$fields',
-	'$children',
-	'$text',
-	'$span',
-	'$nodeId',
-	'$variant', // accepted (stripped by native; carried by factory/wrap nodes)
-	'$format' // rejected below with a dedicated error
-]);
-
 function assertNativeNodeDataInternal(
 	value: unknown,
 	path: string

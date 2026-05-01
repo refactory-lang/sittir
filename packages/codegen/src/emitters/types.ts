@@ -54,7 +54,6 @@ function kindDiscriminantOrLiteral(
 import type {
 	AssembledNode,
 	AssembledField,
-	AssembledForm,
 	AssembledChild,
 	AssembledLeaf,
 	AssembledKeyword,
@@ -1083,7 +1082,7 @@ function makeInliningLookupUnion(): LookupUnion {
  * @param form - The assembled form whose type name to resolve.
  * @returns The canonical `typeName` string for the form.
  */
-function resolvePolymorphFormTypeName(form: AssembledForm): string {
+function resolvePolymorphFormTypeName(form: AssembledGroup): string {
 	return form.typeName;
 }
 
@@ -1615,7 +1614,7 @@ function childContentParts(child: AssembledChild, nodeMap: NodeMap): string[] {
 function emitFormInterface(
 	lines: string[],
 	node: AssembledNode,
-	form: AssembledForm,
+	form: AssembledGroup,
 	typeName: string,
 	nodeMap: NodeMap,
 	lookupUnion?: LookupUnion,
@@ -1683,7 +1682,7 @@ function emitFormInterface(
  */
 function emitFormChildrenSlot(
 	lines: string[],
-	form: AssembledForm,
+	form: AssembledGroup,
 	nodeMap: NodeMap,
 	lookupUnion?: LookupUnion
 ): void {

@@ -1715,13 +1715,6 @@ export interface AssembledField extends AssembledChild {
 	readonly projection: KindProjection;
 }
 
-/**
- * @deprecated AssembledForm is replaced by AssembledGroup.
- * A polymorph's forms are now hidden groups synthesized from the choice branches.
- * This type alias is kept temporarily for backwards-compat with adapters/emitters.
- */
-export type AssembledForm = AssembledGroup;
-
 // --- Concrete classes per model type ---
 
 /**

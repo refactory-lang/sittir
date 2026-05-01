@@ -22,7 +22,7 @@ import type {
 	RenderTemplateSurface,
 	AssembledField,
 	AssembledChild,
-	AssembledForm
+	AssembledGroup
 } from '../compiler/node-map.ts';
 import {
 	AssembledContainer,
@@ -1279,7 +1279,7 @@ function renderTypedBranchFn(
  */
 function renderTypedFormFn(
 	parentKind: string,
-	form: AssembledForm,
+	form: AssembledGroup,
 	parentStruct: EmittedStruct | undefined,
 	meta: MetaData
 ): string[] {
@@ -2624,11 +2624,11 @@ function rustTransportVariantName(node: AssembledNode): string {
 	return rustTypeIdent(node.typeName);
 }
 
-function rustTransportFormStructName(form: AssembledForm): string {
+function rustTransportFormStructName(form: AssembledGroup): string {
 	return `${rustTypeIdent(form.typeName)}Transport`;
 }
 
-function rustTransportFormVariantName(form: AssembledForm): string {
+function rustTransportFormVariantName(form: AssembledGroup): string {
 	return rustTypeIdent(form.typeName);
 }
 
