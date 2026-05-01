@@ -1258,7 +1258,10 @@ function buildSlotRenderCall(cls: SlotClass, expr: string): string {
 		case 'supertype':
 			return `render_${rustSnakeIdent(cls.supertypeName)}_transport(${expr})`;
 		case 'heterogeneous':
-			return `render_transport_dispatch(${expr})`;
+			// Use RenderableTransport::render_to_string() so the call site does not
+			// reference render_transport_dispatch directly. This is the single
+			// change that drives internal render_transport_dispatch callers to zero.
+			return `${expr}.render_to_string()`;
 		default:
 			return assertNever(cls);
 	}
@@ -1342,6 +1345,22 @@ function renderTypedDispatch(
 			`        AnyTransport::${variant}(t) => render_literal_transport(${JSON.stringify(literal.kind)}, t),`
 		);
 	}
+	lines.push(`    }`);
+	lines.push(`}`);
+	lines.push('');
+
+	// ---- impl RenderableTransport for AnyTransport -----------------------
+	// Heterogeneous (Box<AnyTransport>) slots call .render_to_string() instead
+	// of render_transport_dispatch(...) directly, eliminating all internal
+	// callers of that function. The impl delegates to render_transport_dispatch
+	// so the full per-kind dispatch is still exercised — just via the trait.
+	lines.push(`impl ::sittir_core::types::RenderableTransport for AnyTransport {`);
+	lines.push(`    fn render_into<W: ::std::fmt::Write + ?Sized>(`);
+	lines.push(`        &self,`);
+	lines.push(`        dest: &mut W,`);
+	lines.push(`    ) -> Result<(), ::askama::Error> {`);
+	lines.push(`        let s = render_transport_dispatch(self)?;`);
+	lines.push(`        dest.write_str(&s).map_err(::askama::Error::from)`);
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
@@ -1991,6 +2010,11 @@ export function emitRenderModule(
 		'',
 		'#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]',
 		'',
+		// Bring RenderableTransport into scope so .render_to_string() method calls
+		// resolve on heterogeneous (Box<AnyTransport>) slots. The `as _` form
+		// avoids polluting the name-space while still enabling method dispatch.
+		'use ::sittir_core::types::RenderableTransport as _;',
+		'',
 		// Phase B: `#[napi(object)]` / `#[napi(js_name)]` proc-macro attrs and the
 		// custom `impl FromNapiValue` blocks are gated behind the napi-bindings
 		// feature.  Struct/field attributes use `#[cfg_attr(feature =
@@ -2486,6 +2510,21 @@ function emitSupertypeTransportEnum(
 			}
 		}
 	}
+	lines.push(`    }`);
+	lines.push(`}`);
+	lines.push(``);
+
+	// RenderableTransport for the supertype enum — delegates to the per-supertype
+	// render helper (declared later by emitSupertypeRenderHelper; forward fn
+	// references are fine at Rust module scope).
+	const supertypeRenderFn = `render_${rustSnakeIdent(supertypeNode.typeName)}_transport`;
+	lines.push(`impl ::sittir_core::types::RenderableTransport for ${enumName} {`);
+	lines.push(`    fn render_into<W: ::std::fmt::Write + ?Sized>(`);
+	lines.push(`        &self,`);
+	lines.push(`        dest: &mut W,`);
+	lines.push(`    ) -> Result<(), ::askama::Error> {`);
+	lines.push(`        let s = ${supertypeRenderFn}(self)?;`);
+	lines.push(`        dest.write_str(&s).map_err(::askama::Error::from)`);
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push(``);
@@ -3201,6 +3240,17 @@ function renderLiteralTransportStruct(
 		...renderTransportMetadataFields(false),
 		'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]',
 		'    pub text: String,',
+		'}',
+		'',
+		// RenderableTransport for LiteralTransport — returns the text field directly.
+		// render_literal_transport takes (_kind, t) so we inline the body here.
+		'impl ::sittir_core::types::RenderableTransport for LiteralTransport {',
+		'    fn render_into<W: ::std::fmt::Write + ?Sized>(',
+		'        &self,',
+		'        dest: &mut W,',
+		'    ) -> Result<(), ::askama::Error> {',
+		'        dest.write_str(&self.text).map_err(::askama::Error::from)',
+		'    }',
 		'}'
 	];
 }
@@ -3236,6 +3286,20 @@ function renderPolymorphTransportDefs(
 	lines.push('');
 	// Custom FromNapiValue impl for the polymorph envelope.
 	lines.push(...renderPolymorphTransportFromNapiValue(node));
+	// RenderableTransport for the polymorph enum — delegates to the per-polymorph
+	// render fn which matches on variants and calls each form's render fn.
+	const polymorphStructName = rustTransportStructName(node);
+	const polymorphRenderFn = rustTypedRenderFnName(node.typeName);
+	lines.push(`impl ::sittir_core::types::RenderableTransport for ${polymorphStructName} {`);
+	lines.push(`    fn render_into<W: ::std::fmt::Write + ?Sized>(`);
+	lines.push(`        &self,`);
+	lines.push(`        dest: &mut W,`);
+	lines.push(`    ) -> Result<(), ::askama::Error> {`);
+	lines.push(`        let s = ${polymorphRenderFn}(self)?;`);
+	lines.push(`        dest.write_str(&s).map_err(::askama::Error::from)`);
+	lines.push(`    }`);
+	lines.push(`}`);
+	lines.push('');
 	for (const form of node.forms) {
 		lines.push(
 			...renderTransportDataStruct(
@@ -3285,6 +3349,22 @@ function renderTransportDataStruct(
 			break;
 	}
 	lines.push('}');
+	lines.push('');
+	// Emit impl RenderableTransport for this struct so heterogeneous
+	// (Box<AnyTransport>) slots can call .render_to_string() without routing
+	// through the top-level render_transport_dispatch match. The impl delegates
+	// to the per-kind render fn, which is declared (at module scope) after this
+	// struct; forward references are fine in Rust.
+	const renderFn = rustTypedRenderFnName(node.typeName);
+	lines.push(`impl ::sittir_core::types::RenderableTransport for ${structName} {`);
+	lines.push(`    fn render_into<W: ::std::fmt::Write + ?Sized>(`);
+	lines.push(`        &self,`);
+	lines.push(`        dest: &mut W,`);
+	lines.push(`    ) -> Result<(), ::askama::Error> {`);
+	lines.push(`        let s = ${renderFn}(self)?;`);
+	lines.push(`        dest.write_str(&s).map_err(::askama::Error::from)`);
+	lines.push(`    }`);
+	lines.push(`}`);
 	lines.push('');
 	return lines;
 }

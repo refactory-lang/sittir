@@ -174,6 +174,32 @@ pub struct Edit {
     pub inserted_text: String,
 }
 
+/// Implemented by codegen on every transport struct and on `AnyTransport`.
+/// Enables structured render directly into any `Write` target without an
+/// intermediate `String`. The `render_to_string` provided default allocates
+/// once (for the output) rather than pre-allocating per child.
+///
+/// Codegen emits `impl RenderableTransport for <Kind>Transport` for every
+/// kind, delegating to the per-kind `render_<kind>_transport` function. The
+/// `AnyTransport` enum also implements this trait by delegating to
+/// `render_transport_dispatch`, so heterogeneous (type-erased) slots can call
+/// `t.as_ref().render_to_string()?` without going through the 400-arm match
+/// at every call site.
+pub trait RenderableTransport {
+    /// Render this transport value into `dest`.
+    fn render_into<W: std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error>;
+
+    /// Convenience: render to a fresh `String`. Calls `render_into` once.
+    fn render_to_string(&self) -> Result<String, ::askama::Error> {
+        let mut s = String::new();
+        self.render_into(&mut s)?;
+        Ok(s)
+    }
+}
+
 /// Leading / trailing delimiters for a format region. Mirrors
 /// `FormatBoundary` in `@sittir/types` (FR-008).
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

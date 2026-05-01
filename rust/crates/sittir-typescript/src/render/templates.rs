@@ -17,6 +17,8 @@
 
 #![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]
 
+use ::sittir_core::types::RenderableTransport as _;
+
 #[cfg(feature = "napi-bindings")]
 use ::napi_derive::napi;
 
@@ -2073,6 +2075,15 @@ pub struct LiteralTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for LiteralTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(&self.text).map_err(::askama::Error::from)
+    }
+}
+
 #[derive(Debug, Clone)]
 pub enum ExportStatementDefaultTransport {
     ExportStatementDefaultFromArm(Box<ExportStatementDefaultFromArmTransport>),
@@ -2116,6 +2127,16 @@ fn export_statement_default_transport_to_any(t: ExportStatementDefaultTransport)
     match t {
         ExportStatementDefaultTransport::ExportStatementDefaultFromArm(inner) => Box::new(AnyTransport::ExportStatementDefaultFromArm(*inner)),
         ExportStatementDefaultTransport::ExportStatementDefaultDeclArm(inner) => Box::new(AnyTransport::ExportStatementDefaultDeclArm(*inner)),
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for ExportStatementDefaultTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_export_statement_default_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
     }
 }
 
@@ -2165,6 +2186,16 @@ fn expressions_transport_to_any(t: ExpressionsTransport) -> Box<AnyTransport> {
     }
 }
 
+impl ::sittir_core::types::RenderableTransport for ExpressionsTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_expressions_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[derive(Debug, Clone)]
 pub enum FormalParameterTransport {
     RequiredParameter(Box<RequiredParameterTransport>),
@@ -2211,6 +2242,16 @@ fn formal_parameter_transport_to_any(t: FormalParameterTransport) -> Box<AnyTran
     }
 }
 
+impl ::sittir_core::types::RenderableTransport for FormalParameterTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_formal_parameter_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[derive(Debug, Clone)]
 pub enum ImportIdentifierTransport {
     Identifier(IdentifierTransport),
@@ -2252,6 +2293,16 @@ fn import_identifier_transport_to_any(t: ImportIdentifierTransport) -> Box<AnyTr
     }
 }
 
+impl ::sittir_core::types::RenderableTransport for ImportIdentifierTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_import_identifier_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[derive(Debug, Clone)]
 pub enum _JsxAttributeTransport {
     JsxAttribute(Box<JsxAttributeTransport>),
@@ -2289,6 +2340,16 @@ fn _jsx_attribute_transport_to_any(t: _JsxAttributeTransport) -> Box<AnyTranspor
     match t {
         _JsxAttributeTransport::JsxAttribute(inner) => Box::new(AnyTransport::JsxAttribute(*inner)),
         _JsxAttributeTransport::JsxExpression(inner) => Box::new(AnyTransport::JsxExpression(*inner)),
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for _JsxAttributeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render__jsx_attribute_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
     }
 }
 
@@ -2338,6 +2399,16 @@ fn jsx_child_transport_to_any(t: JsxChildTransport) -> Box<AnyTransport> {
         JsxChildTransport::JsxElement(inner) => Box::new(AnyTransport::JsxElement(*inner)),
         JsxChildTransport::JsxSelfClosingElement(inner) => Box::new(AnyTransport::JsxSelfClosingElement(*inner)),
         JsxChildTransport::JsxExpression(inner) => Box::new(AnyTransport::JsxExpression(*inner)),
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for JsxChildTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_jsx_child_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
     }
 }
 
@@ -2391,6 +2462,16 @@ fn jsx_element_name_transport_to_any(t: JsxElementNameTransport) -> Box<AnyTrans
     }
 }
 
+impl ::sittir_core::types::RenderableTransport for JsxElementNameTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_jsx_element_name_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[derive(Debug, Clone)]
 pub enum _JsxIdentifierTransport {
     JsxIdentifier(JsxIdentifierTransport),
@@ -2431,6 +2512,16 @@ fn _jsx_identifier_transport_to_any(t: _JsxIdentifierTransport) -> Box<AnyTransp
     match t {
         _JsxIdentifierTransport::JsxIdentifier(inner) => Box::new(AnyTransport::JsxIdentifier(inner)),
         _JsxIdentifierTransport::Identifier(inner) => Box::new(AnyTransport::Identifier(inner)),
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for _JsxIdentifierTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render__jsx_identifier_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
     }
 }
 
@@ -2480,6 +2571,16 @@ fn module_export_name_transport_to_any(t: ModuleExportNameTransport) -> Box<AnyT
     }
 }
 
+impl ::sittir_core::types::RenderableTransport for ModuleExportNameTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_module_export_name_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[derive(Debug, Clone)]
 pub enum PropertyIdentifierTransport {
     Identifier(IdentifierTransport),
@@ -2520,6 +2621,16 @@ fn property_identifier_transport_to_any(t: PropertyIdentifierTransport) -> Box<A
     match t {
         PropertyIdentifierTransport::Identifier(inner) => Box::new(AnyTransport::Identifier(inner)),
         PropertyIdentifierTransport::ReservedIdentifier(inner) => Box::new(AnyTransport::ReservedIdentifier(inner)),
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for PropertyIdentifierTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_property_identifier_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
     }
 }
 
@@ -2584,6 +2695,16 @@ fn property_name_transport_to_any(t: PropertyNameTransport) -> Box<AnyTransport>
     }
 }
 
+impl ::sittir_core::types::RenderableTransport for PropertyNameTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_property_name_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[derive(Debug, Clone)]
 pub enum SemicolonTransport {
     AutomaticSemicolon(AutomaticSemicolonTransport),
@@ -2622,6 +2743,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for SemicolonTransport {
 fn semicolon_transport_to_any(t: SemicolonTransport) -> Box<AnyTransport> {
     match t {
         SemicolonTransport::AutomaticSemicolon(inner) => Box::new(AnyTransport::AutomaticSemicolon(inner)),
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for SemicolonTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_semicolon_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
     }
 }
 
@@ -2665,6 +2796,16 @@ fn statement_identifier_transport_to_any(t: StatementIdentifierTransport) -> Box
     match t {
         StatementIdentifierTransport::Identifier(inner) => Box::new(AnyTransport::Identifier(inner)),
         StatementIdentifierTransport::ReservedIdentifier(inner) => Box::new(AnyTransport::ReservedIdentifier(inner)),
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for StatementIdentifierTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_statement_identifier_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
     }
 }
 
@@ -2726,6 +2867,16 @@ fn tuple_type_member_transport_to_any(t: TupleTypeMemberTransport) -> Box<AnyTra
         TupleTypeMemberTransport::OptionalType(inner) => Box::new(AnyTransport::OptionalType(*inner)),
         TupleTypeMemberTransport::RestType(inner) => Box::new(AnyTransport::RestType(*inner)),
         TupleTypeMemberTransport::Type(inner) => type_transport_to_any(*inner),
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for TupleTypeMemberTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_tuple_type_member_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
     }
 }
 
@@ -2807,6 +2958,16 @@ fn declaration_transport_to_any(t: DeclarationTransport) -> Box<AnyTransport> {
         DeclarationTransport::InterfaceDeclaration(inner) => Box::new(AnyTransport::InterfaceDeclaration(*inner)),
         DeclarationTransport::ImportAlias(inner) => Box::new(AnyTransport::ImportAlias(*inner)),
         DeclarationTransport::AmbientDeclaration(inner) => Box::new(AnyTransport::AmbientDeclaration(*inner)),
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for DeclarationTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_declaration_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
     }
 }
 
@@ -2921,6 +3082,16 @@ fn expression_transport_to_any(t: ExpressionTransport) -> Box<AnyTransport> {
     }
 }
 
+impl ::sittir_core::types::RenderableTransport for ExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[derive(Debug, Clone)]
 pub enum PatternTransport {
     MemberExpression(Box<MemberExpressionTransport>),
@@ -2997,6 +3168,16 @@ fn pattern_transport_to_any(t: PatternTransport) -> Box<AnyTransport> {
     }
 }
 
+impl ::sittir_core::types::RenderableTransport for PatternTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_pattern_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[derive(Debug, Clone)]
 pub enum PrimaryExpressionTransport {
     NonNullExpression(Box<NonNullExpressionTransport>),
@@ -3035,6 +3216,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for PrimaryExpressionTransport {
 fn primary_expression_transport_to_any(t: PrimaryExpressionTransport) -> Box<AnyTransport> {
     match t {
         PrimaryExpressionTransport::NonNullExpression(inner) => Box::new(AnyTransport::NonNullExpression(*inner)),
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for PrimaryExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_primary_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
     }
 }
 
@@ -3166,6 +3357,16 @@ fn primary_type_transport_to_any(t: PrimaryTypeTransport) -> Box<AnyTransport> {
         PrimaryTypeTransport::TemplateLiteralType(inner) => Box::new(AnyTransport::TemplateLiteralType(*inner)),
         PrimaryTypeTransport::IntersectionType(inner) => Box::new(AnyTransport::IntersectionType(*inner)),
         PrimaryTypeTransport::UnionType(inner) => Box::new(AnyTransport::UnionType(*inner)),
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for PrimaryTypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_primary_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
     }
 }
 
@@ -3305,6 +3506,16 @@ fn statement_transport_to_any(t: StatementTransport) -> Box<AnyTransport> {
     }
 }
 
+impl ::sittir_core::types::RenderableTransport for StatementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_statement_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[derive(Debug, Clone)]
 pub enum TypeTransport {
     PrimaryType(Box<PrimaryTypeTransport>),
@@ -3376,6 +3587,16 @@ fn type_transport_to_any(t: TypeTransport) -> Box<AnyTransport> {
     }
 }
 
+impl ::sittir_core::types::RenderableTransport for TypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
@@ -3395,6 +3616,16 @@ pub struct _ArrowFunctionUCallSignatureTransport {
     pub return_type: Option<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for _ArrowFunctionUCallSignatureTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render__arrow_function_ucall_signature_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct _ArrowFunctionParameterTransport {
@@ -3409,6 +3640,16 @@ pub struct _ArrowFunctionParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub parameter: PropertyIdentifierTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for _ArrowFunctionParameterTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render__arrow_function_parameter_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3429,6 +3670,16 @@ pub struct CallExpressionCallTransport {
     pub arguments: ArgumentsTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for CallExpressionCallTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_call_expression_call_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct CallExpressionMemberTransport {
@@ -3447,6 +3698,16 @@ pub struct CallExpressionMemberTransport {
     pub arguments: ArgumentsTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for CallExpressionMemberTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_call_expression_member_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct CallExpressionTemplateCallTransport {
@@ -3462,6 +3723,16 @@ pub struct CallExpressionTemplateCallTransport {
     pub transport_node_id: Option<f64>,
     pub function: ExpressionTransport,
     pub arguments: TemplateStringTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for CallExpressionTemplateCallTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_call_expression_template_call_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3482,6 +3753,16 @@ pub struct _CallSignatureTransport {
     pub return_type: Option<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for _CallSignatureTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render__call_signature_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ClassBodyMemberTransport {
@@ -3497,6 +3778,16 @@ pub struct ClassBodyMemberTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ClassBodyMemberTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_class_body_member_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3517,6 +3808,16 @@ pub struct ClassBodyMethodTransport {
     pub children: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ClassBodyMethodTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_class_body_method_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ClassBodyMethodSigTransport {
@@ -3532,6 +3833,16 @@ pub struct ClassBodyMethodSigTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ClassBodyMethodSigTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_class_body_method_sig_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3551,6 +3862,16 @@ pub struct _ClassHeritageExtendsClauseTransport {
     pub children: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for _ClassHeritageExtendsClauseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render__class_heritage_extends_clause_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct _ClassHeritageImplementsClauseTransport {
@@ -3566,6 +3887,16 @@ pub struct _ClassHeritageImplementsClauseTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<ImplementsClauseTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for _ClassHeritageImplementsClauseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render__class_heritage_implements_clause_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3586,6 +3917,16 @@ pub struct ExportStatementDefaultDeclArmTransport {
     pub children: Vec<ExportStatementDefaultDeclArmDefaultKwTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ExportStatementDefaultDeclArmTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_export_statement_default_decl_arm_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ExportStatementDefaultDeclArmDefaultKwTransport {
@@ -3601,6 +3942,16 @@ pub struct ExportStatementDefaultDeclArmDefaultKwTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<ExportStatementDefaultDeclArmDefaultKwValueTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ExportStatementDefaultDeclArmDefaultKwTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_export_statement_default_decl_arm_default_kw_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3621,6 +3972,16 @@ pub struct ExportStatementDefaultDeclArmDefaultKwValueTransport {
     pub children: Vec<SemicolonTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ExportStatementDefaultDeclArmDefaultKwValueTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_export_statement_default_decl_arm_default_kw_value_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ExportStatementDefaultFromArmTransport {
@@ -3636,6 +3997,16 @@ pub struct ExportStatementDefaultFromArmTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ExportStatementDefaultFromArmTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_export_statement_default_from_arm_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3656,6 +4027,16 @@ pub struct ExportStatementDefaultFromArmClauseFromTransport {
     pub children: Vec<ExportClauseTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ExportStatementDefaultFromArmClauseFromTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_export_statement_default_from_arm_clause_from_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ExportStatementDefaultFromArmNsFromTransport {
@@ -3674,6 +4055,16 @@ pub struct ExportStatementDefaultFromArmNsFromTransport {
     pub children: Vec<NamespaceExportTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ExportStatementDefaultFromArmNsFromTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_export_statement_default_from_arm_ns_from_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ExportStatementDefaultFromArmStarFromTransport {
@@ -3688,6 +4079,16 @@ pub struct ExportStatementDefaultFromArmStarFromTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub source: Box<AnyTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ExportStatementDefaultFromArmStarFromTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_export_statement_default_from_arm_star_from_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3707,6 +4108,16 @@ pub struct _ExportStatementEqualsExportTransport {
     pub children: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for _ExportStatementEqualsExportTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render__export_statement_equals_export_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct _ExportStatementNamespaceExportTransport {
@@ -3722,6 +4133,16 @@ pub struct _ExportStatementNamespaceExportTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
+}
+
+impl ::sittir_core::types::RenderableTransport for _ExportStatementNamespaceExportTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render__export_statement_namespace_export_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3742,6 +4163,16 @@ pub struct _ExportStatementTypeExportTransport {
     pub children: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for _ExportStatementTypeExportTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render__export_statement_type_export_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ExtendsClauseSingleTransport {
@@ -3757,6 +4188,16 @@ pub struct ExtendsClauseSingleTransport {
     pub transport_node_id: Option<f64>,
     pub value: ExpressionTransport,
     pub type_arguments: Option<TypeArgumentsTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ExtendsClauseSingleTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_extends_clause_single_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3778,6 +4219,16 @@ pub struct ForHeaderTransport {
     pub children: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ForHeaderTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_for_header_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ForHeaderLetConstKindTransport {
@@ -3797,6 +4248,16 @@ pub struct ForHeaderLetConstKindTransport {
     pub children: Option<Vec<AutomaticSemicolonTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ForHeaderLetConstKindTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_for_header_let_const_kind_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ForHeaderLhsTransport {
@@ -3811,6 +4272,16 @@ pub struct ForHeaderLhsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub left: Box<AnyTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ForHeaderLhsTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_for_header_lhs_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3832,6 +4303,16 @@ pub struct ForHeaderVarKindTransport {
     pub children: Option<Vec<InitializerTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ForHeaderVarKindTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_for_header_var_kind_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct FromClauseTransport {
@@ -3846,6 +4327,16 @@ pub struct FromClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub source: Box<AnyTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for FromClauseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_from_clause_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3865,6 +4356,16 @@ pub struct _ImportClauseDefaultImportTransport {
     pub children: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for _ImportClauseDefaultImportTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render__import_clause_default_import_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct _ImportClauseNamedImportsTransport {
@@ -3880,6 +4381,16 @@ pub struct _ImportClauseNamedImportsTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<NamedImportsTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for _ImportClauseNamedImportsTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render__import_clause_named_imports_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3899,6 +4410,16 @@ pub struct _ImportClauseNamespaceImportTransport {
     pub children: Vec<NamespaceImportTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for _ImportClauseNamespaceImportTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render__import_clause_namespace_import_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ImportSpecifierAsTransport {
@@ -3916,6 +4437,16 @@ pub struct ImportSpecifierAsTransport {
     pub alias: ImportIdentifierTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for ImportSpecifierAsTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_import_specifier_as_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct _ImportSpecifierNameTransport {
@@ -3930,6 +4461,16 @@ pub struct _ImportSpecifierNameTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub name: ImportIdentifierTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for _ImportSpecifierNameTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render__import_specifier_name_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -3949,6 +4490,16 @@ pub struct IndexSignatureColonTransport {
     pub index_type: TypeTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for IndexSignatureColonTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_index_signature_colon_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct _IndexSignatureMappedTypeClauseTransport {
@@ -3966,6 +4517,16 @@ pub struct _IndexSignatureMappedTypeClauseTransport {
     pub children: Vec<MappedTypeClauseTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for _IndexSignatureMappedTypeClauseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render__index_signature_mapped_type_clause_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct InitializerTransport {
@@ -3980,6 +4541,16 @@ pub struct InitializerTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub value: ExpressionTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for InitializerTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_initializer_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4000,6 +4571,16 @@ pub struct JsxStartOpeningElementTransport {
     pub attribute: Vec<_JsxAttributeTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for JsxStartOpeningElementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_jsx_start_opening_element_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct JsxStringTransport {
@@ -4017,6 +4598,16 @@ pub struct JsxStringTransport {
     pub children: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for JsxStringTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_jsx_string_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct KwAbstractMarkerTransport {
@@ -4030,6 +4621,16 @@ pub struct KwAbstractMarkerTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for KwAbstractMarkerTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_kw_abstract_marker_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4047,6 +4648,16 @@ pub struct KwAsyncMarkerTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for KwAsyncMarkerTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_kw_async_marker_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct KwConstMarkerTransport {
@@ -4060,6 +4671,16 @@ pub struct KwConstMarkerTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for KwConstMarkerTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_kw_const_marker_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4077,6 +4698,16 @@ pub struct KwOptionalMarkerTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for KwOptionalMarkerTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_kw_optional_marker_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct KwReadonlyMarkerTransport {
@@ -4092,6 +4723,16 @@ pub struct KwReadonlyMarkerTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for KwReadonlyMarkerTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_kw_readonly_marker_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct KwStaticMarkerTransport {
@@ -4105,6 +4746,16 @@ pub struct KwStaticMarkerTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for KwStaticMarkerTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_kw_static_marker_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4124,6 +4775,16 @@ pub struct LhsExpressionTransport {
     pub children: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for LhsExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_lhs_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct _ModuleTransport {
@@ -4141,6 +4802,16 @@ pub struct _ModuleTransport {
     pub body: Option<StatementBlockTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for _ModuleTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render__module_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct _NumberTransport {
@@ -4156,6 +4827,16 @@ pub struct _NumberTransport {
     pub transport_node_id: Option<f64>,
     pub operator: Box<AnyTransport>,
     pub argument: NumberTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for _NumberTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render__number_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4178,6 +4859,16 @@ pub struct ParameterNameTransport {
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ParameterNameTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_parameter_name_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct _ParenthesizedExpressionSequenceTransport {
@@ -4193,6 +4884,16 @@ pub struct _ParenthesizedExpressionSequenceTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<SequenceExpressionTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for _ParenthesizedExpressionSequenceTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render__parenthesized_expression_sequence_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4214,6 +4915,16 @@ pub struct ParenthesizedExpressionTypedTransport {
     pub children: Vec<ExpressionTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ParenthesizedExpressionTypedTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_parenthesized_expression_typed_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct PublicFieldDefinitionAbstractFirstTransport {
@@ -4229,6 +4940,16 @@ pub struct PublicFieldDefinitionAbstractFirstTransport {
     pub transport_node_id: Option<f64>,
     pub abstract_marker: KwAbstractMarkerTransport,
     pub readonly_marker: Option<KwReadonlyMarkerTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for PublicFieldDefinitionAbstractFirstTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_public_field_definition_abstract_first_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4249,6 +4970,16 @@ pub struct PublicFieldDefinitionAccessFirstTransport {
     pub children: Vec<AccessibilityModifierTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for PublicFieldDefinitionAccessFirstTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_public_field_definition_access_first_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct PublicFieldDefinitionAccessorOptTransport {
@@ -4263,6 +4994,16 @@ pub struct PublicFieldDefinitionAccessorOptTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub accessor_marker: Box<AnyTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for PublicFieldDefinitionAccessorOptTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_public_field_definition_accessor_opt_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4282,6 +5023,16 @@ pub struct PublicFieldDefinitionDeclareFirstTransport {
     pub children: Option<Vec<AccessibilityModifierTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for PublicFieldDefinitionDeclareFirstTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_public_field_definition_declare_first_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct PublicFieldDefinitionReadonlyFirstTransport {
@@ -4297,6 +5048,16 @@ pub struct PublicFieldDefinitionReadonlyFirstTransport {
     pub transport_node_id: Option<f64>,
     pub readonly_marker: KwReadonlyMarkerTransport,
     pub abstract_marker: Option<KwAbstractMarkerTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for PublicFieldDefinitionReadonlyFirstTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_public_field_definition_readonly_first_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4318,6 +5079,16 @@ pub struct PublicFieldDefinitionStaticModsTransport {
     pub children: Option<Vec<OverrideModifierTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for PublicFieldDefinitionStaticModsTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_public_field_definition_static_mods_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ReservedIdentifierTransport {
@@ -4331,6 +5102,16 @@ pub struct ReservedIdentifierTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for ReservedIdentifierTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_reserved_identifier_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4350,6 +5131,16 @@ pub struct _StringDoubleTransport {
     pub children: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for _StringDoubleTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render__string_double_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct _StringSingleTransport {
@@ -4365,6 +5156,16 @@ pub struct _StringSingleTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
+}
+
+impl ::sittir_core::types::RenderableTransport for _StringSingleTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render__string_single_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4384,6 +5185,16 @@ pub struct TypeIdentifierTransport {
     pub children: Vec<IdentifierTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for TypeIdentifierTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_type_identifier_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TypeQueryCallExpressionTransport {
@@ -4399,6 +5210,16 @@ pub struct TypeQueryCallExpressionTransport {
     pub transport_node_id: Option<f64>,
     pub function: Box<AnyTransport>,
     pub arguments: ArgumentsTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for TypeQueryCallExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_type_query_call_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4418,6 +5239,16 @@ pub struct TypeQueryCallExpressionInTypeAnnotationTransport {
     pub arguments: ArgumentsTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for TypeQueryCallExpressionInTypeAnnotationTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_type_query_call_expression_in_type_annotation_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TypeQueryInstantiationExpressionTransport {
@@ -4433,6 +5264,16 @@ pub struct TypeQueryInstantiationExpressionTransport {
     pub transport_node_id: Option<f64>,
     pub function: Box<AnyTransport>,
     pub type_arguments: TypeArgumentsTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for TypeQueryInstantiationExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_type_query_instantiation_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4452,6 +5293,16 @@ pub struct TypeQueryMemberExpressionTransport {
     pub property: PropertyNameTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for TypeQueryMemberExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_type_query_member_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TypeQueryMemberExpressionInTypeAnnotationTransport {
@@ -4467,6 +5318,16 @@ pub struct TypeQueryMemberExpressionInTypeAnnotationTransport {
     pub transport_node_id: Option<f64>,
     pub object: Box<AnyTransport>,
     pub property: PropertyNameTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for TypeQueryMemberExpressionInTypeAnnotationTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_type_query_member_expression_in_type_annotation_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4486,6 +5347,16 @@ pub struct TypeQuerySubscriptExpressionTransport {
     pub index: Box<AnyTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for TypeQuerySubscriptExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_type_query_subscript_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct UpdateExpressionPostfixTransport {
@@ -4503,6 +5374,16 @@ pub struct UpdateExpressionPostfixTransport {
     pub operator: Box<AnyTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for UpdateExpressionPostfixTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_update_expression_postfix_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct UpdateExpressionPrefixTransport {
@@ -4518,6 +5399,16 @@ pub struct UpdateExpressionPrefixTransport {
     pub transport_node_id: Option<f64>,
     pub operator: Box<AnyTransport>,
     pub argument: ExpressionTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for UpdateExpressionPrefixTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_update_expression_prefix_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4538,6 +5429,16 @@ pub struct AbstractClassDeclarationTransport {
     pub type_parameters: Option<TypeParametersTransport>,
     pub class_heritage: Option<Box<AnyTransport>>,
     pub body: ClassBodyTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for AbstractClassDeclarationTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_abstract_class_declaration_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4563,6 +5464,16 @@ pub struct AbstractMethodSignatureTransport {
     pub return_type: Option<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for AbstractMethodSignatureTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_abstract_method_signature_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct AccessibilityModifierTransport {
@@ -4576,6 +5487,16 @@ pub struct AccessibilityModifierTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for AccessibilityModifierTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_accessibility_modifier_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4595,6 +5516,16 @@ pub struct AddingTypeAnnotationTransport {
     pub r#type: TypeTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for AddingTypeAnnotationTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_adding_type_annotation_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct AmbientDeclarationTransport {
@@ -4609,6 +5540,16 @@ pub struct AmbientDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub declaration: Box<AnyTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for AmbientDeclarationTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_ambient_declaration_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4628,6 +5569,16 @@ pub struct ArgumentsTransport {
     pub children: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ArgumentsTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_arguments_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ArrayTransport {
@@ -4643,6 +5594,16 @@ pub struct ArrayTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ArrayTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_array_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4662,6 +5623,16 @@ pub struct ArrayPatternTransport {
     pub children: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ArrayPatternTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_array_pattern_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ArrayTypeTransport {
@@ -4676,6 +5647,16 @@ pub struct ArrayTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub primary_type: PrimaryTypeTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for ArrayTypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_array_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4694,6 +5675,16 @@ pub struct ArrowFunctionParameterTransport {
     pub parameter: PropertyIdentifierTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for ArrowFunctionParameterTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_arrow_function_parameter_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ArrowFunctionUCallSignatureTransport {
@@ -4710,6 +5701,16 @@ pub struct ArrowFunctionUCallSignatureTransport {
     pub type_parameters: Option<TypeParametersTransport>,
     pub parameters: FormalParametersTransport,
     pub return_type: Option<Box<AnyTransport>>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ArrowFunctionUCallSignatureTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_arrow_function_ucall_signature_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -4742,6 +5743,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowFunctionTransport {
     }
 }
 
+impl ::sittir_core::types::RenderableTransport for ArrowFunctionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_arrow_function_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ArrowFunctionUFormParameterTransport {
@@ -4759,6 +5770,16 @@ pub struct ArrowFunctionUFormParameterTransport {
     pub body: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<_ArrowFunctionParameterTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ArrowFunctionUFormParameterTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_arrow_function_uform_parameter_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4780,6 +5801,16 @@ pub struct ArrowFunctionUFormUCallSignatureTransport {
     pub children: Vec<_ArrowFunctionUCallSignatureTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ArrowFunctionUFormUCallSignatureTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_arrow_function_uform_ucall_signature_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct AsExpressionTransport {
@@ -4795,6 +5826,16 @@ pub struct AsExpressionTransport {
     pub transport_node_id: Option<f64>,
     pub expression: ExpressionTransport,
     pub type_annotation: TypeTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for AsExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_as_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4814,6 +5855,16 @@ pub struct AssertsTransport {
     pub children: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for AssertsTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_asserts_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct AssertsAnnotationTransport {
@@ -4828,6 +5879,16 @@ pub struct AssertsAnnotationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub asserts: AssertsTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for AssertsAnnotationTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_asserts_annotation_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4848,6 +5909,16 @@ pub struct AssignmentExpressionTransport {
     pub right: ExpressionTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for AssignmentExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_assignment_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct AssignmentPatternTransport {
@@ -4863,6 +5934,16 @@ pub struct AssignmentPatternTransport {
     pub transport_node_id: Option<f64>,
     pub left: PatternTransport,
     pub right: ExpressionTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for AssignmentPatternTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_assignment_pattern_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4883,6 +5964,16 @@ pub struct AugmentedAssignmentExpressionTransport {
     pub right: ExpressionTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for AugmentedAssignmentExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_augmented_assignment_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct AwaitExpressionTransport {
@@ -4897,6 +5988,16 @@ pub struct AwaitExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub expression: ExpressionTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for AwaitExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_await_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -4917,6 +6018,16 @@ pub struct BinaryExpressionTransport {
     pub right: ExpressionTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for BinaryExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_binary_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct BreakStatementTransport {
@@ -4932,6 +6043,16 @@ pub struct BreakStatementTransport {
     pub transport_node_id: Option<f64>,
     pub label: Option<IdentifierTransport>,
     pub semicolon: SemicolonTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for BreakStatementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_break_statement_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -4968,6 +6089,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionTransport {
     }
 }
 
+impl ::sittir_core::types::RenderableTransport for CallExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_call_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct CallExpressionUFormCallTransport {
@@ -4983,6 +6114,16 @@ pub struct CallExpressionUFormCallTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<CallExpressionCallTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for CallExpressionUFormCallTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_call_expression_uform_call_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5002,6 +6143,16 @@ pub struct CallExpressionUFormTemplateCallTransport {
     pub children: Vec<CallExpressionTemplateCallTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for CallExpressionUFormTemplateCallTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_call_expression_uform_template_call_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct CallExpressionUFormMemberTransport {
@@ -5017,6 +6168,16 @@ pub struct CallExpressionUFormMemberTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<CallExpressionMemberTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for CallExpressionUFormMemberTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_call_expression_uform_member_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5037,6 +6198,16 @@ pub struct CallSignatureTransport {
     pub return_type: Option<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for CallSignatureTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_call_signature_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct CatchClauseTransport {
@@ -5054,6 +6225,16 @@ pub struct CatchClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Option<TypeAnnotationTransport>,
     pub body: StatementBlockTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for CatchClauseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_catch_clause_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5076,6 +6257,16 @@ pub struct ClassTransport {
     pub body: ClassBodyTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for ClassTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_class_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ClassBodyTransport {
@@ -5091,6 +6282,16 @@ pub struct ClassBodyTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ClassBodyTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_class_body_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5114,6 +6315,16 @@ pub struct ClassDeclarationTransport {
     pub automatic_semicolon: Option<AutomaticSemicolonTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ClassDeclarationTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_class_declaration_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ClassHeritageExtendsClauseTransport {
@@ -5131,6 +6342,16 @@ pub struct ClassHeritageExtendsClauseTransport {
     pub children: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ClassHeritageExtendsClauseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_class_heritage_extends_clause_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ClassHeritageImplementsClauseTransport {
@@ -5146,6 +6367,16 @@ pub struct ClassHeritageImplementsClauseTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<ImplementsClauseTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ClassHeritageImplementsClauseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_class_heritage_implements_clause_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -5178,6 +6409,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassHeritageTransport {
     }
 }
 
+impl ::sittir_core::types::RenderableTransport for ClassHeritageTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_class_heritage_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ClassHeritageUFormExtendsClauseTransport {
@@ -5195,6 +6436,16 @@ pub struct ClassHeritageUFormExtendsClauseTransport {
     pub children: Vec<_ClassHeritageExtendsClauseTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ClassHeritageUFormExtendsClauseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_class_heritage_uform_extends_clause_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ClassHeritageUFormImplementsClauseTransport {
@@ -5210,6 +6461,16 @@ pub struct ClassHeritageUFormImplementsClauseTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<_ClassHeritageImplementsClauseTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ClassHeritageUFormImplementsClauseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_class_heritage_uform_implements_clause_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5230,6 +6491,16 @@ pub struct ClassStaticBlockTransport {
     pub children: Option<Vec<AutomaticSemicolonTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ClassStaticBlockTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_class_static_block_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct CommentTransport {
@@ -5243,6 +6514,16 @@ pub struct CommentTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for CommentTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_comment_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5259,6 +6540,16 @@ pub struct ComputedPropertyNameTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub expression: ExpressionTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for ComputedPropertyNameTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_computed_property_name_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5280,6 +6571,16 @@ pub struct ConditionalTypeTransport {
     pub alternative: TypeTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for ConditionalTypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_conditional_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ConstraintTransport {
@@ -5295,6 +6596,16 @@ pub struct ConstraintTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: TypeTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for ConstraintTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_constraint_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5317,6 +6628,16 @@ pub struct ConstructSignatureTransport {
     pub r#type: Option<TypeAnnotationTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ConstructSignatureTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_construct_signature_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ConstructorTypeTransport {
@@ -5337,6 +6658,16 @@ pub struct ConstructorTypeTransport {
     pub r#type: TypeTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for ConstructorTypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_constructor_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ContinueStatementTransport {
@@ -5352,6 +6683,16 @@ pub struct ContinueStatementTransport {
     pub transport_node_id: Option<f64>,
     pub label: Option<IdentifierTransport>,
     pub semicolon: SemicolonTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for ContinueStatementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_continue_statement_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5370,6 +6711,16 @@ pub struct DebuggerStatementTransport {
     pub semicolon: SemicolonTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for DebuggerStatementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_debugger_statement_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct DecoratorTransport {
@@ -5385,6 +6736,16 @@ pub struct DecoratorTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
+}
+
+impl ::sittir_core::types::RenderableTransport for DecoratorTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_decorator_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5405,6 +6766,16 @@ pub struct DecoratorCallExpressionTransport {
     pub arguments: ArgumentsTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for DecoratorCallExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_decorator_call_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct DecoratorMemberExpressionTransport {
@@ -5420,6 +6791,16 @@ pub struct DecoratorMemberExpressionTransport {
     pub transport_node_id: Option<f64>,
     pub object: Box<AnyTransport>,
     pub property: IdentifierTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for DecoratorMemberExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_decorator_member_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5439,6 +6820,16 @@ pub struct DecoratorParenthesizedExpressionTransport {
     pub children: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for DecoratorParenthesizedExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_decorator_parenthesized_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct DefaultTypeTransport {
@@ -5454,6 +6845,16 @@ pub struct DefaultTypeTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: TypeTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for DefaultTypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_default_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5474,6 +6875,16 @@ pub struct DoStatementTransport {
     pub semicolon: Option<SemicolonTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for DoStatementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_do_statement_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ElseClauseTransport {
@@ -5490,6 +6901,16 @@ pub struct ElseClauseTransport {
     pub statement: StatementTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for ElseClauseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_else_clause_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct EmptyStatementTransport {
@@ -5503,6 +6924,16 @@ pub struct EmptyStatementTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for EmptyStatementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_empty_statement_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5522,6 +6953,16 @@ pub struct EnumAssignmentTransport {
     pub value: ExpressionTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for EnumAssignmentTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_enum_assignment_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct EnumBodyTransport {
@@ -5537,6 +6978,16 @@ pub struct EnumBodyTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<EnumAssignmentTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for EnumBodyTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_enum_body_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5557,6 +7008,16 @@ pub struct EnumDeclarationTransport {
     pub body: EnumBodyTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for EnumDeclarationTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_enum_declaration_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct EscapeSequenceTransport {
@@ -5570,6 +7031,16 @@ pub struct EscapeSequenceTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for EscapeSequenceTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_escape_sequence_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5587,6 +7058,16 @@ pub struct ExistentialTypeTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for ExistentialTypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_existential_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ExportClauseTransport {
@@ -5602,6 +7083,16 @@ pub struct ExportClauseTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<ExportSpecifierTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ExportClauseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_export_clause_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5622,6 +7113,16 @@ pub struct ExportSpecifierTransport {
     pub alias: Option<ModuleExportNameTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ExportSpecifierTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_export_specifier_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ExportStatementTypeExportTransport {
@@ -5638,6 +7139,16 @@ pub struct ExportStatementTypeExportTransport {
     pub source: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ExportStatementTypeExportTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_export_statement_type_export_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5657,6 +7168,16 @@ pub struct ExportStatementEqualsExportTransport {
     pub children: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ExportStatementEqualsExportTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_export_statement_equals_export_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ExportStatementNamespaceExportTransport {
@@ -5672,6 +7193,16 @@ pub struct ExportStatementNamespaceExportTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ExportStatementNamespaceExportTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_export_statement_namespace_export_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -5712,6 +7243,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementTransport {
     }
 }
 
+impl ::sittir_core::types::RenderableTransport for ExportStatementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_export_statement_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ExportStatementUFormDefaultTransport {
@@ -5727,6 +7268,16 @@ pub struct ExportStatementUFormDefaultTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<ExportStatementDefaultTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ExportStatementUFormDefaultTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_export_statement_uform_default_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5746,6 +7297,16 @@ pub struct ExportStatementUFormTypeExportTransport {
     pub children: Vec<_ExportStatementTypeExportTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ExportStatementUFormTypeExportTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_export_statement_uform_type_export_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ExportStatementUFormEqualsExportTransport {
@@ -5763,6 +7324,16 @@ pub struct ExportStatementUFormEqualsExportTransport {
     pub children: Vec<_ExportStatementEqualsExportTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ExportStatementUFormEqualsExportTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_export_statement_uform_equals_export_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ExportStatementUFormNamespaceExportTransport {
@@ -5778,6 +7349,16 @@ pub struct ExportStatementUFormNamespaceExportTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<_ExportStatementNamespaceExportTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ExportStatementUFormNamespaceExportTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_export_statement_uform_namespace_export_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5798,6 +7379,16 @@ pub struct ExpressionStatementTransport {
     pub children: Vec<ExpressionsTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ExpressionStatementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_expression_statement_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ExtendsClauseTransport {
@@ -5813,6 +7404,16 @@ pub struct ExtendsClauseTransport {
     pub transport_node_id: Option<f64>,
     pub value: Vec<ExpressionTransport>,
     pub type_arguments: Option<TypeArgumentsTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ExtendsClauseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_extends_clause_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5832,6 +7433,16 @@ pub struct ExtendsTypeClauseTransport {
     pub r#type: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ExtendsTypeClauseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_extends_type_clause_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct FalseTransport {
@@ -5845,6 +7456,16 @@ pub struct FalseTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for FalseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_false_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5866,6 +7487,16 @@ pub struct FieldDefinitionTransport {
     pub value: Option<ExpressionTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for FieldDefinitionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_field_definition_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct FinallyClauseTransport {
@@ -5882,6 +7513,16 @@ pub struct FinallyClauseTransport {
     pub body: StatementBlockTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for FinallyClauseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_finally_clause_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct FlowMaybeTypeTransport {
@@ -5896,6 +7537,16 @@ pub struct FlowMaybeTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub primary_type: PrimaryTypeTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for FlowMaybeTypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_flow_maybe_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5919,6 +7570,16 @@ pub struct ForInStatementTransport {
     pub children: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ForInStatementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_for_in_statement_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ForStatementTransport {
@@ -5938,6 +7599,16 @@ pub struct ForStatementTransport {
     pub body: StatementTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for ForStatementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_for_statement_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct FormalParametersTransport {
@@ -5953,6 +7624,16 @@ pub struct FormalParametersTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<FormalParameterTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for FormalParametersTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_formal_parameters_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -5978,6 +7659,16 @@ pub struct FunctionDeclarationTransport {
     pub children: Option<Vec<AutomaticSemicolonTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for FunctionDeclarationTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_function_declaration_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct FunctionExpressionTransport {
@@ -5997,6 +7688,16 @@ pub struct FunctionExpressionTransport {
     pub parameters: FormalParametersTransport,
     pub return_type: Option<Box<AnyTransport>>,
     pub body: StatementBlockTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for FunctionExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_function_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6020,6 +7721,16 @@ pub struct FunctionSignatureTransport {
     pub semicolon: Box<AnyTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for FunctionSignatureTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_function_signature_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct FunctionTypeTransport {
@@ -6036,6 +7747,16 @@ pub struct FunctionTypeTransport {
     pub type_parameters: Option<TypeParametersTransport>,
     pub parameters: FormalParametersTransport,
     pub return_type: Box<AnyTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for FunctionTypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_function_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6057,6 +7778,16 @@ pub struct GeneratorFunctionTransport {
     pub parameters: FormalParametersTransport,
     pub return_type: Option<Box<AnyTransport>>,
     pub body: StatementBlockTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for GeneratorFunctionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_generator_function_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6082,6 +7813,16 @@ pub struct GeneratorFunctionDeclarationTransport {
     pub children: Option<Vec<AutomaticSemicolonTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for GeneratorFunctionDeclarationTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_generator_function_declaration_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct GenericTypeTransport {
@@ -6099,6 +7840,16 @@ pub struct GenericTypeTransport {
     pub type_arguments: TypeArgumentsTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for GenericTypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_generic_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct HashBangLineTransport {
@@ -6112,6 +7863,16 @@ pub struct HashBangLineTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for HashBangLineTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_hash_bang_line_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6129,6 +7890,16 @@ pub struct HtmlCharacterReferenceTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for HtmlCharacterReferenceTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_html_character_reference_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct IdentifierTransport {
@@ -6142,6 +7913,16 @@ pub struct IdentifierTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for IdentifierTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_identifier_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6162,6 +7943,16 @@ pub struct IfStatementTransport {
     pub alternative: Option<ElseClauseTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for IfStatementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_if_statement_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ImplementsClauseTransport {
@@ -6179,6 +7970,16 @@ pub struct ImplementsClauseTransport {
     pub children: Vec<TypeTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ImplementsClauseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_implements_clause_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ImportTransport {
@@ -6192,6 +7993,16 @@ pub struct ImportTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for ImportTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_import_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6212,6 +8023,16 @@ pub struct ImportAliasTransport {
     pub semicolon: SemicolonTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for ImportAliasTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_import_alias_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ImportAttributeTransport {
@@ -6226,6 +8047,16 @@ pub struct ImportAttributeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub object: ObjectTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for ImportAttributeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_import_attribute_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6245,6 +8076,16 @@ pub struct ImportClauseNamespaceImportTransport {
     pub children: Vec<NamespaceImportTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ImportClauseNamespaceImportTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_import_clause_namespace_import_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ImportClauseNamedImportsTransport {
@@ -6262,6 +8103,16 @@ pub struct ImportClauseNamedImportsTransport {
     pub children: Vec<NamedImportsTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ImportClauseNamedImportsTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_import_clause_named_imports_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ImportClauseDefaultImportTransport {
@@ -6277,6 +8128,16 @@ pub struct ImportClauseDefaultImportTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ImportClauseDefaultImportTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_import_clause_default_import_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -6313,6 +8174,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportClauseTransport {
     }
 }
 
+impl ::sittir_core::types::RenderableTransport for ImportClauseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_import_clause_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ImportClauseUFormNamespaceImportTransport {
@@ -6328,6 +8199,16 @@ pub struct ImportClauseUFormNamespaceImportTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<_ImportClauseNamespaceImportTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ImportClauseUFormNamespaceImportTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_import_clause_uform_namespace_import_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6347,6 +8228,16 @@ pub struct ImportClauseUFormNamedImportsTransport {
     pub children: Vec<_ImportClauseNamedImportsTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ImportClauseUFormNamedImportsTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_import_clause_uform_named_imports_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ImportClauseUFormDefaultImportTransport {
@@ -6362,6 +8253,16 @@ pub struct ImportClauseUFormDefaultImportTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<_ImportClauseDefaultImportTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ImportClauseUFormDefaultImportTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_import_clause_uform_default_import_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6381,6 +8282,16 @@ pub struct ImportRequireClauseTransport {
     pub source: Box<AnyTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ImportRequireClauseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_import_require_clause_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ImportSpecifierNameTransport {
@@ -6395,6 +8306,16 @@ pub struct ImportSpecifierNameTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub name: ImportIdentifierTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for ImportSpecifierNameTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_import_specifier_name_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -6427,6 +8348,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportSpecifierTransport {
     }
 }
 
+impl ::sittir_core::types::RenderableTransport for ImportSpecifierTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_import_specifier_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ImportSpecifierUFormNameTransport {
@@ -6445,6 +8376,16 @@ pub struct ImportSpecifierUFormNameTransport {
     pub children: Vec<_ImportSpecifierNameTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ImportSpecifierUFormNameTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_import_specifier_uform_name_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ImportSpecifierUFormAsTransport {
@@ -6461,6 +8402,16 @@ pub struct ImportSpecifierUFormAsTransport {
     pub import_kind: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<ImportSpecifierAsTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ImportSpecifierUFormAsTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_import_specifier_uform_as_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6482,6 +8433,16 @@ pub struct ImportStatementTransport {
     pub semicolon: SemicolonTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for ImportStatementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_import_statement_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct IndexSignatureMappedTypeClauseTransport {
@@ -6497,6 +8458,16 @@ pub struct IndexSignatureMappedTypeClauseTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<MappedTypeClauseTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for IndexSignatureMappedTypeClauseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_index_signature_mapped_type_clause_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -6529,6 +8500,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndexSignatureTransport {
     }
 }
 
+impl ::sittir_core::types::RenderableTransport for IndexSignatureTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_index_signature_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct IndexSignatureUFormColonTransport {
@@ -6547,6 +8528,16 @@ pub struct IndexSignatureUFormColonTransport {
     pub r#type: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<IndexSignatureColonTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for IndexSignatureUFormColonTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_index_signature_uform_colon_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6569,6 +8560,16 @@ pub struct IndexSignatureUFormMappedTypeClauseTransport {
     pub children: Vec<_IndexSignatureMappedTypeClauseTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for IndexSignatureUFormMappedTypeClauseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_index_signature_uform_mapped_type_clause_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct IndexTypeQueryTransport {
@@ -6583,6 +8584,16 @@ pub struct IndexTypeQueryTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub primary_type: PrimaryTypeTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for IndexTypeQueryTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_index_type_query_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6603,6 +8614,16 @@ pub struct InferTypeTransport {
     pub r#type: Option<TypeTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for InferTypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_infer_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct InstantiationExpressionTransport {
@@ -6618,6 +8639,16 @@ pub struct InstantiationExpressionTransport {
     pub transport_node_id: Option<f64>,
     pub expression: ExpressionTransport,
     pub type_arguments: TypeArgumentsTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for InstantiationExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_instantiation_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6639,6 +8670,16 @@ pub struct InterfaceDeclarationTransport {
     pub body: ObjectTypeTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for InterfaceDeclarationTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_interface_declaration_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct InternalModuleTransport {
@@ -6654,6 +8695,16 @@ pub struct InternalModuleTransport {
     pub transport_node_id: Option<f64>,
     pub name: Box<AnyTransport>,
     pub body: Option<StatementBlockTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for InternalModuleTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_internal_module_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6673,6 +8724,16 @@ pub struct IntersectionTypeTransport {
     pub right: TypeTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for IntersectionTypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_intersection_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct JsxAttributeTransport {
@@ -6690,6 +8751,16 @@ pub struct JsxAttributeTransport {
     pub children: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for JsxAttributeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_jsx_attribute_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct JsxClosingElementTransport {
@@ -6704,6 +8775,16 @@ pub struct JsxClosingElementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub name: Option<JsxElementNameTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for JsxClosingElementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_jsx_closing_element_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6725,6 +8806,16 @@ pub struct JsxElementTransport {
     pub children: Vec<JsxChildTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for JsxElementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_jsx_element_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct JsxExpressionTransport {
@@ -6742,6 +8833,16 @@ pub struct JsxExpressionTransport {
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for JsxExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_jsx_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct JsxIdentifierTransport {
@@ -6755,6 +8856,16 @@ pub struct JsxIdentifierTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for JsxIdentifierTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_jsx_identifier_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6772,6 +8883,16 @@ pub struct JsxNamespaceNameTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<_JsxIdentifierTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for JsxNamespaceNameTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_jsx_namespace_name_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6792,6 +8913,16 @@ pub struct JsxOpeningElementTransport {
     pub attribute: Vec<_JsxAttributeTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for JsxOpeningElementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_jsx_opening_element_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct JsxSelfClosingElementTransport {
@@ -6810,6 +8941,16 @@ pub struct JsxSelfClosingElementTransport {
     pub attribute: Vec<_JsxAttributeTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for JsxSelfClosingElementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_jsx_self_closing_element_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct LabeledStatementTransport {
@@ -6825,6 +8966,16 @@ pub struct LabeledStatementTransport {
     pub transport_node_id: Option<f64>,
     pub label: StatementIdentifierTransport,
     pub body: StatementTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for LabeledStatementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_labeled_statement_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6845,6 +8996,16 @@ pub struct LexicalDeclarationTransport {
     pub semicolon: SemicolonTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for LexicalDeclarationTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_lexical_declaration_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct LiteralTypeTransport {
@@ -6862,6 +9023,16 @@ pub struct LiteralTypeTransport {
     pub children: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for LiteralTypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_literal_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct LookupTypeTransport {
@@ -6877,6 +9048,16 @@ pub struct LookupTypeTransport {
     pub transport_node_id: Option<f64>,
     pub primary_type: PrimaryTypeTransport,
     pub index_type: TypeTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for LookupTypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_lookup_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6898,6 +9079,16 @@ pub struct MappedTypeClauseTransport {
     pub alias: Option<TypeTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for MappedTypeClauseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_mapped_type_clause_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct MemberExpressionTransport {
@@ -6915,6 +9106,16 @@ pub struct MemberExpressionTransport {
     pub property: PropertyNameTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for MemberExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_member_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct MetaPropertyTransport {
@@ -6928,6 +9129,16 @@ pub struct MetaPropertyTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for MetaPropertyTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_meta_property_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -6957,6 +9168,16 @@ pub struct MethodDefinitionTransport {
     pub body: StatementBlockTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for MethodDefinitionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_method_definition_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct MethodSignatureTransport {
@@ -6983,6 +9204,16 @@ pub struct MethodSignatureTransport {
     pub return_type: Option<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for MethodSignatureTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_method_signature_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ModuleTransport {
@@ -6998,6 +9229,16 @@ pub struct ModuleTransport {
     pub transport_node_id: Option<f64>,
     pub name: Box<AnyTransport>,
     pub body: Option<StatementBlockTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ModuleTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_module_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7017,6 +9258,16 @@ pub struct NamedImportsTransport {
     pub children: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for NamedImportsTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_named_imports_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct NamespaceExportTransport {
@@ -7034,6 +9285,16 @@ pub struct NamespaceExportTransport {
     pub children: Vec<ModuleExportNameTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for NamespaceExportTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_namespace_export_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct NamespaceImportTransport {
@@ -7048,6 +9309,16 @@ pub struct NamespaceImportTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub identifier: IdentifierTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for NamespaceImportTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_namespace_import_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7067,6 +9338,16 @@ pub struct NestedIdentifierTransport {
     pub property: IdentifierTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for NestedIdentifierTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_nested_identifier_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct NestedTypeIdentifierTransport {
@@ -7082,6 +9363,16 @@ pub struct NestedTypeIdentifierTransport {
     pub transport_node_id: Option<f64>,
     pub module: JsxElementNameTransport,
     pub name: TypeIdentifierTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for NestedTypeIdentifierTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_nested_type_identifier_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7102,6 +9393,16 @@ pub struct NewExpressionTransport {
     pub arguments: Option<ArgumentsTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for NewExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_new_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct NonNullExpressionTransport {
@@ -7116,6 +9417,16 @@ pub struct NonNullExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub expression: ExpressionTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for NonNullExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_non_null_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7133,6 +9444,16 @@ pub struct NullTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for NullTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_null_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct NumberTransport {
@@ -7146,6 +9467,16 @@ pub struct NumberTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for NumberTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_number_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7165,6 +9496,16 @@ pub struct ObjectTransport {
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ObjectTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_object_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ObjectAssignmentPatternTransport {
@@ -7182,6 +9523,16 @@ pub struct ObjectAssignmentPatternTransport {
     pub right: ExpressionTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for ObjectAssignmentPatternTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_object_assignment_pattern_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ObjectPatternTransport {
@@ -7197,6 +9548,16 @@ pub struct ObjectPatternTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<Box<AnyTransport>>>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ObjectPatternTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_object_pattern_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7217,6 +9578,16 @@ pub struct ObjectTypeTransport {
     pub closing: Box<AnyTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ObjectTypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_object_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct OmittingTypeAnnotationTransport {
@@ -7232,6 +9603,16 @@ pub struct OmittingTypeAnnotationTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: TypeTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for OmittingTypeAnnotationTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_omitting_type_annotation_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7251,6 +9632,16 @@ pub struct OptingTypeAnnotationTransport {
     pub r#type: TypeTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for OptingTypeAnnotationTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_opting_type_annotation_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct OptionalChainTransport {
@@ -7264,6 +9655,16 @@ pub struct OptionalChainTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for OptionalChainTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_optional_chain_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7289,6 +9690,16 @@ pub struct OptionalParameterTransport {
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for OptionalParameterTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_optional_parameter_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct OptionalTupleParameterTransport {
@@ -7305,6 +9716,16 @@ pub struct OptionalTupleParameterTransport {
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: TypeAnnotationTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for OptionalTupleParameterTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_optional_tuple_parameter_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7324,6 +9745,16 @@ pub struct OptionalTypeTransport {
     pub r#type: TypeTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for OptionalTypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_optional_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct OverrideModifierTransport {
@@ -7337,6 +9768,16 @@ pub struct OverrideModifierTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for OverrideModifierTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_override_modifier_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7356,6 +9797,16 @@ pub struct PairTransport {
     pub value: ExpressionTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for PairTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_pair_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct PairPatternTransport {
@@ -7373,6 +9824,16 @@ pub struct PairPatternTransport {
     pub value: Box<AnyTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for PairPatternTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_pair_pattern_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ParenthesizedExpressionSequenceTransport {
@@ -7388,6 +9849,16 @@ pub struct ParenthesizedExpressionSequenceTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<SequenceExpressionTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ParenthesizedExpressionSequenceTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_parenthesized_expression_sequence_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -7420,6 +9891,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionTransport
     }
 }
 
+impl ::sittir_core::types::RenderableTransport for ParenthesizedExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_parenthesized_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ParenthesizedExpressionUFormTypedTransport {
@@ -7435,6 +9916,16 @@ pub struct ParenthesizedExpressionUFormTypedTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<ParenthesizedExpressionTypedTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ParenthesizedExpressionUFormTypedTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_parenthesized_expression_uform_typed_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7454,6 +9945,16 @@ pub struct ParenthesizedExpressionUFormSequenceTransport {
     pub children: Vec<_ParenthesizedExpressionSequenceTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ParenthesizedExpressionUFormSequenceTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_parenthesized_expression_uform_sequence_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ParenthesizedTypeTransport {
@@ -7471,6 +9972,16 @@ pub struct ParenthesizedTypeTransport {
     pub r#type: TypeTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for ParenthesizedTypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_parenthesized_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct PredefinedTypeTransport {
@@ -7484,6 +9995,16 @@ pub struct PredefinedTypeTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for PredefinedTypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_predefined_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7501,6 +10022,16 @@ pub struct PrivatePropertyIdentifierTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for PrivatePropertyIdentifierTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_private_property_identifier_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ProgramTransport {
@@ -7516,6 +10047,16 @@ pub struct ProgramTransport {
     pub transport_node_id: Option<f64>,
     pub hash_bang_line: Option<HashBangLineTransport>,
     pub statements: Vec<StatementTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for ProgramTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_program_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7541,6 +10082,16 @@ pub struct PropertySignatureTransport {
     pub r#type: Option<TypeAnnotationTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for PropertySignatureTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_property_signature_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct PublicFieldDefinitionTransport {
@@ -7564,6 +10115,16 @@ pub struct PublicFieldDefinitionTransport {
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for PublicFieldDefinitionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_public_field_definition_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ReadonlyTypeTransport {
@@ -7579,6 +10140,16 @@ pub struct ReadonlyTypeTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: TypeTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for ReadonlyTypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_readonly_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7598,6 +10169,16 @@ pub struct RegexTransport {
     pub flags: Option<RegexFlagsTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for RegexTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_regex_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct RegexFlagsTransport {
@@ -7613,6 +10194,16 @@ pub struct RegexFlagsTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for RegexFlagsTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_regex_flags_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct RegexPatternTransport {
@@ -7626,6 +10217,16 @@ pub struct RegexPatternTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for RegexPatternTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_regex_pattern_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7651,6 +10252,16 @@ pub struct RequiredParameterTransport {
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for RequiredParameterTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_required_parameter_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct RestPatternTransport {
@@ -7668,6 +10279,16 @@ pub struct RestPatternTransport {
     pub children: Vec<LhsExpressionTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for RestPatternTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_rest_pattern_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct RestTypeTransport {
@@ -7683,6 +10304,16 @@ pub struct RestTypeTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: TypeTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for RestTypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_rest_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7703,6 +10334,16 @@ pub struct ReturnStatementTransport {
     pub children: Option<Vec<ExpressionsTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ReturnStatementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_return_statement_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SatisfiesExpressionTransport {
@@ -7718,6 +10359,16 @@ pub struct SatisfiesExpressionTransport {
     pub transport_node_id: Option<f64>,
     pub expression: ExpressionTransport,
     pub type_annotation: TypeTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for SatisfiesExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_satisfies_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7737,6 +10388,16 @@ pub struct SequenceExpressionTransport {
     pub children: Vec<ExpressionTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for SequenceExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_sequence_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SpreadElementTransport {
@@ -7751,6 +10412,16 @@ pub struct SpreadElementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub expression: ExpressionTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for SpreadElementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_spread_element_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7770,6 +10441,16 @@ pub struct StatementBlockTransport {
     pub automatic_semicolon: Option<AutomaticSemicolonTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for StatementBlockTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_statement_block_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct StringDoubleTransport {
@@ -7787,6 +10468,16 @@ pub struct StringDoubleTransport {
     pub children: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for StringDoubleTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_string_double_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct StringSingleTransport {
@@ -7802,6 +10493,16 @@ pub struct StringSingleTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
+}
+
+impl ::sittir_core::types::RenderableTransport for StringSingleTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_string_single_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -7834,6 +10535,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringTransport {
     }
 }
 
+impl ::sittir_core::types::RenderableTransport for StringTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_string_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct StringUFormDoubleTransport {
@@ -7851,6 +10562,16 @@ pub struct StringUFormDoubleTransport {
     pub children: Vec<_StringDoubleTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for StringUFormDoubleTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_string_uform_double_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct StringUFormSingleTransport {
@@ -7866,6 +10587,16 @@ pub struct StringUFormSingleTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<_StringSingleTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for StringUFormSingleTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_string_uform_single_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7886,6 +10617,16 @@ pub struct SubscriptExpressionTransport {
     pub index: ExpressionsTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for SubscriptExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_subscript_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SuperTransport {
@@ -7899,6 +10640,16 @@ pub struct SuperTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for SuperTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_super_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7918,6 +10669,16 @@ pub struct SwitchBodyTransport {
     pub children: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for SwitchBodyTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_switch_body_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SwitchCaseTransport {
@@ -7935,6 +10696,16 @@ pub struct SwitchCaseTransport {
     pub body: Vec<StatementTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for SwitchCaseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_switch_case_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SwitchDefaultTransport {
@@ -7949,6 +10720,16 @@ pub struct SwitchDefaultTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub body: Vec<StatementTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for SwitchDefaultTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_switch_default_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -7968,6 +10749,16 @@ pub struct SwitchStatementTransport {
     pub body: SwitchBodyTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for SwitchStatementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_switch_statement_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TemplateLiteralTypeTransport {
@@ -7983,6 +10774,16 @@ pub struct TemplateLiteralTypeTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<Box<AnyTransport>>,
+}
+
+impl ::sittir_core::types::RenderableTransport for TemplateLiteralTypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_template_literal_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8002,6 +10803,16 @@ pub struct TemplateStringTransport {
     pub children: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for TemplateStringTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_template_string_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TemplateSubstitutionTransport {
@@ -8019,6 +10830,16 @@ pub struct TemplateSubstitutionTransport {
     pub children: Vec<ExpressionsTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for TemplateSubstitutionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_template_substitution_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TemplateTypeTransport {
@@ -8034,6 +10855,16 @@ pub struct TemplateTypeTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TypeTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for TemplateTypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_template_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8054,6 +10885,16 @@ pub struct TernaryExpressionTransport {
     pub alternative: ExpressionTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for TernaryExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_ternary_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ThisTransport {
@@ -8067,6 +10908,16 @@ pub struct ThisTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for ThisTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_this_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8087,6 +10938,16 @@ pub struct ThrowStatementTransport {
     pub children: Vec<ExpressionsTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for ThrowStatementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_throw_statement_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TrueTransport {
@@ -8100,6 +10961,16 @@ pub struct TrueTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for TrueTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_true_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8120,6 +10991,16 @@ pub struct TryStatementTransport {
     pub finalizer: Option<FinallyClauseTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for TryStatementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_try_statement_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TupleParameterTransport {
@@ -8138,6 +11019,16 @@ pub struct TupleParameterTransport {
     pub r#type: TypeAnnotationTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for TupleParameterTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_tuple_parameter_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TupleTypeTransport {
@@ -8153,6 +11044,16 @@ pub struct TupleTypeTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TupleTypeMemberTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for TupleTypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_tuple_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8174,6 +11075,16 @@ pub struct TypeAliasDeclarationTransport {
     pub semicolon: SemicolonTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for TypeAliasDeclarationTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_type_alias_declaration_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TypeAnnotationTransport {
@@ -8189,6 +11100,16 @@ pub struct TypeAnnotationTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: TypeTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for TypeAnnotationTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_type_annotation_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8208,6 +11129,16 @@ pub struct TypeArgumentsTransport {
     pub children: Vec<TypeTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for TypeArgumentsTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_type_arguments_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TypeAssertionTransport {
@@ -8223,6 +11154,16 @@ pub struct TypeAssertionTransport {
     pub transport_node_id: Option<f64>,
     pub type_arguments: TypeArgumentsTransport,
     pub expression: ExpressionTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for TypeAssertionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_type_assertion_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8244,6 +11185,16 @@ pub struct TypeParameterTransport {
     pub value: Option<DefaultTypeTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for TypeParameterTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_type_parameter_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TypeParametersTransport {
@@ -8259,6 +11210,16 @@ pub struct TypeParametersTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TypeParameterTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for TypeParametersTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_type_parameters_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8279,6 +11240,16 @@ pub struct TypePredicateTransport {
     pub r#type: TypeTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for TypePredicateTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_type_predicate_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TypePredicateAnnotationTransport {
@@ -8293,6 +11264,16 @@ pub struct TypePredicateAnnotationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub type_predicate: TypePredicateTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for TypePredicateAnnotationTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_type_predicate_annotation_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8312,6 +11293,16 @@ pub struct TypeQueryTransport {
     pub children: Vec<Box<AnyTransport>>,
 }
 
+impl ::sittir_core::types::RenderableTransport for TypeQueryTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_type_query_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct UnaryExpressionTransport {
@@ -8329,6 +11320,16 @@ pub struct UnaryExpressionTransport {
     pub argument: ExpressionTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for UnaryExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_unary_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct UndefinedTransport {
@@ -8342,6 +11343,16 @@ pub struct UndefinedTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for UndefinedTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_undefined_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8359,6 +11370,16 @@ pub struct UnescapedDoubleJsxStringFragmentTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for UnescapedDoubleJsxStringFragmentTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_unescaped_double_jsx_string_fragment_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct UnescapedDoubleStringFragmentTransport {
@@ -8372,6 +11393,16 @@ pub struct UnescapedDoubleStringFragmentTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for UnescapedDoubleStringFragmentTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_unescaped_double_string_fragment_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8389,6 +11420,16 @@ pub struct UnescapedSingleJsxStringFragmentTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for UnescapedSingleJsxStringFragmentTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_unescaped_single_jsx_string_fragment_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct UnescapedSingleStringFragmentTransport {
@@ -8402,6 +11443,16 @@ pub struct UnescapedSingleStringFragmentTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for UnescapedSingleStringFragmentTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_unescaped_single_string_fragment_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8419,6 +11470,16 @@ pub struct UnionTypeTransport {
     pub transport_node_id: Option<f64>,
     pub left: Option<TypeTransport>,
     pub right: TypeTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for UnionTypeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_union_type_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -8451,6 +11512,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for UpdateExpressionTransport {
     }
 }
 
+impl ::sittir_core::types::RenderableTransport for UpdateExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_update_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct UpdateExpressionUFormPostfixTransport {
@@ -8466,6 +11537,16 @@ pub struct UpdateExpressionUFormPostfixTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<UpdateExpressionPostfixTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for UpdateExpressionUFormPostfixTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_update_expression_uform_postfix_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8485,6 +11566,16 @@ pub struct UpdateExpressionUFormPrefixTransport {
     pub children: Vec<UpdateExpressionPrefixTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for UpdateExpressionUFormPrefixTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_update_expression_uform_prefix_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct VariableDeclarationTransport {
@@ -8500,6 +11591,16 @@ pub struct VariableDeclarationTransport {
     pub transport_node_id: Option<f64>,
     pub declarators: Vec<VariableDeclaratorTransport>,
     pub semicolon: SemicolonTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for VariableDeclarationTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_variable_declaration_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8521,6 +11622,16 @@ pub struct VariableDeclaratorTransport {
     pub value: Option<ExpressionTransport>,
 }
 
+impl ::sittir_core::types::RenderableTransport for VariableDeclaratorTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_variable_declarator_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct WhileStatementTransport {
@@ -8536,6 +11647,16 @@ pub struct WhileStatementTransport {
     pub transport_node_id: Option<f64>,
     pub condition: Box<AnyTransport>,
     pub body: StatementTransport,
+}
+
+impl ::sittir_core::types::RenderableTransport for WhileStatementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_while_statement_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8555,6 +11676,16 @@ pub struct WithStatementTransport {
     pub body: StatementTransport,
 }
 
+impl ::sittir_core::types::RenderableTransport for WithStatementTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_with_statement_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct YieldExpressionTransport {
@@ -8569,6 +11700,16 @@ pub struct YieldExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub expression: Option<ExpressionTransport>,
+}
+
+impl ::sittir_core::types::RenderableTransport for YieldExpressionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_yield_expression_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8586,6 +11727,16 @@ pub struct AutomaticSemicolonTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for AutomaticSemicolonTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_automatic_semicolon_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TemplateCharsTransport {
@@ -8599,6 +11750,16 @@ pub struct TemplateCharsTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for TemplateCharsTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_template_chars_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8616,6 +11777,16 @@ pub struct TernaryQmarkTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for TernaryQmarkTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_ternary_qmark_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct HtmlCommentTransport {
@@ -8629,6 +11800,16 @@ pub struct HtmlCommentTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for HtmlCommentTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_html_comment_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8646,6 +11827,16 @@ pub struct OrorTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for OrorTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_oror_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct JsxTextTransport {
@@ -8659,6 +11850,16 @@ pub struct JsxTextTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for JsxTextTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_jsx_text_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8676,6 +11877,16 @@ pub struct FunctionSignatureAutomaticSemicolonTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for FunctionSignatureAutomaticSemicolonTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_function_signature_automatic_semicolon_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ErrorRecoveryTransport {
@@ -8689,6 +11900,16 @@ pub struct ErrorRecoveryTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for ErrorRecoveryTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_error_recovery_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8706,6 +11927,16 @@ pub struct TokQDotTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for TokQDotTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_tok_qdot_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct CommaTransport {
@@ -8719,6 +11950,16 @@ pub struct CommaTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for CommaTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_comma_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8736,6 +11977,16 @@ pub struct ExportTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for ExportTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_export_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct DefaultTransport {
@@ -8749,6 +12000,16 @@ pub struct DefaultTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for DefaultTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_default_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8766,6 +12027,16 @@ pub struct StarTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for StarTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_star_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct EqTransport {
@@ -8779,6 +12050,16 @@ pub struct EqTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for EqTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_eq_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8796,6 +12077,16 @@ pub struct AsTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for AsTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_as_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct NamespaceTransport {
@@ -8809,6 +12100,16 @@ pub struct NamespaceTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for NamespaceTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_namespace_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8826,6 +12127,16 @@ pub struct ParenTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for ParenTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_paren_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct CloseParenTransport {
@@ -8839,6 +12150,16 @@ pub struct CloseParenTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for CloseParenTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_close_paren_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8856,6 +12177,16 @@ pub struct VarTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for VarTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_var_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct FromTransport {
@@ -8869,6 +12200,16 @@ pub struct FromTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for FromTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_from_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8886,6 +12227,16 @@ pub struct ColonTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for ColonTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_colon_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct LtTransport {
@@ -8899,6 +12250,16 @@ pub struct LtTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for LtTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_lt_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8916,6 +12277,16 @@ pub struct TokDqTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for TokDqTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_tok_dq_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TokSqTransport {
@@ -8929,6 +12300,16 @@ pub struct TokSqTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for TokSqTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_tok_sq_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8946,6 +12327,16 @@ pub struct AbstractTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for AbstractTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_abstract_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct AsyncTransport {
@@ -8959,6 +12350,16 @@ pub struct AsyncTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for AsyncTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_async_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -8976,6 +12377,16 @@ pub struct ConstTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for ConstTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_const_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct QuestionTransport {
@@ -8989,6 +12400,16 @@ pub struct QuestionTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for QuestionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_question_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9006,6 +12427,16 @@ pub struct ReadonlyTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for ReadonlyTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_readonly_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct StaticTransport {
@@ -9019,6 +12450,16 @@ pub struct StaticTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for StaticTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_static_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9036,6 +12477,16 @@ pub struct DeclareTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for DeclareTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_declare_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct AccessorTransport {
@@ -9049,6 +12500,16 @@ pub struct AccessorTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for AccessorTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_accessor_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9066,6 +12527,16 @@ pub struct DotTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for DotTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_dot_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct BracketTransport {
@@ -9079,6 +12550,16 @@ pub struct BracketTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for BracketTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_bracket_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9096,6 +12577,16 @@ pub struct CloseBracketTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for CloseBracketTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_close_bracket_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TokPlusQColonTransport {
@@ -9109,6 +12600,16 @@ pub struct TokPlusQColonTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for TokPlusQColonTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_tok_plus_qcolon_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9126,6 +12627,16 @@ pub struct GlobalTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for GlobalTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_global_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct UsingTransport {
@@ -9139,6 +12650,16 @@ pub struct UsingTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for UsingTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_using_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9156,6 +12677,16 @@ pub struct AwaitTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for AwaitTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_await_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct AndandTransport {
@@ -9169,6 +12700,16 @@ pub struct AndandTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for AndandTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_andand_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9186,6 +12727,16 @@ pub struct ShrTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for ShrTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_shr_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TokGtGtGtTransport {
@@ -9199,6 +12750,16 @@ pub struct TokGtGtGtTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for TokGtGtGtTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_tok_gt_gt_gt_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9216,6 +12777,16 @@ pub struct ShlTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for ShlTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_shl_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct AmpTransport {
@@ -9229,6 +12800,16 @@ pub struct AmpTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for AmpTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_amp_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9246,6 +12827,16 @@ pub struct CaretTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for CaretTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_caret_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct PipeTransport {
@@ -9259,6 +12850,16 @@ pub struct PipeTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for PipeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_pipe_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9276,6 +12877,16 @@ pub struct PlusTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for PlusTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_plus_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct MinusTransport {
@@ -9289,6 +12900,16 @@ pub struct MinusTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for MinusTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_minus_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9306,6 +12927,16 @@ pub struct SlashTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for SlashTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_slash_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct PercentTransport {
@@ -9319,6 +12950,16 @@ pub struct PercentTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for PercentTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_percent_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9336,6 +12977,16 @@ pub struct StarstarTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for StarstarTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_starstar_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct LeTransport {
@@ -9349,6 +13000,16 @@ pub struct LeTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for LeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_le_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9366,6 +13027,16 @@ pub struct EqeqTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for EqeqTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_eqeq_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TokEqEqEqTransport {
@@ -9379,6 +13050,16 @@ pub struct TokEqEqEqTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for TokEqEqEqTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_tok_eq_eq_eq_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9396,6 +13077,16 @@ pub struct NeqTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for NeqTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_neq_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TokBangEqEqTransport {
@@ -9409,6 +13100,16 @@ pub struct TokBangEqEqTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for TokBangEqEqTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_tok_bang_eq_eq_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9426,6 +13127,16 @@ pub struct GeTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for GeTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_ge_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct GtTransport {
@@ -9439,6 +13150,16 @@ pub struct GtTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for GtTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_gt_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9456,6 +13177,16 @@ pub struct TokQQTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for TokQQTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_tok_qq_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct InstanceofTransport {
@@ -9469,6 +13200,16 @@ pub struct InstanceofTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for InstanceofTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_instanceof_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9486,6 +13227,16 @@ pub struct InTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for InTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_in_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct BreakTransport {
@@ -9499,6 +13250,16 @@ pub struct BreakTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for BreakTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_break_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9516,6 +13277,16 @@ pub struct CatchTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for CatchTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_catch_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct BraceTransport {
@@ -9529,6 +13300,16 @@ pub struct BraceTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for BraceTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_brace_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9546,6 +13327,16 @@ pub struct SemiTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for SemiTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_semi_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct CloseBraceTransport {
@@ -9559,6 +13350,16 @@ pub struct CloseBraceTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for CloseBraceTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_close_brace_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9576,6 +13377,16 @@ pub struct ExtendsTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for ExtendsTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_extends_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct NewTransport {
@@ -9589,6 +13400,16 @@ pub struct NewTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for NewTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_new_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9606,6 +13427,16 @@ pub struct FatArrowTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for FatArrowTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_fat_arrow_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ContinueTransport {
@@ -9619,6 +13450,16 @@ pub struct ContinueTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for ContinueTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_continue_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9636,6 +13477,16 @@ pub struct DebuggerTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for DebuggerTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_debugger_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct AtTransport {
@@ -9649,6 +13500,16 @@ pub struct AtTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for AtTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_at_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9666,6 +13527,16 @@ pub struct DoTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for DoTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_do_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct WhileTransport {
@@ -9679,6 +13550,16 @@ pub struct WhileTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for WhileTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_while_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9696,6 +13577,16 @@ pub struct ElseTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for ElseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_else_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct EnumTransport {
@@ -9709,6 +13600,16 @@ pub struct EnumTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for EnumTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_enum_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9726,6 +13627,16 @@ pub struct FinallyTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for FinallyTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_finally_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ForTransport {
@@ -9739,6 +13650,16 @@ pub struct ForTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for ForTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_for_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9756,6 +13677,16 @@ pub struct FunctionTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for FunctionTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_function_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct IfTransport {
@@ -9769,6 +13700,16 @@ pub struct IfTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for IfTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_if_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9786,6 +13727,16 @@ pub struct ImplementsTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for ImplementsTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_implements_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct RequireTransport {
@@ -9799,6 +13750,16 @@ pub struct RequireTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for RequireTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_require_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9816,6 +13777,16 @@ pub struct KeyofTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for KeyofTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_keyof_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct InferTransport {
@@ -9829,6 +13800,16 @@ pub struct InferTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for InferTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_infer_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9846,6 +13827,16 @@ pub struct InterfaceTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for InterfaceTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_interface_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TokLtSlashTransport {
@@ -9859,6 +13850,16 @@ pub struct TokLtSlashTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for TokLtSlashTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_tok_lt_slash_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9876,6 +13877,16 @@ pub struct TokSlashGtTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for TokSlashGtTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_tok_slash_gt_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct BangTransport {
@@ -9889,6 +13900,16 @@ pub struct BangTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for BangTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_bang_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9906,6 +13927,16 @@ pub struct TokMinusQColonTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for TokMinusQColonTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_tok_minus_qcolon_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TokQColonTransport {
@@ -9919,6 +13950,16 @@ pub struct TokQColonTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for TokQColonTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_tok_qcolon_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9936,6 +13977,16 @@ pub struct OverrideTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for OverrideTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_override_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct EllipsisTransport {
@@ -9949,6 +14000,16 @@ pub struct EllipsisTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for EllipsisTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_ellipsis_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9966,6 +14027,16 @@ pub struct ReturnTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for ReturnTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_return_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SatisfiesTransport {
@@ -9979,6 +14050,16 @@ pub struct SatisfiesTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for SatisfiesTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_satisfies_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -9996,6 +14077,16 @@ pub struct CaseTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for CaseTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_case_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SwitchTransport {
@@ -10009,6 +14100,16 @@ pub struct SwitchTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for SwitchTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_switch_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -10026,6 +14127,16 @@ pub struct TokBtTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for TokBtTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_tok_bt_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TokDollarLbrTransport {
@@ -10039,6 +14150,16 @@ pub struct TokDollarLbrTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for TokDollarLbrTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_tok_dollar_lbr_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -10056,6 +14177,16 @@ pub struct ThrowTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for ThrowTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_throw_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TryTransport {
@@ -10069,6 +14200,16 @@ pub struct TryTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for TryTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_try_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -10086,6 +14227,16 @@ pub struct IsTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for IsTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_is_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TypeofTransport {
@@ -10099,6 +14250,16 @@ pub struct TypeofTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for TypeofTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_typeof_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
@@ -10116,6 +14277,16 @@ pub struct WithTransport {
     pub text: String,
 }
 
+impl ::sittir_core::types::RenderableTransport for WithTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_with_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct YieldTransport {
@@ -10129,6 +14300,16 @@ pub struct YieldTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for YieldTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_yield_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
 }
 
 
@@ -10161,73 +14342,23 @@ impl ::askama::FastWritable for Renderable<'_> {
 }
 
 fn render__arrow_function_ucall_signature_transport(node: &_ArrowFunctionUCallSignatureTransport) -> Result<String, ::askama::Error> {
-    let parameters_text = render_formal_parameters_transport(&node.parameters)?;
-    let return_type_text = if let Some(v) = &node.return_type {
-        render_transport_dispatch(v.as_ref())?
-    } else {
-        String::new()
-    };
-    let type_parameters_text = if let Some(v) = &node.type_parameters {
-        render_type_parameters_transport(v)?
-    } else {
-        String::new()
-    };
-    let template = _ArrowFunctionUCallSignatureTemplate {
-        parameters: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(parameters_text.as_str())),
-        return_type: if node.return_type.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(return_type_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
-        type_parameters: if node.type_parameters.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_parameters_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render__arrow_function_parameter_transport(node: &_ArrowFunctionParameterTransport) -> Result<String, ::askama::Error> {
-    let parameter_text = render_property_identifier_transport(&node.parameter)?;
-    let template = _ArrowFunctionParameterTemplate {
-        parameter: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(parameter_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render_call_expression_call_transport(node: &CallExpressionCallTransport) -> Result<String, ::askama::Error> {
-    let arguments_text = render_arguments_transport(&node.arguments)?;
-    let function_text = render_transport_dispatch(node.function.as_ref())?;
-    let type_arguments_text = if let Some(v) = &node.type_arguments {
-        render_type_arguments_transport(v)?
-    } else {
-        String::new()
-    };
-    let template = CallExpressionCallTemplate {
-        arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(arguments_text.as_str())),
-        function: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(function_text.as_str())),
-        type_arguments: if node.type_arguments.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_arguments_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render_call_expression_member_transport(node: &CallExpressionMemberTransport) -> Result<String, ::askama::Error> {
-    let arguments_text = render_arguments_transport(&node.arguments)?;
-    let function_text = render_primary_expression_transport(&node.function)?;
-    let type_arguments_text = if let Some(v) = &node.type_arguments {
-        render_type_arguments_transport(v)?
-    } else {
-        String::new()
-    };
-    let template = CallExpressionMemberTemplate {
-        arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(arguments_text.as_str())),
-        function: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(function_text.as_str())),
-        type_arguments: if node.type_arguments.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(type_arguments_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render_call_expression_template_call_transport(node: &CallExpressionTemplateCallTransport) -> Result<String, ::askama::Error> {
-    let arguments_text = render_template_string_transport(&node.arguments)?;
-    let function_text = render_expression_transport(&node.function)?;
-    let template = CallExpressionTemplateCallTemplate {
-        arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(arguments_text.as_str())),
-        function: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(function_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render__call_signature_transport(node: &_CallSignatureTransport) -> Result<String, ::askama::Error> {
@@ -10236,7 +14367,7 @@ fn render__call_signature_transport(node: &_CallSignatureTransport) -> Result<St
 
 fn render_class_body_member_transport(node: &ClassBodyMemberTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -10254,7 +14385,7 @@ fn render_class_body_member_transport(node: &ClassBodyMemberTransport) -> Result
 
 fn render_class_body_method_transport(node: &ClassBodyMethodTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -10284,7 +14415,7 @@ fn render_class_body_method_transport(node: &ClassBodyMethodTransport) -> Result
 
 fn render_class_body_method_sig_transport(node: &ClassBodyMethodSigTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -10301,39 +14432,19 @@ fn render_class_body_method_sig_transport(node: &ClassBodyMethodSigTransport) ->
 }
 
 fn render__class_heritage_extends_clause_transport(node: &_ClassHeritageExtendsClauseTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _ClassHeritageExtendsClauseTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&child.as_ref().render_to_string()?);
+    }
+    Ok(out)
 }
 
 fn render__class_heritage_implements_clause_transport(node: &_ClassHeritageImplementsClauseTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_implements_clause_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _ClassHeritageImplementsClauseTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&render_implements_clause_transport(child)?);
+    }
+    Ok(out)
 }
 
 fn render_export_statement_default_decl_arm_transport(node: &ExportStatementDefaultDeclArmTransport) -> Result<String, ::askama::Error> {
@@ -10408,7 +14519,7 @@ fn render_export_statement_default_decl_arm_default_kw_value_transport(node: &Ex
 
 fn render_export_statement_default_from_arm_transport(node: &ExportStatementDefaultFromArmTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -10431,7 +14542,7 @@ fn render_export_statement_default_from_arm_clause_from_transport(node: &ExportS
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let source_text = render_transport_dispatch(node.source.as_ref())?;
+    let source_text = node.source.as_ref().render_to_string()?;
     let template = ExportStatementDefaultFromArmClauseFromTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -10451,7 +14562,7 @@ fn render_export_statement_default_from_arm_ns_from_transport(node: &ExportState
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let source_text = render_transport_dispatch(node.source.as_ref())?;
+    let source_text = node.source.as_ref().render_to_string()?;
     let template = ExportStatementDefaultFromArmNsFromTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -10465,7 +14576,7 @@ fn render_export_statement_default_from_arm_ns_from_transport(node: &ExportState
 }
 
 fn render_export_statement_default_from_arm_star_from_transport(node: &ExportStatementDefaultFromArmStarFromTransport) -> Result<String, ::askama::Error> {
-    let source_text = render_transport_dispatch(node.source.as_ref())?;
+    let source_text = node.source.as_ref().render_to_string()?;
     let template = ExportStatementDefaultFromArmStarFromTemplate {
         source: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(source_text.as_str())),
     };
@@ -10473,63 +14584,27 @@ fn render_export_statement_default_from_arm_star_from_transport(node: &ExportSta
 }
 
 fn render__export_statement_equals_export_transport(node: &_ExportStatementEqualsExportTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _ExportStatementEqualsExportTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&child.as_ref().render_to_string()?);
+    }
+    Ok(out)
 }
 
 fn render__export_statement_namespace_export_transport(node: &_ExportStatementNamespaceExportTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _ExportStatementNamespaceExportTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&child.as_ref().render_to_string()?);
+    }
+    Ok(out)
 }
 
 fn render__export_statement_type_export_transport(node: &_ExportStatementTypeExportTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let source_text = if let Some(v) = &node.source {
-        render_transport_dispatch(v.as_ref())?
-    } else {
-        String::new()
-    };
-    let template = _ExportStatementTypeExportTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        source: if node.source.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(source_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&child.as_ref().render_to_string()?);
+    }
+    Ok(out)
 }
 
 fn render_extends_clause_single_transport(node: &ExtendsClauseSingleTransport) -> Result<String, ::askama::Error> {
@@ -10539,7 +14614,7 @@ fn render_extends_clause_single_transport(node: &ExtendsClauseSingleTransport) -
 fn render_for_header_transport(node: &ForHeaderTransport) -> Result<String, ::askama::Error> {
     let mut out = String::new();
     for child in node.children.iter() {
-        out.push_str(&render_transport_dispatch(child.as_ref())?);
+        out.push_str(&child.as_ref().render_to_string()?);
     }
     Ok(out)
 }
@@ -10552,8 +14627,8 @@ fn render_for_header_let_const_kind_transport(node: &ForHeaderLetConstKindTransp
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let kind_text = render_transport_dispatch(node.kind.as_ref())?;
-    let left_text = render_transport_dispatch(node.left.as_ref())?;
+    let kind_text = node.kind.as_ref().render_to_string()?;
+    let left_text = node.left.as_ref().render_to_string()?;
     let template = ForHeaderLetConstKindTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -10568,7 +14643,7 @@ fn render_for_header_let_const_kind_transport(node: &ForHeaderLetConstKindTransp
 }
 
 fn render_for_header_lhs_transport(node: &ForHeaderLhsTransport) -> Result<String, ::askama::Error> {
-    let left_text = render_transport_dispatch(node.left.as_ref())?;
+    let left_text = node.left.as_ref().render_to_string()?;
     let template = ForHeaderLhsTemplate {
         left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
     };
@@ -10576,8 +14651,8 @@ fn render_for_header_lhs_transport(node: &ForHeaderLhsTransport) -> Result<Strin
 }
 
 fn render_for_header_var_kind_transport(node: &ForHeaderVarKindTransport) -> Result<String, ::askama::Error> {
-    let kind_text = render_transport_dispatch(node.kind.as_ref())?;
-    let left_text = render_transport_dispatch(node.left.as_ref())?;
+    let kind_text = node.kind.as_ref().render_to_string()?;
+    let left_text = node.left.as_ref().render_to_string()?;
     let template = ForHeaderVarKindTemplate {
         kind: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(kind_text.as_str())),
         left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
@@ -10591,103 +14666,47 @@ fn render_from_clause_transport(node: &FromClauseTransport) -> Result<String, ::
 }
 
 fn render__import_clause_default_import_transport(node: &_ImportClauseDefaultImportTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _ImportClauseDefaultImportTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&child.as_ref().render_to_string()?);
+    }
+    Ok(out)
 }
 
 fn render__import_clause_named_imports_transport(node: &_ImportClauseNamedImportsTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_named_imports_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _ImportClauseNamedImportsTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&render_named_imports_transport(child)?);
+    }
+    Ok(out)
 }
 
 fn render__import_clause_namespace_import_transport(node: &_ImportClauseNamespaceImportTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_namespace_import_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _ImportClauseNamespaceImportTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&render_namespace_import_transport(child)?);
+    }
+    Ok(out)
 }
 
 fn render_import_specifier_as_transport(node: &ImportSpecifierAsTransport) -> Result<String, ::askama::Error> {
-    let alias_text = render_import_identifier_transport(&node.alias)?;
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
-    let template = ImportSpecifierAsTemplate {
-        alias: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(alias_text.as_str())),
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render__import_specifier_name_transport(node: &_ImportSpecifierNameTransport) -> Result<String, ::askama::Error> {
-    let name_text = render_import_identifier_transport(&node.name)?;
-    let template = _ImportSpecifierNameTemplate {
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render_index_signature_colon_transport(node: &IndexSignatureColonTransport) -> Result<String, ::askama::Error> {
-    let index_type_text = render_type_transport(&node.index_type)?;
-    let name_text = render_property_identifier_transport(&node.name)?;
-    let template = IndexSignatureColonTemplate {
-        index_type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(index_type_text.as_str())),
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render__index_signature_mapped_type_clause_transport(node: &_IndexSignatureMappedTypeClauseTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_mapped_type_clause_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _IndexSignatureMappedTypeClauseTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&render_mapped_type_clause_transport(child)?);
+    }
+    Ok(out)
 }
 
 fn render_initializer_transport(node: &InitializerTransport) -> Result<String, ::askama::Error> {
@@ -10705,7 +14724,7 @@ fn render_jsx_start_opening_element_transport(node: &JsxStartOpeningElementTrans
 fn render_jsx_string_transport(node: &JsxStringTransport) -> Result<String, ::askama::Error> {
     let mut out = String::new();
     for child in node.children.iter() {
-        out.push_str(&render_transport_dispatch(child.as_ref())?);
+        out.push_str(&child.as_ref().render_to_string()?);
     }
     Ok(out)
 }
@@ -10736,7 +14755,7 @@ fn render_kw_static_marker_transport(t: &KwStaticMarkerTransport) -> Result<Stri
 
 fn render_lhs_expression_transport(node: &LhsExpressionTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -10758,7 +14777,7 @@ fn render__module_transport(node: &_ModuleTransport) -> Result<String, ::askama:
 
 fn render__number_transport(node: &_NumberTransport) -> Result<String, ::askama::Error> {
     let argument_text = render_number_transport(&node.argument)?;
-    let operator_text = render_transport_dispatch(node.operator.as_ref())?;
+    let operator_text = node.operator.as_ref().render_to_string()?;
     let template = _NumberTemplate {
         argument: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(argument_text.as_str())),
         operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operator_text.as_str())),
@@ -10770,52 +14789,26 @@ fn render_parameter_name_transport(node: &ParameterNameTransport) -> Result<Stri
     let mut out = String::new();
     if let Some(children) = &node.children {
         for child in children.iter() {
-            out.push_str(&render_transport_dispatch(child.as_ref())?);
+            out.push_str(&child.as_ref().render_to_string()?);
         }
     }
     Ok(out)
 }
 
 fn render__parenthesized_expression_sequence_transport(node: &_ParenthesizedExpressionSequenceTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_sequence_expression_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _ParenthesizedExpressionSequenceTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&render_sequence_expression_transport(child)?);
+    }
+    Ok(out)
 }
 
 fn render_parenthesized_expression_typed_transport(node: &ParenthesizedExpressionTypedTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_expression_transport(t))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let r#type_text = if let Some(v) = &node.r#type {
-        render_type_annotation_transport(v)?
-    } else {
-        String::new()
-    };
-    let template = ParenthesizedExpressionTypedTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        r#type: if node.r#type.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(r#type_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&render_expression_transport(child)?);
+    }
+    Ok(out)
 }
 
 fn render_public_field_definition_abstract_first_transport(node: &PublicFieldDefinitionAbstractFirstTransport) -> Result<String, ::askama::Error> {
@@ -10840,7 +14833,7 @@ fn render_public_field_definition_access_first_transport(node: &PublicFieldDefin
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let declare_marker_text = if let Some(v) = &node.declare_marker {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -10857,7 +14850,7 @@ fn render_public_field_definition_access_first_transport(node: &PublicFieldDefin
 }
 
 fn render_public_field_definition_accessor_opt_transport(node: &PublicFieldDefinitionAccessorOptTransport) -> Result<String, ::askama::Error> {
-    let accessor_marker_text = render_transport_dispatch(node.accessor_marker.as_ref())?;
+    let accessor_marker_text = node.accessor_marker.as_ref().render_to_string()?;
     let template = PublicFieldDefinitionAccessorOptTemplate {
         accessor_marker: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(accessor_marker_text.as_str())),
     };
@@ -10929,39 +14922,19 @@ fn render_reserved_identifier_transport(t: &ReservedIdentifierTransport) -> Resu
 }
 
 fn render__string_double_transport(node: &_StringDoubleTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _StringDoubleTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&child.as_ref().render_to_string()?);
+    }
+    Ok(out)
 }
 
 fn render__string_single_transport(node: &_StringSingleTransport) -> Result<String, ::askama::Error> {
-    let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
-        .collect::<Result<Vec<_>, _>>()?;
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
-        .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
-        .collect();
-    let template = _StringSingleTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-    };
-    template.render()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&child.as_ref().render_to_string()?);
+    }
+    Ok(out)
 }
 
 fn render_type_identifier_transport(node: &TypeIdentifierTransport) -> Result<String, ::askama::Error> {
@@ -10984,7 +14957,7 @@ fn render_type_identifier_transport(node: &TypeIdentifierTransport) -> Result<St
 
 fn render_type_query_call_expression_transport(node: &TypeQueryCallExpressionTransport) -> Result<String, ::askama::Error> {
     let arguments_text = render_arguments_transport(&node.arguments)?;
-    let function_text = render_transport_dispatch(node.function.as_ref())?;
+    let function_text = node.function.as_ref().render_to_string()?;
     let template = TypeQueryCallExpressionTemplate {
         arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(arguments_text.as_str())),
         function: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(function_text.as_str())),
@@ -10994,7 +14967,7 @@ fn render_type_query_call_expression_transport(node: &TypeQueryCallExpressionTra
 
 fn render_type_query_call_expression_in_type_annotation_transport(node: &TypeQueryCallExpressionInTypeAnnotationTransport) -> Result<String, ::askama::Error> {
     let arguments_text = render_arguments_transport(&node.arguments)?;
-    let function_text = render_transport_dispatch(node.function.as_ref())?;
+    let function_text = node.function.as_ref().render_to_string()?;
     let template = TypeQueryCallExpressionInTypeAnnotationTemplate {
         arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(arguments_text.as_str())),
         function: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(function_text.as_str())),
@@ -11003,7 +14976,7 @@ fn render_type_query_call_expression_in_type_annotation_transport(node: &TypeQue
 }
 
 fn render_type_query_instantiation_expression_transport(node: &TypeQueryInstantiationExpressionTransport) -> Result<String, ::askama::Error> {
-    let function_text = render_transport_dispatch(node.function.as_ref())?;
+    let function_text = node.function.as_ref().render_to_string()?;
     let type_arguments_text = render_type_arguments_transport(&node.type_arguments)?;
     let template = TypeQueryInstantiationExpressionTemplate {
         function: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(function_text.as_str())),
@@ -11013,7 +14986,7 @@ fn render_type_query_instantiation_expression_transport(node: &TypeQueryInstanti
 }
 
 fn render_type_query_member_expression_transport(node: &TypeQueryMemberExpressionTransport) -> Result<String, ::askama::Error> {
-    let object_text = render_transport_dispatch(node.object.as_ref())?;
+    let object_text = node.object.as_ref().render_to_string()?;
     let property_text = render_property_name_transport(&node.property)?;
     let template = TypeQueryMemberExpressionTemplate {
         object: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(object_text.as_str())),
@@ -11023,7 +14996,7 @@ fn render_type_query_member_expression_transport(node: &TypeQueryMemberExpressio
 }
 
 fn render_type_query_member_expression_in_type_annotation_transport(node: &TypeQueryMemberExpressionInTypeAnnotationTransport) -> Result<String, ::askama::Error> {
-    let object_text = render_transport_dispatch(node.object.as_ref())?;
+    let object_text = node.object.as_ref().render_to_string()?;
     let property_text = render_property_name_transport(&node.property)?;
     let template = TypeQueryMemberExpressionInTypeAnnotationTemplate {
         object: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(object_text.as_str())),
@@ -11033,8 +15006,8 @@ fn render_type_query_member_expression_in_type_annotation_transport(node: &TypeQ
 }
 
 fn render_type_query_subscript_expression_transport(node: &TypeQuerySubscriptExpressionTransport) -> Result<String, ::askama::Error> {
-    let index_text = render_transport_dispatch(node.index.as_ref())?;
-    let object_text = render_transport_dispatch(node.object.as_ref())?;
+    let index_text = node.index.as_ref().render_to_string()?;
+    let object_text = node.object.as_ref().render_to_string()?;
     let template = TypeQuerySubscriptExpressionTemplate {
         index: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(index_text.as_str())),
         object: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(object_text.as_str())),
@@ -11043,23 +15016,11 @@ fn render_type_query_subscript_expression_transport(node: &TypeQuerySubscriptExp
 }
 
 fn render_update_expression_postfix_transport(node: &UpdateExpressionPostfixTransport) -> Result<String, ::askama::Error> {
-    let argument_text = render_expression_transport(&node.argument)?;
-    let operator_text = render_transport_dispatch(node.operator.as_ref())?;
-    let template = UpdateExpressionPostfixTemplate {
-        argument: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(argument_text.as_str())),
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operator_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render_update_expression_prefix_transport(node: &UpdateExpressionPrefixTransport) -> Result<String, ::askama::Error> {
-    let argument_text = render_expression_transport(&node.argument)?;
-    let operator_text = render_transport_dispatch(node.operator.as_ref())?;
-    let template = UpdateExpressionPrefixTemplate {
-        argument: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(argument_text.as_str())),
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operator_text.as_str())),
-    };
-    template.render()
+    Ok(node.transport_text.clone().unwrap_or_default())
 }
 
 fn render_abstract_class_declaration_transport(node: &AbstractClassDeclarationTransport) -> Result<String, ::askama::Error> {
@@ -11071,7 +15032,7 @@ fn render_abstract_class_declaration_transport(node: &AbstractClassDeclarationTr
         .collect();
     let body_text = render_class_body_transport(&node.body)?;
     let class_heritage_text = if let Some(v) = &node.class_heritage {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -11103,7 +15064,7 @@ fn render_abstract_method_signature_transport(node: &AbstractMethodSignatureTran
         String::new()
     };
     let accessor_kind_text = if let Some(v) = &node.accessor_kind {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -11120,7 +15081,7 @@ fn render_abstract_method_signature_transport(node: &AbstractMethodSignatureTran
     };
     let parameters_text = render_formal_parameters_transport(&node.parameters)?;
     let return_type_text = if let Some(v) = &node.return_type {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -11156,7 +15117,7 @@ fn render_adding_type_annotation_transport(node: &AddingTypeAnnotationTransport)
 
 fn render_ambient_declaration_transport(node: &AmbientDeclarationTransport) -> Result<String, ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = Vec::new();
-    let declaration_rendered = render_transport_dispatch(node.declaration.as_ref())?;
+    let declaration_rendered = node.declaration.as_ref().render_to_string()?;
     let template = AmbientDeclarationTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -11171,7 +15132,7 @@ fn render_ambient_declaration_transport(node: &AmbientDeclarationTransport) -> R
 
 fn render_arguments_transport(node: &ArgumentsTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -11189,7 +15150,7 @@ fn render_arguments_transport(node: &ArgumentsTransport) -> Result<String, ::ask
 
 fn render_array_transport(node: &ArrayTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -11207,7 +15168,7 @@ fn render_array_transport(node: &ArrayTransport) -> Result<String, ::askama::Err
 
 fn render_array_pattern_transport(node: &ArrayPatternTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -11242,7 +15203,7 @@ fn render_arrow_function_parameter_transport(node: &ArrowFunctionParameterTransp
 fn render_arrow_function_ucall_signature_transport(node: &ArrowFunctionUCallSignatureTransport) -> Result<String, ::askama::Error> {
     let parameters_text = render_formal_parameters_transport(&node.parameters)?;
     let return_type_text = if let Some(v) = &node.return_type {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -11278,7 +15239,7 @@ fn render_arrow_function_uform_parameter_transport(node: &ArrowFunctionUFormPara
     } else {
         String::new()
     };
-    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let body_text = node.body.as_ref().render_to_string()?;
     let template = ArrowFunctionTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -11304,7 +15265,7 @@ fn render_arrow_function_uform_ucall_signature_transport(node: &ArrowFunctionUFo
     } else {
         String::new()
     };
-    let body_text = render_transport_dispatch(node.body.as_ref())?;
+    let body_text = node.body.as_ref().render_to_string()?;
     let template = ArrowFunctionTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -11337,7 +15298,7 @@ fn render_as_expression_transport(node: &AsExpressionTransport) -> Result<String
 
 fn render_asserts_transport(node: &AssertsTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -11362,10 +15323,10 @@ fn render_asserts_annotation_transport(node: &AssertsAnnotationTransport) -> Res
 }
 
 fn render_assignment_expression_transport(node: &AssignmentExpressionTransport) -> Result<String, ::askama::Error> {
-    let left_text = render_transport_dispatch(node.left.as_ref())?;
+    let left_text = node.left.as_ref().render_to_string()?;
     let right_text = render_expression_transport(&node.right)?;
     let using_marker_text = if let Some(v) = &node.using_marker {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -11388,8 +15349,8 @@ fn render_assignment_pattern_transport(node: &AssignmentPatternTransport) -> Res
 }
 
 fn render_augmented_assignment_expression_transport(node: &AugmentedAssignmentExpressionTransport) -> Result<String, ::askama::Error> {
-    let left_text = render_transport_dispatch(node.left.as_ref())?;
-    let operator_text = render_transport_dispatch(node.operator.as_ref())?;
+    let left_text = node.left.as_ref().render_to_string()?;
+    let operator_text = node.operator.as_ref().render_to_string()?;
     let right_text = render_expression_transport(&node.right)?;
     let template = AugmentedAssignmentExpressionTemplate {
         left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
@@ -11408,8 +15369,8 @@ fn render_await_expression_transport(node: &AwaitExpressionTransport) -> Result<
 }
 
 fn render_binary_expression_transport(node: &BinaryExpressionTransport) -> Result<String, ::askama::Error> {
-    let left_text = render_transport_dispatch(node.left.as_ref())?;
-    let operator_text = render_transport_dispatch(node.operator.as_ref())?;
+    let left_text = node.left.as_ref().render_to_string()?;
+    let operator_text = node.operator.as_ref().render_to_string()?;
     let right_text = render_expression_transport(&node.right)?;
     let template = BinaryExpressionTemplate {
         left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
@@ -11498,7 +15459,7 @@ fn render_call_expression_uform_member_transport(node: &CallExpressionUFormMembe
 fn render_call_signature_transport(node: &CallSignatureTransport) -> Result<String, ::askama::Error> {
     let parameters_text = render_formal_parameters_transport(&node.parameters)?;
     let return_type_text = if let Some(v) = &node.return_type {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -11518,7 +15479,7 @@ fn render_call_signature_transport(node: &CallSignatureTransport) -> Result<Stri
 fn render_catch_clause_transport(node: &CatchClauseTransport) -> Result<String, ::askama::Error> {
     let body_text = render_statement_block_transport(&node.body)?;
     let parameter_text = if let Some(v) = &node.parameter {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -11544,7 +15505,7 @@ fn render_class_transport(node: &ClassTransport) -> Result<String, ::askama::Err
         .collect();
     let body_text = render_class_body_transport(&node.body)?;
     let class_heritage_text = if let Some(v) = &node.class_heritage {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -11575,7 +15536,7 @@ fn render_class_transport(node: &ClassTransport) -> Result<String, ::askama::Err
 
 fn render_class_body_transport(node: &ClassBodyTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -11605,7 +15566,7 @@ fn render_class_declaration_transport(node: &ClassDeclarationTransport) -> Resul
     };
     let body_text = render_class_body_transport(&node.body)?;
     let class_heritage_text = if let Some(v) = &node.class_heritage {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -11633,7 +15594,7 @@ fn render_class_declaration_transport(node: &ClassDeclarationTransport) -> Resul
 
 fn render_class_heritage_extends_clause_transport(node: &ClassHeritageExtendsClauseTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -11837,7 +15798,7 @@ fn render_debugger_statement_transport(node: &DebuggerStatementTransport) -> Res
 
 fn render_decorator_transport(node: &DecoratorTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -11855,7 +15816,7 @@ fn render_decorator_transport(node: &DecoratorTransport) -> Result<String, ::ask
 
 fn render_decorator_call_expression_transport(node: &DecoratorCallExpressionTransport) -> Result<String, ::askama::Error> {
     let arguments_text = render_arguments_transport(&node.arguments)?;
-    let function_text = render_transport_dispatch(node.function.as_ref())?;
+    let function_text = node.function.as_ref().render_to_string()?;
     let type_arguments_text = if let Some(v) = &node.type_arguments {
         render_type_arguments_transport(v)?
     } else {
@@ -11870,7 +15831,7 @@ fn render_decorator_call_expression_transport(node: &DecoratorCallExpressionTran
 }
 
 fn render_decorator_member_expression_transport(node: &DecoratorMemberExpressionTransport) -> Result<String, ::askama::Error> {
-    let object_text = render_transport_dispatch(node.object.as_ref())?;
+    let object_text = node.object.as_ref().render_to_string()?;
     let property_text = render_identifier_transport(&node.property)?;
     let template = DecoratorMemberExpressionTemplate {
         object: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(object_text.as_str())),
@@ -11881,7 +15842,7 @@ fn render_decorator_member_expression_transport(node: &DecoratorMemberExpression
 
 fn render_decorator_parenthesized_expression_transport(node: &DecoratorParenthesizedExpressionTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -11907,7 +15868,7 @@ fn render_default_type_transport(node: &DefaultTypeTransport) -> Result<String, 
 
 fn render_do_statement_transport(node: &DoStatementTransport) -> Result<String, ::askama::Error> {
     let body_text = render_statement_transport(&node.body)?;
-    let condition_text = render_transport_dispatch(node.condition.as_ref())?;
+    let condition_text = node.condition.as_ref().render_to_string()?;
     let semicolon_text = if let Some(v) = &node.semicolon {
         render_semicolon_transport(v)?
     } else {
@@ -12016,7 +15977,7 @@ fn render_export_specifier_transport(node: &ExportSpecifierTransport) -> Result<
         String::new()
     };
     let export_kind_text = if let Some(v) = &node.export_kind {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -12031,13 +15992,13 @@ fn render_export_specifier_transport(node: &ExportSpecifierTransport) -> Result<
 
 fn render_export_statement_type_export_transport(node: &ExportStatementTypeExportTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let source_text = if let Some(v) = &node.source {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -12055,7 +16016,7 @@ fn render_export_statement_type_export_transport(node: &ExportStatementTypeExpor
 
 fn render_export_statement_equals_export_transport(node: &ExportStatementEqualsExportTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -12073,7 +16034,7 @@ fn render_export_statement_equals_export_transport(node: &ExportStatementEqualsE
 
 fn render_export_statement_namespace_export_transport(node: &ExportStatementNamespaceExportTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -12218,7 +16179,7 @@ fn render_extends_clause_transport(node: &ExtendsClauseTransport) -> Result<Stri
 
 fn render_extends_type_clause_transport(node: &ExtendsTypeClauseTransport) -> Result<String, ::askama::Error> {
     let r#type_strings: Vec<String> = node.r#type.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let r#type_buf: Vec<::sittir_core::filters::Renderable<'_>> = r#type_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -12288,18 +16249,18 @@ fn render_flow_maybe_type_transport(node: &FlowMaybeTypeTransport) -> Result<Str
 
 fn render_for_in_statement_transport(node: &ForInStatementTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let await_marker_text = if let Some(v) = &node.await_marker {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
     let body_text = render_statement_transport(&node.body)?;
-    let operator_text = render_transport_dispatch(node.operator.as_ref())?;
+    let operator_text = node.operator.as_ref().render_to_string()?;
     let right_text = render_expressions_transport(&node.right)?;
     let template = ForInStatementTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -12318,13 +16279,13 @@ fn render_for_in_statement_transport(node: &ForInStatementTransport) -> Result<S
 
 fn render_for_statement_transport(node: &ForStatementTransport) -> Result<String, ::askama::Error> {
     let body_text = render_statement_transport(&node.body)?;
-    let condition_text = render_transport_dispatch(node.condition.as_ref())?;
+    let condition_text = node.condition.as_ref().render_to_string()?;
     let increment_text = if let Some(v) = &node.increment {
         render_expressions_transport(v)?
     } else {
         String::new()
     };
-    let initializer_text = render_transport_dispatch(node.initializer.as_ref())?;
+    let initializer_text = node.initializer.as_ref().render_to_string()?;
     let template = ForStatementTemplate {
         body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
         condition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(condition_text.as_str())),
@@ -12369,7 +16330,7 @@ fn render_function_declaration_transport(node: &FunctionDeclarationTransport) ->
     let name_text = render_identifier_transport(&node.name)?;
     let parameters_text = render_formal_parameters_transport(&node.parameters)?;
     let return_type_text = if let Some(v) = &node.return_type {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -12409,7 +16370,7 @@ fn render_function_expression_transport(node: &FunctionExpressionTransport) -> R
     };
     let parameters_text = render_formal_parameters_transport(&node.parameters)?;
     let return_type_text = if let Some(v) = &node.return_type {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -12439,11 +16400,11 @@ fn render_function_signature_transport(node: &FunctionSignatureTransport) -> Res
     let name_text = render_identifier_transport(&node.name)?;
     let parameters_text = render_formal_parameters_transport(&node.parameters)?;
     let return_type_text = if let Some(v) = &node.return_type {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
-    let semicolon_text = render_transport_dispatch(node.semicolon.as_ref())?;
+    let semicolon_text = node.semicolon.as_ref().render_to_string()?;
     let type_parameters_text = if let Some(v) = &node.type_parameters {
         render_type_parameters_transport(v)?
     } else {
@@ -12468,7 +16429,7 @@ fn render_function_signature_transport(node: &FunctionSignatureTransport) -> Res
 
 fn render_function_type_transport(node: &FunctionTypeTransport) -> Result<String, ::askama::Error> {
     let parameters_text = render_formal_parameters_transport(&node.parameters)?;
-    let return_type_text = render_transport_dispatch(node.return_type.as_ref())?;
+    let return_type_text = node.return_type.as_ref().render_to_string()?;
     let type_parameters_text = if let Some(v) = &node.type_parameters {
         render_type_parameters_transport(v)?
     } else {
@@ -12496,7 +16457,7 @@ fn render_generator_function_transport(node: &GeneratorFunctionTransport) -> Res
     };
     let parameters_text = render_formal_parameters_transport(&node.parameters)?;
     let return_type_text = if let Some(v) = &node.return_type {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -12533,7 +16494,7 @@ fn render_generator_function_declaration_transport(node: &GeneratorFunctionDecla
     let name_text = render_identifier_transport(&node.name)?;
     let parameters_text = render_formal_parameters_transport(&node.parameters)?;
     let return_type_text = if let Some(v) = &node.return_type {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -12560,7 +16521,7 @@ fn render_generator_function_declaration_transport(node: &GeneratorFunctionDecla
 }
 
 fn render_generic_type_transport(node: &GenericTypeTransport) -> Result<String, ::askama::Error> {
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = node.name.as_ref().render_to_string()?;
     let type_arguments_text = render_type_arguments_transport(&node.type_arguments)?;
     let template = GenericTypeTemplate {
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
@@ -12587,7 +16548,7 @@ fn render_if_statement_transport(node: &IfStatementTransport) -> Result<String, 
     } else {
         String::new()
     };
-    let condition_text = render_transport_dispatch(node.condition.as_ref())?;
+    let condition_text = node.condition.as_ref().render_to_string()?;
     let consequence_text = render_statement_transport(&node.consequence)?;
     let template = IfStatementTemplate {
         alternative: if node.alternative.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(alternative_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
@@ -12684,7 +16645,7 @@ fn render_import_clause_named_imports_transport(node: &ImportClauseNamedImportsT
 
 fn render_import_clause_default_import_transport(node: &ImportClauseDefaultImportTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -12764,7 +16725,7 @@ fn render_import_clause_uform_default_import_transport(node: &ImportClauseUFormD
 
 fn render_import_require_clause_transport(node: &ImportRequireClauseTransport) -> Result<String, ::askama::Error> {
     let identifier_text = render_identifier_transport(&node.identifier)?;
-    let source_text = render_transport_dispatch(node.source.as_ref())?;
+    let source_text = node.source.as_ref().render_to_string()?;
     let template = ImportRequireClauseTemplate {
         identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(identifier_text.as_str())),
         source: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(source_text.as_str())),
@@ -12795,7 +16756,7 @@ fn render_import_specifier_uform_name_transport(node: &ImportSpecifierUFormNameT
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let import_kind_text = if let Some(v) = &node.import_kind {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -12819,7 +16780,7 @@ fn render_import_specifier_uform_as_transport(node: &ImportSpecifierUFormAsTrans
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let import_kind_text = if let Some(v) = &node.import_kind {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -12843,7 +16804,7 @@ fn render_import_statement_transport(node: &ImportStatementTransport) -> Result<
         String::new()
     };
     let import_clause_text = if let Some(v) = &node.import_clause {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -12896,11 +16857,11 @@ fn render_index_signature_uform_colon_transport(node: &IndexSignatureUFormColonT
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let sign_text = if let Some(v) = &node.sign {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
-    let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
+    let r#type_text = node.r#type.as_ref().render_to_string()?;
     let template = IndexSignatureTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -12922,11 +16883,11 @@ fn render_index_signature_uform_mapped_type_clause_transport(node: &IndexSignatu
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let sign_text = if let Some(v) = &node.sign {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
-    let r#type_text = render_transport_dispatch(node.r#type.as_ref())?;
+    let r#type_text = node.r#type.as_ref().render_to_string()?;
     let template = IndexSignatureTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -13000,7 +16961,7 @@ fn render_internal_module_transport(node: &InternalModuleTransport) -> Result<St
     } else {
         String::new()
     };
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = node.name.as_ref().render_to_string()?;
     let template = InternalModuleTemplate {
         body: if node.body.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(body_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
@@ -13024,7 +16985,7 @@ fn render_intersection_type_transport(node: &IntersectionTypeTransport) -> Resul
 
 fn render_jsx_attribute_transport(node: &JsxAttributeTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -13077,7 +17038,7 @@ fn render_jsx_element_transport(node: &JsxElementTransport) -> Result<String, ::
 fn render_jsx_expression_transport(node: &JsxExpressionTransport) -> Result<String, ::askama::Error> {
     let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
     let children_strings: Vec<String> = children_owned.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -13123,7 +17084,7 @@ fn render_jsx_opening_element_transport(node: &JsxOpeningElementTransport) -> Re
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let name_text = if let Some(v) = &node.name {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -13153,7 +17114,7 @@ fn render_jsx_self_closing_element_transport(node: &JsxSelfClosingElementTranspo
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
     let name_text = if let Some(v) = &node.name {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -13192,7 +17153,7 @@ fn render_lexical_declaration_transport(node: &LexicalDeclarationTransport) -> R
     let declarators_buf: Vec<::sittir_core::filters::Renderable<'_>> = declarators_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let kind_text = render_transport_dispatch(node.kind.as_ref())?;
+    let kind_text = node.kind.as_ref().render_to_string()?;
     let semicolon_text = render_semicolon_transport(&node.semicolon)?;
     let template = LexicalDeclarationTemplate {
         declarators: ::sittir_core::filters::ListNonterminalView {
@@ -13209,7 +17170,7 @@ fn render_lexical_declaration_transport(node: &LexicalDeclarationTransport) -> R
 
 fn render_literal_type_transport(node: &LiteralTypeTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -13252,7 +17213,7 @@ fn render_mapped_type_clause_transport(node: &MappedTypeClauseTransport) -> Resu
 }
 
 fn render_member_expression_transport(node: &MemberExpressionTransport) -> Result<String, ::askama::Error> {
-    let object_text = render_transport_dispatch(node.object.as_ref())?;
+    let object_text = node.object.as_ref().render_to_string()?;
     let property_text = render_property_name_transport(&node.property)?;
     let template = MemberExpressionTemplate {
         object: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(object_text.as_str())),
@@ -13273,7 +17234,7 @@ fn render_method_definition_transport(node: &MethodDefinitionTransport) -> Resul
         String::new()
     };
     let accessor_kind_text = if let Some(v) = &node.accessor_kind {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -13301,7 +17262,7 @@ fn render_method_definition_transport(node: &MethodDefinitionTransport) -> Resul
         String::new()
     };
     let return_type_text = if let Some(v) = &node.return_type {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -13339,7 +17300,7 @@ fn render_method_signature_transport(node: &MethodSignatureTransport) -> Result<
         String::new()
     };
     let accessor_kind_text = if let Some(v) = &node.accessor_kind {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -13366,7 +17327,7 @@ fn render_method_signature_transport(node: &MethodSignatureTransport) -> Result<
         String::new()
     };
     let return_type_text = if let Some(v) = &node.return_type {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -13402,7 +17363,7 @@ fn render_module_transport(node: &ModuleTransport) -> Result<String, ::askama::E
     } else {
         String::new()
     };
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = node.name.as_ref().render_to_string()?;
     let template = ModuleTemplate {
         body: if node.body.is_some() { ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(body_text.as_str())) } else { ::sittir_core::filters::OptionalNonterminalView::Missing },
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(name_text.as_str())),
@@ -13412,7 +17373,7 @@ fn render_module_transport(node: &ModuleTransport) -> Result<String, ::askama::E
 
 fn render_named_imports_transport(node: &NamedImportsTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -13513,7 +17474,7 @@ fn render_number_transport(t: &NumberTransport) -> Result<String, ::askama::Erro
 fn render_object_transport(node: &ObjectTransport) -> Result<String, ::askama::Error> {
     let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
     let children_strings: Vec<String> = children_owned.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -13530,7 +17491,7 @@ fn render_object_transport(node: &ObjectTransport) -> Result<String, ::askama::E
 }
 
 fn render_object_assignment_pattern_transport(node: &ObjectAssignmentPatternTransport) -> Result<String, ::askama::Error> {
-    let left_text = render_transport_dispatch(node.left.as_ref())?;
+    let left_text = node.left.as_ref().render_to_string()?;
     let right_text = render_expression_transport(&node.right)?;
     let template = ObjectAssignmentPatternTemplate {
         left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(left_text.as_str())),
@@ -13542,7 +17503,7 @@ fn render_object_assignment_pattern_transport(node: &ObjectAssignmentPatternTran
 fn render_object_pattern_transport(node: &ObjectPatternTransport) -> Result<String, ::askama::Error> {
     let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
     let children_strings: Vec<String> = children_owned.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -13561,13 +17522,13 @@ fn render_object_pattern_transport(node: &ObjectPatternTransport) -> Result<Stri
 fn render_object_type_transport(node: &ObjectTypeTransport) -> Result<String, ::askama::Error> {
     let members_owned: &[Box<AnyTransport>] = node.members.as_deref().unwrap_or(&[]);
     let members_strings: Vec<String> = members_owned.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let members_buf: Vec<::sittir_core::filters::Renderable<'_>> = members_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let closing_text = render_transport_dispatch(node.closing.as_ref())?;
-    let opening_text = render_transport_dispatch(node.opening.as_ref())?;
+    let closing_text = node.closing.as_ref().render_to_string()?;
+    let opening_text = node.opening.as_ref().render_to_string()?;
     let template = ObjectTypeTemplate {
         closing: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(closing_text.as_str())),
         members: ::sittir_core::filters::ListNonterminalView {
@@ -13604,7 +17565,7 @@ fn render_optional_chain_transport(t: &OptionalChainTransport) -> Result<String,
 fn render_optional_parameter_transport(node: &OptionalParameterTransport) -> Result<String, ::askama::Error> {
     let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
     let children_strings: Vec<String> = children_owned.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -13615,7 +17576,7 @@ fn render_optional_parameter_transport(node: &OptionalParameterTransport) -> Res
     let decorator_buf: Vec<::sittir_core::filters::Renderable<'_>> = decorator_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let pattern_text = render_transport_dispatch(node.pattern.as_ref())?;
+    let pattern_text = node.pattern.as_ref().render_to_string()?;
     let readonly_marker_text = if let Some(v) = &node.readonly_marker {
         render_kw_readonly_marker_transport(v)?
     } else {
@@ -13686,7 +17647,7 @@ fn render_pair_transport(node: &PairTransport) -> Result<String, ::askama::Error
 
 fn render_pair_pattern_transport(node: &PairPatternTransport) -> Result<String, ::askama::Error> {
     let key_text = render_property_name_transport(&node.key)?;
-    let value_text = render_transport_dispatch(node.value.as_ref())?;
+    let value_text = node.value.as_ref().render_to_string()?;
     let template = PairPatternTemplate {
         key: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(key_text.as_str())),
         value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
@@ -13842,7 +17803,7 @@ fn render_property_signature_transport(node: &PropertySignatureTransport) -> Res
 fn render_public_field_definition_transport(node: &PublicFieldDefinitionTransport) -> Result<String, ::askama::Error> {
     let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
     let children_strings: Vec<String> = children_owned.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -13855,7 +17816,7 @@ fn render_public_field_definition_transport(node: &PublicFieldDefinitionTranspor
         .collect();
     let name_text = render_property_name_transport(&node.name)?;
     let optionality_marker_text = if let Some(v) = &node.optionality_marker {
-        render_transport_dispatch(v.as_ref())?
+        v.as_ref().render_to_string()?
     } else {
         String::new()
     };
@@ -13923,7 +17884,7 @@ fn render_regex_pattern_transport(t: &RegexPatternTransport) -> Result<String, :
 fn render_required_parameter_transport(node: &RequiredParameterTransport) -> Result<String, ::askama::Error> {
     let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
     let children_strings: Vec<String> = children_owned.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -13934,7 +17895,7 @@ fn render_required_parameter_transport(node: &RequiredParameterTransport) -> Res
     let decorator_buf: Vec<::sittir_core::filters::Renderable<'_>> = decorator_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
         .collect();
-    let pattern_text = render_transport_dispatch(node.pattern.as_ref())?;
+    let pattern_text = node.pattern.as_ref().render_to_string()?;
     let readonly_marker_text = if let Some(v) = &node.readonly_marker {
         render_kw_readonly_marker_transport(v)?
     } else {
@@ -14080,7 +18041,7 @@ fn render_statement_block_transport(node: &StatementBlockTransport) -> Result<St
 
 fn render_string_double_transport(node: &StringDoubleTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -14098,7 +18059,7 @@ fn render_string_double_transport(node: &StringDoubleTransport) -> Result<String
 
 fn render_string_single_transport(node: &StringSingleTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -14159,7 +18120,7 @@ fn render_string_uform_single_transport(node: &StringUFormSingleTransport) -> Re
 
 fn render_subscript_expression_transport(node: &SubscriptExpressionTransport) -> Result<String, ::askama::Error> {
     let index_text = render_expressions_transport(&node.index)?;
-    let object_text = render_transport_dispatch(node.object.as_ref())?;
+    let object_text = node.object.as_ref().render_to_string()?;
     let optional_chain_text = if let Some(v) = &node.optional_chain {
         render_optional_chain_transport(v)?
     } else {
@@ -14179,7 +18140,7 @@ fn render_super_transport(t: &SuperTransport) -> Result<String, ::askama::Error>
 
 fn render_switch_body_transport(node: &SwitchBodyTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -14235,7 +18196,7 @@ fn render_switch_default_transport(node: &SwitchDefaultTransport) -> Result<Stri
 
 fn render_switch_statement_transport(node: &SwitchStatementTransport) -> Result<String, ::askama::Error> {
     let body_text = render_switch_body_transport(&node.body)?;
-    let value_text = render_transport_dispatch(node.value.as_ref())?;
+    let value_text = node.value.as_ref().render_to_string()?;
     let template = SwitchStatementTemplate {
         body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
         value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(value_text.as_str())),
@@ -14245,7 +18206,7 @@ fn render_switch_statement_transport(node: &SwitchStatementTransport) -> Result<
 
 fn render_template_literal_type_transport(node: &TemplateLiteralTypeTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -14263,7 +18224,7 @@ fn render_template_literal_type_transport(node: &TemplateLiteralTypeTransport) -
 
 fn render_template_string_transport(node: &TemplateStringTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -14521,7 +18482,7 @@ fn render_type_predicate_annotation_transport(node: &TypePredicateAnnotationTran
 
 fn render_type_query_transport(node: &TypeQueryTransport) -> Result<String, ::askama::Error> {
     let children_strings: Vec<String> = node.children.iter()
-        .map(|t| render_transport_dispatch(t.as_ref()))
+        .map(|t| t.as_ref().render_to_string())
         .collect::<Result<Vec<_>, _>>()?;
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_strings.iter()
         .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
@@ -14539,7 +18500,7 @@ fn render_type_query_transport(node: &TypeQueryTransport) -> Result<String, ::as
 
 fn render_unary_expression_transport(node: &UnaryExpressionTransport) -> Result<String, ::askama::Error> {
     let argument_text = render_expression_transport(&node.argument)?;
-    let operator_text = render_transport_dispatch(node.operator.as_ref())?;
+    let operator_text = node.operator.as_ref().render_to_string()?;
     let template = UnaryExpressionTemplate {
         argument: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(argument_text.as_str())),
         operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(operator_text.as_str())),
@@ -14645,7 +18606,7 @@ fn render_variable_declaration_transport(node: &VariableDeclarationTransport) ->
 }
 
 fn render_variable_declarator_transport(node: &VariableDeclaratorTransport) -> Result<String, ::askama::Error> {
-    let name_text = render_transport_dispatch(node.name.as_ref())?;
+    let name_text = node.name.as_ref().render_to_string()?;
     let r#type_text = if let Some(v) = &node.r#type {
         render_type_annotation_transport(v)?
     } else {
@@ -14666,7 +18627,7 @@ fn render_variable_declarator_transport(node: &VariableDeclaratorTransport) -> R
 
 fn render_while_statement_transport(node: &WhileStatementTransport) -> Result<String, ::askama::Error> {
     let body_text = render_statement_transport(&node.body)?;
-    let condition_text = render_transport_dispatch(node.condition.as_ref())?;
+    let condition_text = node.condition.as_ref().render_to_string()?;
     let template = WhileStatementTemplate {
         body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
         condition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(condition_text.as_str())),
@@ -14676,7 +18637,7 @@ fn render_while_statement_transport(node: &WhileStatementTransport) -> Result<St
 
 fn render_with_statement_transport(node: &WithStatementTransport) -> Result<String, ::askama::Error> {
     let body_text = render_statement_transport(&node.body)?;
-    let object_text = render_transport_dispatch(node.object.as_ref())?;
+    let object_text = node.object.as_ref().render_to_string()?;
     let template = WithStatementTemplate {
         body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(body_text.as_str())),
         object: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(object_text.as_str())),
@@ -15746,6 +19707,16 @@ pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::a
         AnyTransport::Literal25_7e(t) => render_literal_transport("~", t),
         AnyTransport::Literal26_76_6f_69_64(t) => render_literal_transport("void", t),
         AnyTransport::Literal27_64_65_6c_65_74_65(t) => render_literal_transport("delete", t),
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for AnyTransport {
+    fn render_into<W: ::std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_transport_dispatch(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
     }
 }
 
@@ -23197,43 +27168,6 @@ pub fn render_transport(transport: AnyTransport) -> Result<String, ::askama::Err
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_arrow_function__call_signature.jinja", escape = "none")]
-pub struct _ArrowFunctionUCallSignatureTemplate<'a> {
-    pub parameters: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub return_type: ::sittir_core::filters::OptionalNonterminalView<'a>,
-    pub type_parameters: ::sittir_core::filters::OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_arrow_function_parameter.jinja", escape = "none")]
-pub struct _ArrowFunctionParameterTemplate<'a> {
-    pub parameter: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_call_expression_call.jinja", escape = "none")]
-pub struct CallExpressionCallTemplate<'a> {
-    pub arguments: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub function: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub type_arguments: ::sittir_core::filters::OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_call_expression_member.jinja", escape = "none")]
-pub struct CallExpressionMemberTemplate<'a> {
-    pub arguments: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub function: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub type_arguments: ::sittir_core::filters::OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_call_expression_template_call.jinja", escape = "none")]
-pub struct CallExpressionTemplateCallTemplate<'a> {
-    pub arguments: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub function: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_class_body_member.jinja", escape = "none")]
 pub struct ClassBodyMemberTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
@@ -23250,18 +27184,6 @@ pub struct ClassBodyMethodSigTemplate<'a> {
 pub struct ClassBodyMethodTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub decorator: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_class_heritage_extends_clause.jinja", escape = "none")]
-pub struct _ClassHeritageExtendsClauseTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_class_heritage_implements_clause.jinja", escape = "none")]
-pub struct _ClassHeritageImplementsClauseTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -23313,25 +27235,6 @@ pub struct ExportStatementDefaultFromArmTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_export_statement_equals_export.jinja", escape = "none")]
-pub struct _ExportStatementEqualsExportTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_export_statement_namespace_export.jinja", escape = "none")]
-pub struct _ExportStatementNamespaceExportTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_export_statement_type_export.jinja", escape = "none")]
-pub struct _ExportStatementTypeExportTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub source: ::sittir_core::filters::OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_for_header_let_const_kind.jinja", escape = "none")]
 pub struct ForHeaderLetConstKindTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
@@ -23354,50 +27257,6 @@ pub struct ForHeaderVarKindTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_import_clause_default_import.jinja", escape = "none")]
-pub struct _ImportClauseDefaultImportTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_import_clause_named_imports.jinja", escape = "none")]
-pub struct _ImportClauseNamedImportsTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_import_clause_namespace_import.jinja", escape = "none")]
-pub struct _ImportClauseNamespaceImportTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_import_specifier_as.jinja", escape = "none")]
-pub struct ImportSpecifierAsTemplate<'a> {
-    pub alias: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_import_specifier_name.jinja", escape = "none")]
-pub struct _ImportSpecifierNameTemplate<'a> {
-    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_index_signature_colon.jinja", escape = "none")]
-pub struct IndexSignatureColonTemplate<'a> {
-    pub index_type: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_index_signature_mapped_type_clause.jinja", escape = "none")]
-pub struct _IndexSignatureMappedTypeClauseTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_initializer.jinja", escape = "none")]
 pub struct InitializerTemplate<'a> {
     pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
@@ -23414,19 +27273,6 @@ pub struct LhsExpressionTemplate<'a> {
 pub struct _NumberTemplate<'a> {
     pub argument: ::sittir_core::filters::SingleNonterminalView<'a>,
     pub operator: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_parenthesized_expression_sequence.jinja", escape = "none")]
-pub struct _ParenthesizedExpressionSequenceTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_parenthesized_expression_typed.jinja", escape = "none")]
-pub struct ParenthesizedExpressionTypedTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub r#type: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -23468,18 +27314,6 @@ pub struct PublicFieldDefinitionStaticModsTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub readonly_marker: ::sittir_core::filters::OptionalNonterminalView<'a>,
     pub static_marker: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_string_double.jinja", escape = "none")]
-pub struct _StringDoubleTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_string_single.jinja", escape = "none")]
-pub struct _StringSingleTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -23528,20 +27362,6 @@ pub struct TypeQueryMemberExpressionTemplate<'a> {
 pub struct TypeQuerySubscriptExpressionTemplate<'a> {
     pub index: ::sittir_core::filters::SingleNonterminalView<'a>,
     pub object: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_update_expression_postfix.jinja", escape = "none")]
-pub struct UpdateExpressionPostfixTemplate<'a> {
-    pub argument: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub operator: ::sittir_core::filters::SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_update_expression_prefix.jinja", escape = "none")]
-pub struct UpdateExpressionPrefixTemplate<'a> {
-    pub argument: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub operator: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -25206,77 +29026,6 @@ fn token_shaped_fallback(node: &NodeData) -> Result<String, ::askama::Error> {
     ))
 }
 
-fn render_hidden_arrow_function_call_signature(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["parameters", "return_type", "type_parameters"])?;
-    let field_0 = resolve_field(node, "parameters", true)?;
-    let field_1 = resolve_field(node, "return_type", false)?;
-    let field_2 = resolve_field(node, "type_parameters", false)?;
-    let template = _ArrowFunctionUCallSignatureTemplate {
-        parameters: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        return_type: match field_1.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-        },
-        type_parameters: match field_2.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_arrow_function_parameter(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["parameter"])?;
-    let field_0 = resolve_field(node, "parameter", true)?;
-    let template = _ArrowFunctionParameterTemplate {
-        parameter: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_call_expression_call(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["arguments", "function", "type_arguments"])?;
-    let field_0 = resolve_field(node, "arguments", true)?;
-    let field_1 = resolve_field(node, "function", true)?;
-    let field_2 = resolve_field(node, "type_arguments", false)?;
-    let template = CallExpressionCallTemplate {
-        arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        function: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-        type_arguments: match field_2.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_call_expression_member(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["arguments", "function", "type_arguments"])?;
-    let field_0 = resolve_field(node, "arguments", true)?;
-    let field_1 = resolve_field(node, "function", true)?;
-    let field_2 = resolve_field(node, "type_arguments", false)?;
-    let template = CallExpressionMemberTemplate {
-        arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        function: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-        type_arguments: match field_2.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_call_expression_template_call(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["arguments", "function"])?;
-    let field_0 = resolve_field(node, "arguments", true)?;
-    let field_1 = resolve_field(node, "function", true)?;
-    let template = CallExpressionTemplateCallTemplate {
-        arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        function: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-    };
-    template.render()
-}
-
 fn render_hidden_class_body_member(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
@@ -25322,34 +29071,6 @@ fn render_hidden_class_body_method(node: &NodeData) -> Result<String, ::askama::
             separator: field_0.separator,
             leading: field_0.leading_sep,
             trailing: field_0.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_class_heritage_extends_clause(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _ClassHeritageExtendsClauseTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_class_heritage_implements_clause(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _ClassHeritageImplementsClauseTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
         },
     };
     template.render()
@@ -25472,53 +29193,6 @@ fn render_hidden_export_statement_default_from_arm(node: &NodeData) -> Result<St
     template.render()
 }
 
-fn render_hidden_export_statement_equals_export(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _ExportStatementEqualsExportTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_export_statement_namespace_export(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _ExportStatementNamespaceExportTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_export_statement_type_export(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["source"])?;
-    let field_0 = resolve_field(node, "source", false)?;
-    let children_renderables = children.renderable_items();
-    let template = _ExportStatementTypeExportTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-        source: match field_0.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        },
-    };
-    template.render()
-}
-
 fn render_hidden_for_header_let_const_kind(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["kind", "left"])?;
     let field_0 = resolve_field(node, "kind", true)?;
@@ -25562,93 +29236,6 @@ fn render_hidden_for_header_var_kind(node: &NodeData) -> Result<String, ::askama
     template.render()
 }
 
-fn render_hidden_import_clause_default_import(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _ImportClauseDefaultImportTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_import_clause_named_imports(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _ImportClauseNamedImportsTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_import_clause_namespace_import(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _ImportClauseNamespaceImportTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_import_specifier_as(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["alias", "name"])?;
-    let field_0 = resolve_field(node, "alias", true)?;
-    let field_1 = resolve_field(node, "name", true)?;
-    let template = ImportSpecifierAsTemplate {
-        alias: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_import_specifier_name(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["name"])?;
-    let field_0 = resolve_field(node, "name", true)?;
-    let template = _ImportSpecifierNameTemplate {
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_index_signature_colon(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["index_type", "name"])?;
-    let field_0 = resolve_field(node, "index_type", true)?;
-    let field_1 = resolve_field(node, "name", true)?;
-    let template = IndexSignatureColonTemplate {
-        index_type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_index_signature_mapped_type_clause(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _IndexSignatureMappedTypeClauseTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
 fn render_hidden_initializer(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["value"])?;
     let field_0 = resolve_field(node, "value", true)?;
@@ -25679,39 +29266,6 @@ fn render_hidden_number(node: &NodeData) -> Result<String, ::askama::Error> {
     let template = _NumberTemplate {
         argument: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
         operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_parenthesized_expression_sequence(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _ParenthesizedExpressionSequenceTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_parenthesized_expression_typed(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["type"])?;
-    let field_0 = resolve_field(node, "type", false)?;
-    let children_renderables = children.renderable_items();
-    let template = ParenthesizedExpressionTypedTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-        r#type: match field_0.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        },
     };
     template.render()
 }
@@ -25807,34 +29361,6 @@ fn render_hidden_public_field_definition_static_mods(node: &NodeData) -> Result<
     template.render()
 }
 
-fn render_hidden_string_double(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _StringDoubleTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
-fn render_hidden_string_single(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
-    let template = _StringSingleTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
-    };
-    template.render()
-}
-
 fn render_hidden_type_identifier(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
@@ -25911,28 +29437,6 @@ fn render_hidden_type_query_subscript_expression(node: &NodeData) -> Result<Stri
     let template = TypeQuerySubscriptExpressionTemplate {
         index: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
         object: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_update_expression_postfix(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["argument", "operator"])?;
-    let field_0 = resolve_field(node, "argument", true)?;
-    let field_1 = resolve_field(node, "operator", true)?;
-    let template = UpdateExpressionPostfixTemplate {
-        argument: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-    };
-    template.render()
-}
-
-fn render_hidden_update_expression_prefix(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["argument", "operator"])?;
-    let field_0 = resolve_field(node, "argument", true)?;
-    let field_1 = resolve_field(node, "operator", true)?;
-    let template = UpdateExpressionPrefixTemplate {
-        argument: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -28790,16 +32294,9 @@ pub fn render_dispatch(node: &::sittir_core::types::NodeData) -> Result<String, 
         }
     }
     match node.type_.0 {
-        357 => render_hidden_arrow_function_call_signature(node), // "_arrow_function__call_signature" | "arrow_function__call_signature"
-        356 => render_hidden_arrow_function_parameter(node), // "_arrow_function_parameter" | "arrow_function_parameter"
-        387 => render_hidden_call_expression_call(node), // "_call_expression_call" | "call_expression_call"
-        389 => render_hidden_call_expression_member(node), // "_call_expression_member" | "call_expression_member"
-        388 => render_hidden_call_expression_template_call(node), // "_call_expression_template_call" | "call_expression_template_call"
         373 => render_hidden_class_body_member(node), // "_class_body_member" | "class_body_member"
         372 => render_hidden_class_body_method_sig(node), // "_class_body_method_sig" | "class_body_method_sig"
         371 => render_hidden_class_body_method(node), // "_class_body_method" | "class_body_method"
-        358 => render_hidden_class_heritage_extends_clause(node), // "_class_heritage_extends_clause" | "class_heritage_extends_clause"
-        359 => render_hidden_class_heritage_implements_clause(node), // "_class_heritage_implements_clause" | "class_heritage_implements_clause"
         370 => render_hidden_export_statement_default_decl_arm_default_kw_value(node), // "_export_statement_default_decl_arm_default_kw_value" | "export_statement_default_decl_arm_default_kw_value"
         355 => render_hidden_export_statement_default_decl_arm_default_kw(node), // "_export_statement_default_decl_arm_default_kw" | "export_statement_default_decl_arm_default_kw"
         354 => render_hidden_export_statement_default_decl_arm(node), // "_export_statement_default_decl_arm" | "export_statement_default_decl_arm"
@@ -28807,31 +32304,17 @@ pub fn render_dispatch(node: &::sittir_core::types::NodeData) -> Result<String, 
         368 => render_hidden_export_statement_default_from_arm_ns_from(node), // "_export_statement_default_from_arm_ns_from" | "export_statement_default_from_arm_ns_from"
         367 => render_hidden_export_statement_default_from_arm_star_from(node), // "_export_statement_default_from_arm_star_from" | "export_statement_default_from_arm_star_from"
         353 => render_hidden_export_statement_default_from_arm(node), // "_export_statement_default_from_arm" | "export_statement_default_from_arm"
-        385 => render_hidden_export_statement_equals_export(node), // "_export_statement_equals_export" | "export_statement_equals_export"
-        386 => render_hidden_export_statement_namespace_export(node), // "_export_statement_namespace_export" | "export_statement_namespace_export"
-        384 => render_hidden_export_statement_type_export(node), // "_export_statement_type_export" | "export_statement_type_export"
         376 => render_hidden_for_header_let_const_kind(node), // "_for_header_let_const_kind" | "for_header_let_const_kind"
         374 => render_hidden_for_header_lhs(node), // "_for_header_lhs" | "for_header_lhs"
         375 => render_hidden_for_header_var_kind(node), // "_for_header_var_kind" | "for_header_var_kind"
-        362 => render_hidden_import_clause_default_import(node), // "_import_clause_default_import" | "import_clause_default_import"
-        361 => render_hidden_import_clause_named_imports(node), // "_import_clause_named_imports" | "import_clause_named_imports"
-        360 => render_hidden_import_clause_namespace_import(node), // "_import_clause_namespace_import" | "import_clause_namespace_import"
-        364 => render_hidden_import_specifier_as(node), // "_import_specifier_as" | "import_specifier_as"
-        363 => render_hidden_import_specifier_name(node), // "_import_specifier_name" | "import_specifier_name"
-        365 => render_hidden_index_signature_colon(node), // "_index_signature_colon" | "index_signature_colon"
-        366 => render_hidden_index_signature_mapped_type_clause(node), // "_index_signature_mapped_type_clause" | "index_signature_mapped_type_clause"
         239 => render_hidden_initializer(node), // "_initializer"
         331 | 103 => render_hidden_number(node), // "_number" | "number"
-        383 => render_hidden_parenthesized_expression_sequence(node), // "_parenthesized_expression_sequence" | "parenthesized_expression_sequence"
-        382 => render_hidden_parenthesized_expression_typed(node), // "_parenthesized_expression_typed" | "parenthesized_expression_typed"
         420 => render_hidden_public_field_definition_abstract_first(node), // "_public_field_definition_abstract_first" | "public_field_definition_abstract_first"
         421 => render_hidden_public_field_definition_access_first(node), // "_public_field_definition_access_first" | "public_field_definition_access_first"
         422 => render_hidden_public_field_definition_accessor_opt(node), // "_public_field_definition_accessor_opt" | "public_field_definition_accessor_opt"
         423 => render_hidden_public_field_definition_declare_first(node), // "_public_field_definition_declare_first" | "public_field_definition_declare_first"
         424 => render_hidden_public_field_definition_readonly_first(node), // "_public_field_definition_readonly_first" | "public_field_definition_readonly_first"
         425 => render_hidden_public_field_definition_static_mods(node), // "_public_field_definition_static_mods" | "public_field_definition_static_mods"
-        390 => render_hidden_string_double(node), // "_string_double" | "string_double"
-        391 => render_hidden_string_single(node), // "_string_single" | "string_single"
         430 => render_hidden_type_identifier(node), // "_type_identifier" | "type_identifier"
         304 => render_hidden_type_query_call_expression_in_type_annotation(node), // "_type_query_call_expression_in_type_annotation"
         324 => render_hidden_type_query_call_expression(node), // "_type_query_call_expression"
@@ -28839,8 +32322,6 @@ pub fn render_dispatch(node: &::sittir_core::types::NodeData) -> Result<String, 
         303 => render_hidden_type_query_member_expression_in_type_annotation(node), // "_type_query_member_expression_in_type_annotation"
         322 => render_hidden_type_query_member_expression(node), // "_type_query_member_expression"
         323 => render_hidden_type_query_subscript_expression(node), // "_type_query_subscript_expression"
-        392 => render_hidden_update_expression_postfix(node), // "_update_expression_postfix" | "update_expression_postfix"
-        393 => render_hidden_update_expression_prefix(node), // "_update_expression_prefix" | "update_expression_prefix"
         282 => render_abstract_class_declaration(node), // "abstract_class_declaration"
         270 => render_abstract_method_signature(node), // "abstract_method_signature"
         300 => render_adding_type_annotation(node), // "adding_type_annotation"

@@ -23,3 +23,6 @@ pub mod types;
 // runtime migration design, callers reach this as `sittir_core::KindId`
 // rather than the longer `sittir_core::types::KindId`.
 pub use types::KindId;
+// Flat re-export for the streaming render trait — callers reach this as
+// `sittir_core::RenderableTransport`.
+pub use types::RenderableTransport;
