@@ -1611,14 +1611,6 @@ export interface LineDocContentTransport {
   '$text': string
 }
 
-export interface LiteralTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface LoopExpressionTransport {
   '$source'?: Source
   '$named'?: boolean

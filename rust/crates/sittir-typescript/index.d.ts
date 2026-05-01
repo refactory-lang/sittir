@@ -2130,14 +2130,6 @@ export interface LhsExpressionTransport {
   '$children': Array<Box<AnyTransport>>
 }
 
-export interface LiteralTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface LiteralTypeTransport {
   '$source'?: Source
   '$named'?: boolean

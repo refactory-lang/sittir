@@ -475,10 +475,11 @@ describe('native transport emission', () => {
 		expect(emitted.templatesRs.contents).toContain(
 			'pub callee: ExpressionTransport,'
 		);
+		// Literal variants are unit variants — no LiteralTransport payload.
 		expect(emitted.templatesRs.contents).toContain(
-			'#[serde(rename = ";")]\n    Literal0_3b(LiteralTransport),'
+			'#[serde(rename = ";")]\n    Literal0_3b,'
 		);
-		expect(emitted.templatesRs.contents).toContain(
+		expect(emitted.templatesRs.contents).not.toContain(
 			'pub struct LiteralTransport'
 		);
 		expect(emitted.templatesRs.contents).toContain('from_transport');

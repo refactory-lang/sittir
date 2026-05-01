@@ -300,30 +300,30 @@ pub enum AnyTransport {
     Try(TryTransport),
     While(WhileTransport),
     With(WithTransport),
-    Literal0_2b_3d(LiteralTransport),
-    Literal1_2d_3d(LiteralTransport),
-    Literal2_2a_3d(LiteralTransport),
-    Literal3_2f_3d(LiteralTransport),
-    Literal4_40_3d(LiteralTransport),
-    Literal5_2f_2f_3d(LiteralTransport),
-    Literal6_25_3d(LiteralTransport),
-    Literal7_2a_2a_3d(LiteralTransport),
-    Literal8_3e_3e_3d(LiteralTransport),
-    Literal9_3c_3c_3d(LiteralTransport),
-    Literal10_26_3d(LiteralTransport),
-    Literal11_5e_3d(LiteralTransport),
-    Literal12_7c_3d(LiteralTransport),
-    Literal13_3c(LiteralTransport),
-    Literal14_3c_3d(LiteralTransport),
-    Literal15_3d_3d(LiteralTransport),
-    Literal16_21_3d(LiteralTransport),
-    Literal17_3e_3d(LiteralTransport),
-    Literal18_3e(LiteralTransport),
-    Literal19_3c_3e(LiteralTransport),
-    Literal20_6e_6f_74_20_69_6e(LiteralTransport),
-    Literal21_69_73(LiteralTransport),
-    Literal22_69_73_20_6e_6f_74(LiteralTransport),
-    Literal23_7e(LiteralTransport),
+    Literal0_2b_3d,
+    Literal1_2d_3d,
+    Literal2_2a_3d,
+    Literal3_2f_3d,
+    Literal4_40_3d,
+    Literal5_2f_2f_3d,
+    Literal6_25_3d,
+    Literal7_2a_2a_3d,
+    Literal8_3e_3e_3d,
+    Literal9_3c_3c_3d,
+    Literal10_26_3d,
+    Literal11_5e_3d,
+    Literal12_7c_3d,
+    Literal13_3c,
+    Literal14_3c_3d,
+    Literal15_3d_3d,
+    Literal16_21_3d,
+    Literal17_3e_3d,
+    Literal18_3e,
+    Literal19_3c_3e,
+    Literal20_6e_6f_74_20_69_6e,
+    Literal21_69_73,
+    Literal22_69_73_20_6e_6f_74,
+    Literal23_7e,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -1168,101 +1168,53 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 WithTransport::from_napi_value(env, napi_val)?
             )),
             // literal kind: += → "+="
-            73 => Ok(AnyTransport::Literal0_2b_3d(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            73 => Ok(AnyTransport::Literal0_2b_3d),
             // literal kind: -= → "-="
-            74 => Ok(AnyTransport::Literal1_2d_3d(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            74 => Ok(AnyTransport::Literal1_2d_3d),
             // literal kind: *= → "*="
-            75 => Ok(AnyTransport::Literal2_2a_3d(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            75 => Ok(AnyTransport::Literal2_2a_3d),
             // literal kind: /= → "/="
-            76 => Ok(AnyTransport::Literal3_2f_3d(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            76 => Ok(AnyTransport::Literal3_2f_3d),
             // literal kind: @= → "@="
-            77 => Ok(AnyTransport::Literal4_40_3d(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            77 => Ok(AnyTransport::Literal4_40_3d),
             // literal kind: //= → "//="
-            78 => Ok(AnyTransport::Literal5_2f_2f_3d(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            78 => Ok(AnyTransport::Literal5_2f_2f_3d),
             // literal kind: %= → "%="
-            79 => Ok(AnyTransport::Literal6_25_3d(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            79 => Ok(AnyTransport::Literal6_25_3d),
             // literal kind: **= → "**="
-            80 => Ok(AnyTransport::Literal7_2a_2a_3d(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            80 => Ok(AnyTransport::Literal7_2a_2a_3d),
             // literal kind: >>= → ">>="
-            81 => Ok(AnyTransport::Literal8_3e_3e_3d(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            81 => Ok(AnyTransport::Literal8_3e_3e_3d),
             // literal kind: <<= → "<<="
-            82 => Ok(AnyTransport::Literal9_3c_3c_3d(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            82 => Ok(AnyTransport::Literal9_3c_3c_3d),
             // literal kind: &= → "&="
-            83 => Ok(AnyTransport::Literal10_26_3d(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            83 => Ok(AnyTransport::Literal10_26_3d),
             // literal kind: ^= → "^="
-            84 => Ok(AnyTransport::Literal11_5e_3d(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            84 => Ok(AnyTransport::Literal11_5e_3d),
             // literal kind: |= → "|="
-            85 => Ok(AnyTransport::Literal12_7c_3d(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            85 => Ok(AnyTransport::Literal12_7c_3d),
             // literal kind: < → "<"
-            65 => Ok(AnyTransport::Literal13_3c(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            65 => Ok(AnyTransport::Literal13_3c),
             // literal kind: <= → "<="
-            66 => Ok(AnyTransport::Literal14_3c_3d(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            66 => Ok(AnyTransport::Literal14_3c_3d),
             // literal kind: == → "=="
-            67 => Ok(AnyTransport::Literal15_3d_3d(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            67 => Ok(AnyTransport::Literal15_3d_3d),
             // literal kind: != → "!="
-            68 => Ok(AnyTransport::Literal16_21_3d(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            68 => Ok(AnyTransport::Literal16_21_3d),
             // literal kind: >= → ">="
-            69 => Ok(AnyTransport::Literal17_3e_3d(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            69 => Ok(AnyTransport::Literal17_3e_3d),
             // literal kind: > → ">"
-            70 => Ok(AnyTransport::Literal18_3e(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            70 => Ok(AnyTransport::Literal18_3e),
             // literal kind: <> → "<>"
-            71 => Ok(AnyTransport::Literal19_3c_3e(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            71 => Ok(AnyTransport::Literal19_3c_3e),
             // literal kind: not in → "not in"
-            193 => Ok(AnyTransport::Literal20_6e_6f_74_20_69_6e(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            193 => Ok(AnyTransport::Literal20_6e_6f_74_20_69_6e),
             // literal kind: is → "is"
-            64 => Ok(AnyTransport::Literal21_69_73(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            64 => Ok(AnyTransport::Literal21_69_73),
             // literal kind: is not → "is not"
-            194 => Ok(AnyTransport::Literal22_69_73_20_6e_6f_74(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            194 => Ok(AnyTransport::Literal22_69_73_20_6e_6f_74),
             // literal kind: ~ → "~"
-            63 => Ok(AnyTransport::Literal23_7e(
-                LiteralTransport::from_napi_value(env, napi_val)?
-            )),
+            63 => Ok(AnyTransport::Literal23_7e),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {other} in AnyTransport"
             ))),
@@ -1300,29 +1252,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AnyTransport> {
 }
 
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct LiteralTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub text: String,
-}
-
-impl ::sittir_core::types::RenderableTransport for LiteralTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
-    }
-}
 
 #[derive(Debug, Clone)]
 pub enum CompoundStatementTransport {
@@ -10855,30 +10784,30 @@ pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::a
         AnyTransport::Try(t) => render_try_transport(t),
         AnyTransport::While(t) => render_while_transport(t),
         AnyTransport::With(t) => render_with_transport(t),
-        AnyTransport::Literal0_2b_3d(_) => Ok("+=".to_string()),
-        AnyTransport::Literal1_2d_3d(_) => Ok("-=".to_string()),
-        AnyTransport::Literal2_2a_3d(_) => Ok("*=".to_string()),
-        AnyTransport::Literal3_2f_3d(_) => Ok("/=".to_string()),
-        AnyTransport::Literal4_40_3d(_) => Ok("@=".to_string()),
-        AnyTransport::Literal5_2f_2f_3d(_) => Ok("//=".to_string()),
-        AnyTransport::Literal6_25_3d(_) => Ok("%=".to_string()),
-        AnyTransport::Literal7_2a_2a_3d(_) => Ok("**=".to_string()),
-        AnyTransport::Literal8_3e_3e_3d(_) => Ok(">>=".to_string()),
-        AnyTransport::Literal9_3c_3c_3d(_) => Ok("<<=".to_string()),
-        AnyTransport::Literal10_26_3d(_) => Ok("&=".to_string()),
-        AnyTransport::Literal11_5e_3d(_) => Ok("^=".to_string()),
-        AnyTransport::Literal12_7c_3d(_) => Ok("|=".to_string()),
-        AnyTransport::Literal13_3c(_) => Ok("<".to_string()),
-        AnyTransport::Literal14_3c_3d(_) => Ok("<=".to_string()),
-        AnyTransport::Literal15_3d_3d(_) => Ok("==".to_string()),
-        AnyTransport::Literal16_21_3d(_) => Ok("!=".to_string()),
-        AnyTransport::Literal17_3e_3d(_) => Ok(">=".to_string()),
-        AnyTransport::Literal18_3e(_) => Ok(">".to_string()),
-        AnyTransport::Literal19_3c_3e(_) => Ok("<>".to_string()),
-        AnyTransport::Literal20_6e_6f_74_20_69_6e(_) => Ok("not in".to_string()),
-        AnyTransport::Literal21_69_73(_) => Ok("is".to_string()),
-        AnyTransport::Literal22_69_73_20_6e_6f_74(_) => Ok("is not".to_string()),
-        AnyTransport::Literal23_7e(_) => Ok("~".to_string()),
+        AnyTransport::Literal0_2b_3d => Ok("+=".to_string()),
+        AnyTransport::Literal1_2d_3d => Ok("-=".to_string()),
+        AnyTransport::Literal2_2a_3d => Ok("*=".to_string()),
+        AnyTransport::Literal3_2f_3d => Ok("/=".to_string()),
+        AnyTransport::Literal4_40_3d => Ok("@=".to_string()),
+        AnyTransport::Literal5_2f_2f_3d => Ok("//=".to_string()),
+        AnyTransport::Literal6_25_3d => Ok("%=".to_string()),
+        AnyTransport::Literal7_2a_2a_3d => Ok("**=".to_string()),
+        AnyTransport::Literal8_3e_3e_3d => Ok(">>=".to_string()),
+        AnyTransport::Literal9_3c_3c_3d => Ok("<<=".to_string()),
+        AnyTransport::Literal10_26_3d => Ok("&=".to_string()),
+        AnyTransport::Literal11_5e_3d => Ok("^=".to_string()),
+        AnyTransport::Literal12_7c_3d => Ok("|=".to_string()),
+        AnyTransport::Literal13_3c => Ok("<".to_string()),
+        AnyTransport::Literal14_3c_3d => Ok("<=".to_string()),
+        AnyTransport::Literal15_3d_3d => Ok("==".to_string()),
+        AnyTransport::Literal16_21_3d => Ok("!=".to_string()),
+        AnyTransport::Literal17_3e_3d => Ok(">=".to_string()),
+        AnyTransport::Literal18_3e => Ok(">".to_string()),
+        AnyTransport::Literal19_3c_3e => Ok("<>".to_string()),
+        AnyTransport::Literal20_6e_6f_74_20_69_6e => Ok("not in".to_string()),
+        AnyTransport::Literal21_69_73 => Ok("is".to_string()),
+        AnyTransport::Literal22_69_73_20_6e_6f_74 => Ok("is not".to_string()),
+        AnyTransport::Literal23_7e => Ok("~".to_string()),
     }
 }
 
@@ -10942,20 +10871,6 @@ fn transport_children(values: Vec<Box<AnyTransport>>) -> Result<Vec<TransportNod
         nodes.push(transport_to_node(*value)?);
     }
     Ok(nodes)
-}
-
-fn literal_transport_to_node(kind: TransportKindId, transport: LiteralTransport) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        kind,
-        transport.transport_source,
-        transport.transport_named,
-        false,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
-        None,
-        None,
-    ))
 }
 
 fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::askama::Error> {
@@ -11172,30 +11087,30 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::Try(data) => transport_to_node_try(data),
         AnyTransport::While(data) => transport_to_node_while(data),
         AnyTransport::With(data) => transport_to_node_with(data),
-        AnyTransport::Literal0_2b_3d(data) => literal_transport_to_node(TransportKindId(73) /* "+=" */, data),
-        AnyTransport::Literal1_2d_3d(data) => literal_transport_to_node(TransportKindId(74) /* "-=" */, data),
-        AnyTransport::Literal2_2a_3d(data) => literal_transport_to_node(TransportKindId(75) /* "*=" */, data),
-        AnyTransport::Literal3_2f_3d(data) => literal_transport_to_node(TransportKindId(76) /* "/=" */, data),
-        AnyTransport::Literal4_40_3d(data) => literal_transport_to_node(TransportKindId(77) /* "@=" */, data),
-        AnyTransport::Literal5_2f_2f_3d(data) => literal_transport_to_node(TransportKindId(78) /* "//=" */, data),
-        AnyTransport::Literal6_25_3d(data) => literal_transport_to_node(TransportKindId(79) /* "%=" */, data),
-        AnyTransport::Literal7_2a_2a_3d(data) => literal_transport_to_node(TransportKindId(80) /* "**=" */, data),
-        AnyTransport::Literal8_3e_3e_3d(data) => literal_transport_to_node(TransportKindId(81) /* ">>=" */, data),
-        AnyTransport::Literal9_3c_3c_3d(data) => literal_transport_to_node(TransportKindId(82) /* "<<=" */, data),
-        AnyTransport::Literal10_26_3d(data) => literal_transport_to_node(TransportKindId(83) /* "&=" */, data),
-        AnyTransport::Literal11_5e_3d(data) => literal_transport_to_node(TransportKindId(84) /* "^=" */, data),
-        AnyTransport::Literal12_7c_3d(data) => literal_transport_to_node(TransportKindId(85) /* "|=" */, data),
-        AnyTransport::Literal13_3c(data) => literal_transport_to_node(TransportKindId(65) /* "<" */, data),
-        AnyTransport::Literal14_3c_3d(data) => literal_transport_to_node(TransportKindId(66) /* "<=" */, data),
-        AnyTransport::Literal15_3d_3d(data) => literal_transport_to_node(TransportKindId(67) /* "==" */, data),
-        AnyTransport::Literal16_21_3d(data) => literal_transport_to_node(TransportKindId(68) /* "!=" */, data),
-        AnyTransport::Literal17_3e_3d(data) => literal_transport_to_node(TransportKindId(69) /* ">=" */, data),
-        AnyTransport::Literal18_3e(data) => literal_transport_to_node(TransportKindId(70) /* ">" */, data),
-        AnyTransport::Literal19_3c_3e(data) => literal_transport_to_node(TransportKindId(71) /* "<>" */, data),
-        AnyTransport::Literal20_6e_6f_74_20_69_6e(data) => literal_transport_to_node(TransportKindId(193) /* "not in" */, data),
-        AnyTransport::Literal21_69_73(data) => literal_transport_to_node(TransportKindId(64) /* "is" */, data),
-        AnyTransport::Literal22_69_73_20_6e_6f_74(data) => literal_transport_to_node(TransportKindId(194) /* "is not" */, data),
-        AnyTransport::Literal23_7e(data) => literal_transport_to_node(TransportKindId(63) /* "~" */, data),
+        AnyTransport::Literal0_2b_3d => Ok(transport_node_data(TransportKindId(73) /* "+=" */, None, None, false, Some("+=".to_string()), None, None, None, None)),
+        AnyTransport::Literal1_2d_3d => Ok(transport_node_data(TransportKindId(74) /* "-=" */, None, None, false, Some("-=".to_string()), None, None, None, None)),
+        AnyTransport::Literal2_2a_3d => Ok(transport_node_data(TransportKindId(75) /* "*=" */, None, None, false, Some("*=".to_string()), None, None, None, None)),
+        AnyTransport::Literal3_2f_3d => Ok(transport_node_data(TransportKindId(76) /* "/=" */, None, None, false, Some("/=".to_string()), None, None, None, None)),
+        AnyTransport::Literal4_40_3d => Ok(transport_node_data(TransportKindId(77) /* "@=" */, None, None, false, Some("@=".to_string()), None, None, None, None)),
+        AnyTransport::Literal5_2f_2f_3d => Ok(transport_node_data(TransportKindId(78) /* "//=" */, None, None, false, Some("//=".to_string()), None, None, None, None)),
+        AnyTransport::Literal6_25_3d => Ok(transport_node_data(TransportKindId(79) /* "%=" */, None, None, false, Some("%=".to_string()), None, None, None, None)),
+        AnyTransport::Literal7_2a_2a_3d => Ok(transport_node_data(TransportKindId(80) /* "**=" */, None, None, false, Some("**=".to_string()), None, None, None, None)),
+        AnyTransport::Literal8_3e_3e_3d => Ok(transport_node_data(TransportKindId(81) /* ">>=" */, None, None, false, Some(">>=".to_string()), None, None, None, None)),
+        AnyTransport::Literal9_3c_3c_3d => Ok(transport_node_data(TransportKindId(82) /* "<<=" */, None, None, false, Some("<<=".to_string()), None, None, None, None)),
+        AnyTransport::Literal10_26_3d => Ok(transport_node_data(TransportKindId(83) /* "&=" */, None, None, false, Some("&=".to_string()), None, None, None, None)),
+        AnyTransport::Literal11_5e_3d => Ok(transport_node_data(TransportKindId(84) /* "^=" */, None, None, false, Some("^=".to_string()), None, None, None, None)),
+        AnyTransport::Literal12_7c_3d => Ok(transport_node_data(TransportKindId(85) /* "|=" */, None, None, false, Some("|=".to_string()), None, None, None, None)),
+        AnyTransport::Literal13_3c => Ok(transport_node_data(TransportKindId(65) /* "<" */, None, None, false, Some("<".to_string()), None, None, None, None)),
+        AnyTransport::Literal14_3c_3d => Ok(transport_node_data(TransportKindId(66) /* "<=" */, None, None, false, Some("<=".to_string()), None, None, None, None)),
+        AnyTransport::Literal15_3d_3d => Ok(transport_node_data(TransportKindId(67) /* "==" */, None, None, false, Some("==".to_string()), None, None, None, None)),
+        AnyTransport::Literal16_21_3d => Ok(transport_node_data(TransportKindId(68) /* "!=" */, None, None, false, Some("!=".to_string()), None, None, None, None)),
+        AnyTransport::Literal17_3e_3d => Ok(transport_node_data(TransportKindId(69) /* ">=" */, None, None, false, Some(">=".to_string()), None, None, None, None)),
+        AnyTransport::Literal18_3e => Ok(transport_node_data(TransportKindId(70) /* ">" */, None, None, false, Some(">".to_string()), None, None, None, None)),
+        AnyTransport::Literal19_3c_3e => Ok(transport_node_data(TransportKindId(71) /* "<>" */, None, None, false, Some("<>".to_string()), None, None, None, None)),
+        AnyTransport::Literal20_6e_6f_74_20_69_6e => Ok(transport_node_data(TransportKindId(193) /* "not in" */, None, None, false, Some("not in".to_string()), None, None, None, None)),
+        AnyTransport::Literal21_69_73 => Ok(transport_node_data(TransportKindId(64) /* "is" */, None, None, false, Some("is".to_string()), None, None, None, None)),
+        AnyTransport::Literal22_69_73_20_6e_6f_74 => Ok(transport_node_data(TransportKindId(194) /* "is not" */, None, None, false, Some("is not".to_string()), None, None, None, None)),
+        AnyTransport::Literal23_7e => Ok(transport_node_data(TransportKindId(63) /* "~" */, None, None, false, Some("~".to_string()), None, None, None, None)),
     }
 }
 
