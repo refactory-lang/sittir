@@ -878,7 +878,10 @@ export interface NodeToConfigOpts {
 }
 
 interface ReadNodeLike {
-	readonly $type?: string;
+	// Phase A: AnyNodeData.$type is string | number (factory outputs numeric TSKindId,
+	// readNode outputs string kind name). Validators feed readNode output here (string),
+	// but must accept the widened type to satisfy structural compatibility with AnyNodeData.
+	readonly $type?: string | number;
 	readonly $text?: string;
 	readonly $nodeId?: NodeId;
 	readonly $fields?: Readonly<Record<string, unknown>>;
@@ -997,7 +1000,9 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 			// back to the shallow entry we already have.
 		}
 	}
-	const rawKind = drilled.$type ?? c.$type;
+	// Validator feeds readNode output ($type is always string kind name).
+	// Cast: AnyNodeData.$type is string | number in Phase A.
+	const rawKind = (drilled.$type ?? c.$type) as string | undefined;
 	if (!rawKind) return drilled;
 	const kind = resolveAliasedKind(
 		rawKind,
@@ -1095,7 +1100,9 @@ export function nodeToConfig(
 	opts: NodeToConfigOpts = {}
 ): Record<string, unknown> {
 	const out: Record<string, unknown> = {};
-	const parentKind = data.$type;
+	// Validator feeds readNode output ($type is always string kind name).
+	// Cast: AnyNodeData.$type is string | number in Phase A.
+	const parentKind = data.$type as string | undefined;
 	if (data.$fields) {
 		for (const [k, v] of Object.entries(data.$fields)) {
 			if (v === undefined) continue;

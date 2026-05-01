@@ -696,10 +696,6 @@ export function expressionListFrom(...input: readonly (NonNullable<T.ExpressionL
 }
 
 export function expressionStatementTupleFrom(...input: readonly (NonNullable<T.ExpressionStatementTuple.Config['children']>[number] | T.ExpressionStatementTuple)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'expression_statement_tuple') {
-    const data = input[0];
-    return F.expressionStatementTuple(...((data.$children ?? []) as readonly NonNullable<T.ExpressionStatementTuple.Config['children']>[number][]));
-  }
   return F.expressionStatementTuple(...(input as readonly NonNullable<T.ExpressionStatementTuple.Config['children']>[number][]));
 }
 
@@ -1255,18 +1251,10 @@ export function whileStatementFrom(input: T.WhileStatement.Loose): ReturnType<ty
 }
 
 export function withClauseBareFrom(...input: readonly (NonNullable<T.WithClauseBare.Config['children']>[number] | T.WithClauseBare)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'with_clause_bare') {
-    const data = input[0];
-    return F.withClauseBare(...((data.$children ?? []) as readonly NonNullable<T.WithClauseBare.Config['children']>[number][]));
-  }
   return F.withClauseBare(...(input as readonly NonNullable<T.WithClauseBare.Config['children']>[number][]));
 }
 
 export function withClauseParenFrom(...input: readonly (NonNullable<T.WithClauseParen.Config['children']>[number] | T.WithClauseParen)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'with_clause_paren') {
-    const data = input[0];
-    return F.withClauseParen(...((data.$children ?? []) as readonly NonNullable<T.WithClauseParen.Config['children']>[number][]));
-  }
   return F.withClauseParen(...(input as readonly NonNullable<T.WithClauseParen.Config['children']>[number][]));
 }
 

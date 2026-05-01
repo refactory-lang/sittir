@@ -70,7 +70,9 @@ function _deepReadNode(
 		isNodeData(entry) &&
 		entry.$named === true &&
 		typeof entry.$nodeId === 'number' &&
-		deepReadKinds.has(entry.$type);
+		// Validator feeds readNode output ($type is always string kind name).
+		// Cast: AnyNodeData.$type is string | number in Phase A.
+		deepReadKinds.has(entry.$type as string);
 	if (data.$children) {
 		const drilled = data.$children.map((c) =>
 			shouldDrill(c) ? _deepReadNode(tree, c.$nodeId, deepReadKinds) : c
@@ -471,8 +473,10 @@ function applyAliasResolution(
 		effective && effective !== rawData.$type
 			? { ...rawData, $type: effective }
 			: rawData;
-	const renderedKind = data.$type;
-	const targetKind = rawData.$type;
+	// Validator feeds readNode output ($type is always string kind name).
+	// Cast: AnyNodeData.$type is string | number in Phase A.
+	const renderedKind = data.$type as string;
+	const targetKind = rawData.$type as string;
 	return { data, renderedKind, targetKind };
 }
 

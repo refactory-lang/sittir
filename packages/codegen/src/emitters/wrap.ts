@@ -530,7 +530,7 @@ function emitFieldCarryingWrap(
 	if (kindEntries) {
 		const entry = kindEntries.find((e) => e.kind === node.kind);
 		if (entry) {
-			lines.push(`    $type: TSKindId.${kindIdMemberName(nodeMap, node.kind)},`);
+			lines.push(`    $type: TSKindId.${kindIdMemberName(nodeMap, node.kind)} as number,`);
 		}
 	}
 

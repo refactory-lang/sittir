@@ -486,7 +486,12 @@ function factoryTypeDiscriminant(
 	// back to string literal — they can't carry a runtime TSKindId.
 	const hasEntry = kindEntries.some((e) => e.kind === kind);
 	if (!hasEntry) return `'${kind}' as const`;
-	return kindDiscriminantExpr(kind, nodeMap, kindEntries);
+	// Cast to number: TypeScript infers const-enum members as the enum type
+	// (e.g. `TSKindId`), not as `number`. The factory return object literal
+	// needs `$type: number` for compatibility with `AnyNodeData.$type: number`
+	// in the `render(this: AnyNodeData)` / `toEdit(this: AnyNodeData)` methods.
+	// This is a widening-safe cast: const enum values ARE numbers at runtime.
+	return `${kindDiscriminantExpr(kind, nodeMap, kindEntries)} as number`;
 }
 
 /**
@@ -2035,9 +2040,10 @@ function emitTextFactory(
 	nodeMap?: NodeMap
 ): string {
 	const fn = node.rawFactoryName!;
-	const typeExpr = nodeMap
-		? factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)
-		: `'${node.kind}' as const`;
+	// Phase A: leaf / keyword / enum / $TEXT nodes are represented by
+	// Terminal<K extends string> which carries string $type. Keep string
+	// discriminant for these until Phase B migrates Terminal<K>.
+	const typeExpr = `'${node.kind}' as const`;
 	const body: string[] = [`export function ${fn}${sig} {`];
 	if (guard) body.push(`  ${guard}`);
 	body.push(

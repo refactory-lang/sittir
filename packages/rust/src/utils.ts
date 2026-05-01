@@ -3,7 +3,7 @@
 
 import type { AnyNodeData, AnyTreeNodeOf } from '@sittir/types';
 import type { AnyTransport, NamespaceMap } from './types.js';
-import { kindNameFromId } from './types.js';
+import { kindNameFromId, kindIdFromName } from './types.js';
 
 /**
  * Type guard: returns true if `v` is a NodeData.

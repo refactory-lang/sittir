@@ -31,7 +31,7 @@ export function toCst(
 	const text = node.$text !== undefined ? node.$text : renderer.render(node);
 
 	return {
-		type: node.$type,
+		type: String(node.$type),
 		text,
 		children: [],
 		isNamed: true,

@@ -713,20 +713,10 @@ export function classDeclarationFrom(input: T.ClassDeclaration.Loose): ReturnTyp
 }
 
 export function classHeritageExtendsClauseFrom(input?: NonNullable<T.ClassHeritageExtendsClause.Config['children']>[number] | T.ClassHeritageExtendsClause) {
-  if (isNodeData(input) && input.$type === 'class_heritage_extends_clause') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.classHeritageExtendsClause(child as Parameters<typeof F.classHeritageExtendsClause>[0]);
-  }
   return F.classHeritageExtendsClause(input as Parameters<typeof F.classHeritageExtendsClause>[0]);
 }
 
 export function classHeritageImplementsClauseFrom(input?: NonNullable<T.ClassHeritageImplementsClause.Config['children']>[number] | T.ClassHeritageImplementsClause) {
-  if (isNodeData(input) && input.$type === 'class_heritage_implements_clause') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.classHeritageImplementsClause(child as Parameters<typeof F.classHeritageImplementsClause>[0]);
-  }
   return F.classHeritageImplementsClause(input as Parameters<typeof F.classHeritageImplementsClause>[0]);
 }
 
@@ -925,20 +915,10 @@ export function exportStatementTypeExportFrom(input: T.ExportStatementTypeExport
 }
 
 export function exportStatementEqualsExportFrom(input?: NonNullable<T.ExportStatementEqualsExport.Config['children']>[number] | T.ExportStatementEqualsExport) {
-  if (isNodeData(input) && input.$type === 'export_statement_equals_export') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.exportStatementEqualsExport(child as Parameters<typeof F.exportStatementEqualsExport>[0]);
-  }
   return F.exportStatementEqualsExport(input as Parameters<typeof F.exportStatementEqualsExport>[0]);
 }
 
 export function exportStatementNamespaceExportFrom(input?: NonNullable<T.ExportStatementNamespaceExport.Config['children']>[number] | T.ExportStatementNamespaceExport) {
-  if (isNodeData(input) && input.$type === 'export_statement_namespace_export') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.exportStatementNamespaceExport(child as Parameters<typeof F.exportStatementNamespaceExport>[0]);
-  }
   return F.exportStatementNamespaceExport(input as Parameters<typeof F.exportStatementNamespaceExport>[0]);
 }
 
@@ -1183,29 +1163,14 @@ export function importAttributeFrom(input: T.ImportAttribute.Loose): ReturnType<
 }
 
 export function importClauseNamespaceImportFrom(input?: NonNullable<T.ImportClauseNamespaceImport.Config['children']>[number] | T.ImportClauseNamespaceImport) {
-  if (isNodeData(input) && input.$type === 'import_clause_namespace_import') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.importClauseNamespaceImport(child as Parameters<typeof F.importClauseNamespaceImport>[0]);
-  }
   return F.importClauseNamespaceImport(input as Parameters<typeof F.importClauseNamespaceImport>[0]);
 }
 
 export function importClauseNamedImportsFrom(input?: NonNullable<T.ImportClauseNamedImports.Config['children']>[number] | T.ImportClauseNamedImports) {
-  if (isNodeData(input) && input.$type === 'import_clause_named_imports') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.importClauseNamedImports(child as Parameters<typeof F.importClauseNamedImports>[0]);
-  }
   return F.importClauseNamedImports(input as Parameters<typeof F.importClauseNamedImports>[0]);
 }
 
 export function importClauseDefaultImportFrom(input?: NonNullable<T.ImportClauseDefaultImport.Config['children']>[number] | T.ImportClauseDefaultImport) {
-  if (isNodeData(input) && input.$type === 'import_clause_default_import') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.importClauseDefaultImport(child as Parameters<typeof F.importClauseDefaultImport>[0]);
-  }
   return F.importClauseDefaultImport(input as Parameters<typeof F.importClauseDefaultImport>[0]);
 }
 
@@ -1272,11 +1237,6 @@ export function importStatementFrom(input: T.ImportStatement.Loose): ReturnType<
 }
 
 export function indexSignatureMappedTypeClauseFrom(input?: NonNullable<T.IndexSignatureMappedTypeClause.Config['children']>[number] | T.IndexSignatureMappedTypeClause) {
-  if (isNodeData(input) && input.$type === 'index_signature_mapped_type_clause') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.indexSignatureMappedTypeClause(child as Parameters<typeof F.indexSignatureMappedTypeClause>[0]);
-  }
   return F.indexSignatureMappedTypeClause(input as Parameters<typeof F.indexSignatureMappedTypeClause>[0]);
 }
 
@@ -1351,11 +1311,6 @@ export function intersectionTypeFrom(input: T.IntersectionType.Loose): ReturnTyp
 }
 
 export function jsxAttributeFrom(input?: NonNullable<T.JsxAttribute.Config['children']>[number] | T.JsxAttribute) {
-  if (isNodeData(input) && input.$type === 'jsx_attribute') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.jsxAttribute(child as Parameters<typeof F.jsxAttribute>[0]);
-  }
   return F.jsxAttribute(input as Parameters<typeof F.jsxAttribute>[0]);
 }
 
@@ -1376,11 +1331,6 @@ export function jsxElementFrom(input: T.JsxElement.Loose): ReturnType<typeof F.j
 }
 
 export function jsxExpressionFrom(input?: NonNullable<T.JsxExpression.Config['children']>[number] | T.JsxExpression) {
-  if (isNodeData(input) && input.$type === 'jsx_expression') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.jsxExpression(child as Parameters<typeof F.jsxExpression>[0]);
-  }
   return F.jsxExpression(input as Parameters<typeof F.jsxExpression>[0]);
 }
 
@@ -1390,10 +1340,6 @@ export function jsxIdentifierFrom(input: string | T.JsxIdentifier) {
 }
 
 export function jsxNamespaceNameFrom(...input: readonly (NonNullable<T.JsxNamespaceName.Config['children']>[number] | T.JsxNamespaceName)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'jsx_namespace_name') {
-    const data = input[0];
-    return F.jsxNamespaceName(...((data.$children ?? []) as readonly NonNullable<T.JsxNamespaceName.Config['children']>[number][]));
-  }
   return F.jsxNamespaceName(...(input as readonly NonNullable<T.JsxNamespaceName.Config['children']>[number][]));
 }
 
@@ -1680,11 +1626,6 @@ export function pairPatternFrom(input: T.PairPattern.Loose): ReturnType<typeof F
 }
 
 export function parenthesizedExpressionSequenceFrom(input?: NonNullable<T.ParenthesizedExpressionSequence.Config['children']>[number] | T.ParenthesizedExpressionSequence) {
-  if (isNodeData(input) && input.$type === 'parenthesized_expression_sequence') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.parenthesizedExpressionSequence(child as Parameters<typeof F.parenthesizedExpressionSequence>[0]);
-  }
   return F.parenthesizedExpressionSequence(input as Parameters<typeof F.parenthesizedExpressionSequence>[0]);
 }
 
@@ -1846,18 +1787,10 @@ export function statementBlockFrom(input: T.StatementBlock.Loose): ReturnType<ty
 }
 
 export function stringDoubleFrom(...input: readonly (NonNullable<T.StringDouble.Config['children']>[number] | T.StringDouble)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'string_double') {
-    const data = input[0];
-    return F.stringDouble(...((data.$children ?? []) as readonly NonNullable<T.StringDouble.Config['children']>[number][]));
-  }
   return F.stringDouble(...(input as readonly NonNullable<T.StringDouble.Config['children']>[number][]));
 }
 
 export function stringSingleFrom(...input: readonly (NonNullable<T.StringSingle.Config['children']>[number] | T.StringSingle)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'string_single') {
-    const data = input[0];
-    return F.stringSingle(...((data.$children ?? []) as readonly NonNullable<T.StringSingle.Config['children']>[number][]));
-  }
   return F.stringSingle(...(input as readonly NonNullable<T.StringSingle.Config['children']>[number][]));
 }
 

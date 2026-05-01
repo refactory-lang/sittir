@@ -189,15 +189,15 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push('export interface IsGuards {');
 	for (const s of structuralKinds) {
 		lines.push(
-			`    ${s.guardKey}<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '${s.kind}' };`
+			`    ${s.guardKey}<T extends { readonly $type: string | number }>(v: T): v is T & { readonly $type: '${s.kind}' };`
 		);
 	}
 	lines.push(
-		`    kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): v is { readonly $type: K & string };`
+		`    kind<K extends keyof NamespaceMap>(v: { readonly $type: string | number }, kind: K): v is { readonly $type: K & string };`
 	);
 	for (const s of supertypes) {
 		lines.push(
-			`    ${s.guardKey}(v: { readonly $type: string }): v is ${s.typeName};`
+			`    ${s.guardKey}(v: { readonly $type: string | number }): v is ${s.typeName};`
 		);
 	}
 	lines.push('}');
@@ -210,15 +210,15 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push('export interface AssertGuards {');
 	for (const s of structuralKinds) {
 		lines.push(
-			`    ${s.guardKey}(v: { readonly $type: string }): asserts v is { readonly $type: '${s.kind}' };`
+			`    ${s.guardKey}(v: { readonly $type: string | number }): asserts v is { readonly $type: '${s.kind}' };`
 		);
 	}
 	lines.push(
-		`    kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): asserts v is { readonly $type: K & string };`
+		`    kind<K extends keyof NamespaceMap>(v: { readonly $type: string | number }, kind: K): asserts v is { readonly $type: K & string };`
 	);
 	for (const s of supertypes) {
 		lines.push(
-			`    ${s.guardKey}(v: { readonly $type: string }): asserts v is ${s.typeName};`
+			`    ${s.guardKey}(v: { readonly $type: string | number }): asserts v is ${s.typeName};`
 		);
 	}
 	lines.push('}');
@@ -232,14 +232,17 @@ export function emitIs(config: EmitIsConfig): string {
 		'// Building from literal string arrays keeps the runtime footprint minimal.'
 	);
 	lines.push(
-		'function _g(k: string): (v: { readonly $type: string }) => boolean {'
+		'function _g(k: string): (v: { readonly $type: string | number }) => boolean {'
 	);
 	lines.push('    return (v) => v.$type === k;');
 	lines.push('}');
 	lines.push(
-		'function _sg(ks: ReadonlySet<string>): (v: { readonly $type: string }) => boolean {'
+		'function _sg(ks: ReadonlySet<string>): (v: { readonly $type: string | number }) => boolean {'
 	);
-	lines.push('    return (v) => ks.has(v.$type);');
+	// v.$type may be a number (Phase A numeric discriminant) — Set<string>.has
+	// only accepts string, so cast. If $type is numeric, has() returns false
+	// (correct: string-keyed supertype sets don't contain numeric members).
+	lines.push('    return (v) => ks.has(v.$type as string);');
 	lines.push('}');
 	lines.push('');
 
@@ -259,7 +262,7 @@ export function emitIs(config: EmitIsConfig): string {
 		lines.push(`    ${s.guardKey}: _g(${JSON.stringify(s.kind)}),`);
 	}
 	lines.push(
-		`    kind: (v: { readonly $type: string }, k: string): boolean => v.$type === k,`
+		`    kind: (v: { readonly $type: string | number }, k: string): boolean => v.$type === k,`
 	);
 	for (const s of supertypes) {
 		lines.push(`    ${s.guardKey}: _sg(_supertype_${s.guardKey}),`);
@@ -346,10 +349,10 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push('    v: T,');
 	lines.push(`): v is T & NamespaceMap[K]['Node'];`);
 	lines.push(
-		'export function isNode(v: { readonly $type: string }): v is AnyNodeData;'
+		'export function isNode(v: { readonly $type: string | number }): v is AnyNodeData;'
 	);
 	lines.push(
-		'export function isNode(v: { readonly $type: string }): boolean {'
+		'export function isNode(v: { readonly $type: string | number }): boolean {'
 	);
 	lines.push('    const o = v as { $fields?: unknown; $text?: unknown };');
 	// `typeof null === 'object'` — explicitly exclude null before accepting

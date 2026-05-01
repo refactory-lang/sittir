@@ -836,6 +836,17 @@ function emitRepeatedContainerFrom(
 	// generic shape on `AnyNodeData`); the same boundary cast funnels it
 	// into the factory's narrow children-element type.
 	const typeCheck = containerTypeCheck(kind, kindEntries, nodeMap);
+	// Phase A: TSGrammar-only kinds (string $type) can't satisfy isNodeData()
+	// (which requires numeric $type). Skip the node-data pass-through guard
+	// entirely — the check would always be false at runtime anyway.
+	const hasNumericDiscriminant = kindEntries?.some((e) => e.kind === kind) ?? false;
+	if (!hasNumericDiscriminant) {
+		return [
+			`export function ${fn}(...input: readonly (${elementType} | ${tName})[]) {`,
+			`  return ${factory}(...(input as readonly ${elementType}[]));`,
+			'}'
+		].join('\n');
+	}
 	return [
 		`export function ${fn}(...input: readonly (${elementType} | ${tName})[]) {`,
 		`  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === ${typeCheck}) {`,
@@ -888,6 +899,17 @@ function emitSingularContainerFrom(
 	// each kind maps to. Runtime behaviour: required factories will throw
 	// on `undefined`, matching the unwrap path's "missing children" diagnostic.
 	const typeCheck = containerTypeCheck(kind, kindEntries, nodeMap);
+	// Phase A: TSGrammar-only kinds (string $type) can't satisfy isNodeData()
+	// (which requires numeric $type). Skip the node-data pass-through guard
+	// entirely — the check would always be false at runtime anyway.
+	const hasNumericDiscriminant = kindEntries?.some((e) => e.kind === kind) ?? false;
+	if (!hasNumericDiscriminant) {
+		return [
+			`export function ${fn}(input?: ${elementType} | ${tName}) {`,
+			`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`,
+			'}'
+		].join('\n');
+	}
 	return [
 		`export function ${fn}(input?: ${elementType} | ${tName}) {`,
 		`  if (isNodeData(input) && input.$type === ${typeCheck}) {`,

@@ -53,17 +53,20 @@ export type NodeId = number & { readonly [nodeIdBrand]: true };
  */
 export interface AnyNodeData {
 	/**
-	 * Numeric runtime kind discriminant (`TSKindId.X` per generated grammar
-	 * package). Per the KindID runtime migration design (2026-04-30),
-	 * runtime objects carry the parser.c-derived numeric ID, not the kind
-	 * name. Boundary callers that have a string `$type` must normalize
-	 * once via the grammar package's `normalizeKindId(node)` before
-	 * internal access.
+	 * Kind discriminant.
 	 *
-	 * The pre-migration string-shape (`$type: 'function_item'`) is a
-	 * shim accepted only at TS package public API entrypoints.
+	 * **Phase A (current):** factory / wrap outputs carry a numeric
+	 * `TSKindId.X` value; `readNode` (`$source: 'ts'`) still carries
+	 * a string kind name. Both shapes are structurally valid `AnyNodeData`.
+	 *
+	 * **End state (Phase B+):** all producers emit numeric `TSKindId`. The
+	 * string branch will be removed once `readNode` and every other string
+	 * producer are updated.
+	 *
+	 * Use `isNodeData(v)` (checks `typeof v.$type === 'number'`) to
+	 * distinguish factory/wrap output from raw `readNode` output.
 	 */
-	$type: number;
+	$type: string | number;
 	/** Which producer emitted this node. */
 	$source?: 'ts' | 'sg' | 'factory';
 	/** Variant subtype name — set by factory, absent on readNode output. */

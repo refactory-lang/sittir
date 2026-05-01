@@ -704,8 +704,10 @@ export async function validateFactoryRoundTrip(
 				effective && effective !== rawReadData.$type
 					? { ...rawReadData, $type: effective }
 					: rawReadData;
-			const renderedKind = readData.$type;
-			const targetKind = rawReadData.$type;
+			// Validator feeds readNode output (string $type). Cast: AnyNodeData.$type
+			// is string | number in Phase A but readNode always emits string kind names.
+			const renderedKind = readData.$type as string;
+			const targetKind = rawReadData.$type as string;
 
 			const factoryData = buildFactoryNodeData(
 				readData,

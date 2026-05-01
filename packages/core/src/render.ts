@@ -1384,7 +1384,7 @@ export function createRendererFromConfig(
 		// whitespace artifacts indicate walker bugs (template emits a
 		// trailing/leading space when an optional field is absent) and
 		// must surface, not be hidden. Native engine matches this contract.
-		return withMetrics(grammar, node.$type, () => {
+		return withMetrics(grammar, String(node.$type), () => {
 			if (nunjucksEnv || templatesDir) {
 				return renderNunjucks(node, ctx, nunjucksEnv, templatesDir);
 			}

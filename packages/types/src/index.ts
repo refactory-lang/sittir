@@ -508,7 +508,11 @@ export type RuntimeNodeOf<T> = T extends {
 				? {}
 				: { readonly $fields: FieldsOf<T> }) &
 				RuntimeChildSlots<T> &
-				NodeMethods<T['$type']>
+				// Phase A KindID migration: $type is now numeric for structural types.
+				// NodeMethods<K> uses K as a string kind for replace(target); fall back
+				// to `string` when $type is numeric (structural node). Leaf types
+				// (Terminal<K extends string>) still resolve to the specific K.
+				NodeMethods<T['$type'] extends string ? T['$type'] : string>
 		>
 	: never;
 
@@ -1048,7 +1052,7 @@ type WidenValue<
 							| T
 							| (K extends keyof Strings ? Strings[K] : string)
 							| (K extends keyof Scalars ? Scalars[K] : never)
-					: [T] extends [{ readonly $type: string }]
+					: [T] extends [{ readonly $type: string | number }]
 						? // Branch(es) — decide single/homogeneous/heterogeneous ONCE for the
 							// whole union, then emit accordingly.
 							IsSingleType<T> extends true

@@ -43,7 +43,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 		"import type { AnyNodeData, AnyTreeNodeOf } from '@sittir/types';"
 	);
 	lines.push("import type { AnyTransport, NamespaceMap } from './types.js';");
-	lines.push("import { kindNameFromId } from './types.js';");
+	lines.push("import { kindNameFromId, kindIdFromName } from './types.js';");
 	lines.push('');
 
 	// isNodeData
