@@ -92,11 +92,18 @@ pub enum AnyTransport {
     AssignmentEq(AssignmentEqTransport),
     AssignmentType(AssignmentTypeTransport),
     AssignmentTyped(AssignmentTypedTransport),
+    AugmentedAssignmentOperator(AugmentedAssignmentOperatorEnum),
+    BinaryOperatorOperator(BinaryOperatorOperatorEnum),
+    BooleanOperatorOperator(BooleanOperatorOperatorEnum),
     ComprehensionClauses(ComprehensionClausesTransport),
+    ForInClauseAsyncMarker(ForInClauseAsyncMarkerEnum),
+    ForStatementAsyncMarker(ForStatementAsyncMarkerEnum),
+    FunctionDefinitionAsyncMarker(FunctionDefinitionAsyncMarkerEnum),
     ImportList(ImportListTransport),
     IsNot(IsNotTransport),
     KeyValuePattern(KeyValuePatternTransport),
     KwAsyncMarker(KwAsyncMarkerTransport),
+    KwType(KwTypeTransport),
     _ListPattern(_ListPatternTransport),
     MatchBlock(MatchBlockTransport),
     MatchBlockBlock(MatchBlockBlockTransport),
@@ -104,9 +111,14 @@ pub enum AnyTransport {
     NotIn(NotInTransport),
     SimplePatternNegative(SimplePatternNegativeTransport),
     SimpleStatements(SimpleStatementsTransport),
+    SplatPatternIdentifier(SplatPatternIdentifierEnum),
+    SplatTypeIdentifier(SplatTypeIdentifierEnum),
     Suite(SuiteTransport),
     _TuplePattern(_TuplePatternTransport),
+    TypeAliasStatementType(TypeAliasStatementTypeEnum),
+    UnaryOperatorOperator(UnaryOperatorOperatorEnum),
     _WithClauseParen(_WithClauseParenTransport),
+    WithStatementAsyncMarker(WithStatementAsyncMarkerEnum),
     AliasedImport(AliasedImportTransport),
     ArgumentList(ArgumentListTransport),
     AsPattern(AsPatternTransport),
@@ -251,30 +263,20 @@ pub enum AnyTransport {
     Comma(CommaTransport),
     Assert(AssertTransport),
     Dot(DotTransport),
-    Plus(PlusTransport),
-    Star(StarTransport),
-    At(AtTransport),
-    Slash(SlashTransport),
-    Percent(PercentTransport),
-    Slashslash(SlashslashTransport),
-    Starstar(StarstarTransport),
-    Pipe(PipeTransport),
-    Amp(AmpTransport),
-    Caret(CaretTransport),
-    Shl(ShlTransport),
-    Shr(ShrTransport),
-    And(AndTransport),
-    Or(OrTransport),
     Break(BreakTransport),
     Case(CaseTransport),
+    Shr(ShrTransport),
     Class(ClassTransport),
     If(IfTransport),
     Else(ElseTransport),
     Continue(ContinueTransport),
+    At(AtTransport),
     Del(DelTransport),
     Brace(BraceTransport),
+    Starstar(StarstarTransport),
     Elif(ElifTransport),
     Ellipsis(EllipsisTransport),
+    Star(StarTransport),
     Exec(ExecTransport),
     In(InTransport),
     False2(False2Transport),
@@ -292,38 +294,26 @@ pub enum AnyTransport {
     Nonlocal(NonlocalTransport),
     Not(NotTransport),
     Pass(PassTransport),
+    Slash(SlashTransport),
     Print(PrintTransport),
     Raise(RaiseTransport),
     Return(ReturnTransport),
     Anonymous(AnonymousTransport),
     True2(True2Transport),
     Try(TryTransport),
+    Pipe(PipeTransport),
     While(WhileTransport),
     With(WithTransport),
-    Literal0_2b_3d,
-    Literal1_2d_3d,
-    Literal2_2a_3d,
-    Literal3_2f_3d,
-    Literal4_40_3d,
-    Literal5_2f_2f_3d,
-    Literal6_25_3d,
-    Literal7_2a_2a_3d,
-    Literal8_3e_3e_3d,
-    Literal9_3c_3c_3d,
-    Literal10_26_3d,
-    Literal11_5e_3d,
-    Literal12_7c_3d,
-    Literal13_3c,
-    Literal14_3c_3d,
-    Literal15_3d_3d,
-    Literal16_21_3d,
-    Literal17_3e_3d,
-    Literal18_3e,
-    Literal19_3c_3e,
-    Literal20_6e_6f_74_20_69_6e,
-    Literal21_69_73,
-    Literal22_69_73_20_6e_6f_74,
-    Literal23_7e,
+    Literal0_3c,
+    Literal1_3c_3d,
+    Literal2_3d_3d,
+    Literal3_21_3d,
+    Literal4_3e_3d,
+    Literal5_3e,
+    Literal6_3c_3e,
+    Literal7_6e_6f_74_20_69_6e,
+    Literal8_69_73,
+    Literal9_69_73_20_6e_6f_74,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -374,6 +364,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             // kind: _kw_async_marker (_KW_ASYNC_MARKER)
             250 => Ok(AnyTransport::KwAsyncMarker(
                 KwAsyncMarkerTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: _kw_type (_KW_TYPE)
+            251 => Ok(AnyTransport::KwType(
+                KwTypeTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _list_pattern (_LIST_PATTERN)
             167 => Ok(AnyTransport::_ListPattern(
@@ -987,62 +981,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             4 => Ok(AnyTransport::Dot(
                 DotTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: + (PLUS)
-            52 => Ok(AnyTransport::Plus(
-                PlusTransport::from_napi_value(env, napi_val)?
-            )),
-            // kind: * (STAR)
-            11 => Ok(AnyTransport::Star(
-                StarTransport::from_napi_value(env, napi_val)?
-            )),
-            // kind: @ (AT)
-            47 => Ok(AnyTransport::At(
-                AtTransport::from_napi_value(env, napi_val)?
-            )),
-            // kind: / (SLASH)
-            57 => Ok(AnyTransport::Slash(
-                SlashTransport::from_napi_value(env, napi_val)?
-            )),
-            // kind: % (PERCENT)
-            58 => Ok(AnyTransport::Percent(
-                PercentTransport::from_napi_value(env, napi_val)?
-            )),
-            // kind: // (SLASHSLASH)
-            59 => Ok(AnyTransport::Slashslash(
-                SlashslashTransport::from_napi_value(env, napi_val)?
-            )),
-            // kind: ** (STARSTAR)
-            39 => Ok(AnyTransport::Starstar(
-                StarstarTransport::from_napi_value(env, napi_val)?
-            )),
-            // kind: | (PIPE)
-            49 => Ok(AnyTransport::Pipe(
-                PipeTransport::from_napi_value(env, napi_val)?
-            )),
-            // kind: & (AMP)
-            60 => Ok(AnyTransport::Amp(
-                AmpTransport::from_napi_value(env, napi_val)?
-            )),
-            // kind: ^ (CARET)
-            61 => Ok(AnyTransport::Caret(
-                CaretTransport::from_napi_value(env, napi_val)?
-            )),
-            // kind: << (SHL)
-            62 => Ok(AnyTransport::Shl(
-                ShlTransport::from_napi_value(env, napi_val)?
-            )),
-            // kind: >> (SHR)
-            13 => Ok(AnyTransport::Shr(
-                ShrTransport::from_napi_value(env, napi_val)?
-            )),
-            // kind: and (AND)
-            55 => Ok(AnyTransport::And(
-                AndTransport::from_napi_value(env, napi_val)?
-            )),
-            // kind: or (OR)
-            56 => Ok(AnyTransport::Or(
-                OrTransport::from_napi_value(env, napi_val)?
-            )),
             // kind: break (BREAK)
             20 => Ok(AnyTransport::Break(
                 BreakTransport::from_napi_value(env, napi_val)?
@@ -1050,6 +988,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             // kind: case (CASE)
             27 => Ok(AnyTransport::Case(
                 CaseTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: >> (SHR)
+            13 => Ok(AnyTransport::Shr(
+                ShrTransport::from_napi_value(env, napi_val)?
             )),
             // kind: class (CLASS)
             44 => Ok(AnyTransport::Class(
@@ -1067,6 +1009,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             21 => Ok(AnyTransport::Continue(
                 ContinueTransport::from_napi_value(env, napi_val)?
             )),
+            // kind: @ (AT)
+            47 => Ok(AnyTransport::At(
+                AtTransport::from_napi_value(env, napi_val)?
+            )),
             // kind: del (DEL)
             17 => Ok(AnyTransport::Del(
                 DelTransport::from_napi_value(env, napi_val)?
@@ -1075,9 +1021,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             50 => Ok(AnyTransport::Brace(
                 BraceTransport::from_napi_value(env, napi_val)?
             )),
+            // kind: ** (STARSTAR)
+            39 => Ok(AnyTransport::Starstar(
+                StarstarTransport::from_napi_value(env, napi_val)?
+            )),
             // kind: elif (ELIF)
             24 => Ok(AnyTransport::Elif(
                 ElifTransport::from_napi_value(env, napi_val)?
+            )),
+            // kind: * (STAR)
+            11 => Ok(AnyTransport::Star(
+                StarTransport::from_napi_value(env, napi_val)?
             )),
             // kind: exec (EXEC)
             42 => Ok(AnyTransport::Exec(
@@ -1139,6 +1093,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             19 => Ok(AnyTransport::Pass(
                 PassTransport::from_napi_value(env, napi_val)?
             )),
+            // kind: / (SLASH)
+            57 => Ok(AnyTransport::Slash(
+                SlashTransport::from_napi_value(env, napi_val)?
+            )),
             // kind: print (PRINT)
             12 => Ok(AnyTransport::Print(
                 PrintTransport::from_napi_value(env, napi_val)?
@@ -1159,6 +1117,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             32 => Ok(AnyTransport::Try(
                 TryTransport::from_napi_value(env, napi_val)?
             )),
+            // kind: | (PIPE)
+            49 => Ok(AnyTransport::Pipe(
+                PipeTransport::from_napi_value(env, napi_val)?
+            )),
             // kind: while (WHILE)
             31 => Ok(AnyTransport::While(
                 WhileTransport::from_napi_value(env, napi_val)?
@@ -1167,54 +1129,26 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             36 => Ok(AnyTransport::With(
                 WithTransport::from_napi_value(env, napi_val)?
             )),
-            // literal kind: += → "+="
-            73 => Ok(AnyTransport::Literal0_2b_3d),
-            // literal kind: -= → "-="
-            74 => Ok(AnyTransport::Literal1_2d_3d),
-            // literal kind: *= → "*="
-            75 => Ok(AnyTransport::Literal2_2a_3d),
-            // literal kind: /= → "/="
-            76 => Ok(AnyTransport::Literal3_2f_3d),
-            // literal kind: @= → "@="
-            77 => Ok(AnyTransport::Literal4_40_3d),
-            // literal kind: //= → "//="
-            78 => Ok(AnyTransport::Literal5_2f_2f_3d),
-            // literal kind: %= → "%="
-            79 => Ok(AnyTransport::Literal6_25_3d),
-            // literal kind: **= → "**="
-            80 => Ok(AnyTransport::Literal7_2a_2a_3d),
-            // literal kind: >>= → ">>="
-            81 => Ok(AnyTransport::Literal8_3e_3e_3d),
-            // literal kind: <<= → "<<="
-            82 => Ok(AnyTransport::Literal9_3c_3c_3d),
-            // literal kind: &= → "&="
-            83 => Ok(AnyTransport::Literal10_26_3d),
-            // literal kind: ^= → "^="
-            84 => Ok(AnyTransport::Literal11_5e_3d),
-            // literal kind: |= → "|="
-            85 => Ok(AnyTransport::Literal12_7c_3d),
             // literal kind: < → "<"
-            65 => Ok(AnyTransport::Literal13_3c),
+            65 => Ok(AnyTransport::Literal0_3c),
             // literal kind: <= → "<="
-            66 => Ok(AnyTransport::Literal14_3c_3d),
+            66 => Ok(AnyTransport::Literal1_3c_3d),
             // literal kind: == → "=="
-            67 => Ok(AnyTransport::Literal15_3d_3d),
+            67 => Ok(AnyTransport::Literal2_3d_3d),
             // literal kind: != → "!="
-            68 => Ok(AnyTransport::Literal16_21_3d),
+            68 => Ok(AnyTransport::Literal3_21_3d),
             // literal kind: >= → ">="
-            69 => Ok(AnyTransport::Literal17_3e_3d),
+            69 => Ok(AnyTransport::Literal4_3e_3d),
             // literal kind: > → ">"
-            70 => Ok(AnyTransport::Literal18_3e),
+            70 => Ok(AnyTransport::Literal5_3e),
             // literal kind: <> → "<>"
-            71 => Ok(AnyTransport::Literal19_3c_3e),
+            71 => Ok(AnyTransport::Literal6_3c_3e),
             // literal kind: not in → "not in"
-            193 => Ok(AnyTransport::Literal20_6e_6f_74_20_69_6e),
+            193 => Ok(AnyTransport::Literal7_6e_6f_74_20_69_6e),
             // literal kind: is → "is"
-            64 => Ok(AnyTransport::Literal21_69_73),
+            64 => Ok(AnyTransport::Literal8_69_73),
             // literal kind: is not → "is not"
-            194 => Ok(AnyTransport::Literal22_69_73_20_6e_6f_74),
-            // literal kind: ~ → "~"
-            63 => Ok(AnyTransport::Literal23_7e),
+            194 => Ok(AnyTransport::Literal9_69_73_20_6e_6f_74),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {other} in AnyTransport"
             ))),
@@ -2689,6 +2623,213 @@ impl ::sittir_core::types::RenderableTransport for AssignmentTypedTransport {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AugmentedAssignmentOperatorEnum {
+    PlusEq,
+    MinusEq,
+    StarEq,
+    SlashEq,
+    V40_3d,
+    V2f_2f_3d,
+    PercentEq,
+    V2a_2a_3d,
+    GtGtEq,
+    LtLtEq,
+    AmpEq,
+    CaretEq,
+    PipeEq,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentOperatorEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in AugmentedAssignmentOperatorEnum"))?;
+        match text.as_str() {
+            "+=" => Ok(Self::PlusEq),
+            "-=" => Ok(Self::MinusEq),
+            "*=" => Ok(Self::StarEq),
+            "/=" => Ok(Self::SlashEq),
+            "@=" => Ok(Self::V40_3d),
+            "//=" => Ok(Self::V2f_2f_3d),
+            "%=" => Ok(Self::PercentEq),
+            "**=" => Ok(Self::V2a_2a_3d),
+            ">>=" => Ok(Self::GtGtEq),
+            "<<=" => Ok(Self::LtLtEq),
+            "&=" => Ok(Self::AmpEq),
+            "^=" => Ok(Self::CaretEq),
+            "|=" => Ok(Self::PipeEq),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for AugmentedAssignmentOperatorEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AugmentedAssignmentOperatorEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("AugmentedAssignmentOperatorEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for AugmentedAssignmentOperatorEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::PlusEq => "+=",
+            Self::MinusEq => "-=",
+            Self::StarEq => "*=",
+            Self::SlashEq => "/=",
+            Self::V40_3d => "@=",
+            Self::V2f_2f_3d => "//=",
+            Self::PercentEq => "%=",
+            Self::V2a_2a_3d => "**=",
+            Self::GtGtEq => ">>=",
+            Self::LtLtEq => "<<=",
+            Self::AmpEq => "&=",
+            Self::CaretEq => "^=",
+            Self::PipeEq => "|=",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for AugmentedAssignmentOperatorEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::PlusEq => "+=",
+            Self::MinusEq => "-=",
+            Self::StarEq => "*=",
+            Self::SlashEq => "/=",
+            Self::V40_3d => "@=",
+            Self::V2f_2f_3d => "//=",
+            Self::PercentEq => "%=",
+            Self::V2a_2a_3d => "**=",
+            Self::GtGtEq => ">>=",
+            Self::LtLtEq => "<<=",
+            Self::AmpEq => "&=",
+            Self::CaretEq => "^=",
+            Self::PipeEq => "|=",
+        }).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BinaryOperatorOperatorEnum {
+    Plus,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for BinaryOperatorOperatorEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in BinaryOperatorOperatorEnum"))?;
+        match text.as_str() {
+            "+" => Ok(Self::Plus),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for BinaryOperatorOperatorEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for BinaryOperatorOperatorEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("BinaryOperatorOperatorEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for BinaryOperatorOperatorEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::Plus => "+",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for BinaryOperatorOperatorEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::Plus => "+",
+        }).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BooleanOperatorOperatorEnum {
+    AndKw,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for BooleanOperatorOperatorEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in BooleanOperatorOperatorEnum"))?;
+        match text.as_str() {
+            "and" => Ok(Self::AndKw),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for BooleanOperatorOperatorEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for BooleanOperatorOperatorEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("BooleanOperatorOperatorEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for BooleanOperatorOperatorEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::AndKw => "and",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for BooleanOperatorOperatorEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::AndKw => "and",
+        }).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ComprehensionClausesTransport {
@@ -2713,6 +2854,165 @@ impl ::sittir_core::types::RenderableTransport for ComprehensionClausesTransport
     ) -> Result<(), ::askama::Error> {
         let s = render_comprehension_clauses_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ForInClauseAsyncMarkerEnum {
+    AsyncKw,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseAsyncMarkerEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in ForInClauseAsyncMarkerEnum"))?;
+        match text.as_str() {
+            "async" => Ok(Self::AsyncKw),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for ForInClauseAsyncMarkerEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ForInClauseAsyncMarkerEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ForInClauseAsyncMarkerEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for ForInClauseAsyncMarkerEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::AsyncKw => "async",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for ForInClauseAsyncMarkerEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::AsyncKw => "async",
+        }).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ForStatementAsyncMarkerEnum {
+    AsyncKw,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ForStatementAsyncMarkerEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in ForStatementAsyncMarkerEnum"))?;
+        match text.as_str() {
+            "async" => Ok(Self::AsyncKw),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for ForStatementAsyncMarkerEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ForStatementAsyncMarkerEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ForStatementAsyncMarkerEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for ForStatementAsyncMarkerEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::AsyncKw => "async",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for ForStatementAsyncMarkerEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::AsyncKw => "async",
+        }).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FunctionDefinitionAsyncMarkerEnum {
+    AsyncKw,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for FunctionDefinitionAsyncMarkerEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in FunctionDefinitionAsyncMarkerEnum"))?;
+        match text.as_str() {
+            "async" => Ok(Self::AsyncKw),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for FunctionDefinitionAsyncMarkerEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for FunctionDefinitionAsyncMarkerEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("FunctionDefinitionAsyncMarkerEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for FunctionDefinitionAsyncMarkerEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::AsyncKw => "async",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for FunctionDefinitionAsyncMarkerEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::AsyncKw => "async",
+        }).map_err(::askama::Error::from)
     }
 }
 
@@ -2815,6 +3115,31 @@ impl ::sittir_core::types::RenderableTransport for KwAsyncMarkerTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_kw_async_marker_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct KwTypeTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for KwTypeTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_kw_type_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
     }
 }
@@ -3003,6 +3328,120 @@ impl ::sittir_core::types::RenderableTransport for SimpleStatementsTransport {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SplatPatternIdentifierEnum {
+    Star,
+    V2a_2a,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternIdentifierEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in SplatPatternIdentifierEnum"))?;
+        match text.as_str() {
+            "*" => Ok(Self::Star),
+            "**" => Ok(Self::V2a_2a),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for SplatPatternIdentifierEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SplatPatternIdentifierEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("SplatPatternIdentifierEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for SplatPatternIdentifierEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::Star => "*",
+            Self::V2a_2a => "**",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for SplatPatternIdentifierEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::Star => "*",
+            Self::V2a_2a => "**",
+        }).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SplatTypeIdentifierEnum {
+    Star,
+    V2a_2a,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for SplatTypeIdentifierEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in SplatTypeIdentifierEnum"))?;
+        match text.as_str() {
+            "*" => Ok(Self::Star),
+            "**" => Ok(Self::V2a_2a),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for SplatTypeIdentifierEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SplatTypeIdentifierEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("SplatTypeIdentifierEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for SplatTypeIdentifierEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::Star => "*",
+            Self::V2a_2a => "**",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for SplatTypeIdentifierEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::Star => "*",
+            Self::V2a_2a => "**",
+        }).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SuiteTransport {
@@ -3057,6 +3496,120 @@ impl ::sittir_core::types::RenderableTransport for _TuplePatternTransport {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TypeAliasStatementTypeEnum {
+    TypeKw,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for TypeAliasStatementTypeEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in TypeAliasStatementTypeEnum"))?;
+        match text.as_str() {
+            "type" => Ok(Self::TypeKw),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for TypeAliasStatementTypeEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TypeAliasStatementTypeEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("TypeAliasStatementTypeEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for TypeAliasStatementTypeEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::TypeKw => "type",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for TypeAliasStatementTypeEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::TypeKw => "type",
+        }).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum UnaryOperatorOperatorEnum {
+    Plus,
+    Minus,
+    Tilde,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for UnaryOperatorOperatorEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in UnaryOperatorOperatorEnum"))?;
+        match text.as_str() {
+            "+" => Ok(Self::Plus),
+            "-" => Ok(Self::Minus),
+            "~" => Ok(Self::Tilde),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for UnaryOperatorOperatorEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for UnaryOperatorOperatorEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("UnaryOperatorOperatorEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for UnaryOperatorOperatorEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::Plus => "+",
+            Self::Minus => "-",
+            Self::Tilde => "~",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for UnaryOperatorOperatorEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::Plus => "+",
+            Self::Minus => "-",
+            Self::Tilde => "~",
+        }).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct _WithClauseParenTransport {
@@ -3081,6 +3634,59 @@ impl ::sittir_core::types::RenderableTransport for _WithClauseParenTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render__with_clause_paren_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum WithStatementAsyncMarkerEnum {
+    AsyncKw,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for WithStatementAsyncMarkerEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in WithStatementAsyncMarkerEnum"))?;
+        match text.as_str() {
+            "async" => Ok(Self::AsyncKw),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for WithStatementAsyncMarkerEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for WithStatementAsyncMarkerEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("WithStatementAsyncMarkerEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for WithStatementAsyncMarkerEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::AsyncKw => "async",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for WithStatementAsyncMarkerEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::AsyncKw => "async",
+        }).map_err(::askama::Error::from)
     }
 }
 
@@ -3361,7 +3967,7 @@ pub struct AugmentedAssignmentTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub left: LeftHandSideTransport,
-    pub operator: Box<AnyTransport>,
+    pub operator: AugmentedAssignmentOperatorEnum,
     pub right: RightHandSideTransport,
 }
 
@@ -3415,7 +4021,7 @@ pub struct BinaryOperatorTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub left: PrimaryExpressionTransport,
-    pub operator: Box<AnyTransport>,
+    pub operator: BinaryOperatorOperatorEnum,
     pub right: PrimaryExpressionTransport,
 }
 
@@ -3470,7 +4076,7 @@ pub struct BooleanOperatorTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub left: ExpressionTransport,
-    pub operator: Box<AnyTransport>,
+    pub operator: BooleanOperatorOperatorEnum,
     pub right: ExpressionTransport,
 }
 
@@ -4498,7 +5104,7 @@ pub struct ForInClauseTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub async_marker: Option<KwAsyncMarkerTransport>,
+    pub async_marker: Option<ForInClauseAsyncMarkerEnum>,
     pub left: LeftHandSideTransport,
     pub right: Vec<ExpressionWithinForInClauseTransport>,
 }
@@ -4526,7 +5132,7 @@ pub struct ForStatementTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub async_marker: Option<KwAsyncMarkerTransport>,
+    pub async_marker: Option<ForStatementAsyncMarkerEnum>,
     pub left: LeftHandSideTransport,
     pub right: ExpressionsTransport,
     pub body: SuiteTransport,
@@ -4583,7 +5189,7 @@ pub struct FunctionDefinitionTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub async_marker: Option<KwAsyncMarkerTransport>,
+    pub async_marker: Option<FunctionDefinitionAsyncMarkerEnum>,
     pub name: IdentifierTransport,
     pub type_parameters: Option<TypeParameterTransport>,
     pub parameters: ParametersTransport,
@@ -5817,7 +6423,7 @@ pub struct SplatPatternTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub identifier: Box<AnyTransport>,
+    pub identifier: SplatPatternIdentifierEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<IdentifierTransport>,
 }
@@ -5845,7 +6451,7 @@ pub struct SplatTypeTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub identifier: IdentifierTransport,
+    pub identifier: Box<AnyTransport>,
 }
 
 impl ::sittir_core::types::RenderableTransport for SplatTypeTransport {
@@ -6089,7 +6695,7 @@ pub struct TypeAliasStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
-    pub r#type: Box<AnyTransport>,
+    pub r#type: TypeAliasStatementTypeEnum,
     pub left: TypeTransport,
     pub right: TypeTransport,
 }
@@ -6227,7 +6833,7 @@ pub struct UnaryOperatorTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub operator: Box<AnyTransport>,
+    pub operator: UnaryOperatorOperatorEnum,
     pub argument: PrimaryExpressionTransport,
 }
 
@@ -6535,7 +7141,7 @@ pub struct WithStatementTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub async_marker: Option<KwAsyncMarkerTransport>,
+    pub async_marker: Option<WithStatementAsyncMarkerEnum>,
     pub with_clause: Box<AnyTransport>,
     pub body: SuiteTransport,
 }
@@ -7129,356 +7735,6 @@ impl ::sittir_core::types::RenderableTransport for DotTransport {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct PlusTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub text: String,
-}
-
-impl ::sittir_core::types::RenderableTransport for PlusTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        let s = render_plus_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct StarTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub text: String,
-}
-
-impl ::sittir_core::types::RenderableTransport for StarTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        let s = render_star_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct AtTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub text: String,
-}
-
-impl ::sittir_core::types::RenderableTransport for AtTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        let s = render_at_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct SlashTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub text: String,
-}
-
-impl ::sittir_core::types::RenderableTransport for SlashTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        let s = render_slash_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct PercentTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub text: String,
-}
-
-impl ::sittir_core::types::RenderableTransport for PercentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        let s = render_percent_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct SlashslashTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub text: String,
-}
-
-impl ::sittir_core::types::RenderableTransport for SlashslashTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        let s = render_slashslash_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct StarstarTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub text: String,
-}
-
-impl ::sittir_core::types::RenderableTransport for StarstarTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        let s = render_starstar_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct PipeTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub text: String,
-}
-
-impl ::sittir_core::types::RenderableTransport for PipeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        let s = render_pipe_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct AmpTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub text: String,
-}
-
-impl ::sittir_core::types::RenderableTransport for AmpTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        let s = render_amp_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct CaretTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub text: String,
-}
-
-impl ::sittir_core::types::RenderableTransport for CaretTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        let s = render_caret_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct ShlTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub text: String,
-}
-
-impl ::sittir_core::types::RenderableTransport for ShlTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        let s = render_shl_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct ShrTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub text: String,
-}
-
-impl ::sittir_core::types::RenderableTransport for ShrTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        let s = render_shr_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct AndTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub text: String,
-}
-
-impl ::sittir_core::types::RenderableTransport for AndTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        let s = render_and_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct OrTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub text: String,
-}
-
-impl ::sittir_core::types::RenderableTransport for OrTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        let s = render_or_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
 pub struct BreakTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
@@ -7523,6 +7779,31 @@ impl ::sittir_core::types::RenderableTransport for CaseTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_case_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct ShrTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for ShrTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_shr_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
     }
 }
@@ -7629,6 +7910,31 @@ impl ::sittir_core::types::RenderableTransport for ContinueTransport {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
+pub struct AtTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for AtTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_at_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct DelTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
@@ -7679,6 +7985,31 @@ impl ::sittir_core::types::RenderableTransport for BraceTransport {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
+pub struct StarstarTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for StarstarTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_starstar_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ElifTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
@@ -7723,6 +8054,31 @@ impl ::sittir_core::types::RenderableTransport for EllipsisTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = render_ellipsis_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct StarTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for StarTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_star_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
     }
 }
@@ -8154,6 +8510,31 @@ impl ::sittir_core::types::RenderableTransport for PassTransport {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
+pub struct SlashTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for SlashTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_slash_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct PrintTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
@@ -8304,6 +8685,31 @@ impl ::sittir_core::types::RenderableTransport for TryTransport {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
+pub struct PipeTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<::sittir_core::types::Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<::sittir_core::types::Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
+    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub text: String,
+}
+
+impl ::sittir_core::types::RenderableTransport for PipeTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        let s = render_pipe_transport(self)?;
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct WhileTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
@@ -8408,6 +8814,18 @@ fn render_assignment_typed_transport(node: &AssignmentTypedTransport) -> Result<
     Ok(node.transport_text.clone().unwrap_or_default())
 }
 
+fn render_augmented_assignment_operator_transport(t: &AugmentedAssignmentOperatorEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
+}
+
+fn render_binary_operator_operator_transport(t: &BinaryOperatorOperatorEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
+}
+
+fn render_boolean_operator_operator_transport(t: &BooleanOperatorOperatorEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
+}
+
 fn render_comprehension_clauses_transport(node: &ComprehensionClausesTransport) -> Result<String, ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
@@ -8423,6 +8841,18 @@ fn render_comprehension_clauses_transport(node: &ComprehensionClausesTransport) 
     template.render()
 }
 
+fn render_for_in_clause_async_marker_transport(t: &ForInClauseAsyncMarkerEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
+}
+
+fn render_for_statement_async_marker_transport(t: &ForStatementAsyncMarkerEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
+}
+
+fn render_function_definition_async_marker_transport(t: &FunctionDefinitionAsyncMarkerEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
+}
+
 fn render_import_list_transport(node: &ImportListTransport) -> Result<String, ::askama::Error> {
     Ok(node.transport_text.clone().unwrap_or_default())
 }
@@ -8436,6 +8866,10 @@ fn render_key_value_pattern_transport(node: &KeyValuePatternTransport) -> Result
 }
 
 fn render_kw_async_marker_transport(t: &KwAsyncMarkerTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_kw_type_transport(t: &KwTypeTransport) -> Result<String, ::askama::Error> {
     Ok(t.text.clone())
 }
 
@@ -8507,6 +8941,14 @@ fn render_simple_statements_transport(node: &SimpleStatementsTransport) -> Resul
     template.render()
 }
 
+fn render_splat_pattern_identifier_transport(t: &SplatPatternIdentifierEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
+}
+
+fn render_splat_type_identifier_transport(t: &SplatTypeIdentifierEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
+}
+
 fn render_suite_transport(node: &SuiteTransport) -> Result<String, ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
@@ -8530,12 +8972,24 @@ fn render__tuple_pattern_transport(node: &_TuplePatternTransport) -> Result<Stri
     Ok(out)
 }
 
+fn render_type_alias_statement_type_transport(t: &TypeAliasStatementTypeEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
+}
+
+fn render_unary_operator_operator_transport(t: &UnaryOperatorOperatorEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
+}
+
 fn render__with_clause_paren_transport(node: &_WithClauseParenTransport) -> Result<String, ::askama::Error> {
     let mut out = String::new();
     for child in node.children.iter() {
         out.push_str(&render_with_item_transport(child)?);
     }
     Ok(out)
+}
+
+fn render_with_statement_async_marker_transport(t: &WithStatementAsyncMarkerEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
 }
 
 fn render_aliased_import_transport(node: &AliasedImportTransport) -> Result<String, ::askama::Error> {
@@ -8652,7 +9106,7 @@ fn render_attribute_transport(node: &AttributeTransport) -> Result<String, ::ask
 fn render_augmented_assignment_transport(node: &AugmentedAssignmentTransport) -> Result<String, ::askama::Error> {
     let template = AugmentedAssignmentTemplate {
         left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left as &dyn ::sittir_core::types::RenderableTransport)),
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.operator.as_ref())),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator as &dyn ::sittir_core::types::RenderableTransport)),
         right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
@@ -8668,7 +9122,7 @@ fn render_await_transport(node: &AwaitTransport) -> Result<String, ::askama::Err
 fn render_binary_operator_transport(node: &BinaryOperatorTransport) -> Result<String, ::askama::Error> {
     let template = BinaryOperatorTemplate {
         left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left as &dyn ::sittir_core::types::RenderableTransport)),
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.operator.as_ref())),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator as &dyn ::sittir_core::types::RenderableTransport)),
         right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
@@ -8692,7 +9146,7 @@ fn render_block_transport(node: &BlockTransport) -> Result<String, ::askama::Err
 fn render_boolean_operator_transport(node: &BooleanOperatorTransport) -> Result<String, ::askama::Error> {
     let template = BooleanOperatorTemplate {
         left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left as &dyn ::sittir_core::types::RenderableTransport)),
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.operator.as_ref())),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator as &dyn ::sittir_core::types::RenderableTransport)),
         right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
@@ -9762,14 +10216,14 @@ fn render_splat_pattern_transport(node: &SplatPatternTransport) -> Result<String
             leading: false,
             trailing: false,
         },
-        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.identifier.as_ref())),
+        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
 
 fn render_splat_type_transport(node: &SplatTypeTransport) -> Result<String, ::askama::Error> {
     let template = SplatTypeTemplate {
-        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier as &dyn ::sittir_core::types::RenderableTransport)),
+        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.identifier.as_ref())),
     };
     template.render()
 }
@@ -9889,7 +10343,7 @@ fn render_type_alias_statement_transport(node: &TypeAliasStatementTransport) -> 
     let template = TypeAliasStatementTemplate {
         left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left as &dyn ::sittir_core::types::RenderableTransport)),
         right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right as &dyn ::sittir_core::types::RenderableTransport)),
-        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.r#type.as_ref())),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.r#type as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
@@ -9941,7 +10395,7 @@ fn render_typed_parameter_transport(node: &TypedParameterTransport) -> Result<St
 fn render_unary_operator_transport(node: &UnaryOperatorTransport) -> Result<String, ::askama::Error> {
     let template = UnaryOperatorTemplate {
         argument: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.argument as &dyn ::sittir_core::types::RenderableTransport)),
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.operator.as_ref())),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
@@ -10174,67 +10628,15 @@ fn render_dot_transport(t: &DotTransport) -> Result<String, ::askama::Error> {
     Ok(t.text.clone())
 }
 
-fn render_plus_transport(t: &PlusTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
-}
-
-fn render_star_transport(t: &StarTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
-}
-
-fn render_at_transport(t: &AtTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
-}
-
-fn render_slash_transport(t: &SlashTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
-}
-
-fn render_percent_transport(t: &PercentTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
-}
-
-fn render_slashslash_transport(t: &SlashslashTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
-}
-
-fn render_starstar_transport(t: &StarstarTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
-}
-
-fn render_pipe_transport(t: &PipeTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
-}
-
-fn render_amp_transport(t: &AmpTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
-}
-
-fn render_caret_transport(t: &CaretTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
-}
-
-fn render_shl_transport(t: &ShlTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
-}
-
-fn render_shr_transport(t: &ShrTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
-}
-
-fn render_and_transport(t: &AndTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
-}
-
-fn render_or_transport(t: &OrTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
-}
-
 fn render_break_transport(t: &BreakTransport) -> Result<String, ::askama::Error> {
     Ok(t.text.clone())
 }
 
 fn render_case_transport(t: &CaseTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_shr_transport(t: &ShrTransport) -> Result<String, ::askama::Error> {
     Ok(t.text.clone())
 }
 
@@ -10254,6 +10656,10 @@ fn render_continue_transport(t: &ContinueTransport) -> Result<String, ::askama::
     Ok(t.text.clone())
 }
 
+fn render_at_transport(t: &AtTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
 fn render_del_transport(t: &DelTransport) -> Result<String, ::askama::Error> {
     Ok(t.text.clone())
 }
@@ -10262,11 +10668,19 @@ fn render_brace_transport(t: &BraceTransport) -> Result<String, ::askama::Error>
     Ok(t.text.clone())
 }
 
+fn render_starstar_transport(t: &StarstarTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
 fn render_elif_transport(t: &ElifTransport) -> Result<String, ::askama::Error> {
     Ok(t.text.clone())
 }
 
 fn render_ellipsis_transport(t: &EllipsisTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_star_transport(t: &StarTransport) -> Result<String, ::askama::Error> {
     Ok(t.text.clone())
 }
 
@@ -10338,6 +10752,10 @@ fn render_pass_transport(t: &PassTransport) -> Result<String, ::askama::Error> {
     Ok(t.text.clone())
 }
 
+fn render_slash_transport(t: &SlashTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
 fn render_print_transport(t: &PrintTransport) -> Result<String, ::askama::Error> {
     Ok(t.text.clone())
 }
@@ -10359,6 +10777,10 @@ fn render_true2_transport(t: &True2Transport) -> Result<String, ::askama::Error>
 }
 
 fn render_try_transport(t: &TryTransport) -> Result<String, ::askama::Error> {
+    Ok(t.text.clone())
+}
+
+fn render_pipe_transport(t: &PipeTransport) -> Result<String, ::askama::Error> {
     Ok(t.text.clone())
 }
 
@@ -10576,11 +10998,18 @@ pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::a
         AnyTransport::AssignmentEq(t) => render_assignment_eq_transport(t),
         AnyTransport::AssignmentType(t) => render_assignment_type_transport(t),
         AnyTransport::AssignmentTyped(t) => render_assignment_typed_transport(t),
+        AnyTransport::AugmentedAssignmentOperator(t) => render_augmented_assignment_operator_transport(t),
+        AnyTransport::BinaryOperatorOperator(t) => render_binary_operator_operator_transport(t),
+        AnyTransport::BooleanOperatorOperator(t) => render_boolean_operator_operator_transport(t),
         AnyTransport::ComprehensionClauses(t) => render_comprehension_clauses_transport(t),
+        AnyTransport::ForInClauseAsyncMarker(t) => render_for_in_clause_async_marker_transport(t),
+        AnyTransport::ForStatementAsyncMarker(t) => render_for_statement_async_marker_transport(t),
+        AnyTransport::FunctionDefinitionAsyncMarker(t) => render_function_definition_async_marker_transport(t),
         AnyTransport::ImportList(t) => render_import_list_transport(t),
         AnyTransport::IsNot(t) => render_is_not_transport(t),
         AnyTransport::KeyValuePattern(t) => render_key_value_pattern_transport(t),
         AnyTransport::KwAsyncMarker(t) => render_kw_async_marker_transport(t),
+        AnyTransport::KwType(t) => render_kw_type_transport(t),
         AnyTransport::_ListPattern(t) => render__list_pattern_transport(t),
         AnyTransport::MatchBlock(t) => render_match_block_transport(t),
         AnyTransport::MatchBlockBlock(t) => render_match_block_block_transport(t),
@@ -10588,9 +11017,14 @@ pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::a
         AnyTransport::NotIn(t) => render_not_in_transport(t),
         AnyTransport::SimplePatternNegative(t) => render_simple_pattern_negative_transport(t),
         AnyTransport::SimpleStatements(t) => render_simple_statements_transport(t),
+        AnyTransport::SplatPatternIdentifier(t) => render_splat_pattern_identifier_transport(t),
+        AnyTransport::SplatTypeIdentifier(t) => render_splat_type_identifier_transport(t),
         AnyTransport::Suite(t) => render_suite_transport(t),
         AnyTransport::_TuplePattern(t) => render__tuple_pattern_transport(t),
+        AnyTransport::TypeAliasStatementType(t) => render_type_alias_statement_type_transport(t),
+        AnyTransport::UnaryOperatorOperator(t) => render_unary_operator_operator_transport(t),
         AnyTransport::_WithClauseParen(t) => render__with_clause_paren_transport(t),
+        AnyTransport::WithStatementAsyncMarker(t) => render_with_statement_async_marker_transport(t),
         AnyTransport::AliasedImport(t) => render_aliased_import_transport(t),
         AnyTransport::ArgumentList(t) => render_argument_list_transport(t),
         AnyTransport::AsPattern(t) => render_as_pattern_transport(t),
@@ -10735,30 +11169,20 @@ pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::a
         AnyTransport::Comma(t) => render_comma_transport(t),
         AnyTransport::Assert(t) => render_assert_transport(t),
         AnyTransport::Dot(t) => render_dot_transport(t),
-        AnyTransport::Plus(t) => render_plus_transport(t),
-        AnyTransport::Star(t) => render_star_transport(t),
-        AnyTransport::At(t) => render_at_transport(t),
-        AnyTransport::Slash(t) => render_slash_transport(t),
-        AnyTransport::Percent(t) => render_percent_transport(t),
-        AnyTransport::Slashslash(t) => render_slashslash_transport(t),
-        AnyTransport::Starstar(t) => render_starstar_transport(t),
-        AnyTransport::Pipe(t) => render_pipe_transport(t),
-        AnyTransport::Amp(t) => render_amp_transport(t),
-        AnyTransport::Caret(t) => render_caret_transport(t),
-        AnyTransport::Shl(t) => render_shl_transport(t),
-        AnyTransport::Shr(t) => render_shr_transport(t),
-        AnyTransport::And(t) => render_and_transport(t),
-        AnyTransport::Or(t) => render_or_transport(t),
         AnyTransport::Break(t) => render_break_transport(t),
         AnyTransport::Case(t) => render_case_transport(t),
+        AnyTransport::Shr(t) => render_shr_transport(t),
         AnyTransport::Class(t) => render_class_transport(t),
         AnyTransport::If(t) => render_if_transport(t),
         AnyTransport::Else(t) => render_else_transport(t),
         AnyTransport::Continue(t) => render_continue_transport(t),
+        AnyTransport::At(t) => render_at_transport(t),
         AnyTransport::Del(t) => render_del_transport(t),
         AnyTransport::Brace(t) => render_brace_transport(t),
+        AnyTransport::Starstar(t) => render_starstar_transport(t),
         AnyTransport::Elif(t) => render_elif_transport(t),
         AnyTransport::Ellipsis(t) => render_ellipsis_transport(t),
+        AnyTransport::Star(t) => render_star_transport(t),
         AnyTransport::Exec(t) => render_exec_transport(t),
         AnyTransport::In(t) => render_in_transport(t),
         AnyTransport::False2(t) => render_false2_transport(t),
@@ -10776,38 +11200,26 @@ pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::a
         AnyTransport::Nonlocal(t) => render_nonlocal_transport(t),
         AnyTransport::Not(t) => render_not_transport(t),
         AnyTransport::Pass(t) => render_pass_transport(t),
+        AnyTransport::Slash(t) => render_slash_transport(t),
         AnyTransport::Print(t) => render_print_transport(t),
         AnyTransport::Raise(t) => render_raise_transport(t),
         AnyTransport::Return(t) => render_return_transport(t),
         AnyTransport::Anonymous(t) => render_anonymous_transport(t),
         AnyTransport::True2(t) => render_true2_transport(t),
         AnyTransport::Try(t) => render_try_transport(t),
+        AnyTransport::Pipe(t) => render_pipe_transport(t),
         AnyTransport::While(t) => render_while_transport(t),
         AnyTransport::With(t) => render_with_transport(t),
-        AnyTransport::Literal0_2b_3d => Ok("+=".to_string()),
-        AnyTransport::Literal1_2d_3d => Ok("-=".to_string()),
-        AnyTransport::Literal2_2a_3d => Ok("*=".to_string()),
-        AnyTransport::Literal3_2f_3d => Ok("/=".to_string()),
-        AnyTransport::Literal4_40_3d => Ok("@=".to_string()),
-        AnyTransport::Literal5_2f_2f_3d => Ok("//=".to_string()),
-        AnyTransport::Literal6_25_3d => Ok("%=".to_string()),
-        AnyTransport::Literal7_2a_2a_3d => Ok("**=".to_string()),
-        AnyTransport::Literal8_3e_3e_3d => Ok(">>=".to_string()),
-        AnyTransport::Literal9_3c_3c_3d => Ok("<<=".to_string()),
-        AnyTransport::Literal10_26_3d => Ok("&=".to_string()),
-        AnyTransport::Literal11_5e_3d => Ok("^=".to_string()),
-        AnyTransport::Literal12_7c_3d => Ok("|=".to_string()),
-        AnyTransport::Literal13_3c => Ok("<".to_string()),
-        AnyTransport::Literal14_3c_3d => Ok("<=".to_string()),
-        AnyTransport::Literal15_3d_3d => Ok("==".to_string()),
-        AnyTransport::Literal16_21_3d => Ok("!=".to_string()),
-        AnyTransport::Literal17_3e_3d => Ok(">=".to_string()),
-        AnyTransport::Literal18_3e => Ok(">".to_string()),
-        AnyTransport::Literal19_3c_3e => Ok("<>".to_string()),
-        AnyTransport::Literal20_6e_6f_74_20_69_6e => Ok("not in".to_string()),
-        AnyTransport::Literal21_69_73 => Ok("is".to_string()),
-        AnyTransport::Literal22_69_73_20_6e_6f_74 => Ok("is not".to_string()),
-        AnyTransport::Literal23_7e => Ok("~".to_string()),
+        AnyTransport::Literal0_3c => Ok("<".to_string()),
+        AnyTransport::Literal1_3c_3d => Ok("<=".to_string()),
+        AnyTransport::Literal2_3d_3d => Ok("==".to_string()),
+        AnyTransport::Literal3_21_3d => Ok("!=".to_string()),
+        AnyTransport::Literal4_3e_3d => Ok(">=".to_string()),
+        AnyTransport::Literal5_3e => Ok(">".to_string()),
+        AnyTransport::Literal6_3c_3e => Ok("<>".to_string()),
+        AnyTransport::Literal7_6e_6f_74_20_69_6e => Ok("not in".to_string()),
+        AnyTransport::Literal8_69_73 => Ok("is".to_string()),
+        AnyTransport::Literal9_69_73_20_6e_6f_74 => Ok("is not".to_string()),
     }
 }
 
@@ -10879,11 +11291,18 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::AssignmentEq(data) => transport_to_node_assignment_eq(data),
         AnyTransport::AssignmentType(data) => transport_to_node_assignment_type(data),
         AnyTransport::AssignmentTyped(data) => transport_to_node_assignment_typed(data),
+        AnyTransport::AugmentedAssignmentOperator(data) => transport_to_node_augmented_assignment_operator(data),
+        AnyTransport::BinaryOperatorOperator(data) => transport_to_node_binary_operator_operator(data),
+        AnyTransport::BooleanOperatorOperator(data) => transport_to_node_boolean_operator_operator(data),
         AnyTransport::ComprehensionClauses(data) => transport_to_node_comprehension_clauses(data),
+        AnyTransport::ForInClauseAsyncMarker(data) => transport_to_node_for_in_clause_async_marker(data),
+        AnyTransport::ForStatementAsyncMarker(data) => transport_to_node_for_statement_async_marker(data),
+        AnyTransport::FunctionDefinitionAsyncMarker(data) => transport_to_node_function_definition_async_marker(data),
         AnyTransport::ImportList(data) => transport_to_node_import_list(data),
         AnyTransport::IsNot(data) => transport_to_node_is_not(data),
         AnyTransport::KeyValuePattern(data) => transport_to_node_key_value_pattern(data),
         AnyTransport::KwAsyncMarker(data) => transport_to_node_kw_async_marker(data),
+        AnyTransport::KwType(data) => transport_to_node_kw_type(data),
         AnyTransport::_ListPattern(data) => transport_to_node__list_pattern(data),
         AnyTransport::MatchBlock(data) => transport_to_node_match_block(data),
         AnyTransport::MatchBlockBlock(data) => transport_to_node_match_block_block(data),
@@ -10891,9 +11310,14 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::NotIn(data) => transport_to_node_not_in(data),
         AnyTransport::SimplePatternNegative(data) => transport_to_node_simple_pattern_negative(data),
         AnyTransport::SimpleStatements(data) => transport_to_node_simple_statements(data),
+        AnyTransport::SplatPatternIdentifier(data) => transport_to_node_splat_pattern_identifier(data),
+        AnyTransport::SplatTypeIdentifier(data) => transport_to_node_splat_type_identifier(data),
         AnyTransport::Suite(data) => transport_to_node_suite(data),
         AnyTransport::_TuplePattern(data) => transport_to_node__tuple_pattern(data),
+        AnyTransport::TypeAliasStatementType(data) => transport_to_node_type_alias_statement_type(data),
+        AnyTransport::UnaryOperatorOperator(data) => transport_to_node_unary_operator_operator(data),
         AnyTransport::_WithClauseParen(data) => transport_to_node__with_clause_paren(data),
+        AnyTransport::WithStatementAsyncMarker(data) => transport_to_node_with_statement_async_marker(data),
         AnyTransport::AliasedImport(data) => transport_to_node_aliased_import(data),
         AnyTransport::ArgumentList(data) => transport_to_node_argument_list(data),
         AnyTransport::AsPattern(data) => transport_to_node_as_pattern(data),
@@ -11038,30 +11462,20 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::Comma(data) => transport_to_node_comma(data),
         AnyTransport::Assert(data) => transport_to_node_assert(data),
         AnyTransport::Dot(data) => transport_to_node_dot(data),
-        AnyTransport::Plus(data) => transport_to_node_plus(data),
-        AnyTransport::Star(data) => transport_to_node_star(data),
-        AnyTransport::At(data) => transport_to_node_at(data),
-        AnyTransport::Slash(data) => transport_to_node_slash(data),
-        AnyTransport::Percent(data) => transport_to_node_percent(data),
-        AnyTransport::Slashslash(data) => transport_to_node_slashslash(data),
-        AnyTransport::Starstar(data) => transport_to_node_starstar(data),
-        AnyTransport::Pipe(data) => transport_to_node_pipe(data),
-        AnyTransport::Amp(data) => transport_to_node_amp(data),
-        AnyTransport::Caret(data) => transport_to_node_caret(data),
-        AnyTransport::Shl(data) => transport_to_node_shl(data),
-        AnyTransport::Shr(data) => transport_to_node_shr(data),
-        AnyTransport::And(data) => transport_to_node_and(data),
-        AnyTransport::Or(data) => transport_to_node_or(data),
         AnyTransport::Break(data) => transport_to_node_break(data),
         AnyTransport::Case(data) => transport_to_node_case(data),
+        AnyTransport::Shr(data) => transport_to_node_shr(data),
         AnyTransport::Class(data) => transport_to_node_class(data),
         AnyTransport::If(data) => transport_to_node_if(data),
         AnyTransport::Else(data) => transport_to_node_else(data),
         AnyTransport::Continue(data) => transport_to_node_continue(data),
+        AnyTransport::At(data) => transport_to_node_at(data),
         AnyTransport::Del(data) => transport_to_node_del(data),
         AnyTransport::Brace(data) => transport_to_node_brace(data),
+        AnyTransport::Starstar(data) => transport_to_node_starstar(data),
         AnyTransport::Elif(data) => transport_to_node_elif(data),
         AnyTransport::Ellipsis(data) => transport_to_node_ellipsis(data),
+        AnyTransport::Star(data) => transport_to_node_star(data),
         AnyTransport::Exec(data) => transport_to_node_exec(data),
         AnyTransport::In(data) => transport_to_node_in(data),
         AnyTransport::False2(data) => transport_to_node_false2(data),
@@ -11079,38 +11493,26 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::Nonlocal(data) => transport_to_node_nonlocal(data),
         AnyTransport::Not(data) => transport_to_node_not(data),
         AnyTransport::Pass(data) => transport_to_node_pass(data),
+        AnyTransport::Slash(data) => transport_to_node_slash(data),
         AnyTransport::Print(data) => transport_to_node_print(data),
         AnyTransport::Raise(data) => transport_to_node_raise(data),
         AnyTransport::Return(data) => transport_to_node_return(data),
         AnyTransport::Anonymous(data) => transport_to_node_anonymous(data),
         AnyTransport::True2(data) => transport_to_node_true2(data),
         AnyTransport::Try(data) => transport_to_node_try(data),
+        AnyTransport::Pipe(data) => transport_to_node_pipe(data),
         AnyTransport::While(data) => transport_to_node_while(data),
         AnyTransport::With(data) => transport_to_node_with(data),
-        AnyTransport::Literal0_2b_3d => Ok(transport_node_data(TransportKindId(73) /* "+=" */, None, None, false, Some("+=".to_string()), None, None, None, None)),
-        AnyTransport::Literal1_2d_3d => Ok(transport_node_data(TransportKindId(74) /* "-=" */, None, None, false, Some("-=".to_string()), None, None, None, None)),
-        AnyTransport::Literal2_2a_3d => Ok(transport_node_data(TransportKindId(75) /* "*=" */, None, None, false, Some("*=".to_string()), None, None, None, None)),
-        AnyTransport::Literal3_2f_3d => Ok(transport_node_data(TransportKindId(76) /* "/=" */, None, None, false, Some("/=".to_string()), None, None, None, None)),
-        AnyTransport::Literal4_40_3d => Ok(transport_node_data(TransportKindId(77) /* "@=" */, None, None, false, Some("@=".to_string()), None, None, None, None)),
-        AnyTransport::Literal5_2f_2f_3d => Ok(transport_node_data(TransportKindId(78) /* "//=" */, None, None, false, Some("//=".to_string()), None, None, None, None)),
-        AnyTransport::Literal6_25_3d => Ok(transport_node_data(TransportKindId(79) /* "%=" */, None, None, false, Some("%=".to_string()), None, None, None, None)),
-        AnyTransport::Literal7_2a_2a_3d => Ok(transport_node_data(TransportKindId(80) /* "**=" */, None, None, false, Some("**=".to_string()), None, None, None, None)),
-        AnyTransport::Literal8_3e_3e_3d => Ok(transport_node_data(TransportKindId(81) /* ">>=" */, None, None, false, Some(">>=".to_string()), None, None, None, None)),
-        AnyTransport::Literal9_3c_3c_3d => Ok(transport_node_data(TransportKindId(82) /* "<<=" */, None, None, false, Some("<<=".to_string()), None, None, None, None)),
-        AnyTransport::Literal10_26_3d => Ok(transport_node_data(TransportKindId(83) /* "&=" */, None, None, false, Some("&=".to_string()), None, None, None, None)),
-        AnyTransport::Literal11_5e_3d => Ok(transport_node_data(TransportKindId(84) /* "^=" */, None, None, false, Some("^=".to_string()), None, None, None, None)),
-        AnyTransport::Literal12_7c_3d => Ok(transport_node_data(TransportKindId(85) /* "|=" */, None, None, false, Some("|=".to_string()), None, None, None, None)),
-        AnyTransport::Literal13_3c => Ok(transport_node_data(TransportKindId(65) /* "<" */, None, None, false, Some("<".to_string()), None, None, None, None)),
-        AnyTransport::Literal14_3c_3d => Ok(transport_node_data(TransportKindId(66) /* "<=" */, None, None, false, Some("<=".to_string()), None, None, None, None)),
-        AnyTransport::Literal15_3d_3d => Ok(transport_node_data(TransportKindId(67) /* "==" */, None, None, false, Some("==".to_string()), None, None, None, None)),
-        AnyTransport::Literal16_21_3d => Ok(transport_node_data(TransportKindId(68) /* "!=" */, None, None, false, Some("!=".to_string()), None, None, None, None)),
-        AnyTransport::Literal17_3e_3d => Ok(transport_node_data(TransportKindId(69) /* ">=" */, None, None, false, Some(">=".to_string()), None, None, None, None)),
-        AnyTransport::Literal18_3e => Ok(transport_node_data(TransportKindId(70) /* ">" */, None, None, false, Some(">".to_string()), None, None, None, None)),
-        AnyTransport::Literal19_3c_3e => Ok(transport_node_data(TransportKindId(71) /* "<>" */, None, None, false, Some("<>".to_string()), None, None, None, None)),
-        AnyTransport::Literal20_6e_6f_74_20_69_6e => Ok(transport_node_data(TransportKindId(193) /* "not in" */, None, None, false, Some("not in".to_string()), None, None, None, None)),
-        AnyTransport::Literal21_69_73 => Ok(transport_node_data(TransportKindId(64) /* "is" */, None, None, false, Some("is".to_string()), None, None, None, None)),
-        AnyTransport::Literal22_69_73_20_6e_6f_74 => Ok(transport_node_data(TransportKindId(194) /* "is not" */, None, None, false, Some("is not".to_string()), None, None, None, None)),
-        AnyTransport::Literal23_7e => Ok(transport_node_data(TransportKindId(63) /* "~" */, None, None, false, Some("~".to_string()), None, None, None, None)),
+        AnyTransport::Literal0_3c => Ok(transport_node_data(TransportKindId(65) /* "<" */, None, None, false, Some("<".to_string()), None, None, None, None)),
+        AnyTransport::Literal1_3c_3d => Ok(transport_node_data(TransportKindId(66) /* "<=" */, None, None, false, Some("<=".to_string()), None, None, None, None)),
+        AnyTransport::Literal2_3d_3d => Ok(transport_node_data(TransportKindId(67) /* "==" */, None, None, false, Some("==".to_string()), None, None, None, None)),
+        AnyTransport::Literal3_21_3d => Ok(transport_node_data(TransportKindId(68) /* "!=" */, None, None, false, Some("!=".to_string()), None, None, None, None)),
+        AnyTransport::Literal4_3e_3d => Ok(transport_node_data(TransportKindId(69) /* ">=" */, None, None, false, Some(">=".to_string()), None, None, None, None)),
+        AnyTransport::Literal5_3e => Ok(transport_node_data(TransportKindId(70) /* ">" */, None, None, false, Some(">".to_string()), None, None, None, None)),
+        AnyTransport::Literal6_3c_3e => Ok(transport_node_data(TransportKindId(71) /* "<>" */, None, None, false, Some("<>".to_string()), None, None, None, None)),
+        AnyTransport::Literal7_6e_6f_74_20_69_6e => Ok(transport_node_data(TransportKindId(193) /* "not in" */, None, None, false, Some("not in".to_string()), None, None, None, None)),
+        AnyTransport::Literal8_69_73 => Ok(transport_node_data(TransportKindId(64) /* "is" */, None, None, false, Some("is".to_string()), None, None, None, None)),
+        AnyTransport::Literal9_69_73_20_6e_6f_74 => Ok(transport_node_data(TransportKindId(194) /* "is not" */, None, None, false, Some("is not".to_string()), None, None, None, None)),
     }
 }
 
@@ -11186,6 +11588,48 @@ fn transport_to_node_assignment_typed(transport: AssignmentTypedTransport) -> Re
     ))
 }
 
+fn transport_to_node_augmented_assignment_operator(transport: AugmentedAssignmentOperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_augmented_assignment_operator" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_binary_operator_operator(transport: BinaryOperatorOperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_binary_operator_operator" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_boolean_operator_operator(transport: BooleanOperatorOperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_boolean_operator_operator" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
+    ))
+}
+
 fn transport_to_node_comprehension_clauses(transport: ComprehensionClausesTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -11200,6 +11644,48 @@ fn transport_to_node_comprehension_clauses(transport: ComprehensionClausesTransp
         transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
+    ))
+}
+
+fn transport_to_node_for_in_clause_async_marker(transport: ForInClauseAsyncMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_for_in_clause_async_marker" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_for_statement_async_marker(transport: ForStatementAsyncMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_for_statement_async_marker" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_function_definition_async_marker(transport: FunctionDefinitionAsyncMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_function_definition_async_marker" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
     ))
 }
 
@@ -11257,6 +11743,20 @@ fn transport_to_node_key_value_pattern(transport: KeyValuePatternTransport) -> R
 fn transport_to_node_kw_async_marker(transport: KwAsyncMarkerTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(250) /* "_kw_async_marker" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id.map(|v| v as u64),
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_kw_type(transport: KwTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(251) /* "_kw_type" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -11382,6 +11882,34 @@ fn transport_to_node_simple_statements(transport: SimpleStatementsTransport) -> 
     ))
 }
 
+fn transport_to_node_splat_pattern_identifier(transport: SplatPatternIdentifierEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_splat_pattern_identifier" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_splat_type_identifier(transport: SplatTypeIdentifierEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_splat_type_identifier" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
+    ))
+}
+
 fn transport_to_node_suite(transport: SuiteTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -11416,6 +11944,34 @@ fn transport_to_node__tuple_pattern(transport: _TuplePatternTransport) -> Result
     ))
 }
 
+fn transport_to_node_type_alias_statement_type(transport: TypeAliasStatementTypeEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_type_alias_statement_type" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_unary_operator_operator(transport: UnaryOperatorOperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_unary_operator_operator" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
+    ))
+}
+
 fn transport_to_node__with_clause_paren(transport: _WithClauseParenTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -11430,6 +11986,20 @@ fn transport_to_node__with_clause_paren(transport: _WithClauseParenTransport) ->
         transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
+    ))
+}
+
+fn transport_to_node_with_statement_async_marker(transport: WithStatementAsyncMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_with_statement_async_marker" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
     ))
 }
 
@@ -11592,7 +12162,7 @@ fn transport_to_node_attribute(transport: AttributeTransport) -> Result<Transpor
 fn transport_to_node_augmented_assignment(transport: AugmentedAssignmentTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("left".to_string(), transport_field_value(left_hand_side_transport_to_any(transport.left))?);
-    fields.insert("operator".to_string(), transport_field_value(transport.operator)?);
+    fields.insert("operator".to_string(), transport_field_value(Box::new(AnyTransport::AugmentedAssignmentOperator(transport.operator)))?);
     fields.insert("right".to_string(), transport_field_value(right_hand_side_transport_to_any(transport.right))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -11630,7 +12200,7 @@ fn transport_to_node_await(transport: AwaitTransport) -> Result<TransportNodeDat
 fn transport_to_node_binary_operator(transport: BinaryOperatorTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("left".to_string(), transport_field_value(primary_expression_transport_to_any(transport.left))?);
-    fields.insert("operator".to_string(), transport_field_value(transport.operator)?);
+    fields.insert("operator".to_string(), transport_field_value(Box::new(AnyTransport::BinaryOperatorOperator(transport.operator)))?);
     fields.insert("right".to_string(), transport_field_value(primary_expression_transport_to_any(transport.right))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -11667,7 +12237,7 @@ fn transport_to_node_block(transport: BlockTransport) -> Result<TransportNodeDat
 fn transport_to_node_boolean_operator(transport: BooleanOperatorTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("left".to_string(), transport_field_value(expression_transport_to_any(transport.left))?);
-    fields.insert("operator".to_string(), transport_field_value(transport.operator)?);
+    fields.insert("operator".to_string(), transport_field_value(Box::new(AnyTransport::BooleanOperatorOperator(transport.operator)))?);
     fields.insert("right".to_string(), transport_field_value(expression_transport_to_any(transport.right))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -12335,7 +12905,7 @@ fn transport_to_node_float(transport: FloatTransport) -> Result<TransportNodeDat
 fn transport_to_node_for_in_clause(transport: ForInClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.async_marker {
-        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::KwAsyncMarker(value)))?);
+        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::ForInClauseAsyncMarker(value)))?);
     }
     fields.insert("left".to_string(), transport_field_value(left_hand_side_transport_to_any(transport.left))?);
     fields.insert("right".to_string(), transport_field_values(transport.right.into_iter().map(|v| expression_within_for_in_clause_transport_to_any(v)).collect::<Vec<_>>())?);
@@ -12357,7 +12927,7 @@ fn transport_to_node_for_in_clause(transport: ForInClauseTransport) -> Result<Tr
 fn transport_to_node_for_statement(transport: ForStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.async_marker {
-        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::KwAsyncMarker(value)))?);
+        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::ForStatementAsyncMarker(value)))?);
     }
     fields.insert("left".to_string(), transport_field_value(left_hand_side_transport_to_any(transport.left))?);
     fields.insert("right".to_string(), transport_field_value(expressions_transport_to_any(transport.right))?);
@@ -12400,7 +12970,7 @@ fn transport_to_node_format_specifier(transport: FormatSpecifierTransport) -> Re
 fn transport_to_node_function_definition(transport: FunctionDefinitionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.async_marker {
-        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::KwAsyncMarker(value)))?);
+        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::FunctionDefinitionAsyncMarker(value)))?);
     }
     fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(transport.name)))?);
     if let Some(value) = transport.type_parameters {
@@ -13238,7 +13808,7 @@ fn transport_to_node_slice(transport: SliceTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_splat_pattern(transport: SplatPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("identifier".to_string(), transport_field_value(transport.identifier)?);
+    fields.insert("identifier".to_string(), transport_field_value(Box::new(AnyTransport::SplatPatternIdentifier(transport.identifier)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::Identifier(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
@@ -13256,7 +13826,7 @@ fn transport_to_node_splat_pattern(transport: SplatPatternTransport) -> Result<T
 
 fn transport_to_node_splat_type(transport: SplatTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("identifier".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(transport.identifier)))?);
+    fields.insert("identifier".to_string(), transport_field_value(transport.identifier)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -13420,7 +13990,7 @@ fn transport_to_node_type(transport: TypeTransport) -> Result<TransportNodeData,
 
 fn transport_to_node_type_alias_statement(transport: TypeAliasStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("type".to_string(), transport_field_value(transport.r#type)?);
+    fields.insert("type".to_string(), transport_field_value(Box::new(AnyTransport::TypeAliasStatementType(transport.r#type)))?);
     fields.insert("left".to_string(), transport_field_value(Box::new(AnyTransport::Type(transport.left)))?);
     fields.insert("right".to_string(), transport_field_value(Box::new(AnyTransport::Type(transport.right)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -13509,7 +14079,7 @@ fn transport_to_node_typed_parameter(transport: TypedParameterTransport) -> Resu
 
 fn transport_to_node_unary_operator(transport: UnaryOperatorTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("operator".to_string(), transport_field_value(transport.operator)?);
+    fields.insert("operator".to_string(), transport_field_value(Box::new(AnyTransport::UnaryOperatorOperator(transport.operator)))?);
     fields.insert("argument".to_string(), transport_field_value(primary_expression_transport_to_any(transport.argument))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -13694,7 +14264,7 @@ fn transport_to_node_with_item(transport: WithItemTransport) -> Result<Transport
 fn transport_to_node_with_statement(transport: WithStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.async_marker {
-        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::KwAsyncMarker(value)))?);
+        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::WithStatementAsyncMarker(value)))?);
     }
     fields.insert("with_clause".to_string(), transport_field_value(transport.with_clause)?);
     fields.insert("body".to_string(), transport_field_value(Box::new(AnyTransport::Suite(transport.body)))?);
@@ -14038,202 +14608,6 @@ fn transport_to_node_dot(transport: DotTransport) -> Result<TransportNodeData, :
     ))
 }
 
-fn transport_to_node_plus(transport: PlusTransport) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(52) /* "+" */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_star(transport: StarTransport) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(11) /* "*" */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_at(transport: AtTransport) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(47) /* "@" */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_slash(transport: SlashTransport) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(57) /* "/" */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_percent(transport: PercentTransport) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(58) /* "%" */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_slashslash(transport: SlashslashTransport) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(59) /* "//" */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_starstar(transport: StarstarTransport) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(39) /* "**" */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_pipe(transport: PipeTransport) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(49) /* "|" */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_amp(transport: AmpTransport) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(60) /* "&" */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_caret(transport: CaretTransport) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(61) /* "^" */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_shl(transport: ShlTransport) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(62) /* "<<" */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_shr(transport: ShrTransport) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(13) /* ">>" */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_and(transport: AndTransport) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(55) /* "and" */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_or(transport: OrTransport) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(56) /* "or" */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
-        None,
-        None,
-    ))
-}
-
 fn transport_to_node_break(transport: BreakTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(20) /* "break" */,
@@ -14251,6 +14625,20 @@ fn transport_to_node_break(transport: BreakTransport) -> Result<TransportNodeDat
 fn transport_to_node_case(transport: CaseTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(27) /* "case" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id.map(|v| v as u64),
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_shr(transport: ShrTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(13) /* ">>" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -14318,6 +14706,20 @@ fn transport_to_node_continue(transport: ContinueTransport) -> Result<TransportN
     ))
 }
 
+fn transport_to_node_at(transport: AtTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(47) /* "@" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id.map(|v| v as u64),
+        None,
+        None,
+    ))
+}
+
 fn transport_to_node_del(transport: DelTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(17) /* "del" */,
@@ -14346,6 +14748,20 @@ fn transport_to_node_brace(transport: BraceTransport) -> Result<TransportNodeDat
     ))
 }
 
+fn transport_to_node_starstar(transport: StarstarTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(39) /* "**" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id.map(|v| v as u64),
+        None,
+        None,
+    ))
+}
+
 fn transport_to_node_elif(transport: ElifTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(24) /* "elif" */,
@@ -14363,6 +14779,20 @@ fn transport_to_node_elif(transport: ElifTransport) -> Result<TransportNodeData,
 fn transport_to_node_ellipsis(transport: EllipsisTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "..." — no parser symbol */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id.map(|v| v as u64),
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_star(transport: StarTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(11) /* "*" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -14612,6 +15042,20 @@ fn transport_to_node_pass(transport: PassTransport) -> Result<TransportNodeData,
     ))
 }
 
+fn transport_to_node_slash(transport: SlashTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(57) /* "/" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id.map(|v| v as u64),
+        None,
+        None,
+    ))
+}
+
 fn transport_to_node_print(transport: PrintTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(12) /* "print" */,
@@ -14685,6 +15129,20 @@ fn transport_to_node_true2(transport: True2Transport) -> Result<TransportNodeDat
 fn transport_to_node_try(transport: TryTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(32) /* "try" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_id.map(|v| v as u64),
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_pipe(transport: PipeTransport) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(49) /* "|" */,
         transport.transport_source,
         transport.transport_named,
         true,

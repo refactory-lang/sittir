@@ -341,8 +341,9 @@ const _K10: readonly string[] = ["relative_import","dotted_name"];
 const _K11: readonly string[] = ["true","false","none"];
 const _K12: readonly string[] = ["class_pattern","splat_pattern","union_pattern","_list_pattern","_tuple_pattern","dict_pattern","string","concatenated_string","_simple_pattern_negative","complex_pattern","dotted_name"];
 const _K13: readonly string[] = ["keyword_identifier"];
-const _K14: readonly string[] = ["comparison_operator","not_operator","boolean_operator","lambda","primary_expression","conditional_expression","named_expression","as_pattern","slice"];
-const _K15: readonly string[] = ["list_splat_pattern","dictionary_splat_pattern"];
+const _K14: readonly string[] = ["_splat_type_identifier","identifier"];
+const _K15: readonly string[] = ["comparison_operator","not_operator","boolean_operator","lambda","primary_expression","conditional_expression","named_expression","as_pattern","slice"];
+const _K16: readonly string[] = ["list_splat_pattern","dictionary_splat_pattern"];
 
 export function aliasedImportFrom(input: T.AliasedImport.Loose): ReturnType<typeof F.aliasedImport> | T.AliasedImport {
   if (isNodeData(input)) return input;
@@ -415,7 +416,7 @@ export function augmentedAssignmentFrom(input: T.AugmentedAssignment.Loose): Ret
   if (isNodeData(input)) return input;
   return F.augmentedAssignment({
     left: _resolveOne<T.LeftHandSide>(input.left, _K0, _super_left_hand_side),
-    operator: _resolveOne<"+=" | "-=" | "*=" | "/=" | "@=" | "//=" | "%=" | "**=" | ">>=" | "<<=" | "&=" | "^=" | "|=">(input.operator, _K0, _K0),
+    operator: _resolveOneLeaf<T.AugmentedAssignmentOperator>(input.operator, "_augmented_assignment_operator"),
     right: _resolveOne<T.RightHandSide>(input.right, _K0, _super_right_hand_side),
   });
 }
@@ -431,7 +432,7 @@ export function binaryOperatorFrom(input: T.BinaryOperator.Loose): ReturnType<ty
   if (isNodeData(input)) return input;
   return F.binaryOperator({
     left: _resolveOne<T.PrimaryExpression>(input.left, _K1, _K2),
-    operator: _resolveOne<"+" | "-" | "*" | "@" | "/" | "%" | "//" | "**" | "|" | "&" | "^" | "<<" | ">>">(input.operator, _K0, _K0),
+    operator: _resolveOneLeaf<T.BinaryOperatorOperator>(input.operator, "_binary_operator_operator"),
     right: _resolveOne<T.PrimaryExpression>(input.right, _K1, _K2),
   });
 }
@@ -448,7 +449,7 @@ export function booleanOperatorFrom(input: T.BooleanOperator.Loose): ReturnType<
   if (isNodeData(input)) return input;
   return F.booleanOperator({
     left: _resolveOne<T.Expression>(input.left, _K0, _super_expression),
-    operator: _resolveOne<"and" | "or">(input.operator, _K0, _K0),
+    operator: _resolveOneLeaf<T.BooleanOperatorOperator>(input.operator, "_boolean_operator_operator"),
     right: _resolveOne<T.Expression>(input.right, _K0, _super_expression),
   });
 }
@@ -1104,7 +1105,7 @@ export function sliceFrom(input?: T.Slice.Loose): ReturnType<typeof F.slice> | T
 export function splatPatternFrom(input: T.SplatPattern.Loose): ReturnType<typeof F.splatPattern> | T.SplatPattern {
   if (isNodeData(input)) return input;
   return F.splatPattern({
-    identifier: _resolveOne<"*" | "**">(input.identifier, _K0, _K0),
+    identifier: _resolveOneLeaf<T.SplatPatternIdentifier>(input.identifier, "_splat_pattern_identifier"),
     children: _resolveOneLeaf(input.children, "identifier"),
   });
 }
@@ -1112,7 +1113,7 @@ export function splatPatternFrom(input: T.SplatPattern.Loose): ReturnType<typeof
 export function splatTypeFrom(input: T.SplatType.Loose): ReturnType<typeof F.splatType> | T.SplatType {
   if (isNodeData(input)) return input;
   return F.splatType({
-    identifier: _resolveOneLeaf<"*" | "**" | T.Identifier>(input.identifier, "identifier"),
+    identifier: _resolveOne<T.SplatTypeIdentifier | T.Identifier>(input.identifier, _K14, _K0),
   });
 }
 
@@ -1131,7 +1132,7 @@ export function stringContentFrom(...input: readonly (NonNullable<T.StringConten
 
 export function subscriptFrom(input: T.Subscript.Loose): ReturnType<typeof F.subscript> | T.Subscript {
   if (isNodeData(input)) return input;
-  const _ne_subscript = _resolveMany<T.Expression | T.Slice>(input.subscript, _K0, _K14);
+  const _ne_subscript = _resolveMany<T.Expression | T.Slice>(input.subscript, _K0, _K15);
   _assertNonEmpty(_ne_subscript, 'subscript.subscript');
   return F.subscript({
     value: _resolveOne<T.PrimaryExpression>(input.value, _K1, _K2),
@@ -1182,6 +1183,7 @@ export function typeFrom(input?: NonNullable<T.Type.Config['children']>[number] 
 export function typeAliasStatementFrom(input: T.TypeAliasStatement.Loose): ReturnType<typeof F.typeAliasStatement> | T.TypeAliasStatement {
   if (isNodeData(input)) return input;
   return F.typeAliasStatement({
+    type: _resolveOneLeaf<T.TypeAliasStatementType>(input.type, "_type_alias_statement_type"),
     left: _resolveOneBranch<T.Type>(input.left, "type"),
     right: _resolveOneBranch<T.Type>(input.right, "type"),
   });
@@ -1213,14 +1215,14 @@ export function typedParameterFrom(input: T.TypedParameter.Loose): ReturnType<ty
   if (isNodeData(input)) return input;
   return F.typedParameter({
     type: _resolveOneBranch<T.Type>(input.type, "type"),
-    children: _resolveOne(input.children, _super_keyword_identifier, _K15),
+    children: _resolveOne(input.children, _super_keyword_identifier, _K16),
   });
 }
 
 export function unaryOperatorFrom(input: T.UnaryOperator.Loose): ReturnType<typeof F.unaryOperator> | T.UnaryOperator {
   if (isNodeData(input)) return input;
   return F.unaryOperator({
-    operator: _resolveOne<"+" | "-" | "~">(input.operator, _K0, _K0),
+    operator: _resolveOneLeaf<T.UnaryOperatorOperator>(input.operator, "_unary_operator_operator"),
     argument: _resolveOne<T.PrimaryExpression>(input.argument, _K1, _K2),
   });
 }

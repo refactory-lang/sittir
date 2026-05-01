@@ -190,12 +190,12 @@ describe('assignment_pattern', () => {
 
 describe('augmented_assignment_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.augmentedAssignment({ left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, operator: 'test' as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.augmentedAssignment({ left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, operator: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.$type).toBe(TSKindId.AugmentedAssignmentExpression);
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.augmentedAssignment({ left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, operator: 'test' as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.augmentedAssignment({ left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, operator: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -214,12 +214,12 @@ describe('await_expression', () => {
 
 describe('binary_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.binary({ left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, operator: 'test' as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.binary({ left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, operator: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.$type).toBe(TSKindId.BinaryExpression);
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.binary({ left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, operator: 'test' as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.binary({ left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, operator: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -707,12 +707,12 @@ describe('flow_maybe_type', () => {
 
 describe('for_in_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.forIn({ operator: 'test' as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'empty_statement', $text: ';', $source: 'factory', $named: true } as any, children: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] as any });
+    const node = ir.forIn({ operator: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'empty_statement', $text: ';', $source: 'factory', $named: true } as any, children: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] as any });
     expect(node.$type).toBe(TSKindId.ForInStatement);
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.forIn({ operator: 'test' as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'empty_statement', $text: ';', $source: 'factory', $named: true } as any, children: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] as any });
+    const node = ir.forIn({ operator: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'empty_statement', $text: ';', $source: 'factory', $named: true } as any, children: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1090,12 +1090,12 @@ describe('labeled_statement', () => {
 
 describe('lexical_declaration', () => {
   it('factory produces correct type', () => {
-    const node = ir.lexical({ kind: 'test' as any, declarators: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any], semicolon: { $type: '_automatic_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.lexical({ kind: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, declarators: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any], semicolon: { $type: '_automatic_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.$type).toBe(TSKindId.LexicalDeclaration);
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.lexical({ kind: 'test' as any, declarators: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any], semicolon: { $type: '_automatic_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.lexical({ kind: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, declarators: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any], semicolon: { $type: '_automatic_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1313,12 +1313,12 @@ describe('object_pattern', () => {
 
 describe('object_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.objectType({ opening: 'test' as any, closing: 'test' as any });
+    const node = ir.objectType({ opening: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, closing: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.$type).toBe(TSKindId.ObjectType);
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.objectType({ opening: 'test' as any, closing: 'test' as any });
+    const node = ir.objectType({ opening: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, closing: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1931,12 +1931,12 @@ describe('type_query', () => {
 
 describe('unary_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.unary({ operator: 'test' as any, argument: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.unary({ operator: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, argument: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.$type).toBe(TSKindId.UnaryExpression);
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.unary({ operator: 'test' as any, argument: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.unary({ operator: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, argument: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1982,12 +1982,12 @@ describe('union_type', () => {
 
 describe('update_expression', () => {
   it('postfix form produces correct type', () => {
-    const node = ir.update.postfix({ argument: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, operator: 'test' as any });
+    const node = ir.update.postfix({ argument: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, operator: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.$type).toBe(TSKindId.UpdateExpression);
     expect(node.$source).toBe('factory');
   });
   it('prefix form produces correct type', () => {
-    const node = ir.update.prefix({ operator: 'test' as any, argument: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.update.prefix({ operator: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, argument: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.$type).toBe(TSKindId.UpdateExpression);
     expect(node.$source).toBe('factory');
   });

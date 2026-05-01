@@ -657,6 +657,8 @@ const _kindIdByKind = new Map<string, number>([
     ["_visibility_modifier_in_path", TSKindId.VisibilityModifierInPath],
     ["_kw_move_marker", TSKindId.KwMoveMarker],
     ["_kw_static_marker", TSKindId.KwStaticMarker],
+    ["_kw_pub", TSKindId.KwPub],
+    ["_kw_in", TSKindId.KwIn],
     ["_kw_unsafe_marker", TSKindId.KwUnsafeMarker],
     ["_pointer_type_const", TSKindId.PointerTypeConst],
     ["_pointer_type_mut", TSKindId._PointerTypeMut],

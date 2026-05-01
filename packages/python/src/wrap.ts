@@ -1187,6 +1187,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_comprehension_clauses': (d, t) => wrapComprehensionClauses(d, t),
   '_is_not': (d) => ({ ...d, $type: TSKindId.IsNot as number }),
   '_kw_async_marker': (d) => ({ ...d, $type: TSKindId.KwAsyncMarker as number }),
+  '_kw_type': (d) => ({ ...d, $type: TSKindId.KwType as number }),
   '_list_pattern': (d, t) => wrap_ListPattern(d, t),
   '_match_block': (d, t) => wrapMatchBlock(d, t),
   '_not_in': (d) => ({ ...d, $type: TSKindId.NotIn as number }),
@@ -1326,12 +1327,17 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 };
 
 const _aliasTargetToSource: Record<string, string> = {
+  'augmented_assignment_operator': '_augmented_assignment_operator',
+  'binary_operator_operator': '_binary_operator_operator',
+  'boolean_operator_operator': '_boolean_operator_operator',
   'comprehension_clauses': '_comprehension_clauses',
   'dict_pattern_kv': '_dict_pattern_kv',
   'expression_within_for_in_clause': '_expression_within_for_in_clause',
   'expressions': '_expressions',
   'f_expression': '_f_expression',
-  'kw_async_marker': '_kw_async_marker',
+  'for_in_clause_async_marker': '_for_in_clause_async_marker',
+  'for_statement_async_marker': '_for_statement_async_marker',
+  'function_definition_async_marker': '_function_definition_async_marker',
   'left_hand_side': '_left_hand_side',
   'match_block': '_match_block',
   'match_block_block': '_match_block_block',
@@ -1342,8 +1348,13 @@ const _aliasTargetToSource: Record<string, string> = {
   'simple_pattern_negative': '_simple_pattern_negative',
   'simple_statement': '_simple_statement',
   'simple_statements': '_simple_statements',
+  'splat_pattern_identifier': '_splat_pattern_identifier',
+  'splat_type_identifier': '_splat_type_identifier',
   'statement': '_statement',
   'suite': '_suite',
+  'type_alias_statement_type': '_type_alias_statement_type',
+  'unary_operator_operator': '_unary_operator_operator',
+  'with_statement_async_marker': '_with_statement_async_marker',
 };
 
 import { KIND_NAMES } from './types.js';

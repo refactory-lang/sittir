@@ -518,7 +518,7 @@ export function augmentedAssignment(config: ConfigOf<T.AugmentedAssignment>) {
     $named: true as const,
     $fields: fields,
     left(value?: T.LeftHandSide) { return _fs(config, augmentedAssignment, 'left', value, config?.left); },
-    operator(value?: "+=" | "-=" | "*=" | "/=" | "@=" | "//=" | "%=" | "**=" | ">>=" | "<<=" | "&=" | "^=" | "|=") { return _fs(config, augmentedAssignment, 'operator', value, config?.operator); },
+    operator(value?: T.AugmentedAssignmentOperator) { return _fs(config, augmentedAssignment, 'operator', value, config?.operator); },
     right(value?: T.RightHandSide) { return _fs(config, augmentedAssignment, 'right', value, config?.right); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -560,7 +560,7 @@ export function binaryOperator(config: ConfigOf<T.BinaryOperator>) {
     $named: true as const,
     $fields: fields,
     left(value?: T.PrimaryExpression) { return _fs(config, binaryOperator, 'left', value, config?.left); },
-    operator(value?: "+" | "-" | "*" | "@" | "/" | "%" | "//" | "**" | "|" | "&" | "^" | "<<" | ">>") { return _fs(config, binaryOperator, 'operator', value, config?.operator); },
+    operator(value?: T.BinaryOperatorOperator) { return _fs(config, binaryOperator, 'operator', value, config?.operator); },
     right(value?: T.PrimaryExpression) { return _fs(config, binaryOperator, 'right', value, config?.right); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -598,7 +598,7 @@ export function booleanOperator(config: ConfigOf<T.BooleanOperator>) {
     $named: true as const,
     $fields: fields,
     left(value?: T.Expression) { return _fs(config, booleanOperator, 'left', value, config?.left); },
-    operator(value?: "and" | "or") { return _fs(config, booleanOperator, 'operator', value, config?.operator); },
+    operator(value?: T.BooleanOperatorOperator) { return _fs(config, booleanOperator, 'operator', value, config?.operator); },
     right(value?: T.Expression) { return _fs(config, booleanOperator, 'right', value, config?.right); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -1280,7 +1280,7 @@ export function forInClause(config: ConfigOf<T.ForInClause>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    asyncMarker(value?: "async" | undefined) { return _fs(config, forInClause, 'asyncMarker', value, config?.asyncMarker); },
+    asyncMarker(value?: T.ForInClauseAsyncMarker | undefined) { return _fs(config, forInClause, 'asyncMarker', value, config?.asyncMarker); },
     left(value?: T.LeftHandSide) { return _fs(config, forInClause, 'left', value, config?.left); },
     right(...values: NonEmptyArray<T.ExpressionWithinForInClause>) { return _fsm(config, forInClause, 'right', values, config?.right); },
     render(this: AnyNodeData): string { return render(this); },
@@ -1305,7 +1305,7 @@ export function forStatement(config: ConfigOf<T.ForStatement>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    asyncMarker(value?: "async" | undefined) { return _fs(config, forStatement, 'asyncMarker', value, config?.asyncMarker); },
+    asyncMarker(value?: T.ForStatementAsyncMarker | undefined) { return _fs(config, forStatement, 'asyncMarker', value, config?.asyncMarker); },
     left(value?: T.LeftHandSide) { return _fs(config, forStatement, 'left', value, config?.left); },
     right(value?: T.Expressions) { return _fs(config, forStatement, 'right', value, config?.right); },
     body(value?: T.Suite) { return _fs(config, forStatement, 'body', value, config?.body); },
@@ -1348,7 +1348,7 @@ export function functionDefinition(config: ConfigOf<T.FunctionDefinition>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    asyncMarker(value?: "async" | undefined) { return _fs(config, functionDefinition, 'asyncMarker', value, config?.asyncMarker); },
+    asyncMarker(value?: T.FunctionDefinitionAsyncMarker | undefined) { return _fs(config, functionDefinition, 'asyncMarker', value, config?.asyncMarker); },
     name(value?: T.Identifier) { return _fs(config, functionDefinition, 'name', value, config?.name); },
     typeParameters(value?: T.TypeParameter | undefined) { return _fs(config, functionDefinition, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.Parameters) { return _fs(config, functionDefinition, 'parameters', value, config?.parameters); },
@@ -2172,7 +2172,7 @@ export function splatPattern(config: ConfigOf<T.SplatPattern>) {
     $named: true as const,
     $fields: fields,
     $children: children,
-    identifier(value?: "*" | "**") { return _fs(config, splatPattern, 'identifier', value, config?.identifier); },
+    identifier(value?: T.SplatPatternIdentifier) { return _fs(config, splatPattern, 'identifier', value, config?.identifier); },
     child(value?: T.Identifier) {
       if (value === undefined) return children[0];
       return splatPattern({ ...config, children: [value] });
@@ -2195,7 +2195,7 @@ export function splatType(config: ConfigOf<T.SplatType>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    identifier(value?: "*" | "**" | T.Identifier) { return _fs(config, splatType, 'identifier', value, config?.identifier); },
+    identifier(value?: T.SplatTypeIdentifier | T.Identifier) { return _fs(config, splatType, 'identifier', value, config?.identifier); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2339,7 +2339,7 @@ export function type(child: (T.Expression | T.SplatType | T.GenericType | T.Unio
 
 export function typeAliasStatement(config: ConfigOf<T.TypeAliasStatement>) {
   const fields = {
-    type: "type" as const,
+    type: config.type,
     left: config.left,
     right: config.right,
   };
@@ -2348,7 +2348,7 @@ export function typeAliasStatement(config: ConfigOf<T.TypeAliasStatement>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    get typeField() { return fields.type; },
+    typeField(value?: T.TypeAliasStatementType) { return _fs(config, typeAliasStatement, 'type', value, config?.type); },
     left(value?: T.Type) { return _fs(config, typeAliasStatement, 'left', value, config?.left); },
     right(value?: T.Type) { return _fs(config, typeAliasStatement, 'right', value, config?.right); },
     render(this: AnyNodeData): string { return render(this); },
@@ -2447,7 +2447,7 @@ export function unaryOperator(config: ConfigOf<T.UnaryOperator>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    operator(value?: "+" | "-" | "~") { return _fs(config, unaryOperator, 'operator', value, config?.operator); },
+    operator(value?: T.UnaryOperatorOperator) { return _fs(config, unaryOperator, 'operator', value, config?.operator); },
     argument(value?: T.PrimaryExpression) { return _fs(config, unaryOperator, 'argument', value, config?.argument); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -2621,7 +2621,7 @@ export function withStatement(config: ConfigOf<T.WithStatement>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    asyncMarker(value?: "async" | undefined) { return _fs(config, withStatement, 'asyncMarker', value, config?.asyncMarker); },
+    asyncMarker(value?: T.WithStatementAsyncMarker | undefined) { return _fs(config, withStatement, 'asyncMarker', value, config?.asyncMarker); },
     withClause(value?: T.WithClause) { return _fs(config, withStatement, 'withClause', value, config?.withClause); },
     body(value?: T.Suite) { return _fs(config, withStatement, 'body', value, config?.body); },
     render(this: AnyNodeData): string { return render(this); },

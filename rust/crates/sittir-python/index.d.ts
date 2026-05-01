@@ -70,22 +70,6 @@ export interface AliasedImportTransport {
   alias: IdentifierTransport
 }
 
-export interface AmpTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface AndTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface AnonymousTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -246,7 +230,7 @@ export interface AugmentedAssignmentTransport {
   '$span'?: Span
   '$nodeId'?: number
   left: LeftHandSideTransport
-  operator: Box<AnyTransport>
+  operator: AugmentedAssignmentOperatorEnum
   right: RightHandSideTransport
 }
 
@@ -266,7 +250,7 @@ export interface BinaryOperatorTransport {
   '$span'?: Span
   '$nodeId'?: number
   left: PrimaryExpressionTransport
-  operator: Box<AnyTransport>
+  operator: BinaryOperatorOperatorEnum
   right: PrimaryExpressionTransport
 }
 
@@ -286,7 +270,7 @@ export interface BooleanOperatorTransport {
   '$span'?: Span
   '$nodeId'?: number
   left: ExpressionTransport
-  operator: Box<AnyTransport>
+  operator: BooleanOperatorOperatorEnum
   right: ExpressionTransport
 }
 
@@ -330,14 +314,6 @@ export interface CallTransport {
   '$nodeId'?: number
   function: PrimaryExpressionTransport
   arguments: Box<AnyTransport>
-}
-
-export interface CaretTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface CaseClauseTransport {
@@ -855,7 +831,7 @@ export interface ForInClauseTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: KwAsyncMarkerTransport
+  asyncMarker?: ForInClauseAsyncMarkerEnum
   left: LeftHandSideTransport
   right: Array<ExpressionWithinForInClauseTransport>
 }
@@ -875,7 +851,7 @@ export interface ForStatementTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: KwAsyncMarkerTransport
+  asyncMarker?: ForStatementAsyncMarkerEnum
   left: LeftHandSideTransport
   right: ExpressionsTransport
   body: SuiteTransport
@@ -904,7 +880,7 @@ export interface FunctionDefinitionTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: KwAsyncMarkerTransport
+  asyncMarker?: FunctionDefinitionAsyncMarkerEnum
   name: IdentifierTransport
   typeParameters?: TypeParameterTransport
   parameters: ParametersTransport
@@ -1128,6 +1104,14 @@ export interface KeywordSeparatorTransport {
 }
 
 export interface KwAsyncMarkerTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface KwTypeTransport {
   '$source'?: Source
   '$named'?: boolean
   '$span'?: Span
@@ -1374,14 +1358,6 @@ export interface NotTransport {
   '$text': string
 }
 
-export interface OrTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface PairTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1452,23 +1428,7 @@ export interface PatternListTransport {
   '$children': Array<PatternTransport>
 }
 
-export interface PercentTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface PipeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface PlusTransport {
   '$source'?: Source
   '$named'?: boolean
   '$span'?: Span
@@ -1566,14 +1526,6 @@ export interface SetTransport {
   '$children': Array<Box<AnyTransport>>
 }
 
-export interface ShlTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface ShrTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1598,14 +1550,6 @@ export interface SimpleStatementsTransport {
   '$span'?: Span
   '$nodeId'?: number
   '$children': Array<SimpleStatementTransport>
-}
-
-export interface SlashslashTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface SlashTransport {
@@ -1633,7 +1577,7 @@ export interface SplatPatternTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  identifier: Box<AnyTransport>
+  identifier: SplatPatternIdentifierEnum
   '$children': Array<IdentifierTransport>
 }
 
@@ -1643,7 +1587,7 @@ export interface SplatTypeTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  identifier: IdentifierTransport
+  identifier: Box<AnyTransport>
 }
 
 export interface StarstarTransport {
@@ -1802,7 +1746,7 @@ export interface TypeAliasStatementTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  type: Box<AnyTransport>
+  type: TypeAliasStatementTypeEnum
   left: TypeTransport
   right: TypeTransport
 }
@@ -1860,7 +1804,7 @@ export interface UnaryOperatorTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  operator: Box<AnyTransport>
+  operator: UnaryOperatorOperatorEnum
   argument: PrimaryExpressionTransport
 }
 
@@ -1970,7 +1914,7 @@ export interface WithStatementTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: KwAsyncMarkerTransport
+  asyncMarker?: WithStatementAsyncMarkerEnum
   withClause: Box<AnyTransport>
   body: SuiteTransport
 }

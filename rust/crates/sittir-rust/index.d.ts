@@ -197,7 +197,7 @@ export interface AsyncBlockTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  moveMarker?: KwMoveMarkerTransport
+  moveMarker?: AsyncBlockMoveMarkerEnum
   block: BlockTransport
 }
 
@@ -276,7 +276,7 @@ export interface BinaryExpressionTransport {
   '$span'?: Span
   '$nodeId'?: number
   left: ExpressionTransport
-  operator: Box<AnyTransport>
+  operator: BinaryExpressionOperatorEnum
   right: ExpressionTransport
 }
 
@@ -297,14 +297,6 @@ export interface BlockTransport {
   '$nodeId'?: number
   label?: LabelTransport
   '$children': Array<Box<AnyTransport>>
-}
-
-export interface BooleanLiteralTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface BoundedTypeTransport {
@@ -380,14 +372,6 @@ export interface CapturedPatternTransport {
   '$children': Array<PatternTransport>
 }
 
-export interface CaretTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface CharLiteralTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -454,9 +438,9 @@ export interface ClosureExpressionUFormBlockTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  staticMarker?: KwStaticMarkerTransport
-  asyncMarker?: KwAsyncMarkerTransport
-  moveMarker?: KwMoveMarkerTransport
+  staticMarker?: ClosureExpressionStaticMarkerEnum
+  asyncMarker?: ClosureExpressionAsyncMarkerEnum
+  moveMarker?: ClosureExpressionMoveMarkerEnum
   parameters: ClosureParametersTransport
   '$children': Array<ClosureExpressionBlockTransport>
 }
@@ -467,9 +451,9 @@ export interface ClosureExpressionUFormExprTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  staticMarker?: KwStaticMarkerTransport
-  asyncMarker?: KwAsyncMarkerTransport
-  moveMarker?: KwMoveMarkerTransport
+  staticMarker?: ClosureExpressionStaticMarkerEnum
+  asyncMarker?: ClosureExpressionAsyncMarkerEnum
+  moveMarker?: ClosureExpressionMoveMarkerEnum
   parameters: ClosureParametersTransport
   '$children': Array<ClosureExpressionExprTransport>
 }
@@ -515,7 +499,7 @@ export interface CompoundAssignmentExprTransport {
   '$span'?: Span
   '$nodeId'?: number
   left: ExpressionTransport
-  operator: Box<AnyTransport>
+  operator: CompoundAssignmentExprOperatorEnum
   right: ExpressionTransport
 }
 
@@ -879,7 +863,7 @@ export interface ExternCrateDeclarationTransport {
   '$span'?: Span
   '$nodeId'?: number
   visibilityModifier?: Box<AnyTransport>
-  crate: CrateTransport
+  crate: ExternCrateDeclarationCrateEnum
   name: IdentifierTransport
   alias?: IdentifierTransport
 }
@@ -1002,8 +986,8 @@ export interface FieldPatternUFormNamedTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  refMarker?: KwRefMarkerTransport
-  mutableSpecifier?: MutableSpecifierTransport
+  refMarker?: FieldPatternRefMarkerEnum
+  mutableSpecifier?: FieldPatternMutableSpecifierEnum
   '$children': Array<FieldPatternNamedTransport>
 }
 
@@ -1013,8 +997,8 @@ export interface FieldPatternUFormShorthandTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  refMarker?: KwRefMarkerTransport
-  mutableSpecifier?: MutableSpecifierTransport
+  refMarker?: FieldPatternRefMarkerEnum
+  mutableSpecifier?: FieldPatternMutableSpecifierEnum
   '$children': Array<FieldPatternShorthandTransport>
 }
 
@@ -1111,14 +1095,6 @@ export interface ForTransport {
   '$text': string
 }
 
-export interface FragmentSpecifierTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface FunctionItemTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1195,7 +1171,7 @@ export interface GenBlockTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  moveMarker?: KwMoveMarkerTransport
+  moveMarker?: GenBlockMoveMarkerEnum
   block: BlockTransport
 }
 
@@ -1236,7 +1212,7 @@ export interface GenericTypeWithTurbofishTransport {
   '$span'?: Span
   '$nodeId'?: number
   type: Box<AnyTransport>
-  turbofish: Box<AnyTransport>
+  turbofish: GenericTypeWithTurbofishTurbofishEnum
   typeArguments: TypeArgumentsTransport
 }
 
@@ -1333,9 +1309,9 @@ export interface ImplItemUFormBodyTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  unsafeMarker?: KwUnsafeMarkerTransport
+  unsafeMarker?: ImplItemUnsafeMarkerEnum
   typeParameters?: TypeParametersTransport
-  negative?: KwNegativeTransport
+  negative?: ImplItemNegativeEnum
   trait?: Box<AnyTransport>
   type: _TypeTransport
   whereClause?: WhereClauseTransport
@@ -1348,9 +1324,9 @@ export interface ImplItemUFormSemiTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  unsafeMarker?: KwUnsafeMarkerTransport
+  unsafeMarker?: ImplItemUnsafeMarkerEnum
   typeParameters?: TypeParametersTransport
-  negative?: KwNegativeTransport
+  negative?: ImplItemNegativeEnum
   trait?: Box<AnyTransport>
   type: _TypeTransport
   whereClause?: WhereClauseTransport
@@ -1424,6 +1400,14 @@ export interface KwAsyncMarkerTransport {
   '$text': string
 }
 
+export interface KwInTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
 export interface KwMoveMarkerTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1448,6 +1432,14 @@ export interface KwOperatorTransport {
   '$text': string
 }
 
+export interface KwPubTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
 export interface KwRefMarkerTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1457,6 +1449,14 @@ export interface KwRefMarkerTransport {
 }
 
 export interface KwStaticMarkerTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface KwTurbofishTransport {
   '$source'?: Source
   '$named'?: boolean
   '$span'?: Span
@@ -1517,7 +1517,7 @@ export interface LetDeclarationTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  mutableSpecifier?: MutableSpecifierTransport
+  mutableSpecifier?: LetDeclarationMutableSpecifierEnum
   pattern: PatternTransport
   type?: _TypeTransport
   value?: ExpressionTransport
@@ -1919,7 +1919,7 @@ export interface MutPatternTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  mutableSpecifier: MutableSpecifierTransport
+  mutableSpecifier: MutPatternMutableSpecifierEnum
   '$children': Array<PatternTransport>
 }
 
@@ -1964,14 +1964,6 @@ export interface OrderedFieldDeclarationListTransport {
   '$span'?: Span
   '$nodeId'?: number
   type: Array<_TypeTransport>
-}
-
-export interface OrorTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface OrPatternBinaryTransport {
@@ -2042,7 +2034,7 @@ export interface ParameterTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  mutableSpecifier?: MutableSpecifierTransport
+  mutableSpecifier?: ParameterMutableSpecifierEnum
   pattern: Box<AnyTransport>
   type: _TypeTransport
 }
@@ -2126,14 +2118,6 @@ export interface PointerTypeUFormMutTransport {
   '$children': Array<PointerTypeMutTransport>
 }
 
-export interface PrimitiveTypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface PubTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -2166,7 +2150,7 @@ export interface RangeExpressionBareTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  operator: KwOperatorTransport
+  operator: RangeExpressionBareOperatorEnum
 }
 
 export interface RangeExpressionBareTransport {
@@ -2175,7 +2159,7 @@ export interface RangeExpressionBareTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  operator: KwOperatorTransport
+  operator: RangeExpressionBareOperatorEnum
 }
 
 export interface RangeExpressionBinaryTransport {
@@ -2185,7 +2169,7 @@ export interface RangeExpressionBinaryTransport {
   '$span'?: Span
   '$nodeId'?: number
   start: ExpressionTransport
-  operator: Box<AnyTransport>
+  operator: RangeExpressionBinaryOperatorEnum
   end: ExpressionTransport
 }
 
@@ -2196,7 +2180,7 @@ export interface RangeExpressionPostfixTransport {
   '$span'?: Span
   '$nodeId'?: number
   start: ExpressionTransport
-  operator: KwOperatorTransport
+  operator: RangeExpressionPostfixOperatorEnum
 }
 
 export interface RangeExpressionPrefixTransport {
@@ -2205,7 +2189,7 @@ export interface RangeExpressionPrefixTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  operator: KwOperatorTransport
+  operator: RangeExpressionPrefixOperatorEnum
   end: ExpressionTransport
 }
 
@@ -2360,7 +2344,7 @@ export interface ReferencePatternTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  mutableSpecifier?: MutableSpecifierTransport
+  mutableSpecifier?: ReferencePatternMutableSpecifierEnum
   pattern: PatternTransport
 }
 
@@ -2371,7 +2355,7 @@ export interface ReferenceTypeTransport {
   '$span'?: Span
   '$nodeId'?: number
   lifetime?: LifetimeTransport
-  mutableSpecifier?: MutableSpecifierTransport
+  mutableSpecifier?: ReferenceTypeMutableSpecifierEnum
   type: _TypeTransport
 }
 
@@ -2483,8 +2467,8 @@ export interface SelfParameterTransport {
   '$nodeId'?: number
   reference?: Box<AnyTransport>
   lifetime?: LifetimeTransport
-  mutableSpecifier?: MutableSpecifierTransport
-  self: SelfTransport
+  mutableSpecifier?: SelfParameterMutableSpecifierEnum
+  self: SelfParameterSelfEnum
 }
 
 export interface SelfTransport {
@@ -2717,7 +2701,7 @@ export interface TokenBindingPatternTransport {
   '$span'?: Span
   '$nodeId'?: number
   name: MetavariableTransport
-  type: FragmentSpecifierTransport
+  type: TokenBindingPatternTypeEnum
 }
 
 export interface TokenRepetitionPatternTransport {
@@ -2940,7 +2924,7 @@ export interface TraitItemTransport {
   '$span'?: Span
   '$nodeId'?: number
   visibilityModifier?: Box<AnyTransport>
-  unsafeMarker?: KwUnsafeMarkerTransport
+  unsafeMarker?: TraitItemUnsafeMarkerEnum
   name: TypeIdentifierTransport
   typeParameters?: TypeParametersTransport
   bounds?: TraitBoundsTransport
@@ -3107,7 +3091,7 @@ export interface UnaryExpressionTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  operator: Box<AnyTransport>
+  operator: UnaryExpressionOperatorEnum
   operand: ExpressionTransport
 }
 
@@ -3226,7 +3210,7 @@ export interface VariadicParameterTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  mutableSpecifier?: MutableSpecifierTransport
+  mutableSpecifier?: VariadicParameterMutableSpecifierEnum
   pattern?: PatternTransport
 }
 
@@ -3254,7 +3238,7 @@ export interface VisibilityModifierInPathTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  in: Box<AnyTransport>
+  in: VisibilityModifierInPathInEnum
   '$children': Array<PathTransport>
 }
 
@@ -3264,7 +3248,7 @@ export interface VisibilityModifierPubTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  pub: Box<AnyTransport>
+  pub: VisibilityModifierPubPubEnum
   '$children'?: Array<Box<AnyTransport>>
 }
 

@@ -507,7 +507,7 @@ export function _forHeader(config: ConfigOf<T.ForHeader>) {
     $named: true as const,
     $fields: fields,
     $children: children,
-    operator(value?: "in" | "of") { return _fs(config, _forHeader, 'operator', value, config?.operator); },
+    operator(value?: T.ForHeaderOperator) { return _fs(config, _forHeader, 'operator', value, config?.operator); },
     right(value?: T.Expressions) { return _fs(config, _forHeader, 'right', value, config?.right); },
     child(value?: (T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind)) {
       if (value === undefined) return children[0];
@@ -534,7 +534,7 @@ export function _forHeaderLetConstKind(config: ConfigOf<T.ForHeaderLetConstKind>
     $named: true as const,
     $fields: fields,
     $children: children,
-    kind(value?: "let" | "const") { return _fs(config, _forHeaderLetConstKind, 'kind', value, config?.kind); },
+    kind(value?: T.ForHeaderLetConstKindKind) { return _fs(config, _forHeaderLetConstKind, 'kind', value, config?.kind); },
     left(value?: T.Identifier | T.DestructuringPattern) { return _fs(config, _forHeaderLetConstKind, 'left', value, config?.left); },
     child(value?: T.AutomaticSemicolon) {
       if (value === undefined) return children[0];
@@ -570,7 +570,7 @@ export function forHeaderLhs(config: ConfigOf<T.ForHeaderLhs>) {
 
 export function _forHeaderVarKind(config: ConfigOf<T.ForHeaderVarKind>) {
   const fields = {
-    kind: "var" as const,
+    kind: config.kind,
     left: config.left,
   };
   const children = config.children ?? [];
@@ -580,7 +580,7 @@ export function _forHeaderVarKind(config: ConfigOf<T.ForHeaderVarKind>) {
     $named: true as const,
     $fields: fields,
     $children: children,
-    get kind() { return fields.kind; },
+    kind(value?: T.ForHeaderVarKindKind) { return _fs(config, _forHeaderVarKind, 'kind', value, config?.kind); },
     left(value?: T.Identifier | T.DestructuringPattern) { return _fs(config, _forHeaderVarKind, 'left', value, config?.left); },
     child(value?: T.Initializer) {
       if (value === undefined) return children[0];
@@ -789,7 +789,7 @@ export function _number(config: ConfigOf<T._Number>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    operator(value?: "-" | "+") { return _fs(config, _number, 'operator', value, config?.operator); },
+    operator(value?: T.NumberOperator) { return _fs(config, _number, 'operator', value, config?.operator); },
     argument(value?: T.Number) { return _fs(config, _number, 'argument', value, config?.argument); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -814,7 +814,7 @@ export function _parameterName(config: ConfigOf<T.ParameterName>) {
     $fields: fields,
     $children: children,
     decorator(...values: T.Decorator[]) { return _fsm(config, _parameterName, 'decorator', values, config?.decorator); },
-    readonlyMarker(value?: "readonly" | undefined) { return _fs(config, _parameterName, 'readonlyMarker', value, config?.readonlyMarker); },
+    readonlyMarker(value?: T.ParameterNameReadonlyMarker | undefined) { return _fs(config, _parameterName, 'readonlyMarker', value, config?.readonlyMarker); },
     pattern(value?: T.Pattern | T.This) { return _fs(config, _parameterName, 'pattern', value, config?.pattern); },
     child(value?: (T.AccessibilityModifier | T.OverrideModifier)) {
       if (value === undefined) return children[0];
@@ -870,18 +870,18 @@ export function _parenthesizedExpressionTyped(config: ConfigOf<T.ParenthesizedEx
   };
 }
 
-export function _publicFieldDefinitionAbstractFirst(config?: ConfigOf<T.PublicFieldDefinitionAbstractFirst>) {
+export function _publicFieldDefinitionAbstractFirst(config: ConfigOf<T.PublicFieldDefinitionAbstractFirst>) {
   const fields = {
-    abstract_marker: "abstract" as const,
-    readonly_marker: config?.readonlyMarker ? "readonly" as const : undefined,
+    abstract_marker: config.abstractMarker,
+    readonly_marker: config.readonlyMarker ? "readonly" as const : undefined,
   };
   return {
     $type: TSKindId.PublicFieldDefinitionAbstractFirst as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    get abstractMarker() { return fields.abstract_marker; },
-    readonlyMarker(value?: "readonly" | undefined) { return _fs(config, _publicFieldDefinitionAbstractFirst, 'readonlyMarker', value, config?.readonlyMarker); },
+    abstractMarker(value?: T.PublicFieldDefinitionAbstractFirstAbstractMarker) { return _fs(config, _publicFieldDefinitionAbstractFirst, 'abstractMarker', value, config?.abstractMarker); },
+    readonlyMarker(value?: T.PublicFieldDefinitionAbstractFirstReadonlyMarker | undefined) { return _fs(config, _publicFieldDefinitionAbstractFirst, 'readonlyMarker', value, config?.readonlyMarker); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -902,7 +902,7 @@ export function _publicFieldDefinitionAccessFirst(config: ConfigOf<T.PublicField
     $named: true as const,
     $fields: fields,
     $children: children,
-    declareMarker(value?: "declare" | undefined) { return _fs(config, _publicFieldDefinitionAccessFirst, 'declareMarker', value, config?.declareMarker); },
+    declareMarker(value?: T.PublicFieldDefinitionAccessFirstDeclareMarker | undefined) { return _fs(config, _publicFieldDefinitionAccessFirst, 'declareMarker', value, config?.declareMarker); },
     child(value?: T.AccessibilityModifier) {
       if (value === undefined) return children[0];
       return _publicFieldDefinitionAccessFirst({ ...config, children: [value] });
@@ -916,16 +916,16 @@ export function _publicFieldDefinitionAccessFirst(config: ConfigOf<T.PublicField
   };
 }
 
-export function publicFieldDefinitionAccessorOpt(_config?: ConfigOf<T.PublicFieldDefinitionAccessorOpt>) {
+export function publicFieldDefinitionAccessorOpt(config: ConfigOf<T.PublicFieldDefinitionAccessorOpt>) {
   const fields = {
-    accessor_marker: "accessor" as const,
+    accessor_marker: config.accessorMarker,
   };
   return {
     $type: TSKindId.PublicFieldDefinitionAccessorOpt as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    get accessorMarker() { return fields.accessor_marker; },
+    accessorMarker(value?: T.PublicFieldDefinitionAccessorOptAccessorMarker) { return _fs(config, publicFieldDefinitionAccessorOpt, 'accessorMarker', value, config?.accessorMarker); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -951,18 +951,18 @@ export function publicFieldDefinitionDeclareFirst(child?: T.AccessibilityModifie
   };
 }
 
-export function _publicFieldDefinitionReadonlyFirst(config?: ConfigOf<T.PublicFieldDefinitionReadonlyFirst>) {
+export function _publicFieldDefinitionReadonlyFirst(config: ConfigOf<T.PublicFieldDefinitionReadonlyFirst>) {
   const fields = {
-    readonly_marker: "readonly" as const,
-    abstract_marker: config?.abstractMarker ? "abstract" as const : undefined,
+    readonly_marker: config.readonlyMarker,
+    abstract_marker: config.abstractMarker ? "abstract" as const : undefined,
   };
   return {
     $type: TSKindId.PublicFieldDefinitionReadonlyFirst as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    get readonlyMarker() { return fields.readonly_marker; },
-    abstractMarker(value?: "abstract" | undefined) { return _fs(config, _publicFieldDefinitionReadonlyFirst, 'abstractMarker', value, config?.abstractMarker); },
+    readonlyMarker(value?: T.PublicFieldDefinitionReadonlyFirstReadonlyMarker) { return _fs(config, _publicFieldDefinitionReadonlyFirst, 'readonlyMarker', value, config?.readonlyMarker); },
+    abstractMarker(value?: T.PublicFieldDefinitionReadonlyFirstAbstractMarker | undefined) { return _fs(config, _publicFieldDefinitionReadonlyFirst, 'abstractMarker', value, config?.abstractMarker); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -972,20 +972,20 @@ export function _publicFieldDefinitionReadonlyFirst(config?: ConfigOf<T.PublicFi
   };
 }
 
-export function _publicFieldDefinitionStaticMods(config?: ConfigOf<T.PublicFieldDefinitionStaticMods>) {
+export function _publicFieldDefinitionStaticMods(config: ConfigOf<T.PublicFieldDefinitionStaticMods>) {
   const fields = {
-    static_marker: "static" as const,
-    readonly_marker: config?.readonlyMarker ? "readonly" as const : undefined,
+    static_marker: config.staticMarker,
+    readonly_marker: config.readonlyMarker ? "readonly" as const : undefined,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: TSKindId.PublicFieldDefinitionStaticMods as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
     $children: children,
-    get staticMarker() { return fields.static_marker; },
-    readonlyMarker(value?: "readonly" | undefined) { return _fs(config, _publicFieldDefinitionStaticMods, 'readonlyMarker', value, config?.readonlyMarker); },
+    staticMarker(value?: T.PublicFieldDefinitionStaticModsStaticMarker) { return _fs(config, _publicFieldDefinitionStaticMods, 'staticMarker', value, config?.staticMarker); },
+    readonlyMarker(value?: T.PublicFieldDefinitionStaticModsReadonlyMarker | undefined) { return _fs(config, _publicFieldDefinitionStaticMods, 'readonlyMarker', value, config?.readonlyMarker); },
     child(value?: T.OverrideModifier) {
       if (value === undefined) return children[0];
       return _publicFieldDefinitionStaticMods({ ...config, children: [value] });
@@ -1182,7 +1182,7 @@ export function _updateExpressionPostfix(config: ConfigOf<T.UpdateExpressionPost
     $named: true as const,
     $fields: fields,
     argument(value?: T.Expression) { return _fs(config, _updateExpressionPostfix, 'argument', value, config?.argument); },
-    operator(value?: "++" | "--") { return _fs(config, _updateExpressionPostfix, 'operator', value, config?.operator); },
+    operator(value?: T.UpdateExpressionPostfixOperator) { return _fs(config, _updateExpressionPostfix, 'operator', value, config?.operator); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1202,7 +1202,7 @@ export function _updateExpressionPrefix(config: ConfigOf<T.UpdateExpressionPrefi
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    operator(value?: "++" | "--") { return _fs(config, _updateExpressionPrefix, 'operator', value, config?.operator); },
+    operator(value?: T.UpdateExpressionPrefixOperator) { return _fs(config, _updateExpressionPrefix, 'operator', value, config?.operator); },
     argument(value?: T.Expression) { return _fs(config, _updateExpressionPrefix, 'argument', value, config?.argument); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -1256,11 +1256,11 @@ export function abstractMethodSignature(config: ConfigOf<T.AbstractMethodSignatu
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    accessibilityModifier(value?: T.AccessibilityModifier | undefined) { return _fs(config, abstractMethodSignature, 'accessibilityModifier', value, config?.accessibilityModifier); },
-    overrideModifier(value?: T.OverrideModifier | undefined) { return _fs(config, abstractMethodSignature, 'overrideModifier', value, config?.overrideModifier); },
-    accessorKind(value?: "get" | "set" | "*" | undefined) { return _fs(config, abstractMethodSignature, 'accessorKind', value, config?.accessorKind); },
+    accessibilityModifier(value?: T.AbstractMethodSignatureAccessibilityModifier | undefined) { return _fs(config, abstractMethodSignature, 'accessibilityModifier', value, config?.accessibilityModifier); },
+    overrideModifier(value?: T.AbstractMethodSignatureOverrideModifier | undefined) { return _fs(config, abstractMethodSignature, 'overrideModifier', value, config?.overrideModifier); },
+    accessorKind(value?: T.AbstractMethodSignatureAccessorKind | undefined) { return _fs(config, abstractMethodSignature, 'accessorKind', value, config?.accessorKind); },
     name(value?: T.PropertyName) { return _fs(config, abstractMethodSignature, 'name', value, config?.name); },
-    optionalMarker(value?: "?" | undefined) { return _fs(config, abstractMethodSignature, 'optionalMarker', value, config?.optionalMarker); },
+    optionalMarker(value?: T.AbstractMethodSignatureOptionalMarker | undefined) { return _fs(config, abstractMethodSignature, 'optionalMarker', value, config?.optionalMarker); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, abstractMethodSignature, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, abstractMethodSignature, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _fs(config, abstractMethodSignature, 'returnType', value, config?.returnType); },
@@ -1452,7 +1452,7 @@ export function arrowFunctionUFormParameter(config: Omit<ConfigOf<T.ArrowFunctio
     $variant: 'parameter' as const,
     $fields: fields,
     $children: children,
-    asyncMarker(value?: "async" | undefined) {
+    asyncMarker(value?: T.ArrowFunctionAsyncMarker | undefined) {
       if (value === undefined) return fields.async_marker;
       return arrowFunctionUFormParameter({ body: config.body, parameter: inner.$fields.parameter, asyncMarker: value });
     },
@@ -1486,7 +1486,7 @@ export function arrowFunctionUFormUCallSignature(config: Omit<ConfigOf<T.ArrowFu
     $variant: '_call_signature' as const,
     $fields: fields,
     $children: children,
-    asyncMarker(value?: "async" | undefined) {
+    asyncMarker(value?: T.ArrowFunctionAsyncMarker | undefined) {
       if (value === undefined) return fields.async_marker;
       return arrowFunctionUFormUCallSignature({ body: config.body, typeParameters: inner.$fields.type_parameters, parameters: inner.$fields.parameters, returnType: inner.$fields.return_type, asyncMarker: value });
     },
@@ -1561,7 +1561,7 @@ export function assertsAnnotation(config: ConfigOf<T.AssertsAnnotation>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    asserts(value?: ":" | T.Asserts) { return _fs(config, assertsAnnotation, 'asserts', value, config?.asserts); },
+    asserts(value?: T.AssertsAnnotationAsserts | T.Asserts) { return _fs(config, assertsAnnotation, 'asserts', value, config?.asserts); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1582,7 +1582,7 @@ export function assignmentExpression(config: ConfigOf<T.AssignmentExpression>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    usingMarker(value?: "using" | undefined) { return _fs(config, assignmentExpression, 'usingMarker', value, config?.usingMarker); },
+    usingMarker(value?: T.AssignmentExpressionUsingMarker | undefined) { return _fs(config, assignmentExpression, 'usingMarker', value, config?.usingMarker); },
     left(value?: T.ParenthesizedExpression | T.LhsExpression) { return _fs(config, assignmentExpression, 'left', value, config?.left); },
     right(value?: T.Expression) { return _fs(config, assignmentExpression, 'right', value, config?.right); },
     render(this: AnyNodeData): string { return render(this); },
@@ -1627,7 +1627,7 @@ export function augmentedAssignmentExpression(config: ConfigOf<T.AugmentedAssign
     $named: true as const,
     $fields: fields,
     left(value?: T.MemberExpression | T.SubscriptExpression | T.ReservedIdentifier | T.ParenthesizedExpression | T.NonNullExpression) { return _fs(config, augmentedAssignmentExpression, 'left', value, config?.left); },
-    operator(value?: "+=" | "-=" | "*=" | "/=" | "%=" | "^=" | "&=" | "|=" | ">>=" | ">>>=" | "<<=" | "**=" | "&&=" | "||=" | "??=") { return _fs(config, augmentedAssignmentExpression, 'operator', value, config?.operator); },
+    operator(value?: T.AugmentedAssignmentExpressionOperator) { return _fs(config, augmentedAssignmentExpression, 'operator', value, config?.operator); },
     right(value?: T.Expression) { return _fs(config, augmentedAssignmentExpression, 'right', value, config?.right); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -1669,7 +1669,7 @@ export function binaryExpression(config: ConfigOf<T.BinaryExpression>) {
     $named: true as const,
     $fields: fields,
     left(value?: T.Expression | T.PrivatePropertyIdentifier) { return _fs(config, binaryExpression, 'left', value, config?.left); },
-    operator(value?: "&&" | "||" | ">>" | ">>>" | "<<" | "&" | "^" | "|" | "+" | "-" | "*" | "/" | "%" | "**" | "<" | "<=" | "==" | "===" | "!=" | "!==" | ">=" | ">" | "??" | "instanceof" | "in") { return _fs(config, binaryExpression, 'operator', value, config?.operator); },
+    operator(value?: T.BinaryExpressionOperator) { return _fs(config, binaryExpression, 'operator', value, config?.operator); },
     right(value?: T.Expression) { return _fs(config, binaryExpression, 'right', value, config?.right); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -2102,7 +2102,7 @@ export function constructSignature(config: ConfigOf<T.ConstructSignature>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    abstractMarker(value?: "abstract" | undefined) { return _fs(config, constructSignature, 'abstractMarker', value, config?.abstractMarker); },
+    abstractMarker(value?: T.ConstructSignatureAbstractMarker | undefined) { return _fs(config, constructSignature, 'abstractMarker', value, config?.abstractMarker); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, constructSignature, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, constructSignature, 'parameters', value, config?.parameters); },
     typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, constructSignature, 'type', value, config?.type); },
@@ -2127,7 +2127,7 @@ export function constructorType(config: ConfigOf<T.ConstructorType>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    abstractMarker(value?: "abstract" | undefined) { return _fs(config, constructorType, 'abstractMarker', value, config?.abstractMarker); },
+    abstractMarker(value?: T.ConstructorTypeAbstractMarker | undefined) { return _fs(config, constructorType, 'abstractMarker', value, config?.abstractMarker); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, constructorType, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, constructorType, 'parameters', value, config?.parameters); },
     typeField(value?: T.Type) { return _fs(config, constructorType, 'type', value, config?.type); },
@@ -2369,7 +2369,7 @@ export function enumDeclaration(config: ConfigOf<T.EnumDeclaration>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    constMarker(value?: "const" | undefined) { return _fs(config, enumDeclaration, 'constMarker', value, config?.constMarker); },
+    constMarker(value?: T.EnumDeclarationConstMarker | undefined) { return _fs(config, enumDeclaration, 'constMarker', value, config?.constMarker); },
     name(value?: T.Identifier) { return _fs(config, enumDeclaration, 'name', value, config?.name); },
     body(value?: T.EnumBody) { return _fs(config, enumDeclaration, 'body', value, config?.body); },
     render(this: AnyNodeData): string { return render(this); },
@@ -2420,7 +2420,7 @@ export function exportSpecifier(config: ConfigOf<T.ExportSpecifier>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    exportKind(value?: "type" | "typeof" | undefined) { return _fs(config, exportSpecifier, 'exportKind', value, config?.exportKind); },
+    exportKind(value?: T.ExportSpecifierExportKind | undefined) { return _fs(config, exportSpecifier, 'exportKind', value, config?.exportKind); },
     name(value?: T.ModuleExportName) { return _fs(config, exportSpecifier, 'name', value, config?.name); },
     alias(value?: T.ModuleExportName | undefined) { return _fs(config, exportSpecifier, 'alias', value, config?.alias); },
     render(this: AnyNodeData): string { return render(this); },
@@ -2707,8 +2707,8 @@ export function forInStatement(config: ConfigOf<T.ForInStatement>) {
     $named: true as const,
     $fields: fields,
     $children: children,
-    awaitMarker(value?: "await" | undefined) { return _fs(config, forInStatement, 'awaitMarker', value, config?.awaitMarker); },
-    operator(value?: "in" | "of") { return _fs(config, forInStatement, 'operator', value, config?.operator); },
+    awaitMarker(value?: T.ForInStatementAwaitMarker | undefined) { return _fs(config, forInStatement, 'awaitMarker', value, config?.awaitMarker); },
+    operator(value?: T.ForHeaderOperator) { return _fs(config, forInStatement, 'operator', value, config?.operator); },
     right(value?: T.Expressions) { return _fs(config, forInStatement, 'right', value, config?.right); },
     body(value?: T.Statement) { return _fs(config, forInStatement, 'body', value, config?.body); },
     child(value?: (T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind)) {
@@ -2736,7 +2736,7 @@ export function forStatement(config: ConfigOf<T.ForStatement>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    initializer(value?: T.LexicalDeclaration | T.VariableDeclaration | T.Expressions | T.EmptyStatement) { return _fs(config, forStatement, 'initializer', value, config?.initializer); },
+    initializer(value?: T.LexicalDeclaration | T.VariableDeclaration | T.Expressions | T.ForStatementInitializer) { return _fs(config, forStatement, 'initializer', value, config?.initializer); },
     condition(value?: T.Expressions | T.EmptyStatement) { return _fs(config, forStatement, 'condition', value, config?.condition); },
     increment(value?: T.Expressions | undefined) { return _fs(config, forStatement, 'increment', value, config?.increment); },
     body(value?: T.Statement) { return _fs(config, forStatement, 'body', value, config?.body); },
@@ -2780,7 +2780,7 @@ export function functionDeclaration(config: ConfigOf<T.FunctionDeclaration>) {
     $named: true as const,
     $fields: fields,
     $children: children,
-    asyncMarker(value?: "async" | undefined) { return _fs(config, functionDeclaration, 'asyncMarker', value, config?.asyncMarker); },
+    asyncMarker(value?: T.FunctionDeclarationAsyncMarker | undefined) { return _fs(config, functionDeclaration, 'asyncMarker', value, config?.asyncMarker); },
     name(value?: T.Identifier) { return _fs(config, functionDeclaration, 'name', value, config?.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, functionDeclaration, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, functionDeclaration, 'parameters', value, config?.parameters); },
@@ -2813,7 +2813,7 @@ export function functionExpression(config: ConfigOf<T.FunctionExpression>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    asyncMarker(value?: "async" | undefined) { return _fs(config, functionExpression, 'asyncMarker', value, config?.asyncMarker); },
+    asyncMarker(value?: T.FunctionExpressionAsyncMarker | undefined) { return _fs(config, functionExpression, 'asyncMarker', value, config?.asyncMarker); },
     name(value?: T.Identifier | undefined) { return _fs(config, functionExpression, 'name', value, config?.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, functionExpression, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, functionExpression, 'parameters', value, config?.parameters); },
@@ -2842,7 +2842,7 @@ export function functionSignature(config: ConfigOf<T.FunctionSignature>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    asyncMarker(value?: "async" | undefined) { return _fs(config, functionSignature, 'asyncMarker', value, config?.asyncMarker); },
+    asyncMarker(value?: T.FunctionSignatureAsyncMarker | undefined) { return _fs(config, functionSignature, 'asyncMarker', value, config?.asyncMarker); },
     name(value?: T.Identifier) { return _fs(config, functionSignature, 'name', value, config?.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, functionSignature, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, functionSignature, 'parameters', value, config?.parameters); },
@@ -2894,7 +2894,7 @@ export function generatorFunction(config: ConfigOf<T.GeneratorFunction>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    asyncMarker(value?: "async" | undefined) { return _fs(config, generatorFunction, 'asyncMarker', value, config?.asyncMarker); },
+    asyncMarker(value?: T.GeneratorFunctionAsyncMarker | undefined) { return _fs(config, generatorFunction, 'asyncMarker', value, config?.asyncMarker); },
     name(value?: T.Identifier | undefined) { return _fs(config, generatorFunction, 'name', value, config?.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, generatorFunction, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, generatorFunction, 'parameters', value, config?.parameters); },
@@ -2925,7 +2925,7 @@ export function generatorFunctionDeclaration(config: ConfigOf<T.GeneratorFunctio
     $named: true as const,
     $fields: fields,
     $children: children,
-    asyncMarker(value?: "async" | undefined) { return _fs(config, generatorFunctionDeclaration, 'asyncMarker', value, config?.asyncMarker); },
+    asyncMarker(value?: T.GeneratorFunctionDeclarationAsyncMarker | undefined) { return _fs(config, generatorFunctionDeclaration, 'asyncMarker', value, config?.asyncMarker); },
     name(value?: T.Identifier) { return _fs(config, generatorFunctionDeclaration, 'name', value, config?.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, generatorFunctionDeclaration, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, generatorFunctionDeclaration, 'parameters', value, config?.parameters); },
@@ -3074,7 +3074,7 @@ export function importAttribute(config: ConfigOf<T.ImportAttribute>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    object(value?: "with" | "assert" | T.Object) { return _fs(config, importAttribute, 'object', value, config?.object); },
+    object(value?: T.ImportAttributeObject | T.Object) { return _fs(config, importAttribute, 'object', value, config?.object); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3257,7 +3257,7 @@ export function importSpecifierUFormName(config: Omit<ConfigOf<T.ImportSpecifier
     $variant: 'name' as const,
     $fields: fields,
     $children: children,
-    importKind(value?: "type" | "typeof" | undefined) {
+    importKind(value?: T.ImportSpecifierImportKind | undefined) {
       if (value === undefined) return fields.import_kind;
       return importSpecifierUFormName({ name: inner.$fields.name, importKind: value });
     },
@@ -3286,7 +3286,7 @@ export function importSpecifierUFormAs(config: Omit<ConfigOf<T.ImportSpecifierUF
     $variant: 'as' as const,
     $fields: fields,
     $children: children,
-    importKind(value?: "type" | "typeof" | undefined) {
+    importKind(value?: T.ImportSpecifierImportKind | undefined) {
       if (value === undefined) return fields.import_kind;
       return importSpecifierUFormAs({ name: inner.$fields.name, alias: inner.$fields.alias, importKind: value });
     },
@@ -3586,7 +3586,7 @@ export function lexicalDeclaration(config: ConfigOf<T.LexicalDeclaration>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    kind(value?: "let" | "const") { return _fs(config, lexicalDeclaration, 'kind', value, config?.kind); },
+    kind(value?: T.LexicalDeclarationKind) { return _fs(config, lexicalDeclaration, 'kind', value, config?.kind); },
     declarators(...values: NonEmptyArray<T.VariableDeclarator>) { return _fsm(config, lexicalDeclaration, 'declarators', values, config?.declarators); },
     semicolon(value?: T.Semicolon) { return _fs(config, lexicalDeclaration, 'semicolon', value, config?.semicolon); },
     render(this: AnyNodeData): string { return render(this); },
@@ -3712,14 +3712,14 @@ export function methodDefinition(config: ConfigOf<T.MethodDefinition>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    accessibilityModifier(value?: T.AccessibilityModifier | undefined) { return _fs(config, methodDefinition, 'accessibilityModifier', value, config?.accessibilityModifier); },
-    staticMarker(value?: "static" | undefined) { return _fs(config, methodDefinition, 'staticMarker', value, config?.staticMarker); },
-    overrideModifier(value?: T.OverrideModifier | undefined) { return _fs(config, methodDefinition, 'overrideModifier', value, config?.overrideModifier); },
-    readonlyMarker(value?: "readonly" | undefined) { return _fs(config, methodDefinition, 'readonlyMarker', value, config?.readonlyMarker); },
-    asyncMarker(value?: "async" | undefined) { return _fs(config, methodDefinition, 'asyncMarker', value, config?.asyncMarker); },
-    accessorKind(value?: "get" | "set" | "*" | undefined) { return _fs(config, methodDefinition, 'accessorKind', value, config?.accessorKind); },
+    accessibilityModifier(value?: T.MethodDefinitionAccessibilityModifier | undefined) { return _fs(config, methodDefinition, 'accessibilityModifier', value, config?.accessibilityModifier); },
+    staticMarker(value?: T.MethodDefinitionStaticMarker | undefined) { return _fs(config, methodDefinition, 'staticMarker', value, config?.staticMarker); },
+    overrideModifier(value?: T.MethodDefinitionOverrideModifier | undefined) { return _fs(config, methodDefinition, 'overrideModifier', value, config?.overrideModifier); },
+    readonlyMarker(value?: T.MethodDefinitionReadonlyMarker | undefined) { return _fs(config, methodDefinition, 'readonlyMarker', value, config?.readonlyMarker); },
+    asyncMarker(value?: T.MethodDefinitionAsyncMarker | undefined) { return _fs(config, methodDefinition, 'asyncMarker', value, config?.asyncMarker); },
+    accessorKind(value?: T.MethodDefinitionAccessorKind | undefined) { return _fs(config, methodDefinition, 'accessorKind', value, config?.accessorKind); },
     name(value?: T.PropertyName) { return _fs(config, methodDefinition, 'name', value, config?.name); },
-    optionalMarker(value?: "?" | undefined) { return _fs(config, methodDefinition, 'optionalMarker', value, config?.optionalMarker); },
+    optionalMarker(value?: T.MethodDefinitionOptionalMarker | undefined) { return _fs(config, methodDefinition, 'optionalMarker', value, config?.optionalMarker); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, methodDefinition, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, methodDefinition, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _fs(config, methodDefinition, 'returnType', value, config?.returnType); },
@@ -3752,14 +3752,14 @@ export function methodSignature(config: ConfigOf<T.MethodSignature>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    accessibilityModifier(value?: T.AccessibilityModifier | undefined) { return _fs(config, methodSignature, 'accessibilityModifier', value, config?.accessibilityModifier); },
-    staticMarker(value?: "static" | undefined) { return _fs(config, methodSignature, 'staticMarker', value, config?.staticMarker); },
-    overrideModifier(value?: T.OverrideModifier | undefined) { return _fs(config, methodSignature, 'overrideModifier', value, config?.overrideModifier); },
-    readonlyMarker(value?: "readonly" | undefined) { return _fs(config, methodSignature, 'readonlyMarker', value, config?.readonlyMarker); },
-    asyncMarker(value?: "async" | undefined) { return _fs(config, methodSignature, 'asyncMarker', value, config?.asyncMarker); },
-    accessorKind(value?: "get" | "set" | "*" | undefined) { return _fs(config, methodSignature, 'accessorKind', value, config?.accessorKind); },
+    accessibilityModifier(value?: T.MethodSignatureAccessibilityModifier | undefined) { return _fs(config, methodSignature, 'accessibilityModifier', value, config?.accessibilityModifier); },
+    staticMarker(value?: T.MethodSignatureStaticMarker | undefined) { return _fs(config, methodSignature, 'staticMarker', value, config?.staticMarker); },
+    overrideModifier(value?: T.MethodSignatureOverrideModifier | undefined) { return _fs(config, methodSignature, 'overrideModifier', value, config?.overrideModifier); },
+    readonlyMarker(value?: T.MethodSignatureReadonlyMarker | undefined) { return _fs(config, methodSignature, 'readonlyMarker', value, config?.readonlyMarker); },
+    asyncMarker(value?: T.MethodSignatureAsyncMarker | undefined) { return _fs(config, methodSignature, 'asyncMarker', value, config?.asyncMarker); },
+    accessorKind(value?: T.MethodSignatureAccessorKind | undefined) { return _fs(config, methodSignature, 'accessorKind', value, config?.accessorKind); },
     name(value?: T.PropertyName) { return _fs(config, methodSignature, 'name', value, config?.name); },
-    optionalMarker(value?: "?" | undefined) { return _fs(config, methodSignature, 'optionalMarker', value, config?.optionalMarker); },
+    optionalMarker(value?: T.MethodSignatureOptionalMarker | undefined) { return _fs(config, methodSignature, 'optionalMarker', value, config?.optionalMarker); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, methodSignature, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, methodSignature, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _fs(config, methodSignature, 'returnType', value, config?.returnType); },
@@ -4014,9 +4014,9 @@ export function objectType(config: ConfigOf<T.ObjectType>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    opening(value?: "{" | "{|") { return _fs(config, objectType, 'opening', value, config?.opening); },
+    opening(value?: T.ObjectTypeOpening) { return _fs(config, objectType, 'opening', value, config?.opening); },
     members(...values: NonEmptyArray<"," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon>) { return _fsm(config, objectType, 'members', values, config?.members); },
-    closing(value?: "}" | "|}") { return _fs(config, objectType, 'closing', value, config?.closing); },
+    closing(value?: T.ObjectTypeClosing) { return _fs(config, objectType, 'closing', value, config?.closing); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -4026,11 +4026,11 @@ export function objectType(config: ConfigOf<T.ObjectType>) {
   };
 }
 
-export function objectTypeCurly(config?: T.ObjectType.Curly.Config) {
+export function objectTypeCurly(config: T.ObjectType.Curly.Config) {
   const fields = {
-    opening: "{" as const,
-    members: config?.members,
-    closing: "}" as const,
+    opening: config.opening,
+    members: config.members,
+    closing: config.closing,
   };
   return {
     $type: TSKindId.ObjectType as number,
@@ -4046,11 +4046,11 @@ export function objectTypeCurly(config?: T.ObjectType.Curly.Config) {
   };
 }
 
-export function objectTypeFlow(config?: T.ObjectType.Flow.Config) {
+export function objectTypeFlow(config: T.ObjectType.Flow.Config) {
   const fields = {
-    opening: "{|" as const,
-    members: config?.members,
-    closing: "|}" as const,
+    opening: config.opening,
+    members: config.members,
+    closing: config.closing,
   };
   return {
     $type: TSKindId.ObjectType as number,
@@ -4120,7 +4120,7 @@ export function optionalParameter(config: ConfigOf<T.OptionalParameter>) {
     $fields: fields,
     $children: children,
     decorator(...values: T.Decorator[]) { return _fsm(config, optionalParameter, 'decorator', values, config?.decorator); },
-    readonlyMarker(value?: "readonly" | undefined) { return _fs(config, optionalParameter, 'readonlyMarker', value, config?.readonlyMarker); },
+    readonlyMarker(value?: T.ParameterNameReadonlyMarker | undefined) { return _fs(config, optionalParameter, 'readonlyMarker', value, config?.readonlyMarker); },
     pattern(value?: T.Pattern | T.This) { return _fs(config, optionalParameter, 'pattern', value, config?.pattern); },
     typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, optionalParameter, 'type', value, config?.type); },
     value(value?: T.Expression | undefined) { return _fs(config, optionalParameter, 'value', value, config?.value); },
@@ -4376,12 +4376,12 @@ export function propertySignature(config: ConfigOf<T.PropertySignature>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    accessibilityModifier(value?: T.AccessibilityModifier | undefined) { return _fs(config, propertySignature, 'accessibilityModifier', value, config?.accessibilityModifier); },
-    staticMarker(value?: "static" | undefined) { return _fs(config, propertySignature, 'staticMarker', value, config?.staticMarker); },
-    overrideModifier(value?: T.OverrideModifier | undefined) { return _fs(config, propertySignature, 'overrideModifier', value, config?.overrideModifier); },
-    readonlyMarker(value?: "readonly" | undefined) { return _fs(config, propertySignature, 'readonlyMarker', value, config?.readonlyMarker); },
+    accessibilityModifier(value?: T.PropertySignatureAccessibilityModifier | undefined) { return _fs(config, propertySignature, 'accessibilityModifier', value, config?.accessibilityModifier); },
+    staticMarker(value?: T.PropertySignatureStaticMarker | undefined) { return _fs(config, propertySignature, 'staticMarker', value, config?.staticMarker); },
+    overrideModifier(value?: T.PropertySignatureOverrideModifier | undefined) { return _fs(config, propertySignature, 'overrideModifier', value, config?.overrideModifier); },
+    readonlyMarker(value?: T.PropertySignatureReadonlyMarker | undefined) { return _fs(config, propertySignature, 'readonlyMarker', value, config?.readonlyMarker); },
     name(value?: T.PropertyName) { return _fs(config, propertySignature, 'name', value, config?.name); },
-    optionalMarker(value?: "?" | undefined) { return _fs(config, propertySignature, 'optionalMarker', value, config?.optionalMarker); },
+    optionalMarker(value?: T.PropertySignatureOptionalMarker | undefined) { return _fs(config, propertySignature, 'optionalMarker', value, config?.optionalMarker); },
     typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, propertySignature, 'type', value, config?.type); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -4409,7 +4409,7 @@ export function publicFieldDefinition(config: ConfigOf<T.PublicFieldDefinition>)
     $children: children,
     decorator(...values: T.Decorator[]) { return _fsm(config, publicFieldDefinition, 'decorator', values, config?.decorator); },
     name(value?: T.PropertyName) { return _fs(config, publicFieldDefinition, 'name', value, config?.name); },
-    optionalityMarker(value?: "?" | "!" | undefined) { return _fs(config, publicFieldDefinition, 'optionalityMarker', value, config?.optionalityMarker); },
+    optionalityMarker(value?: T.PublicFieldDefinitionOptionalityMarker | undefined) { return _fs(config, publicFieldDefinition, 'optionalityMarker', value, config?.optionalityMarker); },
     typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, publicFieldDefinition, 'type', value, config?.type); },
     value(value?: T.Expression | undefined) { return _fs(config, publicFieldDefinition, 'value', value, config?.value); },
     child(value?: (T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst | T.PublicFieldDefinitionStaticMods | T.PublicFieldDefinitionAbstractFirst | T.PublicFieldDefinitionReadonlyFirst | T.PublicFieldDefinitionAccessorOpt)) {
@@ -4507,7 +4507,7 @@ export function requiredParameter(config: ConfigOf<T.RequiredParameter>) {
     $fields: fields,
     $children: children,
     decorator(...values: T.Decorator[]) { return _fsm(config, requiredParameter, 'decorator', values, config?.decorator); },
-    readonlyMarker(value?: "readonly" | undefined) { return _fs(config, requiredParameter, 'readonlyMarker', value, config?.readonlyMarker); },
+    readonlyMarker(value?: T.ParameterNameReadonlyMarker | undefined) { return _fs(config, requiredParameter, 'readonlyMarker', value, config?.readonlyMarker); },
     pattern(value?: T.Pattern | T.This) { return _fs(config, requiredParameter, 'pattern', value, config?.pattern); },
     typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, requiredParameter, 'type', value, config?.type); },
     value(value?: T.Expression | undefined) { return _fs(config, requiredParameter, 'value', value, config?.value); },
@@ -4747,7 +4747,7 @@ export function subscriptExpression(config: ConfigOf<T.SubscriptExpression>) {
     $named: true as const,
     $fields: fields,
     object(value?: T.Expression | T.PrimaryExpression) { return _fs(config, subscriptExpression, 'object', value, config?.object); },
-    optionalChain(value?: T.OptionalChain | undefined) { return _fs(config, subscriptExpression, 'optionalChain', value, config?.optionalChain); },
+    optionalChain(value?: T.SubscriptExpressionOptionalChain | undefined) { return _fs(config, subscriptExpression, 'optionalChain', value, config?.optionalChain); },
     index(value?: T.Expressions) { return _fs(config, subscriptExpression, 'index', value, config?.index); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -5132,7 +5132,7 @@ export function typeParameter(config: ConfigOf<T.TypeParameter>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    constMarker(value?: "const" | undefined) { return _fs(config, typeParameter, 'constMarker', value, config?.constMarker); },
+    constMarker(value?: T.TypeParameterConstMarker | undefined) { return _fs(config, typeParameter, 'constMarker', value, config?.constMarker); },
     name(value?: T.TypeIdentifier) { return _fs(config, typeParameter, 'name', value, config?.name); },
     constraint(value?: T.Constraint | undefined) { return _fs(config, typeParameter, 'constraint', value, config?.constraint); },
     value(value?: T.DefaultType | undefined) { return _fs(config, typeParameter, 'value', value, config?.value); },
@@ -5191,7 +5191,7 @@ export function typePredicateAnnotation(config: ConfigOf<T.TypePredicateAnnotati
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    typePredicate(value?: ":" | T.TypePredicate) { return _fs(config, typePredicateAnnotation, 'typePredicate', value, config?.typePredicate); },
+    typePredicate(value?: T.TypePredicateAnnotationTypePredicate | T.TypePredicate) { return _fs(config, typePredicateAnnotation, 'typePredicate', value, config?.typePredicate); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -5227,7 +5227,7 @@ export function unaryExpression(config: ConfigOf<T.UnaryExpression>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    operator(value?: "!" | "~" | "-" | "+" | "typeof" | "void" | "delete") { return _fs(config, unaryExpression, 'operator', value, config?.operator); },
+    operator(value?: T.UnaryExpressionOperator) { return _fs(config, unaryExpression, 'operator', value, config?.operator); },
     argument(value?: T.Expression) { return _fs(config, unaryExpression, 'argument', value, config?.argument); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -5319,7 +5319,7 @@ export function updateExpressionUFormPostfix(config: Omit<ConfigOf<T.UpdateExpre
       if (value === undefined) return inner.$fields.argument;
       return updateExpressionUFormPostfix({ operator: inner.$fields.operator, argument: value });
     },
-    operator(value?: "++" | "--") {
+    operator(value?: T.UpdateExpressionPostfixOperator) {
       if (value === undefined) return inner.$fields.operator;
       return updateExpressionUFormPostfix({ argument: inner.$fields.argument, operator: value });
     },
@@ -5340,7 +5340,7 @@ export function updateExpressionUFormPrefix(config: Omit<ConfigOf<T.UpdateExpres
     $named: true as const,
     $variant: 'prefix' as const,
     $children: children,
-    operator(value?: "++" | "--") {
+    operator(value?: T.UpdateExpressionPrefixOperator) {
       if (value === undefined) return inner.$fields.operator;
       return updateExpressionUFormPrefix({ argument: inner.$fields.argument, operator: value });
     },

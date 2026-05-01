@@ -28,6 +28,7 @@ import type {
 } from '../compiler/node-map.ts';
 import {
 	AssembledContainer,
+	AssembledEnum,
 	AssembledPolymorph,
 	isMultiple,
 	isRequired,
@@ -1450,13 +1451,18 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
 /**
  * Emit a simple leaf/keyword/token/enum typed render fn that returns the
  * transport text field directly.
+ *
+ * For `enum` modelType nodes, the transport type is the Rust enum; render
+ * via `Display` (`t.to_string()`). For all others, use `t.text.clone()`.
  */
 function renderTypedLeafFn(node: AssembledNode): string[] {
 	const fnName = rustTypedRenderFnName(node.typeName);
-	const structName = rustTransportStructName(node);
+	const typeName = rustTransportStructName(node);
+	const body =
+		node instanceof AssembledEnum ? `Ok(t.to_string())` : `Ok(t.text.clone())`;
 	return [
-		`fn ${fnName}(t: &${structName}) -> Result<String, ::askama::Error> {`,
-		`    Ok(t.text.clone())`,
+		`fn ${fnName}(t: &${typeName}) -> Result<String, ::askama::Error> {`,
+		`    ${body}`,
 		`}`,
 		``
 	];
@@ -2168,7 +2174,7 @@ function renderTransportSupport(
 		// Per-supertype transport enums must precede per-kind transport structs
 		// so struct field type references resolve correctly.
 		...(supertypeEnumLines.length > 0 ? [...supertypeEnumLines, ''] : []),
-		...nodes.flatMap((node) => renderTransportStruct(node, nodeMap)),
+		...nodes.flatMap((node) => renderTransportStruct(node, nodeMap, generatedIdTables !== undefined)),
 		'',
 		...renderGrammarRenderable(),
 		'',
@@ -2392,8 +2398,8 @@ function emitSupertypeTransportEnum(
 	lines.push(`pub enum ${enumName} {`);
 	for (const { subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
-		const structName = `${rustTypeIdent(subNode.typeName)}Transport`;
-		const variantType = isLeafLike(subNode) ? structName : `Box<${structName}>`;
+		const typeName = rustTransportStructName(subNode);
+		const variantType = isLeafLike(subNode) ? typeName : `Box<${typeName}>`;
 		lines.push(`    ${variant}(${variantType}),`);
 	}
 	lines.push(`}`);
@@ -2415,14 +2421,14 @@ function emitSupertypeTransportEnum(
 			const id = kindIdByKind.get(subKind);
 			if (id === undefined) continue; // no catalog entry — skip
 			const variant = rustTypeIdent(subNode.typeName);
-			const structName = `${rustTypeIdent(subNode.typeName)}Transport`;
+			const typeName = rustTransportStructName(subNode);
 			if (isLeafLike(subNode)) {
 				lines.push(`            ${id} => Ok(Self::${variant}(`);
-				lines.push(`                ${structName}::from_napi_value(env, napi_val)?`);
+				lines.push(`                ${typeName}::from_napi_value(env, napi_val)?`);
 				lines.push(`            )),`);
 			} else {
 				lines.push(`            ${id} => Ok(Self::${variant}(Box::new(`);
-				lines.push(`                ${structName}::from_napi_value(env, napi_val)?`);
+				lines.push(`                ${typeName}::from_napi_value(env, napi_val)?`);
 				lines.push(`            ))),`);
 			}
 		}
@@ -3169,8 +3175,32 @@ function renderTerminalTransportToNodeFn(
 	kindIdByKind?: ReadonlyMap<string, number>
 ): string[] {
 	const kindArg = kindIdExpr(node.kind, kindIdByKind);
+	const typeName = rustTransportStructName(node);
+
+	if (node instanceof AssembledEnum) {
+		// Enum modelType: the transport type IS the Rust enum (no wrapper struct).
+		// Metadata fields (source, named, span, node_id) are not available on the
+		// enum — all default to None. The text is derived from the enum's Display impl.
+		return [
+			`fn ${rustTransportToNodeFnName(node.typeName)}(transport: ${typeName}) -> Result<TransportNodeData, ::askama::Error> {`,
+			'    Ok(transport_node_data(',
+			`        ${kindArg},`,
+			'        None,',
+			'        None,',
+			'        true,',
+			'        Some(transport.to_string()),',
+			'        None,',
+			'        None,',
+			'        None,',
+			'        None,',
+			'    ))',
+			'}',
+			''
+		];
+	}
+
 	return [
-		`fn ${rustTransportToNodeFnName(node.typeName)}(transport: ${rustTransportStructName(node)}) -> Result<TransportNodeData, ::askama::Error> {`,
+		`fn ${rustTransportToNodeFnName(node.typeName)}(transport: ${typeName}) -> Result<TransportNodeData, ::askama::Error> {`,
 		'    Ok(transport_node_data(',
 		`        ${kindArg},`,
 		'        transport.transport_source,',
@@ -3203,7 +3233,16 @@ function renderLiteralTransportStruct(
 	return [];
 }
 
-function renderTransportStruct(node: AssembledNode, nodeMap: NodeMap): string[] {
+function renderTransportStruct(
+	node: AssembledNode,
+	nodeMap: NodeMap,
+	hasNapi: boolean = false
+): string[] {
+	if (node instanceof AssembledEnum) {
+		// Enum modelType: emit a proper Rust enum type with one variant per member,
+		// plus FromNapiValue / RenderableTransport / Display impls.
+		return renderEnumType(node, hasNapi);
+	}
 	if (node.modelType === 'polymorph' && node.forms.length > 0) {
 		return renderPolymorphTransportDefs(node, nodeMap);
 	}
@@ -3432,6 +3471,9 @@ function concreteTransportTypeName(kind: string, nodeMap: NodeMap): string | nul
 		if (node.modelType === 'supertype' || node.modelType === 'multi' || node.modelType === 'polymorph') {
 			return null;
 		}
+		// Enum modelType: the transport type is the Rust enum itself (XxxEnum), not
+		// a wrapper struct. Use the enum type name so parent struct fields resolve correctly.
+		if (node instanceof AssembledEnum) return enumTypeName(node);
 		return `${rustTypeIdent(node.typeName)}Transport`;
 	}
 	// Unknown kind — conservative fallback.
@@ -3442,7 +3484,15 @@ function hasRequiredChild(children: readonly AssembledChild[]): boolean {
 	return children.some((child) => isRequired(child));
 }
 
+/**
+ * Rust type name for the transport representation of a node.
+ *
+ * For `enum` modelType nodes, the transport type is the Rust enum itself
+ * (`XxxEnum`), not a `#[napi(object)]` wrapper struct. All other nodes
+ * use the standard `XxxTransport` struct name.
+ */
 function rustTransportStructName(node: AssembledNode): string {
+	if (node instanceof AssembledEnum) return enumTypeName(node);
 	return `${rustTypeIdent(node.typeName)}Transport`;
 }
 
@@ -3492,4 +3542,364 @@ function rustTypeIdent(name: string): string {
 		: `Transport${replaced}`;
 	const ident = withStart.length > 0 ? withStart : 'Transport';
 	return RUST_KEYWORDS.has(ident) ? `${ident}_` : ident;
+}
+
+// ----------------------------------------------------------------------
+// Enum transport type emission
+// ----------------------------------------------------------------------
+
+/**
+ * Mapping from operator/punctuation literal text to a safe Rust PascalCase
+ * identifier. Covers the symbols that appear across the three grammars
+ * (rust, typescript, python). Identifiers that need disambiguation from
+ * Rust keywords get a `Kw` suffix.
+ */
+const LITERAL_TO_VARIANT_NAME: ReadonlyMap<string, string> = new Map([
+	// Arithmetic
+	['+', 'Plus'],
+	['-', 'Minus'],
+	['*', 'Star'],
+	['/', 'Slash'],
+	['%', 'Percent'],
+	// Bitwise / logical
+	['&', 'Amp'],
+	['|', 'Pipe'],
+	['^', 'Caret'],
+	['~', 'Tilde'],
+	['!', 'Bang'],
+	['?', 'Question'],
+	// Comparison
+	['==', 'EqEq'],
+	['!=', 'BangEq'],
+	['<', 'Lt'],
+	['>', 'Gt'],
+	['<=', 'LtEq'],
+	['>=', 'GtEq'],
+	// Shift
+	['<<', 'LtLt'],
+	['>>', 'GtGt'],
+	// Compound assignment
+	['+=', 'PlusEq'],
+	['-=', 'MinusEq'],
+	['*=', 'StarEq'],
+	['/=', 'SlashEq'],
+	['%=', 'PercentEq'],
+	['&=', 'AmpEq'],
+	['|=', 'PipeEq'],
+	['^=', 'CaretEq'],
+	['<<=', 'LtLtEq'],
+	['>>=', 'GtGtEq'],
+	// Double-char operators
+	['&&', 'AmpAmp'],
+	['||', 'PipePipe'],
+	['??', 'QuestionQuestion'],
+	// Range operators
+	['..', 'DotDot'],
+	['..=', 'DotDotEq'],
+	['...', 'DotDotDot'],
+	// Optional chaining
+	['?.', 'QuestionDot'],
+	// Arrow / fat arrow / thin arrow
+	['=>', 'FatArrow'],
+	['->', 'ThinArrow'],
+	// Assignment
+	['=', 'Eq'],
+	// Misc punctuation
+	['.', 'Dot'],
+	[',', 'Comma'],
+	[';', 'Semi'],
+	[':', 'Colon'],
+	['::', 'ColonColon'],
+	['@', 'At'],
+	['#', 'Hash'],
+	['$', 'Dollar'],
+	['_', 'Underscore'],
+	// Brackets (less common as enum members but cover all cases)
+	['(', 'LParen'],
+	[')', 'RParen'],
+	['[', 'LBracket'],
+	[']', 'RBracket'],
+	['{', 'LBrace'],
+	['}', 'RBrace'],
+	['</', 'LtSlash'],
+	// Boolean literals
+	['true', 'True'],
+	['false', 'False'],
+	// Keywords that appear as enum members (with Kw suffix to avoid collisions)
+	['pub', 'PubKw'],
+	['mut', 'MutKw'],
+	['async', 'AsyncKw'],
+	['await', 'AwaitKw'],
+	['unsafe', 'UnsafeKw'],
+	['move', 'MoveKw'],
+	['static', 'StaticKw'],
+	['const', 'ConstKw'],
+	['type', 'TypeKw'],
+	['self', 'SelfKw'],
+	['super', 'SuperKw'],
+	['crate', 'CrateKw'],
+	['extern', 'ExternKw'],
+	['use', 'UseKw'],
+	['mod', 'ModKw'],
+	['fn', 'FnKw'],
+	['let', 'LetKw'],
+	['in', 'InKw'],
+	['if', 'IfKw'],
+	['else', 'ElseKw'],
+	['for', 'ForKw'],
+	['while', 'WhileKw'],
+	['loop', 'LoopKw'],
+	['match', 'MatchKw'],
+	['return', 'ReturnKw'],
+	['break', 'BreakKw'],
+	['continue', 'ContinueKw'],
+	['dyn', 'DynKw'],
+	['impl', 'ImplKw'],
+	['trait', 'TraitKw'],
+	['struct', 'StructKw'],
+	['enum', 'EnumKw'],
+	['ref', 'RefKw'],
+	['where', 'WhereKw'],
+	['abstract', 'AbstractKw'],
+	['override', 'OverrideKw'],
+	['virtual', 'VirtualKw'],
+	['typeof', 'TypeofKw'],
+	['instanceof', 'InstanceofKw'],
+	['new', 'NewKw'],
+	['delete', 'DeleteKw'],
+	['void', 'VoidKw'],
+	['null', 'NullKw'],
+	['undefined', 'UndefinedKw'],
+	['class', 'ClassKw'],
+	['extends', 'ExtendsKw'],
+	['import', 'ImportKw'],
+	['export', 'ExportKw'],
+	['from', 'FromKw'],
+	['as', 'AsKw'],
+	['of', 'OfKw'],
+	['yield', 'YieldKw'],
+	['with', 'WithKw'],
+	['try', 'TryKw'],
+	['catch', 'CatchKw'],
+	['finally', 'FinallyKw'],
+	['throw', 'ThrowKw'],
+	['switch', 'SwitchKw'],
+	['case', 'CaseKw'],
+	['default', 'DefaultKw'],
+	['do', 'DoKw'],
+	['package', 'PackageKw'],
+	['private', 'PrivateKw'],
+	['protected', 'ProtectedKw'],
+	['public', 'PublicKw'],
+	['interface', 'InterfaceKw'],
+	['namespace', 'NamespaceKw'],
+	['declare', 'DeclareKw'],
+	['readonly', 'ReadonlyKw'],
+	['abstract', 'AbstractKw'],
+	['satisfies', 'SatisfiesKw'],
+	['keyof', 'KeyofKw'],
+	['infer', 'InferKw'],
+	['never', 'NeverKw'],
+	['any', 'AnyKw'],
+	['unknown', 'UnknownKw'],
+	['object', 'ObjectKw'],
+	['symbol', 'SymbolKw'],
+	['string', 'StringKw'],
+	['number', 'NumberKw'],
+	['boolean', 'BooleanKw'],
+	['bigint', 'BigintKw'],
+	['global', 'GlobalKw'],
+	['unique', 'UniqueKw'],
+	['asserts', 'AssertsKw'],
+	['is', 'IsKw'],
+	['not', 'NotKw'],
+	['and', 'AndKw'],
+	['or', 'OrKw'],
+	['lambda', 'LambdaKw'],
+	['pass', 'PassKw'],
+	['None', 'NoneKw'],
+	['True', 'TrueKw'],
+	['False', 'FalseKw'],
+	// Rust-specific primitives
+	['u8', 'U8'],
+	['i8', 'I8'],
+	['u16', 'U16'],
+	['i16', 'I16'],
+	['u32', 'U32'],
+	['i32', 'I32'],
+	['u64', 'U64'],
+	['i64', 'I64'],
+	['u128', 'U128'],
+	['i128', 'I128'],
+	['usize', 'Usize'],
+	['isize', 'Isize'],
+	['f32', 'F32'],
+	['f64', 'F64'],
+	['bool', 'Bool'],
+	['str', 'Str'],
+	['char', 'Char'],
+	// Fragment specifiers
+	['block', 'Block'],
+	['expr', 'Expr'],
+	['expr_2021', 'Expr2021'],
+	['ident', 'Ident'],
+	['item', 'Item'],
+	['lifetime', 'Lifetime'],
+	['literal', 'Literal'],
+	['meta', 'Meta'],
+	['pat', 'Pat'],
+	['pat_param', 'PatParam'],
+	['path', 'Path'],
+	['stmt', 'Stmt'],
+	['tt', 'Tt'],
+	['ty', 'Ty'],
+	['vis', 'Vis'],
+]);
+
+/**
+ * Convert a literal text value to a safe Rust PascalCase enum variant name.
+ *
+ * Lookup order:
+ * 1. Exact match in `LITERAL_TO_VARIANT_NAME` (operator/keyword/symbol table).
+ * 2. Alphanumeric identifier: PascalCase the token (e.g. `async_block` → `AsyncBlock`).
+ * 3. Fallback: encode each byte as `U{hex}` to guarantee a valid Rust identifier.
+ *
+ * @param literal - The grammar literal string (e.g. `"+"`, `"mut"`, `"u8"`).
+ */
+export function literalToVariantName(literal: string): string {
+	const known = LITERAL_TO_VARIANT_NAME.get(literal);
+	if (known !== undefined) return known;
+
+	// Alphanumeric / underscore — PascalCase each segment.
+	if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(literal)) {
+		const pascal = literal
+			.split('_')
+			.filter(Boolean)
+			.map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+			.join('');
+		if (pascal.length > 0 && /^[A-Za-z]/.test(pascal)) {
+			return RUST_KEYWORDS.has(pascal) ? `${pascal}Kw` : pascal;
+		}
+	}
+
+	// Fallback: encode each code-point as hex with a leading `V` prefix.
+	const hex = [...literal]
+		.map((c) => c.codePointAt(0)!.toString(16).padStart(2, '0'))
+		.join('_');
+	return `V${hex}`;
+}
+
+/**
+ * Enum type name for an `AssembledEnum` node. Appends `Enum` to the typeName
+ * (PascalCase) to avoid collision with the companion `*Transport` struct naming
+ * convention. Used by the parent transport struct field type.
+ *
+ * Example: typeName `BinaryExpressionOperator` → `BinaryExpressionOperatorEnum`.
+ */
+function enumTypeName(node: AssembledEnum): string {
+	return `${rustTypeIdent(node.typeName)}Enum`;
+}
+
+/**
+ * Emit a Rust enum type for an `AssembledEnum` node (synthesized field-enum
+ * or pre-existing grammar enum). Replaces the `text: String` leaf-struct path
+ * with a closed, statically-known variant set.
+ *
+ * Emits:
+ * - `#[derive(Debug, Clone, Copy)] pub enum XxxEnum { ... }`
+ * - `impl FromNapiValue` — reads `$text` string and matches to the variant
+ * - `impl RenderableTransport` — writes the static literal text per variant
+ * - `impl Display` — writes the static literal text per variant
+ *
+ * The companion `XxxTransport` struct wraps the enum for the wire transport
+ * layer (napi bridge) and retains the metadata fields.
+ *
+ * @param node - the AssembledEnum node
+ * @param hasNapi - whether napi-bindings feature is present (from generatedIdTables)
+ */
+function renderEnumType(
+	node: AssembledEnum,
+	hasNapi: boolean
+): string[] {
+	const enumName = enumTypeName(node);
+	const values = node.values;
+	const lines: string[] = [];
+
+	// --- Rust enum declaration ---
+	lines.push(`#[derive(Debug, Clone, Copy, PartialEq, Eq)]`);
+	lines.push(`pub enum ${enumName} {`);
+	for (const v of values) {
+		lines.push(`    ${literalToVariantName(v)},`);
+	}
+	lines.push(`}`);
+	lines.push('');
+
+	// --- impl FromNapiValue ---
+	if (hasNapi) {
+		lines.push(`#[cfg(feature = "napi-bindings")]`);
+		lines.push(`impl ::napi::bindgen_prelude::FromNapiValue for ${enumName} {`);
+		lines.push(`    unsafe fn from_napi_value(`);
+		lines.push(`        env: ::napi::sys::napi_env,`);
+		lines.push(`        napi_val: ::napi::sys::napi_value,`);
+		lines.push(`    ) -> ::napi::Result<Self> {`);
+		lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
+		lines.push(`        let text: String = obj.get("$text")?`);
+		lines.push(`            .ok_or_else(|| ::napi::Error::from_reason(${JSON.stringify(`$text property missing in ${enumName}`)}))?;`);
+		lines.push(`        match text.as_str() {`);
+		for (const v of values) {
+			const variant = literalToVariantName(v);
+			lines.push(`            ${JSON.stringify(v)} => Ok(Self::${variant}),`);
+		}
+		lines.push(`            other => Err(::napi::Error::from_reason(format!(`);
+		lines.push(`                "unknown $text value {:?} for ${enumName}",`);
+		lines.push(`                other`);
+		lines.push(`            ))),`);
+		lines.push(`        }`);
+		lines.push(`    }`);
+		lines.push(`}`);
+		lines.push('');
+
+		// Stub ToNapiValue — enum is receive-only (JS → Rust).
+		lines.push(`#[cfg(feature = "napi-bindings")]`);
+		lines.push(`impl ::napi::bindgen_prelude::ToNapiValue for ${enumName} {`);
+		lines.push(`    unsafe fn to_napi_value(`);
+		lines.push(`        _env: ::napi::sys::napi_env,`);
+		lines.push(`        _val: Self,`);
+		lines.push(`    ) -> ::napi::Result<::napi::sys::napi_value> {`);
+		lines.push(`        Err(::napi::Error::from_reason(${JSON.stringify(`${enumName} is receive-only`)}))`);
+		lines.push(`    }`);
+		lines.push(`}`);
+		lines.push('');
+	}
+
+	// --- impl Display ---
+	lines.push(`impl ::std::fmt::Display for ${enumName} {`);
+	lines.push(`    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {`);
+	lines.push(`        f.write_str(match self {`);
+	for (const v of values) {
+		const variant = literalToVariantName(v);
+		lines.push(`            Self::${variant} => ${JSON.stringify(v)},`);
+	}
+	lines.push(`        })`);
+	lines.push(`    }`);
+	lines.push(`}`);
+	lines.push('');
+
+	// --- impl RenderableTransport ---
+	lines.push(`impl ::sittir_core::types::RenderableTransport for ${enumName} {`);
+	lines.push(`    fn render_into(`);
+	lines.push(`        &self,`);
+	lines.push(`        dest: &mut dyn ::std::fmt::Write,`);
+	lines.push(`    ) -> Result<(), ::askama::Error> {`);
+	lines.push(`        dest.write_str(match self {`);
+	for (const v of values) {
+		const variant = literalToVariantName(v);
+		lines.push(`            Self::${variant} => ${JSON.stringify(v)},`);
+	}
+	lines.push(`        }).map_err(::askama::Error::from)`);
+	lines.push(`    }`);
+	lines.push(`}`);
+	lines.push('');
+
+	return lines;
 }

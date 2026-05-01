@@ -80,12 +80,17 @@ type NativeTransportRawChildRule = { readonly childrenRequired: boolean; readonl
 type NativeTransportVariantRule = { readonly variant: string; readonly fields: readonly NativeTransportFieldRule[]; readonly children?: { readonly required: boolean; readonly alternatives: readonly NativeTransportAlternative[] } };
 
 const nativeTransportAliasTargetToSource: Record<string, string> = {
+  "augmented_assignment_operator": "_augmented_assignment_operator",
+  "binary_operator_operator": "_binary_operator_operator",
+  "boolean_operator_operator": "_boolean_operator_operator",
   "comprehension_clauses": "_comprehension_clauses",
   "dict_pattern_kv": "_dict_pattern_kv",
   "expression_within_for_in_clause": "_expression_within_for_in_clause",
   "expressions": "_expressions",
   "f_expression": "_f_expression",
-  "kw_async_marker": "_kw_async_marker",
+  "for_in_clause_async_marker": "_for_in_clause_async_marker",
+  "for_statement_async_marker": "_for_statement_async_marker",
+  "function_definition_async_marker": "_function_definition_async_marker",
   "left_hand_side": "_left_hand_side",
   "match_block": "_match_block",
   "match_block_block": "_match_block_block",
@@ -96,8 +101,13 @@ const nativeTransportAliasTargetToSource: Record<string, string> = {
   "simple_pattern_negative": "_simple_pattern_negative",
   "simple_statement": "_simple_statement",
   "simple_statements": "_simple_statements",
+  "splat_pattern_identifier": "_splat_pattern_identifier",
+  "splat_type_identifier": "_splat_type_identifier",
   "statement": "_statement",
   "suite": "_suite",
+  "type_alias_statement_type": "_type_alias_statement_type",
+  "unary_operator_operator": "_unary_operator_operator",
+  "with_statement_async_marker": "_with_statement_async_marker",
 };
 
 const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildRule> = {
@@ -442,6 +452,9 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
       return;
     case 250: // _kw_async_marker
       assertKwAsyncMarkerTransport(node, 'node');
+      return;
+    case 251: // _kw_type
+      assertKwTypeTransport(node, 'node');
       return;
     case 167: // _list_pattern
       assert_ListPatternTransport(node, 'node');
@@ -902,53 +915,14 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 4: // .
       assertDotTransport(node, 'node');
       return;
-    case 52: // +
-      assertPlusTransport(node, 'node');
-      return;
-    case 34: // *
-      assertStarTransport(node, 'node');
-      return;
-    case 47: // @
-      assertAtTransport(node, 'node');
-      return;
-    case 57: // /
-      assertSlashTransport(node, 'node');
-      return;
-    case 58: // %
-      assertPercentTransport(node, 'node');
-      return;
-    case 59: // //
-      assertSlashslashTransport(node, 'node');
-      return;
-    case 39: // **
-      assertStarstarTransport(node, 'node');
-      return;
-    case 49: // |
-      assertPipeTransport(node, 'node');
-      return;
-    case 60: // &
-      assertAmpTransport(node, 'node');
-      return;
-    case 61: // ^
-      assertCaretTransport(node, 'node');
-      return;
-    case 62: // <<
-      assertShlTransport(node, 'node');
-      return;
-    case 13: // >>
-      assertShrTransport(node, 'node');
-      return;
-    case 55: // and
-      assertAndTransport(node, 'node');
-      return;
-    case 56: // or
-      assertOrTransport(node, 'node');
-      return;
     case 20: // break
       assertBreakTransport(node, 'node');
       return;
     case 27: // case
       assertCaseTransport(node, 'node');
+      return;
+    case 13: // >>
+      assertShrTransport(node, 'node');
       return;
     case 44: // class
       assertClassTransport(node, 'node');
@@ -962,14 +936,23 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 21: // continue
       assertContinueTransport(node, 'node');
       return;
+    case 47: // @
+      assertAtTransport(node, 'node');
+      return;
     case 17: // del
       assertDelTransport(node, 'node');
       return;
     case 50: // {
       assertBraceTransport(node, 'node');
       return;
+    case 39: // **
+      assertStarstarTransport(node, 'node');
+      return;
     case 24: // elif
       assertElifTransport(node, 'node');
+      return;
+    case 34: // *
+      assertStarTransport(node, 'node');
       return;
     case 42: // exec
       assertExecTransport(node, 'node');
@@ -1016,6 +999,9 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 19: // pass
       assertPassTransport(node, 'node');
       return;
+    case 57: // /
+      assertSlashTransport(node, 'node');
+      return;
     case 12: // print
       assertPrintTransport(node, 'node');
       return;
@@ -1031,50 +1017,14 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
     case 32: // try
       assertTryTransport(node, 'node');
       return;
+    case 49: // |
+      assertPipeTransport(node, 'node');
+      return;
     case 31: // while
       assertWhileTransport(node, 'node');
       return;
     case 36: // with
       assertWithTransport(node, 'node');
-      return;
-    case 73: // +=
-      assertLiteralTransport(node, 'node', "+=", "+=");
-      return;
-    case 74: // -=
-      assertLiteralTransport(node, 'node', "-=", "-=");
-      return;
-    case 75: // *=
-      assertLiteralTransport(node, 'node', "*=", "*=");
-      return;
-    case 76: // /=
-      assertLiteralTransport(node, 'node', "/=", "/=");
-      return;
-    case 77: // @=
-      assertLiteralTransport(node, 'node', "@=", "@=");
-      return;
-    case 78: // //=
-      assertLiteralTransport(node, 'node', "//=", "//=");
-      return;
-    case 79: // %=
-      assertLiteralTransport(node, 'node', "%=", "%=");
-      return;
-    case 80: // **=
-      assertLiteralTransport(node, 'node', "**=", "**=");
-      return;
-    case 81: // >>=
-      assertLiteralTransport(node, 'node', ">>=", ">>=");
-      return;
-    case 82: // <<=
-      assertLiteralTransport(node, 'node', "<<=", "<<=");
-      return;
-    case 83: // &=
-      assertLiteralTransport(node, 'node', "&=", "&=");
-      return;
-    case 84: // ^=
-      assertLiteralTransport(node, 'node', "^=", "^=");
-      return;
-    case 85: // |=
-      assertLiteralTransport(node, 'node', "|=", "|=");
       return;
     case 65: // <
       assertLiteralTransport(node, 'node', "<", "<");
@@ -1105,9 +1055,6 @@ export function assertNativeRenderTransport(node: unknown): asserts node is AnyT
       return;
     case 194: // is not
       assertLiteralTransport(node, 'node', "is not", "is not");
-      return;
-    case 63: // ~
-      assertLiteralTransport(node, 'node', "~", "~");
       return;
     default:
       throw new TypeError(`unsupported native transport kind: ${String(node.$type)}`);
@@ -1256,6 +1203,24 @@ function assertAssignmentTypedTransport(node: Record<string, unknown>, path: str
   if (node["right"] !== undefined) assertTransportValue(node["right"], `${path}.right`, [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"expression_list"},{"type":"assignment"},{"type":"augmented_assignment"},{"type":"pattern_list"},{"type":"yield"}] as const);
 }
 
+function assertAugmentedAssignmentOperatorTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_augmented_assignment_operator");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["+=","-=","*=","/=","@=","//=","%=","**=",">>=","<<=","&=","^=","|="] as const);
+}
+
+function assertBinaryOperatorOperatorTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_binary_operator_operator");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["+"] as const);
+}
+
+function assertBooleanOperatorOperatorTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_boolean_operator_operator");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["and"] as const);
+}
+
 function assertComprehensionClausesTransport(node: Record<string, unknown>, path: string): void {
   assertTransportKind(node, path, "_comprehension_clauses");
   assertOptionalMetadata(node, path);
@@ -1266,6 +1231,24 @@ function assertComprehensionClausesTransport(node: Record<string, unknown>, path
       assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"for_in_clause"},{"type":"if_clause"}] as const);
     }
   }
+}
+
+function assertForInClauseAsyncMarkerTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_for_in_clause_async_marker");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["async"] as const);
+}
+
+function assertForStatementAsyncMarkerTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_for_statement_async_marker");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["async"] as const);
+}
+
+function assertFunctionDefinitionAsyncMarkerTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_function_definition_async_marker");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["async"] as const);
 }
 
 function assertImportListTransport(node: Record<string, unknown>, path: string): void {
@@ -1294,6 +1277,12 @@ function assertKwAsyncMarkerTransport(node: Record<string, unknown>, path: strin
   assertTransportKind(node, path, "_kw_async_marker");
   assertOptionalMetadata(node, path);
   assertTextIn(node.$text, `${path}.$text`, ["async"] as const);
+}
+
+function assertKwTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_kw_type");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["type"] as const);
 }
 
 function assert_ListPatternTransport(node: Record<string, unknown>, path: string): void {
@@ -1363,6 +1352,18 @@ function assertSimpleStatementsTransport(node: Record<string, unknown>, path: st
   }
 }
 
+function assertSplatPatternIdentifierTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_splat_pattern_identifier");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["*","**"] as const);
+}
+
+function assertSplatTypeIdentifierTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_splat_type_identifier");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["*","**"] as const);
+}
+
 function assertSuiteTransport(node: Record<string, unknown>, path: string): void {
   assertTransportKind(node, path, "_suite");
   assertOptionalMetadata(node, path);
@@ -1387,6 +1388,18 @@ function assert_TuplePatternTransport(node: Record<string, unknown>, path: strin
   }
 }
 
+function assertTypeAliasStatementTypeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_type_alias_statement_type");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["type"] as const);
+}
+
+function assertUnaryOperatorOperatorTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_unary_operator_operator");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["+","-","~"] as const);
+}
+
 function assert_WithClauseParenTransport(node: Record<string, unknown>, path: string): void {
   assertTransportKind(node, path, "_with_clause_paren");
   assertOptionalMetadata(node, path);
@@ -1397,6 +1410,12 @@ function assert_WithClauseParenTransport(node: Record<string, unknown>, path: st
       assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"with_item"}] as const);
     }
   }
+}
+
+function assertWithStatementAsyncMarkerTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_with_statement_async_marker");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["async"] as const);
 }
 
 function assertAliasedImportTransport(node: Record<string, unknown>, path: string): void {
@@ -1515,7 +1534,7 @@ function assertAugmentedAssignmentTransport(node: Record<string, unknown>, path:
   if (node["left"] === undefined) throw new TypeError(`${path}.left` + ' is required');
   if (node["left"] !== undefined) assertTransportValue(node["left"], `${path}.left`, [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"list_pattern"},{"type":"pattern_list"}] as const);
   if (node["operator"] === undefined) throw new TypeError(`${path}.operator` + ' is required');
-  if (node["operator"] !== undefined) assertTransportValue(node["operator"], `${path}.operator`, [{"type":"+=","text":"+="},{"type":"-=","text":"-="},{"type":"*=","text":"*="},{"type":"/=","text":"/="},{"type":"@=","text":"@="},{"type":"//=","text":"//="},{"type":"%=","text":"%="},{"type":"**=","text":"**="},{"type":">>=","text":">>="},{"type":"<<=","text":"<<="},{"type":"&=","text":"&="},{"type":"^=","text":"^="},{"type":"|=","text":"|="}] as const);
+  if (node["operator"] !== undefined) assertTransportValue(node["operator"], `${path}.operator`, [{"type":"_augmented_assignment_operator","text":"+="},{"type":"_augmented_assignment_operator","text":"-="},{"type":"_augmented_assignment_operator","text":"*="},{"type":"_augmented_assignment_operator","text":"/="},{"type":"_augmented_assignment_operator","text":"@="},{"type":"_augmented_assignment_operator","text":"//="},{"type":"_augmented_assignment_operator","text":"%="},{"type":"_augmented_assignment_operator","text":"**="},{"type":"_augmented_assignment_operator","text":">>="},{"type":"_augmented_assignment_operator","text":"<<="},{"type":"_augmented_assignment_operator","text":"&="},{"type":"_augmented_assignment_operator","text":"^="},{"type":"_augmented_assignment_operator","text":"|="}] as const);
   if (node["right"] === undefined) throw new TypeError(`${path}.right` + ' is required');
   if (node["right"] !== undefined) assertTransportValue(node["right"], `${path}.right`, [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"expression_list"},{"type":"assignment"},{"type":"augmented_assignment"},{"type":"pattern_list"},{"type":"yield"}] as const);
 }
@@ -1533,7 +1552,7 @@ function assertBinaryOperatorTransport(node: Record<string, unknown>, path: stri
   if (node["left"] === undefined) throw new TypeError(`${path}.left` + ' is required');
   if (node["left"] !== undefined) assertTransportValue(node["left"], `${path}.left`, [{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"}] as const);
   if (node["operator"] === undefined) throw new TypeError(`${path}.operator` + ' is required');
-  if (node["operator"] !== undefined) assertTransportValue(node["operator"], `${path}.operator`, [{"type":"+","text":"+"},{"type":"-","text":"-"},{"type":"*","text":"*"},{"type":"@","text":"@"},{"type":"/","text":"/"},{"type":"%","text":"%"},{"type":"//","text":"//"},{"type":"**","text":"**"},{"type":"|","text":"|"},{"type":"&","text":"&"},{"type":"^","text":"^"},{"type":"<<","text":"<<"},{"type":">>","text":">>"}] as const);
+  if (node["operator"] !== undefined) assertTransportValue(node["operator"], `${path}.operator`, [{"type":"_binary_operator_operator","text":"+"}] as const);
   if (node["right"] === undefined) throw new TypeError(`${path}.right` + ' is required');
   if (node["right"] !== undefined) assertTransportValue(node["right"], `${path}.right`, [{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"}] as const);
 }
@@ -1556,7 +1575,7 @@ function assertBooleanOperatorTransport(node: Record<string, unknown>, path: str
   if (node["left"] === undefined) throw new TypeError(`${path}.left` + ' is required');
   if (node["left"] !== undefined) assertTransportValue(node["left"], `${path}.left`, [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"}] as const);
   if (node["operator"] === undefined) throw new TypeError(`${path}.operator` + ' is required');
-  if (node["operator"] !== undefined) assertTransportValue(node["operator"], `${path}.operator`, [{"type":"and","text":"and"},{"type":"or","text":"or"}] as const);
+  if (node["operator"] !== undefined) assertTransportValue(node["operator"], `${path}.operator`, [{"type":"_boolean_operator_operator","text":"and"}] as const);
   if (node["right"] === undefined) throw new TypeError(`${path}.right` + ' is required');
   if (node["right"] !== undefined) assertTransportValue(node["right"], `${path}.right`, [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"}] as const);
 }
@@ -1932,7 +1951,7 @@ function assertFloatTransport(node: Record<string, unknown>, path: string): void
 function assertForInClauseTransport(node: Record<string, unknown>, path: string): void {
   assertTransportKind(node, path, "for_in_clause");
   assertOptionalMetadata(node, path);
-  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"async","text":"async"}] as const);
+  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"_for_in_clause_async_marker","text":"async"}] as const);
   if (node["left"] === undefined) throw new TypeError(`${path}.left` + ' is required');
   if (node["left"] !== undefined) assertTransportValue(node["left"], `${path}.left`, [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"list_pattern"},{"type":"pattern_list"}] as const);
   if (node["right"] === undefined) throw new TypeError(`${path}.right` + ' is required');
@@ -1942,7 +1961,7 @@ function assertForInClauseTransport(node: Record<string, unknown>, path: string)
 function assertForStatementTransport(node: Record<string, unknown>, path: string): void {
   assertTransportKind(node, path, "for_statement");
   assertOptionalMetadata(node, path);
-  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"async","text":"async"}] as const);
+  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"_for_statement_async_marker","text":"async"}] as const);
   if (node["left"] === undefined) throw new TypeError(`${path}.left` + ' is required');
   if (node["left"] !== undefined) assertTransportValue(node["left"], `${path}.left`, [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"list_pattern"},{"type":"pattern_list"}] as const);
   if (node["right"] === undefined) throw new TypeError(`${path}.right` + ' is required');
@@ -1967,7 +1986,7 @@ function assertFormatSpecifierTransport(node: Record<string, unknown>, path: str
 function assertFunctionDefinitionTransport(node: Record<string, unknown>, path: string): void {
   assertTransportKind(node, path, "function_definition");
   assertOptionalMetadata(node, path);
-  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"async","text":"async"}] as const);
+  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"_function_definition_async_marker","text":"async"}] as const);
   if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
   if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"}] as const);
   if (node["type_parameters"] !== undefined) assertTransportValue(node["type_parameters"], `${path}.type_parameters`, [{"type":"type_parameter"}] as const);
@@ -2415,7 +2434,7 @@ function assertSplatPatternTransport(node: Record<string, unknown>, path: string
   assertTransportKind(node, path, "splat_pattern");
   assertOptionalMetadata(node, path);
   if (node["identifier"] === undefined) throw new TypeError(`${path}.identifier` + ' is required');
-  if (node["identifier"] !== undefined) assertTransportValue(node["identifier"], `${path}.identifier`, [{"type":"*","text":"*"},{"type":"**","text":"**"}] as const);
+  if (node["identifier"] !== undefined) assertTransportValue(node["identifier"], `${path}.identifier`, [{"type":"_splat_pattern_identifier","text":"*"},{"type":"_splat_pattern_identifier","text":"**"}] as const);
   if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
   if (node.$children !== undefined) {
     if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
@@ -2429,7 +2448,7 @@ function assertSplatTypeTransport(node: Record<string, unknown>, path: string): 
   assertTransportKind(node, path, "splat_type");
   assertOptionalMetadata(node, path);
   if (node["identifier"] === undefined) throw new TypeError(`${path}.identifier` + ' is required');
-  if (node["identifier"] !== undefined) assertTransportValue(node["identifier"], `${path}.identifier`, [{"type":"*","text":"*"},{"type":"**","text":"**"},{"type":"identifier"}] as const);
+  if (node["identifier"] !== undefined) assertTransportValue(node["identifier"], `${path}.identifier`, [{"type":"_splat_type_identifier","text":"*"},{"type":"_splat_type_identifier","text":"**"},{"type":"identifier"}] as const);
 }
 
 function assertStringTransport(node: Record<string, unknown>, path: string): void {
@@ -2521,7 +2540,7 @@ function assertTypeAliasStatementTransport(node: Record<string, unknown>, path: 
   assertTransportKind(node, path, "type_alias_statement");
   assertOptionalMetadata(node, path);
   if (node["type"] === undefined) throw new TypeError(`${path}.type` + ' is required');
-  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"type","text":"type"}] as const);
+  if (node["type"] !== undefined) assertTransportValue(node["type"], `${path}.type`, [{"type":"_type_alias_statement_type","text":"type"}] as const);
   if (node["left"] === undefined) throw new TypeError(`${path}.left` + ' is required');
   if (node["left"] !== undefined) assertTransportValue(node["left"], `${path}.left`, [{"type":"type"}] as const);
   if (node["right"] === undefined) throw new TypeError(`${path}.right` + ' is required');
@@ -2575,7 +2594,7 @@ function assertUnaryOperatorTransport(node: Record<string, unknown>, path: strin
   assertTransportKind(node, path, "unary_operator");
   assertOptionalMetadata(node, path);
   if (node["operator"] === undefined) throw new TypeError(`${path}.operator` + ' is required');
-  if (node["operator"] !== undefined) assertTransportValue(node["operator"], `${path}.operator`, [{"type":"+","text":"+"},{"type":"-","text":"-"},{"type":"~","text":"~"}] as const);
+  if (node["operator"] !== undefined) assertTransportValue(node["operator"], `${path}.operator`, [{"type":"_unary_operator_operator","text":"+"},{"type":"_unary_operator_operator","text":"-"},{"type":"_unary_operator_operator","text":"~"}] as const);
   if (node["argument"] === undefined) throw new TypeError(`${path}.argument` + ' is required');
   if (node["argument"] !== undefined) assertTransportValue(node["argument"], `${path}.argument`, [{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"}] as const);
 }
@@ -2691,7 +2710,7 @@ function assertWithItemTransport(node: Record<string, unknown>, path: string): v
 function assertWithStatementTransport(node: Record<string, unknown>, path: string): void {
   assertTransportKind(node, path, "with_statement");
   assertOptionalMetadata(node, path);
-  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"async","text":"async"}] as const);
+  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"_with_statement_async_marker","text":"async"}] as const);
   if (node["with_clause"] === undefined) throw new TypeError(`${path}.with_clause` + ' is required');
   if (node["with_clause"] !== undefined) assertTransportValue(node["with_clause"], `${path}.with_clause`, [{"type":"with_clause"}] as const);
   if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');
@@ -2842,90 +2861,6 @@ function assertDotTransport(node: Record<string, unknown>, path: string): void {
   assertTextIn(node.$text, `${path}.$text`, ["."] as const);
 }
 
-function assertPlusTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "+");
-  assertOptionalMetadata(node, path);
-  assertTextIn(node.$text, `${path}.$text`, ["+"] as const);
-}
-
-function assertStarTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "*");
-  assertOptionalMetadata(node, path);
-  assertTextIn(node.$text, `${path}.$text`, ["*"] as const);
-}
-
-function assertAtTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "@");
-  assertOptionalMetadata(node, path);
-  assertTextIn(node.$text, `${path}.$text`, ["@"] as const);
-}
-
-function assertSlashTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "/");
-  assertOptionalMetadata(node, path);
-  assertTextIn(node.$text, `${path}.$text`, ["/"] as const);
-}
-
-function assertPercentTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "%");
-  assertOptionalMetadata(node, path);
-  assertTextIn(node.$text, `${path}.$text`, ["%"] as const);
-}
-
-function assertSlashslashTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "//");
-  assertOptionalMetadata(node, path);
-  assertTextIn(node.$text, `${path}.$text`, ["//"] as const);
-}
-
-function assertStarstarTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "**");
-  assertOptionalMetadata(node, path);
-  assertTextIn(node.$text, `${path}.$text`, ["**"] as const);
-}
-
-function assertPipeTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "|");
-  assertOptionalMetadata(node, path);
-  assertTextIn(node.$text, `${path}.$text`, ["|"] as const);
-}
-
-function assertAmpTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "&");
-  assertOptionalMetadata(node, path);
-  assertTextIn(node.$text, `${path}.$text`, ["&"] as const);
-}
-
-function assertCaretTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "^");
-  assertOptionalMetadata(node, path);
-  assertTextIn(node.$text, `${path}.$text`, ["^"] as const);
-}
-
-function assertShlTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "<<");
-  assertOptionalMetadata(node, path);
-  assertTextIn(node.$text, `${path}.$text`, ["<<"] as const);
-}
-
-function assertShrTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, ">>");
-  assertOptionalMetadata(node, path);
-  assertTextIn(node.$text, `${path}.$text`, [">>"] as const);
-}
-
-function assertAndTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "and");
-  assertOptionalMetadata(node, path);
-  assertTextIn(node.$text, `${path}.$text`, ["and"] as const);
-}
-
-function assertOrTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "or");
-  assertOptionalMetadata(node, path);
-  assertTextIn(node.$text, `${path}.$text`, ["or"] as const);
-}
-
 function assertBreakTransport(node: Record<string, unknown>, path: string): void {
   assertTransportKind(node, path, "break");
   assertOptionalMetadata(node, path);
@@ -2936,6 +2871,12 @@ function assertCaseTransport(node: Record<string, unknown>, path: string): void 
   assertTransportKind(node, path, "case");
   assertOptionalMetadata(node, path);
   assertTextIn(node.$text, `${path}.$text`, ["case"] as const);
+}
+
+function assertShrTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, ">>");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, [">>"] as const);
 }
 
 function assertClassTransport(node: Record<string, unknown>, path: string): void {
@@ -2962,6 +2903,12 @@ function assertContinueTransport(node: Record<string, unknown>, path: string): v
   assertTextIn(node.$text, `${path}.$text`, ["continue"] as const);
 }
 
+function assertAtTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "@");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["@"] as const);
+}
+
 function assertDelTransport(node: Record<string, unknown>, path: string): void {
   assertTransportKind(node, path, "del");
   assertOptionalMetadata(node, path);
@@ -2974,6 +2921,12 @@ function assertBraceTransport(node: Record<string, unknown>, path: string): void
   assertTextIn(node.$text, `${path}.$text`, ["{"] as const);
 }
 
+function assertStarstarTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "**");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["**"] as const);
+}
+
 function assertElifTransport(node: Record<string, unknown>, path: string): void {
   assertTransportKind(node, path, "elif");
   assertOptionalMetadata(node, path);
@@ -2984,6 +2937,12 @@ function assertEllipsisTransport(node: Record<string, unknown>, path: string): v
   assertTransportKind(node, path, "...");
   assertOptionalMetadata(node, path);
   assertTextIn(node.$text, `${path}.$text`, ["..."] as const);
+}
+
+function assertStarTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "*");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["*"] as const);
 }
 
 function assertExecTransport(node: Record<string, unknown>, path: string): void {
@@ -3088,6 +3047,12 @@ function assertPassTransport(node: Record<string, unknown>, path: string): void 
   assertTextIn(node.$text, `${path}.$text`, ["pass"] as const);
 }
 
+function assertSlashTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "/");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["/"] as const);
+}
+
 function assertPrintTransport(node: Record<string, unknown>, path: string): void {
   assertTransportKind(node, path, "print");
   assertOptionalMetadata(node, path);
@@ -3122,6 +3087,12 @@ function assertTryTransport(node: Record<string, unknown>, path: string): void {
   assertTransportKind(node, path, "try");
   assertOptionalMetadata(node, path);
   assertTextIn(node.$text, `${path}.$text`, ["try"] as const);
+}
+
+function assertPipeTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "|");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["|"] as const);
 }
 
 function assertWhileTransport(node: Record<string, unknown>, path: string): void {

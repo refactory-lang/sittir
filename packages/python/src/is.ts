@@ -343,8 +343,6 @@ const _kindIdByKind = new Map<string, number>([
     ["class", TSKindId.Class],
     ["_", TSKindId.Anonymous],
     ["not", TSKindId.Not],
-    ["and", TSKindId.And],
-    ["or", TSKindId.Or],
     ["escape_sequence", TSKindId.EscapeSequence],
     ["type_conversion", TSKindId.TypeConversion],
     ["integer", TSKindId.Integer],
@@ -483,6 +481,7 @@ const _kindIdByKind = new Map<string, number>([
     ["_match_block_block", TSKindId.MatchBlockBlock],
     ["_simple_pattern_negative", TSKindId.SimplePatternNegative],
     ["_kw_async_marker", TSKindId.KwAsyncMarker],
+    ["_kw_type", TSKindId.KwType],
 ]);
 
 export const is = {

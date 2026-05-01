@@ -79,25 +79,17 @@ export interface AbstractMethodSignatureTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  accessibilityModifier?: AccessibilityModifierTransport
-  overrideModifier?: OverrideModifierTransport
-  accessorKind?: Box<AnyTransport>
+  accessibilityModifier?: AbstractMethodSignatureAccessibilityModifierEnum
+  overrideModifier?: AbstractMethodSignatureOverrideModifierEnum
+  accessorKind?: AbstractMethodSignatureAccessorKindEnum
   name: PropertyNameTransport
-  optionalMarker?: KwOptionalMarkerTransport
+  optionalMarker?: AbstractMethodSignatureOptionalMarkerEnum
   typeParameters?: TypeParametersTransport
   parameters: FormalParametersTransport
   returnType?: Box<AnyTransport>
 }
 
 export interface AbstractTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface AccessibilityModifierTransport {
   '$source'?: Source
   '$named'?: boolean
   '$span'?: Span
@@ -132,14 +124,6 @@ export interface AmbientDeclarationTransport {
 }
 
 export interface AmpTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface AndandTransport {
   '$source'?: Source
   '$named'?: boolean
   '$span'?: Span
@@ -229,7 +213,7 @@ export interface ArrowFunctionUFormParameterTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: KwAsyncMarkerTransport
+  asyncMarker?: ArrowFunctionAsyncMarkerEnum
   body: Box<AnyTransport>
   '$children': Array<ArrowFunctionParameterTransport>
 }
@@ -240,7 +224,7 @@ export interface ArrowFunctionUFormUCallSignatureTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: KwAsyncMarkerTransport
+  asyncMarker?: ArrowFunctionAsyncMarkerEnum
   body: Box<AnyTransport>
   '$children': Array<ArrowFunctionUCallSignatureTransport>
 }
@@ -261,7 +245,7 @@ export interface AssertsAnnotationTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asserts: AssertsTransport
+  asserts: Box<AnyTransport>
 }
 
 export interface AssertsTransport {
@@ -279,7 +263,7 @@ export interface AssignmentExpressionTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  usingMarker?: Box<AnyTransport>
+  usingMarker?: AssignmentExpressionUsingMarkerEnum
   left: Box<AnyTransport>
   right: ExpressionTransport
 }
@@ -325,7 +309,7 @@ export interface AugmentedAssignmentExpressionTransport {
   '$span'?: Span
   '$nodeId'?: number
   left: Box<AnyTransport>
-  operator: Box<AnyTransport>
+  operator: AugmentedAssignmentExpressionOperatorEnum
   right: ExpressionTransport
 }
 
@@ -369,7 +353,7 @@ export interface BinaryExpressionTransport {
   '$span'?: Span
   '$nodeId'?: number
   left: Box<AnyTransport>
-  operator: Box<AnyTransport>
+  operator: BinaryExpressionOperatorEnum
   right: ExpressionTransport
 }
 
@@ -486,14 +470,6 @@ export interface CallSignatureTransport {
   typeParameters?: TypeParametersTransport
   parameters: FormalParametersTransport
   returnType?: Box<AnyTransport>
-}
-
-export interface CaretTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface CaseTransport {
@@ -735,7 +711,7 @@ export interface ConstructorTypeTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  abstractMarker?: KwAbstractMarkerTransport
+  abstractMarker?: ConstructorTypeAbstractMarkerEnum
   typeParameters?: TypeParametersTransport
   parameters: FormalParametersTransport
   type: TypeTransport
@@ -747,7 +723,7 @@ export interface ConstructSignatureTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  abstractMarker?: KwAbstractMarkerTransport
+  abstractMarker?: ConstructSignatureAbstractMarkerEnum
   typeParameters?: TypeParametersTransport
   parameters: FormalParametersTransport
   type?: TypeAnnotationTransport
@@ -949,20 +925,12 @@ export interface EnumDeclarationTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  constMarker?: KwConstMarkerTransport
+  constMarker?: EnumDeclarationConstMarkerEnum
   name: IdentifierTransport
   body: EnumBodyTransport
 }
 
 export interface EnumTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface EqeqTransport {
   '$source'?: Source
   '$named'?: boolean
   '$span'?: Span
@@ -1017,7 +985,7 @@ export interface ExportSpecifierTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  exportKind?: Box<AnyTransport>
+  exportKind?: ExportSpecifierExportKindEnum
   name: ModuleExportNameTransport
   alias?: ModuleExportNameTransport
 }
@@ -1259,7 +1227,7 @@ export interface FieldDefinitionTransport {
   '$span'?: Span
   '$nodeId'?: number
   decorator: Array<DecoratorTransport>
-  staticMarker?: KwStaticMarkerTransport
+  staticMarker?: FieldDefinitionStaticMarkerEnum
   property: PropertyNameTransport
   value?: ExpressionTransport
 }
@@ -1296,7 +1264,7 @@ export interface ForHeaderLetConstKindTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  kind: Box<AnyTransport>
+  kind: ForHeaderLetConstKindKindEnum
   left: Box<AnyTransport>
   '$children'?: Array<AutomaticSemicolonTransport>
 }
@@ -1316,7 +1284,7 @@ export interface ForHeaderTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  operator: Box<AnyTransport>
+  operator: ForHeaderOperatorEnum
   right: ExpressionsTransport
   '$children': Array<Box<AnyTransport>>
 }
@@ -1327,7 +1295,7 @@ export interface ForHeaderVarKindTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  kind: Box<AnyTransport>
+  kind: ForHeaderVarKindKindEnum
   left: Box<AnyTransport>
   '$children'?: Array<InitializerTransport>
 }
@@ -1338,8 +1306,8 @@ export interface ForInStatementTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  awaitMarker?: Box<AnyTransport>
-  operator: Box<AnyTransport>
+  awaitMarker?: ForInStatementAwaitMarkerEnum
+  operator: ForHeaderOperatorEnum
   right: ExpressionsTransport
   body: StatementTransport
   '$children': Array<Box<AnyTransport>>
@@ -1397,7 +1365,7 @@ export interface FunctionDeclarationTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: KwAsyncMarkerTransport
+  asyncMarker?: FunctionDeclarationAsyncMarkerEnum
   name: IdentifierTransport
   typeParameters?: TypeParametersTransport
   parameters: FormalParametersTransport
@@ -1412,7 +1380,7 @@ export interface FunctionExpressionTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: KwAsyncMarkerTransport
+  asyncMarker?: FunctionExpressionAsyncMarkerEnum
   name?: IdentifierTransport
   typeParameters?: TypeParametersTransport
   parameters: FormalParametersTransport
@@ -1434,7 +1402,7 @@ export interface FunctionSignatureTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: KwAsyncMarkerTransport
+  asyncMarker?: FunctionSignatureAsyncMarkerEnum
   name: IdentifierTransport
   typeParameters?: TypeParametersTransport
   parameters: FormalParametersTransport
@@ -1467,7 +1435,7 @@ export interface GeneratorFunctionDeclarationTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: KwAsyncMarkerTransport
+  asyncMarker?: GeneratorFunctionDeclarationAsyncMarkerEnum
   name: IdentifierTransport
   typeParameters?: TypeParametersTransport
   parameters: FormalParametersTransport
@@ -1482,7 +1450,7 @@ export interface GeneratorFunctionTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: KwAsyncMarkerTransport
+  asyncMarker?: GeneratorFunctionAsyncMarkerEnum
   name?: IdentifierTransport
   typeParameters?: TypeParametersTransport
   parameters: FormalParametersTransport
@@ -1498,14 +1466,6 @@ export interface GenericTypeTransport {
   '$nodeId'?: number
   name: Box<AnyTransport>
   typeArguments: TypeArgumentsTransport
-}
-
-export interface GeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface GlobalTransport {
@@ -1609,7 +1569,7 @@ export interface ImportAttributeTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  object: ObjectTransport
+  object: Box<AnyTransport>
 }
 
 export interface ImportClauseDefaultImportTransport {
@@ -1737,7 +1697,7 @@ export interface ImportSpecifierUFormAsTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  importKind?: Box<AnyTransport>
+  importKind?: ImportSpecifierImportKindEnum
   '$children': Array<ImportSpecifierAsTransport>
 }
 
@@ -1747,7 +1707,7 @@ export interface ImportSpecifierUFormNameTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  importKind?: Box<AnyTransport>
+  importKind?: ImportSpecifierImportKindEnum
   '$children': Array<ImportSpecifierNameTransport>
 }
 
@@ -1855,14 +1815,6 @@ export interface InitializerTransport {
   '$span'?: Span
   '$nodeId'?: number
   value: ExpressionTransport
-}
-
-export interface InstanceofTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface InstantiationExpressionTransport {
@@ -2052,6 +2004,22 @@ export interface KwAbstractMarkerTransport {
   '$text': string
 }
 
+export interface KwAccessorMarkerTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface KwAssertsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
 export interface KwAsyncMarkerTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -2060,7 +2028,23 @@ export interface KwAsyncMarkerTransport {
   '$text': string
 }
 
+export interface KwAwaitMarkerTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
 export interface KwConstMarkerTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface KwDeclareMarkerTransport {
   '$source'?: Source
   '$named'?: boolean
   '$span'?: Span
@@ -2092,6 +2076,22 @@ export interface KwStaticMarkerTransport {
   '$text': string
 }
 
+export interface KwTypePredicateTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
+export interface KwUsingMarkerTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$span'?: Span
+  '$nodeId'?: number
+  '$text': string
+}
+
 export interface LabeledStatementTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -2102,21 +2102,13 @@ export interface LabeledStatementTransport {
   body: StatementTransport
 }
 
-export interface LeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface LexicalDeclarationTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  kind: Box<AnyTransport>
+  kind: LexicalDeclarationKindEnum
   declarators: Array<VariableDeclaratorTransport>
   semicolon: SemicolonTransport
 }
@@ -2192,14 +2184,14 @@ export interface MethodDefinitionTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  accessibilityModifier?: AccessibilityModifierTransport
-  staticMarker?: KwStaticMarkerTransport
-  overrideModifier?: OverrideModifierTransport
-  readonlyMarker?: KwReadonlyMarkerTransport
-  asyncMarker?: KwAsyncMarkerTransport
-  accessorKind?: Box<AnyTransport>
+  accessibilityModifier?: MethodDefinitionAccessibilityModifierEnum
+  staticMarker?: MethodDefinitionStaticMarkerEnum
+  overrideModifier?: MethodDefinitionOverrideModifierEnum
+  readonlyMarker?: MethodDefinitionReadonlyMarkerEnum
+  asyncMarker?: MethodDefinitionAsyncMarkerEnum
+  accessorKind?: MethodDefinitionAccessorKindEnum
   name: PropertyNameTransport
-  optionalMarker?: KwOptionalMarkerTransport
+  optionalMarker?: MethodDefinitionOptionalMarkerEnum
   typeParameters?: TypeParametersTransport
   parameters: FormalParametersTransport
   returnType?: Box<AnyTransport>
@@ -2212,25 +2204,17 @@ export interface MethodSignatureTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  accessibilityModifier?: AccessibilityModifierTransport
-  staticMarker?: KwStaticMarkerTransport
-  overrideModifier?: OverrideModifierTransport
-  readonlyMarker?: KwReadonlyMarkerTransport
-  asyncMarker?: KwAsyncMarkerTransport
-  accessorKind?: Box<AnyTransport>
+  accessibilityModifier?: MethodSignatureAccessibilityModifierEnum
+  staticMarker?: MethodSignatureStaticMarkerEnum
+  overrideModifier?: MethodSignatureOverrideModifierEnum
+  readonlyMarker?: MethodSignatureReadonlyMarkerEnum
+  asyncMarker?: MethodSignatureAsyncMarkerEnum
+  accessorKind?: MethodSignatureAccessorKindEnum
   name: PropertyNameTransport
-  optionalMarker?: KwOptionalMarkerTransport
+  optionalMarker?: MethodSignatureOptionalMarkerEnum
   typeParameters?: TypeParametersTransport
   parameters: FormalParametersTransport
   returnType?: Box<AnyTransport>
-}
-
-export interface MinusTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface ModuleTransport {
@@ -2281,14 +2265,6 @@ export interface NamespaceImportTransport {
 }
 
 export interface NamespaceTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface NeqTransport {
   '$source'?: Source
   '$named'?: boolean
   '$span'?: Span
@@ -2358,7 +2334,7 @@ export interface NumberTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  operator: Box<AnyTransport>
+  operator: NumberOperatorEnum
   argument: NumberTransport
 }
 
@@ -2404,9 +2380,9 @@ export interface ObjectTypeTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  opening: Box<AnyTransport>
+  opening: ObjectTypeOpeningEnum
   members?: Array<Box<AnyTransport>>
-  closing: Box<AnyTransport>
+  closing: ObjectTypeClosingEnum
 }
 
 export interface OmittingTypeAnnotationTransport {
@@ -2442,7 +2418,7 @@ export interface OptionalParameterTransport {
   '$span'?: Span
   '$nodeId'?: number
   decorator: Array<DecoratorTransport>
-  readonlyMarker?: KwReadonlyMarkerTransport
+  readonlyMarker?: ParameterNameReadonlyMarkerEnum
   pattern: Box<AnyTransport>
   type?: TypeAnnotationTransport
   value?: ExpressionTransport
@@ -2519,7 +2495,7 @@ export interface ParameterNameTransport {
   '$span'?: Span
   '$nodeId'?: number
   decorator: Array<DecoratorTransport>
-  readonlyMarker?: KwReadonlyMarkerTransport
+  readonlyMarker?: ParameterNameReadonlyMarkerEnum
   pattern: Box<AnyTransport>
   '$children'?: Array<Box<AnyTransport>>
 }
@@ -2587,23 +2563,7 @@ export interface ParenTransport {
   '$text': string
 }
 
-export interface PercentTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface PipeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface PlusTransport {
   '$source'?: Source
   '$named'?: boolean
   '$span'?: Span
@@ -2643,12 +2603,12 @@ export interface PropertySignatureTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  accessibilityModifier?: AccessibilityModifierTransport
-  staticMarker?: KwStaticMarkerTransport
-  overrideModifier?: OverrideModifierTransport
-  readonlyMarker?: KwReadonlyMarkerTransport
+  accessibilityModifier?: PropertySignatureAccessibilityModifierEnum
+  staticMarker?: PropertySignatureStaticMarkerEnum
+  overrideModifier?: PropertySignatureOverrideModifierEnum
+  readonlyMarker?: PropertySignatureReadonlyMarkerEnum
   name: PropertyNameTransport
-  optionalMarker?: KwOptionalMarkerTransport
+  optionalMarker?: PropertySignatureOptionalMarkerEnum
   type?: TypeAnnotationTransport
 }
 
@@ -2658,8 +2618,8 @@ export interface PublicFieldDefinitionAbstractFirstTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  abstractMarker: KwAbstractMarkerTransport
-  readonlyMarker?: KwReadonlyMarkerTransport
+  abstractMarker: PublicFieldDefinitionAbstractFirstAbstractMarkerEnum
+  readonlyMarker?: PublicFieldDefinitionAbstractFirstReadonlyMarkerEnum
 }
 
 export interface PublicFieldDefinitionAccessFirstTransport {
@@ -2668,8 +2628,8 @@ export interface PublicFieldDefinitionAccessFirstTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  declareMarker?: Box<AnyTransport>
-  '$children': Array<AccessibilityModifierTransport>
+  declareMarker?: PublicFieldDefinitionAccessFirstDeclareMarkerEnum
+  '$children': Array<AccessibilityModifierEnum>
 }
 
 export interface PublicFieldDefinitionAccessorOptTransport {
@@ -2678,7 +2638,7 @@ export interface PublicFieldDefinitionAccessorOptTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  accessorMarker: Box<AnyTransport>
+  accessorMarker: PublicFieldDefinitionAccessorOptAccessorMarkerEnum
 }
 
 export interface PublicFieldDefinitionDeclareFirstTransport {
@@ -2687,7 +2647,7 @@ export interface PublicFieldDefinitionDeclareFirstTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  '$children'?: Array<AccessibilityModifierTransport>
+  '$children'?: Array<AccessibilityModifierEnum>
 }
 
 export interface PublicFieldDefinitionReadonlyFirstTransport {
@@ -2696,8 +2656,8 @@ export interface PublicFieldDefinitionReadonlyFirstTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  readonlyMarker: KwReadonlyMarkerTransport
-  abstractMarker?: KwAbstractMarkerTransport
+  readonlyMarker: PublicFieldDefinitionReadonlyFirstReadonlyMarkerEnum
+  abstractMarker?: PublicFieldDefinitionReadonlyFirstAbstractMarkerEnum
 }
 
 export interface PublicFieldDefinitionStaticModsTransport {
@@ -2706,8 +2666,8 @@ export interface PublicFieldDefinitionStaticModsTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  staticMarker: KwStaticMarkerTransport
-  readonlyMarker?: KwReadonlyMarkerTransport
+  staticMarker: PublicFieldDefinitionStaticModsStaticMarkerEnum
+  readonlyMarker?: PublicFieldDefinitionStaticModsReadonlyMarkerEnum
   '$children'?: Array<OverrideModifierTransport>
 }
 
@@ -2719,7 +2679,7 @@ export interface PublicFieldDefinitionTransport {
   '$nodeId'?: number
   decorator: Array<DecoratorTransport>
   name: PropertyNameTransport
-  optionalityMarker?: Box<AnyTransport>
+  optionalityMarker?: PublicFieldDefinitionOptionalityMarkerEnum
   type?: TypeAnnotationTransport
   value?: ExpressionTransport
   '$children'?: Array<Box<AnyTransport>>
@@ -2783,7 +2743,7 @@ export interface RequiredParameterTransport {
   '$span'?: Span
   '$nodeId'?: number
   decorator: Array<DecoratorTransport>
-  readonlyMarker?: KwReadonlyMarkerTransport
+  readonlyMarker?: ParameterNameReadonlyMarkerEnum
   pattern: Box<AnyTransport>
   type?: TypeAnnotationTransport
   value?: ExpressionTransport
@@ -2877,22 +2837,6 @@ export interface SequenceExpressionTransport {
   '$children': Array<ExpressionTransport>
 }
 
-export interface ShlTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface ShrTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface SlashTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -2908,14 +2852,6 @@ export interface SpreadElementTransport {
   '$span'?: Span
   '$nodeId'?: number
   expression: ExpressionTransport
-}
-
-export interface StarstarTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface StarTransport {
@@ -3005,7 +2941,7 @@ export interface SubscriptExpressionTransport {
   '$span'?: Span
   '$nodeId'?: number
   object: Box<AnyTransport>
-  optionalChain?: OptionalChainTransport
+  optionalChain?: SubscriptExpressionOptionalChainEnum
   index: ExpressionsTransport
 }
 
@@ -3152,14 +3088,6 @@ export interface ThrowTransport {
   '$text': string
 }
 
-export interface TokBangEqEqTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface TokBtTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -3177,22 +3105,6 @@ export interface TokDollarLbrTransport {
 }
 
 export interface TokDqTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface TokEqEqEqTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface TokGtGtGtTransport {
   '$source'?: Source
   '$named'?: boolean
   '$span'?: Span
@@ -3233,14 +3145,6 @@ export interface TokQColonTransport {
 }
 
 export interface TokQDotTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface TokQqTransport {
   '$source'?: Source
   '$named'?: boolean
   '$span'?: Span
@@ -3382,7 +3286,7 @@ export interface TypeParameterTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  constMarker?: KwConstMarkerTransport
+  constMarker?: TypeParameterConstMarkerEnum
   name: TypeIdentifierTransport
   constraint?: ConstraintTransport
   value?: DefaultTypeTransport
@@ -3394,7 +3298,7 @@ export interface TypePredicateAnnotationTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  typePredicate: TypePredicateTransport
+  typePredicate: Box<AnyTransport>
 }
 
 export interface TypePredicateTransport {
@@ -3482,7 +3386,7 @@ export interface UnaryExpressionTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  operator: Box<AnyTransport>
+  operator: UnaryExpressionOperatorEnum
   argument: ExpressionTransport
 }
 
@@ -3543,7 +3447,7 @@ export interface UpdateExpressionPostfixTransport {
   '$span'?: Span
   '$nodeId'?: number
   argument: ExpressionTransport
-  operator: Box<AnyTransport>
+  operator: UpdateExpressionPostfixOperatorEnum
 }
 
 export interface UpdateExpressionPrefixTransport {
@@ -3552,7 +3456,7 @@ export interface UpdateExpressionPrefixTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  operator: Box<AnyTransport>
+  operator: UpdateExpressionPrefixOperatorEnum
   argument: ExpressionTransport
 }
 

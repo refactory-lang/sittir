@@ -126,14 +126,25 @@ export const LEAF_KINDS = [
   ']',
   '_',
   '__future__',
+  '_augmented_assignment_operator',
+  '_binary_operator_operator',
+  '_boolean_operator_operator',
   '_dedent',
+  '_for_in_clause_async_marker',
+  '_for_statement_async_marker',
+  '_function_definition_async_marker',
   '_indent',
   '_is_not',
   '_kw_async_marker',
+  '_kw_type',
   '_newline',
   '_not_in',
+  '_splat_pattern_identifier',
+  '_splat_type_identifier',
   '_string_content',
-  'and',
+  '_type_alias_statement_type',
+  '_unary_operator_operator',
+  '_with_statement_async_marker',
   'as',
   'assert',
   'async',
@@ -169,7 +180,6 @@ export const LEAF_KINDS = [
   'none',
   'nonlocal',
   'not',
-  'or',
   'pass',
   'pass_statement',
   'print',
@@ -196,8 +206,8 @@ export const KEYWORDS = [
   '_',
   '__future__',
   '_kw_async_marker',
+  '_kw_type',
   '_not_escape_sequence',
-  'and',
   'as',
   'assert',
   'async',
@@ -226,7 +236,6 @@ export const KEYWORDS = [
   'none',
   'nonlocal',
   'not',
-  'or',
   'pass',
   'pass_statement',
   'positional_separator',
@@ -242,28 +251,22 @@ export const KEYWORDS = [
 
 /** Operator/punctuation tokens. */
 export const OPERATORS = [
-  "%",
-  "&",
   "(",
   "*",
   "**",
-  "+",
   ",",
   "-",
   "->",
   ".",
   "...",
   "/",
-  "//",
   ":",
   ":=",
-  "<<",
   "=",
   ">>",
   "@",
   "[",
   "\\",
-  "^",
   "{",
   "|",
 ] as const;
@@ -311,8 +314,6 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
   "class": 44,
   "_": 48,
   "not": 54,
-  "and": 55,
-  "or": 56,
   "ellipsis": 87,
   "escape_sequence": 89,
   "type_conversion": 92,
@@ -450,6 +451,7 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
   "_with_clause_paren": 245,
   "_simple_pattern_negative": 248,
   "_kw_async_marker": 250,
+  "_kw_type": 251,
 } as const satisfies Record<string, number>;
 
 export const TREE_SITTER_KIND_BY_KIND_ID = {
@@ -486,8 +488,6 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
   [44]: "class",
   [48]: "_",
   [54]: "not",
-  [55]: "and",
-  [56]: "or",
   [87]: "ellipsis",
   [89]: "escape_sequence",
   [92]: "type_conversion",
@@ -625,6 +625,7 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
   [245]: "_with_clause_paren",
   [248]: "_simple_pattern_negative",
   [250]: "_kw_async_marker",
+  [251]: "_kw_type",
 } as const;
 
 export const TREE_SITTER_KIND_ID_JSON = [
@@ -661,8 +662,6 @@ export const TREE_SITTER_KIND_ID_JSON = [
   { name: "class", id: 44, enumName: "AnonClass", cName: "anon_sym_class" },
   { name: "_", id: 48, enumName: "Anon", cName: "anon_sym__" },
   { name: "not", id: 54, enumName: "AnonNot", cName: "anon_sym_not" },
-  { name: "and", id: 55, enumName: "AnonAnd", cName: "anon_sym_and" },
-  { name: "or", id: 56, enumName: "AnonOr", cName: "anon_sym_or" },
   { name: "ellipsis", id: 87, enumName: "Ellipsis", cName: "sym_ellipsis" },
   { name: "escape_sequence", id: 89, enumName: "EscapeSequence", cName: "sym_escape_sequence" },
   { name: "type_conversion", id: 92, enumName: "TypeConversion", cName: "sym_type_conversion" },
@@ -800,6 +799,7 @@ export const TREE_SITTER_KIND_ID_JSON = [
   { name: "_with_clause_paren", id: 245, enumName: "WithClauseParen", cName: "sym__with_clause_paren" },
   { name: "_simple_pattern_negative", id: 248, enumName: "SimplePatternNegative", cName: "sym__simple_pattern_negative" },
   { name: "_kw_async_marker", id: 250, enumName: "KwAsyncMarker", cName: "sym__kw_async_marker" },
+  { name: "_kw_type", id: 251, enumName: "KwType", cName: "sym__kw_type" },
 ] as const;
 
 export const enum TSFieldId {
@@ -1422,3 +1422,85 @@ export const enum Operators {
   Is = 1 << 9,
   IsNot = 1 << 10,
 }
+
+/** Valid values for `_augmented_assignment_operator` nodes. */
+export const _AUGMENTED_ASSIGNMENT_OPERATORS = [
+  '+=',
+  '-=',
+  '*=',
+  '/=',
+  '@=',
+  '//=',
+  '%=',
+  '**=',
+  '>>=',
+  '<<=',
+  '&=',
+  '^=',
+  '|=',
+] as const;
+export type AugmentedAssignmentOperatorValue = (typeof _AUGMENTED_ASSIGNMENT_OPERATORS)[number];
+
+/** Valid values for `_binary_operator_operator` nodes. */
+export const _BINARY_OPERATOR_OPERATORS = [
+  '+',
+] as const;
+export type BinaryOperatorOperatorValue = (typeof _BINARY_OPERATOR_OPERATORS)[number];
+
+/** Valid values for `_boolean_operator_operator` nodes. */
+export const _BOOLEAN_OPERATOR_OPERATORS = [
+  'and',
+] as const;
+export type BooleanOperatorOperatorValue = (typeof _BOOLEAN_OPERATOR_OPERATORS)[number];
+
+/** Valid values for `_for_in_clause_async_marker` nodes. */
+export const _FOR_IN_CLAUSE_ASYNC_MARKERS = [
+  'async',
+] as const;
+export type ForInClauseAsyncMarkerValue = (typeof _FOR_IN_CLAUSE_ASYNC_MARKERS)[number];
+
+/** Valid values for `_for_statement_async_marker` nodes. */
+export const _FOR_STATEMENT_ASYNC_MARKERS = [
+  'async',
+] as const;
+export type ForStatementAsyncMarkerValue = (typeof _FOR_STATEMENT_ASYNC_MARKERS)[number];
+
+/** Valid values for `_function_definition_async_marker` nodes. */
+export const _FUNCTION_DEFINITION_ASYNC_MARKERS = [
+  'async',
+] as const;
+export type FunctionDefinitionAsyncMarkerValue = (typeof _FUNCTION_DEFINITION_ASYNC_MARKERS)[number];
+
+/** Valid values for `_splat_pattern_identifier` nodes. */
+export const _SPLAT_PATTERN_IDENTIFIERS = [
+  '*',
+  '**',
+] as const;
+export type SplatPatternIdentifierValue = (typeof _SPLAT_PATTERN_IDENTIFIERS)[number];
+
+/** Valid values for `_splat_type_identifier` nodes. */
+export const _SPLAT_TYPE_IDENTIFIERS = [
+  '*',
+  '**',
+] as const;
+export type SplatTypeIdentifierValue = (typeof _SPLAT_TYPE_IDENTIFIERS)[number];
+
+/** Valid values for `_type_alias_statement_type` nodes. */
+export const _TYPE_ALIAS_STATEMENT_TYPES = [
+  'type',
+] as const;
+export type TypeAliasStatementTypeValue = (typeof _TYPE_ALIAS_STATEMENT_TYPES)[number];
+
+/** Valid values for `_unary_operator_operator` nodes. */
+export const _UNARY_OPERATOR_OPERATORS = [
+  '+',
+  '-',
+  '~',
+] as const;
+export type UnaryOperatorOperatorValue = (typeof _UNARY_OPERATOR_OPERATORS)[number];
+
+/** Valid values for `_with_statement_async_marker` nodes. */
+export const _WITH_STATEMENT_ASYNC_MARKERS = [
+  'async',
+] as const;
+export type WithStatementAsyncMarkerValue = (typeof _WITH_STATEMENT_ASYNC_MARKERS)[number];

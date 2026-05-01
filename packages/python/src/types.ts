@@ -14,7 +14,19 @@ export type LeafScalarMap = {
 };
 
 export type LeafStringMap = {
+  _augmented_assignment_operator: "+=" | "-=" | "*=" | "/=" | "@=" | "//=" | "%=" | "**=" | ">>=" | "<<=" | "&=" | "^=" | "|=";
+  _binary_operator_operator: "+";
+  _boolean_operator_operator: "and";
+  _for_in_clause_async_marker: "async";
+  _for_statement_async_marker: "async";
+  _function_definition_async_marker: "async";
   _kw_async_marker: "async";
+  _kw_type: "type";
+  _splat_pattern_identifier: "*" | "**";
+  _splat_type_identifier: "*" | "**";
+  _type_alias_statement_type: "type";
+  _unary_operator_operator: "+" | "-" | "~";
+  _with_statement_async_marker: "async";
   break_statement: "break";
   continue_statement: "continue";
   false: "False";
@@ -24,8 +36,6 @@ export type LeafStringMap = {
   as: "as";
   async: "async";
   assert: "assert";
-  and: "and";
-  or: "or";
   break: "break";
   case: "case";
   class: "class";
@@ -179,9 +189,21 @@ export const enum SyntaxKind {
   WithItem = 'with_item',
   WithStatement = 'with_statement',
   Yield = 'yield',
+  AugmentedAssignmentOperator = '_augmented_assignment_operator',
+  BinaryOperatorOperator = '_binary_operator_operator',
+  BooleanOperatorOperator = '_boolean_operator_operator',
+  ForInClauseAsyncMarker = '_for_in_clause_async_marker',
+  ForStatementAsyncMarker = '_for_statement_async_marker',
+  FunctionDefinitionAsyncMarker = '_function_definition_async_marker',
   IsNot = '_is_not',
   KwAsyncMarker = '_kw_async_marker',
+  KwType = '_kw_type',
   NotIn = '_not_in',
+  SplatPatternIdentifier = '_splat_pattern_identifier',
+  SplatTypeIdentifier = '_splat_type_identifier',
+  TypeAliasStatementType = '_type_alias_statement_type',
+  UnaryOperatorOperator = '_unary_operator_operator',
+  WithStatementAsyncMarker = '_with_statement_async_marker',
   BreakStatement = 'break_statement',
   Comment = 'comment',
   ContinueStatement = 'continue_statement',
@@ -210,8 +232,6 @@ export const enum SyntaxKind {
   As = 'as',
   Async = 'async',
   Assert = 'assert',
-  And = 'and',
-  Or = 'or',
   Break = 'break',
   Case = 'case',
   Class = 'class',
@@ -492,7 +512,7 @@ export const enum TSKindId {
   SimplePatternNegative = 248,
   _KwReal = 249,
   KwAsyncMarker = 250,
-  _KwType = 251,
+  KwType = 251,
   ModuleRepeat1 = 252,
   _SimpleStatementsRepeat1 = 253,
   ImportPrefixRepeat1 = 254,
@@ -1061,7 +1081,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_simple_pattern_negative": return TSKindId.SimplePatternNegative;
     case "_kw_real": return TSKindId._KwReal;
     case "_kw_async_marker": return TSKindId.KwAsyncMarker;
-    case "_kw_type": return TSKindId._KwType;
+    case "_kw_type": return TSKindId.KwType;
     case "module_repeat1": return TSKindId.ModuleRepeat1;
     case "_simple_statements_repeat1": return TSKindId._SimpleStatementsRepeat1;
     case "import_prefix_repeat1": return TSKindId.ImportPrefixRepeat1;
@@ -1425,7 +1445,7 @@ export interface AugmentedAssignment {
   readonly $type: TSKindId.AugmentedAssignment;
   readonly $fields: {
     readonly left: LeftHandSide;
-    readonly operator: "+=" | "-=" | "*=" | "/=" | "@=" | "//=" | "%=" | "**=" | ">>=" | "<<=" | "&=" | "^=" | "|=";
+    readonly operator: AugmentedAssignmentOperator;
     readonly right: RightHandSide;
   };
 }
@@ -1441,7 +1461,7 @@ export interface BinaryOperator {
   readonly $type: TSKindId.BinaryOperator;
   readonly $fields: {
     readonly left: PrimaryExpression;
-    readonly operator: "+" | "-" | "*" | "@" | "/" | "%" | "//" | "**" | "|" | "&" | "^" | "<<" | ">>";
+    readonly operator: BinaryOperatorOperator;
     readonly right: PrimaryExpression;
   };
 }
@@ -1455,7 +1475,7 @@ export interface BooleanOperator {
   readonly $type: TSKindId.BooleanOperator;
   readonly $fields: {
     readonly left: Expression;
-    readonly operator: "and" | "or";
+    readonly operator: BooleanOperatorOperator;
     readonly right: Expression;
   };
 }
@@ -1668,7 +1688,7 @@ export interface FinallyClause {
 export interface ForInClause {
   readonly $type: TSKindId.ForInClause;
   readonly $fields: {
-    readonly async_marker?: BooleanKeyword<"async">;
+    readonly async_marker?: BooleanKeyword<ForInClauseAsyncMarker>;
     readonly left: LeftHandSide;
     readonly right: NonEmptyArray<ExpressionWithinForInClause>;
   };
@@ -1677,7 +1697,7 @@ export interface ForInClause {
 export interface ForStatement {
   readonly $type: TSKindId.ForStatement;
   readonly $fields: {
-    readonly async_marker?: BooleanKeyword<"async">;
+    readonly async_marker?: BooleanKeyword<ForStatementAsyncMarker>;
     readonly left: LeftHandSide;
     readonly right: Expressions;
     readonly body: Suite;
@@ -1693,7 +1713,7 @@ export interface FormatSpecifier {
 export interface FunctionDefinition {
   readonly $type: TSKindId.FunctionDefinition;
   readonly $fields: {
-    readonly async_marker?: BooleanKeyword<"async">;
+    readonly async_marker?: BooleanKeyword<FunctionDefinitionAsyncMarker>;
     readonly name: Identifier;
     readonly type_parameters?: TypeParameter;
     readonly parameters: Parameters;
@@ -1960,7 +1980,7 @@ export interface Slice {
 export interface SplatPattern {
   readonly $type: TSKindId.SplatPattern;
   readonly $fields: {
-    readonly identifier: "*" | "**";
+    readonly identifier: SplatPatternIdentifier;
   };
   readonly $children: readonly [Identifier];
 }
@@ -1968,7 +1988,7 @@ export interface SplatPattern {
 export interface SplatType {
   readonly $type: TSKindId.SplatType;
   readonly $fields: {
-    readonly identifier: "*" | "**" | Identifier;
+    readonly identifier: SplatTypeIdentifier | Identifier;
   };
 }
 
@@ -2022,7 +2042,7 @@ export interface Type {
 export interface TypeAliasStatement {
   readonly $type: TSKindId.TypeAliasStatement;
   readonly $fields: {
-    readonly type: AutoStamp<"type">;
+    readonly type: TypeAliasStatementType;
     readonly left: Type;
     readonly right: Type;
   };
@@ -2053,7 +2073,7 @@ export interface TypedParameter {
 export interface UnaryOperator {
   readonly $type: TSKindId.UnaryOperator;
   readonly $fields: {
-    readonly operator: "+" | "-" | "~";
+    readonly operator: UnaryOperatorOperator;
     readonly argument: PrimaryExpression;
   };
 }
@@ -2112,7 +2132,7 @@ export interface WithItem {
 export interface WithStatement {
   readonly $type: TSKindId.WithStatement;
   readonly $fields: {
-    readonly async_marker?: BooleanKeyword<"async">;
+    readonly async_marker?: BooleanKeyword<WithStatementAsyncMarker>;
     readonly with_clause: WithClause;
     readonly body: Suite;
   };
@@ -2125,8 +2145,19 @@ export interface Yield {
 
 
 // Leaf node types
+export type AugmentedAssignmentOperator = Terminal<"_augmented_assignment_operator", "+=" | "-=" | "*=" | "/=" | "@=" | "//=" | "%=" | "**=" | ">>=" | "<<=" | "&=" | "^=" | "|=">;
+export type BinaryOperatorOperator = Terminal<"_binary_operator_operator", "+">;
+export type BooleanOperatorOperator = Terminal<"_boolean_operator_operator", "and">;
+export type ForInClauseAsyncMarker = Terminal<"_for_in_clause_async_marker", "async">;
+export type ForStatementAsyncMarker = Terminal<"_for_statement_async_marker", "async">;
+export type FunctionDefinitionAsyncMarker = Terminal<"_function_definition_async_marker", "async">;
 export type IsNot = Terminal<"_is_not", string>;
 export type NotIn = Terminal<"_not_in", string>;
+export type SplatPatternIdentifier = Terminal<"_splat_pattern_identifier", "*" | "**">;
+export type SplatTypeIdentifier = Terminal<"_splat_type_identifier", "*" | "**">;
+export type TypeAliasStatementType = Terminal<"_type_alias_statement_type", "type">;
+export type UnaryOperatorOperator = Terminal<"_unary_operator_operator", "+" | "-" | "~">;
+export type WithStatementAsyncMarker = Terminal<"_with_statement_async_marker", "async">;
 export type BreakStatement = Terminal<"break_statement", "break">;
 export type Comment = Terminal<"comment", string>;
 export type ContinueStatement = Terminal<"continue_statement", "continue">;
@@ -2281,8 +2312,19 @@ export interface WithClauseUFormParenTree extends TreeNode<'with_clause'> {}
 export interface WithItemTree extends TreeNode<'with_item'> {}
 export interface WithStatementTree extends TreeNode<'with_statement'> {}
 export interface YieldTree extends TreeNode<'yield'> {}
+export interface AugmentedAssignmentOperatorTree extends AnyTreeNode { readonly type: "_augmented_assignment_operator"; }
+export interface BinaryOperatorOperatorTree extends AnyTreeNode { readonly type: "_binary_operator_operator"; }
+export interface BooleanOperatorOperatorTree extends AnyTreeNode { readonly type: "_boolean_operator_operator"; }
+export interface ForInClauseAsyncMarkerTree extends AnyTreeNode { readonly type: "_for_in_clause_async_marker"; }
+export interface ForStatementAsyncMarkerTree extends AnyTreeNode { readonly type: "_for_statement_async_marker"; }
+export interface FunctionDefinitionAsyncMarkerTree extends AnyTreeNode { readonly type: "_function_definition_async_marker"; }
 export interface IsNotTree extends AnyTreeNode { readonly type: "_is_not"; }
 export interface NotInTree extends AnyTreeNode { readonly type: "_not_in"; }
+export interface SplatPatternIdentifierTree extends AnyTreeNode { readonly type: "_splat_pattern_identifier"; }
+export interface SplatTypeIdentifierTree extends AnyTreeNode { readonly type: "_splat_type_identifier"; }
+export interface TypeAliasStatementTypeTree extends AnyTreeNode { readonly type: "_type_alias_statement_type"; }
+export interface UnaryOperatorOperatorTree extends AnyTreeNode { readonly type: "_unary_operator_operator"; }
+export interface WithStatementAsyncMarkerTree extends AnyTreeNode { readonly type: "_with_statement_async_marker"; }
 export interface BreakStatementTree extends AnyTreeNode { readonly type: "break_statement"; }
 export interface CommentTree extends TreeNode<'comment'> {}
 export interface ContinueStatementTree extends AnyTreeNode { readonly type: "continue_statement"; }
@@ -2311,8 +2353,6 @@ export interface ExceptTree extends AnyTreeNode { readonly type: "except"; }
 export interface AsTree extends AnyTreeNode { readonly type: "as"; }
 export interface AsyncTree extends AnyTreeNode { readonly type: "async"; }
 export interface AssertTree extends AnyTreeNode { readonly type: "assert"; }
-export interface AndTree extends AnyTreeNode { readonly type: "and"; }
-export interface OrTree extends AnyTreeNode { readonly type: "or"; }
 export interface BreakTree extends AnyTreeNode { readonly type: "break"; }
 export interface CaseTree extends AnyTreeNode { readonly type: "case"; }
 export interface ClassTree extends AnyTreeNode { readonly type: "class"; }
@@ -2786,8 +2826,19 @@ export interface KindMap {
   'with_item': WithItem;
   'with_statement': WithStatement;
   'yield': Yield;
+  '_augmented_assignment_operator': AugmentedAssignmentOperator;
+  '_binary_operator_operator': BinaryOperatorOperator;
+  '_boolean_operator_operator': BooleanOperatorOperator;
+  '_for_in_clause_async_marker': ForInClauseAsyncMarker;
+  '_for_statement_async_marker': ForStatementAsyncMarker;
+  '_function_definition_async_marker': FunctionDefinitionAsyncMarker;
   '_is_not': IsNot;
   '_not_in': NotIn;
+  '_splat_pattern_identifier': SplatPatternIdentifier;
+  '_splat_type_identifier': SplatTypeIdentifier;
+  '_type_alias_statement_type': TypeAliasStatementType;
+  '_unary_operator_operator': UnaryOperatorOperator;
+  '_with_statement_async_marker': WithStatementAsyncMarker;
   'break_statement': BreakStatement;
   'comment': Comment;
   'continue_statement': ContinueStatement;
@@ -3966,6 +4017,18 @@ export namespace AssignmentTyped {
   }
 }
 
+export namespace AugmentedAssignmentOperator {
+  export type Transport = TerminalTransport<"_augmented_assignment_operator", "+=" | "-=" | "*=" | "/=" | "@=" | "//=" | "%=" | "**=" | ">>=" | "<<=" | "&=" | "^=" | "|=">;
+}
+
+export namespace BinaryOperatorOperator {
+  export type Transport = TerminalTransport<"_binary_operator_operator", "+">;
+}
+
+export namespace BooleanOperatorOperator {
+  export type Transport = TerminalTransport<"_boolean_operator_operator", "and">;
+}
+
 export namespace ComprehensionClauses {
   export interface Transport {
     readonly $type: TSKindId.ComprehensionClauses;
@@ -3976,6 +4039,18 @@ export namespace ComprehensionClauses {
     readonly $nodeId?: number;
     readonly $children: readonly (ForInClause.Transport | IfClause.Transport)[];
   }
+}
+
+export namespace ForInClauseAsyncMarker {
+  export type Transport = TerminalTransport<"_for_in_clause_async_marker", "async">;
+}
+
+export namespace ForStatementAsyncMarker {
+  export type Transport = TerminalTransport<"_for_statement_async_marker", "async">;
+}
+
+export namespace FunctionDefinitionAsyncMarker {
+  export type Transport = TerminalTransport<"_function_definition_async_marker", "async">;
 }
 
 export namespace ImportList {
@@ -4009,6 +4084,10 @@ export namespace KeyValuePattern {
 
 export namespace KwAsyncMarker {
   export type Transport = TerminalTransport<"_kw_async_marker", "async">;
+}
+
+export namespace KwType {
+  export type Transport = TerminalTransport<"_kw_type", "type">;
 }
 
 export namespace _ListPattern {
@@ -4079,6 +4158,14 @@ export namespace SimpleStatements {
   }
 }
 
+export namespace SplatPatternIdentifier {
+  export type Transport = TerminalTransport<"_splat_pattern_identifier", "*" | "**">;
+}
+
+export namespace SplatTypeIdentifier {
+  export type Transport = TerminalTransport<"_splat_type_identifier", "*" | "**">;
+}
+
 export namespace Suite {
   export interface Transport {
     readonly $type: "_suite";
@@ -4103,6 +4190,14 @@ export namespace _TuplePattern {
   }
 }
 
+export namespace TypeAliasStatementType {
+  export type Transport = TerminalTransport<"_type_alias_statement_type", "type">;
+}
+
+export namespace UnaryOperatorOperator {
+  export type Transport = TerminalTransport<"_unary_operator_operator", "+" | "-" | "~">;
+}
+
 export namespace _WithClauseParen {
   export interface Transport {
     readonly $type: TSKindId._WithClauseParen;
@@ -4113,6 +4208,10 @@ export namespace _WithClauseParen {
     readonly $nodeId?: number;
     readonly $children: readonly (WithItem.Transport)[];
   }
+}
+
+export namespace WithStatementAsyncMarker {
+  export type Transport = TerminalTransport<"_with_statement_async_marker", "async">;
 }
 
 export namespace AliasedImport {
@@ -4233,7 +4332,7 @@ export namespace AugmentedAssignment {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
     readonly left: LeftHandSide.Transport;
-    readonly operator: LiteralTransport<"+=", "+="> | LiteralTransport<"-=", "-="> | LiteralTransport<"*=", "*="> | LiteralTransport<"/=", "/="> | LiteralTransport<"@=", "@="> | LiteralTransport<"//=", "//="> | LiteralTransport<"%=", "%="> | LiteralTransport<"**=", "**="> | LiteralTransport<">>=", ">>="> | LiteralTransport<"<<=", "<<="> | LiteralTransport<"&=", "&="> | LiteralTransport<"^=", "^="> | LiteralTransport<"|=", "|=">;
+    readonly operator: AugmentedAssignmentOperator.Transport;
     readonly right: RightHandSide.Transport;
   }
 }
@@ -4259,7 +4358,7 @@ export namespace BinaryOperator {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
     readonly left: PrimaryExpression.Transport;
-    readonly operator: LiteralTransport<"+", "+"> | LiteralTransport<"-", "-"> | LiteralTransport<"*", "*"> | LiteralTransport<"@", "@"> | LiteralTransport<"/", "/"> | LiteralTransport<"%", "%"> | LiteralTransport<"//", "//"> | LiteralTransport<"**", "**"> | LiteralTransport<"|", "|"> | LiteralTransport<"&", "&"> | LiteralTransport<"^", "^"> | LiteralTransport<"<<", "<<"> | LiteralTransport<">>", ">>">;
+    readonly operator: BinaryOperatorOperator.Transport;
     readonly right: PrimaryExpression.Transport;
   }
 }
@@ -4285,7 +4384,7 @@ export namespace BooleanOperator {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
     readonly left: Expression.Transport;
-    readonly operator: LiteralTransport<"and", "and"> | LiteralTransport<"or", "or">;
+    readonly operator: BooleanOperatorOperator.Transport;
     readonly right: Expression.Transport;
   }
 }
@@ -4700,7 +4799,7 @@ export namespace ForInClause {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly async_marker?: LiteralTransport<"async", "async">;
+    readonly async_marker?: ForInClauseAsyncMarker.Transport;
     readonly left: LeftHandSide.Transport;
     readonly right: readonly (ExpressionWithinForInClause.Transport)[];
   }
@@ -4714,7 +4813,7 @@ export namespace ForStatement {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly async_marker?: LiteralTransport<"async", "async">;
+    readonly async_marker?: ForStatementAsyncMarker.Transport;
     readonly left: LeftHandSide.Transport;
     readonly right: Expressions.Transport;
     readonly body: Suite.Transport;
@@ -4742,7 +4841,7 @@ export namespace FunctionDefinition {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly async_marker?: LiteralTransport<"async", "async">;
+    readonly async_marker?: FunctionDefinitionAsyncMarker.Transport;
     readonly name: Identifier.Transport;
     readonly type_parameters?: TypeParameter.Transport;
     readonly parameters: Parameters.Transport;
@@ -5257,7 +5356,7 @@ export namespace SplatPattern {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly identifier: LiteralTransport<"*", "*"> | LiteralTransport<"**", "**">;
+    readonly identifier: SplatPatternIdentifier.Transport;
     readonly $children: readonly [Identifier.Transport];
   }
 }
@@ -5270,7 +5369,7 @@ export namespace SplatType {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly identifier: LiteralTransport<"*", "*"> | LiteralTransport<"**", "**"> | Identifier.Transport;
+    readonly identifier: SplatTypeIdentifier.Transport | Identifier.Transport;
   }
 }
 
@@ -5376,7 +5475,7 @@ export namespace TypeAliasStatement {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly type: LiteralTransport<"type", "type">;
+    readonly type: TypeAliasStatementType.Transport;
     readonly left: Type.Transport;
     readonly right: Type.Transport;
   }
@@ -5433,7 +5532,7 @@ export namespace UnaryOperator {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly operator: LiteralTransport<"+", "+"> | LiteralTransport<"-", "-"> | LiteralTransport<"~", "~">;
+    readonly operator: UnaryOperatorOperator.Transport;
     readonly argument: PrimaryExpression.Transport;
   }
 }
@@ -5555,7 +5654,7 @@ export namespace WithStatement {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly async_marker?: LiteralTransport<"async", "async">;
+    readonly async_marker?: WithStatementAsyncMarker.Transport;
     readonly with_clause: WithClause.Transport;
     readonly body: Suite.Transport;
   }
@@ -5661,68 +5760,16 @@ export namespace Dot {
   export type Transport = TerminalTransport<".", ".">;
 }
 
-export namespace Plus {
-  export type Transport = TerminalTransport<"+", "+">;
-}
-
-export namespace Star {
-  export type Transport = TerminalTransport<"*", "*">;
-}
-
-export namespace At {
-  export type Transport = TerminalTransport<"@", "@">;
-}
-
-export namespace Slash {
-  export type Transport = TerminalTransport<"/", "/">;
-}
-
-export namespace Percent {
-  export type Transport = TerminalTransport<"%", "%">;
-}
-
-export namespace Slashslash {
-  export type Transport = TerminalTransport<"//", "//">;
-}
-
-export namespace Starstar {
-  export type Transport = TerminalTransport<"**", "**">;
-}
-
-export namespace Pipe {
-  export type Transport = TerminalTransport<"|", "|">;
-}
-
-export namespace Amp {
-  export type Transport = TerminalTransport<"&", "&">;
-}
-
-export namespace Caret {
-  export type Transport = TerminalTransport<"^", "^">;
-}
-
-export namespace Shl {
-  export type Transport = TerminalTransport<"<<", "<<">;
-}
-
-export namespace Shr {
-  export type Transport = TerminalTransport<">>", ">>">;
-}
-
-export namespace And {
-  export type Transport = TerminalTransport<"and", "and">;
-}
-
-export namespace Or {
-  export type Transport = TerminalTransport<"or", "or">;
-}
-
 export namespace Break {
   export type Transport = TerminalTransport<"break", "break">;
 }
 
 export namespace Case {
   export type Transport = TerminalTransport<"case", "case">;
+}
+
+export namespace Shr {
+  export type Transport = TerminalTransport<">>", ">>">;
 }
 
 export namespace Class {
@@ -5741,6 +5788,10 @@ export namespace Continue {
   export type Transport = TerminalTransport<"continue", "continue">;
 }
 
+export namespace At {
+  export type Transport = TerminalTransport<"@", "@">;
+}
+
 export namespace Del {
   export type Transport = TerminalTransport<"del", "del">;
 }
@@ -5749,12 +5800,20 @@ export namespace Brace {
   export type Transport = TerminalTransport<"{", "{">;
 }
 
+export namespace Starstar {
+  export type Transport = TerminalTransport<"**", "**">;
+}
+
 export namespace Elif {
   export type Transport = TerminalTransport<"elif", "elif">;
 }
 
 export namespace Ellipsis {
   export type Transport = TerminalTransport<"...", "...">;
+}
+
+export namespace Star {
+  export type Transport = TerminalTransport<"*", "*">;
 }
 
 export namespace Exec {
@@ -5825,6 +5884,10 @@ export namespace Pass {
   export type Transport = TerminalTransport<"pass", "pass">;
 }
 
+export namespace Slash {
+  export type Transport = TerminalTransport<"/", "/">;
+}
+
 export namespace Print {
   export type Transport = TerminalTransport<"print", "print">;
 }
@@ -5847,6 +5910,10 @@ export namespace True2 {
 
 export namespace Try {
   export type Transport = TerminalTransport<"try", "try">;
+}
+
+export namespace Pipe {
+  export type Transport = TerminalTransport<"|", "|">;
 }
 
 export namespace While {
@@ -5926,11 +5993,18 @@ export type TransportFor<K extends SyntaxKind | keyof KindMap> =
   K extends "_assignment_eq" ? AssignmentEq.Transport :
   K extends "_assignment_type" ? AssignmentType.Transport :
   K extends "_assignment_typed" ? AssignmentTyped.Transport :
+  K extends "_augmented_assignment_operator" ? AugmentedAssignmentOperator.Transport :
+  K extends "_binary_operator_operator" ? BinaryOperatorOperator.Transport :
+  K extends "_boolean_operator_operator" ? BooleanOperatorOperator.Transport :
   K extends "_comprehension_clauses" ? ComprehensionClauses.Transport :
+  K extends "_for_in_clause_async_marker" ? ForInClauseAsyncMarker.Transport :
+  K extends "_for_statement_async_marker" ? ForStatementAsyncMarker.Transport :
+  K extends "_function_definition_async_marker" ? FunctionDefinitionAsyncMarker.Transport :
   K extends "_import_list" ? ImportList.Transport :
   K extends "_is_not" ? IsNot.Transport :
   K extends "_key_value_pattern" ? KeyValuePattern.Transport :
   K extends "_kw_async_marker" ? KwAsyncMarker.Transport :
+  K extends "_kw_type" ? KwType.Transport :
   K extends "_list_pattern" ? _ListPattern.Transport :
   K extends "_match_block" ? MatchBlock.Transport :
   K extends "_match_block_block" ? MatchBlockBlock.Transport :
@@ -5938,9 +6012,14 @@ export type TransportFor<K extends SyntaxKind | keyof KindMap> =
   K extends "_not_in" ? NotIn.Transport :
   K extends "_simple_pattern_negative" ? SimplePatternNegative.Transport :
   K extends "_simple_statements" ? SimpleStatements.Transport :
+  K extends "_splat_pattern_identifier" ? SplatPatternIdentifier.Transport :
+  K extends "_splat_type_identifier" ? SplatTypeIdentifier.Transport :
   K extends "_suite" ? Suite.Transport :
   K extends "_tuple_pattern" ? _TuplePattern.Transport :
+  K extends "_type_alias_statement_type" ? TypeAliasStatementType.Transport :
+  K extends "_unary_operator_operator" ? UnaryOperatorOperator.Transport :
   K extends "_with_clause_paren" ? _WithClauseParen.Transport :
+  K extends "_with_statement_async_marker" ? WithStatementAsyncMarker.Transport :
   K extends "aliased_import" ? AliasedImport.Transport :
   K extends "argument_list" ? ArgumentList.Transport :
   K extends "as_pattern" ? AsPattern.Transport :
@@ -6085,30 +6164,20 @@ export type TransportFor<K extends SyntaxKind | keyof KindMap> =
   K extends "," ? Comma.Transport :
   K extends "assert" ? Assert.Transport :
   K extends "." ? Dot.Transport :
-  K extends "+" ? Plus.Transport :
-  K extends "*" ? Star.Transport :
-  K extends "@" ? At.Transport :
-  K extends "/" ? Slash.Transport :
-  K extends "%" ? Percent.Transport :
-  K extends "//" ? Slashslash.Transport :
-  K extends "**" ? Starstar.Transport :
-  K extends "|" ? Pipe.Transport :
-  K extends "&" ? Amp.Transport :
-  K extends "^" ? Caret.Transport :
-  K extends "<<" ? Shl.Transport :
-  K extends ">>" ? Shr.Transport :
-  K extends "and" ? And.Transport :
-  K extends "or" ? Or.Transport :
   K extends "break" ? Break.Transport :
   K extends "case" ? Case.Transport :
+  K extends ">>" ? Shr.Transport :
   K extends "class" ? Class.Transport :
   K extends "if" ? If.Transport :
   K extends "else" ? Else.Transport :
   K extends "continue" ? Continue.Transport :
+  K extends "@" ? At.Transport :
   K extends "del" ? Del.Transport :
   K extends "{" ? Brace.Transport :
+  K extends "**" ? Starstar.Transport :
   K extends "elif" ? Elif.Transport :
   K extends "..." ? Ellipsis.Transport :
+  K extends "*" ? Star.Transport :
   K extends "exec" ? Exec.Transport :
   K extends "in" ? In.Transport :
   K extends "False" ? False2.Transport :
@@ -6126,12 +6195,14 @@ export type TransportFor<K extends SyntaxKind | keyof KindMap> =
   K extends "nonlocal" ? Nonlocal.Transport :
   K extends "not" ? Not.Transport :
   K extends "pass" ? Pass.Transport :
+  K extends "/" ? Slash.Transport :
   K extends "print" ? Print.Transport :
   K extends "raise" ? Raise.Transport :
   K extends "return" ? Return.Transport :
   K extends "_" ? Anonymous.Transport :
   K extends "True" ? True2.Transport :
   K extends "try" ? Try.Transport :
+  K extends "|" ? Pipe.Transport :
   K extends "while" ? While.Transport :
   K extends "with" ? With.Transport :
   never;
@@ -6141,11 +6212,18 @@ export type AnyTransport =
   | AssignmentEq.Transport
   | AssignmentType.Transport
   | AssignmentTyped.Transport
+  | AugmentedAssignmentOperator.Transport
+  | BinaryOperatorOperator.Transport
+  | BooleanOperatorOperator.Transport
   | ComprehensionClauses.Transport
+  | ForInClauseAsyncMarker.Transport
+  | ForStatementAsyncMarker.Transport
+  | FunctionDefinitionAsyncMarker.Transport
   | ImportList.Transport
   | IsNot.Transport
   | KeyValuePattern.Transport
   | KwAsyncMarker.Transport
+  | KwType.Transport
   | _ListPattern.Transport
   | MatchBlock.Transport
   | MatchBlockBlock.Transport
@@ -6153,9 +6231,14 @@ export type AnyTransport =
   | NotIn.Transport
   | SimplePatternNegative.Transport
   | SimpleStatements.Transport
+  | SplatPatternIdentifier.Transport
+  | SplatTypeIdentifier.Transport
   | Suite.Transport
   | _TuplePattern.Transport
+  | TypeAliasStatementType.Transport
+  | UnaryOperatorOperator.Transport
   | _WithClauseParen.Transport
+  | WithStatementAsyncMarker.Transport
   | AliasedImport.Transport
   | ArgumentList.Transport
   | AsPattern.Transport
@@ -6300,30 +6383,20 @@ export type AnyTransport =
   | Comma.Transport
   | Assert.Transport
   | Dot.Transport
-  | Plus.Transport
-  | Star.Transport
-  | At.Transport
-  | Slash.Transport
-  | Percent.Transport
-  | Slashslash.Transport
-  | Starstar.Transport
-  | Pipe.Transport
-  | Amp.Transport
-  | Caret.Transport
-  | Shl.Transport
-  | Shr.Transport
-  | And.Transport
-  | Or.Transport
   | Break.Transport
   | Case.Transport
+  | Shr.Transport
   | Class.Transport
   | If.Transport
   | Else.Transport
   | Continue.Transport
+  | At.Transport
   | Del.Transport
   | Brace.Transport
+  | Starstar.Transport
   | Elif.Transport
   | Ellipsis.Transport
+  | Star.Transport
   | Exec.Transport
   | In.Transport
   | False2.Transport
@@ -6341,27 +6414,16 @@ export type AnyTransport =
   | Nonlocal.Transport
   | Not.Transport
   | Pass.Transport
+  | Slash.Transport
   | Print.Transport
   | Raise.Transport
   | Return.Transport
   | Anonymous.Transport
   | True2.Transport
   | Try.Transport
+  | Pipe.Transport
   | While.Transport
   | With.Transport
-  | LiteralTransport<"+=", "+=">
-  | LiteralTransport<"-=", "-=">
-  | LiteralTransport<"*=", "*=">
-  | LiteralTransport<"/=", "/=">
-  | LiteralTransport<"@=", "@=">
-  | LiteralTransport<"//=", "//=">
-  | LiteralTransport<"%=", "%=">
-  | LiteralTransport<"**=", "**=">
-  | LiteralTransport<">>=", ">>=">
-  | LiteralTransport<"<<=", "<<=">
-  | LiteralTransport<"&=", "&=">
-  | LiteralTransport<"^=", "^=">
-  | LiteralTransport<"|=", "|=">
   | LiteralTransport<"<", "<">
   | LiteralTransport<"<=", "<=">
   | LiteralTransport<"==", "==">
@@ -6372,5 +6434,4 @@ export type AnyTransport =
   | LiteralTransport<"not in", "not in">
   | LiteralTransport<"is", "is">
   | LiteralTransport<"is not", "is not">
-  | LiteralTransport<"~", "~">
 ;

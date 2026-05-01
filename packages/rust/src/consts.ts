@@ -201,20 +201,54 @@ export const NODE_KINDS = [
 /** All leaf/terminal node kind strings. */
 export const LEAF_KINDS = [
   '_',
+  '__range_expression_bare_operator',
+  '__range_expression_binary_operator',
+  '__range_expression_postfix_operator',
+  '__range_expression_prefix_operator',
+  '__visibility_modifier_in_path_in',
+  '__visibility_modifier_pub_pub',
+  '_async_block_move_marker',
+  '_binary_expression_operator',
+  '_closure_expression_async_marker',
+  '_closure_expression_move_marker',
+  '_closure_expression_static_marker',
+  '_compound_assignment_expr_operator',
   '_error_sentinel',
+  '_extern_crate_declaration_crate',
+  '_field_pattern_mutable_specifier',
+  '_field_pattern_ref_marker',
+  '_gen_block_move_marker',
+  '_generic_type_with_turbofish_turbofish',
+  '_impl_item_negative',
+  '_impl_item_unsafe_marker',
   '_inner_block_doc_comment_marker',
   '_kw_async_marker',
+  '_kw_in',
   '_kw_move_marker',
+  '_kw_pub',
   '_kw_ref_marker',
   '_kw_static_marker',
   '_kw_unsafe_marker',
+  '_let_declaration_mutable_specifier',
   '_line_comment_content',
   '_line_comment_regular_dslash',
   '_line_doc_content',
+  '_mut_pattern_mutable_specifier',
   '_outer_block_doc_comment_marker',
+  '_parameter_mutable_specifier',
   '_pointer_type_const',
   '_primitive_type',
   '_reference_expression_raw_const',
+  '_reference_pattern_mutable_specifier',
+  '_reference_type_mutable_specifier',
+  '_self_parameter_mutable_specifier',
+  '_self_parameter_self',
+  '_static_item_mutable_specifier',
+  '_static_item_ref_marker',
+  '_token_binding_pattern_type',
+  '_trait_item_unsafe_marker',
+  '_unary_expression_operator',
+  '_variadic_parameter_mutable_specifier',
   '_wildcard_pattern',
   'as',
   'async',
@@ -283,11 +317,14 @@ export const KEYWORDS = [
   '_impl_item_semi',
   '_inner_line_doc_comment_marker',
   '_kw_async_marker',
+  '_kw_in',
   '_kw_move_marker',
   '_kw_negative',
   '_kw_operator',
+  '_kw_pub',
   '_kw_ref_marker',
   '_kw_static_marker',
+  '_kw_turbofish',
   '_kw_unsafe_marker',
   '_mod_item_external',
   '_outer_line_doc_comment_marker',
@@ -375,10 +412,8 @@ export const OPERATORS = [
   "@",
   "[",
   "]",
-  "^",
   "{",
   "|",
-  "||",
   "}",
 ] as const;
 
@@ -615,6 +650,9 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
   "_visibility_modifier_crate": 348,
   "_kw_move_marker": 351,
   "_kw_static_marker": 352,
+  "_kw_pub": 353,
+  "_kw_in": 354,
+  "_kw_turbofish": 355,
   "_kw_unsafe_marker": 356,
   "_kw_negative": 357,
   "_pointer_type_const": 358,
@@ -865,6 +903,9 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
   [348]: "_visibility_modifier_crate",
   [351]: "_kw_move_marker",
   [352]: "_kw_static_marker",
+  [353]: "_kw_pub",
+  [354]: "_kw_in",
+  [355]: "_kw_turbofish",
   [356]: "_kw_unsafe_marker",
   [357]: "_kw_negative",
   [358]: "_pointer_type_const",
@@ -1115,6 +1156,9 @@ export const TREE_SITTER_KIND_ID_JSON = [
   { name: "_visibility_modifier_crate", id: 348, enumName: "VisibilityModifierCrate", cName: "sym__visibility_modifier_crate" },
   { name: "_kw_move_marker", id: 351, enumName: "KwMoveMarker", cName: "sym__kw_move_marker" },
   { name: "_kw_static_marker", id: 352, enumName: "KwStaticMarker", cName: "sym__kw_static_marker" },
+  { name: "_kw_pub", id: 353, enumName: "KwPub", cName: "sym__kw_pub" },
+  { name: "_kw_in", id: 354, enumName: "KwIn", cName: "sym__kw_in" },
+  { name: "_kw_turbofish", id: 355, enumName: "KwTurbofish", cName: "sym__kw_turbofish" },
   { name: "_kw_unsafe_marker", id: 356, enumName: "KwUnsafeMarker", cName: "sym__kw_unsafe_marker" },
   { name: "_kw_negative", id: 357, enumName: "KwNegative", cName: "sym__kw_negative" },
   { name: "_pointer_type_const", id: 358, enumName: "PointerTypeConst", cName: "sym__pointer_type_const" },
@@ -2065,6 +2109,149 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
 };
 
+/** Valid values for `__range_expression_bare_operator` nodes. */
+export const __RANGE_EXPRESSION_BARE_OPERATORS = [
+  '..',
+] as const;
+export type RangeExpressionBareOperatorValue = (typeof __RANGE_EXPRESSION_BARE_OPERATORS)[number];
+
+/** Valid values for `__range_expression_binary_operator` nodes. */
+export const __RANGE_EXPRESSION_BINARY_OPERATORS = [
+  '..',
+  '...',
+  '..=',
+] as const;
+export type RangeExpressionBinaryOperatorValue = (typeof __RANGE_EXPRESSION_BINARY_OPERATORS)[number];
+
+/** Valid values for `__range_expression_postfix_operator` nodes. */
+export const __RANGE_EXPRESSION_POSTFIX_OPERATORS = [
+  '..',
+] as const;
+export type RangeExpressionPostfixOperatorValue = (typeof __RANGE_EXPRESSION_POSTFIX_OPERATORS)[number];
+
+/** Valid values for `__range_expression_prefix_operator` nodes. */
+export const __RANGE_EXPRESSION_PREFIX_OPERATORS = [
+  '..',
+] as const;
+export type RangeExpressionPrefixOperatorValue = (typeof __RANGE_EXPRESSION_PREFIX_OPERATORS)[number];
+
+/** Valid values for `__visibility_modifier_in_path_in` nodes. */
+export const __VISIBILITY_MODIFIER_IN_PATH_INS = [
+  'in',
+] as const;
+export type VisibilityModifierInPathInValue = (typeof __VISIBILITY_MODIFIER_IN_PATH_INS)[number];
+
+/** Valid values for `__visibility_modifier_pub_pub` nodes. */
+export const __VISIBILITY_MODIFIER_PUB_PUBS = [
+  'pub',
+] as const;
+export type VisibilityModifierPubPubValue = (typeof __VISIBILITY_MODIFIER_PUB_PUBS)[number];
+
+/** Valid values for `_async_block_move_marker` nodes. */
+export const _ASYNC_BLOCK_MOVE_MARKERS = [
+  'move',
+] as const;
+export type AsyncBlockMoveMarkerValue = (typeof _ASYNC_BLOCK_MOVE_MARKERS)[number];
+
+/** Valid values for `_binary_expression_operator` nodes. */
+export const _BINARY_EXPRESSION_OPERATORS = [
+  '&&',
+] as const;
+export type BinaryExpressionOperatorValue = (typeof _BINARY_EXPRESSION_OPERATORS)[number];
+
+/** Valid values for `_closure_expression_async_marker` nodes. */
+export const _CLOSURE_EXPRESSION_ASYNC_MARKERS = [
+  'async',
+] as const;
+export type ClosureExpressionAsyncMarkerValue = (typeof _CLOSURE_EXPRESSION_ASYNC_MARKERS)[number];
+
+/** Valid values for `_closure_expression_move_marker` nodes. */
+export const _CLOSURE_EXPRESSION_MOVE_MARKERS = [
+  'move',
+] as const;
+export type ClosureExpressionMoveMarkerValue = (typeof _CLOSURE_EXPRESSION_MOVE_MARKERS)[number];
+
+/** Valid values for `_closure_expression_static_marker` nodes. */
+export const _CLOSURE_EXPRESSION_STATIC_MARKERS = [
+  'static',
+] as const;
+export type ClosureExpressionStaticMarkerValue = (typeof _CLOSURE_EXPRESSION_STATIC_MARKERS)[number];
+
+/** Valid values for `_compound_assignment_expr_operator` nodes. */
+export const _COMPOUND_ASSIGNMENT_EXPR_OPERATORS = [
+  '+=',
+  '-=',
+  '*=',
+  '/=',
+  '%=',
+  '&=',
+  '|=',
+  '^=',
+  '<<=',
+  '>>=',
+] as const;
+export type CompoundAssignmentExprOperatorValue = (typeof _COMPOUND_ASSIGNMENT_EXPR_OPERATORS)[number];
+
+/** Valid values for `_extern_crate_declaration_crate` nodes. */
+export const _EXTERN_CRATE_DECLARATION_CRATES = [
+  'crate',
+] as const;
+export type ExternCrateDeclarationCrateValue = (typeof _EXTERN_CRATE_DECLARATION_CRATES)[number];
+
+/** Valid values for `_field_pattern_mutable_specifier` nodes. */
+export const _FIELD_PATTERN_MUTABLE_SPECIFIERS = [
+  'mut',
+] as const;
+export type FieldPatternMutableSpecifierValue = (typeof _FIELD_PATTERN_MUTABLE_SPECIFIERS)[number];
+
+/** Valid values for `_field_pattern_ref_marker` nodes. */
+export const _FIELD_PATTERN_REF_MARKERS = [
+  'ref',
+] as const;
+export type FieldPatternRefMarkerValue = (typeof _FIELD_PATTERN_REF_MARKERS)[number];
+
+/** Valid values for `_gen_block_move_marker` nodes. */
+export const _GEN_BLOCK_MOVE_MARKERS = [
+  'move',
+] as const;
+export type GenBlockMoveMarkerValue = (typeof _GEN_BLOCK_MOVE_MARKERS)[number];
+
+/** Valid values for `_generic_type_with_turbofish_turbofish` nodes. */
+export const _GENERIC_TYPE_WITH_TURBOFISH_TURBOFISHS = [
+  '::',
+] as const;
+export type GenericTypeWithTurbofishTurbofishValue = (typeof _GENERIC_TYPE_WITH_TURBOFISH_TURBOFISHS)[number];
+
+/** Valid values for `_impl_item_negative` nodes. */
+export const _IMPL_ITEM_NEGATIVES = [
+  '!',
+] as const;
+export type ImplItemNegativeValue = (typeof _IMPL_ITEM_NEGATIVES)[number];
+
+/** Valid values for `_impl_item_unsafe_marker` nodes. */
+export const _IMPL_ITEM_UNSAFE_MARKERS = [
+  'unsafe',
+] as const;
+export type ImplItemUnsafeMarkerValue = (typeof _IMPL_ITEM_UNSAFE_MARKERS)[number];
+
+/** Valid values for `_let_declaration_mutable_specifier` nodes. */
+export const _LET_DECLARATION_MUTABLE_SPECIFIERS = [
+  'mut',
+] as const;
+export type LetDeclarationMutableSpecifierValue = (typeof _LET_DECLARATION_MUTABLE_SPECIFIERS)[number];
+
+/** Valid values for `_mut_pattern_mutable_specifier` nodes. */
+export const _MUT_PATTERN_MUTABLE_SPECIFIERS = [
+  'mut',
+] as const;
+export type MutPatternMutableSpecifierValue = (typeof _MUT_PATTERN_MUTABLE_SPECIFIERS)[number];
+
+/** Valid values for `_parameter_mutable_specifier` nodes. */
+export const _PARAMETER_MUTABLE_SPECIFIERS = [
+  'mut',
+] as const;
+export type ParameterMutableSpecifierValue = (typeof _PARAMETER_MUTABLE_SPECIFIERS)[number];
+
 /** Valid values for `_primitive_type` nodes. */
 export const _PRIMITIVE_TYPES = [
   'u8',
@@ -2086,6 +2273,82 @@ export const _PRIMITIVE_TYPES = [
   'char',
 ] as const;
 export type PrimitiveTypeValue = (typeof _PRIMITIVE_TYPES)[number];
+
+/** Valid values for `_reference_pattern_mutable_specifier` nodes. */
+export const _REFERENCE_PATTERN_MUTABLE_SPECIFIERS = [
+  'mut',
+] as const;
+export type ReferencePatternMutableSpecifierValue = (typeof _REFERENCE_PATTERN_MUTABLE_SPECIFIERS)[number];
+
+/** Valid values for `_reference_type_mutable_specifier` nodes. */
+export const _REFERENCE_TYPE_MUTABLE_SPECIFIERS = [
+  'mut',
+] as const;
+export type ReferenceTypeMutableSpecifierValue = (typeof _REFERENCE_TYPE_MUTABLE_SPECIFIERS)[number];
+
+/** Valid values for `_self_parameter_mutable_specifier` nodes. */
+export const _SELF_PARAMETER_MUTABLE_SPECIFIERS = [
+  'mut',
+] as const;
+export type SelfParameterMutableSpecifierValue = (typeof _SELF_PARAMETER_MUTABLE_SPECIFIERS)[number];
+
+/** Valid values for `_self_parameter_self` nodes. */
+export const _SELF_PARAMETER_SELFS = [
+  'self',
+] as const;
+export type SelfParameterSelfValue = (typeof _SELF_PARAMETER_SELFS)[number];
+
+/** Valid values for `_static_item_mutable_specifier` nodes. */
+export const _STATIC_ITEM_MUTABLE_SPECIFIERS = [
+  'mut',
+] as const;
+export type StaticItemMutableSpecifierValue = (typeof _STATIC_ITEM_MUTABLE_SPECIFIERS)[number];
+
+/** Valid values for `_static_item_ref_marker` nodes. */
+export const _STATIC_ITEM_REF_MARKERS = [
+  'ref',
+] as const;
+export type StaticItemRefMarkerValue = (typeof _STATIC_ITEM_REF_MARKERS)[number];
+
+/** Valid values for `_token_binding_pattern_type` nodes. */
+export const _TOKEN_BINDING_PATTERN_TYPES = [
+  'block',
+  'expr',
+  'expr_2021',
+  'ident',
+  'item',
+  'lifetime',
+  'literal',
+  'meta',
+  'pat',
+  'pat_param',
+  'path',
+  'stmt',
+  'tt',
+  'ty',
+  'vis',
+] as const;
+export type TokenBindingPatternTypeValue = (typeof _TOKEN_BINDING_PATTERN_TYPES)[number];
+
+/** Valid values for `_trait_item_unsafe_marker` nodes. */
+export const _TRAIT_ITEM_UNSAFE_MARKERS = [
+  'unsafe',
+] as const;
+export type TraitItemUnsafeMarkerValue = (typeof _TRAIT_ITEM_UNSAFE_MARKERS)[number];
+
+/** Valid values for `_unary_expression_operator` nodes. */
+export const _UNARY_EXPRESSION_OPERATORS = [
+  '-',
+  '*',
+  '!',
+] as const;
+export type UnaryExpressionOperatorValue = (typeof _UNARY_EXPRESSION_OPERATORS)[number];
+
+/** Valid values for `_variadic_parameter_mutable_specifier` nodes. */
+export const _VARIADIC_PARAMETER_MUTABLE_SPECIFIERS = [
+  'mut',
+] as const;
+export type VariadicParameterMutableSpecifierValue = (typeof _VARIADIC_PARAMETER_MUTABLE_SPECIFIERS)[number];
 
 /** Valid values for `boolean_literal` nodes. */
 export const BOOLEAN_LITERALS = [
