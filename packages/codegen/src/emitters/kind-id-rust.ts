@@ -79,7 +79,7 @@ export function toScreamingSnakeCase(memberName: string, rawKind: string): strin
 
 /**
  * Emit the Rust source for `kind_ids.rs` — one `pub const` per kind that
- * has a parser symbol (TSRuntime presence), sorted by numeric id, plus a
+ * has a parser symbol (TSInternals presence), sorted by numeric id, plus a
  * `kind_name_from_id(KindId) -> &'static str` diagnostic helper.
  *
  * @returns The complete Rust source as a single string, ready to write to
@@ -124,9 +124,9 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push(`pub fn kind_name_from_id(id: KindId) -> &'static str {`);
 	lines.push(`    match id.0 {`);
 	for (const entry of entries) {
-		// For anonymous tokens use displayName when available (shows literal text),
+		// For anonymous tokens use symbolName when available (shows literal text),
 		// otherwise fall back to the canonical kind string.
-		const displayStr = entry.displayName ?? entry.kind;
+		const displayStr = entry.symbolName ?? entry.kind;
 		lines.push(`        ${entry.id} => ${JSON.stringify(displayStr)}, // ${JSON.stringify(entry.kind)}`);
 	}
 	lines.push(`        _ => "<unknown>",`);

@@ -19,14 +19,14 @@ interface PhantomReport {
 	phantoms: string[];
 	catalogKinds: Set<string>;
 	nodeMapKinds: Set<string>;
-	displayNameCollisions: DisplayNameCollision[];
+	symbolNameCollisions: SymbolNameCollision[];
 }
 
-interface DisplayNameCollision {
+interface SymbolNameCollision {
 	catalogKey: string;     // e.g. "_as_pattern"
-	displayName: string;    // e.g. "as_pattern"
+	symbolName: string;     // e.g. "as_pattern"
 	catalogKeyId: number;
-	collidingKindId?: number; // id of the real kind whose name === displayName
+	collidingKindId?: number; // id of the real kind whose name === symbolName
 }
 
 async function diagnoseGrammar(grammar: string): Promise<PhantomReport> {
@@ -47,9 +47,9 @@ async function diagnoseGrammar(grammar: string): Promise<PhantomReport> {
 	// Phantoms = in nodeMap but NOT in catalog (no parser symbol)
 	const phantoms = [...nodeMapKinds].filter((k) => !catalogKinds.has(k)).sort();
 
-	// Find displayName collisions: catalog entries where displayName matches
+	// Find symbolName collisions: catalog entries where symbolName matches
 	// another real catalog key (or nodeMap key).
-	const displayNameCollisions: DisplayNameCollision[] = [];
+	const symbolNameCollisions: SymbolNameCollision[] = [];
 	if (tables?.kindIds) {
 		const ids = tables.kindIds;
 		const entries = ids instanceof Map ? [...ids.entries()] : Object.entries(ids);
@@ -63,17 +63,17 @@ async function diagnoseGrammar(grammar: string): Promise<PhantomReport> {
 
 		for (const [key, value] of entries) {
 			if (typeof value === 'number') continue;
-			const entry = value as { id?: number; parser?: { displayName?: string } };
-			if (!entry.id || !entry.parser?.displayName) continue;
-			const displayName = entry.parser.displayName;
-			if (displayName === key) continue; // no collision when same
+			const entry = value as { id?: number; parser?: { symbolName?: string } };
+			if (!entry.id || !entry.parser?.symbolName) continue;
+			const symbolName = entry.parser.symbolName;
+			if (symbolName === key) continue; // no collision when same
 
-			// Check if another catalog key uses displayName as its key
-			const collidingId = idByKey.get(displayName);
+			// Check if another catalog key uses symbolName as its key
+			const collidingId = idByKey.get(symbolName);
 			if (collidingId !== undefined && collidingId !== entry.id) {
-				displayNameCollisions.push({
+				symbolNameCollisions.push({
 					catalogKey: key,
-					displayName,
+					symbolName,
 					catalogKeyId: entry.id,
 					collidingKindId: collidingId
 				});
@@ -81,7 +81,7 @@ async function diagnoseGrammar(grammar: string): Promise<PhantomReport> {
 		}
 	}
 
-	return { grammar, phantoms, catalogKinds, nodeMapKinds, displayNameCollisions };
+	return { grammar, phantoms, catalogKinds, nodeMapKinds, symbolNameCollisions };
 }
 
 const args = process.argv.slice(2);
@@ -103,16 +103,16 @@ for (const grammar of grammars) {
 			}
 		}
 
-		if (report.displayNameCollisions.length > 0) {
-			console.log('\nDisplayName collisions (displayName === another catalog key):');
-			for (const c of report.displayNameCollisions) {
+		if (report.symbolNameCollisions.length > 0) {
+			console.log('\nSymbolName collisions (symbolName === another catalog key):');
+			for (const c of report.symbolNameCollisions) {
 				console.log(
-					`  ${c.catalogKey} (id=${c.catalogKeyId}) displayName="${c.displayName}" ` +
+					`  ${c.catalogKey} (id=${c.catalogKeyId}) symbolName="${c.symbolName}" ` +
 					`collides with catalog key id=${c.collidingKindId}`
 				);
 			}
 		} else {
-			console.log('\nNo displayName collisions found.');
+			console.log('\nNo symbolName collisions found.');
 		}
 	} catch (e) {
 		console.log(`${grammar}: ERROR ${(e as Error).message}`);

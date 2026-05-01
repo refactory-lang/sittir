@@ -23,7 +23,7 @@ import type * as TS from 'web-tree-sitter';
  * One row of the parser symbol catalog (KindID runtime migration design,
  * 2026-04-30). When `id` / `parser` are absent, the kind exists in the
  * codegen rule set but tree-sitter inlined it during parser compilation —
- * presence is `TSGrammar` only, not `TSRuntime`. A row's mere existence
+ * presence is `TSGrammar` only, not `TSInternals`. A row's mere existence
  * here is the canonical record of "this kind is reachable from the
  * grammar"; downstream code reads `parser` to discover whether it also
  * surfaces at runtime.
@@ -143,7 +143,7 @@ export function deriveGeneratedMetadata(
 	// Every kind in the rule catalog gets a catalog row, even when
 	// tree-sitter inlined it (no parser symbol). This is the DRY source:
 	// one entry per codegen rule. `presence` carries the file/runtime
-	// existence flags (TSGrammar / TSNodeTypes / TSRuntime); `parser`
+	// existence flags (TSGrammar / TSNodeTypes / TSInternals); `parser`
 	// carries the parser-origin metadata when applicable. `uses` is
 	// populated by downstream NodeMap classification (Readable /
 	// Buildable / Renderable). Per KindID runtime migration design
@@ -155,7 +155,7 @@ export function deriveGeneratedMetadata(
 			kindByName.set(kind, {
 				kindId: parserEntry.id,
 				parser: parserEntry.parser,
-				presence: basePresence | KindPresenceFlag.TSRuntime,
+				presence: basePresence | KindPresenceFlag.TSInternals,
 				sourceArtifact: tables.sourceArtifact
 			});
 		} else {
@@ -172,7 +172,7 @@ export function deriveGeneratedMetadata(
 		fieldByName.set(field, {
 			fieldId: entry.id,
 			parser: entry.parser,
-			presence: KindPresenceFlag.TSGrammar | KindPresenceFlag.TSRuntime,
+			presence: KindPresenceFlag.TSGrammar | KindPresenceFlag.TSInternals,
 			sourceArtifact: tables.sourceArtifact
 		});
 	}
@@ -344,7 +344,7 @@ function joinIdNames(
 	// lookup table `ts_symbol_names[]` is intentionally lossy — it
 	// canonicalizes display labels and collapses `sym__as_pattern` and
 	// `sym_as_pattern` to the same `"as_pattern"` string — so it can NOT be
-	// used as the identity key. The display name survives as a diagnostic
+	// used as the identity key. The symbol name survives as a diagnostic
 	// label on the catalog row.
 	const result = new Map<string, GeneratedIdEntry>();
 	for (const entry of ids.values()) {
@@ -356,7 +356,7 @@ function joinIdNames(
 		const parser: KindParserMetadata = {
 			cSymbol: entry.cName,
 			parserName: key,
-			displayName: names.get(entry.cName),
+			symbolName: names.get(entry.cName),
 			anon: entry.cName.startsWith('anon_sym_'),
 			aux: entry.cName.startsWith('aux_sym_'),
 			alias: entry.cName.startsWith('alias_sym_'),
@@ -388,7 +388,7 @@ function deriveSymbolRuntimeName(cName: string): string {
 	// `toScreamingSnakeCase` regex inserts `_` before every letter, and the
 	// emitted Rust constant becomes `L_P_A_R_E_N` instead of `LPAREN`.
 	// The original C-side name is preserved in `parser.cSymbol`; the literal
-	// punctuation text is preserved in `parser.displayName`.
+	// punctuation text is preserved in `parser.symbolName`.
 	if (cName.startsWith('anon_sym_')) {
 		return cName.slice('anon_sym_'.length).toLowerCase();
 	}

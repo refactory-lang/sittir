@@ -26,7 +26,7 @@ describe('generated metadata', () => {
 		expect(sourceFileEntry?.kindId).toBe(1);
 		expect(sourceFileEntry?.sourceArtifact).toBe('parser.c');
 		expect(sourceFileEntry?.presence).toBe(
-			KindPresenceFlag.TSGrammar | KindPresenceFlag.TSRuntime
+			KindPresenceFlag.TSGrammar | KindPresenceFlag.TSInternals
 		);
 		expect(metadata.kindByName.has('missing')).toBe(false);
 
@@ -131,7 +131,7 @@ static const char * const ts_field_names[] = {
 				readonly anon: boolean;
 				readonly alias: boolean;
 				readonly hidden: boolean;
-				readonly displayName?: string;
+				readonly symbolName?: string;
 			};
 		};
 		const kindIds = tables.kindIds as ReadonlyMap<string, CatalogRow>;
@@ -153,7 +153,7 @@ static const char * const ts_field_names[] = {
 		// in identity (the lossy `ts_symbol_names[]` table maps both
 		// `sym__as_pattern` and `sym_as_pattern` to the same string, so it
 		// can't be used as the join key).
-		expect(bangEq?.parser.displayName).toBe('!==');
+		expect(bangEq?.parser.symbolName).toBe('!==');
 
 		const nameField = fieldIdsMap.get('name');
 		expect(nameField?.id).toBe(1);

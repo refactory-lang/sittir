@@ -29,13 +29,15 @@ export interface KindEnumEntry {
 	readonly member: string;
 	readonly id: number;
 	/**
-	 * Display name from `ts_symbol_names[]`, when distinct from `kind`.
+	 * Symbol name from `ts_symbol_names[]`, when distinct from `kind`.
 	 * Anonymous tokens (`anon_sym_PLUS`) carry the literal text (`"+"`)
 	 * here while `kind` is the parser symbol name (`"PLUS"`). Used to
 	 * emit additional `kindIdFromName` switch arms so JS callers passing
 	 * the literal text can also resolve to the correct id.
 	 */
-	readonly displayName?: string;
+	readonly symbolName?: string;
+	/** True when this entry came from an `anon_sym_*` parser symbol. */
+	readonly anon?: boolean;
 }
 
 /**
@@ -79,7 +81,7 @@ export function collectCatalogKinds(
 /**
  * Collect catalog entries that should appear in `TSKindId`. Skips
  * kinds whose parser symbol is absent (`TSGrammar`-only-without-
- * `TSRuntime` per the design).
+ * `TSInternals` per the design).
  *
  * Pass `collectCatalogKinds(generatedIdTables)` for the runtime-
  * dispatch surfaces (TSKindId, kindIdFromName, AnyTransport,
@@ -98,11 +100,12 @@ export function collectKindEntries(
 		const row = fullCatalog.get(kind);
 		if (row === undefined || row.id === undefined) continue;
 		const member = kindIdMemberName(nodeMap, kind);
-		const displayName =
-			row.parser?.displayName !== undefined && row.parser.displayName !== kind
-				? row.parser.displayName
+		const symbolName =
+			row.parser?.symbolName !== undefined && row.parser.symbolName !== kind
+				? row.parser.symbolName
 				: undefined;
-		entries.push({ kind, member, id: row.id, displayName });
+		const anon = row.parser?.anon ?? false;
+		entries.push({ kind, member, id: row.id, symbolName, anon: anon || undefined });
 	}
 	entries.sort((a, b) => a.id - b.id || a.kind.localeCompare(b.kind));
 	return entries;
@@ -111,13 +114,13 @@ export function collectKindEntries(
 /**
  * Find the catalog entry for a given kind name, matching on either
  * `entry.kind` (the catalog key, e.g. `_expression_statement_tuple`) or
- * `entry.displayName` (the display name, e.g. `expression_statement_tuple`).
+ * `entry.symbolName` (the symbol name, e.g. `expression_statement_tuple`).
  *
- * Some grammar kinds appear in node-types.json under their display name
+ * Some grammar kinds appear in node-types.json under their symbol name
  * (no leading underscore) while the parser.c symbol has a hidden prefix
  * (`sym__expression_statement_tuple` → catalog key `_expression_statement_tuple`,
- * display name `expression_statement_tuple`). Anonymous tokens are similar:
- * catalog key `RPAREN`, display name `)`. Both spellings must resolve to the
+ * symbol name `expression_statement_tuple`). Anonymous tokens are similar:
+ * catalog key `rparen`, symbol name `)`. Both spellings must resolve to the
  * same catalog entry so emission-point guards can match the nodeMap kind name.
  *
  * @param kindEntries - The catalog entries from `collectKindEntries`.
@@ -135,21 +138,26 @@ export function findKindEntry(
 	//    hidden form (from `sym__closure_expression_expr` → strip `sym_` →
 	//    `_closure_expression_expr`). Try the underscore-prefixed form so
 	//    the join succeeds for Pattern B kinds.
-	// 3. DisplayName fallback (last resort — only anon tokens whose literal
-	//    text matches a displayName should reach this).
+	// 3. Anon-symbol literal-value match: resolve punctuation/operator literals
+	//    like `'+'` to their parser symbol (`anon_sym_PLUS` → catalog key `plus`,
+	//    symbolName `"+"`). ONLY matches when the catalog row is an anonymous
+	//    token (`anon === true`) — NOT a general symbolName match, which caused
+	//    the `_as_pattern` shadowing bug (hidden `_as_pattern` symbolName
+	//    `"as_pattern"` shadowed the real `as_pattern` entry).
 	return (
 		kindEntries.find((e) => e.kind === kind) ??
 		kindEntries.find((e) => e.kind === `_${kind}`) ??
-		kindEntries.find((e) => e.displayName === kind)
+		kindEntries.find((e) => e.anon === true && e.symbolName === kind) ??
+		undefined
 	);
 }
 
 /**
  * Return true when a kind has a parser symbol in the catalog — matches on
- * the catalog key (`entry.kind`) only, NOT on `entry.displayName`.
+ * the catalog key (`entry.kind`) only, NOT on `entry.symbolName`.
  *
  * Using `entry.kind` only prevents phantom kinds (TSGrammar-only inlined
- * rules) from being treated as real kinds via a coincidental displayName
+ * rules) from being treated as real kinds via a coincidental symbolName
  * match. Transport alternative lists must only include kinds that have a
  * parser symbol so `kindIdFromName` is always safe to call at runtime.
  *
@@ -173,8 +181,8 @@ export function hasCatalogEntry(
  * always resolve; the inverse is a loud error, not a silent string
  * fallback.
  *
- * Matches the kind against both the catalog key and the display name
- * (via `findKindEntry`) so nodeMap kinds that use the display spelling
+ * Matches the kind against both the catalog key and the symbol name
+ * (via `findKindEntry`) so nodeMap kinds that use the symbol spelling
  * (e.g. `expression_statement_tuple`) resolve to the same entry as
  * the catalog key (`_expression_statement_tuple`).
  *
@@ -227,7 +235,7 @@ interface CatalogRow {
 	readonly parser?: {
 		readonly cSymbol: string;
 		readonly parserName: string;
-		readonly displayName?: string;
+		readonly symbolName?: string;
 		readonly anon: boolean;
 		readonly aux: boolean;
 		readonly alias: boolean;

@@ -1004,12 +1004,12 @@ function emitKindIdEnumAndLookups(
 	lines.push('export function kindIdFromName(kindName: string): TSKindId {');
 	lines.push('  switch (kindName) {');
 	// Strict canonical-key-only resolution: each case matches the catalog key
-	// (e.g. `"as_pattern"`, `"PLUS"`), never a displayName. DisplayName cases
+	// (e.g. `"as_pattern"`, `"PLUS"`), never a symbolName. SymbolName cases
 	// (e.g. `"+"` for `PLUS`) are intentionally omitted — they produced
-	// shadowing bugs (python `_as_pattern` displayName `"as_pattern"` shadowed
+	// shadowing bugs (python `_as_pattern` symbolName `"as_pattern"` shadowed
 	// the real `as_pattern` entry) and the napi dispatch path uses numeric
-	// $type ids, not name strings. If a separate displayName→id helper is needed
-	// in the future, emit it as `kindIdFromDisplayName` — don't mix into this function.
+	// $type ids, not name strings. If a separate symbolName→id helper is needed
+	// in the future, emit it as `kindIdFromSymbolName` — don't mix into this function.
 	for (const entry of entries) {
 		lines.push(`    case ${JSON.stringify(entry.kind)}: return TSKindId.${entry.member};`);
 	}

@@ -162,37 +162,37 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 		: undefined;
 
 	emitNativeTransportProjection(lines, nodeMap, kindEntries);
-	// Build a displayName→id lookup from generatedIdTables so that
+	// Build a symbolName→id lookup from generatedIdTables so that
 	// anonymous-token literals (e.g. ">>=", "not in") can be resolved to
-	// numeric IDs. Their kind strings match the ts_symbol_names[] display
+	// numeric IDs. Their kind strings match the ts_symbol_names[] symbol
 	// values, not the prefix-stripped cName keys in kindIdByKind.
-	const displayNameToId = generatedIdTables
-		? buildDisplayNameToIdMap(generatedIdTables)
+	const symbolNameToId = generatedIdTables
+		? buildSymbolNameToIdMap(generatedIdTables)
 		: undefined;
-	emitNativeTransportAssertions(lines, nodeMap, kindEntries, displayNameToId);
+	emitNativeTransportAssertions(lines, nodeMap, kindEntries, symbolNameToId);
 
 	return lines.join('\n');
 }
 
 /**
- * Build a map from ts_symbol_names[] display values to parser IDs.
+ * Build a map from ts_symbol_names[] symbol values to parser IDs.
  * Used to resolve anonymous-token literals (e.g. `">>="`  → 81) that
  * don't appear as named rule kinds in the nodeMap but DO have parser symbols.
  */
-function buildDisplayNameToIdMap(generatedIdTables: GeneratedIdTables): Map<string, number> {
+function buildSymbolNameToIdMap(generatedIdTables: GeneratedIdTables): Map<string, number> {
 	const result = new Map<string, number>();
 	const ids = generatedIdTables.kindIds;
 	if (!ids) return result;
 	const entries = ids instanceof Map ? [...ids.entries()] : Object.entries(ids);
 	for (const [, value] of entries) {
-		if (typeof value === 'number') continue; // legacy number-only entry — no displayName
-		const entry = value as { id?: number; parser?: { displayName?: string } };
+		if (typeof value === 'number') continue; // legacy number-only entry — no symbolName
+		const entry = value as { id?: number; parser?: { symbolName?: string } };
 		if (entry.id === undefined) continue;
-		if (entry.parser?.displayName) {
+		if (entry.parser?.symbolName) {
 			// Only add if not already mapped (prefer named rules over anonymous tokens
-			// when display names collide, but anonymous tokens are usually unique).
-			if (!result.has(entry.parser.displayName)) {
-				result.set(entry.parser.displayName, entry.id);
+			// when symbol names collide, but anonymous tokens are usually unique).
+			if (!result.has(entry.parser.symbolName)) {
+				result.set(entry.parser.symbolName, entry.id);
 			}
 		}
 	}
@@ -570,21 +570,21 @@ function emitNativeTransportAssertions(
 	lines: string[],
 	nodeMap: NodeMap,
 	kindEntries?: readonly KindEnumEntry[],
-	displayNameToId?: Map<string, number>
+	symbolNameToId?: Map<string, number>
 ): void {
 	const projection = collectTransportProjection(nodeMap);
 	const validators = projection.nodes;
 
 	// Build kind→id lookup for numeric switch when kindEntries available.
 	// Includes both the catalog key (e.g. `_expression_statement_tuple`)
-	// and the display name (e.g. `expression_statement_tuple`) so nodeMap
-	// kinds that use the display spelling resolve correctly.
+	// and the symbol name (e.g. `expression_statement_tuple`) so nodeMap
+	// kinds that use the symbol spelling resolve correctly.
 	const kindIdByKind = kindEntries
 		? (() => {
 				const m = new Map<string, number>();
 				for (const e of kindEntries) {
 					m.set(e.kind, e.id);
-					if (e.displayName !== undefined) m.set(e.displayName, e.id);
+					if (e.symbolName !== undefined) m.set(e.symbolName, e.id);
 				}
 				return m;
 			})()
@@ -635,7 +635,7 @@ function emitNativeTransportAssertions(
 		// First try nodeMap-scoped kind lookup, then fall back to display-name
 		// lookup (for anonymous-token literals like ">>=", "not in" whose
 		// literal.kind is the display text rather than a grammar rule name).
-		const id = kindIdByKind?.get(literal.kind) ?? displayNameToId?.get(literal.kind);
+		const id = kindIdByKind?.get(literal.kind) ?? symbolNameToId?.get(literal.kind);
 		if (id === undefined) {
 			// TSGrammar-only kind — cannot reach the wire. Skip emission.
 			continue;
@@ -812,7 +812,7 @@ function emitNativeTransportAssertions(
 	);
 	lines.push('  const accepted = alternatives.some((candidate) => {');
 	// `kindIdFromName` only resolves by canonical catalog key, not by
-	// displayName (e.g. '+', ';'). For displayName-typed alternatives
+	// symbolName (e.g. '+', ';'). For symbolName-typed alternatives
 	// (anonymous-token terminals), the candidate.type won't be in the catalog
 	// so kindIdFromName throws. Wrap in a try/catch and fall back to false:
 	// if the alternative can't be resolved to a numeric id, it simply doesn't

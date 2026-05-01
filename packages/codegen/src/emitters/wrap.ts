@@ -30,6 +30,7 @@ import {
 	collectKindEntries,
 	kindIdMemberName,
 	hasCatalogEntry,
+	collectCatalogKinds,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 
@@ -62,9 +63,8 @@ export function emitWrap(config: EmitWrapConfig): string {
 	// Collect KindEnumEntry table for numeric $type stamping when
 	// generatedIdTables is present (Phase A KindID migration). Undefined
 	// for legacy callers — per-kind wrap functions then inherit $type from data.
-	const allKinds = Array.from(nodeMap.nodes.keys());
 	const kindEntries = generatedIdTables
-		? collectKindEntries(allKinds, nodeMap, generatedIdTables)
+		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
 		: undefined;
 
 	const typeImports = collectTypeImports(nodeMap);
