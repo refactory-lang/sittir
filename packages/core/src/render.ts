@@ -44,6 +44,13 @@ interface InternalRenderContext {
 	prefix: string;
 	format?: FormatRecord;
 	ignoreFormat?: boolean;
+	/**
+	 * Resolver lifted from `config.kindNameFromId` for direct access inside
+	 * render-path helpers. Present when the grammar package injected a
+	 * resolver into `RulesConfig`; absent for the legacy regex-substitutor
+	 * path (which never sees numeric `$type` from the current readNode).
+	 */
+	kindNameFromId?: (id: number) => string | undefined;
 }
 
 function buildRenderContext(
@@ -63,7 +70,8 @@ function buildRenderContext(
 		varPattern,
 		prefix,
 		format: options?.format,
-		ignoreFormat: options?.ignoreFormat
+		ignoreFormat: options?.ignoreFormat,
+		kindNameFromId: config.kindNameFromId
 	};
 }
 
@@ -1122,6 +1130,20 @@ function renderNunjucks(
 		);
 	}
 
+	// Phase A/B coexistence: factory/wrap output carries a numeric TSKindId in
+	// `$type`. Resolve to the string kind name before any template file lookup
+	// so the lookup uses "<kind>.jinja" not "<number>.jinja".
+	const kindName =
+		typeof node.$type === 'string'
+			? node.$type
+			: ctx.kindNameFromId?.(node.$type as number);
+	if (kindName === undefined) {
+		throw new Error(
+			`render: cannot resolve numeric $type ${node.$type} to a kind name. ` +
+				`The grammar package's RulesConfig must supply 'kindNameFromId' for Phase A/B coexistence.`
+		);
+	}
+
 	// Canonical-hidden short-circuit (Option Y): when render is called
 	// with a non-canonicalized NodeData (visible `$type` for a hidden
 	// alias-source kind), look up the underscore-prefixed template
@@ -1130,9 +1152,9 @@ function renderNunjucks(
 	// `wrapNode`'s alias remap) so this fallback covers the rarer
 	// case where a parser-output node reaches render before being
 	// wrapped (e.g. tests that bypass the wrap layer).
-	let templateName = `${node.$type}.jinja`;
+	let templateName = `${kindName}.jinja`;
 	if (!templateFileExists(templatesDir, templateName)) {
-		const hiddenTemplateName = `_${node.$type}.jinja`;
+		const hiddenTemplateName = `_${kindName}.jinja`;
 		if (templateFileExists(templatesDir, hiddenTemplateName)) {
 			templateName = hiddenTemplateName;
 		} else {
@@ -1140,7 +1162,7 @@ function renderNunjucks(
 			// the token-shaped-kind path (FR-017 / T027a). Filesystem check
 			// distinguishes "file absent" (→ fallback) from "file present but
 			// malformed" (→ propagate Nunjucks's compile error).
-			const fallback = tokenShapedFallback(node);
+			const fallback = tokenShapedFallback(node, kindName);
 			return withFormat(fallback, node, ctx);
 		}
 	}
@@ -1154,7 +1176,7 @@ function renderNunjucks(
 	} catch (err) {
 		const cause = err instanceof Error ? err.message : String(err);
 		throw new Error(
-			`render: template '${templateName}' (rule '${node.$type}') failed — ${cause}`,
+			`render: template '${templateName}' (rule '${kindName}') failed — ${cause}`,
 			{
 				cause: err
 			}
@@ -1173,12 +1195,17 @@ function renderNunjucks(
  * `SITTIR_DEBUG_TEXT` is not set). A node with named structure but no
  * template is an error — the grammar declared a rule the renderer doesn't
  * know how to render.
+ *
+ * @param node - The node being rendered.
+ * @param kindName - The resolved string kind name (already de-numericised by
+ *   the caller so error messages stay human-readable even when `node.$type`
+ *   is a numeric TSKindId).
  */
-function tokenShapedFallback(node: AnyNodeData): string {
+function tokenShapedFallback(node: AnyNodeData, kindName: string): string {
 	const fallbackText = collectAnonText(node);
 	if (fallbackText !== null) return fallbackText;
 	throw new Error(
-		`No render template for '${node.$type}' (no <kind>.jinja file and node has named fields/children)`
+		`No render template for '${kindName}' (no <kind>.jinja file and node has named fields/children)`
 	);
 }
 

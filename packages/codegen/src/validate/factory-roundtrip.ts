@@ -161,6 +161,13 @@ const FACTORY_MODULE_PATHS: Record<string, string> = {
 	python: '../../../python/src/factories.ts'
 };
 
+/** Relative path from codegen/src/validate to language package types.ts */
+const TYPES_MODULE_PATHS: Record<string, string> = {
+	rust: '../../../rust/src/types.ts',
+	typescript: '../../../typescript/src/types.ts',
+	python: '../../../python/src/types.ts'
+};
+
 /** Relative path from codegen/src/validate to language package factory-map.json5 */
 const FACTORY_MAP_PATHS: Record<string, string> = {
 	rust: '../../../rust/factory-map.json5',
@@ -251,6 +258,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	fieldAliasMap: Record<string, Record<string, string>>;
 	factoryFields: Record<string, readonly string[]>;
 	polymorphVariants: PolymorphVariantMap;
+	kindNameFromId: ((id: number) => string | undefined) | undefined;
 	importFailure: { message: string } | null;
 }> {
 	const factoryModulePath = FACTORY_MODULE_PATHS[grammar];
@@ -259,6 +267,8 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
 	let factoryFields: Record<string, readonly string[]> = {};
 	let polymorphVariants: PolymorphVariantMap = {};
+	let kindNameFromId: ((id: number) => string | undefined) | undefined =
+		undefined;
 	if (!factoryModulePath) {
 		return {
 			factoryMap,
@@ -266,6 +276,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			fieldAliasMap,
 			factoryFields,
 			polymorphVariants,
+			kindNameFromId,
 			importFailure: null
 		};
 	}
@@ -281,12 +292,40 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 		fieldAliasMap = mapData.fieldAliasMap;
 		factoryFields = mapData.factoryFields;
 		polymorphVariants = mapData.polymorphVariants;
+		// Load kindNameFromId from the grammar's types module for Phase A/B
+		// coexistence: factory output carries numeric TSKindId in $type,
+		// and the Nunjucks render path needs a string kind name for template
+		// file lookup.
+		const typesModulePath = TYPES_MODULE_PATHS[grammar];
+		if (typesModulePath) {
+			try {
+				const typesModule = await import(
+					new URL(typesModulePath, import.meta.url).pathname
+				);
+				const rawFn = typesModule.kindNameFromId as
+					| ((id: number) => string)
+					| undefined;
+				if (rawFn) {
+					kindNameFromId = (id: number) => {
+						try {
+							return rawFn(id);
+						} catch {
+							return undefined;
+						}
+					};
+				}
+			} catch {
+				// types module unavailable — kindNameFromId stays undefined.
+				// Renders will fail with a clear error if numeric $type is encountered.
+			}
+		}
 		return {
 			factoryMap,
 			factoryShapes,
 			fieldAliasMap,
 			factoryFields,
 			polymorphVariants,
+			kindNameFromId,
 			importFailure: null
 		};
 	} catch (e) {
@@ -298,6 +337,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			fieldAliasMap,
 			factoryFields,
 			polymorphVariants,
+			kindNameFromId,
 			importFailure: { message }
 		};
 	}
@@ -607,7 +647,6 @@ export async function validateFactoryRoundTrip(
 
 	const rawEntries = loadRawEntries(grammar);
 	const ruleKinds = deriveRuleKinds(templatesPath);
-	const { render } = createRenderer(templatesPath);
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
 	const {
@@ -616,8 +655,14 @@ export async function validateFactoryRoundTrip(
 		fieldAliasMap,
 		factoryFields,
 		polymorphVariants,
+		kindNameFromId,
 		importFailure
 	} = await loadFactoryModuleForGrammar(grammar);
+
+	// Phase A/B coexistence: factory output carries numeric TSKindId in $type.
+	// Inject the resolver so the Nunjucks render path can map back to the string
+	// kind name for template file lookup.
+	const { render } = createRenderer(templatesPath, { kindNameFromId });
 
 	const readTreeNodeFn = await loadWrapperBasedAliasResolver(grammar);
 

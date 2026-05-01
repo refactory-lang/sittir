@@ -13,6 +13,22 @@ import { createRendererFromConfig } from './render.ts';
 import type { BoundRenderer } from './render.ts';
 
 /**
+ * Options accepted by the `createRenderer(templatesDir, options)` overload.
+ */
+export interface CreateRendererOptions {
+	/**
+	 * Resolver for numeric `$type` values produced by Phase A/B factory/wrap
+	 * output. When `node.$type` is a number, the Nunjucks render engine calls
+	 * this to recover the string kind name for template file lookup.
+	 *
+	 * Forward the grammar package's generated `kindNameFromId` function here,
+	 * wrapped in a try/catch that returns `undefined` for unknown ids (since
+	 * the generated function throws on unknowns).
+	 */
+	kindNameFromId?: (id: number) => string | undefined;
+}
+
+/**
  * Create a renderer bound to a specific templates source.
  *
  * - `templatesDir: string` — directory containing per-rule `.jinja`
@@ -20,11 +36,19 @@ import type { BoundRenderer } from './render.ts';
  * - `config: RulesConfig` — pre-built rules map. Uses the legacy
  *   regex-substitutor render path. Intended for in-memory unit
  *   tests; production grammars ship `.jinja` files on disk.
+ *
+ * The optional `options` argument (directory-path overload only) allows
+ * injecting a `kindNameFromId` resolver for Phase A/B coexistence where
+ * factory/wrap output carries numeric TSKindId values in `$type`.
  */
-export function createRenderer(templatesDir: string): BoundRenderer;
+export function createRenderer(
+	templatesDir: string,
+	options?: CreateRendererOptions
+): BoundRenderer;
 export function createRenderer(config: RulesConfig): BoundRenderer;
 export function createRenderer(
-	pathOrConfig: string | RulesConfig
+	pathOrConfig: string | RulesConfig,
+	options?: CreateRendererOptions
 ): BoundRenderer {
 	if (typeof pathOrConfig !== 'string') {
 		return createRendererFromConfig(pathOrConfig);
@@ -40,7 +64,8 @@ export function createRenderer(
 		extensions: [],
 		expandoChar: null,
 		metadata: { grammarSha: '' },
-		rules: {}
+		rules: {},
+		kindNameFromId: options?.kindNameFromId
 	};
 	return createRendererFromConfig(emptyConfig, { templatesDir: pathOrConfig });
 }

@@ -182,6 +182,21 @@ export interface RulesConfig {
 		treeSitterVersion?: string;
 	};
 	rules: Record<string, TemplateRule>;
+	/**
+	 * Optional resolver for numeric `$type` values produced by Phase A/B
+	 * factory/wrap output. When `node.$type` is a number, the Nunjucks render
+	 * engine calls this resolver to recover the string kind name for template
+	 * file lookup.
+	 *
+	 * Required during the Phase A/B coexistence period (factory/wrap output
+	 * carries numeric TSKindId while readNode still emits string kind names).
+	 * Removable in Phase D when all producers flip to numeric and the render
+	 * engine is updated to key templates by numeric id.
+	 *
+	 * Returning `undefined` causes the engine to throw a descriptive error
+	 * identifying the unknown numeric id.
+	 */
+	kindNameFromId?: (id: number) => string | undefined;
 }
 
 // ---------------------------------------------------------------------------

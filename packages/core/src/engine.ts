@@ -131,6 +131,16 @@ export interface JsEngineOptions {
 	 * When omitted, the engine will have no reader surface (renderer-only).
 	 */
 	parse?: (source: string) => TreeHandle;
+
+	/**
+	 * Resolver for numeric `$type` values produced by Phase A/B factory/wrap output.
+	 * Forwarded to `RulesConfig.kindNameFromId` so the Nunjucks render path can map
+	 * a numeric TSKindId back to a string kind name for template file lookup.
+	 *
+	 * Required when the engine will render factory-built NodeData (numeric `$type`).
+	 * Omit for read-only / WASM-backed paths where `readNode` still emits string types.
+	 */
+	kindNameFromId?: (id: number) => string | undefined;
 }
 
 /**
@@ -145,8 +155,8 @@ export interface JsEngineOptions {
  * @returns A JS engine implementing `SittirEngineLike`.
  */
 export function createJsEngine(options: JsEngineOptions): SittirEngineLike {
-	const { templatesPath, format: engineFormat, parse } = options;
-	const renderer = createRenderer(templatesPath);
+	const { templatesPath, format: engineFormat, parse, kindNameFromId } = options;
+	const renderer = createRenderer(templatesPath, { kindNameFromId });
 
 	function renderNode(
 		node: AnyNodeData,
