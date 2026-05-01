@@ -8,6 +8,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { is, isTree, isNode, assert } from '../src/index.ts';
+import { TSKindId } from '../src/types.ts';
 import type { FunctionItem } from '../src/index.ts';
 
 type Equals<A, B> =
@@ -108,5 +109,104 @@ describe('assert throw behavior', () => {
 		expect(() => assert.kind({ $type: 'block' }, 'function_item')).toThrow(
 			TypeError
 		);
+	});
+});
+
+/**
+ * Phase A coexistence — guards must accept BOTH numeric `$type` (factory /
+ * wrap output) AND string `$type` (readNode output) until Phase D removes
+ * the string arm. These tests are the regression check for the dual-form
+ * `_g(k, id)` and the `is.kind()` map lookup.
+ */
+describe('Phase A coexistence: numeric and string $type', () => {
+	it('per-kind guard accepts numeric $type from factory output', () => {
+		const node = {
+			$type: TSKindId.FunctionItem,
+			$source: 'factory',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.functionItem(node)).toBe(true);
+	});
+
+	it('per-kind guard accepts string $type from readNode output', () => {
+		const node = {
+			$type: 'function_item',
+			$source: 'ts',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.functionItem(node)).toBe(true);
+	});
+
+	it('per-kind guard rejects mismatched numeric $type', () => {
+		const node = {
+			$type: TSKindId.Block,
+			$source: 'factory',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.functionItem(node)).toBe(false);
+	});
+
+	it('is.kind() accepts numeric $type from factory output', () => {
+		const node = {
+			$type: TSKindId.FunctionItem,
+			$source: 'factory',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.kind(node, 'function_item')).toBe(true);
+	});
+
+	it('is.kind() accepts string $type from readNode output', () => {
+		const node = {
+			$type: 'function_item',
+			$source: 'ts',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.kind(node, 'function_item')).toBe(true);
+	});
+
+	it('is.kind() rejects mismatched numeric $type', () => {
+		const node = {
+			$type: TSKindId.Block,
+			$source: 'factory',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.kind(node, 'function_item')).toBe(false);
+	});
+
+	it('supertype guard accepts numeric $type member from factory', () => {
+		// `expression` is a supertype; `binary_expression` is a member kind.
+		const node = {
+			$type: TSKindId.BinaryExpression,
+			$source: 'factory',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.expression(node)).toBe(true);
+	});
+
+	it('supertype guard accepts string $type member from readNode', () => {
+		const node = {
+			$type: 'binary_expression',
+			$source: 'ts',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.expression(node)).toBe(true);
+	});
+
+	it('assert.functionItem passes on numeric $type from factory', () => {
+		const node = {
+			$type: TSKindId.FunctionItem,
+			$source: 'factory',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(() => assert.functionItem(node)).not.toThrow();
 	});
 });

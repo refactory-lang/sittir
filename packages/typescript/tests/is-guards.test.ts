@@ -5,6 +5,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { is, isNode, isTree, assert } from '../src/index.ts';
+import { TSKindId } from '../src/types.ts';
 
 describe('typescript is / isTree / isNode composition', () => {
 	it('is.classDeclaration narrows on matching kind', () => {
@@ -54,5 +55,92 @@ describe('typescript is / isTree / isNode composition', () => {
 		expect(() =>
 			assert.functionDeclaration({ $type: 'class_declaration' })
 		).toThrow(TypeError);
+	});
+});
+
+/**
+ * Phase A coexistence — guards must accept BOTH numeric `$type` (factory /
+ * wrap output) AND string `$type` (readNode output) until Phase D removes
+ * the string arm.
+ */
+describe('typescript Phase A coexistence: numeric and string $type', () => {
+	it('per-kind guard accepts numeric $type from factory output', () => {
+		const node = {
+			$type: TSKindId.ClassDeclaration,
+			$source: 'factory',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.classDeclaration(node)).toBe(true);
+	});
+
+	it('per-kind guard accepts string $type from readNode output', () => {
+		const node = {
+			$type: 'class_declaration',
+			$source: 'ts',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.classDeclaration(node)).toBe(true);
+	});
+
+	it('is.kind() accepts numeric $type from factory output', () => {
+		const node = {
+			$type: TSKindId.ClassDeclaration,
+			$source: 'factory',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.kind(node, 'class_declaration')).toBe(true);
+	});
+
+	it('is.kind() accepts string $type from readNode output', () => {
+		const node = {
+			$type: 'class_declaration',
+			$source: 'ts',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.kind(node, 'class_declaration')).toBe(true);
+	});
+
+	it('is.kind() rejects mismatched numeric $type', () => {
+		const node = {
+			$type: TSKindId.FunctionDeclaration,
+			$source: 'factory',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.kind(node, 'class_declaration')).toBe(false);
+	});
+
+	it('supertype guard accepts numeric $type member from factory', () => {
+		const node = {
+			$type: TSKindId.BinaryExpression,
+			$source: 'factory',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.expression(node)).toBe(true);
+	});
+
+	it('supertype guard accepts string $type member from readNode', () => {
+		const node = {
+			$type: 'binary_expression',
+			$source: 'ts',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.expression(node)).toBe(true);
+	});
+
+	it('assert.classDeclaration passes on numeric $type from factory', () => {
+		const node = {
+			$type: TSKindId.ClassDeclaration,
+			$source: 'factory',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(() => assert.classDeclaration(node)).not.toThrow();
 	});
 });

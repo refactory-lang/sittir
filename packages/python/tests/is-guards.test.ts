@@ -5,6 +5,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { is, isNode, isTree, assert } from '../src/index.ts';
+import { TSKindId } from '../src/types.ts';
 
 describe('python is / isTree / isNode composition', () => {
 	it('is.functionDefinition narrows on matching kind', () => {
@@ -50,5 +51,93 @@ describe('python is / isTree / isNode composition', () => {
 		expect(() => assert.classDefinition({ $type: 'if_statement' })).toThrow(
 			TypeError
 		);
+	});
+});
+
+/**
+ * Phase A coexistence — guards must accept BOTH numeric `$type` (factory /
+ * wrap output) AND string `$type` (readNode output) until Phase D removes
+ * the string arm.
+ */
+describe('python Phase A coexistence: numeric and string $type', () => {
+	it('per-kind guard accepts numeric $type from factory output', () => {
+		const node = {
+			$type: TSKindId.FunctionDefinition,
+			$source: 'factory',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.functionDefinition(node)).toBe(true);
+	});
+
+	it('per-kind guard accepts string $type from readNode output', () => {
+		const node = {
+			$type: 'function_definition',
+			$source: 'ts',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.functionDefinition(node)).toBe(true);
+	});
+
+	it('is.kind() accepts numeric $type from factory output', () => {
+		const node = {
+			$type: TSKindId.FunctionDefinition,
+			$source: 'factory',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.kind(node, 'function_definition')).toBe(true);
+	});
+
+	it('is.kind() accepts string $type from readNode output', () => {
+		const node = {
+			$type: 'function_definition',
+			$source: 'ts',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.kind(node, 'function_definition')).toBe(true);
+	});
+
+	it('is.kind() rejects mismatched numeric $type', () => {
+		const node = {
+			$type: TSKindId.ClassDefinition,
+			$source: 'factory',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.kind(node, 'function_definition')).toBe(false);
+	});
+
+	it('supertype guard accepts numeric $type member from factory', () => {
+		// `compoundStatement` is a supertype; `function_definition` is a member.
+		const node = {
+			$type: TSKindId.FunctionDefinition,
+			$source: 'factory',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.compoundStatement(node)).toBe(true);
+	});
+
+	it('supertype guard accepts string $type member from readNode', () => {
+		const node = {
+			$type: 'function_definition',
+			$source: 'ts',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(is.compoundStatement(node)).toBe(true);
+	});
+
+	it('assert.functionDefinition passes on numeric $type from factory', () => {
+		const node = {
+			$type: TSKindId.FunctionDefinition,
+			$source: 'factory',
+			$named: true,
+			$fields: {}
+		} as unknown as { readonly $type: string | number };
+		expect(() => assert.functionDefinition(node)).not.toThrow();
 	});
 });

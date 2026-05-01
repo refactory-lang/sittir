@@ -302,17 +302,17 @@ const _supertype_compoundStatement_ids = new Set<number>([131, 137, 138, 139, 14
 const _supertype_dictPatternKv = new Set<string>(["_key_value_pattern", "splat_pattern"]);
 const _supertype_dictPatternKv_ids = new Set<number>([170, 172]);
 const _supertype_expressionWithinForInClause = new Set<string>(["expression", "lambda_within_for_in_clause"]);
-const _supertype_expressionWithinForInClause_ids = new Set<number>([187, 197]);
+const _supertype_expressionWithinForInClause_ids = new Set<number>([197]);
 const _supertype_expressions = new Set<string>(["expression", "expression_list"]);
-const _supertype_expressions_ids = new Set<number>([187, 161]);
+const _supertype_expressions_ids = new Set<number>([161]);
 const _supertype_fExpression = new Set<string>(["expression", "expression_list", "pattern_list", "yield"]);
-const _supertype_fExpression_ids = new Set<number>([187, 161, 200, 202]);
+const _supertype_fExpression_ids = new Set<number>([161, 200, 202]);
 const _supertype_leftHandSide = new Set<string>(["pattern", "pattern_list"]);
-const _supertype_leftHandSide_ids = new Set<number>([178, 200]);
+const _supertype_leftHandSide_ids = new Set<number>([200]);
 const _supertype_namedExpressionLhs = new Set<string>(["identifier", "keyword_identifier"]);
 const _supertype_namedExpressionLhs_ids = new Set<number>([1]);
 const _supertype_rightHandSide = new Set<string>(["expression", "expression_list", "assignment", "augmented_assignment", "pattern_list", "yield"]);
-const _supertype_rightHandSide_ids = new Set<number>([187, 161, 198, 199, 200, 202]);
+const _supertype_rightHandSide_ids = new Set<number>([161, 198, 199, 200, 202]);
 const _supertype_simplePattern = new Set<string>(["class_pattern", "splat_pattern", "union_pattern", "_list_pattern", "_tuple_pattern", "dict_pattern", "string", "concatenated_string", "true", "false", "none", "_simple_pattern_negative", "complex_pattern", "dotted_name"]);
 const _supertype_simplePattern_ids = new Set<number>([173, 172, 166, 167, 168, 169, 231, 230, 96, 97, 98, 248, 174, 162]);
 const _supertype_simpleStatement = new Set<string>(["future_import_statement", "import_statement", "import_from_statement", "print_statement", "assert_statement", "expression_statement", "return_statement", "delete_statement", "raise_statement", "pass_statement", "break_statement", "continue_statement", "global_statement", "nonlocal_statement", "exec_statement", "type_alias_statement"]);
@@ -320,15 +320,193 @@ const _supertype_simpleStatement_ids = new Set<number>([114, 111, 115, 119, 121,
 const _supertype_statement = new Set<string>(["_simple_statements", "if_statement", "for_statement", "while_statement", "try_statement", "with_statement", "function_definition", "class_definition", "decorated_definition", "match_statement"]);
 const _supertype_statement_ids = new Set<number>([110, 131, 137, 138, 139, 142, 145, 154, 158, 134]);
 const _supertype_expression = new Set<string>(["comparison_operator", "not_operator", "boolean_operator", "lambda", "primary_expression", "conditional_expression", "named_expression", "as_pattern"]);
-const _supertype_expression_ids = new Set<number>([195, 189, 190, 196, 188, 229, 123, 185]);
+const _supertype_expression_ids = new Set<number>([195, 189, 190, 196, 229, 123, 185]);
 const _supertype_keywordIdentifier = new Set<string>(["identifier"]);
 const _supertype_keywordIdentifier_ids = new Set<number>([1]);
 const _supertype_parameter = new Set<string>(["identifier", "typed_parameter", "default_parameter", "typed_default_parameter", "list_splat_pattern", "tuple_pattern", "keyword_separator", "positional_separator", "dictionary_splat_pattern"]);
-const _supertype_parameter_ids = new Set<number>([1, 207, 181, 182, 183, 179, 239, 238, 184]);
+const _supertype_parameter_ids = new Set<number>([1, 207, 181, 182, 183, 179, 184]);
 const _supertype_pattern = new Set<string>(["identifier", "keyword_identifier", "subscript", "attribute", "list_splat_pattern", "tuple_pattern", "list_pattern"]);
 const _supertype_pattern_ids = new Set<number>([1, 204, 203, 183, 179, 180]);
 const _supertype_primaryExpression = new Set<string>(["await", "binary_operator", "identifier", "keyword_identifier", "string", "concatenated_string", "integer", "float", "true", "false", "none", "unary_operator", "attribute", "subscript", "call", "list", "list_comprehension", "dictionary", "dictionary_comprehension", "set", "set_comprehension", "tuple", "parenthesized_expression", "generator_expression", "ellipsis", "list_splat_pattern"]);
-const _supertype_primaryExpression_ids = new Set<number>([237, 191, 1, 231, 230, 93, 94, 96, 97, 98, 192, 203, 204, 206, 215, 220, 218, 221, 216, 222, 217, 225, 223, 87, 183]);
+const _supertype_primaryExpression_ids = new Set<number>([237, 191, 1, 231, 230, 93, 94, 96, 97, 98, 192, 203, 204, 206, 215, 220, 218, 221, 216, 222, 217, 225, 223, 183]);
+
+const _kindIdByKind = new Map<string, number>([
+    ["identifier", TSKindId.Identifier],
+    ["import", TSKindId.Import],
+    ["from", TSKindId.From],
+    ["__future__", TSKindId.FutureU],
+    ["as", TSKindId.As],
+    ["print", TSKindId.Print],
+    ["assert", TSKindId.Assert],
+    ["return", TSKindId.Return],
+    ["del", TSKindId.Del],
+    ["raise", TSKindId.Raise],
+    ["pass", TSKindId.Pass],
+    ["break", TSKindId.Break],
+    ["continue", TSKindId.Continue],
+    ["if", TSKindId.If],
+    ["elif", TSKindId.Elif],
+    ["else", TSKindId.Else],
+    ["match", TSKindId.Match],
+    ["case", TSKindId.Case],
+    ["async", TSKindId.Async],
+    ["for", TSKindId.For],
+    ["in", TSKindId.In],
+    ["while", TSKindId.While],
+    ["try", TSKindId.Try],
+    ["except", TSKindId.Except],
+    ["finally", TSKindId.Finally],
+    ["with", TSKindId.With],
+    ["def", TSKindId.Def],
+    ["global", TSKindId.Global],
+    ["nonlocal", TSKindId.Nonlocal],
+    ["exec", TSKindId.Exec],
+    ["class", TSKindId.Class],
+    ["_", TSKindId.Anonymous],
+    ["not", TSKindId.Not],
+    ["and", TSKindId.And],
+    ["or", TSKindId.Or],
+    ["escape_sequence", TSKindId.EscapeSequence],
+    ["type_conversion", TSKindId.TypeConversion],
+    ["integer", TSKindId.Integer],
+    ["float", TSKindId.Float],
+    ["true", TSKindId.True],
+    ["false", TSKindId.False],
+    ["none", TSKindId.None],
+    ["comment", TSKindId.Comment],
+    ["line_continuation", TSKindId.LineContinuation],
+    ["_newline", TSKindId.Newline],
+    ["_indent", TSKindId.Indent],
+    ["_dedent", TSKindId.Dedent],
+    ["string_start", TSKindId.StringStart],
+    ["_string_content", TSKindId._StringContent],
+    ["escape_interpolation", TSKindId.EscapeInterpolation],
+    ["string_end", TSKindId.StringEnd],
+    ["module", TSKindId.Module],
+    ["_simple_statements", TSKindId.SimpleStatements],
+    ["import_statement", TSKindId.ImportStatement],
+    ["import_prefix", TSKindId.ImportPrefix],
+    ["relative_import", TSKindId.RelativeImport],
+    ["future_import_statement", TSKindId.FutureImportStatement],
+    ["import_from_statement", TSKindId.ImportFromStatement],
+    ["_import_list", TSKindId.ImportList],
+    ["aliased_import", TSKindId.AliasedImport],
+    ["print_statement", TSKindId.PrintStatement],
+    ["chevron", TSKindId.Chevron],
+    ["assert_statement", TSKindId.AssertStatement],
+    ["expression_statement", TSKindId.ExpressionStatement],
+    ["named_expression", TSKindId.NamedExpression],
+    ["return_statement", TSKindId.ReturnStatement],
+    ["delete_statement", TSKindId.DeleteStatement],
+    ["raise_statement", TSKindId.RaiseStatement],
+    ["pass_statement", TSKindId.PassStatement],
+    ["break_statement", TSKindId.BreakStatement],
+    ["continue_statement", TSKindId.ContinueStatement],
+    ["if_statement", TSKindId.IfStatement],
+    ["elif_clause", TSKindId.ElifClause],
+    ["else_clause", TSKindId.ElseClause],
+    ["match_statement", TSKindId.MatchStatement],
+    ["_match_block", TSKindId.MatchBlock],
+    ["case_clause", TSKindId.CaseClause],
+    ["for_statement", TSKindId.ForStatement],
+    ["while_statement", TSKindId.WhileStatement],
+    ["try_statement", TSKindId.TryStatement],
+    ["except_clause", TSKindId.ExceptClause],
+    ["finally_clause", TSKindId.FinallyClause],
+    ["with_statement", TSKindId.WithStatement],
+    ["with_clause", TSKindId.WithClause],
+    ["with_item", TSKindId.WithItem],
+    ["function_definition", TSKindId.FunctionDefinition],
+    ["parameters", TSKindId.Parameters],
+    ["lambda_parameters", TSKindId.LambdaParameters],
+    ["list_splat", TSKindId.ListSplat],
+    ["dictionary_splat", TSKindId.DictionarySplat],
+    ["global_statement", TSKindId.GlobalStatement],
+    ["nonlocal_statement", TSKindId.NonlocalStatement],
+    ["exec_statement", TSKindId.ExecStatement],
+    ["type_alias_statement", TSKindId.TypeAliasStatement],
+    ["class_definition", TSKindId.ClassDefinition],
+    ["type_parameter", TSKindId.TypeParameter],
+    ["parenthesized_list_splat", TSKindId.ParenthesizedListSplat],
+    ["argument_list", TSKindId.ArgumentList],
+    ["decorated_definition", TSKindId.DecoratedDefinition],
+    ["decorator", TSKindId.Decorator],
+    ["block", TSKindId.Block],
+    ["expression_list", TSKindId.ExpressionList],
+    ["dotted_name", TSKindId.DottedName],
+    ["case_pattern", TSKindId.CasePattern],
+    ["_as_pattern", TSKindId._AsPattern],
+    ["union_pattern", TSKindId.UnionPattern],
+    ["_list_pattern", TSKindId._ListPattern],
+    ["_tuple_pattern", TSKindId._TuplePattern],
+    ["dict_pattern", TSKindId.DictPattern],
+    ["_key_value_pattern", TSKindId.KeyValuePattern],
+    ["keyword_pattern", TSKindId.KeywordPattern],
+    ["splat_pattern", TSKindId.SplatPattern],
+    ["class_pattern", TSKindId.ClassPattern],
+    ["complex_pattern", TSKindId.ComplexPattern],
+    ["tuple_pattern", TSKindId.TuplePattern],
+    ["list_pattern", TSKindId.ListPattern],
+    ["default_parameter", TSKindId.DefaultParameter],
+    ["typed_default_parameter", TSKindId.TypedDefaultParameter],
+    ["list_splat_pattern", TSKindId.ListSplatPattern],
+    ["dictionary_splat_pattern", TSKindId.DictionarySplatPattern],
+    ["as_pattern", TSKindId.AsPattern],
+    ["not_operator", TSKindId.NotOperator],
+    ["boolean_operator", TSKindId.BooleanOperator],
+    ["binary_operator", TSKindId.BinaryOperator],
+    ["unary_operator", TSKindId.UnaryOperator],
+    ["_not_in", TSKindId.NotIn],
+    ["_is_not", TSKindId.IsNot],
+    ["comparison_operator", TSKindId.ComparisonOperator],
+    ["lambda", TSKindId.Lambda],
+    ["lambda_within_for_in_clause", TSKindId.LambdaWithinForInClause],
+    ["assignment", TSKindId.Assignment],
+    ["augmented_assignment", TSKindId.AugmentedAssignment],
+    ["pattern_list", TSKindId.PatternList],
+    ["yield", TSKindId.Yield],
+    ["attribute", TSKindId.Attribute],
+    ["subscript", TSKindId.Subscript],
+    ["slice", TSKindId.Slice],
+    ["call", TSKindId.Call],
+    ["typed_parameter", TSKindId.TypedParameter],
+    ["type", TSKindId.Type],
+    ["splat_type", TSKindId.SplatType],
+    ["generic_type", TSKindId.GenericType],
+    ["union_type", TSKindId.UnionType],
+    ["constrained_type", TSKindId.ConstrainedType],
+    ["member_type", TSKindId.MemberType],
+    ["keyword_argument", TSKindId.KeywordArgument],
+    ["list", TSKindId.List],
+    ["set", TSKindId.Set],
+    ["tuple", TSKindId.Tuple],
+    ["dictionary", TSKindId.Dictionary],
+    ["pair", TSKindId.Pair],
+    ["list_comprehension", TSKindId.ListComprehension],
+    ["dictionary_comprehension", TSKindId.DictionaryComprehension],
+    ["set_comprehension", TSKindId.SetComprehension],
+    ["generator_expression", TSKindId.GeneratorExpression],
+    ["_comprehension_clauses", TSKindId.ComprehensionClauses],
+    ["parenthesized_expression", TSKindId.ParenthesizedExpression],
+    ["for_in_clause", TSKindId.ForInClause],
+    ["if_clause", TSKindId.IfClause],
+    ["conditional_expression", TSKindId.ConditionalExpression],
+    ["concatenated_string", TSKindId.ConcatenatedString],
+    ["string", TSKindId.String],
+    ["string_content", TSKindId.StringContent],
+    ["interpolation", TSKindId.Interpolation],
+    ["format_specifier", TSKindId.FormatSpecifier],
+    ["await", TSKindId.Await],
+    ["_assignment_eq", TSKindId.AssignmentEq],
+    ["_assignment_type", TSKindId.AssignmentType],
+    ["_assignment_typed", TSKindId.AssignmentTyped],
+    ["_with_clause_paren", TSKindId._WithClauseParen],
+    ["_match_block_block", TSKindId.MatchBlockBlock],
+    ["_simple_pattern_negative", TSKindId.SimplePatternNegative],
+    ["_kw_async_marker", TSKindId.KwAsyncMarker],
+    ["_as_pattern_target", TSKindId.AsPatternTarget],
+    ["_format_expression", TSKindId.FormatExpression],
+]);
 
 export const is = {
     AsPattern: _g("_as_pattern", TSKindId._AsPattern),
@@ -442,7 +620,11 @@ export const is = {
     withItem: _g("with_item", TSKindId.WithItem),
     withStatement: _g("with_statement", TSKindId.WithStatement),
     yield_: _g("yield", TSKindId.Yield),
-    kind: (v: { readonly $type: string | number }, k: string): boolean => v.$type === k,
+    kind: (v: { readonly $type: string | number }, k: string): boolean => {
+        if (v.$type === k) return true;
+        const id = _kindIdByKind.get(k);
+        return id !== undefined && v.$type === id;
+    },
     compoundStatement: _sg(_supertype_compoundStatement, _supertype_compoundStatement_ids),
     dictPatternKv: _sg(_supertype_dictPatternKv, _supertype_dictPatternKv_ids),
     expressionWithinForInClause: _sg(_supertype_expressionWithinForInClause, _supertype_expressionWithinForInClause_ids),

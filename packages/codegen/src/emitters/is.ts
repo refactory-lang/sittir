@@ -109,7 +109,30 @@ export function emitIs(config: EmitIsConfig): string {
 	// Collect KindEnumEntry table for numeric $type coexistence when
 	// generatedIdTables is present (Phase A KindID migration). Undefined
 	// for legacy callers / unit tests — those fall back to string-only guards.
-	const allKinds = Array.from(nodeMap.nodes.keys());
+	//
+	// IMPORTANT: this list MUST match types.ts's allKinds (structural +
+	// leaf kinds). Including supertypes / unfiltered nodeMap.nodes here
+	// produces extra entries that reference TSKindId members which the
+	// types.ts emitter never wrote to the integer enum, breaking the
+	// type-check on the generated _kindIdByKind map.
+	const allKinds: string[] = [];
+	for (const [kind, node] of nodeMap.nodes) {
+		switch (node.modelType) {
+			case 'branch':
+			case 'container':
+			case 'polymorph':
+			case 'leaf':
+			case 'keyword':
+			case 'enum':
+				allKinds.push(kind);
+				break;
+			case 'group':
+				if (!nodeMap.polymorphFormKinds.has(kind)) allKinds.push(kind);
+				break;
+			// supertypes are intentionally skipped — they have no parser-
+			// symbol and never appear in the TSKindId integer enum.
+		}
+	}
 	const kindEntries: readonly KindEnumEntry[] | undefined = generatedIdTables
 		? collectKindEntries(allKinds, nodeMap, generatedIdTables)
 		: undefined;
@@ -350,6 +373,25 @@ export function emitIs(config: EmitIsConfig): string {
 	}
 	if (supertypes.length > 0) lines.push('');
 
+	// Phase A coexistence: kind-name → numeric TSKindId map for the generic
+	// `is.kind(v, k)` guard. When `v.$type` is numeric (factory/wrap output)
+	// and `k` is a string kind-name, we need to translate `k` to its numeric
+	// form before comparing. Map drops to undefined for kinds without a parser
+	// symbol; the guard returns false in that case (TSGrammar-only kinds can
+	// never match a numeric runtime $type anyway).
+	if (kindEntries && kindEntries.length > 0) {
+		const entries = kindEntries
+			.map(
+				(e) =>
+					`    [${JSON.stringify(e.kind)}, TSKindId.${e.member}]`
+			)
+			.join(',\n');
+		lines.push('const _kindIdByKind = new Map<string, number>([');
+		lines.push(entries + (entries.length > 0 ? ',' : ''));
+		lines.push(']);');
+		lines.push('');
+	}
+
 	// The is const — per-kind, kind(), supertype methods.
 	lines.push('export const is = {');
 	for (const s of structuralKinds) {
@@ -361,10 +403,24 @@ export function emitIs(config: EmitIsConfig): string {
 			lines.push(`    ${s.guardKey}: _g(${JSON.stringify(s.kind)}),`);
 		}
 	}
-	// kind() compares string only — NamespaceMap keys are always strings.
-	lines.push(
-		`    kind: (v: { readonly $type: string | number }, k: string): boolean => v.$type === k,`
-	);
+	if (kindEntries) {
+		// Phase A coexistence: kind() must accept numeric $type. Translate
+		// the string kind-name `k` to its numeric TSKindId via the map and
+		// compare both. Falls through to `false` when `k` is not a known
+		// kind (TSGrammar-only or genuinely unknown).
+		lines.push(
+			`    kind: (v: { readonly $type: string | number }, k: string): boolean => {`
+		);
+		lines.push(`        if (v.$type === k) return true;`);
+		lines.push(`        const id = _kindIdByKind.get(k);`);
+		lines.push(`        return id !== undefined && v.$type === id;`);
+		lines.push(`    },`);
+	} else {
+		// Legacy / unit-test callers without generatedIdTables: string-only.
+		lines.push(
+			`    kind: (v: { readonly $type: string | number }, k: string): boolean => v.$type === k,`
+		);
+	}
 	for (const s of supertypes) {
 		if (kindEntries && s.memberIds.length > 0) {
 			lines.push(
