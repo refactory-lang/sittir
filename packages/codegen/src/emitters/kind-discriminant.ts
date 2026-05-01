@@ -28,37 +28,76 @@ export interface KindEnumEntry {
 	readonly kind: string;
 	readonly member: string;
 	readonly id: number;
+	/**
+	 * Display name from `ts_symbol_names[]`, when distinct from `kind`.
+	 * Anonymous tokens (`anon_sym_PLUS`) carry the literal text (`"+"`)
+	 * here while `kind` is the parser symbol name (`"PLUS"`). Used to
+	 * emit additional `kindIdFromName` switch arms so JS callers passing
+	 * the literal text can also resolve to the correct id.
+	 */
+	readonly displayName?: string;
 }
 
 /**
  * Map a kind name to its `TSKindId.X` member name. Prefers the
  * AssembledNode's `typeName` when available (so `_function_item`
  * becomes `FunctionItem`), falls back to PascalCase of the raw kind.
+ *
+ * For catalog kinds NOT in `nodeMap.nodes` (children-only named kinds
+ * like `empty_statement`, anonymous tokens like `PLUS`), the PascalCase
+ * fallback applied to the catalog `parserName` produces a valid TS
+ * identifier — `EmptyStatement`, `PLUS` (already-uppercase
+ * passes-through). This is exactly what we want.
  */
 export function kindIdMemberName(nodeMap: NodeMap, kind: string): string {
 	return nodeMap.nodes.get(kind)?.typeName ?? toPascal(kind);
 }
 
 /**
+ * Return the canonical superset of parser-symbol-bearing kinds —
+ * iterates `generatedIdTables.kindIds` directly so the catalog includes
+ * (a) named kinds in `nodeMap.nodes`, (b) named kinds that appear only
+ * as transport children (`empty_statement`, `never_type`), and (c)
+ * anonymous tokens (`PLUS`, `EQ_EQ`, ...). This is the DRY source for
+ * `TSKindId` / `kindIdFromName` / `kind_ids.rs` / `AnyTransport`
+ * dispatch — they MUST share the same kind universe.
+ */
+export function collectCatalogKinds(
+	generatedIdTables: GeneratedIdTables
+): readonly string[] {
+	return [...toIdMap(generatedIdTables.kindIds).keys()];
+}
+
+/**
  * Collect catalog entries that should appear in `TSKindId`. Skips
  * kinds whose parser symbol is absent (`TSGrammar`-only-without-
  * `TSRuntime` per the design).
+ *
+ * Pass `collectCatalogKinds(generatedIdTables)` for the runtime-
+ * dispatch surfaces (TSKindId, kindIdFromName, AnyTransport,
+ * kind_ids.rs); pass `collectAllKinds(nodeMap)` only for emitter
+ * surfaces that intentionally restrict to user-facing rule names
+ * (`is.kind()` guards — see `is.ts`).
  */
 export function collectKindEntries(
 	allKinds: readonly string[],
 	nodeMap: NodeMap,
 	generatedIdTables: GeneratedIdTables
 ): KindEnumEntry[] {
-	const kindIds = toIdMap(generatedIdTables.kindIds);
+	const fullCatalog = toCatalogMap(generatedIdTables.kindIds);
 	const entries: KindEnumEntry[] = [];
 	const seenMembers = new Set<string>();
 	for (const kind of allKinds) {
-		const id = kindIds.get(kind);
-		if (id === undefined) continue;
+		const row = fullCatalog.get(kind);
+		if (row === undefined || row.id === undefined) continue;
 		const member = kindIdMemberName(nodeMap, kind);
 		if (seenMembers.has(member)) continue;
 		seenMembers.add(member);
-		entries.push({ kind, member, id });
+		const displayName =
+			row.parser?.displayName !== undefined && row.parser.displayName !== kind
+				? row.parser.displayName
+				: undefined;
+		entries.push({ kind, member, id: row.id, displayName });
 	}
 	entries.sort((a, b) => a.id - b.id || a.kind.localeCompare(b.kind));
 	return entries;
@@ -115,6 +154,35 @@ function toIdMap(
 		const id = typeof value === 'number' ? value : value.id;
 		if (id === undefined) continue;
 		result.set(name, id);
+	}
+	return result;
+}
+
+interface CatalogRow {
+	readonly id?: number;
+	readonly parser?: {
+		readonly cSymbol: string;
+		readonly parserName: string;
+		readonly displayName?: string;
+		readonly anon: boolean;
+		readonly aux: boolean;
+		readonly alias: boolean;
+		readonly hidden: boolean;
+	};
+}
+
+function toCatalogMap(
+	ids: GeneratedIdTables['kindIds']
+): Map<string, CatalogRow> {
+	if (!ids) return new Map();
+	const entries = ids instanceof Map ? [...ids.entries()] : Object.entries(ids);
+	const result = new Map<string, CatalogRow>();
+	for (const [name, value] of entries) {
+		if (typeof value === 'number') {
+			result.set(name, { id: value });
+		} else {
+			result.set(name, value);
+		}
 	}
 	return result;
 }

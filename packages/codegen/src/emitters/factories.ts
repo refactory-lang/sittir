@@ -11,6 +11,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	collectKindEntries,
+	collectCatalogKinds,
 	kindDiscriminantExpr,
 	kindIdMemberName,
 	type KindEnumEntry
@@ -71,9 +72,14 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	// Collect KindEnumEntry table for numeric $type emission when
 	// generatedIdTables is present (Phase A KindID migration). Undefined
 	// for legacy callers / unit tests — those fall back to string literals.
-	const allKinds = Array.from(nodeMap.nodes.keys());
+	// Source from the catalog superset so factory bodies for catalog-only
+	// kinds (children-only, anon tokens) can resolve TSKindId.X members.
 	const kindEntries = generatedIdTables
-		? collectKindEntries(allKinds, nodeMap, generatedIdTables)
+		? collectKindEntries(
+				collectCatalogKinds(generatedIdTables),
+				nodeMap,
+				generatedIdTables
+			)
 		: undefined;
 
 	const lines: string[] = [

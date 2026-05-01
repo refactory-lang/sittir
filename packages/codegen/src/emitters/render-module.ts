@@ -38,7 +38,12 @@ import {
 	collectTransportProjection,
 	type TransportLiteral
 } from './transport-projection.ts';
-import { collectKindEntries, kindIdMemberName, type KindEnumEntry } from './kind-discriminant.ts';
+import {
+	collectKindEntries,
+	collectCatalogKinds,
+	kindIdMemberName,
+	type KindEnumEntry
+} from './kind-discriminant.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 
@@ -1739,9 +1744,14 @@ function renderTransportSupport(
 	const nodes = projection.nodes;
 
 	// Build kind entries for numeric dispatch when parser.c metadata is available.
-	const allKinds = [...nodeMap.nodes.keys()];
+	// Source from the catalog superset (children-only kinds + anon tokens) so the
+	// AnyTransport dispatch matches the TS-side TSKindId / kindIdFromName universe.
 	const kindEntries: readonly KindEnumEntry[] | undefined = generatedIdTables
-		? collectKindEntries(allKinds, nodeMap, generatedIdTables)
+		? collectKindEntries(
+				collectCatalogKinds(generatedIdTables),
+				nodeMap,
+				generatedIdTables
+			)
 		: undefined;
 
 	const anyTransportLines = kindEntries
@@ -1864,7 +1874,19 @@ function renderAnyTransportWithNapiFromValue(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[]
 ): string[] {
-	const kindIdByKind = new Map<string, number>(kindEntries.map((e) => [e.kind, e.id]));
+	// Index by both `kind` (canonical catalog name) and `displayName` (anon-token
+	// literal text). Literal arms are keyed by `literal.kind`, which for
+	// component literals carries the literal text (`"+"`) rather than the
+	// parser-symbol name (`"PLUS"`). Without the displayName index, `+` and
+	// other operator-token literals would fall through to `id === undefined` and
+	// silently skip — leaving the dispatch incomplete.
+	const kindIdByKind = new Map<string, number>();
+	for (const e of kindEntries) {
+		kindIdByKind.set(e.kind, e.id);
+		if (e.displayName !== undefined && !kindIdByKind.has(e.displayName)) {
+			kindIdByKind.set(e.displayName, e.id);
+		}
+	}
 
 	const lines: string[] = [];
 

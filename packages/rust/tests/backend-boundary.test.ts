@@ -116,14 +116,18 @@ describe('boundary', () => {
 			]
 		} as const;
 
-		// After projection: $type is TSKindId.SourceFile (157)
+		// After projection: $type is TSKindId.SourceFile (157). Children of
+		// $source:"ts" raw nodes also resolve to numeric IDs after the
+		// kindIdFromName coverage extension — `empty_statement` → 159.
 		expect(render(rawSourceFile)).toBe(`ok:${TSKindId.SourceFile}`);
 		expect(renderSpy).toHaveBeenCalledWith(
 			expect.objectContaining({
 				$type: TSKindId.SourceFile,
 				statements: [
-					// empty_statement has no numeric TSKindId — kept as string
-					expect.objectContaining({ $type: 'empty_statement', $text: ';' })
+					expect.objectContaining({
+						$type: TSKindId.EmptyStatement,
+						$text: ';'
+					})
 				]
 			})
 		);

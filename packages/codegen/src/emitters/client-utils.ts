@@ -27,7 +27,11 @@ import {
 	resolveTransportReferenceKind
 } from './transport-projection.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import { collectKindEntries, type KindEnumEntry } from './kind-discriminant.ts';
+import {
+	collectKindEntries,
+	collectCatalogKinds,
+	type KindEnumEntry
+} from './kind-discriminant.ts';
 
 export interface EmitClientUtilsConfig {
 	nodeMap: NodeMap;
@@ -146,9 +150,15 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('');
 
 	// Build the kind→id lookup for numeric $type emission at the wire boundary.
-	const allKinds = [...nodeMap.nodes.keys()];
+	// Source from the catalog superset (children-only kinds + anon tokens) so
+	// projectTransportValue can resolve every parser-symbol-bearing kind without
+	// hitting the try/catch fallback that keeps a string $type on the wire.
 	const kindEntries = generatedIdTables
-		? collectKindEntries(allKinds, nodeMap, generatedIdTables)
+		? collectKindEntries(
+				collectCatalogKinds(generatedIdTables),
+				nodeMap,
+				generatedIdTables
+			)
 		: undefined;
 
 	emitNativeTransportProjection(lines, nodeMap, kindEntries);
@@ -264,8 +274,15 @@ function emitNativeTransportProjection(lines: string[], nodeMap: NodeMap, kindEn
 	lines.push('  inferNativeTransportVariant(projected, resolvedKind);');
 	lines.push('');
 	lines.push('  // Convert $type to numeric at the wire boundary (Phase B).');
-	lines.push('  // TSGrammar-only inlined kinds have no parser ID — keep as string.');
-	lines.push('  try { projected.$type = kindIdFromName(resolvedKind); } catch { projected.$type = resolvedKind; }');
+	lines.push('  // After the kindIdFromName coverage extension, every parser-symbol-bearing');
+	lines.push('  // kind resolves — the try/catch fallback only fires for genuinely TSGrammar-only');
+	lines.push('  // inlined rules (which never reach the wire). Warn loudly if it does fire so');
+	lines.push('  // wire-shape regressions surface immediately rather than silently degrading.');
+	lines.push('  try { projected.$type = kindIdFromName(resolvedKind); } catch {');
+	lines.push('    // eslint-disable-next-line no-console');
+	lines.push('    console.warn(`[sittir] projectTransportValue: kind "${resolvedKind}" has no TSKindId — keeping string $type. This kind is TSGrammar-only or the catalog is missing an entry.`);');
+	lines.push('    projected.$type = resolvedKind;');
+	lines.push('  }');
 	lines.push('');
 	lines.push('  return projected;');
 	lines.push('}');

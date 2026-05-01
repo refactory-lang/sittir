@@ -19,12 +19,14 @@ import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import {
 	collectKindEntries,
+	collectCatalogKinds,
 	kindDiscriminantExpr,
 	kindIdMemberName,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 export {
 	collectKindEntries,
+	collectCatalogKinds,
 	kindDiscriminantExpr,
 	kindIdMemberName,
 	type KindEnumEntry
@@ -126,8 +128,17 @@ export function emitTypes(config: EmitTypesConfig): string {
 	const nodeKinds = structNodes.map((n) => n.kind);
 	const allKinds = [...nodeKinds, ...leafKinds];
 	const generatedTypes = new Set<string>();
+	// TSKindId / kindIdFromName / kindNameFromId source from the parser
+	// symbol catalog superset (children-only kinds + anon tokens), not
+	// just nodeMap rule roots — see collectCatalogKinds doc. This matches
+	// the AnyTransport::FromNapiValue dispatch so wire $type values from
+	// any source resolve to the same KindId. Coverage gap fix (Phase B).
 	const kindEntries = generatedIdTables
-		? collectKindEntries(allKinds, nodeMap, generatedIdTables)
+		? collectKindEntries(
+				collectCatalogKinds(generatedIdTables),
+				nodeMap,
+				generatedIdTables
+			)
 		: undefined;
 
 	const lines: string[] = [];
@@ -1000,10 +1011,30 @@ function emitKindIdEnumAndLookups(
 
 	lines.push('export function kindIdFromName(kindName: string): TSKindId {');
 	lines.push('  switch (kindName) {');
+	// Track emitted case strings so a kind whose displayName equals
+	// another kind's `kind` does not produce a duplicate-case TS error.
+	const emittedCases = new Set<string>();
 	for (const entry of entries) {
-		lines.push(
-			`    case ${JSON.stringify(entry.kind)}: return TSKindId.${entry.member};`
-		);
+		const kindCase = JSON.stringify(entry.kind);
+		if (!emittedCases.has(kindCase)) {
+			lines.push(`    case ${kindCase}: return TSKindId.${entry.member};`);
+			emittedCases.add(kindCase);
+		}
+		// Anon tokens carry both a parser symbol name (`PLUS`) and a
+		// display name (`+`). Tree-sitter emits the literal text on the
+		// wire, so kindIdFromName must accept either spelling and resolve
+		// to the same KindId. Without this case JS callers passing the
+		// literal `value.$type` from a parsed tree would throw and fall
+		// back to a string $type — breaking the napi numeric dispatch.
+		if (entry.displayName !== undefined) {
+			const displayCase = JSON.stringify(entry.displayName);
+			if (!emittedCases.has(displayCase)) {
+				lines.push(
+					`    case ${displayCase}: return TSKindId.${entry.member};`
+				);
+				emittedCases.add(displayCase);
+			}
+		}
 	}
 	lines.push(
 		"    default: throw new TypeError(`unknown kind name ${kindName}`);"

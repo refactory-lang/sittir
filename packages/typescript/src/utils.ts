@@ -526,8 +526,15 @@ function projectTransportValue(value: unknown, path: string): unknown {
   inferNativeTransportVariant(projected, resolvedKind);
 
   // Convert $type to numeric at the wire boundary (Phase B).
-  // TSGrammar-only inlined kinds have no parser ID — keep as string.
-  try { projected.$type = kindIdFromName(resolvedKind); } catch { projected.$type = resolvedKind; }
+  // After the kindIdFromName coverage extension, every parser-symbol-bearing
+  // kind resolves — the try/catch fallback only fires for genuinely TSGrammar-only
+  // inlined rules (which never reach the wire). Warn loudly if it does fire so
+  // wire-shape regressions surface immediately rather than silently degrading.
+  try { projected.$type = kindIdFromName(resolvedKind); } catch {
+    // eslint-disable-next-line no-console
+    console.warn(`[sittir] projectTransportValue: kind "${resolvedKind}" has no TSKindId — keeping string $type. This kind is TSGrammar-only or the catalog is missing an entry.`);
+    projected.$type = resolvedKind;
+  }
 
   return projected;
 }

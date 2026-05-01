@@ -19,7 +19,11 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import { collectKindEntries, kindIdMemberName } from './kind-discriminant.ts';
+import {
+	collectKindEntries,
+	collectCatalogKinds,
+	kindIdMemberName
+} from './kind-discriminant.ts';
 
 export interface EmitKindIdRustConfig {
 	/** Grammar name, e.g. `'rust'` | `'typescript'` | `'python'`. */
@@ -65,8 +69,14 @@ export function toScreamingSnakeCase(memberName: string, rawKind: string): strin
  */
 export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	const { grammar, nodeMap, generatedIdTables } = config;
-	const allKinds = [...nodeMap.nodes.keys()];
-	const entries = collectKindEntries(allKinds, nodeMap, generatedIdTables);
+	// Source from the catalog superset so `kind_ids.rs` constants match
+	// the AnyTransport::FromNapiValue dispatch (which sources from the
+	// same superset). Coverage gap fix (Phase B).
+	const entries = collectKindEntries(
+		collectCatalogKinds(generatedIdTables),
+		nodeMap,
+		generatedIdTables
+	);
 
 	const lines: string[] = [
 		`// @generated from packages/${grammar}/.sittir/src/parser.c — do not hand-edit.`,

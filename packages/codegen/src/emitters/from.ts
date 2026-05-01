@@ -11,6 +11,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	collectKindEntries,
+	collectCatalogKinds,
 	kindDiscriminantExpr,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
@@ -292,9 +293,14 @@ export function emitFrom(config: EmitFromConfig): string {
 	const { nodeMap, generatedIdTables } = config;
 
 	// Collect KindEnumEntry table for numeric $type comparisons in from() resolvers.
-	const allKinds = Array.from(nodeMap.nodes.keys());
+	// Source from the catalog superset (children-only kinds + anon tokens) so
+	// every parser-symbol-bearing kind resolves through TSKindId.
 	const kindEntries = generatedIdTables
-		? collectKindEntries(allKinds, nodeMap, generatedIdTables)
+		? collectKindEntries(
+				collectCatalogKinds(generatedIdTables),
+				nodeMap,
+				generatedIdTables
+			)
 		: undefined;
 
 	const supertypeByKey = buildSupertypeByKey(nodeMap);

@@ -112,9 +112,11 @@ export function emitIs(config: EmitIsConfig): string {
 	// generatedIdTables is present (Phase A KindID migration). Undefined
 	// for legacy callers / unit tests — those fall back to string-only guards.
 	//
-	// `collectAllKinds` is the single source of truth shared with the
-	// types.ts emitter; both files must consume the same kind list so
-	// `_kindIdByKind` and `TSKindId` agree on which members exist.
+	// `is.kind()` guards are about user-facing rule names — restrict to
+	// `collectAllKinds(nodeMap)` (rule roots) so we don't expose anon-sym
+	// tokens or children-only kinds as guard targets. The runtime-dispatch
+	// surfaces (TSKindId / kindIdFromName / AnyTransport / kind_ids.rs) source
+	// from the catalog superset instead via `collectCatalogKinds`.
 	const allKinds = collectAllKinds(nodeMap);
 	const kindEntries: readonly KindEnumEntry[] | undefined = generatedIdTables
 		? collectKindEntries(allKinds, nodeMap, generatedIdTables)
