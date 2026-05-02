@@ -519,7 +519,9 @@ function projectTransportValue(value: unknown, path: string): unknown {
   const resolvedKind = nativeTransportType(KIND_NAMES.get(numericType) ?? String(numericType));
 
   const projected: Record<string, unknown> = {};
+  const isFactory = value.$source === 'factory';
   for (const key of transportMetadataKeys) {
+    if (isFactory && (key === '$span' || key === '$nodeId')) continue;
     if (key in value) projected[key] = value[key];
   }
   // Phase D: napi-rs #[napi(string_enum)] uses PascalCase variant names

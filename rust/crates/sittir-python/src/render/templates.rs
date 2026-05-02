@@ -2838,8 +2838,7 @@ impl ::sittir_core::types::RenderableTransport for IsNotTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_is_not_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -2933,8 +2932,7 @@ impl ::sittir_core::types::RenderableTransport for KwAsyncMarkerTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_kw_async_marker_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -3001,8 +2999,7 @@ impl ::sittir_core::types::RenderableTransport for KwTypeTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_kw_type_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -3149,8 +3146,7 @@ impl ::sittir_core::types::RenderableTransport for NotEscapeSequenceTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_not_escape_sequence_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -3217,8 +3213,7 @@ impl ::sittir_core::types::RenderableTransport for NotInTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_not_in_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -3878,8 +3873,7 @@ impl ::sittir_core::types::RenderableTransport for BreakStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_break_statement_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -4111,8 +4105,7 @@ impl ::sittir_core::types::RenderableTransport for CommentTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_comment_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -4317,8 +4310,7 @@ impl ::sittir_core::types::RenderableTransport for ContinueStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_continue_statement_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -4683,8 +4675,7 @@ impl ::sittir_core::types::RenderableTransport for Ellipsis2Transport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_ellipsis2_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -4777,8 +4768,7 @@ impl ::sittir_core::types::RenderableTransport for EscapeSequenceTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_escape_sequence_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -5018,8 +5008,7 @@ impl ::sittir_core::types::RenderableTransport for FalseTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_false_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -5112,8 +5101,7 @@ impl ::sittir_core::types::RenderableTransport for FloatTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_float_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -5404,8 +5392,7 @@ impl ::sittir_core::types::RenderableTransport for IdentifierTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_identifier_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -5554,8 +5541,7 @@ impl ::sittir_core::types::RenderableTransport for ImportPrefixTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_import_prefix_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -5648,8 +5634,7 @@ impl ::sittir_core::types::RenderableTransport for IntegerTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_integer_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -5798,8 +5783,7 @@ impl ::sittir_core::types::RenderableTransport for KeywordSeparatorTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_keyword_separator_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -5947,8 +5931,7 @@ impl ::sittir_core::types::RenderableTransport for LineContinuationTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_line_continuation_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -6258,8 +6241,7 @@ impl ::sittir_core::types::RenderableTransport for NoneTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_none_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -6487,8 +6469,7 @@ impl ::sittir_core::types::RenderableTransport for PassStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_pass_statement_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -6582,8 +6563,7 @@ impl ::sittir_core::types::RenderableTransport for PositionalSeparatorTransport 
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_positional_separator_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -6979,8 +6959,7 @@ impl ::sittir_core::types::RenderableTransport for TrueTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_true_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -7186,8 +7165,7 @@ impl ::sittir_core::types::RenderableTransport for TypeConversionTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_type_conversion_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -7448,8 +7426,7 @@ impl ::sittir_core::types::RenderableTransport for WildcardImportTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_wildcard_import_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -7745,8 +7722,7 @@ impl ::sittir_core::types::RenderableTransport for NewlineTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_newline_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -7813,8 +7789,7 @@ impl ::sittir_core::types::RenderableTransport for IndentTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_indent_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -7881,8 +7856,7 @@ impl ::sittir_core::types::RenderableTransport for DedentTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_dedent_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -7949,8 +7923,7 @@ impl ::sittir_core::types::RenderableTransport for StringStartTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_string_start_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -8017,8 +7990,7 @@ impl ::sittir_core::types::RenderableTransport for _StringContentTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render__string_content_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -8085,8 +8057,7 @@ impl ::sittir_core::types::RenderableTransport for EscapeInterpolationTransport 
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_escape_interpolation_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -8153,8 +8124,7 @@ impl ::sittir_core::types::RenderableTransport for StringEndTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_string_end_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -8221,8 +8191,7 @@ impl ::sittir_core::types::RenderableTransport for CloseBracketTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_close_bracket_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -8289,8 +8258,7 @@ impl ::sittir_core::types::RenderableTransport for CloseParenTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_close_paren_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -8357,8 +8325,7 @@ impl ::sittir_core::types::RenderableTransport for CloseBraceTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_close_brace_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -8425,8 +8392,7 @@ impl ::sittir_core::types::RenderableTransport for ExceptTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_except_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -8493,8 +8459,7 @@ impl ::sittir_core::types::RenderableTransport for AsTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_as_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -8561,8 +8526,7 @@ impl ::sittir_core::types::RenderableTransport for EqTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_eq_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -8629,8 +8593,7 @@ impl ::sittir_core::types::RenderableTransport for ColonTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_colon_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -8697,8 +8660,7 @@ impl ::sittir_core::types::RenderableTransport for AsyncTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_async_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -8765,8 +8727,7 @@ impl ::sittir_core::types::RenderableTransport for BracketTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_bracket_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -8833,8 +8794,7 @@ impl ::sittir_core::types::RenderableTransport for TokBsTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_tok_bs_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -8901,8 +8861,7 @@ impl ::sittir_core::types::RenderableTransport for MinusTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_minus_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -8969,8 +8928,7 @@ impl ::sittir_core::types::RenderableTransport for ParenTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_paren_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -9037,8 +8995,7 @@ impl ::sittir_core::types::RenderableTransport for CommaTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_comma_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -9105,8 +9062,7 @@ impl ::sittir_core::types::RenderableTransport for AssertTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_assert_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -9173,8 +9129,7 @@ impl ::sittir_core::types::RenderableTransport for DotTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_dot_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -9241,8 +9196,7 @@ impl ::sittir_core::types::RenderableTransport for BreakTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_break_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -9309,8 +9263,7 @@ impl ::sittir_core::types::RenderableTransport for CaseTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_case_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -9377,8 +9330,7 @@ impl ::sittir_core::types::RenderableTransport for ShrTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_shr_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -9445,8 +9397,7 @@ impl ::sittir_core::types::RenderableTransport for ClassTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_class_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -9513,8 +9464,7 @@ impl ::sittir_core::types::RenderableTransport for IfTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_if_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -9581,8 +9531,7 @@ impl ::sittir_core::types::RenderableTransport for ElseTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_else_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -9649,8 +9598,7 @@ impl ::sittir_core::types::RenderableTransport for ContinueTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_continue_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -9717,8 +9665,7 @@ impl ::sittir_core::types::RenderableTransport for AtTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_at_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -9785,8 +9732,7 @@ impl ::sittir_core::types::RenderableTransport for DelTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_del_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -9853,8 +9799,7 @@ impl ::sittir_core::types::RenderableTransport for BraceTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_brace_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -9921,8 +9866,7 @@ impl ::sittir_core::types::RenderableTransport for StarstarTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_starstar_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -9989,8 +9933,7 @@ impl ::sittir_core::types::RenderableTransport for ElifTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_elif_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -10057,8 +10000,7 @@ impl ::sittir_core::types::RenderableTransport for EllipsisTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_ellipsis_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -10125,8 +10067,7 @@ impl ::sittir_core::types::RenderableTransport for StarTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_star_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -10193,8 +10134,7 @@ impl ::sittir_core::types::RenderableTransport for ExecTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_exec_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -10261,8 +10201,7 @@ impl ::sittir_core::types::RenderableTransport for InTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_in_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -10329,8 +10268,7 @@ impl ::sittir_core::types::RenderableTransport for False2Transport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_false2_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -10397,8 +10335,7 @@ impl ::sittir_core::types::RenderableTransport for FinallyTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_finally_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -10465,8 +10402,7 @@ impl ::sittir_core::types::RenderableTransport for ForTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_for_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -10533,8 +10469,7 @@ impl ::sittir_core::types::RenderableTransport for DefTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_def_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -10601,8 +10536,7 @@ impl ::sittir_core::types::RenderableTransport for ArrowTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_arrow_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -10669,8 +10603,7 @@ impl ::sittir_core::types::RenderableTransport for FromTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_from_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -10737,8 +10670,7 @@ impl ::sittir_core::types::RenderableTransport for FutureUTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_future_u_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -10805,8 +10737,7 @@ impl ::sittir_core::types::RenderableTransport for ImportTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_import_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -10873,8 +10804,7 @@ impl ::sittir_core::types::RenderableTransport for GlobalTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_global_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -10941,8 +10871,7 @@ impl ::sittir_core::types::RenderableTransport for MatchTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_match_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -11009,8 +10938,7 @@ impl ::sittir_core::types::RenderableTransport for ColoneqTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_coloneq_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -11077,8 +11005,7 @@ impl ::sittir_core::types::RenderableTransport for None2Transport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_none2_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -11145,8 +11072,7 @@ impl ::sittir_core::types::RenderableTransport for NonlocalTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_nonlocal_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -11213,8 +11139,7 @@ impl ::sittir_core::types::RenderableTransport for NotTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_not_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -11281,8 +11206,7 @@ impl ::sittir_core::types::RenderableTransport for PassTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_pass_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -11349,8 +11273,7 @@ impl ::sittir_core::types::RenderableTransport for SlashTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_slash_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -11417,8 +11340,7 @@ impl ::sittir_core::types::RenderableTransport for PrintTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_print_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -11485,8 +11407,7 @@ impl ::sittir_core::types::RenderableTransport for RaiseTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_raise_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -11553,8 +11474,7 @@ impl ::sittir_core::types::RenderableTransport for ReturnTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_return_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -11621,8 +11541,7 @@ impl ::sittir_core::types::RenderableTransport for AnonymousTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_anonymous_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -11689,8 +11608,7 @@ impl ::sittir_core::types::RenderableTransport for True2Transport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_true2_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -11757,8 +11675,7 @@ impl ::sittir_core::types::RenderableTransport for TryTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_try_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -11825,8 +11742,7 @@ impl ::sittir_core::types::RenderableTransport for PipeTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_pipe_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -11893,8 +11809,7 @@ impl ::sittir_core::types::RenderableTransport for WhileTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_while_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -11961,8 +11876,7 @@ impl ::sittir_core::types::RenderableTransport for WithTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_with_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        dest.write_str(&self.text).map_err(::askama::Error::from)
     }
 }
 
@@ -12060,15 +11974,15 @@ fn render__as_pattern_transport(node: &_AsPatternTransport) -> Result<String, ::
 }
 
 fn render_assignment_eq_transport(node: &AssignmentEqTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.clone().unwrap_or_default())
+    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
 }
 
 fn render_assignment_type_transport(node: &AssignmentTypeTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.clone().unwrap_or_default())
+    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
 }
 
 fn render_assignment_typed_transport(node: &AssignmentTypedTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.clone().unwrap_or_default())
+    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
 }
 
 fn render_async_marker_transport(t: &bool) -> Result<String, ::askama::Error> {
@@ -12107,23 +12021,23 @@ fn render__identifier_transport(t: &_IdentifierEnum) -> Result<String, ::askama:
 }
 
 fn render_import_list_transport(node: &ImportListTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.clone().unwrap_or_default())
+    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
 }
 
 fn render_is_not_transport(t: &IsNotTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_key_value_pattern_transport(node: &KeyValuePatternTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.clone().unwrap_or_default())
+    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
 }
 
 fn render_kw_async_marker_transport(t: &KwAsyncMarkerTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_kw_type_transport(t: &KwTypeTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render__list_pattern_transport(node: &_ListPatternTransport) -> Result<String, ::askama::Error> {
@@ -12165,11 +12079,11 @@ fn render_match_block_block_transport(node: &MatchBlockBlockTransport) -> Result
 }
 
 fn render_not_escape_sequence_transport(t: &NotEscapeSequenceTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_not_in_transport(t: &NotInTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_simple_pattern_negative_transport(node: &SimplePatternNegativeTransport) -> Result<String, ::askama::Error> {
@@ -12398,7 +12312,7 @@ fn render_boolean_operator_transport(node: &BooleanOperatorTransport) -> Result<
 }
 
 fn render_break_statement_transport(t: &BreakStatementTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_call_transport(node: &CallTransport) -> Result<String, ::askama::Error> {
@@ -12484,7 +12398,7 @@ fn render_class_pattern_transport(node: &ClassPatternTransport) -> Result<String
 }
 
 fn render_comment_transport(t: &CommentTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_comparison_operator_transport(node: &ComparisonOperatorTransport) -> Result<String, ::askama::Error> {
@@ -12563,7 +12477,7 @@ fn render_constrained_type_transport(node: &ConstrainedTypeTransport) -> Result<
 }
 
 fn render_continue_statement_transport(t: &ContinueStatementTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_decorated_definition_transport(node: &DecoratedDefinitionTransport) -> Result<String, ::askama::Error> {
@@ -12708,7 +12622,7 @@ fn render_elif_clause_transport(node: &ElifClauseTransport) -> Result<String, ::
 }
 
 fn render_ellipsis2_transport(t: &Ellipsis2Transport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_else_clause_transport(node: &ElseClauseTransport) -> Result<String, ::askama::Error> {
@@ -12719,7 +12633,7 @@ fn render_else_clause_transport(node: &ElseClauseTransport) -> Result<String, ::
 }
 
 fn render_escape_sequence_transport(t: &EscapeSequenceTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_except_clause_transport(node: &ExceptClauseTransport) -> Result<String, ::askama::Error> {
@@ -12821,7 +12735,7 @@ fn render_expression_statement_uform_tuple_transport(node: &ExpressionStatementU
 }
 
 fn render_false_transport(t: &FalseTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_finally_clause_transport(node: &FinallyClauseTransport) -> Result<String, ::askama::Error> {
@@ -12832,7 +12746,7 @@ fn render_finally_clause_transport(node: &FinallyClauseTransport) -> Result<Stri
 }
 
 fn render_float_transport(t: &FloatTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_for_in_clause_transport(node: &ForInClauseTransport) -> Result<String, ::askama::Error> {
@@ -12963,7 +12877,7 @@ fn render_global_statement_transport(node: &GlobalStatementTransport) -> Result<
 }
 
 fn render_identifier_transport(t: &IdentifierTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_if_clause_transport(node: &IfClauseTransport) -> Result<String, ::askama::Error> {
@@ -13014,7 +12928,7 @@ fn render_import_from_statement_transport(node: &ImportFromStatementTransport) -
 }
 
 fn render_import_prefix_transport(t: &ImportPrefixTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_import_statement_transport(node: &ImportStatementTransport) -> Result<String, ::askama::Error> {
@@ -13033,7 +12947,7 @@ fn render_import_statement_transport(node: &ImportStatementTransport) -> Result<
 }
 
 fn render_integer_transport(t: &IntegerTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_interpolation_transport(node: &InterpolationTransport) -> Result<String, ::askama::Error> {
@@ -13068,7 +12982,7 @@ fn render_keyword_pattern_transport(node: &KeywordPatternTransport) -> Result<St
 }
 
 fn render_keyword_separator_transport(t: &KeywordSeparatorTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_lambda_transport(node: &LambdaTransport) -> Result<String, ::askama::Error> {
@@ -13109,7 +13023,7 @@ fn render_lambda_within_for_in_clause_transport(node: &LambdaWithinForInClauseTr
 }
 
 fn render_line_continuation_transport(t: &LineContinuationTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_list_transport(node: &ListTransport) -> Result<String, ::askama::Error> {
@@ -13228,7 +13142,7 @@ fn render_named_expression_transport(node: &NamedExpressionTransport) -> Result<
 }
 
 fn render_none_transport(t: &NoneTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_nonlocal_statement_transport(node: &NonlocalStatementTransport) -> Result<String, ::askama::Error> {
@@ -13307,7 +13221,7 @@ fn render_parenthesized_list_splat_transport(node: &ParenthesizedListSplatTransp
 }
 
 fn render_pass_statement_transport(t: &PassStatementTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_pattern_list_transport(node: &PatternListTransport) -> Result<String, ::askama::Error> {
@@ -13326,7 +13240,7 @@ fn render_pattern_list_transport(node: &PatternListTransport) -> Result<String, 
 }
 
 fn render_positional_separator_transport(t: &PositionalSeparatorTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_print_statement_transport(node: &PrintStatementTransport) -> Result<String, ::askama::Error> {
@@ -13512,7 +13426,7 @@ fn render_subscript_transport(node: &SubscriptTransport) -> Result<String, ::ask
 }
 
 fn render_true_transport(t: &TrueTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_try_statement_transport(node: &TryStatementTransport) -> Result<String, ::askama::Error> {
@@ -13596,7 +13510,7 @@ fn render_type_alias_statement_transport(node: &TypeAliasStatementTransport) -> 
 }
 
 fn render_type_conversion_transport(t: &TypeConversionTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_type_parameter_transport(node: &TypeParameterTransport) -> Result<String, ::askama::Error> {
@@ -13683,7 +13597,7 @@ fn render_while_statement_transport(node: &WhileStatementTransport) -> Result<St
 }
 
 fn render_wildcard_import_transport(t: &WildcardImportTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_with_clause_bare_transport(node: &WithClauseBareTransport) -> Result<String, ::askama::Error> {
@@ -13788,255 +13702,255 @@ fn render_yield_transport(node: &YieldTransport) -> Result<String, ::askama::Err
 }
 
 fn render_newline_transport(t: &NewlineTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_indent_transport(t: &IndentTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_dedent_transport(t: &DedentTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_string_start_transport(t: &StringStartTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render__string_content_transport(t: &_StringContentTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_escape_interpolation_transport(t: &EscapeInterpolationTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_string_end_transport(t: &StringEndTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_close_bracket_transport(t: &CloseBracketTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_close_paren_transport(t: &CloseParenTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_close_brace_transport(t: &CloseBraceTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_except_transport(t: &ExceptTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_as_transport(t: &AsTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_eq_transport(t: &EqTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_colon_transport(t: &ColonTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_async_transport(t: &AsyncTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_bracket_transport(t: &BracketTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_tok_bs_transport(t: &TokBsTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_minus_transport(t: &MinusTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_paren_transport(t: &ParenTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_comma_transport(t: &CommaTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_assert_transport(t: &AssertTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_dot_transport(t: &DotTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_break_transport(t: &BreakTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_case_transport(t: &CaseTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_shr_transport(t: &ShrTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_class_transport(t: &ClassTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_if_transport(t: &IfTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_else_transport(t: &ElseTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_continue_transport(t: &ContinueTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_at_transport(t: &AtTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_del_transport(t: &DelTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_brace_transport(t: &BraceTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_starstar_transport(t: &StarstarTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_elif_transport(t: &ElifTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_ellipsis_transport(t: &EllipsisTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_star_transport(t: &StarTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_exec_transport(t: &ExecTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_in_transport(t: &InTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_false2_transport(t: &False2Transport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_finally_transport(t: &FinallyTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_for_transport(t: &ForTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_def_transport(t: &DefTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_arrow_transport(t: &ArrowTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_from_transport(t: &FromTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_future_u_transport(t: &FutureUTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_import_transport(t: &ImportTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_global_transport(t: &GlobalTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_match_transport(t: &MatchTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_coloneq_transport(t: &ColoneqTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_none2_transport(t: &None2Transport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_nonlocal_transport(t: &NonlocalTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_not_transport(t: &NotTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_pass_transport(t: &PassTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_slash_transport(t: &SlashTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_print_transport(t: &PrintTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_raise_transport(t: &RaiseTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_return_transport(t: &ReturnTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_anonymous_transport(t: &AnonymousTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_true2_transport(t: &True2Transport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_try_transport(t: &TryTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_pipe_transport(t: &PipeTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_while_transport(t: &WhileTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_with_transport(t: &WithTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
+    Ok(t.text.to_owned())
 }
 
 fn render_compound_statement_transport(t: &CompoundStatementTransport) -> Result<String, ::askama::Error> {
@@ -14240,230 +14154,9 @@ fn render_primary_expression_transport(t: &PrimaryExpressionTransport) -> Result
 }
 
 pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::askama::Error> {
-    match transport {
-        AnyTransport::_AsPattern(t) => render__as_pattern_transport(t),
-        AnyTransport::AssignmentEq(t) => render_assignment_eq_transport(t),
-        AnyTransport::AssignmentType(t) => render_assignment_type_transport(t),
-        AnyTransport::AssignmentTyped(t) => render_assignment_typed_transport(t),
-        AnyTransport::AsyncMarker(t) => render_async_marker_transport(t),
-        AnyTransport::AugmentedAssignmentOperator(t) => render_augmented_assignment_operator_transport(t),
-        AnyTransport::BinaryOperatorOperator(t) => render_binary_operator_operator_transport(t),
-        AnyTransport::BooleanOperatorOperator(t) => render_boolean_operator_operator_transport(t),
-        AnyTransport::ComprehensionClauses(t) => render_comprehension_clauses_transport(t),
-        AnyTransport::_Identifier(t) => render__identifier_transport(t),
-        AnyTransport::ImportList(t) => render_import_list_transport(t),
-        AnyTransport::IsNot(t) => render_is_not_transport(t),
-        AnyTransport::KeyValuePattern(t) => render_key_value_pattern_transport(t),
-        AnyTransport::KwAsyncMarker(t) => render_kw_async_marker_transport(t),
-        AnyTransport::KwType(t) => render_kw_type_transport(t),
-        AnyTransport::_ListPattern(t) => render__list_pattern_transport(t),
-        AnyTransport::MatchBlock(t) => render_match_block_transport(t),
-        AnyTransport::MatchBlockBlock(t) => render_match_block_block_transport(t),
-        AnyTransport::NotEscapeSequence(t) => render_not_escape_sequence_transport(t),
-        AnyTransport::NotIn(t) => render_not_in_transport(t),
-        AnyTransport::SimplePatternNegative(t) => render_simple_pattern_negative_transport(t),
-        AnyTransport::SimpleStatements(t) => render_simple_statements_transport(t),
-        AnyTransport::Suite(t) => render_suite_transport(t),
-        AnyTransport::_TuplePattern(t) => render__tuple_pattern_transport(t),
-        AnyTransport::TypeAliasStatementType(t) => render_type_alias_statement_type_transport(t),
-        AnyTransport::UnaryOperatorOperator(t) => render_unary_operator_operator_transport(t),
-        AnyTransport::_WithClauseParen(t) => render__with_clause_paren_transport(t),
-        AnyTransport::AliasedImport(t) => render_aliased_import_transport(t),
-        AnyTransport::ArgumentList(t) => render_argument_list_transport(t),
-        AnyTransport::AsPattern(t) => render_as_pattern_transport(t),
-        AnyTransport::AssertStatement(t) => render_assert_statement_transport(t),
-        AnyTransport::Assignment(t) => render_assignment_transport(t),
-        AnyTransport::Attribute(t) => render_attribute_transport(t),
-        AnyTransport::AugmentedAssignment(t) => render_augmented_assignment_transport(t),
-        AnyTransport::Await(t) => render_await_transport(t),
-        AnyTransport::BinaryOperator(t) => render_binary_operator_transport(t),
-        AnyTransport::Block(t) => render_block_transport(t),
-        AnyTransport::BooleanOperator(t) => render_boolean_operator_transport(t),
-        AnyTransport::BreakStatement(t) => render_break_statement_transport(t),
-        AnyTransport::Call(t) => render_call_transport(t),
-        AnyTransport::CaseClause(t) => render_case_clause_transport(t),
-        AnyTransport::CasePattern(t) => render_case_pattern_transport(t),
-        AnyTransport::Chevron(t) => render_chevron_transport(t),
-        AnyTransport::ClassDefinition(t) => render_class_definition_transport(t),
-        AnyTransport::ClassPattern(t) => render_class_pattern_transport(t),
-        AnyTransport::Comment(t) => render_comment_transport(t),
-        AnyTransport::ComparisonOperator(t) => render_comparison_operator_transport(t),
-        AnyTransport::ComplexPattern(t) => render_complex_pattern_transport(t),
-        AnyTransport::ConcatenatedString(t) => render_concatenated_string_transport(t),
-        AnyTransport::ConditionalExpression(t) => render_conditional_expression_transport(t),
-        AnyTransport::ConstrainedType(t) => render_constrained_type_transport(t),
-        AnyTransport::ContinueStatement(t) => render_continue_statement_transport(t),
-        AnyTransport::DecoratedDefinition(t) => render_decorated_definition_transport(t),
-        AnyTransport::Decorator(t) => render_decorator_transport(t),
-        AnyTransport::DefaultParameter(t) => render_default_parameter_transport(t),
-        AnyTransport::DeleteStatement(t) => render_delete_statement_transport(t),
-        AnyTransport::DictPattern(t) => render_dict_pattern_transport(t),
-        AnyTransport::Dictionary(t) => render_dictionary_transport(t),
-        AnyTransport::DictionaryComprehension(t) => render_dictionary_comprehension_transport(t),
-        AnyTransport::DictionarySplat(t) => render_dictionary_splat_transport(t),
-        AnyTransport::DictionarySplatPattern(t) => render_dictionary_splat_pattern_transport(t),
-        AnyTransport::DottedName(t) => render_dotted_name_transport(t),
-        AnyTransport::ElifClause(t) => render_elif_clause_transport(t),
-        AnyTransport::Ellipsis2(t) => render_ellipsis2_transport(t),
-        AnyTransport::ElseClause(t) => render_else_clause_transport(t),
-        AnyTransport::EscapeSequence(t) => render_escape_sequence_transport(t),
-        AnyTransport::ExceptClause(t) => render_except_clause_transport(t),
-        AnyTransport::ExecStatement(t) => render_exec_statement_transport(t),
-        AnyTransport::ExpressionList(t) => render_expression_list_transport(t),
-        AnyTransport::ExpressionStatementTuple(t) => render_expression_statement_tuple_transport(t),
-        AnyTransport::ExpressionStatement(t) => render_expression_statement_transport(t),
-        AnyTransport::False(t) => render_false_transport(t),
-        AnyTransport::FinallyClause(t) => render_finally_clause_transport(t),
-        AnyTransport::Float(t) => render_float_transport(t),
-        AnyTransport::ForInClause(t) => render_for_in_clause_transport(t),
-        AnyTransport::ForStatement(t) => render_for_statement_transport(t),
-        AnyTransport::FormatSpecifier(t) => render_format_specifier_transport(t),
-        AnyTransport::FunctionDefinition(t) => render_function_definition_transport(t),
-        AnyTransport::FutureImportStatement(t) => render_future_import_statement_transport(t),
-        AnyTransport::GeneratorExpression(t) => render_generator_expression_transport(t),
-        AnyTransport::GenericType(t) => render_generic_type_transport(t),
-        AnyTransport::GlobalStatement(t) => render_global_statement_transport(t),
-        AnyTransport::Identifier(t) => render_identifier_transport(t),
-        AnyTransport::IfClause(t) => render_if_clause_transport(t),
-        AnyTransport::IfStatement(t) => render_if_statement_transport(t),
-        AnyTransport::ImportFromStatement(t) => render_import_from_statement_transport(t),
-        AnyTransport::ImportPrefix(t) => render_import_prefix_transport(t),
-        AnyTransport::ImportStatement(t) => render_import_statement_transport(t),
-        AnyTransport::Integer(t) => render_integer_transport(t),
-        AnyTransport::Interpolation(t) => render_interpolation_transport(t),
-        AnyTransport::KeywordArgument(t) => render_keyword_argument_transport(t),
-        AnyTransport::KeywordPattern(t) => render_keyword_pattern_transport(t),
-        AnyTransport::KeywordSeparator(t) => render_keyword_separator_transport(t),
-        AnyTransport::Lambda(t) => render_lambda_transport(t),
-        AnyTransport::LambdaParameters(t) => render_lambda_parameters_transport(t),
-        AnyTransport::LambdaWithinForInClause(t) => render_lambda_within_for_in_clause_transport(t),
-        AnyTransport::LineContinuation(t) => render_line_continuation_transport(t),
-        AnyTransport::List(t) => render_list_transport(t),
-        AnyTransport::ListComprehension(t) => render_list_comprehension_transport(t),
-        AnyTransport::ListPattern(t) => render_list_pattern_transport(t),
-        AnyTransport::ListSplat(t) => render_list_splat_transport(t),
-        AnyTransport::ListSplatPattern(t) => render_list_splat_pattern_transport(t),
-        AnyTransport::MatchStatement(t) => render_match_statement_transport(t),
-        AnyTransport::MemberType(t) => render_member_type_transport(t),
-        AnyTransport::Module(t) => render_module_transport(t),
-        AnyTransport::NamedExpression(t) => render_named_expression_transport(t),
-        AnyTransport::None(t) => render_none_transport(t),
-        AnyTransport::NonlocalStatement(t) => render_nonlocal_statement_transport(t),
-        AnyTransport::NotOperator(t) => render_not_operator_transport(t),
-        AnyTransport::Pair(t) => render_pair_transport(t),
-        AnyTransport::Parameters(t) => render_parameters_transport(t),
-        AnyTransport::ParenthesizedExpression(t) => render_parenthesized_expression_transport(t),
-        AnyTransport::ParenthesizedListSplat(t) => render_parenthesized_list_splat_transport(t),
-        AnyTransport::PassStatement(t) => render_pass_statement_transport(t),
-        AnyTransport::PatternList(t) => render_pattern_list_transport(t),
-        AnyTransport::PositionalSeparator(t) => render_positional_separator_transport(t),
-        AnyTransport::PrintStatement(t) => render_print_statement_transport(t),
-        AnyTransport::RaiseStatement(t) => render_raise_statement_transport(t),
-        AnyTransport::RelativeImport(t) => render_relative_import_transport(t),
-        AnyTransport::ReturnStatement(t) => render_return_statement_transport(t),
-        AnyTransport::Set(t) => render_set_transport(t),
-        AnyTransport::SetComprehension(t) => render_set_comprehension_transport(t),
-        AnyTransport::Slice(t) => render_slice_transport(t),
-        AnyTransport::SplatPattern(t) => render_splat_pattern_transport(t),
-        AnyTransport::SplatType(t) => render_splat_type_transport(t),
-        AnyTransport::String(t) => render_string_transport(t),
-        AnyTransport::StringContent(t) => render_string_content_transport(t),
-        AnyTransport::Subscript(t) => render_subscript_transport(t),
-        AnyTransport::True(t) => render_true_transport(t),
-        AnyTransport::TryStatement(t) => render_try_statement_transport(t),
-        AnyTransport::Tuple(t) => render_tuple_transport(t),
-        AnyTransport::TuplePattern(t) => render_tuple_pattern_transport(t),
-        AnyTransport::Type(t) => render_type_transport(t),
-        AnyTransport::TypeAliasStatement(t) => render_type_alias_statement_transport(t),
-        AnyTransport::TypeConversion(t) => render_type_conversion_transport(t),
-        AnyTransport::TypeParameter(t) => render_type_parameter_transport(t),
-        AnyTransport::TypedDefaultParameter(t) => render_typed_default_parameter_transport(t),
-        AnyTransport::TypedParameter(t) => render_typed_parameter_transport(t),
-        AnyTransport::UnaryOperator(t) => render_unary_operator_transport(t),
-        AnyTransport::UnionPattern(t) => render_union_pattern_transport(t),
-        AnyTransport::UnionType(t) => render_union_type_transport(t),
-        AnyTransport::WhileStatement(t) => render_while_statement_transport(t),
-        AnyTransport::WildcardImport(t) => render_wildcard_import_transport(t),
-        AnyTransport::WithClauseBare(t) => render_with_clause_bare_transport(t),
-        AnyTransport::WithClauseParen(t) => render_with_clause_paren_transport(t),
-        AnyTransport::WithClause(t) => render_with_clause_transport(t),
-        AnyTransport::WithItem(t) => render_with_item_transport(t),
-        AnyTransport::WithStatement(t) => render_with_statement_transport(t),
-        AnyTransport::Yield(t) => render_yield_transport(t),
-        AnyTransport::Newline(t) => render_newline_transport(t),
-        AnyTransport::Indent(t) => render_indent_transport(t),
-        AnyTransport::Dedent(t) => render_dedent_transport(t),
-        AnyTransport::StringStart(t) => render_string_start_transport(t),
-        AnyTransport::_StringContent(t) => render__string_content_transport(t),
-        AnyTransport::EscapeInterpolation(t) => render_escape_interpolation_transport(t),
-        AnyTransport::StringEnd(t) => render_string_end_transport(t),
-        AnyTransport::CloseBracket(t) => render_close_bracket_transport(t),
-        AnyTransport::CloseParen(t) => render_close_paren_transport(t),
-        AnyTransport::CloseBrace(t) => render_close_brace_transport(t),
-        AnyTransport::Except(t) => render_except_transport(t),
-        AnyTransport::As(t) => render_as_transport(t),
-        AnyTransport::Eq(t) => render_eq_transport(t),
-        AnyTransport::Colon(t) => render_colon_transport(t),
-        AnyTransport::Async(t) => render_async_transport(t),
-        AnyTransport::Bracket(t) => render_bracket_transport(t),
-        AnyTransport::TokBs(t) => render_tok_bs_transport(t),
-        AnyTransport::Minus(t) => render_minus_transport(t),
-        AnyTransport::Paren(t) => render_paren_transport(t),
-        AnyTransport::Comma(t) => render_comma_transport(t),
-        AnyTransport::Assert(t) => render_assert_transport(t),
-        AnyTransport::Dot(t) => render_dot_transport(t),
-        AnyTransport::Break(t) => render_break_transport(t),
-        AnyTransport::Case(t) => render_case_transport(t),
-        AnyTransport::Shr(t) => render_shr_transport(t),
-        AnyTransport::Class(t) => render_class_transport(t),
-        AnyTransport::If(t) => render_if_transport(t),
-        AnyTransport::Else(t) => render_else_transport(t),
-        AnyTransport::Continue(t) => render_continue_transport(t),
-        AnyTransport::At(t) => render_at_transport(t),
-        AnyTransport::Del(t) => render_del_transport(t),
-        AnyTransport::Brace(t) => render_brace_transport(t),
-        AnyTransport::Starstar(t) => render_starstar_transport(t),
-        AnyTransport::Elif(t) => render_elif_transport(t),
-        AnyTransport::Ellipsis(t) => render_ellipsis_transport(t),
-        AnyTransport::Star(t) => render_star_transport(t),
-        AnyTransport::Exec(t) => render_exec_transport(t),
-        AnyTransport::In(t) => render_in_transport(t),
-        AnyTransport::False2(t) => render_false2_transport(t),
-        AnyTransport::Finally(t) => render_finally_transport(t),
-        AnyTransport::For(t) => render_for_transport(t),
-        AnyTransport::Def(t) => render_def_transport(t),
-        AnyTransport::Arrow(t) => render_arrow_transport(t),
-        AnyTransport::From(t) => render_from_transport(t),
-        AnyTransport::FutureU(t) => render_future_u_transport(t),
-        AnyTransport::Import(t) => render_import_transport(t),
-        AnyTransport::Global(t) => render_global_transport(t),
-        AnyTransport::Match(t) => render_match_transport(t),
-        AnyTransport::Coloneq(t) => render_coloneq_transport(t),
-        AnyTransport::None2(t) => render_none2_transport(t),
-        AnyTransport::Nonlocal(t) => render_nonlocal_transport(t),
-        AnyTransport::Not(t) => render_not_transport(t),
-        AnyTransport::Pass(t) => render_pass_transport(t),
-        AnyTransport::Slash(t) => render_slash_transport(t),
-        AnyTransport::Print(t) => render_print_transport(t),
-        AnyTransport::Raise(t) => render_raise_transport(t),
-        AnyTransport::Return(t) => render_return_transport(t),
-        AnyTransport::Anonymous(t) => render_anonymous_transport(t),
-        AnyTransport::True2(t) => render_true2_transport(t),
-        AnyTransport::Try(t) => render_try_transport(t),
-        AnyTransport::Pipe(t) => render_pipe_transport(t),
-        AnyTransport::While(t) => render_while_transport(t),
-        AnyTransport::With(t) => render_with_transport(t),
-        AnyTransport::Literal0_3c => Ok("<".to_string()),
-        AnyTransport::Literal1_3c_3d => Ok("<=".to_string()),
-        AnyTransport::Literal2_3d_3d => Ok("==".to_string()),
-        AnyTransport::Literal3_21_3d => Ok("!=".to_string()),
-        AnyTransport::Literal4_3e_3d => Ok(">=".to_string()),
-        AnyTransport::Literal5_3e => Ok(">".to_string()),
-        AnyTransport::Literal6_3c_3e => Ok("<>".to_string()),
-        AnyTransport::Literal7_6e_6f_74_20_69_6e => Ok("not in".to_string()),
-        AnyTransport::Literal8_69_73 => Ok("is".to_string()),
-        AnyTransport::Literal9_69_73_20_6e_6f_74 => Ok("is not".to_string()),
-    }
+    let mut s = String::new();
+    transport.render_into(&mut s)?;
+    Ok(s)
 }
 
 impl ::sittir_core::types::RenderableTransport for AnyTransport {
@@ -14471,8 +14164,230 @@ impl ::sittir_core::types::RenderableTransport for AnyTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        let s = render_transport_dispatch(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
+        match self {
+            AnyTransport::_AsPattern(t) => { let s = render__as_pattern_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::AssignmentEq(t) => { let s = render_assignment_eq_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::AssignmentType(t) => { let s = render_assignment_type_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::AssignmentTyped(t) => { let s = render_assignment_typed_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::AsyncMarker(t) => if *t { dest.write_str("async").map_err(::askama::Error::from) } else { Ok(()) },
+            AnyTransport::AugmentedAssignmentOperator(t) => t.render_into(dest),
+            AnyTransport::BinaryOperatorOperator(t) => if *t { dest.write_str("+").map_err(::askama::Error::from) } else { Ok(()) },
+            AnyTransport::BooleanOperatorOperator(t) => if *t { dest.write_str("and").map_err(::askama::Error::from) } else { Ok(()) },
+            AnyTransport::ComprehensionClauses(t) => { let s = render_comprehension_clauses_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::_Identifier(t) => t.render_into(dest),
+            AnyTransport::ImportList(t) => { let s = render_import_list_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::IsNot(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::KeyValuePattern(t) => { let s = render_key_value_pattern_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::KwAsyncMarker(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::KwType(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::_ListPattern(t) => { let s = render__list_pattern_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::MatchBlock(t) => { let s = render_match_block_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::MatchBlockBlock(t) => { let s = render_match_block_block_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::NotEscapeSequence(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::NotIn(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::SimplePatternNegative(t) => { let s = render_simple_pattern_negative_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::SimpleStatements(t) => { let s = render_simple_statements_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::Suite(t) => { let s = render_suite_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::_TuplePattern(t) => { let s = render__tuple_pattern_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::TypeAliasStatementType(t) => if *t { dest.write_str("type").map_err(::askama::Error::from) } else { Ok(()) },
+            AnyTransport::UnaryOperatorOperator(t) => t.render_into(dest),
+            AnyTransport::_WithClauseParen(t) => { let s = render__with_clause_paren_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::AliasedImport(t) => { let s = render_aliased_import_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::ArgumentList(t) => { let s = render_argument_list_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::AsPattern(t) => { let s = render_as_pattern_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::AssertStatement(t) => { let s = render_assert_statement_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::Assignment(t) => { let s = render_assignment_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::Attribute(t) => { let s = render_attribute_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::AugmentedAssignment(t) => { let s = render_augmented_assignment_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::Await(t) => { let s = render_await_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::BinaryOperator(t) => { let s = render_binary_operator_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::Block(t) => { let s = render_block_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::BooleanOperator(t) => { let s = render_boolean_operator_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::BreakStatement(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Call(t) => { let s = render_call_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::CaseClause(t) => { let s = render_case_clause_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::CasePattern(t) => { let s = render_case_pattern_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::Chevron(t) => { let s = render_chevron_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::ClassDefinition(t) => { let s = render_class_definition_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::ClassPattern(t) => { let s = render_class_pattern_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::Comment(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::ComparisonOperator(t) => { let s = render_comparison_operator_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::ComplexPattern(t) => { let s = render_complex_pattern_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::ConcatenatedString(t) => { let s = render_concatenated_string_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::ConditionalExpression(t) => { let s = render_conditional_expression_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::ConstrainedType(t) => { let s = render_constrained_type_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::ContinueStatement(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::DecoratedDefinition(t) => { let s = render_decorated_definition_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::Decorator(t) => { let s = render_decorator_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::DefaultParameter(t) => { let s = render_default_parameter_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::DeleteStatement(t) => { let s = render_delete_statement_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::DictPattern(t) => { let s = render_dict_pattern_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::Dictionary(t) => { let s = render_dictionary_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::DictionaryComprehension(t) => { let s = render_dictionary_comprehension_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::DictionarySplat(t) => { let s = render_dictionary_splat_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::DictionarySplatPattern(t) => { let s = render_dictionary_splat_pattern_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::DottedName(t) => { let s = render_dotted_name_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::ElifClause(t) => { let s = render_elif_clause_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::Ellipsis2(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::ElseClause(t) => { let s = render_else_clause_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::EscapeSequence(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::ExceptClause(t) => { let s = render_except_clause_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::ExecStatement(t) => { let s = render_exec_statement_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::ExpressionList(t) => { let s = render_expression_list_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::ExpressionStatementTuple(t) => { let s = render_expression_statement_tuple_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::ExpressionStatement(t) => { let s = render_expression_statement_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::False(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::FinallyClause(t) => { let s = render_finally_clause_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::Float(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::ForInClause(t) => { let s = render_for_in_clause_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::ForStatement(t) => { let s = render_for_statement_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::FormatSpecifier(t) => { let s = render_format_specifier_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::FunctionDefinition(t) => { let s = render_function_definition_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::FutureImportStatement(t) => { let s = render_future_import_statement_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::GeneratorExpression(t) => { let s = render_generator_expression_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::GenericType(t) => { let s = render_generic_type_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::GlobalStatement(t) => { let s = render_global_statement_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::Identifier(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::IfClause(t) => { let s = render_if_clause_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::IfStatement(t) => { let s = render_if_statement_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::ImportFromStatement(t) => { let s = render_import_from_statement_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::ImportPrefix(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::ImportStatement(t) => { let s = render_import_statement_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::Integer(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Interpolation(t) => { let s = render_interpolation_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::KeywordArgument(t) => { let s = render_keyword_argument_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::KeywordPattern(t) => { let s = render_keyword_pattern_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::KeywordSeparator(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Lambda(t) => { let s = render_lambda_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::LambdaParameters(t) => { let s = render_lambda_parameters_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::LambdaWithinForInClause(t) => { let s = render_lambda_within_for_in_clause_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::LineContinuation(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::List(t) => { let s = render_list_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::ListComprehension(t) => { let s = render_list_comprehension_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::ListPattern(t) => { let s = render_list_pattern_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::ListSplat(t) => { let s = render_list_splat_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::ListSplatPattern(t) => { let s = render_list_splat_pattern_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::MatchStatement(t) => { let s = render_match_statement_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::MemberType(t) => { let s = render_member_type_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::Module(t) => { let s = render_module_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::NamedExpression(t) => { let s = render_named_expression_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::None(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::NonlocalStatement(t) => { let s = render_nonlocal_statement_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::NotOperator(t) => { let s = render_not_operator_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::Pair(t) => { let s = render_pair_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::Parameters(t) => { let s = render_parameters_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::ParenthesizedExpression(t) => { let s = render_parenthesized_expression_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::ParenthesizedListSplat(t) => { let s = render_parenthesized_list_splat_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::PassStatement(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::PatternList(t) => { let s = render_pattern_list_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::PositionalSeparator(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::PrintStatement(t) => { let s = render_print_statement_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::RaiseStatement(t) => { let s = render_raise_statement_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::RelativeImport(t) => { let s = render_relative_import_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::ReturnStatement(t) => { let s = render_return_statement_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::Set(t) => { let s = render_set_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::SetComprehension(t) => { let s = render_set_comprehension_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::Slice(t) => { let s = render_slice_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::SplatPattern(t) => { let s = render_splat_pattern_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::SplatType(t) => { let s = render_splat_type_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::String(t) => { let s = render_string_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::StringContent(t) => { let s = render_string_content_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::Subscript(t) => { let s = render_subscript_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::True(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::TryStatement(t) => { let s = render_try_statement_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::Tuple(t) => { let s = render_tuple_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::TuplePattern(t) => { let s = render_tuple_pattern_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::Type(t) => { let s = render_type_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::TypeAliasStatement(t) => { let s = render_type_alias_statement_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::TypeConversion(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::TypeParameter(t) => { let s = render_type_parameter_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::TypedDefaultParameter(t) => { let s = render_typed_default_parameter_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::TypedParameter(t) => { let s = render_typed_parameter_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::UnaryOperator(t) => { let s = render_unary_operator_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::UnionPattern(t) => { let s = render_union_pattern_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::UnionType(t) => { let s = render_union_type_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::WhileStatement(t) => { let s = render_while_statement_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::WildcardImport(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::WithClauseBare(t) => { let s = render_with_clause_bare_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::WithClauseParen(t) => { let s = render_with_clause_paren_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::WithClause(t) => { let s = render_with_clause_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::WithItem(t) => { let s = render_with_item_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::WithStatement(t) => { let s = render_with_statement_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::Yield(t) => { let s = render_yield_transport(t)?; dest.write_str(&s).map_err(::askama::Error::from) }
+            AnyTransport::Newline(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Indent(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Dedent(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::StringStart(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::_StringContent(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::EscapeInterpolation(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::StringEnd(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::CloseBracket(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::CloseParen(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::CloseBrace(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Except(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::As(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Eq(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Colon(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Async(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Bracket(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::TokBs(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Minus(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Paren(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Comma(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Assert(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Dot(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Break(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Case(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Shr(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Class(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::If(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Else(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Continue(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::At(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Del(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Brace(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Starstar(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Elif(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Ellipsis(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Star(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Exec(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::In(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::False2(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Finally(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::For(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Def(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Arrow(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::From(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::FutureU(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Import(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Global(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Match(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Coloneq(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::None2(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Nonlocal(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Not(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Pass(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Slash(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Print(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Raise(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Return(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Anonymous(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::True2(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Try(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Pipe(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::While(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::With(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Literal0_3c => dest.write_str("<").map_err(::askama::Error::from),
+            AnyTransport::Literal1_3c_3d => dest.write_str("<=").map_err(::askama::Error::from),
+            AnyTransport::Literal2_3d_3d => dest.write_str("==").map_err(::askama::Error::from),
+            AnyTransport::Literal3_21_3d => dest.write_str("!=").map_err(::askama::Error::from),
+            AnyTransport::Literal4_3e_3d => dest.write_str(">=").map_err(::askama::Error::from),
+            AnyTransport::Literal5_3e => dest.write_str(">").map_err(::askama::Error::from),
+            AnyTransport::Literal6_3c_3e => dest.write_str("<>").map_err(::askama::Error::from),
+            AnyTransport::Literal7_6e_6f_74_20_69_6e => dest.write_str("not in").map_err(::askama::Error::from),
+            AnyTransport::Literal8_69_73 => dest.write_str("is").map_err(::askama::Error::from),
+            AnyTransport::Literal9_69_73_20_6e_6f_74 => dest.write_str("is not").map_err(::askama::Error::from),
+        }
     }
 }
 
@@ -14505,7 +14420,7 @@ fn transport_node_data(
 fn transport_field_value(value: Box<AnyTransport>) -> Result<TransportFieldValue, ::askama::Error> {
     let node = transport_to_node(*value)?;
     if !node.named {
-        if let Some(text) = node.text.clone() {
+        if let Some(text) = node.text {
             return Ok(TransportFieldValue::Text(text));
         }
     }
@@ -19250,7 +19165,7 @@ fn missing_required_field(node: &NodeData, name: &str) -> ::askama::Error {
 
 fn resolve_text(node: &NodeData) -> Result<String, ::askama::Error> {
     if let Some(text) = &node.text {
-        return Ok(text.clone());
+        return Ok(text.to_owned());
     }
     let mut parts = Vec::new();
     if let Some(fields) = &node.fields {
@@ -19262,7 +19177,7 @@ fn resolve_text(node: &NodeData) -> Result<String, ::askama::Error> {
                         parts.push(render_node_value(child)?);
                     }
                 }
-                FieldValue::Text(text) => parts.push(text.clone()),
+                FieldValue::Text(text) => parts.push(text.to_owned()),
             }
         }
     }
@@ -19285,7 +19200,7 @@ fn resolve_leaf<'a>(node: &'a NodeData, name: &str) -> Option<&'a str> {
 fn resolve_optional(node: &NodeData, name: &str) -> Result<Option<String>, ::askama::Error> {
     match node.fields.as_ref().and_then(|fields| fields.get(name)) {
         None => Ok(None),
-        Some(FieldValue::Text(text)) => Ok((!text.is_empty()).then(|| text.clone())),
+        Some(FieldValue::Text(text)) => Ok((!text.is_empty()).then(|| text.to_owned())),
         Some(FieldValue::Single(child)) => {
             let rendered = render_node_value(child)?;
             Ok((!rendered.is_empty()).then_some(rendered))
@@ -19373,7 +19288,7 @@ fn resolve_field(node: &NodeData, name: &str, required: bool) -> Result<Resolved
                 Ok(ResolvedField::default())
             }
         }
-        Some(FieldValue::Text(text)) => Ok(ResolvedField::from_scalar(text.clone())),
+        Some(FieldValue::Text(text)) => Ok(ResolvedField::from_scalar(text.to_owned())),
         Some(FieldValue::Single(child)) => {
             let rendered = render_node_value(child)?;
             Ok(ResolvedField::from_scalar(rendered))
@@ -19478,7 +19393,7 @@ fn token_shaped_fallback(node: &NodeData) -> Result<String, ::askama::Error> {
     let children_all_anon = node.children.as_ref().map_or(true, |children| children.iter().all(|child| !child.named));
     if fields_all_anon && children_all_anon {
         if let Some(text) = &node.text {
-            return Ok(text.clone());
+            return Ok(text.to_owned());
         }
         let mut parts = Vec::new();
         if let Some(fields) = &node.fields {
@@ -19486,24 +19401,24 @@ fn token_shaped_fallback(node: &NodeData) -> Result<String, ::askama::Error> {
                 match value {
                     FieldValue::Single(item) => {
                         if let Some(text) = &item.text {
-                            parts.push(text.clone());
+                            parts.push(text.to_owned());
                         }
                     }
                     FieldValue::Multiple(items) => {
                         for item in items {
                             if let Some(text) = &item.text {
-                                parts.push(text.clone());
+                                parts.push(text.to_owned());
                             }
                         }
                     }
-                    FieldValue::Text(text) => parts.push(text.clone()),
+                    FieldValue::Text(text) => parts.push(text.to_owned()),
                 }
             }
         }
         if let Some(children) = &node.children {
             for child in children {
                 if let Some(text) = &child.text {
-                    parts.push(text.clone());
+                    parts.push(text.to_owned());
                 }
             }
         }
@@ -21130,7 +21045,7 @@ fn render_yield(node: &NodeData) -> Result<String, ::askama::Error> {
 pub fn render_dispatch(node: &::sittir_core::types::NodeData) -> Result<String, ::askama::Error> {
     if node.fields.is_none() && node.children.is_none() {
         if let Some(text) = &node.text {
-            return Ok(text.clone());
+            return Ok(text.to_owned());
         }
     }
     match node.type_.0 {

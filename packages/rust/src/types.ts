@@ -6958,15 +6958,20 @@ export interface TerminalTransport<K extends string, V extends string = string> 
 export interface LiteralTransport<K extends string, V extends string = K> extends TerminalTransport<K, V> {}
 
 export namespace RangeExpressionBinaryOperator {
-  export type Transport = TerminalTransport<"__range_expression_binary_operator", ".." | "..." | "..=">;
+  export const enum Values {
+    DotDot = TSKindId.DotDot,
+    DotDotDot = TSKindId.DotDotDot,
+    DotDotEq = TSKindId.DotDotEq,
+  }
+  export type Transport = Values;
 }
 
 export namespace VisibilityModifierInPathIn {
-  export type Transport = TerminalTransport<"__visibility_modifier_in_path_in", "in">;
+  export type Transport = boolean;
 }
 
 export namespace VisibilityModifierPubPub {
-  export type Transport = TerminalTransport<"__visibility_modifier_pub_pub", "pub">;
+  export type Transport = boolean;
 }
 
 export namespace ArrayExpressionList {
@@ -6998,11 +7003,11 @@ export namespace ArrayExpressionSemi {
 }
 
 export namespace BinaryExpressionOperator {
-  export type Transport = TerminalTransport<"_binary_expression_operator", "&&">;
+  export type Transport = boolean;
 }
 
 export namespace ClosureExpressionAsyncMarker {
-  export type Transport = TerminalTransport<"_closure_expression_async_marker", "async">;
+  export type Transport = boolean;
 }
 
 export namespace ClosureExpressionBlock {
@@ -7031,15 +7036,27 @@ export namespace _ClosureExpressionExpr {
 }
 
 export namespace ClosureExpressionStaticMarker {
-  export type Transport = TerminalTransport<"_closure_expression_static_marker", "static">;
+  export type Transport = boolean;
 }
 
 export namespace CompoundAssignmentExprOperator {
-  export type Transport = TerminalTransport<"_compound_assignment_expr_operator", "+=" | "-=" | "*=" | "/=" | "%=" | "&=" | "|=" | "^=" | "<<=" | ">>=">;
+  export const enum Values {
+    PlusEq = TSKindId.PlusEq,
+    DashEq = TSKindId.DashEq,
+    StarEq = TSKindId.StarEq,
+    SlashEq = TSKindId.SlashEq,
+    PercentEq = TSKindId.PercentEq,
+    AmpEq = TSKindId.AmpEq,
+    PipeEq = TSKindId.PipeEq,
+    CaretEq = TSKindId.CaretEq,
+    LtLtEq = TSKindId.LtLtEq,
+    GtGtEq = TSKindId.GtGtEq,
+  }
+  export type Transport = Values;
 }
 
 export namespace _Crate {
-  export type Transport = TerminalTransport<"_crate", "crate">;
+  export type Transport = boolean;
 }
 
 export namespace _DelimTokenTreeBrace {
@@ -7180,7 +7197,7 @@ export namespace FunctionTypeTraitForm {
 }
 
 export namespace GenericTypeWithTurbofishTurbofish {
-  export type Transport = TerminalTransport<"_generic_type_with_turbofish_turbofish", "::">;
+  export type Transport = boolean;
 }
 
 export namespace _ImplItemBody {
@@ -7196,7 +7213,7 @@ export namespace _ImplItemBody {
 }
 
 export namespace ImplItemNegative {
-  export type Transport = TerminalTransport<"_impl_item_negative", "!">;
+  export type Transport = boolean;
 }
 
 export namespace ImplItemSemi {
@@ -7356,11 +7373,11 @@ export namespace _ModItemInline {
 }
 
 export namespace MoveMarker {
-  export type Transport = TerminalTransport<"_move_marker", "move">;
+  export type Transport = boolean;
 }
 
 export namespace _MutableSpecifier {
-  export type Transport = TerminalTransport<"_mutable_specifier", "mut">;
+  export type Transport = boolean;
 }
 
 export namespace NonSpecialToken {
@@ -7376,7 +7393,7 @@ export namespace NonSpecialToken {
 }
 
 export namespace Operator {
-  export type Transport = TerminalTransport<"_operator", "..">;
+  export type Transport = boolean;
 }
 
 export namespace OrPatternBinary {
@@ -7425,7 +7442,26 @@ export namespace _PointerTypeMut {
 }
 
 export namespace PrimitiveType {
-  export type Transport = TerminalTransport<"_primitive_type", "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char">;
+  export const enum Values {
+    U8 = TSKindId.U8,
+    I8 = TSKindId.I8,
+    U16 = TSKindId.U16,
+    I16 = TSKindId.I16,
+    U32 = TSKindId.U32,
+    I32 = TSKindId.I32,
+    U64 = TSKindId.U64,
+    I64 = TSKindId.I64,
+    U128 = TSKindId.U128,
+    I128 = TSKindId.I128,
+    Isize = TSKindId.Isize,
+    Usize = TSKindId.Usize,
+    F32 = TSKindId.F32,
+    F64 = TSKindId.F64,
+    Bool = TSKindId.Bool,
+    Str = TSKindId.Str,
+    Char = TSKindId.Char,
+  }
+  export type Transport = Values;
 }
 
 export namespace _RangeExpressionBare {
@@ -7509,7 +7545,7 @@ export namespace RangePatternPrefix {
 }
 
 export namespace RefMarker {
-  export type Transport = TerminalTransport<"_ref_marker", "ref">;
+  export type Transport = boolean;
 }
 
 export namespace ReferenceExpressionRawConst {
@@ -7541,7 +7577,7 @@ export namespace ReservedIdentifier {
 }
 
 export namespace _Self {
-  export type Transport = TerminalTransport<"_self", "self">;
+  export type Transport = boolean;
 }
 
 export namespace StructItemBrace {
@@ -7575,7 +7611,24 @@ export namespace StructItemUnit {
 }
 
 export namespace TokenBindingPatternType {
-  export type Transport = TerminalTransport<"_token_binding_pattern_type", "block" | "expr" | "expr_2021" | "ident" | "item" | "lifetime" | "literal" | "meta" | "pat" | "pat_param" | "path" | "stmt" | "tt" | "ty" | "vis">;
+  export const enum Values {
+    Block = TSKindId.Block,
+    Expr = TSKindId.Expr,
+    Expr2021 = TSKindId.Expr2021,
+    Ident = TSKindId.Ident,
+    Item = TSKindId.Item,
+    Lifetime = TSKindId.Lifetime,
+    Literal = TSKindId.Literal,
+    Meta = TSKindId.Meta,
+    Pat = TSKindId.Pat,
+    PatParam = TSKindId.PatParam,
+    Path = TSKindId.Path,
+    Stmt = TSKindId.Stmt,
+    Tt = TSKindId.Tt,
+    Ty = TSKindId.Ty,
+    Vis = TSKindId.Vis,
+  }
+  export type Transport = Values;
 }
 
 export namespace _TokenTreeBrace {
@@ -7663,11 +7716,16 @@ export namespace TypeIdentifier {
 }
 
 export namespace UnaryExpressionOperator {
-  export type Transport = TerminalTransport<"_unary_expression_operator", "-" | "*" | "!">;
+  export const enum Values {
+    Dash = TSKindId.Dash,
+    Star = TSKindId.Star,
+    Bang = TSKindId.Bang,
+  }
+  export type Transport = Values;
 }
 
 export namespace UnsafeMarker {
-  export type Transport = TerminalTransport<"_unsafe_marker", "unsafe">;
+  export type Transport = boolean;
 }
 
 export namespace _VisibilityModifierCrate {
@@ -7909,7 +7967,11 @@ export namespace BlockComment {
 }
 
 export namespace BooleanLiteral {
-  export type Transport = TerminalTransport<"boolean_literal", "true" | "false">;
+  export const enum Values {
+    True = TSKindId.True,
+    False = TSKindId.False,
+  }
+  export type Transport = Values;
 }
 
 export namespace BoundedType {
@@ -8557,7 +8619,24 @@ export namespace ForeignModItem {
 }
 
 export namespace FragmentSpecifier {
-  export type Transport = TerminalTransport<"fragment_specifier", "block" | "expr" | "expr_2021" | "ident" | "item" | "lifetime" | "literal" | "meta" | "pat" | "pat_param" | "path" | "stmt" | "tt" | "ty" | "vis">;
+  export const enum Values {
+    Block = TSKindId.Block,
+    Expr = TSKindId.Expr,
+    Expr2021 = TSKindId.Expr2021,
+    Ident = TSKindId.Ident,
+    Item = TSKindId.Item,
+    Lifetime = TSKindId.Lifetime,
+    Literal = TSKindId.Literal,
+    Meta = TSKindId.Meta,
+    Pat = TSKindId.Pat,
+    PatParam = TSKindId.PatParam,
+    Path = TSKindId.Path,
+    Stmt = TSKindId.Stmt,
+    Tt = TSKindId.Tt,
+    Ty = TSKindId.Ty,
+    Vis = TSKindId.Vis,
+  }
+  export type Transport = Values;
 }
 
 export namespace FunctionItem {

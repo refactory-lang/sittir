@@ -542,7 +542,7 @@ function renderDirectSupport(
 		`fn resolve_text(node: &NodeData) -> Result<String, ::askama::Error> {`
 	);
 	lines.push(`    if let Some(text) = &node.text {`);
-	lines.push(`        return Ok(text.clone());`);
+	lines.push(`        return Ok(text.to_owned());`);
 	lines.push(`    }`);
 	lines.push(`    let mut parts = Vec::new();`);
 	lines.push(`    if let Some(fields) = &node.fields {`);
@@ -557,7 +557,7 @@ function renderDirectSupport(
 	lines.push(`                    }`);
 	lines.push(`                }`);
 	lines.push(
-		`                FieldValue::Text(text) => parts.push(text.clone()),`
+		`                FieldValue::Text(text) => parts.push(text.to_owned()),`
 	);
 	lines.push(`            }`);
 	lines.push(`        }`);
@@ -592,7 +592,7 @@ function renderDirectSupport(
 	);
 	lines.push(`        None => Ok(None),`);
 	lines.push(
-		`        Some(FieldValue::Text(text)) => Ok((!text.is_empty()).then(|| text.clone())),`
+		`        Some(FieldValue::Text(text)) => Ok((!text.is_empty()).then(|| text.to_owned())),`
 	);
 	lines.push(`        Some(FieldValue::Single(child)) => {`);
 	lines.push(`            let rendered = render_node_value(child)?;`);
@@ -702,7 +702,7 @@ function renderDirectSupport(
 	lines.push(`            }`);
 	lines.push(`        }`);
 	lines.push(
-		`        Some(FieldValue::Text(text)) => Ok(ResolvedField::from_scalar(text.clone())),`
+		`        Some(FieldValue::Text(text)) => Ok(ResolvedField::from_scalar(text.to_owned())),`
 	);
 	lines.push(`        Some(FieldValue::Single(child)) => {`);
 	lines.push(`            let rendered = render_node_value(child)?;`);
@@ -834,7 +834,7 @@ function renderDirectSupport(
 	);
 	lines.push(`    if fields_all_anon && children_all_anon {`);
 	lines.push(`        if let Some(text) = &node.text {`);
-	lines.push(`            return Ok(text.clone());`);
+	lines.push(`            return Ok(text.to_owned());`);
 	lines.push(`        }`);
 	lines.push(`        let mut parts = Vec::new();`);
 	lines.push(`        if let Some(fields) = &node.fields {`);
@@ -842,18 +842,18 @@ function renderDirectSupport(
 	lines.push(`                match value {`);
 	lines.push(`                    FieldValue::Single(item) => {`);
 	lines.push(`                        if let Some(text) = &item.text {`);
-	lines.push(`                            parts.push(text.clone());`);
+	lines.push(`                            parts.push(text.to_owned());`);
 	lines.push(`                        }`);
 	lines.push(`                    }`);
 	lines.push(`                    FieldValue::Multiple(items) => {`);
 	lines.push(`                        for item in items {`);
 	lines.push(`                            if let Some(text) = &item.text {`);
-	lines.push(`                                parts.push(text.clone());`);
+	lines.push(`                                parts.push(text.to_owned());`);
 	lines.push(`                            }`);
 	lines.push(`                        }`);
 	lines.push(`                    }`);
 	lines.push(
-		`                    FieldValue::Text(text) => parts.push(text.clone()),`
+		`                    FieldValue::Text(text) => parts.push(text.to_owned()),`
 	);
 	lines.push(`                }`);
 	lines.push(`            }`);
@@ -861,7 +861,7 @@ function renderDirectSupport(
 	lines.push(`        if let Some(children) = &node.children {`);
 	lines.push(`            for child in children {`);
 	lines.push(`                if let Some(text) = &child.text {`);
-	lines.push(`                    parts.push(text.clone());`);
+	lines.push(`                    parts.push(text.to_owned());`);
 	lines.push(`                }`);
 	lines.push(`            }`);
 	lines.push(`        }`);
@@ -972,7 +972,7 @@ function renderDispatchFn(
 	);
 	lines.push(`    if node.fields.is_none() && node.children.is_none() {`);
 	lines.push(`        if let Some(text) = &node.text {`);
-	lines.push(`            return Ok(text.clone());`);
+	lines.push(`            return Ok(text.to_owned());`);
 	lines.push(`        }`);
 	lines.push(`    }`);
 	if (kindIdByKind !== undefined) {
@@ -1321,42 +1321,75 @@ function renderTypedDispatch(
 	}
 
 	// ---- render_transport_dispatch ---------------------------------------
-	// Literal token arms use the static text known at codegen time — no
-	// heap allocation and no call through render_literal_transport.
+	// Delegates to render_into so all dispatch logic lives in one place.
+	// render_into writes leaf text directly (no String intermediate) and
+	// dispatches branch nodes through their Askama template fns. This
+	// function is retained as the `pub fn -> String` entry point for callers
+	// that need an owned String (e.g. render_transport, parity tests).
 	lines.push(
 		`pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::askama::Error> {`
 	);
-	lines.push(`    match transport {`);
-	for (const node of nodes) {
-		const variant = rustTransportVariantName(node);
-		const fnName = rustTypedRenderFnName(node.typeName);
-		lines.push(
-			`        AnyTransport::${variant}(t) => ${fnName}(t),`
-		);
-	}
-	for (const [index, literal] of literals.entries()) {
-		const variant = rustLiteralTransportVariantName(literal, index);
-		// Unit variant — no payload. Literal text is a compile-time constant.
-		lines.push(
-			`        AnyTransport::${variant} => Ok(${JSON.stringify(literal.text)}.to_string()),`
-		);
-	}
-	lines.push(`    }`);
+	lines.push(`    let mut s = String::new();`);
+	lines.push(`    transport.render_into(&mut s)?;`);
+	lines.push(`    Ok(s)`);
 	lines.push(`}`);
 	lines.push('');
 
 	// ---- impl RenderableTransport for AnyTransport -----------------------
 	// Heterogeneous (Box<AnyTransport>) slots call .render_to_string() instead
-	// of render_transport_dispatch(...) directly, eliminating all internal
-	// callers of that function. The impl delegates to render_transport_dispatch
-	// so the full per-kind dispatch is still exercised — just via the trait.
+	// of render_transport_dispatch(...) directly.
+	//
+	// Per-kind node arms delegate to the per-kind render fn (same as dispatch).
+	// Literal unit variant arms write static text directly via dest.write_str —
+	// no String allocation, no call through render_transport_dispatch.
 	lines.push(`impl ::sittir_core::types::RenderableTransport for AnyTransport {`);
 	lines.push(`    fn render_into(`);
 	lines.push(`        &self,`);
 	lines.push(`        dest: &mut dyn ::std::fmt::Write,`);
 	lines.push(`    ) -> Result<(), ::askama::Error> {`);
-	lines.push(`        let s = render_transport_dispatch(self)?;`);
-	lines.push(`        dest.write_str(&s).map_err(::askama::Error::from)`);
+	lines.push(`        match self {`);
+	for (const node of nodes) {
+		const variant = rustTransportVariantName(node);
+		const isLeafLikeNode =
+			node.modelType === 'leaf' ||
+			node.modelType === 'keyword' ||
+			node.modelType === 'token';
+		const isEnumNode = node instanceof AssembledEnum && !isSingleMemberEnum(node);
+		const isSingleBoolEnum = node instanceof AssembledEnum && isSingleMemberEnum(node);
+		if (isLeafLikeNode) {
+			// Leaf/keyword/token: write text field directly — no String intermediate.
+			lines.push(
+				`            AnyTransport::${variant}(t) => dest.write_str(&t.text).map_err(::askama::Error::from),`
+			);
+		} else if (isEnumNode) {
+			// Multi-member enum: delegate to its RenderableTransport impl which
+			// writes the static text directly via dest.write_str(match self {...}).
+			lines.push(
+				`            AnyTransport::${variant}(t) => t.render_into(dest),`
+			);
+		} else if (isSingleBoolEnum) {
+			// Single-member presence bool: static text when true, empty when false.
+			const text = JSON.stringify((node as AssembledEnum).values[0]!);
+			lines.push(
+				`            AnyTransport::${variant}(t) => if *t { dest.write_str(${text}).map_err(::askama::Error::from) } else { Ok(()) },`
+			);
+		} else {
+			// Branch/container/group/polymorph: delegate to per-kind render fn
+			// (Askama template.render() returns String; no cheaper path exists).
+			const fnName = rustTypedRenderFnName(node.typeName);
+			lines.push(
+				`            AnyTransport::${variant}(t) => { let s = ${fnName}(t)?; dest.write_str(&s).map_err(::askama::Error::from) }`
+			);
+		}
+	}
+	for (const [index, literal] of literals.entries()) {
+		const variant = rustLiteralTransportVariantName(literal, index);
+		// Literal unit variant — static text known at codegen time; write directly.
+		lines.push(
+			`            AnyTransport::${variant} => dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from),`
+		);
+	}
+	lines.push(`        }`);
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
@@ -1375,7 +1408,7 @@ function rustTypedRenderFnName(typeName: string): string {
  *
  * - polymorph → match on enum variants, delegate to per-form fns
  * - branch / container / group → build template struct from typed fields
- * - leaf / keyword / token / enum → return `t.text.clone()`
+ * - leaf / keyword / token / enum → return `t.text.to_string()` (or enum Display)
  */
 function renderTypedKindFn(
 	node: AssembledNode,
@@ -1442,7 +1475,7 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
 			lines.push(`    Ok(out)`);
 		}
 	} else {
-		lines.push(`    Ok(node.transport_text.clone().unwrap_or_default())`);
+		lines.push(`    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())`);
 	}
 	lines.push(`}`);
 	lines.push('');
@@ -1457,7 +1490,7 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
  * - Single-member enums: transport is `bool`; render the known static text when
  *   true, empty string when false.
  * - Multi-member enums: transport is the Rust enum; render via `Display` (`t.to_string()`).
- * For all others: use `t.text.clone()`.
+ * For all others: use `t.text.to_string()`.
  */
 function renderTypedLeafFn(node: AssembledNode): string[] {
 	const fnName = rustTypedRenderFnName(node.typeName);
@@ -1473,7 +1506,7 @@ function renderTypedLeafFn(node: AssembledNode): string[] {
 		];
 	}
 	const body =
-		node instanceof AssembledEnum ? `Ok(t.to_string())` : `Ok(t.text.clone())`;
+		node instanceof AssembledEnum ? `Ok(t.to_string())` : `Ok(t.text.to_owned())`;
 	return [
 		`fn ${fnName}(t: &${typeName}) -> Result<String, ::askama::Error> {`,
 		`    ${body}`,
@@ -2835,7 +2868,7 @@ function renderTransportBridge(
 		'fn transport_field_value(value: Box<AnyTransport>) -> Result<TransportFieldValue, ::askama::Error> {',
 		'    let node = transport_to_node(*value)?;',
 		'    if !node.named {',
-		'        if let Some(text) = node.text.clone() {',
+		'        if let Some(text) = node.text {',
 		'            return Ok(TransportFieldValue::Text(text));',
 		'        }',
 		'    }',
@@ -3426,17 +3459,23 @@ function renderTransportDataStruct(
 	lines.push('');
 	// Emit impl RenderableTransport for this struct so heterogeneous
 	// (Box<AnyTransport>) slots can call .render_to_string() without routing
-	// through the top-level render_transport_dispatch match. The impl delegates
-	// to the per-kind render fn, which is declared (at module scope) after this
-	// struct; forward references are fine in Rust.
-	const renderFn = rustTypedRenderFnName(node.typeName);
+	// through the top-level render_transport_dispatch match.
+	//
+	// Leaf/keyword/token structs write directly to `dest` — no String intermediate.
+	// Branch/container/group nodes delegate to the per-kind render fn (which uses
+	// Askama's template.render() that returns String; no cheaper path exists).
 	lines.push(`impl ::sittir_core::types::RenderableTransport for ${structName} {`);
 	lines.push(`    fn render_into(`);
 	lines.push(`        &self,`);
 	lines.push(`        dest: &mut dyn ::std::fmt::Write,`);
 	lines.push(`    ) -> Result<(), ::askama::Error> {`);
-	lines.push(`        let s = ${renderFn}(self)?;`);
-	lines.push(`        dest.write_str(&s).map_err(::askama::Error::from)`);
+	if (isLeafNode) {
+		lines.push(`        dest.write_str(&self.text).map_err(::askama::Error::from)`);
+	} else {
+		const renderFn = rustTypedRenderFnName(node.typeName);
+		lines.push(`        let s = ${renderFn}(self)?;`);
+		lines.push(`        dest.write_str(&s).map_err(::askama::Error::from)`);
+	}
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
