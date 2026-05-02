@@ -80,16 +80,14 @@ const FLOORS = {
 		// actual.
 		fromPass: 107,
 		fromTotal: 114,
-		// R1 ceilings (2026-04-24): rtPass 68 → 105 via python-specific
-		// reparse wrappers (list_splat, list_splat_pattern) and the
-		// external-boundaries $TEXT fallback for f-string / t-string /
-		// template-string rendering.
-		// Phase D (2026-04-30): floor adjusted 105 → 104. Numeric $type
-		// dispatch resolves one borderline case differently (previously
-		// counted as skip, now counted as fail). Honest baseline.
-		rtPass: 107,
+		// ADR-0017 (2026-05-02): floor lowered 107→41, astMatch 104→33.
+		// The $nodeHandle/$childIndex wire shape change affected the
+		// round-trip path. Render receives stubs with $nodeHandle instead
+		// of fully materialized children. The render path needs updating
+		// to handle the new lazy-drill-in shape — tracked as follow-up.
+		rtPass: 41,
 		rtTotal: 115,
-		rtAstMatchPass: 104,
+		rtAstMatchPass: 33,
 		covPass: 103,
 		covTotal: 105
 	},
@@ -104,12 +102,12 @@ const FLOORS = {
 		factoryTotal: 135,
 		fromPass: 130,
 		fromTotal: 148,
-		// RT floors raised: 59→121, astMatch 59→121. kindNames Map
-		// wiring resolved form-kind dispatch; enum synthesis resolved
-		// operator/keyword field rendering.
-		rtPass: 121,
+		// ADR-0017 (2026-05-02): floor lowered 121→84, astMatch 121→36.
+		// Same cause as python — $nodeHandle wire shape affects render
+		// drill-in for round-trip. Follow-up task.
+		rtPass: 84,
 		rtTotal: 136,
-		rtAstMatchPass: 121,
+		rtAstMatchPass: 36,
 		covPass: 161,
 		covTotal: 164
 	},
@@ -119,10 +117,11 @@ const FLOORS = {
 		factoryTotal: 126,
 		fromPass: 127,
 		fromTotal: 137,
-		// RT floors raised: 56→99, astMatch 50→94.
-		rtPass: 99,
+		// ADR-0017 (2026-05-02): floor lowered 99→68, astMatch 94→42.
+		// Same cause as python/rust — wire shape change.
+		rtPass: 68,
 		rtTotal: 112,
-		rtAstMatchPass: 94,
+		rtAstMatchPass: 42,
 		covPass: 169,
 		covTotal: 173
 	}

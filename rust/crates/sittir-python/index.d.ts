@@ -49,7 +49,7 @@ export declare class SittirEngine {
   get nativeRenderTransportAbi(): number
   findAndRead(source: string, pattern: string): string
   parseAndRead(source: string): string
-  readNode(nodeId: number): string
+  readNode(handle: number, childIndex: number): string
   /**
    * Render a typed transport object (napi-native, numeric `$type`).
    * Phase B: `AnyTransport` is decoded by napi-rs directly from the JS
@@ -294,7 +294,7 @@ export interface ComparisonOperatorTransport {
   '$span'?: Span
   '$nodeId'?: number
   left: PrimaryExpressionTransport
-  operators: Array<Box<AnyTransport>>
+  operators: Array<AnyTransport>
 }
 
 export interface ComplexPatternTransport {
@@ -574,7 +574,7 @@ export interface FutureImportStatementTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  name: Array<Box<AnyTransport>>
+  name: Array<AnyTransport>
 }
 
 export interface GeneratorExpressionTransport {
@@ -623,7 +623,7 @@ export interface IfStatementTransport {
   '$nodeId'?: number
   condition: ExpressionTransport
   consequence: SuiteTransport
-  alternative?: Array<Box<AnyTransport>>
+  alternative?: Array<AnyTransport>
 }
 
 export interface ImportFromStatementTransport {
@@ -642,7 +642,7 @@ export interface ImportListTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  name: Array<Box<AnyTransport>>
+  name: Array<AnyTransport>
 }
 
 export interface ImportStatementTransport {
@@ -651,7 +651,7 @@ export interface ImportStatementTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  name: Array<Box<AnyTransport>>
+  name: Array<AnyTransport>
 }
 
 export interface InterpolationTransport {
@@ -1022,7 +1022,7 @@ export interface StringTransport {
   '$span'?: Span
   '$nodeId'?: number
   stringStart: StringStartTransport
-  content: Array<Box<AnyTransport>>
+  content: Array<AnyTransport>
   stringEnd: StringEndTransport
 }
 
@@ -1033,7 +1033,7 @@ export interface SubscriptTransport {
   '$span'?: Span
   '$nodeId'?: number
   value: PrimaryExpressionTransport
-  subscript: Array<Box<AnyTransport>>
+  subscript: Array<AnyTransport>
 }
 
 export interface SuiteTransport {

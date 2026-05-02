@@ -49,7 +49,7 @@ export declare class SittirEngine {
   get nativeRenderTransportAbi(): number
   findAndRead(source: string, pattern: string): string
   parseAndRead(source: string): string
-  readNode(nodeId: number): string
+  readNode(handle: number, childIndex: number): string
   /**
    * Render a typed transport object (napi-native, numeric `$type`).
    * Phase B: `AnyTransport` is decoded by napi-rs directly from the JS
@@ -905,7 +905,7 @@ export interface ExtendsTypeClauseTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  type: Array<Box<AnyTransport>>
+  type: Array<AnyTransport>
 }
 
 export interface FieldDefinitionTransport {
@@ -1651,7 +1651,7 @@ export interface NamedImportsTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  '$children': Array<Box<AnyTransport>>
+  '$children': Array<AnyTransport>
 }
 
 export interface NamespaceExportTransport {
@@ -1757,7 +1757,7 @@ export interface ObjectTypeTransport {
   '$span'?: Span
   '$nodeId'?: number
   opening: ObjectTypeOpeningEnum
-  members?: Array<Box<AnyTransport>>
+  members?: Array<AnyTransport>
   closing: ObjectTypeClosingEnum
 }
 

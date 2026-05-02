@@ -45,22 +45,25 @@ describe('kindIdFromName coverage (Phase B)', () => {
 		expect(id).toBe(TSKindId.Plus);
 	});
 
-	it('does NOT resolve anonymous tokens by displayName (+)', () => {
-		// Fix 1: kindIdFromName resolves by canonical catalog key ONLY.
-		// DisplayName cases (like '+' for the 'plus' entry) are intentionally
-		// omitted — they produced shadowing bugs (python `_as_pattern` displayName
-		// `"as_pattern"` shadowed the real `as_pattern` entry). If displayName→id
-		// resolution is needed in the future, emit it as `kindIdFromDisplayName`
-		// rather than mixing it into this function.
-		expect(() => kindIdFromName('+')).toThrow(/unknown kind name/);
+	it('resolves anonymous tokens by symbol value / displayName (+)', () => {
+		// ADR-0017 / commit 259a43d1: kindIdFromName now resolves symbol values
+		// (displayNames like '+', ';', 'is not') in addition to canonical catalog
+		// keys. This is CORRECT behavior — the native wire format sends numeric
+		// $type IDs, and displayName resolution is needed for round-trip fidelity
+		// when tree-sitter surfaces these tokens as children.
+		const id = kindIdFromName('+');
+		expect(typeof id).toBe('number');
+		expect(id).toBe(TSKindId.Plus);
 	});
 
 	it('round-trips: KIND_NAMES.get(kindIdFromName(name)) returns canonical name', () => {
 		// Canonical name = catalog `kind` (parser symbol name). Anon-sym names
 		// are lowercased on the catalog side (`anon_sym_PLUS` → `plus`).
-		// Note: '+' (displayName) no longer resolves — only the canonical 'plus' key.
+		// Both the canonical key 'plus' and the displayName '+' resolve to the
+		// same numeric id, and that id maps back to the canonical name 'plus'.
 		expect(KIND_NAMES.get(kindIdFromName('empty_statement'))).toBe('empty_statement');
 		expect(KIND_NAMES.get(kindIdFromName('plus'))).toBe('plus');
+		expect(KIND_NAMES.get(kindIdFromName('+'))).toBe('plus');
 	});
 
 	it('throws on genuinely unknown kinds', () => {

@@ -26,8 +26,24 @@ interface FakeChild {
 	end?: number;
 }
 
+/**
+ * Synthetic kind-name-to-id mapping for test fixtures. Each unique
+ * kind string gets a stable numeric id (starting from 1; 0 is the
+ * sentinel for "unresolvable" in readNode's resolveKindId fallback).
+ */
+function buildKindIdMap(rootType: string, children: FakeChild[]): Map<string, number> {
+	const map = new Map<string, number>();
+	let nextId = 1;
+	const register = (kind: string) => {
+		if (!map.has(kind)) map.set(kind, nextId++);
+	};
+	register(rootType);
+	for (const c of children) register(c.type);
+	return map;
+}
+
 function makeHandle(rootType: string, children: FakeChild[]): TreeHandle {
-	const idMap = new Map<number, AnyTreeNode>();
+	const kindIdMap = buildKindIdMap(rootType, children);
 	const root: AnyTreeNode = {
 		type: rootType,
 		id: () => 0 as NodeId,
@@ -52,11 +68,9 @@ function makeHandle(rootType: string, children: FakeChild[]): TreeHandle {
 				fieldNameForChild: () => null
 			}) as unknown as AnyTreeNode
 	);
-	idMap.set(0, root);
-	childNodes.forEach((n, i) => idMap.set(children[i]!.id, n));
 	return {
 		rootNode: root,
-		nodeById: (id: NodeId) => idMap.get(id) as AnyTreeNode
+		kindIdFromName: (kind: string) => kindIdMap.get(kind)
 	};
 }
 
@@ -94,12 +108,14 @@ describe('readNode — fname / anonymous-keyword collision', () => {
 		expect(data.$fields?.type).toBeDefined();
 		// $fields.type is the NAMED RHS, not an array and not the anon.
 		const t = data.$fields!.type as {
-			$type: string;
+			$type: number;
 			$text: string;
 			$named: boolean;
 		};
 		expect(Array.isArray(t)).toBe(false);
-		expect(t.$type).toBe('type_identifier');
+		// $type is numeric (resolved via kindIdFromName on the handle)
+		expect(typeof t.$type).toBe('number');
+		expect(t.$type).toBeGreaterThan(0);
 		expect(t.$text).toBe('u64');
 		expect(t.$named).toBe(true);
 	});

@@ -39,7 +39,8 @@ const NATIVE_ENGINE_PATH_BY_GRAMMAR = {
 
 export type NativeEngine = {
 	parseAndRead(src: string): string;
-	readNode(nodeId: number): string;
+	/** ADR-0017: readNode takes (handle, childIndex) instead of single nodeId. */
+	readNode(handle: number, childIndex: number): string;
 	// Phase B: render accepts a JS object directly (napi-native AnyTransport
 	// decoded from the object). The old string-JSON path has been removed.
 	render(transport: object): string;
@@ -187,8 +188,11 @@ export function toBoundaryNodeData(nodeData: unknown): object {
 		boundary.$span = cloneJsonValue(node.$span as BoundaryNodeValue);
 	}
 
-	if (typeof node.$nodeId === 'number') {
-		boundary.$nodeId = node.$nodeId;
+	if (typeof node.$nodeHandle === 'number') {
+		boundary.$nodeHandle = node.$nodeHandle;
+	}
+	if (typeof node.$childIndex === 'number') {
+		boundary.$childIndex = node.$childIndex;
 	}
 
 	return boundary;

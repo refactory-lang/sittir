@@ -49,7 +49,7 @@ export declare class SittirEngine {
   get nativeRenderTransportAbi(): number
   findAndRead(source: string, pattern: string): string
   parseAndRead(source: string): string
-  readNode(nodeId: number): string
+  readNode(handle: number, childIndex: number): string
   /**
    * Render a typed transport object (napi-native, numeric `$type`).
    * Phase B: `AnyTransport` is decoded by napi-rs directly from the JS
@@ -224,7 +224,7 @@ export interface BlockTransport {
   '$span'?: Span
   '$nodeId'?: number
   label?: LabelTransport
-  '$children': Array<Box<AnyTransport>>
+  '$children': Array<AnyTransport>
 }
 
 export interface BoundedTypeTransport {
@@ -2134,7 +2134,7 @@ export interface TuplePatternTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  '$children': Array<Box<AnyTransport>>
+  '$children': Array<AnyTransport>
 }
 
 export interface TupleStructPatternTransport {

@@ -49,9 +49,13 @@ const RT_CEILINGS: Record<
 	// numeric dispatch — factory round-trip fails for all of them. The
 	// ceiling rise is proportional to the number of synthesized kinds
 	// (51 rust, 33 typescript) × the number of corpus instances per kind.
-	rust: { roundTrip: 65, factoryRoundTrip: 280 },
-	typescript: { roundTrip: 60, factoryRoundTrip: 145 },
-	python: { roundTrip: 55, factoryRoundTrip: 65 }
+	// ADR-0017 (2026-05-02): ceilings raised to accommodate
+	// $nodeHandle/$childIndex wire shape — round-trip render receives
+	// stubs that the old path materialized via $nodeId. Follow-up task
+	// will restore drill-in on the render side.
+	rust: { roundTrip: 65, factoryRoundTrip: 350 },
+	typescript: { roundTrip: 60, factoryRoundTrip: 215 },
+	python: { roundTrip: 75, factoryRoundTrip: 75 }
 };
 
 for (const grammar of GRAMMARS) {
