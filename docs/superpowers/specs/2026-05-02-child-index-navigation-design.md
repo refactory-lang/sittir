@@ -129,6 +129,22 @@ function drillIn(entry: unknown, tree: TreeHandle): unknown {
 8. **native-boundary.ts** — validation checks new fields
 9. **Tests** — update mock handles and assertions
 
+### Memory safety verification
+
+The implementation MUST include a test that verifies no inadvertent
+memory leaks on the JS side:
+
+1. Parse a file, wrap the root, access a few fields (trigger drill-in)
+2. Release all references to wrapped nodes
+3. Force GC (`--expose-gc` + `global.gc()`)
+4. Verify the engine/tree/vec are collected (weak ref check or
+   `process.memoryUsage()` delta)
+
+The vec + handle approach must be **equal or better** in memory profile
+compared to the current `$nodeId` approach. If holding a `SyntaxNode[]`
+on the JS side prevents GC of nodes that tree-sitter would otherwise
+release, the design is wrong.
+
 ### What doesn't change
 
 - Wrap closure structure (still closes over `tree`)
