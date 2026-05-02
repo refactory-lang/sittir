@@ -236,8 +236,8 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'if without else renders without trailing space',
 		source: 'fn main() { if x { 1 } }',
 		target: 'if x { 1 }',
-		mode: 'fail',
-		why: 'forms-out-of-nodeMap: numeric dispatch resolves to id=0 for form kinds embedded in this subtree, causing No render template for \'267\' errors at runtime. Whole render fails rather than producing the expected output.'
+		mode: 'pass',
+		why: 'Resolved by kindNames Map wiring — numeric dispatch now resolves form kinds correctly.'
 	},
 	{
 		grammar: 'rust',
@@ -245,8 +245,8 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'if with else still renders correctly',
 		source: 'fn main() { if x { 1 } else { 2 } }',
 		target: 'if x { 1 } else { 2 }',
-		mode: 'fail',
-		why: 'forms-out-of-nodeMap: same as the if-without-else case — No render template for \'267\' error prevents the subtree from rendering.'
+		mode: 'pass',
+		why: 'Resolved by kindNames Map wiring.'
 	},
 	{
 		grammar: 'rust',
@@ -254,8 +254,8 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'while without label renders without leading space',
 		source: 'fn main() { while x {} }',
 		target: 'while x {}',
-		mode: 'fail',
-		why: 'forms-out-of-nodeMap: No render template for \'277\' error for a form kind embedded in the while subtree — rendering throws rather than producing expected output.'
+		mode: 'pass',
+		why: 'Resolved by kindNames Map wiring.'
 	},
 	{
 		grammar: 'rust',
