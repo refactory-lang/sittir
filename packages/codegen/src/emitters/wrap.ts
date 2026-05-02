@@ -149,7 +149,7 @@ export function emitWrap(config: EmitWrapConfig): string {
 					'function drillIn(entry: unknown, tree: TreeHandle): unknown {',
 					'  if (!entry) return undefined;',
 					'  const e = entry as _NodeData;',
-					'  if (e.$nodeHandle != null) return readTreeNode(tree, e.$nodeHandle, e.$childIndex);',
+					'  if (e.$nodeHandle != null && e.$childIndex != null) return readTreeNode(tree, e.$nodeHandle, e.$childIndex);',
 					'  return entry;',
 					'}'
 				]
@@ -175,7 +175,7 @@ export function emitWrap(config: EmitWrapConfig): string {
 					'function drillAs(entry: unknown, tree: TreeHandle, fromType: string, toType: string): unknown {',
 					'  if (!entry) return undefined;',
 					'  const e = entry as _NodeData;',
-					'  if (e.$nodeHandle == null) return entry;',
+					'  if (e.$nodeHandle == null || e.$childIndex == null) return entry;',
 					'  return readTreeNode(tree, e.$nodeHandle, e.$childIndex, { from: fromType, to: toType });',
 					'}'
 				]

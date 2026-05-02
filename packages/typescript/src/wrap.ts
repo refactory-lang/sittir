@@ -219,7 +219,7 @@ import type {
 function drillIn(entry: unknown, tree: TreeHandle): unknown {
   if (!entry) return undefined;
   const e = entry as _NodeData;
-  if (e.$nodeHandle != null) return readTreeNode(tree, e.$nodeHandle, e.$childIndex);
+  if (e.$nodeHandle != null && e.$childIndex != null) return readTreeNode(tree, e.$nodeHandle, e.$childIndex);
   return entry;
 }
 function drillInAll(entries: unknown, tree: TreeHandle): unknown[] {
@@ -237,7 +237,7 @@ function drillInAll(entries: unknown, tree: TreeHandle): unknown[] {
 function drillAs(entry: unknown, tree: TreeHandle, fromType: string, toType: string): unknown {
   if (!entry) return undefined;
   const e = entry as _NodeData;
-  if (e.$nodeHandle == null) return entry;
+  if (e.$nodeHandle == null || e.$childIndex == null) return entry;
   return readTreeNode(tree, e.$nodeHandle, e.$childIndex, { from: fromType, to: toType });
 }
 
@@ -2409,9 +2409,8 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 function readNode(tree: TreeHandle, handle?: number, childIndex?: number): AnyNodeData {
   // Per-handle dispatch: native-engine handles carry a `read`
   // closure that routes through napi (engine owns the tree;
-  // tree-sitter Node::id() is per-tree, so the engine that
-  // parsed the tree is the only thing that can dereference
-  // its ids). Wasm/JS handles leave `read` absent and fall
+  // ADR-0017: navigation via handle + childIndex replaces nodeId).
+  // Wasm/JS handles leave `read` absent and fall
   // back to the in-process JS walker.
   return tree.read ? tree.read(handle, childIndex) : readNodeJs(tree, handle, childIndex);
 }
