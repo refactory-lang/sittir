@@ -4,11 +4,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "c",
           "$span": {
             "start": 26,
@@ -20,7 +20,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 27,
@@ -32,7 +32,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "d",
           "$span": {
             "start": 28,
@@ -68,11 +68,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "d",
           "$span": {
             "start": 32,
@@ -84,7 +84,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 33,
@@ -96,7 +96,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "e",
           "$span": {
             "start": 34,
@@ -132,11 +132,11 @@
     "grammar": "python",
     "input": {
       "$type": 191,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "left": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "width",
           "$span": {
             "start": 81,
@@ -148,7 +148,7 @@
         },
         "operator": {
           "$type": 52,
-          "$source": "ts",
+          "$source": 0,
           "$text": "+",
           "$span": {
             "start": 87,
@@ -160,7 +160,7 @@
         },
         "right": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "padding",
           "$span": {
             "start": 89,
@@ -196,11 +196,11 @@
     "grammar": "python",
     "input": {
       "$type": 191,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "left": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "a",
           "$span": {
             "start": 159,
@@ -212,7 +212,7 @@
         },
         "operator": {
           "$type": 52,
-          "$source": "ts",
+          "$source": 0,
           "$text": "+",
           "$span": {
             "start": 161,
@@ -224,7 +224,7 @@
         },
         "right": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "b",
           "$span": {
             "start": 163,
@@ -260,11 +260,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "command.split",
           "$span": {
             "start": 6,
@@ -276,7 +276,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 19,
@@ -312,11 +312,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "print",
           "$span": {
             "start": 50,
@@ -328,7 +328,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(\"Goodbye!\")",
           "$span": {
             "start": 55,
@@ -364,11 +364,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "quit_game",
           "$span": {
             "start": 76,
@@ -380,7 +380,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 85,
@@ -416,11 +416,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "current_room.describe",
           "$span": {
             "start": 115,
@@ -432,7 +432,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 136,
@@ -468,11 +468,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "character.get",
           "$span": {
             "start": 170,
@@ -484,7 +484,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(obj, current_room)",
           "$span": {
             "start": 183,
@@ -520,11 +520,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "current_room.neighbor",
           "$span": {
             "start": 254,
@@ -536,7 +536,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(direction)",
           "$span": {
             "start": 275,
@@ -572,11 +572,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "command",
           "$span": {
             "start": 6,
@@ -588,7 +588,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 13,
@@ -600,7 +600,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "split",
           "$span": {
             "start": 14,
@@ -636,11 +636,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "current_room",
           "$span": {
             "start": 115,
@@ -652,7 +652,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 127,
@@ -664,7 +664,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "describe",
           "$span": {
             "start": 128,
@@ -700,11 +700,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "character",
           "$span": {
             "start": 170,
@@ -716,7 +716,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 179,
@@ -728,7 +728,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "get",
           "$span": {
             "start": 180,
@@ -764,11 +764,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "current_room",
           "$span": {
             "start": 254,
@@ -780,7 +780,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 266,
@@ -792,7 +792,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "neighbor",
           "$span": {
             "start": 267,
@@ -828,11 +828,11 @@
     "grammar": "python",
     "input": {
       "$type": 180,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "[": {
           "$type": 45,
-          "$source": "ts",
+          "$source": 0,
           "$text": "[",
           "$span": {
             "start": 32,
@@ -844,7 +844,7 @@
         },
         "]": {
           "$type": 46,
-          "$source": "ts",
+          "$source": 0,
           "$text": "]",
           "$span": {
             "start": 39,
@@ -858,7 +858,7 @@
       "$children": [
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"quit\"",
           "$span": {
             "start": 33,
@@ -894,11 +894,11 @@
     "grammar": "python",
     "input": {
       "$type": 180,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "[": {
           "$type": 45,
-          "$source": "ts",
+          "$source": 0,
           "$text": "[",
           "$span": {
             "start": 97,
@@ -910,7 +910,7 @@
         },
         "]": {
           "$type": 46,
-          "$source": "ts",
+          "$source": 0,
           "$text": "]",
           "$span": {
             "start": 104,
@@ -924,7 +924,7 @@
       "$children": [
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"look\"",
           "$span": {
             "start": 98,
@@ -960,11 +960,11 @@
     "grammar": "python",
     "input": {
       "$type": 180,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "[": {
           "$type": 45,
-          "$source": "ts",
+          "$source": 0,
           "$text": "[",
           "$span": {
             "start": 148,
@@ -976,7 +976,7 @@
         },
         ",": {
           "$type": 9,
-          "$source": "ts",
+          "$source": 0,
           "$text": ",",
           "$span": {
             "start": 154,
@@ -988,7 +988,7 @@
         },
         "]": {
           "$type": 46,
-          "$source": "ts",
+          "$source": 0,
           "$text": "]",
           "$span": {
             "start": 159,
@@ -1002,7 +1002,7 @@
       "$children": [
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"get\"",
           "$span": {
             "start": 149,
@@ -1014,7 +1014,7 @@
         },
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "obj",
           "$span": {
             "start": 156,
@@ -1050,11 +1050,11 @@
     "grammar": "python",
     "input": {
       "$type": 180,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "[": {
           "$type": 45,
-          "$source": "ts",
+          "$source": 0,
           "$text": "[",
           "$span": {
             "start": 212,
@@ -1066,7 +1066,7 @@
         },
         ",": {
           "$type": 9,
-          "$source": "ts",
+          "$source": 0,
           "$text": ",",
           "$span": {
             "start": 217,
@@ -1078,7 +1078,7 @@
         },
         "]": {
           "$type": 46,
-          "$source": "ts",
+          "$source": 0,
           "$text": "]",
           "$span": {
             "start": 228,
@@ -1092,7 +1092,7 @@
       "$children": [
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"go\"",
           "$span": {
             "start": 213,
@@ -1104,7 +1104,7 @@
         },
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "direction",
           "$span": {
             "start": 219,
@@ -1140,11 +1140,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 33,
@@ -1156,7 +1156,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "quit",
           "$span": {
             "start": 34,
@@ -1168,7 +1168,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 38,
@@ -1204,11 +1204,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 98,
@@ -1220,7 +1220,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "look",
           "$span": {
             "start": 99,
@@ -1232,7 +1232,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 103,
@@ -1268,11 +1268,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 149,
@@ -1284,7 +1284,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "get",
           "$span": {
             "start": 150,
@@ -1296,7 +1296,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 153,
@@ -1332,11 +1332,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 213,
@@ -1348,7 +1348,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "go",
           "$span": {
             "start": 214,
@@ -1360,7 +1360,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 216,
@@ -1396,11 +1396,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 56,
@@ -1412,7 +1412,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "Goodbye!",
           "$span": {
             "start": 57,
@@ -1424,7 +1424,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 65,
@@ -1460,11 +1460,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "command.split",
           "$span": {
             "start": 6,
@@ -1476,7 +1476,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 19,
@@ -1512,11 +1512,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "character.drop",
           "$span": {
             "start": 92,
@@ -1528,7 +1528,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(obj, current_room)",
           "$span": {
             "start": 106,
@@ -1564,11 +1564,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "command",
           "$span": {
             "start": 6,
@@ -1580,7 +1580,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 13,
@@ -1592,7 +1592,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "split",
           "$span": {
             "start": 14,
@@ -1628,11 +1628,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "character",
           "$span": {
             "start": 92,
@@ -1644,7 +1644,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 101,
@@ -1656,7 +1656,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "drop",
           "$span": {
             "start": 102,
@@ -1692,11 +1692,11 @@
     "grammar": "python",
     "input": {
       "$type": 180,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "[": {
           "$type": 45,
-          "$source": "ts",
+          "$source": 0,
           "$text": "[",
           "$span": {
             "start": 32,
@@ -1708,7 +1708,7 @@
         },
         ",": {
           "$type": 9,
-          "$source": "ts",
+          "$source": 0,
           "$text": ",",
           "$span": {
             "start": 39,
@@ -1720,7 +1720,7 @@
         },
         "]": {
           "$type": 46,
-          "$source": "ts",
+          "$source": 0,
           "$text": "]",
           "$span": {
             "start": 49,
@@ -1734,7 +1734,7 @@
       "$children": [
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"drop\"",
           "$span": {
             "start": 33,
@@ -1746,7 +1746,7 @@
         },
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "*objects",
           "$span": {
             "start": 41,
@@ -1782,11 +1782,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 33,
@@ -1798,7 +1798,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "drop",
           "$span": {
             "start": 34,
@@ -1810,7 +1810,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 38,
@@ -1846,11 +1846,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "command.split",
           "$span": {
             "start": 6,
@@ -1862,7 +1862,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 19,
@@ -1898,11 +1898,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "print",
           "$span": {
             "start": 176,
@@ -1914,7 +1914,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(f\"Sorry, I couldn't understand {command!r}\")",
           "$span": {
             "start": 181,
@@ -1950,11 +1950,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "command",
           "$span": {
             "start": 6,
@@ -1966,7 +1966,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 13,
@@ -1978,7 +1978,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "split",
           "$span": {
             "start": 14,
@@ -2014,11 +2014,11 @@
     "grammar": "python",
     "input": {
       "$type": 180,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "[": {
           "$type": 45,
-          "$source": "ts",
+          "$source": 0,
           "$text": "[",
           "$span": {
             "start": 48,
@@ -2030,7 +2030,7 @@
         },
         "]": {
           "$type": 46,
-          "$source": "ts",
+          "$source": 0,
           "$text": "]",
           "$span": {
             "start": 55,
@@ -2044,7 +2044,7 @@
       "$children": [
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"quit\"",
           "$span": {
             "start": 49,
@@ -2080,11 +2080,11 @@
     "grammar": "python",
     "input": {
       "$type": 180,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "[": {
           "$type": 45,
-          "$source": "ts",
+          "$source": 0,
           "$text": "[",
           "$span": {
             "start": 98,
@@ -2096,7 +2096,7 @@
         },
         ",": {
           "$type": 9,
-          "$source": "ts",
+          "$source": 0,
           "$text": ",",
           "$span": {
             "start": 103,
@@ -2108,7 +2108,7 @@
         },
         "]": {
           "$type": 46,
-          "$source": "ts",
+          "$source": 0,
           "$text": "]",
           "$span": {
             "start": 114,
@@ -2122,7 +2122,7 @@
       "$children": [
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"go\"",
           "$span": {
             "start": 99,
@@ -2134,7 +2134,7 @@
         },
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "direction",
           "$span": {
             "start": 105,
@@ -2170,11 +2170,11 @@
     "grammar": "python",
     "input": {
       "$type": 180,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "[": {
           "$type": 45,
-          "$source": "ts",
+          "$source": 0,
           "$text": "[",
           "$span": {
             "start": 131,
@@ -2186,7 +2186,7 @@
         },
         ",": {
           "$type": 9,
-          "$source": "ts",
+          "$source": 0,
           "$text": ",",
           "$span": {
             "start": 138,
@@ -2198,7 +2198,7 @@
         },
         "]": {
           "$type": 46,
-          "$source": "ts",
+          "$source": 0,
           "$text": "]",
           "$span": {
             "start": 148,
@@ -2212,7 +2212,7 @@
       "$children": [
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"drop\"",
           "$span": {
             "start": 132,
@@ -2224,7 +2224,7 @@
         },
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "*objects",
           "$span": {
             "start": 140,
@@ -2260,11 +2260,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 49,
@@ -2276,7 +2276,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "quit",
           "$span": {
             "start": 50,
@@ -2288,7 +2288,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 54,
@@ -2324,11 +2324,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 99,
@@ -2340,7 +2340,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "go",
           "$span": {
             "start": 100,
@@ -2352,7 +2352,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 102,
@@ -2388,11 +2388,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 132,
@@ -2404,7 +2404,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "drop",
           "$span": {
             "start": 133,
@@ -2416,7 +2416,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 137,
@@ -2452,11 +2452,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "f\"",
           "$span": {
             "start": 182,
@@ -2469,7 +2469,7 @@
         "content": [
           {
             "$type": 232,
-            "$source": "ts",
+            "$source": 0,
             "$text": "Sorry, I couldn't understand ",
             "$span": {
               "start": 184,
@@ -2481,7 +2481,7 @@
           },
           {
             "$type": 233,
-            "$source": "ts",
+            "$source": 0,
             "$text": "{command!r}",
             "$span": {
               "start": 213,
@@ -2494,7 +2494,7 @@
         ],
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 224,
@@ -2530,11 +2530,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "command.split",
           "$span": {
             "start": 6,
@@ -2546,7 +2546,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 19,
@@ -2582,11 +2582,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "current_room.neighbor",
           "$span": {
             "start": 84,
@@ -2598,7 +2598,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(\"north\")",
           "$span": {
             "start": 105,
@@ -2634,11 +2634,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "command",
           "$span": {
             "start": 6,
@@ -2650,7 +2650,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 13,
@@ -2662,7 +2662,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "split",
           "$span": {
             "start": 14,
@@ -2698,11 +2698,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "current_room",
           "$span": {
             "start": 84,
@@ -2714,7 +2714,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 96,
@@ -2726,7 +2726,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "neighbor",
           "$span": {
             "start": 97,
@@ -2762,11 +2762,11 @@
     "grammar": "python",
     "input": {
       "$type": 180,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "[": {
           "$type": 45,
-          "$source": "ts",
+          "$source": 0,
           "$text": "[",
           "$span": {
             "start": 32,
@@ -2778,7 +2778,7 @@
         },
         "]": {
           "$type": 46,
-          "$source": "ts",
+          "$source": 0,
           "$text": "]",
           "$span": {
             "start": 40,
@@ -2792,7 +2792,7 @@
       "$children": [
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"north\"",
           "$span": {
             "start": 33,
@@ -2828,11 +2828,11 @@
     "grammar": "python",
     "input": {
       "$type": 180,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "[": {
           "$type": 45,
-          "$source": "ts",
+          "$source": 0,
           "$text": "[",
           "$span": {
             "start": 44,
@@ -2844,7 +2844,7 @@
         },
         ",": {
           "$type": 9,
-          "$source": "ts",
+          "$source": 0,
           "$text": ",",
           "$span": {
             "start": 49,
@@ -2856,7 +2856,7 @@
         },
         "]": {
           "$type": 46,
-          "$source": "ts",
+          "$source": 0,
           "$text": "]",
           "$span": {
             "start": 58,
@@ -2870,7 +2870,7 @@
       "$children": [
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"go\"",
           "$span": {
             "start": 45,
@@ -2882,7 +2882,7 @@
         },
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"north\"",
           "$span": {
             "start": 51,
@@ -2918,11 +2918,11 @@
     "grammar": "python",
     "input": {
       "$type": 180,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "[": {
           "$type": 45,
-          "$source": "ts",
+          "$source": 0,
           "$text": "[",
           "$span": {
             "start": 124,
@@ -2934,7 +2934,7 @@
         },
         ",": {
           "$type": 9,
-          "$source": "ts",
+          "$source": 0,
           "$text": ",",
           "$span": {
             "start": 130,
@@ -2946,7 +2946,7 @@
         },
         "]": {
           "$type": 46,
-          "$source": "ts",
+          "$source": 0,
           "$text": "]",
           "$span": {
             "start": 135,
@@ -2960,7 +2960,7 @@
       "$children": [
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"get\"",
           "$span": {
             "start": 125,
@@ -2972,7 +2972,7 @@
         },
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "obj",
           "$span": {
             "start": 132,
@@ -3008,11 +3008,11 @@
     "grammar": "python",
     "input": {
       "$type": 180,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "[": {
           "$type": 45,
-          "$source": "ts",
+          "$source": 0,
           "$text": "[",
           "$span": {
             "start": 139,
@@ -3024,7 +3024,7 @@
         },
         ",": {
           "$type": 9,
-          "$source": "ts",
+          "$source": 0,
           "$text": ",",
           "$span": {
             "start": 146,
@@ -3036,7 +3036,7 @@
         },
         "]": {
           "$type": 46,
-          "$source": "ts",
+          "$source": 0,
           "$text": "]",
           "$span": {
             "start": 157,
@@ -3050,7 +3050,7 @@
       "$children": [
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"pick\"",
           "$span": {
             "start": 140,
@@ -3062,7 +3062,7 @@
         },
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"up\"",
           "$span": {
             "start": 148,
@@ -3074,7 +3074,7 @@
         },
         {
           "$type": 9,
-          "$source": "ts",
+          "$source": 0,
           "$text": ",",
           "$span": {
             "start": 152,
@@ -3086,7 +3086,7 @@
         },
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "obj",
           "$span": {
             "start": 154,
@@ -3122,11 +3122,11 @@
     "grammar": "python",
     "input": {
       "$type": 180,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "[": {
           "$type": 45,
-          "$source": "ts",
+          "$source": 0,
           "$text": "[",
           "$span": {
             "start": 161,
@@ -3138,7 +3138,7 @@
         },
         ",": {
           "$type": 9,
-          "$source": "ts",
+          "$source": 0,
           "$text": ",",
           "$span": {
             "start": 168,
@@ -3150,7 +3150,7 @@
         },
         "]": {
           "$type": 46,
-          "$source": "ts",
+          "$source": 0,
           "$text": "]",
           "$span": {
             "start": 179,
@@ -3164,7 +3164,7 @@
       "$children": [
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"pick\"",
           "$span": {
             "start": 162,
@@ -3176,7 +3176,7 @@
         },
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "obj",
           "$span": {
             "start": 170,
@@ -3188,7 +3188,7 @@
         },
         {
           "$type": 9,
-          "$source": "ts",
+          "$source": 0,
           "$text": ",",
           "$span": {
             "start": 173,
@@ -3200,7 +3200,7 @@
         },
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"up\"",
           "$span": {
             "start": 175,
@@ -3236,11 +3236,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 33,
@@ -3252,7 +3252,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "north",
           "$span": {
             "start": 34,
@@ -3264,7 +3264,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 39,
@@ -3300,11 +3300,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 45,
@@ -3316,7 +3316,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "go",
           "$span": {
             "start": 46,
@@ -3328,7 +3328,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 48,
@@ -3364,11 +3364,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 51,
@@ -3380,7 +3380,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "north",
           "$span": {
             "start": 52,
@@ -3392,7 +3392,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 57,
@@ -3428,11 +3428,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 125,
@@ -3444,7 +3444,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "get",
           "$span": {
             "start": 126,
@@ -3456,7 +3456,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 129,
@@ -3492,11 +3492,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 140,
@@ -3508,7 +3508,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "pick",
           "$span": {
             "start": 141,
@@ -3520,7 +3520,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 145,
@@ -3556,11 +3556,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 148,
@@ -3572,7 +3572,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "up",
           "$span": {
             "start": 149,
@@ -3584,7 +3584,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 151,
@@ -3620,11 +3620,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 162,
@@ -3636,7 +3636,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "pick",
           "$span": {
             "start": 163,
@@ -3648,7 +3648,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 167,
@@ -3684,11 +3684,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 175,
@@ -3700,7 +3700,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "up",
           "$span": {
             "start": 176,
@@ -3712,7 +3712,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 178,
@@ -3748,11 +3748,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 106,
@@ -3764,7 +3764,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "north",
           "$span": {
             "start": 107,
@@ -3776,7 +3776,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 112,
@@ -3812,11 +3812,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "command.split",
           "$span": {
             "start": 6,
@@ -3828,7 +3828,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 19,
@@ -3864,11 +3864,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "current_room.neighbor",
           "$span": {
             "start": 115,
@@ -3880,7 +3880,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(direction)",
           "$span": {
             "start": 136,
@@ -3916,11 +3916,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "command",
           "$span": {
             "start": 6,
@@ -3932,7 +3932,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 13,
@@ -3944,7 +3944,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "split",
           "$span": {
             "start": 14,
@@ -3980,11 +3980,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "current_room",
           "$span": {
             "start": 115,
@@ -3996,7 +3996,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 127,
@@ -4008,7 +4008,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "neighbor",
           "$span": {
             "start": 128,
@@ -4044,11 +4044,11 @@
     "grammar": "python",
     "input": {
       "$type": 180,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "[": {
           "$type": 45,
-          "$source": "ts",
+          "$source": 0,
           "$text": "[",
           "$span": {
             "start": 32,
@@ -4060,7 +4060,7 @@
         },
         ",": {
           "$type": 9,
-          "$source": "ts",
+          "$source": 0,
           "$text": ",",
           "$span": {
             "start": 37,
@@ -4072,7 +4072,7 @@
         },
         "]": {
           "$type": 46,
-          "$source": "ts",
+          "$source": 0,
           "$text": "]",
           "$span": {
             "start": 89,
@@ -4086,7 +4086,7 @@
       "$children": [
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"go\"",
           "$span": {
             "start": 33,
@@ -4098,7 +4098,7 @@
         },
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(\"north\" | \"south\" | \"east\" | \"west\") as direction",
           "$span": {
             "start": 39,
@@ -4134,11 +4134,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 33,
@@ -4150,7 +4150,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "go",
           "$span": {
             "start": 34,
@@ -4162,7 +4162,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 36,
@@ -4198,11 +4198,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 40,
@@ -4214,7 +4214,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "north",
           "$span": {
             "start": 41,
@@ -4226,7 +4226,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 46,
@@ -4262,11 +4262,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 50,
@@ -4278,7 +4278,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "south",
           "$span": {
             "start": 51,
@@ -4290,7 +4290,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 56,
@@ -4326,11 +4326,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 60,
@@ -4342,7 +4342,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "east",
           "$span": {
             "start": 61,
@@ -4354,7 +4354,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 65,
@@ -4390,11 +4390,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 69,
@@ -4406,7 +4406,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "west",
           "$span": {
             "start": 70,
@@ -4418,7 +4418,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 74,
@@ -4454,11 +4454,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 48,
@@ -4470,7 +4470,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "something",
           "$span": {
             "start": 49,
@@ -4482,7 +4482,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 58,
@@ -4518,11 +4518,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 81,
@@ -4534,7 +4534,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "something",
           "$span": {
             "start": 82,
@@ -4546,7 +4546,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 91,
@@ -4582,11 +4582,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 93,
@@ -4598,7 +4598,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "else",
           "$span": {
             "start": 94,
@@ -4610,7 +4610,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 98,
@@ -4646,11 +4646,11 @@
     "grammar": "python",
     "input": {
       "$type": 230,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 231,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"something\"",
           "$span": {
             "start": 81,
@@ -4662,7 +4662,7 @@
         },
         {
           "$type": 231,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"else\"",
           "$span": {
             "start": 93,
@@ -4698,11 +4698,11 @@
     "grammar": "python",
     "input": {
       "$type": 217,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "(": {
           "$type": 7,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(",
           "$span": {
             "start": 6,
@@ -4714,7 +4714,7 @@
         },
         ",": {
           "$type": 9,
-          "$source": "ts",
+          "$source": 0,
           "$text": ",",
           "$span": {
             "start": 8,
@@ -4726,7 +4726,7 @@
         },
         ")": {
           "$type": 8,
-          "$source": "ts",
+          "$source": 0,
           "$text": ")",
           "$span": {
             "start": 14,
@@ -4740,7 +4740,7 @@
       "$children": [
         {
           "$type": 93,
-          "$source": "ts",
+          "$source": 0,
           "$text": "0",
           "$span": {
             "start": 7,
@@ -4752,7 +4752,7 @@
         },
         {
           "$type": 93,
-          "$source": "ts",
+          "$source": 0,
           "$text": "1",
           "$span": {
             "start": 10,
@@ -4764,7 +4764,7 @@
         },
         {
           "$type": 9,
-          "$source": "ts",
+          "$source": 0,
           "$text": ",",
           "$span": {
             "start": 11,
@@ -4776,7 +4776,7 @@
         },
         {
           "$type": 93,
-          "$source": "ts",
+          "$source": 0,
           "$text": "2",
           "$span": {
             "start": 13,
@@ -4812,11 +4812,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "locals",
           "$span": {
             "start": 46,
@@ -4828,7 +4828,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 52,
@@ -4864,11 +4864,11 @@
     "grammar": "python",
     "input": {
       "$type": 123,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "name": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "match",
           "$span": {
             "start": 3,
@@ -4880,7 +4880,7 @@
         },
         ":=": {
           "$type": 15,
-          "$source": "ts",
+          "$source": 0,
           "$text": ":=",
           "$span": {
             "start": 9,
@@ -4892,7 +4892,7 @@
         },
         "value": {
           "$type": 206,
-          "$source": "ts",
+          "$source": 0,
           "$text": "re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)",
           "$span": {
             "start": 12,
@@ -4928,11 +4928,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "re.fullmatch",
           "$span": {
             "start": 12,
@@ -4944,7 +4944,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)",
           "$span": {
             "start": 24,
@@ -4980,11 +4980,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "re",
           "$span": {
             "start": 12,
@@ -4996,7 +4996,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 14,
@@ -5008,7 +5008,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "fullmatch",
           "$span": {
             "start": 15,
@@ -5044,11 +5044,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "re",
           "$span": {
             "start": 71,
@@ -5060,7 +5060,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 73,
@@ -5072,7 +5072,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "ASCII",
           "$span": {
             "start": 74,
@@ -5108,11 +5108,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "event.get",
           "$span": {
             "start": 6,
@@ -5124,7 +5124,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 15,
@@ -5160,11 +5160,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "handle_click_at",
           "$span": {
             "start": 60,
@@ -5176,7 +5176,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(x, y)",
           "$span": {
             "start": 75,
@@ -5212,11 +5212,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "game.quit",
           "$span": {
             "start": 132,
@@ -5228,7 +5228,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 141,
@@ -5264,11 +5264,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "game.go_north",
           "$span": {
             "start": 192,
@@ -5280,7 +5280,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 205,
@@ -5316,11 +5316,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "ValueError",
           "$span": {
             "start": 316,
@@ -5332,7 +5332,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(f\"Unrecognized event: {other_event}\")",
           "$span": {
             "start": 326,
@@ -5368,11 +5368,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "event",
           "$span": {
             "start": 6,
@@ -5384,7 +5384,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 11,
@@ -5396,7 +5396,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "get",
           "$span": {
             "start": 12,
@@ -5432,11 +5432,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "game",
           "$span": {
             "start": 132,
@@ -5448,7 +5448,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 136,
@@ -5460,7 +5460,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "quit",
           "$span": {
             "start": 137,
@@ -5496,11 +5496,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "game",
           "$span": {
             "start": 192,
@@ -5512,7 +5512,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 196,
@@ -5524,7 +5524,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "go_north",
           "$span": {
             "start": 197,
@@ -5560,11 +5560,11 @@
     "grammar": "python",
     "input": {
       "$type": 179,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "(": {
           "$type": 7,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(",
           "$span": {
             "start": 43,
@@ -5576,7 +5576,7 @@
         },
         ",": {
           "$type": 9,
-          "$source": "ts",
+          "$source": 0,
           "$text": ",",
           "$span": {
             "start": 45,
@@ -5588,7 +5588,7 @@
         },
         ")": {
           "$type": 8,
-          "$source": "ts",
+          "$source": 0,
           "$text": ")",
           "$span": {
             "start": 48,
@@ -5602,7 +5602,7 @@
       "$children": [
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "x",
           "$span": {
             "start": 44,
@@ -5614,7 +5614,7 @@
         },
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "y",
           "$span": {
             "start": 47,
@@ -5650,11 +5650,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 171,
@@ -5666,7 +5666,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "up arrow",
           "$span": {
             "start": 172,
@@ -5678,7 +5678,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 180,
@@ -5714,11 +5714,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "f\"",
           "$span": {
             "start": 327,
@@ -5731,7 +5731,7 @@
         "content": [
           {
             "$type": 232,
-            "$source": "ts",
+            "$source": 0,
             "$text": "Unrecognized event: ",
             "$span": {
               "start": 329,
@@ -5743,7 +5743,7 @@
           },
           {
             "$type": 233,
-            "$source": "ts",
+            "$source": 0,
             "$text": "{other_event}",
             "$span": {
               "start": 349,
@@ -5756,7 +5756,7 @@
         ],
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 362,
@@ -5792,11 +5792,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 109,
@@ -5808,7 +5808,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "Q",
           "$span": {
             "start": 110,
@@ -5820,7 +5820,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 111,
@@ -5856,11 +5856,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "event.get",
           "$span": {
             "start": 6,
@@ -5872,7 +5872,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 15,
@@ -5908,11 +5908,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "handle_click_at",
           "$span": {
             "start": 51,
@@ -5924,7 +5924,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(x, y)",
           "$span": {
             "start": 66,
@@ -5960,11 +5960,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "event",
           "$span": {
             "start": 6,
@@ -5976,7 +5976,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 11,
@@ -5988,7 +5988,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "get",
           "$span": {
             "start": 12,
@@ -6024,11 +6024,11 @@
     "grammar": "python",
     "input": {
       "$type": 179,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "(": {
           "$type": 7,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(",
           "$span": {
             "start": 34,
@@ -6040,7 +6040,7 @@
         },
         ",": {
           "$type": 9,
-          "$source": "ts",
+          "$source": 0,
           "$text": ",",
           "$span": {
             "start": 36,
@@ -6052,7 +6052,7 @@
         },
         ")": {
           "$type": 8,
-          "$source": "ts",
+          "$source": 0,
           "$text": ")",
           "$span": {
             "start": 39,
@@ -6066,7 +6066,7 @@
       "$children": [
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "x",
           "$span": {
             "start": 35,
@@ -6078,7 +6078,7 @@
         },
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "y",
           "$span": {
             "start": 38,
@@ -6114,11 +6114,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "event.get",
           "$span": {
             "start": 6,
@@ -6130,7 +6130,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 15,
@@ -6166,11 +6166,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "handle_click_at",
           "$span": {
             "start": 95,
@@ -6182,7 +6182,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(x, y)",
           "$span": {
             "start": 110,
@@ -6218,11 +6218,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "event",
           "$span": {
             "start": 6,
@@ -6234,7 +6234,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 11,
@@ -6246,7 +6246,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "get",
           "$span": {
             "start": 12,
@@ -6282,11 +6282,11 @@
     "grammar": "python",
     "input": {
       "$type": 179,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "(": {
           "$type": 7,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(",
           "$span": {
             "start": 34,
@@ -6298,7 +6298,7 @@
         },
         ",": {
           "$type": 9,
-          "$source": "ts",
+          "$source": 0,
           "$text": ",",
           "$span": {
             "start": 36,
@@ -6310,7 +6310,7 @@
         },
         ")": {
           "$type": 8,
-          "$source": "ts",
+          "$source": 0,
           "$text": ")",
           "$span": {
             "start": 39,
@@ -6324,7 +6324,7 @@
       "$children": [
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "x",
           "$span": {
             "start": 35,
@@ -6336,7 +6336,7 @@
         },
         {
           "$type": 163,
-          "$source": "ts",
+          "$source": 0,
           "$text": "y",
           "$span": {
             "start": 38,
@@ -6372,11 +6372,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 72,
@@ -6388,7 +6388,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "color",
           "$span": {
             "start": 73,
@@ -6400,7 +6400,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 78,
@@ -6436,11 +6436,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 242,
@@ -6452,7 +6452,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "format",
           "$span": {
             "start": 243,
@@ -6464,7 +6464,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 249,
@@ -6500,11 +6500,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 355,
@@ -6516,7 +6516,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "format",
           "$span": {
             "start": 356,
@@ -6528,7 +6528,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 362,
@@ -6564,11 +6564,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 55,
@@ -6580,7 +6580,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "text",
           "$span": {
             "start": 56,
@@ -6592,7 +6592,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 60,
@@ -6628,11 +6628,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 164,
@@ -6644,7 +6644,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "sleep",
           "$span": {
             "start": 165,
@@ -6656,7 +6656,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 170,
@@ -6692,11 +6692,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 228,
@@ -6708,7 +6708,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "sound",
           "$span": {
             "start": 229,
@@ -6720,7 +6720,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 234,
@@ -6756,11 +6756,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 252,
@@ -6772,7 +6772,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "ogg",
           "$span": {
             "start": 253,
@@ -6784,7 +6784,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 256,
@@ -6820,11 +6820,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 343,
@@ -6836,7 +6836,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "sound",
           "$span": {
             "start": 344,
@@ -6848,7 +6848,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 349,
@@ -6884,11 +6884,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 389,
@@ -6900,7 +6900,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "Unsupported audio format",
           "$span": {
             "start": 390,
@@ -6912,7 +6912,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 414,
@@ -6948,11 +6948,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "ui.set_text_color",
           "$span": {
             "start": 97,
@@ -6964,7 +6964,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(c)",
           "$span": {
             "start": 114,
@@ -7000,11 +7000,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "ui.display",
           "$span": {
             "start": 130,
@@ -7016,7 +7016,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(message)",
           "$span": {
             "start": 140,
@@ -7052,11 +7052,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "ui.wait",
           "$span": {
             "start": 196,
@@ -7068,7 +7068,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(duration)",
           "$span": {
             "start": 203,
@@ -7104,11 +7104,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "ui.play",
           "$span": {
             "start": 272,
@@ -7120,7 +7120,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(url)",
           "$span": {
             "start": 279,
@@ -7156,11 +7156,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "action",
           "$span": {
             "start": 320,
@@ -7172,7 +7172,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 326,
@@ -7208,11 +7208,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "warning",
           "$span": {
             "start": 381,
@@ -7224,7 +7224,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(\"Unsupported audio format\")",
           "$span": {
             "start": 388,
@@ -7260,11 +7260,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "ui",
           "$span": {
             "start": 97,
@@ -7276,7 +7276,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 99,
@@ -7288,7 +7288,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "set_text_color",
           "$span": {
             "start": 100,
@@ -7324,11 +7324,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "ui",
           "$span": {
             "start": 130,
@@ -7340,7 +7340,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 132,
@@ -7352,7 +7352,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "display",
           "$span": {
             "start": 133,
@@ -7388,11 +7388,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "ui",
           "$span": {
             "start": 196,
@@ -7404,7 +7404,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 198,
@@ -7416,7 +7416,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "wait",
           "$span": {
             "start": 199,
@@ -7452,11 +7452,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "ui",
           "$span": {
             "start": 272,
@@ -7468,7 +7468,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 274,
@@ -7480,7 +7480,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "play",
           "$span": {
             "start": 275,
@@ -7516,11 +7516,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 77,
@@ -7532,7 +7532,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "color",
           "$span": {
             "start": 78,
@@ -7544,7 +7544,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 83,
@@ -7580,11 +7580,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 264,
@@ -7596,7 +7596,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "format",
           "$span": {
             "start": 265,
@@ -7608,7 +7608,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 271,
@@ -7644,11 +7644,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 333,
@@ -7660,7 +7660,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "format",
           "$span": {
             "start": 334,
@@ -7672,7 +7672,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 340,
@@ -7708,11 +7708,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 55,
@@ -7724,7 +7724,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "text",
           "$span": {
             "start": 56,
@@ -7736,7 +7736,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 60,
@@ -7772,11 +7772,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 174,
@@ -7788,7 +7788,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "sleep",
           "$span": {
             "start": 175,
@@ -7800,7 +7800,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 180,
@@ -7836,11 +7836,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 245,
@@ -7852,7 +7852,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "sound",
           "$span": {
             "start": 246,
@@ -7864,7 +7864,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 251,
@@ -7900,11 +7900,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 274,
@@ -7916,7 +7916,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "ogg",
           "$span": {
             "start": 275,
@@ -7928,7 +7928,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 278,
@@ -7964,11 +7964,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 321,
@@ -7980,7 +7980,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "sound",
           "$span": {
             "start": 322,
@@ -7992,7 +7992,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 327,
@@ -8028,11 +8028,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 367,
@@ -8044,7 +8044,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "Unsupported audio format",
           "$span": {
             "start": 368,
@@ -8056,7 +8056,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 392,
@@ -8092,11 +8092,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "ui.set_text_color",
           "$span": {
             "start": 107,
@@ -8108,7 +8108,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(c)",
           "$span": {
             "start": 124,
@@ -8144,11 +8144,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "ui.display",
           "$span": {
             "start": 140,
@@ -8160,7 +8160,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(message)",
           "$span": {
             "start": 150,
@@ -8196,11 +8196,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "ui.wait",
           "$span": {
             "start": 213,
@@ -8212,7 +8212,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(duration)",
           "$span": {
             "start": 220,
@@ -8248,11 +8248,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "ui.play",
           "$span": {
             "start": 294,
@@ -8264,7 +8264,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(url)",
           "$span": {
             "start": 301,
@@ -8300,11 +8300,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "warning",
           "$span": {
             "start": 359,
@@ -8316,7 +8316,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(\"Unsupported audio format\")",
           "$span": {
             "start": 366,
@@ -8352,11 +8352,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "ui",
           "$span": {
             "start": 107,
@@ -8368,7 +8368,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 109,
@@ -8380,7 +8380,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "set_text_color",
           "$span": {
             "start": 110,
@@ -8416,11 +8416,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "ui",
           "$span": {
             "start": 140,
@@ -8432,7 +8432,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 142,
@@ -8444,7 +8444,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "display",
           "$span": {
             "start": 143,
@@ -8480,11 +8480,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "ui",
           "$span": {
             "start": 213,
@@ -8496,7 +8496,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 215,
@@ -8508,7 +8508,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "wait",
           "$span": {
             "start": 216,
@@ -8544,11 +8544,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "ui",
           "$span": {
             "start": 294,
@@ -8560,7 +8560,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 296,
@@ -8572,7 +8572,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "play",
           "$span": {
             "start": 297,
@@ -8608,11 +8608,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "foo1",
           "$span": {
             "start": 49,
@@ -8624,7 +8624,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 53,
@@ -8660,11 +8660,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "foo2",
           "$span": {
             "start": 117,
@@ -8676,7 +8676,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 121,
@@ -8712,11 +8712,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "foo3",
           "$span": {
             "start": 172,
@@ -8728,7 +8728,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 176,
@@ -8764,11 +8764,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "foo4",
           "$span": {
             "start": 230,
@@ -8780,7 +8780,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 234,
@@ -8816,11 +8816,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "foo5",
           "$span": {
             "start": 305,
@@ -8832,7 +8832,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 309,
@@ -8868,11 +8868,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "foo6",
           "$span": {
             "start": 375,
@@ -8884,7 +8884,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 379,
@@ -8920,11 +8920,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "foo7",
           "$span": {
             "start": 448,
@@ -8936,7 +8936,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 452,
@@ -8972,11 +8972,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "foo8",
           "$span": {
             "start": 538,
@@ -8988,7 +8988,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 542,
@@ -9024,11 +9024,11 @@
     "grammar": "python",
     "input": {
       "$type": 190,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "left": {
           "$type": 93,
-          "$source": "ts",
+          "$source": 0,
           "$text": "0",
           "$span": {
             "start": 25,
@@ -9040,7 +9040,7 @@
         },
         "operator": {
           "$type": 56,
-          "$source": "ts",
+          "$source": 0,
           "$text": "or",
           "$span": {
             "start": 27,
@@ -9052,7 +9052,7 @@
         },
         "right": {
           "$type": 93,
-          "$source": "ts",
+          "$source": 0,
           "$text": "1",
           "$span": {
             "start": 30,
@@ -9088,11 +9088,11 @@
     "grammar": "python",
     "input": {
       "$type": 190,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "left": {
           "$type": 93,
-          "$source": "ts",
+          "$source": 0,
           "$text": "1",
           "$span": {
             "start": 33,
@@ -9104,7 +9104,7 @@
         },
         "operator": {
           "$type": 56,
-          "$source": "ts",
+          "$source": 0,
           "$text": "or",
           "$span": {
             "start": 35,
@@ -9116,7 +9116,7 @@
         },
         "right": {
           "$type": 93,
-          "$source": "ts",
+          "$source": 0,
           "$text": "0",
           "$span": {
             "start": 38,
@@ -9152,11 +9152,11 @@
     "grammar": "python",
     "input": {
       "$type": 190,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "left": {
           "$type": 93,
-          "$source": "ts",
+          "$source": 0,
           "$text": "0",
           "$span": {
             "start": 47,
@@ -9168,7 +9168,7 @@
         },
         "operator": {
           "$type": 56,
-          "$source": "ts",
+          "$source": 0,
           "$text": "or",
           "$span": {
             "start": 49,
@@ -9180,7 +9180,7 @@
         },
         "right": {
           "$type": 93,
-          "$source": "ts",
+          "$source": 0,
           "$text": "1",
           "$span": {
             "start": 52,
@@ -9216,11 +9216,11 @@
     "grammar": "python",
     "input": {
       "$type": 189,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "not": {
           "$type": 54,
-          "$source": "ts",
+          "$source": 0,
           "$text": "not",
           "$span": {
             "start": 60,
@@ -9232,7 +9232,7 @@
         },
         "argument": {
           "$type": 96,
-          "$source": "ts",
+          "$source": 0,
           "$text": "True",
           "$span": {
             "start": 64,
@@ -9268,11 +9268,11 @@
     "grammar": "python",
     "input": {
       "$type": 204,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "value": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "a",
           "$span": {
             "start": 4,
@@ -9284,7 +9284,7 @@
         },
         "[": {
           "$type": 45,
-          "$source": "ts",
+          "$source": 0,
           "$text": "[",
           "$span": {
             "start": 5,
@@ -9296,7 +9296,7 @@
         },
         "subscript": {
           "$type": 93,
-          "$source": "ts",
+          "$source": 0,
           "$text": "1",
           "$span": {
             "start": 6,
@@ -9308,7 +9308,7 @@
         },
         "]": {
           "$type": 46,
-          "$source": "ts",
+          "$source": 0,
           "$text": "]",
           "$span": {
             "start": 7,
@@ -9344,11 +9344,11 @@
     "grammar": "python",
     "input": {
       "$type": 204,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "value": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "b",
           "$span": {
             "start": 10,
@@ -9360,7 +9360,7 @@
         },
         "[": {
           "$type": 45,
-          "$source": "ts",
+          "$source": 0,
           "$text": "[",
           "$span": {
             "start": 11,
@@ -9372,7 +9372,7 @@
         },
         "subscript": {
           "$type": 93,
-          "$source": "ts",
+          "$source": 0,
           "$text": "2",
           "$span": {
             "start": 12,
@@ -9384,7 +9384,7 @@
         },
         "]": {
           "$type": 46,
-          "$source": "ts",
+          "$source": 0,
           "$text": "]",
           "$span": {
             "start": 13,
@@ -9420,11 +9420,11 @@
     "grammar": "python",
     "input": {
       "$type": 191,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "left": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "a",
           "$span": {
             "start": 14,
@@ -9436,7 +9436,7 @@
         },
         "operator": {
           "$type": 52,
-          "$source": "ts",
+          "$source": 0,
           "$text": "+",
           "$span": {
             "start": 16,
@@ -9448,7 +9448,7 @@
         },
         "right": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "b",
           "$span": {
             "start": 18,
@@ -9484,11 +9484,11 @@
     "grammar": "python",
     "input": {
       "$type": 189,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "not": {
           "$type": 54,
-          "$source": "ts",
+          "$source": 0,
           "$text": "not",
           "$span": {
             "start": 30,
@@ -9500,7 +9500,7 @@
         },
         "argument": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "b",
           "$span": {
             "start": 34,
@@ -9536,11 +9536,11 @@
     "grammar": "python",
     "input": {
       "$type": 215,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "[": {
           "$type": 45,
-          "$source": "ts",
+          "$source": 0,
           "$text": "[",
           "$span": {
             "start": 110,
@@ -9552,7 +9552,7 @@
         },
         ",": {
           "$type": 9,
-          "$source": "ts",
+          "$source": 0,
           "$text": ",",
           "$span": {
             "start": 115,
@@ -9564,7 +9564,7 @@
         },
         "]": {
           "$type": 46,
-          "$source": "ts",
+          "$source": 0,
           "$text": "]",
           "$span": {
             "start": 127,
@@ -9578,7 +9578,7 @@
       "$children": [
         {
           "$type": 217,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(1,)",
           "$span": {
             "start": 111,
@@ -9590,7 +9590,7 @@
         },
         {
           "$type": 217,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(2,)",
           "$span": {
             "start": 117,
@@ -9602,7 +9602,7 @@
         },
         {
           "$type": 9,
-          "$source": "ts",
+          "$source": 0,
           "$text": ",",
           "$span": {
             "start": 121,
@@ -9614,7 +9614,7 @@
         },
         {
           "$type": 217,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(3,)",
           "$span": {
             "start": 123,
@@ -9650,11 +9650,11 @@
     "grammar": "python",
     "input": {
       "$type": 185,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "expression": {
           "$type": 206,
-          "$source": "ts",
+          "$source": 0,
           "$text": "open('d')",
           "$span": {
             "start": 24,
@@ -9666,7 +9666,7 @@
         },
         "as": {
           "$type": 10,
-          "$source": "ts",
+          "$source": 0,
           "$text": "as",
           "$span": {
             "start": 34,
@@ -9678,7 +9678,7 @@
         },
         "alias": {
           "$type": 284,
-          "$source": "ts",
+          "$source": 0,
           "$text": "d",
           "$span": {
             "start": 37,
@@ -9714,11 +9714,11 @@
     "grammar": "python",
     "input": {
       "$type": 185,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "expression": {
           "$type": 206,
-          "$source": "ts",
+          "$source": 0,
           "$text": "open('e')",
           "$span": {
             "start": 46,
@@ -9730,7 +9730,7 @@
         },
         "as": {
           "$type": 10,
-          "$source": "ts",
+          "$source": 0,
           "$text": "as",
           "$span": {
             "start": 56,
@@ -9742,7 +9742,7 @@
         },
         "alias": {
           "$type": 284,
-          "$source": "ts",
+          "$source": 0,
           "$text": "e",
           "$span": {
             "start": 59,
@@ -9778,11 +9778,11 @@
     "grammar": "python",
     "input": {
       "$type": 185,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "expression": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "g",
           "$span": {
             "start": 81,
@@ -9794,7 +9794,7 @@
         },
         "as": {
           "$type": 10,
-          "$source": "ts",
+          "$source": 0,
           "$text": "as",
           "$span": {
             "start": 83,
@@ -9806,7 +9806,7 @@
         },
         "alias": {
           "$type": 284,
-          "$source": "ts",
+          "$source": 0,
           "$text": "h",
           "$span": {
             "start": 86,
@@ -9842,11 +9842,11 @@
     "grammar": "python",
     "input": {
       "$type": 217,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "(": {
           "$type": 7,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(",
           "$span": {
             "start": 23,
@@ -9858,7 +9858,7 @@
         },
         ",": {
           "$type": 9,
-          "$source": "ts",
+          "$source": 0,
           "$text": ",",
           "$span": {
             "start": 25,
@@ -9870,7 +9870,7 @@
         },
         ")": {
           "$type": 8,
-          "$source": "ts",
+          "$source": 0,
           "$text": ")",
           "$span": {
             "start": 27,
@@ -9884,7 +9884,7 @@
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "a",
           "$span": {
             "start": 24,
@@ -9896,7 +9896,7 @@
         },
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "b",
           "$span": {
             "start": 26,
@@ -9932,11 +9932,11 @@
     "grammar": "python",
     "input": {
       "$type": 183,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "*": {
           "$type": 11,
-          "$source": "ts",
+          "$source": 0,
           "$text": "*",
           "$span": {
             "start": 176,
@@ -9950,7 +9950,7 @@
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "a",
           "$span": {
             "start": 177,
@@ -9986,11 +9986,11 @@
     "grammar": "python",
     "input": {
       "$type": 183,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "*": {
           "$type": 11,
-          "$source": "ts",
+          "$source": 0,
           "$text": "*",
           "$span": {
             "start": 36,
@@ -10004,7 +10004,7 @@
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "list",
           "$span": {
             "start": 37,
@@ -10040,11 +10040,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "str",
           "$span": {
             "start": 43,
@@ -10080,11 +10080,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "str",
           "$span": {
             "start": 71,
@@ -10120,11 +10120,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "f",
           "$span": {
             "start": 219,
@@ -10136,7 +10136,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 220,
@@ -10172,11 +10172,11 @@
     "grammar": "python",
     "input": {
       "$type": 204,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "value": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "Sequence",
           "$span": {
             "start": 122,
@@ -10188,7 +10188,7 @@
         },
         "[": {
           "$type": 45,
-          "$source": "ts",
+          "$source": 0,
           "$text": "[",
           "$span": {
             "start": 130,
@@ -10200,7 +10200,7 @@
         },
         "subscript": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "T",
           "$span": {
             "start": 131,
@@ -10212,7 +10212,7 @@
         },
         "]": {
           "$type": 46,
-          "$source": "ts",
+          "$source": 0,
           "$text": "]",
           "$span": {
             "start": 132,
@@ -10248,11 +10248,11 @@
     "grammar": "python",
     "input": {
       "$type": 204,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "value": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "Sequence",
           "$span": {
             "start": 151,
@@ -10264,7 +10264,7 @@
         },
         "[": {
           "$type": 45,
-          "$source": "ts",
+          "$source": 0,
           "$text": "[",
           "$span": {
             "start": 159,
@@ -10277,7 +10277,7 @@
         "subscript": [
           {
             "$type": 1,
-            "$source": "ts",
+            "$source": 0,
             "$text": "T",
             "$span": {
               "start": 160,
@@ -10289,7 +10289,7 @@
           },
           {
             "$type": 1,
-            "$source": "ts",
+            "$source": 0,
             "$text": "U",
             "$span": {
               "start": 163,
@@ -10302,7 +10302,7 @@
         ],
         ",": {
           "$type": 9,
-          "$source": "ts",
+          "$source": 0,
           "$text": ",",
           "$span": {
             "start": 161,
@@ -10314,7 +10314,7 @@
         },
         "]": {
           "$type": 46,
-          "$source": "ts",
+          "$source": 0,
           "$text": "]",
           "$span": {
             "start": 164,
@@ -10350,11 +10350,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "a",
           "$span": {
             "start": 1,
@@ -10366,7 +10366,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 2,
@@ -10378,7 +10378,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "b",
           "$span": {
             "start": 3,
@@ -10414,11 +10414,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "buttons[0].clicked",
           "$span": {
             "start": 84,
@@ -10430,7 +10430,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 102,
@@ -10442,7 +10442,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "connect",
           "$span": {
             "start": 103,
@@ -10478,11 +10478,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 204,
-          "$source": "ts",
+          "$source": 0,
           "$text": "buttons[0]",
           "$span": {
             "start": 84,
@@ -10494,7 +10494,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 94,
@@ -10506,7 +10506,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "clicked",
           "$span": {
             "start": 95,
@@ -10542,11 +10542,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 203,
-          "$source": "ts",
+          "$source": 0,
           "$text": "e[2].f",
           "$span": {
             "start": 25,
@@ -10558,7 +10558,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 31,
@@ -10570,7 +10570,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "g",
           "$span": {
             "start": 32,
@@ -10606,11 +10606,11 @@
     "grammar": "python",
     "input": {
       "$type": 203,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "object": {
           "$type": 204,
-          "$source": "ts",
+          "$source": 0,
           "$text": "e[2]",
           "$span": {
             "start": 25,
@@ -10622,7 +10622,7 @@
         },
         ".": {
           "$type": 4,
-          "$source": "ts",
+          "$source": 0,
           "$text": ".",
           "$span": {
             "start": 29,
@@ -10634,7 +10634,7 @@
         },
         "attribute": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "f",
           "$span": {
             "start": 30,
@@ -10670,11 +10670,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "d",
           "$span": {
             "start": 17,
@@ -10686,7 +10686,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(1)",
           "$span": {
             "start": 18,
@@ -10722,11 +10722,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "f",
           "$span": {
             "start": 55,
@@ -10738,7 +10738,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "()",
           "$span": {
             "start": 56,
@@ -10774,11 +10774,11 @@
     "grammar": "python",
     "input": {
       "$type": 204,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "value": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "buttons",
           "$span": {
             "start": 84,
@@ -10790,7 +10790,7 @@
         },
         "[": {
           "$type": 45,
-          "$source": "ts",
+          "$source": 0,
           "$text": "[",
           "$span": {
             "start": 91,
@@ -10802,7 +10802,7 @@
         },
         "subscript": {
           "$type": 93,
-          "$source": "ts",
+          "$source": 0,
           "$text": "0",
           "$span": {
             "start": 92,
@@ -10814,7 +10814,7 @@
         },
         "]": {
           "$type": 46,
-          "$source": "ts",
+          "$source": 0,
           "$text": "]",
           "$span": {
             "start": 93,
@@ -10850,11 +10850,11 @@
     "grammar": "python",
     "input": {
       "$type": 204,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "value": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "e",
           "$span": {
             "start": 25,
@@ -10866,7 +10866,7 @@
         },
         "[": {
           "$type": 45,
-          "$source": "ts",
+          "$source": 0,
           "$text": "[",
           "$span": {
             "start": 26,
@@ -10878,7 +10878,7 @@
         },
         "subscript": {
           "$type": 93,
-          "$source": "ts",
+          "$source": 0,
           "$text": "2",
           "$span": {
             "start": 27,
@@ -10890,7 +10890,7 @@
         },
         "]": {
           "$type": 46,
-          "$source": "ts",
+          "$source": 0,
           "$text": "]",
           "$span": {
             "start": 28,
@@ -10926,11 +10926,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "RuntimeError",
           "$span": {
             "start": 12,
@@ -10942,7 +10942,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "('NO')",
           "$span": {
             "start": 24,
@@ -10978,11 +10978,11 @@
     "grammar": "python",
     "input": {
       "$type": 206,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "function": {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "RunTimeError",
           "$span": {
             "start": 37,
@@ -10994,7 +10994,7 @@
         },
         "arguments": {
           "$type": 157,
-          "$source": "ts",
+          "$source": 0,
           "$text": "('NO')",
           "$span": {
             "start": 49,
@@ -11030,11 +11030,11 @@
     "grammar": "python",
     "input": {
       "$type": 231,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "string_start": {
           "$type": 104,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 58,
@@ -11046,7 +11046,7 @@
         },
         "content": {
           "$type": 232,
-          "$source": "ts",
+          "$source": 0,
           "$text": "print",
           "$span": {
             "start": 59,
@@ -11058,7 +11058,7 @@
         },
         "string_end": {
           "$type": 107,
-          "$source": "ts",
+          "$source": 0,
           "$text": "\"",
           "$span": {
             "start": 64,
@@ -11094,11 +11094,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "Point",
           "$span": {
             "start": 5,
@@ -11134,11 +11134,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 210,
-          "$source": "ts",
+          "$source": 0,
           "$text": "tuple[float, float]",
           "$span": {
             "start": 13,
@@ -11174,11 +11174,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 210,
-          "$source": "ts",
+          "$source": 0,
           "$text": "Point[T]",
           "$span": {
             "start": 38,
@@ -11214,11 +11214,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 210,
-          "$source": "ts",
+          "$source": 0,
           "$text": "tuple[T, T]",
           "$span": {
             "start": 49,
@@ -11254,11 +11254,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 210,
-          "$source": "ts",
+          "$source": 0,
           "$text": "IntFunc[**P]",
           "$span": {
             "start": 66,
@@ -11294,11 +11294,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 210,
-          "$source": "ts",
+          "$source": 0,
           "$text": "Callable[P, int]",
           "$span": {
             "start": 81,
@@ -11334,11 +11334,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 210,
-          "$source": "ts",
+          "$source": 0,
           "$text": "LabeledTuple[*Ts]",
           "$span": {
             "start": 116,
@@ -11374,11 +11374,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 210,
-          "$source": "ts",
+          "$source": 0,
           "$text": "tuple[str, *Ts]",
           "$span": {
             "start": 136,
@@ -11414,11 +11414,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 210,
-          "$source": "ts",
+          "$source": 0,
           "$text": "HashableSequence[T: Hashable]",
           "$span": {
             "start": 173,
@@ -11454,11 +11454,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 210,
-          "$source": "ts",
+          "$source": 0,
           "$text": "Sequence[T]",
           "$span": {
             "start": 205,
@@ -11494,11 +11494,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 210,
-          "$source": "ts",
+          "$source": 0,
           "$text": "IntOrStrSequence[T: (int, str)]",
           "$span": {
             "start": 244,
@@ -11534,11 +11534,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 210,
-          "$source": "ts",
+          "$source": 0,
           "$text": "Sequence[T]",
           "$span": {
             "start": 278,
@@ -11574,11 +11574,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "float",
           "$span": {
             "start": 19,
@@ -11614,11 +11614,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "float",
           "$span": {
             "start": 26,
@@ -11654,11 +11654,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "T",
           "$span": {
             "start": 44,
@@ -11694,11 +11694,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "T",
           "$span": {
             "start": 55,
@@ -11734,11 +11734,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "T",
           "$span": {
             "start": 58,
@@ -11774,11 +11774,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 209,
-          "$source": "ts",
+          "$source": 0,
           "$text": "**P",
           "$span": {
             "start": 74,
@@ -11814,11 +11814,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "P",
           "$span": {
             "start": 90,
@@ -11854,11 +11854,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "int",
           "$span": {
             "start": 93,
@@ -11894,11 +11894,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 209,
-          "$source": "ts",
+          "$source": 0,
           "$text": "*Ts",
           "$span": {
             "start": 129,
@@ -11934,11 +11934,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "str",
           "$span": {
             "start": 142,
@@ -11974,11 +11974,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 209,
-          "$source": "ts",
+          "$source": 0,
           "$text": "*Ts",
           "$span": {
             "start": 147,
@@ -12014,11 +12014,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 212,
-          "$source": "ts",
+          "$source": 0,
           "$text": "T: Hashable",
           "$span": {
             "start": 190,
@@ -12054,11 +12054,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "T",
           "$span": {
             "start": 214,
@@ -12094,11 +12094,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 212,
-          "$source": "ts",
+          "$source": 0,
           "$text": "T: (int, str)",
           "$span": {
             "start": 261,
@@ -12134,11 +12134,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "T",
           "$span": {
             "start": 287,
@@ -12174,11 +12174,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "T",
           "$span": {
             "start": 190,
@@ -12214,11 +12214,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "Hashable",
           "$span": {
             "start": 193,
@@ -12254,11 +12254,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "T",
           "$span": {
             "start": 261,
@@ -12294,11 +12294,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 217,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(int, str)",
           "$span": {
             "start": 264,
@@ -12334,11 +12334,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 209,
-          "$source": "ts",
+          "$source": 0,
           "$text": "**P",
           "$span": {
             "start": 74,
@@ -12374,11 +12374,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 209,
-          "$source": "ts",
+          "$source": 0,
           "$text": "*Ts",
           "$span": {
             "start": 129,
@@ -12414,11 +12414,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 209,
-          "$source": "ts",
+          "$source": 0,
           "$text": "*Ts",
           "$span": {
             "start": 147,
@@ -12454,11 +12454,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 217,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(int, str)",
           "$span": {
             "start": 264,
@@ -12494,11 +12494,11 @@
     "grammar": "python",
     "input": {
       "$type": 217,
-      "$source": "ts",
+      "$source": 0,
       "$fields": {
         "(": {
           "$type": 7,
-          "$source": "ts",
+          "$source": 0,
           "$text": "(",
           "$span": {
             "start": 264,
@@ -12510,7 +12510,7 @@
         },
         ",": {
           "$type": 9,
-          "$source": "ts",
+          "$source": 0,
           "$text": ",",
           "$span": {
             "start": 268,
@@ -12522,7 +12522,7 @@
         },
         ")": {
           "$type": 8,
-          "$source": "ts",
+          "$source": 0,
           "$text": ")",
           "$span": {
             "start": 273,
@@ -12536,7 +12536,7 @@
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "int",
           "$span": {
             "start": 265,
@@ -12548,7 +12548,7 @@
         },
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "str",
           "$span": {
             "start": 270,
@@ -12584,11 +12584,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "T",
           "$span": {
             "start": 17,
@@ -12624,11 +12624,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 209,
-          "$source": "ts",
+          "$source": 0,
           "$text": "*Ts",
           "$span": {
             "start": 20,
@@ -12664,11 +12664,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 209,
-          "$source": "ts",
+          "$source": 0,
           "$text": "**P",
           "$span": {
             "start": 25,
@@ -12704,11 +12704,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 210,
-          "$source": "ts",
+          "$source": 0,
           "$text": "TA[T2, *Ts2, **P2]",
           "$span": {
             "start": 42,
@@ -12744,11 +12744,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 210,
-          "$source": "ts",
+          "$source": 0,
           "$text": "tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]",
           "$span": {
             "start": 63,
@@ -12784,11 +12784,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "T2",
           "$span": {
             "start": 45,
@@ -12824,11 +12824,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 209,
-          "$source": "ts",
+          "$source": 0,
           "$text": "*Ts2",
           "$span": {
             "start": 49,
@@ -12864,11 +12864,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 209,
-          "$source": "ts",
+          "$source": 0,
           "$text": "**P2",
           "$span": {
             "start": 55,
@@ -12904,11 +12904,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 210,
-          "$source": "ts",
+          "$source": 0,
           "$text": "Callable[P, tuple[T, *Ts]]",
           "$span": {
             "start": 69,
@@ -12944,11 +12944,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 210,
-          "$source": "ts",
+          "$source": 0,
           "$text": "Callable[P2, tuple[T2, *Ts2]]",
           "$span": {
             "start": 97,
@@ -12984,11 +12984,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "P",
           "$span": {
             "start": 78,
@@ -13024,11 +13024,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 210,
-          "$source": "ts",
+          "$source": 0,
           "$text": "tuple[T, *Ts]",
           "$span": {
             "start": 81,
@@ -13064,11 +13064,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "P2",
           "$span": {
             "start": 106,
@@ -13104,11 +13104,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 210,
-          "$source": "ts",
+          "$source": 0,
           "$text": "tuple[T2, *Ts2]",
           "$span": {
             "start": 110,
@@ -13144,11 +13144,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "T",
           "$span": {
             "start": 87,
@@ -13184,11 +13184,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 209,
-          "$source": "ts",
+          "$source": 0,
           "$text": "*Ts",
           "$span": {
             "start": 90,
@@ -13224,11 +13224,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 1,
-          "$source": "ts",
+          "$source": 0,
           "$text": "T2",
           "$span": {
             "start": 116,
@@ -13264,11 +13264,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 209,
-          "$source": "ts",
+          "$source": 0,
           "$text": "*Ts2",
           "$span": {
             "start": 120,
@@ -13304,11 +13304,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 209,
-          "$source": "ts",
+          "$source": 0,
           "$text": "*Ts",
           "$span": {
             "start": 20,
@@ -13344,11 +13344,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 209,
-          "$source": "ts",
+          "$source": 0,
           "$text": "**P",
           "$span": {
             "start": 25,
@@ -13384,11 +13384,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 209,
-          "$source": "ts",
+          "$source": 0,
           "$text": "*Ts2",
           "$span": {
             "start": 49,
@@ -13424,11 +13424,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 209,
-          "$source": "ts",
+          "$source": 0,
           "$text": "**P2",
           "$span": {
             "start": 55,
@@ -13464,11 +13464,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 209,
-          "$source": "ts",
+          "$source": 0,
           "$text": "*Ts",
           "$span": {
             "start": 90,
@@ -13504,11 +13504,11 @@
     "grammar": "python",
     "input": {
       "$type": 208,
-      "$source": "ts",
+      "$source": 0,
       "$children": [
         {
           "$type": 209,
-          "$source": "ts",
+          "$source": 0,
           "$text": "*Ts2",
           "$span": {
             "start": 120,
