@@ -4078,11 +4078,11 @@ export namespace KeyValuePattern {
 }
 
 export namespace KwAsyncMarker {
-  export type Transport = TerminalTransport<TSKindId.KwAsyncMarker, "async">;
+  export type Transport = TerminalTransport<TSKindId.Async, "async">;
 }
 
 export namespace KwType {
-  export type Transport = TerminalTransport<TSKindId.KwType, "type">;
+  export type Transport = TerminalTransport<TSKindId.Type, "type">;
 }
 
 export namespace _ListPattern {

@@ -7229,23 +7229,23 @@ export namespace KwAsyncMarker {
 }
 
 export namespace KwIn {
-  export type Transport = TerminalTransport<TSKindId.KwIn, "in">;
+  export type Transport = TerminalTransport<TSKindId.In, "in">;
 }
 
 export namespace KwMoveMarker {
-  export type Transport = TerminalTransport<TSKindId.KwMoveMarker, "move">;
+  export type Transport = TerminalTransport<TSKindId.Move, "move">;
 }
 
 export namespace KwNegative {
-  export type Transport = TerminalTransport<TSKindId.KwNegative, "!">;
+  export type Transport = TerminalTransport<TSKindId.Bang, "!">;
 }
 
 export namespace KwOperator {
-  export type Transport = TerminalTransport<TSKindId.KwOperator, "..">;
+  export type Transport = TerminalTransport<TSKindId.DotDot, "..">;
 }
 
 export namespace KwPub {
-  export type Transport = TerminalTransport<TSKindId.KwPub, "pub">;
+  export type Transport = TerminalTransport<TSKindId.Pub, "pub">;
 }
 
 export namespace KwRefMarker {
@@ -7253,15 +7253,15 @@ export namespace KwRefMarker {
 }
 
 export namespace KwStaticMarker {
-  export type Transport = TerminalTransport<TSKindId.KwStaticMarker, "static">;
+  export type Transport = TerminalTransport<TSKindId.Static, "static">;
 }
 
 export namespace KwTurbofish {
-  export type Transport = TerminalTransport<TSKindId.KwTurbofish, "::">;
+  export type Transport = TerminalTransport<TSKindId.ColonColon, "::">;
 }
 
 export namespace KwUnsafeMarker {
-  export type Transport = TerminalTransport<TSKindId.KwUnsafeMarker, "unsafe">;
+  export type Transport = TerminalTransport<TSKindId.Unsafe, "unsafe">;
 }
 
 export namespace LetChain {

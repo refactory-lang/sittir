@@ -863,12 +863,14 @@ function terminalTransportDiscriminant(
 	node: TerminalNode,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
-	// Try resolving the kind name itself first
-	if (kindEntries) {
+	// Hidden _kw_* kinds are inlined by tree-sitter (visible=false); at
+	// runtime the CST node carries the anonymous token's symbol, not the
+	// _kw_ wrapper's. Skip the kind-name lookup and resolve through the
+	// text value to the real anon token's TSKindId.
+	if (!kind.startsWith('_kw_') && kindEntries) {
 		const kindEntry = findKindEntry(kindEntries, kind);
 		if (kindEntry) return `TSKindId.${kindEntry.member}`;
 	}
-	// For keywords/tokens, resolve the text value to its anonymous token TSKindId
 	if (node.modelType === 'keyword') {
 		return resolveTransportDiscriminant(node.text, kindEntries);
 	}

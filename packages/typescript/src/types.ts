@@ -7820,7 +7820,7 @@ export namespace Kind {
 }
 
 export namespace KwAbstractMarker {
-  export type Transport = TerminalTransport<TSKindId.KwAbstractMarker, "abstract">;
+  export type Transport = TerminalTransport<TSKindId.Abstract, "abstract">;
 }
 
 export namespace KwAccessorMarker {
@@ -7840,7 +7840,7 @@ export namespace KwAwaitMarker {
 }
 
 export namespace KwConstMarker {
-  export type Transport = TerminalTransport<TSKindId.KwConstMarker, "const">;
+  export type Transport = TerminalTransport<TSKindId.Const, "const">;
 }
 
 export namespace KwDeclareMarker {
@@ -7848,7 +7848,7 @@ export namespace KwDeclareMarker {
 }
 
 export namespace KwOptionalMarker {
-  export type Transport = TerminalTransport<TSKindId.KwOptionalMarker, "?">;
+  export type Transport = TerminalTransport<TSKindId.Qmark, "?">;
 }
 
 export namespace KwReadonlyMarker {
@@ -7856,7 +7856,7 @@ export namespace KwReadonlyMarker {
 }
 
 export namespace KwStaticMarker {
-  export type Transport = TerminalTransport<TSKindId.KwStaticMarker, "static">;
+  export type Transport = TerminalTransport<TSKindId.Static, "static">;
 }
 
 export namespace KwTypePredicate {
@@ -7864,7 +7864,7 @@ export namespace KwTypePredicate {
 }
 
 export namespace KwUsingMarker {
-  export type Transport = TerminalTransport<TSKindId.KwUsingMarker, "using">;
+  export type Transport = TerminalTransport<TSKindId.Using, "using">;
 }
 
 export namespace LhsExpression {
