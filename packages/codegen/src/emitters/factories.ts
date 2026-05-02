@@ -1683,7 +1683,8 @@ function buildHoistedRebuildExpr(
 	innerFields: readonly AssembledField[],
 	patchKey: string,
 	patchVar: string,
-	patchSource: 'form' | 'inner'
+	patchSource: 'form' | 'inner',
+	nodeMap: NodeMap
 ): string {
 	const parts: string[] = [];
 	// Form-level fields come from `config.<propName>` (already camelCase on
@@ -1695,9 +1696,11 @@ function buildHoistedRebuildExpr(
 	}
 	// Inner-level fields come from the materialized inner node's `$fields`
 	// map (snake_case). Skip the patched key if this setter is patching an
-	// inner-level field.
+	// inner-level field. Also skip auto-stamped fields — they are excluded
+	// from ConfigOf<T> so passing them in the rebuild config is a type error.
 	for (const f of innerFields) {
 		if (patchSource === 'inner' && f.propertyName === patchKey) continue;
+		if (autoStampExpression(f, nodeMap) !== undefined) continue;
 		parts.push(`${f.propertyName}: inner.$fields.${f.name}`);
 	}
 	// Patched key appended last so its value is authoritative in the
@@ -1939,7 +1942,8 @@ function emitHoistedSetter(
 		innerFields,
 		f.propertyName,
 		param,
-		patchSource
+		patchSource,
+		nodeMap
 	);
 	const elemType = fieldElementType(f, nodeMap);
 	if (fMultiple) {

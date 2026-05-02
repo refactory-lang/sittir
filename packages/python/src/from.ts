@@ -432,7 +432,6 @@ export function binaryOperatorFrom(input: T.BinaryOperator.Loose): ReturnType<ty
   if (isNodeData(input)) return input;
   return F.binaryOperator({
     left: _resolveOne<T.PrimaryExpression>(input.left, _K1, _K2),
-    operator: _resolveOneLeaf<T.BinaryOperatorOperator>(input.operator, "_binary_operator_operator"),
     right: _resolveOne<T.PrimaryExpression>(input.right, _K1, _K2),
   });
 }
@@ -449,7 +448,6 @@ export function booleanOperatorFrom(input: T.BooleanOperator.Loose): ReturnType<
   if (isNodeData(input)) return input;
   return F.booleanOperator({
     left: _resolveOne<T.Expression>(input.left, _K0, _super_expression),
-    operator: _resolveOneLeaf<T.BooleanOperatorOperator>(input.operator, "_boolean_operator_operator"),
     right: _resolveOne<T.Expression>(input.right, _K0, _super_expression),
   });
 }
@@ -1183,7 +1181,6 @@ export function typeFrom(input?: NonNullable<T.Type.Config['children']>[number] 
 export function typeAliasStatementFrom(input: T.TypeAliasStatement.Loose): ReturnType<typeof F.typeAliasStatement> | T.TypeAliasStatement {
   if (isNodeData(input)) return input;
   return F.typeAliasStatement({
-    type: _resolveOneLeaf<T.TypeAliasStatementType>(input.type, "_type_alias_statement_type"),
     left: _resolveOneBranch<T.Type>(input.left, "type"),
     right: _resolveOneBranch<T.Type>(input.right, "type"),
   });

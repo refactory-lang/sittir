@@ -2143,7 +2143,7 @@ export interface ForHeaderLhs {
 export interface ForHeaderVarKind {
   readonly $type: TSKindId.ForHeaderVarKind;
   readonly $fields: {
-    readonly kind: ForHeaderVarKindKind;
+    readonly kind: AutoStamp<ForHeaderVarKindKind>;
     readonly left: Identifier | DestructuringPattern;
   };
   readonly $children: readonly [Initializer];
@@ -2267,7 +2267,7 @@ export interface ParenthesizedExpressionTyped {
 export interface PublicFieldDefinitionAbstractFirst {
   readonly $type: TSKindId.PublicFieldDefinitionAbstractFirst;
   readonly $fields: {
-    readonly abstract_marker: AbstractMarker;
+    readonly abstract_marker: AutoStamp<AbstractMarker>;
     readonly readonly_marker?: BooleanKeyword<ReadonlyMarker>;
   };
 }
@@ -2283,7 +2283,7 @@ export interface PublicFieldDefinitionAccessFirst {
 export interface PublicFieldDefinitionAccessorOpt {
   readonly $type: TSKindId.PublicFieldDefinitionAccessorOpt;
   readonly $fields: {
-    readonly accessor_marker: PublicFieldDefinitionAccessorOptAccessorMarker;
+    readonly accessor_marker: AutoStamp<PublicFieldDefinitionAccessorOptAccessorMarker>;
   };
 }
 
@@ -2295,7 +2295,7 @@ export interface PublicFieldDefinitionDeclareFirst {
 export interface PublicFieldDefinitionReadonlyFirst {
   readonly $type: TSKindId.PublicFieldDefinitionReadonlyFirst;
   readonly $fields: {
-    readonly readonly_marker: ReadonlyMarker;
+    readonly readonly_marker: AutoStamp<ReadonlyMarker>;
     readonly abstract_marker?: BooleanKeyword<AbstractMarker>;
   };
 }
@@ -2303,7 +2303,7 @@ export interface PublicFieldDefinitionReadonlyFirst {
 export interface PublicFieldDefinitionStaticMods {
   readonly $type: TSKindId.PublicFieldDefinitionStaticMods;
   readonly $fields: {
-    readonly static_marker: StaticMarker;
+    readonly static_marker: AutoStamp<StaticMarker>;
     readonly readonly_marker?: BooleanKeyword<ReadonlyMarker>;
   };
   readonly $children: readonly [OverrideModifier];
@@ -2543,7 +2543,7 @@ export interface BinaryExpression {
   readonly $type: TSKindId.BinaryExpression;
   readonly $fields: {
     readonly left: Expression | PrivatePropertyIdentifier;
-    readonly operator: BinaryExpressionOperator;
+    readonly operator: AutoStamp<BinaryExpressionOperator>;
     readonly right: Expression;
   };
 }

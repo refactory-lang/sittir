@@ -1453,7 +1453,7 @@ export interface BinaryOperator {
   readonly $type: TSKindId.BinaryOperator;
   readonly $fields: {
     readonly left: PrimaryExpression;
-    readonly operator: BinaryOperatorOperator;
+    readonly operator: AutoStamp<BinaryOperatorOperator>;
     readonly right: PrimaryExpression;
   };
 }
@@ -1467,7 +1467,7 @@ export interface BooleanOperator {
   readonly $type: TSKindId.BooleanOperator;
   readonly $fields: {
     readonly left: Expression;
-    readonly operator: BooleanOperatorOperator;
+    readonly operator: AutoStamp<BooleanOperatorOperator>;
     readonly right: Expression;
   };
 }
@@ -2034,7 +2034,7 @@ export interface Type {
 export interface TypeAliasStatement {
   readonly $type: TSKindId.TypeAliasStatement;
   readonly $fields: {
-    readonly type: TypeAliasStatementType;
+    readonly type: AutoStamp<TypeAliasStatementType>;
     readonly left: Type;
     readonly right: Type;
   };

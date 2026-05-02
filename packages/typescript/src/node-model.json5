@@ -378,6 +378,8 @@
       "factoryName": "forHeaderVarKindKind",
       "irKey": "forHeaderVarKindKind",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"var\" as const",
       "values": [
         "var"
       ]
@@ -401,6 +403,8 @@
       "factoryName": "publicFieldDefinitionAccessFirstDeclareMarker",
       "irKey": "publicFieldDefinitionAccessFirstDeclareMarker",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"declare\" as const",
       "values": [
         "declare"
       ]
@@ -412,6 +416,8 @@
       "factoryName": "publicFieldDefinitionAccessorOptAccessorMarker",
       "irKey": "publicFieldDefinitionAccessorOptAccessorMarker",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"accessor\" as const",
       "values": [
         "accessor"
       ]
@@ -423,6 +429,8 @@
       "factoryName": "abstractMarker",
       "irKey": "abstractMarker",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"abstract\" as const",
       "values": [
         "abstract"
       ]
@@ -598,6 +606,8 @@
       "factoryName": "assertsAnnotationAsserts",
       "irKey": "assertsAnnotationAsserts",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\":\" as const",
       "values": [
         ":"
       ]
@@ -609,6 +619,8 @@
       "factoryName": "assignmentExpressionUsingMarker",
       "irKey": "assignmentExpressionUsingMarker",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"using\" as const",
       "values": [
         "using"
       ]
@@ -620,6 +632,8 @@
       "factoryName": "asyncMarker",
       "irKey": "asyncMarker",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"async\" as const",
       "values": [
         "async"
       ]
@@ -664,6 +678,8 @@
       "factoryName": "binaryExpressionOperator",
       "irKey": "binaryExpressionOperator",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"&&\" as const",
       "values": [
         "&&"
       ]
@@ -1260,6 +1276,8 @@
       "factoryName": "constMarker",
       "irKey": "constMarker",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"const\" as const",
       "values": [
         "const"
       ]
@@ -2174,6 +2192,8 @@
       "factoryName": "forInStatementAwaitMarker",
       "irKey": "forInStatementAwaitMarker",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"await\" as const",
       "values": [
         "await"
       ]
@@ -2185,6 +2205,8 @@
       "factoryName": "forStatementInitializer",
       "irKey": "forStatementInitializer",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\";\" as const",
       "values": [
         ";"
       ]
@@ -3260,6 +3282,8 @@
       "factoryName": "optionalChain",
       "irKey": "optionalChain",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"?.\" as const",
       "values": [
         "?."
       ]
@@ -3271,6 +3295,8 @@
       "factoryName": "optionalMarker",
       "irKey": "optionalMarker",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"?\" as const",
       "values": [
         "?"
       ]
@@ -3282,6 +3308,8 @@
       "factoryName": "_overrideModifier",
       "irKey": "_overrideModifier",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"override\" as const",
       "values": [
         "override"
       ]
@@ -3513,6 +3541,8 @@
       "factoryName": "_publicFieldDefinitionAbstractFirst",
       "irKey": "publicFieldDefinitionAbstractFirst",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "_publicFieldDefinitionAbstractFirst()",
       "name": "_public_field_definition_abstract_first",
       "fields": [
         {
@@ -3622,6 +3652,8 @@
       "factoryName": "publicFieldDefinitionAccessorOpt",
       "irKey": "publicFieldDefinitionAccessorOpt",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "publicFieldDefinitionAccessorOpt()",
       "fields": [
         {
           "name": "accessor_marker",
@@ -3693,6 +3725,8 @@
       "factoryName": "_publicFieldDefinitionReadonlyFirst",
       "irKey": "publicFieldDefinitionReadonlyFirst",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "_publicFieldDefinitionReadonlyFirst()",
       "name": "_public_field_definition_readonly_first",
       "fields": [
         {
@@ -3751,6 +3785,8 @@
       "factoryName": "_publicFieldDefinitionStaticMods",
       "irKey": "publicFieldDefinitionStaticMods",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "_publicFieldDefinitionStaticMods()",
       "name": "_public_field_definition_static_mods",
       "fields": [
         {
@@ -3825,6 +3861,8 @@
       "factoryName": "readonlyMarker",
       "irKey": "readonlyMarker",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"readonly\" as const",
       "values": [
         "readonly"
       ]
@@ -3887,6 +3925,8 @@
       "factoryName": "staticMarker",
       "irKey": "staticMarker",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"static\" as const",
       "values": [
         "static"
       ]

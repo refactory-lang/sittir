@@ -56,14 +56,17 @@ export interface AnyNodeData {
 	 * Kind discriminant. Numeric (TSKindId.X) for parser.c-derived kinds
 	 * (all named and anonymous tokens that appear in the parse tree).
 	 * String for synthetic/hidden kinds (e.g., `"_suite"`) that have no
-	 * parser.c entry and therefore no numeric KindId.
+	 * parser.c entry and therefore no numeric KindId. Also string for
+	 * `Terminal<K>` leaf nodes whose string-literal $type has not yet
+	 * been migrated to a numeric TSKindId (pending full KindID migration).
 	 *
 	 * Per the KindID runtime migration design (Phase D, 2026-04-30):
 	 * runtime objects carry the parser.c-derived numeric ID wherever
-	 * possible. String $type is retained only for hidden/synthetic kinds
-	 * that tree-sitter inlines away (no parser.c symbol, no TSKindId).
+	 * possible. String $type is retained for hidden/synthetic kinds that
+	 * tree-sitter inlines away and for Terminal<K> leaf types pending
+	 * their numeric migration.
 	 */
-	$type: number;
+	$type: number | string;
 	/** Which producer emitted this node. */
 	$source?: 'ts' | 'sg' | 'factory';
 	/** Variant subtype name — set by factory, absent on readNode output. */

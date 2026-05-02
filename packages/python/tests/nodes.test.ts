@@ -99,12 +99,12 @@ describe('await', () => {
 
 describe('binary_operator', () => {
   it('factory produces correct type', () => {
-    const node = ir.binaryOperator({ left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, operator: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.binaryOperator({ left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.$type).toBe(TSKindId.BinaryOperator);
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.binaryOperator({ left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, operator: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.binaryOperator({ left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -119,12 +119,12 @@ describe('block', () => {
 
 describe('boolean_operator', () => {
   it('factory produces correct type', () => {
-    const node = ir.booleanOperator({ left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, operator: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.booleanOperator({ left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.$type).toBe(TSKindId.BooleanOperator);
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.booleanOperator({ left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, operator: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.booleanOperator({ left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1084,12 +1084,12 @@ describe('type', () => {
 
 describe('type_alias_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.typeAlias({ type: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.typeAlias({ left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.$type).toBe(TSKindId.TypeAliasStatement);
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.typeAlias({ type: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.typeAlias({ left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

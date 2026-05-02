@@ -88,9 +88,10 @@ function buildRenderContext(
  * @param kindNameFromId  Optional id→name resolver from `RulesConfig`.
  */
 function resolveKindName(
-	type: number,
+	type: number | string,
 	ctx: InternalRenderContext
 ): string {
+	if (typeof type === 'string') return type;
 	return ctx.kindNames?.get(type) ?? String(type);
 }
 

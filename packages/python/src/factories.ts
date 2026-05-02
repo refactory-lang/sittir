@@ -551,7 +551,7 @@ export function await_(config: ConfigOf<T.Await>) {
 export function binaryOperator(config: ConfigOf<T.BinaryOperator>) {
   const fields = {
     left: config.left,
-    operator: config.operator,
+    operator: "+" as const,
     right: config.right,
   };
   return {
@@ -560,7 +560,7 @@ export function binaryOperator(config: ConfigOf<T.BinaryOperator>) {
     $named: true as const,
     $fields: fields,
     left(value?: T.PrimaryExpression) { return _fs(config, binaryOperator, 'left', value, config?.left); },
-    operator(value?: T.BinaryOperatorOperator) { return _fs(config, binaryOperator, 'operator', value, config?.operator); },
+    get operator() { return fields.operator; },
     right(value?: T.PrimaryExpression) { return _fs(config, binaryOperator, 'right', value, config?.right); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -589,7 +589,7 @@ export function block(...children: T.Statement[]) {
 export function booleanOperator(config: ConfigOf<T.BooleanOperator>) {
   const fields = {
     left: config.left,
-    operator: config.operator,
+    operator: "and" as const,
     right: config.right,
   };
   return {
@@ -598,7 +598,7 @@ export function booleanOperator(config: ConfigOf<T.BooleanOperator>) {
     $named: true as const,
     $fields: fields,
     left(value?: T.Expression) { return _fs(config, booleanOperator, 'left', value, config?.left); },
-    operator(value?: T.BooleanOperatorOperator) { return _fs(config, booleanOperator, 'operator', value, config?.operator); },
+    get operator() { return fields.operator; },
     right(value?: T.Expression) { return _fs(config, booleanOperator, 'right', value, config?.right); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -2339,7 +2339,7 @@ export function type(child: (T.Expression | T.SplatType | T.GenericType | T.Unio
 
 export function typeAliasStatement(config: ConfigOf<T.TypeAliasStatement>) {
   const fields = {
-    type: config.type,
+    type: "type" as const,
     left: config.left,
     right: config.right,
   };
@@ -2348,7 +2348,7 @@ export function typeAliasStatement(config: ConfigOf<T.TypeAliasStatement>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    typeField(value?: T.TypeAliasStatementType) { return _fs(config, typeAliasStatement, 'type', value, config?.type); },
+    get typeField() { return fields.type; },
     left(value?: T.Type) { return _fs(config, typeAliasStatement, 'left', value, config?.left); },
     right(value?: T.Type) { return _fs(config, typeAliasStatement, 'right', value, config?.right); },
     render(this: AnyNodeData): string { return render(this); },

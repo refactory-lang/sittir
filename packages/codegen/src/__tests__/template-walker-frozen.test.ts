@@ -35,7 +35,7 @@ import {
 	loadLanguageForGrammar,
 	loadReadTreeNode,
 	loadKindIdFromName,
-	loadKindNameFromId,
+	loadKindNames,
 	treeHandle,
 	findFirst
 } from '../validate/common.ts';
@@ -61,9 +61,9 @@ async function rendererFor(
 ): Promise<ReturnType<typeof createRenderer>> {
 	const cached = renderers[grammar];
 	if (cached) return cached;
-	const kindNameFromId = await loadKindNameFromId(grammar);
+	const kindNames = await loadKindNames(grammar);
 	const r = createRenderer(templatesDirFor(grammar), {
-		kindNameFromId: kindNameFromId ?? undefined
+		kindNames: kindNames ?? undefined
 	});
 	renderers[grammar] = r;
 	return r;

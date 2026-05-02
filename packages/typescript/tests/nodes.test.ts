@@ -214,12 +214,12 @@ describe('await_expression', () => {
 
 describe('binary_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.binary({ left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, operator: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.binary({ left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.$type).toBe(TSKindId.BinaryExpression);
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.binary({ left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, operator: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.binary({ left: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

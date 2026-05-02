@@ -570,7 +570,7 @@ export function forHeaderLhs(config: ConfigOf<T.ForHeaderLhs>) {
 
 export function _forHeaderVarKind(config: ConfigOf<T.ForHeaderVarKind>) {
   const fields = {
-    kind: config.kind,
+    kind: "var" as const,
     left: config.left,
   };
   const children = config.children ?? [];
@@ -580,7 +580,7 @@ export function _forHeaderVarKind(config: ConfigOf<T.ForHeaderVarKind>) {
     $named: true as const,
     $fields: fields,
     $children: children,
-    kind(value?: T.ForHeaderVarKindKind) { return _fs(config, _forHeaderVarKind, 'kind', value, config?.kind); },
+    get kind() { return fields.kind; },
     left(value?: T.Identifier | T.DestructuringPattern) { return _fs(config, _forHeaderVarKind, 'left', value, config?.left); },
     child(value?: T.Initializer) {
       if (value === undefined) return children[0];
@@ -870,17 +870,17 @@ export function _parenthesizedExpressionTyped(config: ConfigOf<T.ParenthesizedEx
   };
 }
 
-export function _publicFieldDefinitionAbstractFirst(config: ConfigOf<T.PublicFieldDefinitionAbstractFirst>) {
+export function _publicFieldDefinitionAbstractFirst(config?: ConfigOf<T.PublicFieldDefinitionAbstractFirst>) {
   const fields = {
-    abstract_marker: config.abstractMarker,
-    readonly_marker: config.readonlyMarker ? "readonly" as const : undefined,
+    abstract_marker: "abstract" as const,
+    readonly_marker: config?.readonlyMarker ? "readonly" as const : undefined,
   };
   return {
     $type: TSKindId.PublicFieldDefinitionAbstractFirst as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    abstractMarker(value?: T.AbstractMarker) { return _fs(config, _publicFieldDefinitionAbstractFirst, 'abstractMarker', value, config?.abstractMarker); },
+    get abstractMarker() { return fields.abstract_marker; },
     readonlyMarker(value?: T.ReadonlyMarker | undefined) { return _fs(config, _publicFieldDefinitionAbstractFirst, 'readonlyMarker', value, config?.readonlyMarker); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -916,16 +916,16 @@ export function _publicFieldDefinitionAccessFirst(config: ConfigOf<T.PublicField
   };
 }
 
-export function publicFieldDefinitionAccessorOpt(config: ConfigOf<T.PublicFieldDefinitionAccessorOpt>) {
+export function publicFieldDefinitionAccessorOpt(_config?: ConfigOf<T.PublicFieldDefinitionAccessorOpt>) {
   const fields = {
-    accessor_marker: config.accessorMarker,
+    accessor_marker: "accessor" as const,
   };
   return {
     $type: TSKindId.PublicFieldDefinitionAccessorOpt as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    accessorMarker(value?: T.PublicFieldDefinitionAccessorOptAccessorMarker) { return _fs(config, publicFieldDefinitionAccessorOpt, 'accessorMarker', value, config?.accessorMarker); },
+    get accessorMarker() { return fields.accessor_marker; },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -951,17 +951,17 @@ export function publicFieldDefinitionDeclareFirst(child?: T.AccessibilityModifie
   };
 }
 
-export function _publicFieldDefinitionReadonlyFirst(config: ConfigOf<T.PublicFieldDefinitionReadonlyFirst>) {
+export function _publicFieldDefinitionReadonlyFirst(config?: ConfigOf<T.PublicFieldDefinitionReadonlyFirst>) {
   const fields = {
-    readonly_marker: config.readonlyMarker,
-    abstract_marker: config.abstractMarker ? "abstract" as const : undefined,
+    readonly_marker: "readonly" as const,
+    abstract_marker: config?.abstractMarker ? "abstract" as const : undefined,
   };
   return {
     $type: TSKindId.PublicFieldDefinitionReadonlyFirst as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    readonlyMarker(value?: T.ReadonlyMarker) { return _fs(config, _publicFieldDefinitionReadonlyFirst, 'readonlyMarker', value, config?.readonlyMarker); },
+    get readonlyMarker() { return fields.readonly_marker; },
     abstractMarker(value?: T.AbstractMarker | undefined) { return _fs(config, _publicFieldDefinitionReadonlyFirst, 'abstractMarker', value, config?.abstractMarker); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -972,19 +972,19 @@ export function _publicFieldDefinitionReadonlyFirst(config: ConfigOf<T.PublicFie
   };
 }
 
-export function _publicFieldDefinitionStaticMods(config: ConfigOf<T.PublicFieldDefinitionStaticMods>) {
+export function _publicFieldDefinitionStaticMods(config?: ConfigOf<T.PublicFieldDefinitionStaticMods>) {
   const fields = {
-    static_marker: config.staticMarker,
-    readonly_marker: config.readonlyMarker ? "readonly" as const : undefined,
+    static_marker: "static" as const,
+    readonly_marker: config?.readonlyMarker ? "readonly" as const : undefined,
   };
-  const children = config.children ?? [];
+  const children = config?.children ?? [];
   return {
     $type: TSKindId.PublicFieldDefinitionStaticMods as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
     $children: children,
-    staticMarker(value?: T.StaticMarker) { return _fs(config, _publicFieldDefinitionStaticMods, 'staticMarker', value, config?.staticMarker); },
+    get staticMarker() { return fields.static_marker; },
     readonlyMarker(value?: T.ReadonlyMarker | undefined) { return _fs(config, _publicFieldDefinitionStaticMods, 'readonlyMarker', value, config?.readonlyMarker); },
     child(value?: T.OverrideModifier) {
       if (value === undefined) return children[0];
@@ -1660,7 +1660,7 @@ export function awaitExpression(config: ConfigOf<T.AwaitExpression>) {
 export function binaryExpression(config: ConfigOf<T.BinaryExpression>) {
   const fields = {
     left: config.left,
-    operator: config.operator,
+    operator: "&&" as const,
     right: config.right,
   };
   return {
@@ -1669,7 +1669,7 @@ export function binaryExpression(config: ConfigOf<T.BinaryExpression>) {
     $named: true as const,
     $fields: fields,
     left(value?: T.Expression | T.PrivatePropertyIdentifier) { return _fs(config, binaryExpression, 'left', value, config?.left); },
-    operator(value?: T.BinaryExpressionOperator) { return _fs(config, binaryExpression, 'operator', value, config?.operator); },
+    get operator() { return fields.operator; },
     right(value?: T.Expression) { return _fs(config, binaryExpression, 'right', value, config?.right); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {

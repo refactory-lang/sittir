@@ -444,6 +444,8 @@
       "factoryName": "asyncMarker",
       "irKey": "asyncMarker",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"async\" as const",
       "values": [
         "async"
       ]
@@ -478,6 +480,8 @@
       "factoryName": "binaryOperatorOperator",
       "irKey": "binaryOperatorOperator",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"+\" as const",
       "values": [
         "+"
       ]
@@ -489,6 +493,8 @@
       "factoryName": "booleanOperatorOperator",
       "irKey": "booleanOperatorOperator",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"and\" as const",
       "values": [
         "and"
       ]
@@ -1173,6 +1179,8 @@
       "factoryName": "typeAliasStatementType",
       "irKey": "typeAliasStatementType",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"type\" as const",
       "values": [
         "type"
       ]

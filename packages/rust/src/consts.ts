@@ -407,7 +407,7 @@ export type NodeKind = (typeof NODE_KINDS)[number];
 export type LeafKind = (typeof LEAF_KINDS)[number];
 export type AnyKind = (typeof ALL_KINDS)[number];
 export type Keyword = (typeof KEYWORDS)[number];
-export type Operator = (typeof OPERATORS)[number];
+export type AnyOperator = (typeof OPERATORS)[number];
 
 /** Tree-sitter numeric IDs from the generated parser artifact. */
 export const TREE_SITTER_ID_SOURCE = "packages/rust/.sittir/src/parser.c";

@@ -223,17 +223,24 @@ export function resolveEffectiveLiteral(
 	// Source A: inline literal (bare STRING or choice-of-one-string field)
 	if (isTerminalValue(v)) return v.value;
 
-	// Source B: field references a single hidden keyword kind (`_kw_*` pattern).
+	// Source B: field references a single hidden kind (`_kw_*` / `_*` pattern).
 	// Restricted to hidden kinds (name starts with `_`) to avoid false-positives
 	// from visible keyword nodes that may appear inside mixed-choice overrides
 	// (e.g. pointer_type's `choice('const', $.mutable_specifier)` where the
 	// string alternative is now explicitly present in values — both entries
 	// prevent single-value auto-stamp, which is the correct behavior).
+	//
+	// Handled sub-cases:
+	//   - AssembledKeyword (literal keyword rule)
+	//   - Single-value AssembledEnum (synthesised by evaluate for choice-of-one-literal
+	//     hidden kinds — e.g. python's `_type_alias_statement_type: $ => 'type'`).
 	if (isNodeRef(v)) {
 		const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
 		if (kindName.startsWith('_')) {
 			const ref = nodeMap.nodes.get(kindName);
 			if (ref instanceof AssembledKeyword) return ref.text;
+			if (ref instanceof AssembledEnum && ref.values.length === 1)
+				return ref.values[0]!;
 		}
 	}
 

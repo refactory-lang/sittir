@@ -607,7 +607,6 @@ export function binaryExpressionFrom(input: T.BinaryExpression.Loose): ReturnTyp
   if (isNodeData(input)) return input;
   return F.binaryExpression({
     left: _resolveOne<T.Expression | T.PrivatePropertyIdentifier>(input.left, _K14, _super_expression),
-    operator: _resolveOneLeaf<T.BinaryExpressionOperator>(input.operator, "_binary_expression_operator"),
     right: _resolveOne<T.Expression>(input.right, _K2, _super_expression),
   });
 }

@@ -526,7 +526,6 @@ export function binaryExpressionFrom(input: T.BinaryExpression.Loose): ReturnTyp
   if (isNodeData(input)) return input;
   return F.binaryExpression({
     left: _resolveOne<T.Expression>(input.left, _K2, _K3),
-    operator: _resolveOneLeaf<T.BinaryExpressionOperator>(input.operator, "_binary_expression_operator"),
     right: _resolveOne<T.Expression>(input.right, _K2, _K3),
   });
 }
@@ -797,7 +796,6 @@ export function externCrateDeclarationFrom(input: T.ExternCrateDeclaration.Loose
   if (isNodeData(input)) return input;
   return F.externCrateDeclaration({
     visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
-    crate: _resolveOneLeaf<T._Crate>(input.crate, "_crate"),
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
     alias: _resolveOneLeaf<T.Identifier>(input.alias, "identifier"),
   });
@@ -1013,7 +1011,6 @@ export function genericTypeWithTurbofishFrom(input: T.GenericTypeWithTurbofish.L
   if (isNodeData(input)) return input;
   return F.genericTypeWithTurbofish({
     type: _resolveOne<T.TypeIdentifier | T.ScopedIdentifier>(input.type, _K0, _K23),
-    turbofish: _resolveOneLeaf<T.GenericTypeWithTurbofishTurbofish>(input.turbofish, "_generic_type_with_turbofish_turbofish"),
     typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments"),
   });
 }
@@ -1306,7 +1303,6 @@ export function modItemUFormInlineFrom(input: Omit<ConfigOf<T.ModItemUFormInline
 export function mutPatternFrom(input: T.MutPattern.Loose): ReturnType<typeof F.mutPattern> | T.MutPattern {
   if (isNodeData(input)) return input;
   return F.mutPattern({
-    mutableSpecifier: _resolveOneLeaf<T._MutableSpecifier>(input.mutableSpecifier, "_mutable_specifier"),
     children: _resolveOne(input.children, _K9, _K10),
   });
 }
@@ -1403,10 +1399,9 @@ export function qualifiedTypeFrom(input: T.QualifiedType.Loose): ReturnType<type
   });
 }
 
-export function rangeExpressionBareFrom(input: T.RangeExpressionBare.Loose): ReturnType<typeof F.rangeExpressionBare> | T.RangeExpressionBare {
-  if (isNodeData(input)) return input;
+export function rangeExpressionBareFrom(input?: T.RangeExpressionBare.Loose): ReturnType<typeof F.rangeExpressionBare> | T.RangeExpressionBare {
+  if (input !== undefined && isNodeData(input)) return input;
   return F.rangeExpressionBare({
-    operator: _resolveOneLeaf<T.Operator>(input.operator, "_operator"),
   });
 }
 
@@ -1426,20 +1421,17 @@ export function rangeExpressionUFormBinaryFrom(input: Omit<ConfigOf<T.RangeExpre
 export function rangeExpressionUFormPostfixFrom(input: Omit<ConfigOf<T.RangeExpressionUFormPostfix>, '$variant'>) {
   return F.rangeExpressionUFormPostfix({
     start: _resolveOne<T.Expression>(input.start, _K2, _K3),
-    operator: _resolveOneLeaf<T.Operator>(input.operator, "_operator"),
   });
 }
 
 export function rangeExpressionUFormPrefixFrom(input: Omit<ConfigOf<T.RangeExpressionUFormPrefix>, '$variant'>) {
   return F.rangeExpressionUFormPrefix({
-    operator: _resolveOneLeaf<T.Operator>(input.operator, "_operator"),
     end: _resolveOne<T.Expression>(input.end, _K2, _K3),
   });
 }
 
-export function rangeExpressionUFormBareFrom(input: Omit<ConfigOf<T.RangeExpressionUFormBare>, '$variant'>) {
+export function rangeExpressionUFormBareFrom(_input?: Omit<ConfigOf<T.RangeExpressionUFormBare>, '$variant'>) {
   return F.rangeExpressionUFormBare({
-    operator: _resolveOneLeaf<T.Operator>(input.operator, "_operator"),
   });
 }
 
@@ -1561,13 +1553,12 @@ export function selfFrom(input?: T.Self) {
   return F.self();
 }
 
-export function selfParameterFrom(input: T.SelfParameter.Loose): ReturnType<typeof F.selfParameter> | T.SelfParameter {
-  if (isNodeData(input)) return input;
+export function selfParameterFrom(input?: T.SelfParameter.Loose): ReturnType<typeof F.selfParameter> | T.SelfParameter {
+  if (input !== undefined && isNodeData(input)) return input;
   return F.selfParameter({
-    reference: _resolveBooleanKeyword(input.reference),
-    lifetime: _resolveOneBranch<T.Lifetime>(input.lifetime, "lifetime"),
-    mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
-    self: _resolveOneLeaf<T._Self>(input.self, "_self"),
+    reference: _resolveBooleanKeyword(input?.reference),
+    lifetime: _resolveOneBranch<T.Lifetime>(input?.lifetime, "lifetime"),
+    mutableSpecifier: _resolveBooleanKeyword(input?.mutableSpecifier),
   });
 }
 
@@ -1966,9 +1957,8 @@ export function visibilityModifierFrom(input?: T.VisibilityModifier.Loose): Retu
   return F.visibilityModifier(input as Parameters<typeof F.visibilityModifier>[0]);
 }
 
-export function visibilityModifierUFormInPathFrom(input: Omit<ConfigOf<T.VisibilityModifierUFormInPath>, '$variant'>) {
+export function visibilityModifierUFormInPathFrom(_input: Omit<ConfigOf<T.VisibilityModifierUFormInPath>, '$variant'>) {
   return F.visibilityModifierUFormInPath({
-    in: _resolveOneLeaf<T.VisibilityModifierInPathIn>(input.in, "__visibility_modifier_in_path_in"),
   });
 }
 
@@ -1976,9 +1966,8 @@ export function visibilityModifierUFormCrateFrom(input?: Omit<ConfigOf<T.Visibil
   return F.visibilityModifierUFormCrate(input);
 }
 
-export function visibilityModifierUFormPubFrom(input: Omit<ConfigOf<T.VisibilityModifierUFormPub>, '$variant'>) {
+export function visibilityModifierUFormPubFrom(_input?: Omit<ConfigOf<T.VisibilityModifierUFormPub>, '$variant'>) {
   return F.visibilityModifierUFormPub({
-    pub: _resolveOneLeaf<T.VisibilityModifierPubPub>(input.pub, "__visibility_modifier_pub_pub"),
   });
 }
 

@@ -112,11 +112,13 @@ export function emitConsts(config: EmitConstsConfig): string {
 	lines.push('');
 
 	// Type aliases
+	// Note: `AnyOperator` (not `Operator`) to avoid collision with concrete
+	// grammar terminal types named `_operator` that `types.ts` exports.
 	lines.push('export type NodeKind = (typeof NODE_KINDS)[number];');
 	lines.push('export type LeafKind = (typeof LEAF_KINDS)[number];');
 	lines.push('export type AnyKind = (typeof ALL_KINDS)[number];');
 	lines.push('export type Keyword = (typeof KEYWORDS)[number];');
-	lines.push('export type Operator = (typeof OPERATORS)[number];');
+	lines.push('export type AnyOperator = (typeof OPERATORS)[number];');
 	lines.push('');
 
 	emitTreeSitterIdConsts(lines, {
@@ -155,11 +157,13 @@ export function emitConsts(config: EmitConstsConfig): string {
 	emitBitflagConstEnums(lines, nodeMap);
 
 	// Enum values
+	const emittedValueTypes = new Set<string>();
 	for (const ek of enumEntries.sort((a, b) => a.kind.localeCompare(b.kind))) {
 		const constName = ek.kind.toUpperCase() + 'S';
 		const typeName =
 			ek.kind
 				.split('_')
+				.filter(Boolean)
 				.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
 				.join('') + 'Value';
 
@@ -169,7 +173,14 @@ export function emitConsts(config: EmitConstsConfig): string {
 			lines.push(`  '${v.replace(/'/g, "\\'")}',`);
 		}
 		lines.push('] as const;');
-		lines.push(`export type ${typeName} = (typeof ${constName})[number];`);
+		// Emit the type alias only once per unique name — hidden kinds like
+		// `_accessibility_modifier` and their visible counterparts like
+		// `accessibility_modifier` resolve to the same PascalCase type name.
+		// Emitting both would produce a duplicate identifier TS2300 error.
+		if (!emittedValueTypes.has(typeName)) {
+			emittedValueTypes.add(typeName);
+			lines.push(`export type ${typeName} = (typeof ${constName})[number];`);
+		}
 		lines.push('');
 	}
 

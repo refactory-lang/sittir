@@ -552,16 +552,16 @@ export function _pointerTypeMut(child: T.MutableSpecifier) {
   };
 }
 
-export function _rangeExpressionBare(config: ConfigOf<T._RangeExpressionBare>) {
+export function _rangeExpressionBare(_config?: ConfigOf<T._RangeExpressionBare>) {
   const fields = {
-    operator: config.operator,
+    operator: ".." as const,
   };
   return {
     $type: TSKindId._RangeExpressionBare as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    operator(value?: T.Operator) { return _fs(config, _rangeExpressionBare, 'operator', value, config?.operator); },
+    get operator() { return fields.operator; },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -597,7 +597,7 @@ export function _rangeExpressionBinary(config: ConfigOf<T.RangeExpressionBinary>
 export function _rangeExpressionPostfix(config: ConfigOf<T.RangeExpressionPostfix>) {
   const fields = {
     start: config.start,
-    operator: config.operator,
+    operator: ".." as const,
   };
   return {
     $type: TSKindId.RangeExpressionPostfix as number,
@@ -605,7 +605,7 @@ export function _rangeExpressionPostfix(config: ConfigOf<T.RangeExpressionPostfi
     $named: true as const,
     $fields: fields,
     start(value?: T.Expression) { return _fs(config, _rangeExpressionPostfix, 'start', value, config?.start); },
-    operator(value?: T.Operator) { return _fs(config, _rangeExpressionPostfix, 'operator', value, config?.operator); },
+    get operator() { return fields.operator; },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -617,7 +617,7 @@ export function _rangeExpressionPostfix(config: ConfigOf<T.RangeExpressionPostfi
 
 export function _rangeExpressionPrefix(config: ConfigOf<T.RangeExpressionPrefix>) {
   const fields = {
-    operator: config.operator,
+    operator: ".." as const,
     end: config.end,
   };
   return {
@@ -625,7 +625,7 @@ export function _rangeExpressionPrefix(config: ConfigOf<T.RangeExpressionPrefix>
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    operator(value?: T.Operator) { return _fs(config, _rangeExpressionPrefix, 'operator', value, config?.operator); },
+    get operator() { return fields.operator; },
     end(value?: T.Expression) { return _fs(config, _rangeExpressionPrefix, 'end', value, config?.end); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -877,7 +877,7 @@ export function _visibilityModifierCrate(child: T.Crate) {
 
 export function _visibilityModifierInPath(config: ConfigOf<T.VisibilityModifierInPath>) {
   const fields = {
-    in: config.in,
+    in: "in" as const,
   };
   const children = config.children ?? [];
   return {
@@ -886,7 +886,7 @@ export function _visibilityModifierInPath(config: ConfigOf<T.VisibilityModifierI
     $named: true as const,
     $fields: fields,
     $children: children,
-    in(value?: T.VisibilityModifierInPathIn) { return _fs(config, _visibilityModifierInPath, 'in', value, config?.in); },
+    get in() { return fields.in; },
     child(value?: T.Path) {
       if (value === undefined) return children[0];
       return _visibilityModifierInPath({ ...config, children: [value] });
@@ -900,18 +900,18 @@ export function _visibilityModifierInPath(config: ConfigOf<T.VisibilityModifierI
   };
 }
 
-export function _visibilityModifierPub(config: ConfigOf<T.VisibilityModifierPub>) {
+export function _visibilityModifierPub(config?: ConfigOf<T.VisibilityModifierPub>) {
   const fields = {
-    pub: config.pub,
+    pub: "pub" as const,
   };
-  const children = config.children ?? [];
+  const children = config?.children ?? [];
   return {
     $type: TSKindId.VisibilityModifierPub as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
     $children: children,
-    pub(value?: T.VisibilityModifierPubPub) { return _fs(config, _visibilityModifierPub, 'pub', value, config?.pub); },
+    get pub() { return fields.pub; },
     child(value?: (T.Self | T.Super | T.Crate | T.VisibilityModifierInPath)) {
       if (value === undefined) return children[0];
       return _visibilityModifierPub({ ...config, children: [value] });
@@ -1178,7 +1178,7 @@ export function baseFieldInitializer(child: T.Expression) {
 export function binaryExpression(config: ConfigOf<T.BinaryExpression>) {
   const fields = {
     left: config.left,
-    operator: config.operator,
+    operator: "&&" as const,
     right: config.right,
   };
   return {
@@ -1187,7 +1187,7 @@ export function binaryExpression(config: ConfigOf<T.BinaryExpression>) {
     $named: true as const,
     $fields: fields,
     left(value?: T.Expression) { return _fs(config, binaryExpression, 'left', value, config?.left); },
-    operator(value?: T.BinaryExpressionOperator) { return _fs(config, binaryExpression, 'operator', value, config?.operator); },
+    get operator() { return fields.operator; },
     right(value?: T.Expression) { return _fs(config, binaryExpression, 'right', value, config?.right); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -1949,7 +1949,7 @@ export function expressionStatementUFormBlockEnding(config?: Omit<ConfigOf<T.Exp
 export function externCrateDeclaration(config: ConfigOf<T.ExternCrateDeclaration>) {
   const fields = {
     visibility_modifier: config.visibilityModifier,
-    crate: config.crate,
+    crate: "crate" as const,
     name: config.name,
     alias: config.alias,
   };
@@ -1959,7 +1959,7 @@ export function externCrateDeclaration(config: ConfigOf<T.ExternCrateDeclaration
     $named: true as const,
     $fields: fields,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, externCrateDeclaration, 'visibilityModifier', value, config?.visibilityModifier); },
-    crate(value?: T._Crate) { return _fs(config, externCrateDeclaration, 'crate', value, config?.crate); },
+    get crate() { return fields.crate; },
     name(value?: T.Identifier) { return _fs(config, externCrateDeclaration, 'name', value, config?.name); },
     alias(value?: T.Identifier | undefined) { return _fs(config, externCrateDeclaration, 'alias', value, config?.alias); },
     render(this: AnyNodeData): string { return render(this); },
@@ -2532,7 +2532,7 @@ export function genericType(config: ConfigOf<T.GenericType>) {
 export function genericTypeWithTurbofish(config: ConfigOf<T.GenericTypeWithTurbofish>) {
   const fields = {
     type: config.type,
-    turbofish: config.turbofish,
+    turbofish: "::" as const,
     type_arguments: config.typeArguments,
   };
   return {
@@ -2541,7 +2541,7 @@ export function genericTypeWithTurbofish(config: ConfigOf<T.GenericTypeWithTurbo
     $named: true as const,
     $fields: fields,
     typeField(value?: T.TypeIdentifier | T.ScopedIdentifier) { return _fs(config, genericTypeWithTurbofish, 'type', value, config?.type); },
-    turbofish(value?: T.GenericTypeWithTurbofishTurbofish) { return _fs(config, genericTypeWithTurbofish, 'turbofish', value, config?.turbofish); },
+    get turbofish() { return fields.turbofish; },
     typeArguments(value?: T.TypeArguments) { return _fs(config, genericTypeWithTurbofish, 'typeArguments', value, config?.typeArguments); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -3415,7 +3415,7 @@ export function modItemUFormInline(config: Omit<ConfigOf<T.ModItemUFormInline>, 
 
 export function mutPattern(config: ConfigOf<T.MutPattern>) {
   const fields = {
-    mutable_specifier: config.mutableSpecifier,
+    mutable_specifier: "mut" as const,
   };
   const children = config.children ?? [];
   return {
@@ -3424,7 +3424,7 @@ export function mutPattern(config: ConfigOf<T.MutPattern>) {
     $named: true as const,
     $fields: fields,
     $children: children,
-    mutableSpecifier(value?: T._MutableSpecifier) { return _fs(config, mutPattern, 'mutableSpecifier', value, config?.mutableSpecifier); },
+    get mutableSpecifier() { return fields.mutable_specifier; },
     child(value?: T.Pattern) {
       if (value === undefined) return children[0];
       return mutPattern({ ...config, children: [value] });
@@ -3689,16 +3689,16 @@ export function qualifiedType(config: ConfigOf<T.QualifiedType>) {
   };
 }
 
-export function rangeExpressionBare(config: ConfigOf<T.RangeExpressionBare>) {
+export function rangeExpressionBare(_config?: ConfigOf<T.RangeExpressionBare>) {
   const fields = {
-    operator: config.operator,
+    operator: ".." as const,
   };
   return {
     $type: TSKindId._RangeExpressionBare as number,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    operator(value?: T.Operator) { return _fs(config, rangeExpressionBare, 'operator', value, config?.operator); },
+    get operator() { return fields.operator; },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3761,12 +3761,9 @@ export function rangeExpressionUFormPostfix(config: Omit<ConfigOf<T.RangeExpress
     $children: children,
     start(value?: T.Expression) {
       if (value === undefined) return inner.$fields.start;
-      return rangeExpressionUFormPostfix({ operator: inner.$fields.operator, start: value });
+      return rangeExpressionUFormPostfix({ start: value });
     },
-    operator(value?: T.Operator) {
-      if (value === undefined) return inner.$fields.operator;
-      return rangeExpressionUFormPostfix({ start: inner.$fields.start, operator: value });
-    },
+    get operator() { return inner.$fields.operator; },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3784,13 +3781,10 @@ export function rangeExpressionUFormPrefix(config: Omit<ConfigOf<T.RangeExpressi
     $named: true as const,
     $variant: 'prefix' as const,
     $children: children,
-    operator(value?: T.Operator) {
-      if (value === undefined) return inner.$fields.operator;
-      return rangeExpressionUFormPrefix({ end: inner.$fields.end, operator: value });
-    },
+    get operator() { return inner.$fields.operator; },
     end(value?: T.Expression) {
       if (value === undefined) return inner.$fields.end;
-      return rangeExpressionUFormPrefix({ operator: inner.$fields.operator, end: value });
+      return rangeExpressionUFormPrefix({ end: value });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -3800,8 +3794,8 @@ export function rangeExpressionUFormPrefix(config: Omit<ConfigOf<T.RangeExpressi
     replace(this: AnyNodeData, target: T.RangeExpressionUFormPrefixTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function rangeExpressionUFormBare(config: Omit<ConfigOf<T.RangeExpressionUFormBare>, '$variant'>) {
-  const inner = _rangeExpressionBare(config);
+export function rangeExpressionUFormBare(config?: Omit<ConfigOf<T.RangeExpressionUFormBare>, '$variant'>) {
+  const inner = _rangeExpressionBare(config as Parameters<typeof _rangeExpressionBare>[0]);
   const children = [inner] as const;
   return {
     $type: TSKindId.RangeExpression as number,
@@ -3809,10 +3803,7 @@ export function rangeExpressionUFormBare(config: Omit<ConfigOf<T.RangeExpression
     $named: true as const,
     $variant: 'bare' as const,
     $children: children,
-    operator(value?: T.Operator) {
-      if (value === undefined) return inner.$fields.operator;
-      return rangeExpressionUFormBare({ operator: value });
-    },
+    get operator() { return inner.$fields.operator; },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -4128,12 +4119,12 @@ export function self() {
   };
 }
 
-export function selfParameter(config: ConfigOf<T.SelfParameter>) {
+export function selfParameter(config?: ConfigOf<T.SelfParameter>) {
   const fields = {
-    reference: config.reference ? "&" as const : undefined,
-    lifetime: config.lifetime,
-    mutable_specifier: config.mutableSpecifier ? "mut" as const : undefined,
-    self: config.self,
+    reference: config?.reference ? "&" as const : undefined,
+    lifetime: config?.lifetime,
+    mutable_specifier: config?.mutableSpecifier ? "mut" as const : undefined,
+    self: "self" as const,
   };
   return {
     $type: TSKindId.SelfParameter as number,
@@ -4143,7 +4134,7 @@ export function selfParameter(config: ConfigOf<T.SelfParameter>) {
     reference(value?: "&" | undefined) { return _fs(config, selfParameter, 'reference', value, config?.reference); },
     lifetime(value?: T.Lifetime | undefined) { return _fs(config, selfParameter, 'lifetime', value, config?.lifetime); },
     mutableSpecifier(value?: T._MutableSpecifier | undefined) { return _fs(config, selfParameter, 'mutableSpecifier', value, config?.mutableSpecifier); },
-    self(value?: T._Self) { return _fs(config, selfParameter, 'self', value, config?.self); },
+    get self() { return fields.self; },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -5225,8 +5216,8 @@ export function visibilityModifier(config: ConfigOf<T.VisibilityModifierUFormInP
   }
   throw new Error(`visibilityModifier: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'in_path' | 'crate' | 'pub'.`);
 }
-export function visibilityModifierUFormInPath(config: Omit<ConfigOf<T.VisibilityModifierUFormInPath>, '$variant'>) {
-  const inner = _visibilityModifierInPath(config);
+export function visibilityModifierUFormInPath(config?: Omit<ConfigOf<T.VisibilityModifierUFormInPath>, '$variant'>) {
+  const inner = _visibilityModifierInPath(config as Parameters<typeof _visibilityModifierInPath>[0]);
   const children = [inner] as const;
   return {
     $type: TSKindId.VisibilityModifier as number,
@@ -5234,10 +5225,7 @@ export function visibilityModifierUFormInPath(config: Omit<ConfigOf<T.Visibility
     $named: true as const,
     $variant: 'in_path' as const,
     $children: children,
-    in(value?: T.VisibilityModifierInPathIn) {
-      if (value === undefined) return inner.$fields.in;
-      return visibilityModifierUFormInPath({ in: value });
-    },
+    get in() { return inner.$fields.in; },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -5263,8 +5251,8 @@ export function visibilityModifierUFormCrate(config?: Omit<ConfigOf<T.Visibility
     replace(this: AnyNodeData, target: T.VisibilityModifierUFormCrateTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function visibilityModifierUFormPub(config: Omit<ConfigOf<T.VisibilityModifierUFormPub>, '$variant'>) {
-  const inner = _visibilityModifierPub(config);
+export function visibilityModifierUFormPub(config?: Omit<ConfigOf<T.VisibilityModifierUFormPub>, '$variant'>) {
+  const inner = _visibilityModifierPub(config as Parameters<typeof _visibilityModifierPub>[0]);
   const children = [inner] as const;
   return {
     $type: TSKindId.VisibilityModifier as number,
@@ -5272,10 +5260,7 @@ export function visibilityModifierUFormPub(config: Omit<ConfigOf<T.VisibilityMod
     $named: true as const,
     $variant: 'pub' as const,
     $children: children,
-    pub(value?: T.VisibilityModifierPubPub) {
-      if (value === undefined) return inner.$fields.pub;
-      return visibilityModifierUFormPub({ pub: value });
-    },
+    get pub() { return inner.$fields.pub; },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

@@ -2189,7 +2189,7 @@ export interface _PointerTypeMut {
 export interface _RangeExpressionBare {
   readonly $type: TSKindId._RangeExpressionBare;
   readonly $fields: {
-    readonly operator: Operator;
+    readonly operator: AutoStamp<Operator>;
   };
 }
 
@@ -2206,14 +2206,14 @@ export interface RangeExpressionPostfix {
   readonly $type: TSKindId.RangeExpressionPostfix;
   readonly $fields: {
     readonly start: Expression;
-    readonly operator: Operator;
+    readonly operator: AutoStamp<Operator>;
   };
 }
 
 export interface RangeExpressionPrefix {
   readonly $type: TSKindId.RangeExpressionPrefix;
   readonly $fields: {
-    readonly operator: Operator;
+    readonly operator: AutoStamp<Operator>;
     readonly end: Expression;
   };
 }
@@ -2301,7 +2301,7 @@ export interface _VisibilityModifierCrate {
 export interface VisibilityModifierInPath {
   readonly $type: TSKindId.VisibilityModifierInPath;
   readonly $fields: {
-    readonly in: VisibilityModifierInPathIn;
+    readonly in: AutoStamp<VisibilityModifierInPathIn>;
   };
   readonly $children: readonly [Path];
 }
@@ -2309,7 +2309,7 @@ export interface VisibilityModifierInPath {
 export interface VisibilityModifierPub {
   readonly $type: TSKindId.VisibilityModifierPub;
   readonly $fields: {
-    readonly pub: VisibilityModifierPubPub;
+    readonly pub: AutoStamp<VisibilityModifierPubPub>;
   };
   readonly $children: readonly [Self | Super | Crate | VisibilityModifierInPath];
 }
@@ -2400,7 +2400,7 @@ export interface BinaryExpression {
   readonly $type: TSKindId.BinaryExpression;
   readonly $fields: {
     readonly left: Expression;
-    readonly operator: BinaryExpressionOperator;
+    readonly operator: AutoStamp<BinaryExpressionOperator>;
     readonly right: Expression;
   };
 }
@@ -2645,7 +2645,7 @@ export interface ExternCrateDeclaration {
   readonly $type: TSKindId.ExternCrateDeclaration;
   readonly $fields: {
     readonly visibility_modifier?: VisibilityModifier;
-    readonly crate: _Crate;
+    readonly crate: AutoStamp<_Crate>;
     readonly name: Identifier;
     readonly alias?: Identifier;
   };
@@ -2844,7 +2844,7 @@ export interface GenericTypeWithTurbofish {
   readonly $type: TSKindId.GenericTypeWithTurbofish;
   readonly $fields: {
     readonly type: TypeIdentifier | ScopedIdentifier;
-    readonly turbofish: GenericTypeWithTurbofishTurbofish;
+    readonly turbofish: AutoStamp<GenericTypeWithTurbofishTurbofish>;
     readonly type_arguments: TypeArguments;
   };
 }
@@ -3129,7 +3129,7 @@ export type ModItem = ModItemUFormExternal | ModItemUFormInline;
 export interface MutPattern {
   readonly $type: TSKindId.MutPattern;
   readonly $fields: {
-    readonly mutable_specifier: _MutableSpecifier;
+    readonly mutable_specifier: AutoStamp<_MutableSpecifier>;
   };
   readonly $children: readonly [Pattern];
 }
@@ -3214,7 +3214,7 @@ export interface QualifiedType {
 export interface RangeExpressionBare {
   readonly $type: "range_expression_bare";
   readonly $fields: {
-    readonly operator: Operator;
+    readonly operator: AutoStamp<Operator>;
   };
 }
 
@@ -3354,7 +3354,7 @@ export interface SelfParameter {
     readonly reference?: BooleanKeyword<"&">;
     readonly lifetime?: Lifetime;
     readonly mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
-    readonly self: _Self;
+    readonly self: AutoStamp<_Self>;
   };
 }
 

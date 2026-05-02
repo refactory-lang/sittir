@@ -423,6 +423,8 @@
       "factoryName": "visibilityModifierInPathIn",
       "irKey": "visibilityModifierInPathIn",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"in\" as const",
       "values": [
         "in"
       ]
@@ -434,6 +436,8 @@
       "factoryName": "visibilityModifierPubPub",
       "irKey": "visibilityModifierPubPub",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"pub\" as const",
       "values": [
         "pub"
       ]
@@ -600,6 +604,8 @@
       "factoryName": "binaryExpressionOperator",
       "irKey": "binaryExpressionOperator",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"&&\" as const",
       "values": [
         "&&"
       ]
@@ -611,6 +617,8 @@
       "factoryName": "closureExpressionAsyncMarker",
       "irKey": "closureExpressionAsyncMarker",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"async\" as const",
       "values": [
         "async"
       ]
@@ -719,6 +727,8 @@
       "factoryName": "closureExpressionStaticMarker",
       "irKey": "closureExpressionStaticMarker",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"static\" as const",
       "values": [
         "static"
       ]
@@ -806,6 +816,8 @@
       "factoryName": "_crate",
       "irKey": "_crate",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"crate\" as const",
       "values": [
         "crate"
       ]
@@ -1358,6 +1370,8 @@
       "factoryName": "genericTypeWithTurbofishTurbofish",
       "irKey": "genericTypeWithTurbofishTurbofish",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"::\" as const",
       "values": [
         "::"
       ]
@@ -1403,6 +1417,8 @@
       "factoryName": "implItemNegative",
       "irKey": "implItemNegative",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"!\" as const",
       "values": [
         "!"
       ]
@@ -1904,6 +1920,8 @@
       "factoryName": "moveMarker",
       "irKey": "moveMarker",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"move\" as const",
       "values": [
         "move"
       ]
@@ -1915,6 +1933,8 @@
       "factoryName": "_mutableSpecifier",
       "irKey": "_mutableSpecifier",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"mut\" as const",
       "values": [
         "mut"
       ]
@@ -2061,6 +2081,8 @@
       "factoryName": "operator",
       "irKey": "operator",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"..\" as const",
       "values": [
         ".."
       ]
@@ -2296,6 +2318,8 @@
       "factoryName": "_rangeExpressionBare",
       "irKey": "_rangeExpressionBare",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "_rangeExpressionBare()",
       "fields": [
         {
           "name": "operator",
@@ -2621,6 +2645,8 @@
       "factoryName": "refMarker",
       "irKey": "refMarker",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"ref\" as const",
       "values": [
         "ref"
       ]
@@ -2692,6 +2718,8 @@
       "factoryName": "_self",
       "irKey": "_self",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"self\" as const",
       "values": [
         "self"
       ]
@@ -3132,6 +3160,8 @@
       "factoryName": "unsafeMarker",
       "irKey": "unsafeMarker",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"unsafe\" as const",
       "values": [
         "unsafe"
       ]
@@ -3240,6 +3270,8 @@
       "factoryName": "_visibilityModifierPub",
       "irKey": "visibilityModifierPub",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "_visibilityModifierPub()",
       "name": "_visibility_modifier_pub",
       "fields": [
         {
@@ -10928,6 +10960,8 @@
       "factoryName": "rangeExpressionBare",
       "irKey": "rangeExpressionBare",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "rangeExpressionBare()",
       "fields": [
         {
           "name": "operator",
@@ -11821,6 +11855,8 @@
       "factoryName": "selfParameter",
       "irKey": "selfParameter",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "selfParameter()",
       "fields": [
         {
           "name": "reference",
