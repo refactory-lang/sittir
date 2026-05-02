@@ -153,10 +153,17 @@ export function toBoundaryNodeData(nodeData: unknown): object {
 	// Preserve numeric $type as-is (Phase D: TSKindId-based). Only stringify
 	// when $type is already a string (hidden/synthetic kinds like "_suite").
 	const rawType = node.$type;
-	// $source is numeric (0=ts, 1=sg, 2=factory) — pass through as-is.
+	// $source MUST be numeric (0=ts, 1=sg, 2=factory) for napi boundary.
+	// Coerce string values ('ts'/'sg'/'factory') to their numeric equivalents.
+	const SOURCE_MAP: Record<string, number> = { ts: 0, sg: 1, factory: 2 };
+	const rawSource = node.$source;
+	const numericSource =
+		typeof rawSource === 'string'
+			? (SOURCE_MAP[rawSource] ?? 0)
+			: (rawSource ?? 0);
 	const boundary: Record<string, BoundaryNodeValue> = {
 		$type: typeof rawType === 'number' ? rawType : String(rawType),
-		$source: node.$source ?? 0,
+		$source: numericSource as number,
 		$named: Boolean(node.$named)
 	};
 
@@ -174,6 +181,10 @@ export function toBoundaryNodeData(nodeData: unknown): object {
 		boundary.$children = node.$children.map((child) =>
 			toBoundaryNodeData(child)
 		) as BoundaryNodeValue;
+	} else if (boundary.$fields) {
+		// napi structs with Vec<T> $children fields cannot accept undefined —
+		// ensure branch nodes always carry $children (empty array when absent).
+		boundary.$children = [];
 	}
 
 	if (typeof node.$text === 'string') {
@@ -194,13 +205,77 @@ export function toBoundaryNodeData(nodeData: unknown): object {
 	return boundary;
 }
 
+/**
+ * Recursively convert a readNode-shaped NodeData (nested `$fields`) into
+ * the flat transport shape expected by the napi `#[napi(object)]` structs.
+ *
+ * Transform: `{ $type, $source, $fields: { a, b }, $children: [...] }`
+ *         → `{ $type, $source, a, b, $children: [...] }`
+ *
+ * Also:
+ * - Coerces `$source` to numeric (0/1/2) for the napi Source enum.
+ * - Ensures branch nodes always carry `$children` (empty array when absent)
+ *   because napi `Vec<T>` fields cannot accept undefined.
+ */
+function toNativeTransport(obj: unknown): unknown {
+	if (!obj || typeof obj !== 'object') return obj;
+	if (Array.isArray(obj)) return obj.map(toNativeTransport);
+
+	const node = obj as Record<string, unknown>;
+	const result: Record<string, unknown> = {};
+
+	// Copy metadata fields
+	for (const [key, value] of Object.entries(node)) {
+		if (key === '$fields') continue; // flatten below
+		if (key === '$children') {
+			result[key] = Array.isArray(value)
+				? value.map(toNativeTransport)
+				: [];
+		} else if (key === '$source') {
+			// Coerce string $source to numeric for napi Source enum
+			if (typeof value === 'string') {
+				const SOURCE_MAP: Record<string, number> = {
+					ts: 0,
+					sg: 1,
+					factory: 2
+				};
+				result[key] = SOURCE_MAP[value] ?? 0;
+			} else {
+				result[key] = value ?? 0;
+			}
+		} else {
+			result[key] = value;
+		}
+	}
+
+	// Flatten $fields into top-level (napi structs read fields at root)
+	if (node.$fields && typeof node.$fields === 'object') {
+		const fields = node.$fields as Record<string, unknown>;
+		for (const [fk, fv] of Object.entries(fields)) {
+			result[fk] = toNativeTransport(fv);
+		}
+	}
+
+	// Ensure $children exists on branch nodes
+	if (
+		(node.$fields || node.$children) &&
+		!('$children' in result)
+	) {
+		result.$children = [];
+	}
+
+	return result;
+}
+
 export function renderNativeNodeData(
 	engine: NativeEngine,
 	nodeData: object
 ): string {
 	// Phase B: render() accepts a JS object directly (napi-native AnyTransport
 	// decoded from the napi value). The old string-JSON path was removed.
-	return engine.render(nodeData);
+	// Convert from readNode nested shape ($fields wrapper) to the flat transport
+	// shape expected by napi structs, and ensure $source is numeric.
+	return engine.render(toNativeTransport(nodeData) as object);
 }
 
 export function createTsRenderEngine(
