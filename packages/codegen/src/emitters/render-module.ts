@@ -47,6 +47,7 @@ import {
 import {
 	collectKindEntries,
 	collectCatalogKinds,
+	findKindEntry,
 	kindIdMemberName,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
@@ -1452,12 +1453,25 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
  * Emit a simple leaf/keyword/token/enum typed render fn that returns the
  * transport text field directly.
  *
- * For `enum` modelType nodes, the transport type is the Rust enum; render
- * via `Display` (`t.to_string()`). For all others, use `t.text.clone()`.
+ * For `enum` modelType nodes:
+ * - Single-member enums: transport is `bool`; render the known static text when
+ *   true, empty string when false.
+ * - Multi-member enums: transport is the Rust enum; render via `Display` (`t.to_string()`).
+ * For all others: use `t.text.clone()`.
  */
 function renderTypedLeafFn(node: AssembledNode): string[] {
 	const fnName = rustTypedRenderFnName(node.typeName);
 	const typeName = rustTransportStructName(node);
+	if (node instanceof AssembledEnum && isSingleMemberEnum(node)) {
+		// Single-member presence bool: render the one known static text when true.
+		const text = JSON.stringify(node.values[0]!);
+		return [
+			`fn ${fnName}(t: &${typeName}) -> Result<String, ::askama::Error> {`,
+			`    Ok(if *t { ${text}.to_string() } else { String::new() })`,
+			`}`,
+			``
+		];
+	}
 	const body =
 		node instanceof AssembledEnum ? `Ok(t.to_string())` : `Ok(t.text.clone())`;
 	return [
@@ -1842,6 +1856,21 @@ function buildTypedTemplateBody(
 				lines.push(
 					`        ${rIdent}: ${C}SingleNonterminalView(${C}Renderable::Transport(node.${rIdent}.as_ref())),`
 				);
+			} else if (
+				cls.tag === 'concrete' &&
+				nodeMap !== undefined &&
+				singleMemberEnumTextForKind(cls.kind, nodeMap) !== undefined
+			) {
+				// Single-member enum field: bool transport — emit static text conditional.
+				// bool does not implement RenderableTransport; use Renderable::Text directly.
+				const staticText = JSON.stringify(singleMemberEnumTextForKind(cls.kind, nodeMap)!);
+				lines.push(
+					`        ${rIdent}: ${C}SingleNonterminalView(`
+				);
+				lines.push(
+					`            if node.${rIdent} { ${C}Renderable::Text(${staticText}) } else { ${C}Renderable::Text("") }`
+				);
+				lines.push(`        ),`);
 			} else {
 				// Concrete or supertype — coerce directly to &dyn RenderableTransport.
 				lines.push(
@@ -1862,6 +1891,22 @@ function buildTypedTemplateBody(
 				);
 				lines.push(
 					`            None => ${C}OptionalNonterminalView::Missing,`
+				);
+				lines.push(`        },`);
+			} else if (
+				cls.tag === 'concrete' &&
+				nodeMap !== undefined &&
+				singleMemberEnumTextForKind(cls.kind, nodeMap) !== undefined
+			) {
+				// Single-member enum field: bool transport — emit static text conditional.
+				// bool does not implement RenderableTransport; use Renderable::Text directly.
+				const staticText = JSON.stringify(singleMemberEnumTextForKind(cls.kind, nodeMap)!);
+				lines.push(`        ${rIdent}: match node.${rIdent} {`);
+				lines.push(
+					`            Some(true) => ${C}OptionalNonterminalView::Present(${C}Renderable::Text(${staticText})),`
+				);
+				lines.push(
+					`            _ => ${C}OptionalNonterminalView::Missing,`
 				);
 				lines.push(`        },`);
 			} else {
@@ -2174,7 +2219,7 @@ function renderTransportSupport(
 		// Per-supertype transport enums must precede per-kind transport structs
 		// so struct field type references resolve correctly.
 		...(supertypeEnumLines.length > 0 ? [...supertypeEnumLines, ''] : []),
-		...nodes.flatMap((node) => renderTransportStruct(node, nodeMap, generatedIdTables !== undefined)),
+		...nodes.flatMap((node) => renderTransportStruct(node, nodeMap, generatedIdTables !== undefined, kindEntries)),
 		'',
 		...renderGrammarRenderable(),
 		'',
@@ -2642,9 +2687,17 @@ function renderAnyTransportWithNapiFromValue(
 		const structName = rustTransportStructName(node);
 		const constName = toScreamingSnakeCase(kindIdMemberName(nodeMap, node.kind), node.kind);
 		lines.push(`            // kind: ${node.kind} (${constName})`);
-		lines.push(`            ${id} => Ok(AnyTransport::${variant}(`);
-		lines.push(`                ${structName}::from_napi_value(env, napi_val)?`);
-		lines.push(`            )),`);
+		if (node instanceof AssembledEnum && isSingleMemberEnum(node)) {
+			// Single-member presence bool: the object's presence means `true`.
+			// JS sends an object with `$type: <id>` to signal this node is present;
+			// the bool value is always `true` here (absence is handled by the parent
+			// struct's `Option<bool>` field being None when the property is missing).
+			lines.push(`            ${id} => Ok(AnyTransport::${variant}(true)),`);
+		} else {
+			lines.push(`            ${id} => Ok(AnyTransport::${variant}(`);
+			lines.push(`                ${structName}::from_napi_value(env, napi_val)?`);
+			lines.push(`            )),`);
+		}
 	}
 
 	// One match arm per literal kind — unit variants, no payload.
@@ -3178,7 +3231,28 @@ function renderTerminalTransportToNodeFn(
 	const typeName = rustTransportStructName(node);
 
 	if (node instanceof AssembledEnum) {
-		// Enum modelType: the transport type IS the Rust enum (no wrapper struct).
+		if (isSingleMemberEnum(node)) {
+			// Single-member presence bool: transport IS `bool`.
+			// The text is the one known static literal when true; empty when false.
+			const text = JSON.stringify(node.values[0]!);
+			return [
+				`fn ${rustTransportToNodeFnName(node.typeName)}(transport: ${typeName}) -> Result<TransportNodeData, ::askama::Error> {`,
+				'    Ok(transport_node_data(',
+				`        ${kindArg},`,
+				'        None,',
+				'        None,',
+				'        true,',
+				`        Some(if transport { ${text}.to_string() } else { String::new() }),`,
+				'        None,',
+				'        None,',
+				'        None,',
+				'        None,',
+				'    ))',
+				'}',
+				''
+			];
+		}
+		// Multi-member enum: the transport type IS the Rust enum (no wrapper struct).
 		// Metadata fields (source, named, span, node_id) are not available on the
 		// enum — all default to None. The text is derived from the enum's Display impl.
 		return [
@@ -3236,12 +3310,13 @@ function renderLiteralTransportStruct(
 function renderTransportStruct(
 	node: AssembledNode,
 	nodeMap: NodeMap,
-	hasNapi: boolean = false
+	hasNapi: boolean = false,
+	kindEntries?: readonly KindEnumEntry[]
 ): string[] {
 	if (node instanceof AssembledEnum) {
-		// Enum modelType: emit a proper Rust enum type with one variant per member,
-		// plus FromNapiValue / RenderableTransport / Display impls.
-		return renderEnumType(node, hasNapi);
+		// Enum modelType: single-member enums are skipped (parent uses `bool`).
+		// Multi-member enums emit a Rust enum type with FromNapiValue / Display / RenderableTransport.
+		return renderEnumType(node, hasNapi, kindEntries);
 	}
 	if (node.modelType === 'polymorph' && node.forms.length > 0) {
 		return renderPolymorphTransportDefs(node, nodeMap);
@@ -3308,8 +3383,19 @@ function renderTransportDataStruct(
 	children: readonly AssembledChild[],
 	nodeMap: NodeMap
 ): string[] {
+	const isLeafNode =
+		node.modelType === 'leaf' ||
+		node.modelType === 'keyword' ||
+		node.modelType === 'token';
 	const lines: string[] = [];
-	lines.push('#[cfg_attr(feature = "napi-bindings", napi(object))]');
+	// Branch/container/group/polymorph/enum use #[napi(object)] for derived
+	// FromNapiValue. Leaf/keyword/token transport structs opt out of
+	// #[napi(object)] and instead get manual cfg-gated FromNapiValue impls
+	// below — so JS can send a plain string in release mode (no debug-transport)
+	// and the full metadata object in debug mode.
+	if (!isLeafNode) {
+		lines.push('#[cfg_attr(feature = "napi-bindings", napi(object))]');
+	}
 	lines.push('#[derive(Debug, Clone)]');
 	lines.push(`pub struct ${structName} {`);
 	switch (node.modelType) {
@@ -3330,9 +3416,10 @@ function renderTransportDataStruct(
 		case 'keyword':
 		case 'token':
 		case 'enum':
-			lines.push(...renderTransportMetadataFields(false));
-			lines.push('    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]');
-			lines.push('    pub text: String,');
+			// Leaf/keyword/token structs have manual cfg-gated FromNapiValue impls
+			// (below). The napi field attributes are not emitted because there is no
+			// #[napi(object)] on the struct to act as the consuming proc-macro.
+			lines.push(...renderLeafTransportPlainFields());
 			break;
 	}
 	lines.push('}');
@@ -3353,6 +3440,97 @@ function renderTransportDataStruct(
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
+	// For leaf/keyword/token structs: emit manual cfg-gated napi impls.
+	// These replace the #[napi(object)]-derived FromNapiValue so that:
+	//   - release (not debug-transport): JS sends a plain string → read as String
+	//   - debug  (    debug-transport): JS sends full metadata object → read fields
+	// ToNapiValue is a stub in both modes — transport structs are receive-only.
+	if (isLeafNode) {
+		lines.push(...renderLeafTransportNapiImpls(structName));
+	}
+	return lines;
+}
+
+/**
+ * Emit manual napi `FromNapiValue` + `ToNapiValue` impls for a leaf
+ * transport struct. Two cfg-gated `FromNapiValue` variants are emitted:
+ *
+ * - `#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]`
+ *   reads the napi value as a plain JS string and constructs the struct
+ *   with only `text` populated (metadata fields are `None` / default).
+ *   JS callers in release mode send a bare string for leaf fields.
+ *
+ * - `#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]`
+ *   reads the napi value as a JS object and extracts the full set of
+ *   metadata fields (`$text`, `$source`, `$named`, `$span`, `$nodeId`).
+ *   JS callers in debug mode send the complete transport object.
+ *
+ * `ToNapiValue` is a no-op stub in both modes. Transport is receive-only
+ * (JS→Rust); the stub satisfies `#[napi(object)]` field bounds on parent
+ * branch structs that embed these leaf types.
+ *
+ * @param structName - Rust struct name, e.g. `IdentifierTransport`.
+ */
+function renderLeafTransportNapiImpls(structName: string): string[] {
+	const lines: string[] = [];
+
+	// Release mode: read plain JS string — no metadata round-trip.
+	lines.push(`#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]`);
+	lines.push(`impl ::napi::bindgen_prelude::FromNapiValue for ${structName} {`);
+	lines.push(`    unsafe fn from_napi_value(`);
+	lines.push(`        env: ::napi::sys::napi_env,`);
+	lines.push(`        napi_val: ::napi::sys::napi_value,`);
+	lines.push(`    ) -> ::napi::Result<Self> {`);
+	lines.push(`        let text = String::from_napi_value(env, napi_val)?;`);
+	lines.push(`        Ok(Self {`);
+	lines.push(`            transport_source: None,`);
+	lines.push(`            transport_named: None,`);
+	lines.push(`            transport_span: None,`);
+	lines.push(`            transport_node_id: None,`);
+	lines.push(`            text,`);
+	lines.push(`        })`);
+	lines.push(`    }`);
+	lines.push(`}`);
+	lines.push('');
+
+	// Debug mode: read full metadata object — same shape as #[napi(object)] would derive.
+	lines.push(`#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]`);
+	lines.push(`impl ::napi::bindgen_prelude::FromNapiValue for ${structName} {`);
+	lines.push(`    unsafe fn from_napi_value(`);
+	lines.push(`        env: ::napi::sys::napi_env,`);
+	lines.push(`        napi_val: ::napi::sys::napi_value,`);
+	lines.push(`    ) -> ::napi::Result<Self> {`);
+	lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
+	lines.push('        let text: String = obj.get("$text")?.unwrap_or_default();');
+	lines.push('        let transport_source = obj.get("$source")?;');
+	lines.push('        let transport_named = obj.get("$named")?;');
+	lines.push('        let transport_span = obj.get("$span")?;');
+	lines.push('        let transport_node_id = obj.get("$nodeId")?;');
+	lines.push(`        Ok(Self {`);
+	lines.push(`            transport_source,`);
+	lines.push(`            transport_named,`);
+	lines.push(`            transport_span,`);
+	lines.push(`            transport_node_id,`);
+	lines.push(`            text,`);
+	lines.push(`        })`);
+	lines.push(`    }`);
+	lines.push(`}`);
+	lines.push('');
+
+	// ToNapiValue stub — transport is JS→Rust only; this impl satisfies the
+	// trait bound required by #[napi(object)] on parent branch structs whose
+	// fields embed this leaf transport type.
+	lines.push(`#[cfg(feature = "napi-bindings")]`);
+	lines.push(`impl ::napi::bindgen_prelude::ToNapiValue for ${structName} {`);
+	lines.push(`    unsafe fn to_napi_value(`);
+	lines.push(`        env: ::napi::sys::napi_env,`);
+	lines.push(`        _val: Self,`);
+	lines.push(`    ) -> ::napi::Result<::napi::sys::napi_value> {`);
+	lines.push(`        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())`);
+	lines.push(`    }`);
+	lines.push(`}`);
+	lines.push('');
+
 	return lines;
 }
 
@@ -3379,6 +3557,28 @@ function renderTransportMetadataFields(includeText: boolean): string[] {
 		'    pub transport_node_id: Option<f64>,'
 	);
 	return lines;
+}
+
+/**
+ * Plain struct fields for leaf/keyword/token transport structs. Unlike
+ * branch structs, these do not carry `#[napi(object)]` on the struct itself,
+ * so individual field `cfg_attr(napi(...))` attributes would have no proc-macro
+ * to consume them and could confuse napi-derive. Plain field declarations are
+ * used instead; `FromNapiValue` is emitted manually below the struct definition
+ * (via `renderLeafTransportNapiImpls`), reading the JS property names with the
+ * `$`-prefixed keys explicitly.
+ */
+function renderLeafTransportPlainFields(): string[] {
+	return [
+		'    pub transport_source: Option<::sittir_core::types::Source>,',
+		'    pub transport_named: Option<bool>,',
+		'    pub transport_span: Option<::sittir_core::types::Span>,',
+		// napi-rs 3 does not implement FromNapiValue/ToNapiValue for u64 (BigInt-only).
+		// JS passes $nodeId as a plain number (f64). We use f64 here and convert
+		// to u64 in the NodeData bridge (transport_node_data).
+		'    pub transport_node_id: Option<f64>,',
+		'    pub text: String,'
+	];
 }
 
 function renderTransportField(field: AssembledField, nodeMap: NodeMap): string[] {
@@ -3471,9 +3671,13 @@ function concreteTransportTypeName(kind: string, nodeMap: NodeMap): string | nul
 		if (node.modelType === 'supertype' || node.modelType === 'multi' || node.modelType === 'polymorph') {
 			return null;
 		}
-		// Enum modelType: the transport type is the Rust enum itself (XxxEnum), not
-		// a wrapper struct. Use the enum type name so parent struct fields resolve correctly.
-		if (node instanceof AssembledEnum) return enumTypeName(node);
+		// Enum modelType: single-member enums are presence flags — parent struct fields
+		// use `bool` directly (JS sends true/false, no heap allocation, no enum type).
+		// Multi-member enums use the Rust enum type (XxxEnum).
+		if (node instanceof AssembledEnum) {
+			if (isSingleMemberEnum(node)) return 'bool';
+			return enumTypeName(node);
+		}
 		return `${rustTypeIdent(node.typeName)}Transport`;
 	}
 	// Unknown kind — conservative fallback.
@@ -3487,12 +3691,16 @@ function hasRequiredChild(children: readonly AssembledChild[]): boolean {
 /**
  * Rust type name for the transport representation of a node.
  *
- * For `enum` modelType nodes, the transport type is the Rust enum itself
- * (`XxxEnum`), not a `#[napi(object)]` wrapper struct. All other nodes
- * use the standard `XxxTransport` struct name.
+ * For `enum` modelType nodes:
+ * - Single-member enums are presence flags: the transport type is `bool`.
+ * - Multi-member enums: the transport type is the Rust enum itself (`XxxEnum`).
+ * All other nodes use the standard `XxxTransport` struct name.
  */
 function rustTransportStructName(node: AssembledNode): string {
-	if (node instanceof AssembledEnum) return enumTypeName(node);
+	if (node instanceof AssembledEnum) {
+		if (isSingleMemberEnum(node)) return 'bool';
+		return enumTypeName(node);
+	}
 	return `${rustTypeIdent(node.typeName)}Transport`;
 }
 
@@ -3790,6 +3998,41 @@ export function literalToVariantName(literal: string): string {
 }
 
 /**
+ * True when an `AssembledEnum` has exactly one member value.
+ *
+ * Single-member enums are presence markers — the field either holds
+ * the one known literal or is absent. The Rust transport layer maps
+ * these to plain `bool` rather than a single-variant enum type, and
+ * JS sends `true`/`false` (or omits the field) instead of an object
+ * with `$text`. This eliminates the enum struct entirely and lets
+ * `#[napi(object)]` handle the bool field automatically.
+ */
+function isSingleMemberEnum(node: AssembledEnum): boolean {
+	return node.values.length === 1;
+}
+
+/**
+ * Return the static text for a kind whose transport type is `bool`, or
+ * `undefined` when the kind is not a single-member enum.
+ *
+ * Used by `buildTypedTemplateBody` to emit static-text conditionals instead
+ * of `&dyn RenderableTransport` coercions (bool does not implement the trait).
+ *
+ * @param kind - the catalog kind name from `cls.kind`
+ * @param nodeMap - for node lookup
+ */
+function singleMemberEnumTextForKind(
+	kind: string,
+	nodeMap: NodeMap
+): string | undefined {
+	const node = nodeMap.nodes.get(kind);
+	if (node === undefined) return undefined;
+	if (!(node instanceof AssembledEnum)) return undefined;
+	if (!isSingleMemberEnum(node)) return undefined;
+	return node.values[0]!;
+}
+
+/**
  * Enum type name for an `AssembledEnum` node. Appends `Enum` to the typeName
  * (PascalCase) to avoid collision with the companion `*Transport` struct naming
  * convention. Used by the parent transport struct field type.
@@ -3805,22 +4048,31 @@ function enumTypeName(node: AssembledEnum): string {
  * or pre-existing grammar enum). Replaces the `text: String` leaf-struct path
  * with a closed, statically-known variant set.
  *
- * Emits:
+ * **Single-member enums are not emitted** — they are presence markers and the
+ * parent struct carries `bool` instead (see `concreteTransportTypeName`).
+ * Returns `[]` when `node.values.length === 1`.
+ *
+ * Emits for multi-member enums:
  * - `#[derive(Debug, Clone, Copy)] pub enum XxxEnum { ... }`
- * - `impl FromNapiValue` — reads `$text` string and matches to the variant
+ * - `impl FromNapiValue` — reads a plain `u16` KindId (no heap allocation)
+ *   and dispatches to the correct variant via a match on numeric IDs.
+ *   Falls back to `$text: String` matching when `kindEntries` is absent.
  * - `impl RenderableTransport` — writes the static literal text per variant
  * - `impl Display` — writes the static literal text per variant
  *
- * The companion `XxxTransport` struct wraps the enum for the wire transport
- * layer (napi bridge) and retains the metadata fields.
- *
  * @param node - the AssembledEnum node
  * @param hasNapi - whether napi-bindings feature is present (from generatedIdTables)
+ * @param kindEntries - catalog entries for KindId lookup; when present, emits
+ *   numeric `u16` dispatch in `FromNapiValue` instead of `$text: String` matching
  */
 function renderEnumType(
 	node: AssembledEnum,
-	hasNapi: boolean
+	hasNapi: boolean,
+	kindEntries?: readonly KindEnumEntry[]
 ): string[] {
+	// Single-member enums are presence flags — parent struct uses `bool`, no enum type.
+	if (isSingleMemberEnum(node)) return [];
+
 	const enumName = enumTypeName(node);
 	const values = node.values;
 	const lines: string[] = [];
@@ -3842,19 +4094,45 @@ function renderEnumType(
 		lines.push(`        env: ::napi::sys::napi_env,`);
 		lines.push(`        napi_val: ::napi::sys::napi_value,`);
 		lines.push(`    ) -> ::napi::Result<Self> {`);
-		lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
-		lines.push(`        let text: String = obj.get("$text")?`);
-		lines.push(`            .ok_or_else(|| ::napi::Error::from_reason(${JSON.stringify(`$text property missing in ${enumName}`)}))?;`);
-		lines.push(`        match text.as_str() {`);
-		for (const v of values) {
-			const variant = literalToVariantName(v);
-			lines.push(`            ${JSON.stringify(v)} => Ok(Self::${variant}),`);
+
+		if (kindEntries !== undefined) {
+			// Fix 2: read a plain u16 KindId — no heap allocation, no object property lookup.
+			// JS sends the numeric parser.c symbol ID directly for each enum member.
+			lines.push(`        let kind_id: u16 = u16::from_napi_value(env, napi_val)?;`);
+			lines.push(`        match kind_id {`);
+			for (const v of values) {
+				const entry = findKindEntry(kindEntries, v);
+				const variant = literalToVariantName(v);
+				if (entry !== undefined) {
+					lines.push(`            ${entry.id} => Ok(Self::${variant}), // ${JSON.stringify(v)}`);
+				} else {
+					// No catalog entry for this literal — emit a commented-out arm.
+					// This arm will never match at runtime (the value has no parser symbol);
+					// the unreachable comment signals that the literal is synthesized.
+					lines.push(`            // ${JSON.stringify(v)}: no parser symbol — cannot dispatch by KindId`);
+				}
+			}
+			lines.push(`            other => Err(::napi::Error::from_reason(format!(`);
+			lines.push(`                "unknown kind id {{other}} for ${enumName}",`);
+			lines.push(`            ))),`);
+			lines.push(`        }`);
+		} else {
+			// Fallback: kindEntries unavailable (parser.c not found) — read $text string.
+			lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
+			lines.push(`        let text: String = obj.get("$text")?`);
+			lines.push(`            .ok_or_else(|| ::napi::Error::from_reason(${JSON.stringify(`$text property missing in ${enumName}`)}))?;`);
+			lines.push(`        match text.as_str() {`);
+			for (const v of values) {
+				const variant = literalToVariantName(v);
+				lines.push(`            ${JSON.stringify(v)} => Ok(Self::${variant}),`);
+			}
+			lines.push(`            other => Err(::napi::Error::from_reason(format!(`);
+			lines.push(`                "unknown $text value {:?} for ${enumName}",`);
+			lines.push(`                other`);
+			lines.push(`            ))),`);
+			lines.push(`        }`);
 		}
-		lines.push(`            other => Err(::napi::Error::from_reason(format!(`);
-		lines.push(`                "unknown $text value {:?} for ${enumName}",`);
-		lines.push(`                other`);
-		lines.push(`            ))),`);
-		lines.push(`        }`);
+
 		lines.push(`    }`);
 		lines.push(`}`);
 		lines.push('');

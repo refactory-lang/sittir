@@ -70,30 +70,6 @@ export interface AbstractTypeTransport {
   trait: Box<AnyTransport>
 }
 
-export interface AmpTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface AndandTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface AnonymousTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface ArgumentsTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -153,14 +129,6 @@ export interface ArrayTypeTransport {
   length?: ExpressionTransport
 }
 
-export interface ArrowTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface AssignmentExpressionTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -183,38 +151,14 @@ export interface AssociatedTypeTransport {
   whereClause?: WhereClauseTransport
 }
 
-export interface AsTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface AsyncBlockTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  moveMarker?: MoveMarkerEnum
+  moveMarker?: boolean
   block: BlockTransport
-}
-
-export interface AsyncTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface AtTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface AttributeItemTransport {
@@ -244,22 +188,6 @@ export interface AwaitExpressionTransport {
   '$children': Array<ExpressionTransport>
 }
 
-export interface AwaitTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface BangTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface BaseFieldInitializerTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -276,7 +204,7 @@ export interface BinaryExpressionTransport {
   '$span'?: Span
   '$nodeId'?: number
   left: ExpressionTransport
-  operator: BinaryExpressionOperatorEnum
+  operator: boolean
   right: ExpressionTransport
 }
 
@@ -309,14 +237,6 @@ export interface BoundedTypeTransport {
   right: Box<AnyTransport>
 }
 
-export interface BraceTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface BracketedTypeTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -324,14 +244,6 @@ export interface BracketedTypeTransport {
   '$span'?: Span
   '$nodeId'?: number
   '$children': Array<Box<AnyTransport>>
-}
-
-export interface BracketTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface BreakExpressionTransport {
@@ -342,14 +254,6 @@ export interface BreakExpressionTransport {
   '$nodeId'?: number
   label?: LabelTransport
   '$children'?: Array<ExpressionTransport>
-}
-
-export interface BreakTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface CallExpressionTransport {
@@ -370,38 +274,6 @@ export interface CapturedPatternTransport {
   '$nodeId'?: number
   identifier: IdentifierTransport
   '$children': Array<PatternTransport>
-}
-
-export interface CharLiteralTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface CloseBraceTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface CloseBracketTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface CloseParenTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface ClosureExpressionBlockTransport {
@@ -438,9 +310,9 @@ export interface ClosureExpressionUFormBlockTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  staticMarker?: ClosureExpressionStaticMarkerEnum
-  asyncMarker?: ClosureExpressionAsyncMarkerEnum
-  moveMarker?: MoveMarkerEnum
+  staticMarker?: boolean
+  asyncMarker?: boolean
+  moveMarker?: boolean
   parameters: ClosureParametersTransport
   '$children': Array<ClosureExpressionBlockTransport>
 }
@@ -451,9 +323,9 @@ export interface ClosureExpressionUFormExprTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  staticMarker?: ClosureExpressionStaticMarkerEnum
-  asyncMarker?: ClosureExpressionAsyncMarkerEnum
-  moveMarker?: MoveMarkerEnum
+  staticMarker?: boolean
+  asyncMarker?: boolean
+  moveMarker?: boolean
   parameters: ClosureParametersTransport
   '$children': Array<ClosureExpressionExprTransport>
 }
@@ -465,22 +337,6 @@ export interface ClosureParametersTransport {
   '$span'?: Span
   '$nodeId'?: number
   '$children': Array<Box<AnyTransport>>
-}
-
-export interface ColonTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface CommaTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface CommentTransport {
@@ -535,14 +391,6 @@ export interface ConstParameterTransport {
   value?: Box<AnyTransport>
 }
 
-export interface ConstTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface ContinueExpressionTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -552,22 +400,6 @@ export interface ContinueExpressionTransport {
   label?: LabelTransport
 }
 
-export interface ContinueTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface CrateTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface DeclarationListTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -575,14 +407,6 @@ export interface DeclarationListTransport {
   '$span'?: Span
   '$nodeId'?: number
   '$children': Array<DeclarationStatementTransport>
-}
-
-export interface DefaultTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface DelimTokenTreeBraceTransport {
@@ -666,22 +490,6 @@ export interface DelimTokenTreeUFormParenTransport {
   '$children': Array<DelimTokenTreeParenTransport>
 }
 
-export interface DotdotTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface DotTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface DynamicTypeTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -691,22 +499,6 @@ export interface DynamicTypeTransport {
   trait: Box<AnyTransport>
 }
 
-export interface DynTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface EllipsisTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface ElseClauseTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -714,22 +506,6 @@ export interface ElseClauseTransport {
   '$span'?: Span
   '$nodeId'?: number
   '$children': Array<ExpressionEndingWithBlockTransport>
-}
-
-export interface ElseTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface EmptyStatementTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface EngineOptions {
@@ -747,14 +523,6 @@ export interface EnumItemTransport {
   typeParameters?: TypeParametersTransport
   whereClause?: WhereClauseTransport
   body: EnumVariantListTransport
-}
-
-export interface EnumTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface EnumVariantListTransport {
@@ -776,30 +544,6 @@ export interface EnumVariantTransport {
   name: IdentifierTransport
   body?: Box<AnyTransport>
   value?: ExpressionTransport
-}
-
-export interface EqTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface ErrorSentinelTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface EscapeSequenceTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface ExpressionStatementBlockEndingTransport {
@@ -863,7 +607,7 @@ export interface ExternCrateDeclarationTransport {
   '$span'?: Span
   '$nodeId'?: number
   visibilityModifier?: Box<AnyTransport>
-  crate: _CrateEnum
+  crate: boolean
   name: IdentifierTransport
   alias?: IdentifierTransport
 }
@@ -875,22 +619,6 @@ export interface ExternModifierTransport {
   '$span'?: Span
   '$nodeId'?: number
   stringLiteral?: StringLiteralTransport
-}
-
-export interface ExternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface FatArrowTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface FieldDeclarationListTransport {
@@ -986,8 +714,8 @@ export interface FieldPatternUFormNamedTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  refMarker?: RefMarkerEnum
-  mutableSpecifier?: _MutableSpecifierEnum
+  refMarker?: boolean
+  mutableSpecifier?: boolean
   '$children': Array<FieldPatternNamedTransport>
 }
 
@@ -997,27 +725,11 @@ export interface FieldPatternUFormShorthandTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  refMarker?: RefMarkerEnum
-  mutableSpecifier?: _MutableSpecifierEnum
+  refMarker?: boolean
+  mutableSpecifier?: boolean
   '$children': Array<FieldPatternShorthandTransport>
 }
 
-export interface FloatLiteralTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface FnTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface ForeignModItemBodyTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1034,14 +746,6 @@ export interface ForeignModItemBodyTransport {
   '$span'?: Span
   '$nodeId'?: number
   body: DeclarationListTransport
-}
-
-export interface ForeignModItemSemiTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface ForeignModItemUFormBodyTransport {
@@ -1085,14 +789,6 @@ export interface ForLifetimesTransport {
   '$span'?: Span
   '$nodeId'?: number
   '$children': Array<LifetimeTransport>
-}
-
-export interface ForTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface FunctionItemTransport {
@@ -1171,7 +867,7 @@ export interface GenBlockTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  moveMarker?: MoveMarkerEnum
+  moveMarker?: boolean
   block: BlockTransport
 }
 
@@ -1212,32 +908,8 @@ export interface GenericTypeWithTurbofishTransport {
   '$span'?: Span
   '$nodeId'?: number
   type: Box<AnyTransport>
-  turbofish: GenericTypeWithTurbofishTurbofishEnum
+  turbofish: boolean
   typeArguments: TypeArgumentsTransport
-}
-
-export interface GenTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface GtTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface HashTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface HigherRankedTraitBoundTransport {
@@ -1248,14 +920,6 @@ export interface HigherRankedTraitBoundTransport {
   '$nodeId'?: number
   typeParameters: TypeParametersTransport
   type: _TypeTransport
-}
-
-export interface IdentifierTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface IfExpressionTransport {
@@ -1269,14 +933,6 @@ export interface IfExpressionTransport {
   alternative?: ElseClauseTransport
 }
 
-export interface IfTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface ImplItemBodyTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1293,14 +949,6 @@ export interface ImplItemBodyTransport {
   '$span'?: Span
   '$nodeId'?: number
   body: DeclarationListTransport
-}
-
-export interface ImplItemSemiTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface ImplItemUFormBodyTransport {
@@ -1309,9 +957,9 @@ export interface ImplItemUFormBodyTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  unsafeMarker?: UnsafeMarkerEnum
+  unsafeMarker?: boolean
   typeParameters?: TypeParametersTransport
-  negative?: ImplItemNegativeEnum
+  negative?: boolean
   trait?: Box<AnyTransport>
   type: _TypeTransport
   whereClause?: WhereClauseTransport
@@ -1324,21 +972,13 @@ export interface ImplItemUFormSemiTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  unsafeMarker?: UnsafeMarkerEnum
+  unsafeMarker?: boolean
   typeParameters?: TypeParametersTransport
-  negative?: ImplItemNegativeEnum
+  negative?: boolean
   trait?: Box<AnyTransport>
   type: _TypeTransport
   whereClause?: WhereClauseTransport
   '$children': Array<ImplItemSemiTransport>
-}
-
-export interface ImplTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface IndexExpressionTransport {
@@ -1358,118 +998,6 @@ export interface InnerAttributeItemTransport {
   '$span'?: Span
   '$nodeId'?: number
   attribute: AttributeTransport
-}
-
-export interface InnerBlockDocCommentMarkerTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface InnerLineDocCommentMarkerTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface IntegerLiteralTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface InTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface KwAsyncMarkerTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface KwInTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface KwMoveMarkerTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface KwNegativeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface KwOperatorTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface KwPubTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface KwRefMarkerTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface KwStaticMarkerTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface KwTurbofishTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface KwUnsafeMarkerTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface LabelTransport {
@@ -1517,19 +1045,11 @@ export interface LetDeclarationTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  mutableSpecifier?: _MutableSpecifierEnum
+  mutableSpecifier?: boolean
   pattern: PatternTransport
   type?: _TypeTransport
   value?: ExpressionTransport
   alternative?: BlockTransport
-}
-
-export interface LetTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface LifetimeParameterTransport {
@@ -1551,14 +1071,6 @@ export interface LifetimeTransport {
   identifier: IdentifierTransport
 }
 
-export interface LineCommentContentTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface LineCommentDocTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1566,14 +1078,6 @@ export interface LineCommentDocTransport {
   '$span'?: Span
   '$nodeId'?: number
   doc: LineDocContentTransport
-}
-
-export interface LineCommentRegularDslashTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface LineCommentUFormContentTransport {
@@ -1603,14 +1107,6 @@ export interface LineCommentUFormRegularDslashTransport {
   '$children': Array<LineCommentRegularDslashTransport>
 }
 
-export interface LineDocContentTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface LoopExpressionTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1619,22 +1115,6 @@ export interface LoopExpressionTransport {
   '$nodeId'?: number
   label?: LabelTransport
   body: BlockTransport
-}
-
-export interface LoopTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface LtTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface MacroDefinitionBraceTransport {
@@ -1817,38 +1297,6 @@ export interface MatchPatternTransport {
   '$children': Array<PatternTransport>
 }
 
-export interface MatchTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface MetavariableTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface MinusTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface ModItemExternalTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface ModItemInlineTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1889,46 +1337,14 @@ export interface ModItemUFormInlineTransport {
   '$children': Array<ModItemInlineTransport>
 }
 
-export interface ModTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface MoveTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface MutableSpecifierTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface MutPatternTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  mutableSpecifier: _MutableSpecifierEnum
+  mutableSpecifier: boolean
   '$children': Array<PatternTransport>
-}
-
-export interface MutTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface NegativeLiteralTransport {
@@ -1938,14 +1354,6 @@ export interface NegativeLiteralTransport {
   '$span'?: Span
   '$nodeId'?: number
   value: Box<AnyTransport>
-}
-
-export interface NeverTypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface NonSpecialTokenTransport {
@@ -2003,22 +1411,6 @@ export interface OrPatternUFormPrefixTransport {
   '$children': Array<OrPatternPrefixTransport>
 }
 
-export interface OuterBlockDocCommentMarkerTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface OuterLineDocCommentMarkerTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface ParametersTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -2034,7 +1426,7 @@ export interface ParameterTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  mutableSpecifier?: _MutableSpecifierEnum
+  mutableSpecifier?: boolean
   pattern: Box<AnyTransport>
   type: _TypeTransport
 }
@@ -2046,38 +1438,6 @@ export interface ParenthesizedExpressionTransport {
   '$span'?: Span
   '$nodeId'?: number
   '$children': Array<ExpressionTransport>
-}
-
-export interface ParenTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface PipeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface PlusTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface PointerTypeConstTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface PointerTypeMutTransport {
@@ -2118,14 +1478,6 @@ export interface PointerTypeUFormMutTransport {
   '$children': Array<PointerTypeMutTransport>
 }
 
-export interface PubTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface QualifiedTypeTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -2136,12 +1488,13 @@ export interface QualifiedTypeTransport {
   alias: _TypeTransport
 }
 
-export interface QuestionTransport {
+export interface RangeExpressionBareTransport {
   '$source'?: Source
   '$named'?: boolean
+  '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  '$text': string
+  operator: boolean
 }
 
 export interface RangeExpressionBareTransport {
@@ -2150,16 +1503,7 @@ export interface RangeExpressionBareTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  operator: OperatorEnum
-}
-
-export interface RangeExpressionBareTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeId'?: number
-  operator: OperatorEnum
+  operator: boolean
 }
 
 export interface RangeExpressionBinaryTransport {
@@ -2180,7 +1524,7 @@ export interface RangeExpressionPostfixTransport {
   '$span'?: Span
   '$nodeId'?: number
   start: ExpressionTransport
-  operator: OperatorEnum
+  operator: boolean
 }
 
 export interface RangeExpressionPrefixTransport {
@@ -2189,7 +1533,7 @@ export interface RangeExpressionPrefixTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  operator: OperatorEnum
+  operator: boolean
   end: ExpressionTransport
 }
 
@@ -2227,14 +1571,6 @@ export interface RangeExpressionUFormPrefixTransport {
   '$span'?: Span
   '$nodeId'?: number
   '$children': Array<RangeExpressionPrefixTransport>
-}
-
-export interface RangePatternLeftBareTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface RangePatternLeftWithRightTransport {
@@ -2284,14 +1620,6 @@ export interface RangePatternUFormPrefixTransport {
   '$children': Array<RangePatternPrefixTransport>
 }
 
-export interface RawStringLiteralContentTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface RawStringLiteralTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -2301,22 +1629,6 @@ export interface RawStringLiteralTransport {
   rawStringLiteralStart?: Box<AnyTransport>
   stringContent: RawStringLiteralContentTransport
   rawStringLiteralEnd?: Box<AnyTransport>
-}
-
-export interface RawTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface ReferenceExpressionRawConstTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface ReferenceExpressionRawMutTransport {
@@ -2344,7 +1656,7 @@ export interface ReferencePatternTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  mutableSpecifier?: _MutableSpecifierEnum
+  mutableSpecifier?: boolean
   pattern: PatternTransport
 }
 
@@ -2355,7 +1667,7 @@ export interface ReferenceTypeTransport {
   '$span'?: Span
   '$nodeId'?: number
   lifetime?: LifetimeTransport
-  mutableSpecifier?: _MutableSpecifierEnum
+  mutableSpecifier?: boolean
   type: _TypeTransport
 }
 
@@ -2366,22 +1678,6 @@ export interface RefPatternTransport {
   '$span'?: Span
   '$nodeId'?: number
   '$children': Array<PatternTransport>
-}
-
-export interface RefTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface RemainingFieldPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface RemovedTraitBoundTransport {
@@ -2409,14 +1705,6 @@ export interface ReturnExpressionTransport {
   '$span'?: Span
   '$nodeId'?: number
   '$children'?: Array<ExpressionTransport>
-}
-
-export interface ReturnTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface ScopedIdentifierTransport {
@@ -2467,32 +1755,8 @@ export interface SelfParameterTransport {
   '$nodeId'?: number
   reference?: Box<AnyTransport>
   lifetime?: LifetimeTransport
-  mutableSpecifier?: _MutableSpecifierEnum
-  self: _SelfEnum
-}
-
-export interface SelfTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface SemiTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface ShebangTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
+  mutableSpecifier?: boolean
+  self: boolean
 }
 
 export interface ShorthandFieldInitializerTransport {
@@ -2503,14 +1767,6 @@ export interface ShorthandFieldInitializerTransport {
   '$nodeId'?: number
   attributes: Array<AttributeItemTransport>
   identifier: IdentifierTransport
-}
-
-export interface SlashTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface SlicePatternTransport {
@@ -2532,14 +1788,6 @@ export interface SourceFileTransport {
   statements: Array<StatementTransport>
 }
 
-export interface StarTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface StaticItemTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -2551,22 +1799,6 @@ export interface StaticItemTransport {
   name: IdentifierTransport
   type: _TypeTransport
   value?: ExpressionTransport
-}
-
-export interface StaticTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface StringContentTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface StringLiteralTransport {
@@ -2644,14 +1876,6 @@ export interface StructItemUFormUnitTransport {
   '$children': Array<StructItemUnitTransport>
 }
 
-export interface StructItemUnitTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface StructPatternTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -2660,38 +1884,6 @@ export interface StructPatternTransport {
   '$nodeId'?: number
   type: Box<AnyTransport>
   '$children': Array<Box<AnyTransport>>
-}
-
-export interface StructTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface SuperTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface TokDollarTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface TokDqTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface TokenBindingPatternTransport {
@@ -2884,30 +2076,6 @@ export interface TokenTreeUFormParenTransport {
   '$children': Array<TokenTreeParenTransport>
 }
 
-export interface TokSlashStarTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface TokSqTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface TokStarSlashTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface TraitBoundsTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -2924,20 +2092,12 @@ export interface TraitItemTransport {
   '$span'?: Span
   '$nodeId'?: number
   visibilityModifier?: Box<AnyTransport>
-  unsafeMarker?: UnsafeMarkerEnum
+  unsafeMarker?: boolean
   name: TypeIdentifierTransport
   typeParameters?: TypeParametersTransport
   bounds?: TraitBoundsTransport
   whereClause?: WhereClauseTransport
   body: DeclarationListTransport
-}
-
-export interface TraitTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface TryBlockTransport {
@@ -2956,14 +2116,6 @@ export interface TryExpressionTransport {
   '$span'?: Span
   '$nodeId'?: number
   value: ExpressionTransport
-}
-
-export interface TryTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface TupleExpressionTransport {
@@ -3077,14 +2229,6 @@ export interface TypeParameterTransport {
   defaultType?: _TypeTransport
 }
 
-export interface TypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface UnaryExpressionTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -3108,30 +2252,6 @@ export interface UnionItemTransport {
   body: FieldDeclarationListTransport
 }
 
-export interface UnionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface UnitExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface UnitTypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface UnsafeBlockTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -3139,14 +2259,6 @@ export interface UnsafeBlockTransport {
   '$span'?: Span
   '$nodeId'?: number
   block: BlockTransport
-}
-
-export interface UnsafeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }
 
 export interface UseAsClauseTransport {
@@ -3187,14 +2299,6 @@ export interface UseListTransport {
   '$children': Array<UseClauseTransport>
 }
 
-export interface UseTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface UseWildcardTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -3210,7 +2314,7 @@ export interface VariadicParameterTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  mutableSpecifier?: _MutableSpecifierEnum
+  mutableSpecifier?: boolean
   pattern?: PatternTransport
 }
 
@@ -3238,7 +2342,7 @@ export interface VisibilityModifierInPathTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  in: VisibilityModifierInPathInEnum
+  in: boolean
   '$children': Array<PathTransport>
 }
 
@@ -3248,7 +2352,7 @@ export interface VisibilityModifierPubTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  pub: VisibilityModifierPubPubEnum
+  pub: boolean
   '$children'?: Array<Box<AnyTransport>>
 }
 
@@ -3298,14 +2402,6 @@ export interface WherePredicateTransport {
   bounds: TraitBoundsTransport
 }
 
-export interface WhereTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface WhileExpressionTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -3317,22 +2413,6 @@ export interface WhileExpressionTransport {
   body: BlockTransport
 }
 
-export interface WhileTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
-export interface WildcardPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
-}
-
 export interface YieldExpressionTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -3340,12 +2420,4 @@ export interface YieldExpressionTransport {
   '$span'?: Span
   '$nodeId'?: number
   '$children'?: Array<ExpressionTransport>
-}
-
-export interface YieldTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$span'?: Span
-  '$nodeId'?: number
-  '$text': string
 }

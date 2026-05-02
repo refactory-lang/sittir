@@ -22,6 +22,7 @@ import {
 	collectCatalogKinds,
 	kindDiscriminantExpr,
 	kindIdMemberName,
+	findKindEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 export {
@@ -57,14 +58,14 @@ import type {
 	AssembledChild,
 	AssembledLeaf,
 	AssembledKeyword,
-	AssembledToken,
-	AssembledEnum
+	AssembledToken
 } from '../compiler/node-map.ts';
 import {
 	AssembledBranch,
 	AssembledContainer,
 	AssembledPolymorph,
 	AssembledGroup,
+	AssembledEnum,
 	snakeToCamel,
 	isNodeRef,
 	isTerminalValue,
@@ -652,7 +653,7 @@ function emitTransportDeclarations(
 			case 'keyword':
 			case 'token':
 			case 'enum':
-				emitTerminalTransportNamespace(lines, node.kind, node);
+				emitTerminalTransportNamespace(lines, node.kind, node, kindEntries);
 				break;
 			case 'supertype':
 			case 'multi':
@@ -831,11 +832,71 @@ function emitTransportInterfaceNamespace(
 	lines.push('');
 }
 
+/**
+ * Emit the transport namespace for a terminal node.
+ *
+ * - Non-enum terminals: `Transport = TerminalTransport<kind, text>`
+ * - Single-member enum: `Transport = boolean` — presence flag. JS sends
+ *   `true` when the marker is present; `false`/absent when not. Matches
+ *   the Rust `bool` transport on the FFI boundary.
+ * - Multi-member enum: emit a `const enum TypeName { Variant = TSKindId.X, ... }`
+ *   (zero-cost, numeric KindId-backed) then `Transport = TypeName`. This
+ *   unifies the JS and Rust sides: both use the same numeric wire value.
+ *
+ * @param kindEntries - catalog entries for KindId lookup; when present,
+ *   multi-member enums get `const enum` members backed by `TSKindId.*`.
+ *   When absent, falls back to `TerminalTransport<kind, union>`.
+ */
 function emitTerminalTransportNamespace(
 	lines: string[],
 	kind: string,
-	node: TerminalNode
+	node: TerminalNode,
+	kindEntries?: readonly KindEnumEntry[]
 ): void {
+	// Single-member enum: presence flag → boolean
+	if (node instanceof AssembledEnum && node.values.length === 1) {
+		lines.push(`export namespace ${node.typeName} {`);
+		lines.push(`  export type Transport = boolean;`);
+		lines.push('}');
+		lines.push('');
+		return;
+	}
+
+	// Multi-member enum with kindEntries: emit a `const enum Values` inside the
+	// namespace, backed by TSKindId. Using a namespace-internal const enum avoids
+	// a top-level name collision with `export type RangeExpressionBinaryOperator`
+	// already declared in the types section of this file.
+	//
+	// Developer usage: `RangeExpressionBinaryOperator.Values.DotDot`
+	// Wire value: same numeric KindId as Rust's `u16` dispatch — zero-cost.
+	if (node instanceof AssembledEnum && node.values.length > 1 && kindEntries !== undefined) {
+		const enumName = node.typeName;
+		// Build members — look up each value's KindEntry. Skip values without
+		// a catalog entry (they'll have no TSKindId member to reference).
+		// Use entry.member as the variant name: it is the same PascalCase name
+		// used by TSKindId, so `Values.AmpAmp = TSKindId.AmpAmp`.
+		const members: Array<{ variant: string; member: string }> = [];
+		for (const value of node.values) {
+			const entry = findKindEntry(kindEntries, value);
+			if (entry === undefined) continue;
+			members.push({ variant: entry.member, member: entry.member });
+		}
+		if (members.length > 0) {
+			lines.push(`export namespace ${enumName} {`);
+			lines.push(`  export const enum Values {`);
+			for (const { variant, member } of members) {
+				lines.push(`    ${variant} = TSKindId.${member},`);
+			}
+			lines.push(`  }`);
+			lines.push(`  export type Transport = Values;`);
+			lines.push('}');
+			lines.push('');
+			return;
+		}
+		// Fall through: no catalog entries for any member — use string union fallback.
+	}
+
+	// Default: TerminalTransport with text union
 	lines.push(`export namespace ${node.typeName} {`);
 	lines.push(
 		`  export type Transport = TerminalTransport<${JSON.stringify(kind)}, ${terminalTransportTextType(node)}>;`

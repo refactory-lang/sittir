@@ -7227,35 +7227,53 @@ export interface TerminalTransport<K extends string, V extends string = string> 
 export interface LiteralTransport<K extends string, V extends string = K> extends TerminalTransport<K, V> {}
 
 export namespace ForHeaderOperator {
-  export type Transport = TerminalTransport<"__for_header_operator", "in" | "of">;
+  export const enum Values {
+    In = TSKindId.In,
+    Of = TSKindId.Of,
+  }
+  export type Transport = Values;
 }
 
 export namespace ForHeaderVarKindKind {
-  export type Transport = TerminalTransport<"__for_header_var_kind_kind", "var">;
+  export type Transport = boolean;
 }
 
 export namespace NumberOperator {
-  export type Transport = TerminalTransport<"__number_operator", "-" | "+">;
+  export const enum Values {
+    Dash = TSKindId.Dash,
+    Plus = TSKindId.Plus,
+  }
+  export type Transport = Values;
 }
 
 export namespace PublicFieldDefinitionAccessFirstDeclareMarker {
-  export type Transport = TerminalTransport<"__public_field_definition_access_first_declare_marker", "declare">;
+  export type Transport = boolean;
 }
 
 export namespace PublicFieldDefinitionAccessorOptAccessorMarker {
-  export type Transport = TerminalTransport<"__public_field_definition_accessor_opt_accessor_marker", "accessor">;
+  export type Transport = boolean;
 }
 
 export namespace AbstractMarker {
-  export type Transport = TerminalTransport<"_abstract_marker", "abstract">;
+  export type Transport = boolean;
 }
 
 export namespace _AccessibilityModifier {
-  export type Transport = TerminalTransport<"_accessibility_modifier", "public" | "private" | "protected">;
+  export const enum Values {
+    Public = TSKindId.Public,
+    Private = TSKindId.Private,
+    Protected = TSKindId.Protected,
+  }
+  export type Transport = Values;
 }
 
 export namespace AccessorKind {
-  export type Transport = TerminalTransport<"_accessor_kind", "get" | "set" | "*">;
+  export const enum Values {
+    Get = TSKindId.Get,
+    Set = TSKindId.Set,
+    Star = TSKindId.Star,
+  }
+  export type Transport = Values;
 }
 
 export namespace _ArrowFunctionUCallSignature {
@@ -7285,23 +7303,40 @@ export namespace _ArrowFunctionParameter {
 }
 
 export namespace AssertsAnnotationAsserts {
-  export type Transport = TerminalTransport<"_asserts_annotation_asserts", ":">;
+  export type Transport = boolean;
 }
 
 export namespace AssignmentExpressionUsingMarker {
-  export type Transport = TerminalTransport<"_assignment_expression_using_marker", "using">;
+  export type Transport = boolean;
 }
 
 export namespace AsyncMarker {
-  export type Transport = TerminalTransport<"_async_marker", "async">;
+  export type Transport = boolean;
 }
 
 export namespace AugmentedAssignmentExpressionOperator {
-  export type Transport = TerminalTransport<"_augmented_assignment_expression_operator", "+=" | "-=" | "*=" | "/=" | "%=" | "^=" | "&=" | "|=" | ">>=" | ">>>=" | "<<=" | "**=" | "&&=" | "||=" | "??=">;
+  export const enum Values {
+    PlusEq = TSKindId.PlusEq,
+    DashEq = TSKindId.DashEq,
+    StarEq = TSKindId.StarEq,
+    SlashEq = TSKindId.SlashEq,
+    PercentEq = TSKindId.PercentEq,
+    CaretEq = TSKindId.CaretEq,
+    AmpEq = TSKindId.AmpEq,
+    PipeEq = TSKindId.PipeEq,
+    GtGtEq = TSKindId.GtGtEq,
+    GtGtGtEq = TSKindId.GtGtGtEq,
+    LtLtEq = TSKindId.LtLtEq,
+    StarStarEq = TSKindId.StarStarEq,
+    AmpAmpEq = TSKindId.AmpAmpEq,
+    PipePipeEq = TSKindId.PipePipeEq,
+    QmarkQmarkEq = TSKindId.QmarkQmarkEq,
+  }
+  export type Transport = Values;
 }
 
 export namespace BinaryExpressionOperator {
-  export type Transport = TerminalTransport<"_binary_expression_operator", "&&">;
+  export type Transport = boolean;
 }
 
 export namespace CallExpressionCall {
@@ -7421,11 +7456,15 @@ export namespace _ClassHeritageImplementsClause {
 }
 
 export namespace ConstMarker {
-  export type Transport = TerminalTransport<"_const_marker", "const">;
+  export type Transport = boolean;
 }
 
 export namespace ExportSpecifierExportKind {
-  export type Transport = TerminalTransport<"_export_specifier_export_kind", "type" | "typeof">;
+  export const enum Values {
+    Type = TSKindId.Type,
+    Typeof = TSKindId.Typeof,
+  }
+  export type Transport = Values;
 }
 
 export namespace ExportStatementDefaultDeclArm {
@@ -7621,11 +7660,11 @@ export namespace ForHeaderVarKind {
 }
 
 export namespace ForInStatementAwaitMarker {
-  export type Transport = TerminalTransport<"_for_in_statement_await_marker", "await">;
+  export type Transport = boolean;
 }
 
 export namespace ForStatementInitializer {
-  export type Transport = TerminalTransport<"_for_statement_initializer", ";">;
+  export type Transport = boolean;
 }
 
 export namespace FromClause {
@@ -7641,7 +7680,11 @@ export namespace FromClause {
 }
 
 export namespace ImportAttributeObject {
-  export type Transport = TerminalTransport<"_import_attribute_object", "with" | "assert">;
+  export const enum Values {
+    With = TSKindId.With,
+    Assert = TSKindId.Assert,
+  }
+  export type Transport = Values;
 }
 
 export namespace _ImportClauseDefaultImport {
@@ -7769,7 +7812,11 @@ export namespace JsxString {
 }
 
 export namespace Kind {
-  export type Transport = TerminalTransport<"_kind", "let" | "const">;
+  export const enum Values {
+    Let = TSKindId.Let,
+    Const = TSKindId.Const,
+  }
+  export type Transport = Values;
 }
 
 export namespace KwAbstractMarker {
@@ -7859,27 +7906,39 @@ export namespace _Number {
 }
 
 export namespace ObjectTypeClosing {
-  export type Transport = TerminalTransport<"_object_type_closing", "}" | "|}">;
+  export const enum Values {
+    Rbrace = TSKindId.Rbrace,
+    PipeRbrace = TSKindId.PipeRbrace,
+  }
+  export type Transport = Values;
 }
 
 export namespace ObjectTypeOpening {
-  export type Transport = TerminalTransport<"_object_type_opening", "{" | "{|">;
+  export const enum Values {
+    Lbrace = TSKindId.Lbrace,
+    LbracePipe = TSKindId.LbracePipe,
+  }
+  export type Transport = Values;
 }
 
 export namespace Operator {
-  export type Transport = TerminalTransport<"_operator", "++" | "--">;
+  export const enum Values {
+    PlusPlus = TSKindId.PlusPlus,
+    DashDash = TSKindId.DashDash,
+  }
+  export type Transport = Values;
 }
 
 export namespace OptionalChain {
-  export type Transport = TerminalTransport<"_optional_chain", "?.">;
+  export type Transport = boolean;
 }
 
 export namespace OptionalMarker {
-  export type Transport = TerminalTransport<"_optional_marker", "?">;
+  export type Transport = boolean;
 }
 
 export namespace _OverrideModifier {
-  export type Transport = TerminalTransport<"_override_modifier", "override">;
+  export type Transport = boolean;
 }
 
 export namespace ParameterName {
@@ -7973,7 +8032,11 @@ export namespace PublicFieldDefinitionDeclareFirst {
 }
 
 export namespace PublicFieldDefinitionOptionalityMarker {
-  export type Transport = TerminalTransport<"_public_field_definition_optionality_marker", "?" | "!">;
+  export const enum Values {
+    Qmark = TSKindId.Qmark,
+    Bang = TSKindId.Bang,
+  }
+  export type Transport = Values;
 }
 
 export namespace PublicFieldDefinitionReadonlyFirst {
@@ -8004,7 +8067,7 @@ export namespace PublicFieldDefinitionStaticMods {
 }
 
 export namespace ReadonlyMarker {
-  export type Transport = TerminalTransport<"_readonly_marker", "readonly">;
+  export type Transport = boolean;
 }
 
 export namespace ReservedIdentifier {
@@ -8012,7 +8075,7 @@ export namespace ReservedIdentifier {
 }
 
 export namespace StaticMarker {
-  export type Transport = TerminalTransport<"_static_marker", "static">;
+  export type Transport = boolean;
 }
 
 export namespace _StringDouble {
@@ -8130,7 +8193,16 @@ export namespace TypeQuerySubscriptExpression {
 }
 
 export namespace UnaryExpressionOperator {
-  export type Transport = TerminalTransport<"_unary_expression_operator", "!" | "~" | "-" | "+" | "typeof" | "void" | "delete">;
+  export const enum Values {
+    Bang = TSKindId.Bang,
+    Tilde = TSKindId.Tilde,
+    Dash = TSKindId.Dash,
+    Plus = TSKindId.Plus,
+    Typeof = TSKindId.Typeof,
+    Void = TSKindId.Void,
+    Delete = TSKindId.Delete,
+  }
+  export type Transport = Values;
 }
 
 export namespace UpdateExpressionPostfix {
@@ -8195,7 +8267,12 @@ export namespace AbstractMethodSignature {
 }
 
 export namespace AccessibilityModifier {
-  export type Transport = TerminalTransport<"accessibility_modifier", "public" | "private" | "protected">;
+  export const enum Values {
+    Public = TSKindId.Public,
+    Private = TSKindId.Private,
+    Protected = TSKindId.Protected,
+  }
+  export type Transport = Values;
 }
 
 export namespace AddingTypeAnnotation {

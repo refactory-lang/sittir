@@ -89,17 +89,17 @@ pub mod filters {
 #[derive(Debug, Clone)]
 pub enum AnyTransport {
     RangeExpressionBinaryOperator(RangeExpressionBinaryOperatorEnum),
-    VisibilityModifierInPathIn(VisibilityModifierInPathInEnum),
-    VisibilityModifierPubPub(VisibilityModifierPubPubEnum),
+    VisibilityModifierInPathIn(bool),
+    VisibilityModifierPubPub(bool),
     ArrayExpressionList(ArrayExpressionListTransport),
     ArrayExpressionSemi(ArrayExpressionSemiTransport),
-    BinaryExpressionOperator(BinaryExpressionOperatorEnum),
-    ClosureExpressionAsyncMarker(ClosureExpressionAsyncMarkerEnum),
+    BinaryExpressionOperator(bool),
+    ClosureExpressionAsyncMarker(bool),
     ClosureExpressionBlock(ClosureExpressionBlockTransport),
     _ClosureExpressionExpr(_ClosureExpressionExprTransport),
-    ClosureExpressionStaticMarker(ClosureExpressionStaticMarkerEnum),
+    ClosureExpressionStaticMarker(bool),
     CompoundAssignmentExprOperator(CompoundAssignmentExprOperatorEnum),
-    _Crate(_CrateEnum),
+    _Crate(bool),
     _DelimTokenTreeBrace(_DelimTokenTreeBraceTransport),
     _DelimTokenTreeBracket(_DelimTokenTreeBracketTransport),
     _DelimTokenTreeParen(_DelimTokenTreeParenTransport),
@@ -112,9 +112,9 @@ pub enum AnyTransport {
     ForeignModItemSemi(ForeignModItemSemiTransport),
     FunctionTypeFnForm(FunctionTypeFnFormTransport),
     FunctionTypeTraitForm(FunctionTypeTraitFormTransport),
-    GenericTypeWithTurbofishTurbofish(GenericTypeWithTurbofishTurbofishEnum),
+    GenericTypeWithTurbofishTurbofish(bool),
     _ImplItemBody(_ImplItemBodyTransport),
-    ImplItemNegative(ImplItemNegativeEnum),
+    ImplItemNegative(bool),
     ImplItemSemi(ImplItemSemiTransport),
     InnerLineDocCommentMarker(InnerLineDocCommentMarkerTransport),
     KwAsyncMarker(KwAsyncMarkerTransport),
@@ -138,10 +138,10 @@ pub enum AnyTransport {
     MatchArmWithComma(MatchArmWithCommaTransport),
     ModItemExternal(ModItemExternalTransport),
     _ModItemInline(_ModItemInlineTransport),
-    MoveMarker(MoveMarkerEnum),
-    _MutableSpecifier(_MutableSpecifierEnum),
+    MoveMarker(bool),
+    _MutableSpecifier(bool),
     NonSpecialToken(NonSpecialTokenTransport),
-    Operator(OperatorEnum),
+    Operator(bool),
     OrPatternBinary(OrPatternBinaryTransport),
     OrPatternPrefix(OrPatternPrefixTransport),
     OuterLineDocCommentMarker(OuterLineDocCommentMarkerTransport),
@@ -155,11 +155,11 @@ pub enum AnyTransport {
     RangePatternLeftBare(RangePatternLeftBareTransport),
     RangePatternLeftWithRight(RangePatternLeftWithRightTransport),
     RangePatternPrefix(RangePatternPrefixTransport),
-    RefMarker(RefMarkerEnum),
+    RefMarker(bool),
     ReferenceExpressionRawConst(ReferenceExpressionRawConstTransport),
     ReferenceExpressionRawMut(ReferenceExpressionRawMutTransport),
     ReservedIdentifier(ReservedIdentifierTransport),
-    _Self(_SelfEnum),
+    _Self(bool),
     StructItemBrace(StructItemBraceTransport),
     StructItemTuple(StructItemTupleTransport),
     StructItemUnit(StructItemUnitTransport),
@@ -172,7 +172,7 @@ pub enum AnyTransport {
     _TokenTreePatternParen(_TokenTreePatternParenTransport),
     TypeIdentifier(TypeIdentifierTransport),
     UnaryExpressionOperator(UnaryExpressionOperatorEnum),
-    UnsafeMarker(UnsafeMarkerEnum),
+    UnsafeMarker(bool),
     _VisibilityModifierCrate(_VisibilityModifierCrateTransport),
     VisibilityModifierInPath(VisibilityModifierInPathTransport),
     VisibilityModifierPub(VisibilityModifierPubTransport),
@@ -3830,16 +3830,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangeExpressionBinaryOperatorEnu
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in RangeExpressionBinaryOperatorEnum"))?;
-        match text.as_str() {
-            ".." => Ok(Self::DotDot),
-            "..." => Ok(Self::DotDotDot),
-            "..=" => Ok(Self::DotDotEq),
+        let kind_id: u16 = u16::from_napi_value(env, napi_val)?;
+        match kind_id {
+            76 => Ok(Self::DotDot), // ".."
+            77 => Ok(Self::DotDotDot), // "..."
+            78 => Ok(Self::DotDotEq), // "..="
             other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for RangeExpressionBinaryOperatorEnum",
-                other
+                "unknown kind id {{other}} for RangeExpressionBinaryOperatorEnum",
             ))),
         }
     }
@@ -3874,112 +3871,6 @@ impl ::sittir_core::types::RenderableTransport for RangeExpressionBinaryOperator
             Self::DotDot => "..",
             Self::DotDotDot => "...",
             Self::DotDotEq => "..=",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum VisibilityModifierInPathInEnum {
-    InKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierInPathInEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in VisibilityModifierInPathInEnum"))?;
-        match text.as_str() {
-            "in" => Ok(Self::InKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for VisibilityModifierInPathInEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for VisibilityModifierInPathInEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("VisibilityModifierInPathInEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for VisibilityModifierInPathInEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::InKw => "in",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for VisibilityModifierInPathInEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::InKw => "in",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum VisibilityModifierPubPubEnum {
-    PubKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierPubPubEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in VisibilityModifierPubPubEnum"))?;
-        match text.as_str() {
-            "pub" => Ok(Self::PubKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for VisibilityModifierPubPubEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for VisibilityModifierPubPubEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("VisibilityModifierPubPubEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for VisibilityModifierPubPubEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::PubKw => "pub",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for VisibilityModifierPubPubEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::PubKw => "pub",
         }).map_err(::askama::Error::from)
     }
 }
@@ -4041,112 +3932,6 @@ impl ::sittir_core::types::RenderableTransport for ArrayExpressionSemiTransport 
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum BinaryExpressionOperatorEnum {
-    AmpAmp,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionOperatorEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in BinaryExpressionOperatorEnum"))?;
-        match text.as_str() {
-            "&&" => Ok(Self::AmpAmp),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for BinaryExpressionOperatorEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for BinaryExpressionOperatorEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("BinaryExpressionOperatorEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for BinaryExpressionOperatorEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::AmpAmp => "&&",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for BinaryExpressionOperatorEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::AmpAmp => "&&",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ClosureExpressionAsyncMarkerEnum {
-    AsyncKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ClosureExpressionAsyncMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in ClosureExpressionAsyncMarkerEnum"))?;
-        match text.as_str() {
-            "async" => Ok(Self::AsyncKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for ClosureExpressionAsyncMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ClosureExpressionAsyncMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ClosureExpressionAsyncMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for ClosureExpressionAsyncMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::AsyncKw => "async",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for ClosureExpressionAsyncMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::AsyncKw => "async",
-        }).map_err(::askama::Error::from)
-    }
-}
-
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ClosureExpressionBlockTransport {
@@ -4201,59 +3986,6 @@ impl ::sittir_core::types::RenderableTransport for _ClosureExpressionExprTranspo
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ClosureExpressionStaticMarkerEnum {
-    StaticKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ClosureExpressionStaticMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in ClosureExpressionStaticMarkerEnum"))?;
-        match text.as_str() {
-            "static" => Ok(Self::StaticKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for ClosureExpressionStaticMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ClosureExpressionStaticMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ClosureExpressionStaticMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for ClosureExpressionStaticMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::StaticKw => "static",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for ClosureExpressionStaticMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::StaticKw => "static",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CompoundAssignmentExprOperatorEnum {
     PlusEq,
     MinusEq,
@@ -4273,23 +4005,20 @@ impl ::napi::bindgen_prelude::FromNapiValue for CompoundAssignmentExprOperatorEn
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in CompoundAssignmentExprOperatorEnum"))?;
-        match text.as_str() {
-            "+=" => Ok(Self::PlusEq),
-            "-=" => Ok(Self::MinusEq),
-            "*=" => Ok(Self::StarEq),
-            "/=" => Ok(Self::SlashEq),
-            "%=" => Ok(Self::PercentEq),
-            "&=" => Ok(Self::AmpEq),
-            "|=" => Ok(Self::PipeEq),
-            "^=" => Ok(Self::CaretEq),
-            "<<=" => Ok(Self::LtLtEq),
-            ">>=" => Ok(Self::GtGtEq),
+        let kind_id: u16 = u16::from_napi_value(env, napi_val)?;
+        match kind_id {
+            56 => Ok(Self::PlusEq), // "+="
+            57 => Ok(Self::MinusEq), // "-="
+            58 => Ok(Self::StarEq), // "*="
+            59 => Ok(Self::SlashEq), // "/="
+            60 => Ok(Self::PercentEq), // "%="
+            62 => Ok(Self::AmpEq), // "&="
+            63 => Ok(Self::PipeEq), // "|="
+            61 => Ok(Self::CaretEq), // "^="
+            64 => Ok(Self::LtLtEq), // "<<="
+            65 => Ok(Self::GtGtEq), // ">>="
             other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for CompoundAssignmentExprOperatorEnum",
-                other
+                "unknown kind id {{other}} for CompoundAssignmentExprOperatorEnum",
             ))),
         }
     }
@@ -4338,59 +4067,6 @@ impl ::sittir_core::types::RenderableTransport for CompoundAssignmentExprOperato
             Self::CaretEq => "^=",
             Self::LtLtEq => "<<=",
             Self::GtGtEq => ">>=",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum _CrateEnum {
-    CrateKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for _CrateEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in _CrateEnum"))?;
-        match text.as_str() {
-            "crate" => Ok(Self::CrateKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for _CrateEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for _CrateEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("_CrateEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for _CrateEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::CrateKw => "crate",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for _CrateEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::CrateKw => "crate",
         }).map_err(::askama::Error::from)
     }
 }
@@ -4636,18 +4312,12 @@ impl ::sittir_core::types::RenderableTransport for _ForeignModItemBodyTransport 
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ForeignModItemSemiTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -4658,6 +4328,55 @@ impl ::sittir_core::types::RenderableTransport for ForeignModItemSemiTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_foreign_mod_item_semi_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for ForeignModItemSemiTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for ForeignModItemSemiTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ForeignModItemSemiTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -4715,59 +4434,6 @@ impl ::sittir_core::types::RenderableTransport for FunctionTypeTraitFormTranspor
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum GenericTypeWithTurbofishTurbofishEnum {
-    ColonColon,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for GenericTypeWithTurbofishTurbofishEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in GenericTypeWithTurbofishTurbofishEnum"))?;
-        match text.as_str() {
-            "::" => Ok(Self::ColonColon),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for GenericTypeWithTurbofishTurbofishEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for GenericTypeWithTurbofishTurbofishEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("GenericTypeWithTurbofishTurbofishEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for GenericTypeWithTurbofishTurbofishEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::ColonColon => "::",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for GenericTypeWithTurbofishTurbofishEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::ColonColon => "::",
-        }).map_err(::askama::Error::from)
-    }
-}
-
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct _ImplItemBodyTransport {
@@ -4794,71 +4460,12 @@ impl ::sittir_core::types::RenderableTransport for _ImplItemBodyTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ImplItemNegativeEnum {
-    Bang,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ImplItemNegativeEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in ImplItemNegativeEnum"))?;
-        match text.as_str() {
-            "!" => Ok(Self::Bang),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for ImplItemNegativeEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ImplItemNegativeEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ImplItemNegativeEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for ImplItemNegativeEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::Bang => "!",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for ImplItemNegativeEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::Bang => "!",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ImplItemSemiTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -4872,18 +4479,61 @@ impl ::sittir_core::types::RenderableTransport for ImplItemSemiTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for ImplItemSemiTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for ImplItemSemiTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ImplItemSemiTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct InnerLineDocCommentMarkerTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -4897,18 +4547,61 @@ impl ::sittir_core::types::RenderableTransport for InnerLineDocCommentMarkerTran
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for InnerLineDocCommentMarkerTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for InnerLineDocCommentMarkerTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for InnerLineDocCommentMarkerTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct KwAsyncMarkerTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -4922,18 +4615,61 @@ impl ::sittir_core::types::RenderableTransport for KwAsyncMarkerTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwAsyncMarkerTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwAsyncMarkerTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for KwAsyncMarkerTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct KwInTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -4947,18 +4683,61 @@ impl ::sittir_core::types::RenderableTransport for KwInTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwInTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwInTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for KwInTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct KwMoveMarkerTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -4972,18 +4751,61 @@ impl ::sittir_core::types::RenderableTransport for KwMoveMarkerTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwMoveMarkerTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwMoveMarkerTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for KwMoveMarkerTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct KwNegativeTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -4997,18 +4819,61 @@ impl ::sittir_core::types::RenderableTransport for KwNegativeTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwNegativeTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwNegativeTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for KwNegativeTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct KwOperatorTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -5022,18 +4887,61 @@ impl ::sittir_core::types::RenderableTransport for KwOperatorTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwOperatorTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwOperatorTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for KwOperatorTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct KwPubTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -5047,18 +4955,61 @@ impl ::sittir_core::types::RenderableTransport for KwPubTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwPubTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwPubTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for KwPubTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct KwRefMarkerTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -5072,18 +5023,61 @@ impl ::sittir_core::types::RenderableTransport for KwRefMarkerTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwRefMarkerTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwRefMarkerTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for KwRefMarkerTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct KwStaticMarkerTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -5097,18 +5091,61 @@ impl ::sittir_core::types::RenderableTransport for KwStaticMarkerTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwStaticMarkerTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwStaticMarkerTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for KwStaticMarkerTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct KwTurbofishTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -5122,18 +5159,61 @@ impl ::sittir_core::types::RenderableTransport for KwTurbofishTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwTurbofishTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwTurbofishTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for KwTurbofishTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct KwUnsafeMarkerTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -5144,6 +5224,55 @@ impl ::sittir_core::types::RenderableTransport for KwUnsafeMarkerTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_kw_unsafe_marker_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwUnsafeMarkerTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwUnsafeMarkerTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for KwUnsafeMarkerTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -5174,18 +5303,12 @@ impl ::sittir_core::types::RenderableTransport for LetChainTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct LineCommentContentTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -5196,6 +5319,55 @@ impl ::sittir_core::types::RenderableTransport for LineCommentContentTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_line_comment_content_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for LineCommentContentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for LineCommentContentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for LineCommentContentTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -5225,18 +5397,12 @@ impl ::sittir_core::types::RenderableTransport for LineCommentDocTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct LineCommentRegularDslashTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -5247,6 +5413,55 @@ impl ::sittir_core::types::RenderableTransport for LineCommentRegularDslashTrans
     ) -> Result<(), ::askama::Error> {
         let s = render_line_comment_regular_dslash_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for LineCommentRegularDslashTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for LineCommentRegularDslashTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for LineCommentRegularDslashTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -5383,18 +5598,12 @@ impl ::sittir_core::types::RenderableTransport for MatchArmWithCommaTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ModItemExternalTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -5405,6 +5614,55 @@ impl ::sittir_core::types::RenderableTransport for ModItemExternalTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_mod_item_external_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for ModItemExternalTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for ModItemExternalTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ModItemExternalTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -5434,112 +5692,6 @@ impl ::sittir_core::types::RenderableTransport for _ModItemInlineTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MoveMarkerEnum {
-    MoveKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for MoveMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in MoveMarkerEnum"))?;
-        match text.as_str() {
-            "move" => Ok(Self::MoveKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for MoveMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MoveMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("MoveMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for MoveMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::MoveKw => "move",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for MoveMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::MoveKw => "move",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum _MutableSpecifierEnum {
-    MutKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for _MutableSpecifierEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in _MutableSpecifierEnum"))?;
-        match text.as_str() {
-            "mut" => Ok(Self::MutKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for _MutableSpecifierEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for _MutableSpecifierEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("_MutableSpecifierEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for _MutableSpecifierEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::MutKw => "mut",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for _MutableSpecifierEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::MutKw => "mut",
-        }).map_err(::askama::Error::from)
-    }
-}
-
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct NonSpecialTokenTransport {
@@ -5564,59 +5716,6 @@ impl ::sittir_core::types::RenderableTransport for NonSpecialTokenTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_non_special_token_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum OperatorEnum {
-    DotDot,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for OperatorEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in OperatorEnum"))?;
-        match text.as_str() {
-            ".." => Ok(Self::DotDot),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for OperatorEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for OperatorEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("OperatorEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for OperatorEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::DotDot => "..",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for OperatorEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::DotDot => "..",
-        }).map_err(::askama::Error::from)
     }
 }
 
@@ -5673,18 +5772,12 @@ impl ::sittir_core::types::RenderableTransport for OrPatternPrefixTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct OuterLineDocCommentMarkerTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -5698,18 +5791,61 @@ impl ::sittir_core::types::RenderableTransport for OuterLineDocCommentMarkerTran
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for OuterLineDocCommentMarkerTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for OuterLineDocCommentMarkerTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for OuterLineDocCommentMarkerTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct PointerTypeConstTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -5720,6 +5856,55 @@ impl ::sittir_core::types::RenderableTransport for PointerTypeConstTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_pointer_type_const_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for PointerTypeConstTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for PointerTypeConstTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PointerTypeConstTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -5777,30 +5962,27 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimitiveTypeEnum {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in PrimitiveTypeEnum"))?;
-        match text.as_str() {
-            "u8" => Ok(Self::U8),
-            "i8" => Ok(Self::I8),
-            "u16" => Ok(Self::U16),
-            "i16" => Ok(Self::I16),
-            "u32" => Ok(Self::U32),
-            "i32" => Ok(Self::I32),
-            "u64" => Ok(Self::U64),
-            "i64" => Ok(Self::I64),
-            "u128" => Ok(Self::U128),
-            "i128" => Ok(Self::I128),
-            "isize" => Ok(Self::Isize),
-            "usize" => Ok(Self::Usize),
-            "f32" => Ok(Self::F32),
-            "f64" => Ok(Self::F64),
-            "bool" => Ok(Self::Bool),
-            "str" => Ok(Self::Str),
-            "char" => Ok(Self::Char),
+        let kind_id: u16 = u16::from_napi_value(env, napi_val)?;
+        match kind_id {
+            28 => Ok(Self::U8), // "u8"
+            29 => Ok(Self::I8), // "i8"
+            30 => Ok(Self::U16), // "u16"
+            31 => Ok(Self::I16), // "i16"
+            32 => Ok(Self::U32), // "u32"
+            33 => Ok(Self::I32), // "i32"
+            34 => Ok(Self::U64), // "u64"
+            35 => Ok(Self::I64), // "i64"
+            36 => Ok(Self::U128), // "u128"
+            37 => Ok(Self::I128), // "i128"
+            38 => Ok(Self::Isize), // "isize"
+            39 => Ok(Self::Usize), // "usize"
+            40 => Ok(Self::F32), // "f32"
+            41 => Ok(Self::F64), // "f64"
+            42 => Ok(Self::Bool), // "bool"
+            43 => Ok(Self::Str), // "str"
+            44 => Ok(Self::Char), // "char"
             other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for PrimitiveTypeEnum",
-                other
+                "unknown kind id {{other}} for PrimitiveTypeEnum",
             ))),
         }
     }
@@ -5880,7 +6062,7 @@ pub struct _RangeExpressionBareTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub operator: OperatorEnum,
+    pub operator: bool,
 }
 
 impl ::sittir_core::types::RenderableTransport for _RangeExpressionBareTransport {
@@ -5935,7 +6117,7 @@ pub struct RangeExpressionPostfixTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub start: ExpressionTransport,
-    pub operator: OperatorEnum,
+    pub operator: bool,
 }
 
 impl ::sittir_core::types::RenderableTransport for RangeExpressionPostfixTransport {
@@ -5961,7 +6143,7 @@ pub struct RangeExpressionPrefixTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub operator: OperatorEnum,
+    pub operator: bool,
     pub end: ExpressionTransport,
 }
 
@@ -5975,18 +6157,12 @@ impl ::sittir_core::types::RenderableTransport for RangeExpressionPrefixTranspor
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct RangePatternLeftBareTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -5997,6 +6173,55 @@ impl ::sittir_core::types::RenderableTransport for RangePatternLeftBareTransport
     ) -> Result<(), ::askama::Error> {
         let s = render_range_pattern_left_bare_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for RangePatternLeftBareTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for RangePatternLeftBareTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for RangePatternLeftBareTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -6052,71 +6277,12 @@ impl ::sittir_core::types::RenderableTransport for RangePatternPrefixTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum RefMarkerEnum {
-    RefKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for RefMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in RefMarkerEnum"))?;
-        match text.as_str() {
-            "ref" => Ok(Self::RefKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for RefMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for RefMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("RefMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for RefMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::RefKw => "ref",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for RefMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::RefKw => "ref",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ReferenceExpressionRawConstTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -6127,6 +6293,55 @@ impl ::sittir_core::types::RenderableTransport for ReferenceExpressionRawConstTr
     ) -> Result<(), ::askama::Error> {
         let s = render_reference_expression_raw_const_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for ReferenceExpressionRawConstTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for ReferenceExpressionRawConstTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ReferenceExpressionRawConstTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -6181,59 +6396,6 @@ impl ::sittir_core::types::RenderableTransport for ReservedIdentifierTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_reserved_identifier_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum _SelfEnum {
-    SelfKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for _SelfEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in _SelfEnum"))?;
-        match text.as_str() {
-            "self" => Ok(Self::SelfKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for _SelfEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for _SelfEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("_SelfEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for _SelfEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::SelfKw => "self",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for _SelfEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::SelfKw => "self",
-        }).map_err(::askama::Error::from)
     }
 }
 
@@ -6293,18 +6455,12 @@ impl ::sittir_core::types::RenderableTransport for StructItemTupleTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct StructItemUnitTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -6315,6 +6471,55 @@ impl ::sittir_core::types::RenderableTransport for StructItemUnitTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_struct_item_unit_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for StructItemUnitTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for StructItemUnitTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for StructItemUnitTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -6343,28 +6548,25 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenBindingPatternTypeEnum {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in TokenBindingPatternTypeEnum"))?;
-        match text.as_str() {
-            "block" => Ok(Self::Block),
-            "expr" => Ok(Self::Expr),
-            "expr_2021" => Ok(Self::Expr2021),
-            "ident" => Ok(Self::Ident),
-            "item" => Ok(Self::Item),
-            "lifetime" => Ok(Self::Lifetime),
-            "literal" => Ok(Self::Literal),
-            "meta" => Ok(Self::Meta),
-            "pat" => Ok(Self::Pat),
-            "pat_param" => Ok(Self::PatParam),
-            "path" => Ok(Self::Path),
-            "stmt" => Ok(Self::Stmt),
-            "tt" => Ok(Self::Tt),
-            "ty" => Ok(Self::Ty),
-            "vis" => Ok(Self::Vis),
+        let kind_id: u16 = u16::from_napi_value(env, napi_val)?;
+        match kind_id {
+            293 => Ok(Self::Block), // "block"
+            14 => Ok(Self::Expr), // "expr"
+            15 => Ok(Self::Expr2021), // "expr_2021"
+            16 => Ok(Self::Ident), // "ident"
+            17 => Ok(Self::Item), // "item"
+            219 => Ok(Self::Lifetime), // "lifetime"
+            19 => Ok(Self::Literal), // "literal"
+            20 => Ok(Self::Meta), // "meta"
+            21 => Ok(Self::Pat), // "pat"
+            22 => Ok(Self::PatParam), // "pat_param"
+            23 => Ok(Self::Path), // "path"
+            24 => Ok(Self::Stmt), // "stmt"
+            25 => Ok(Self::Tt), // "tt"
+            26 => Ok(Self::Ty), // "ty"
+            27 => Ok(Self::Vis), // "vis"
             other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for TokenBindingPatternTypeEnum",
-                other
+                "unknown kind id {{other}} for TokenBindingPatternTypeEnum",
             ))),
         }
     }
@@ -6629,16 +6831,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnaryExpressionOperatorEnum {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in UnaryExpressionOperatorEnum"))?;
-        match text.as_str() {
-            "-" => Ok(Self::Minus),
-            "*" => Ok(Self::Star),
-            "!" => Ok(Self::Bang),
+        let kind_id: u16 = u16::from_napi_value(env, napi_val)?;
+        match kind_id {
+            45 => Ok(Self::Minus), // "-"
+            11 => Ok(Self::Star), // "*"
+            49 => Ok(Self::Bang), // "!"
             other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for UnaryExpressionOperatorEnum",
-                other
+                "unknown kind id {{other}} for UnaryExpressionOperatorEnum",
             ))),
         }
     }
@@ -6673,59 +6872,6 @@ impl ::sittir_core::types::RenderableTransport for UnaryExpressionOperatorEnum {
             Self::Minus => "-",
             Self::Star => "*",
             Self::Bang => "!",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum UnsafeMarkerEnum {
-    UnsafeKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for UnsafeMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in UnsafeMarkerEnum"))?;
-        match text.as_str() {
-            "unsafe" => Ok(Self::UnsafeKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for UnsafeMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for UnsafeMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("UnsafeMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for UnsafeMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::UnsafeKw => "unsafe",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for UnsafeMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::UnsafeKw => "unsafe",
         }).map_err(::askama::Error::from)
     }
 }
@@ -6771,7 +6917,7 @@ pub struct VisibilityModifierInPathTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "in"))]
-    pub r#in: VisibilityModifierInPathInEnum,
+    pub r#in: bool,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<PathTransport>,
 }
@@ -6800,7 +6946,7 @@ pub struct VisibilityModifierPubTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "pub"))]
-    pub r#pub: VisibilityModifierPubPubEnum,
+    pub r#pub: bool,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<Box<AnyTransport>>>,
 }
@@ -6815,18 +6961,12 @@ impl ::sittir_core::types::RenderableTransport for VisibilityModifierPubTranspor
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct WildcardPatternTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -6837,6 +6977,55 @@ impl ::sittir_core::types::RenderableTransport for WildcardPatternTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_wildcard_pattern_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for WildcardPatternTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for WildcardPatternTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for WildcardPatternTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -7085,7 +7274,7 @@ pub struct AsyncBlockTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub move_marker: Option<MoveMarkerEnum>,
+    pub move_marker: Option<bool>,
     pub block: BlockTransport,
 }
 
@@ -7220,7 +7409,7 @@ pub struct BinaryExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub left: ExpressionTransport,
-    pub operator: BinaryExpressionOperatorEnum,
+    pub operator: bool,
     pub right: ExpressionTransport,
 }
 
@@ -7300,15 +7489,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for BooleanLiteralEnum {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in BooleanLiteralEnum"))?;
-        match text.as_str() {
-            "true" => Ok(Self::True),
-            "false" => Ok(Self::False),
+        let kind_id: u16 = u16::from_napi_value(env, napi_val)?;
+        match kind_id {
+            131 => Ok(Self::True), // "true"
+            132 => Ok(Self::False), // "false"
             other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for BooleanLiteralEnum",
-                other
+                "unknown kind id {{other}} for BooleanLiteralEnum",
             ))),
         }
     }
@@ -7482,18 +7668,12 @@ impl ::sittir_core::types::RenderableTransport for CapturedPatternTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct CharLiteralTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -7504,6 +7684,55 @@ impl ::sittir_core::types::RenderableTransport for CharLiteralTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_char_literal_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for CharLiteralTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for CharLiteralTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for CharLiteralTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -7586,9 +7815,9 @@ pub struct ClosureExpressionUFormBlockTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub static_marker: Option<ClosureExpressionStaticMarkerEnum>,
-    pub async_marker: Option<ClosureExpressionAsyncMarkerEnum>,
-    pub move_marker: Option<MoveMarkerEnum>,
+    pub static_marker: Option<bool>,
+    pub async_marker: Option<bool>,
+    pub move_marker: Option<bool>,
     pub parameters: ClosureParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<ClosureExpressionBlockTransport>,
@@ -7617,9 +7846,9 @@ pub struct ClosureExpressionUFormExprTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub static_marker: Option<ClosureExpressionStaticMarkerEnum>,
-    pub async_marker: Option<ClosureExpressionAsyncMarkerEnum>,
-    pub move_marker: Option<MoveMarkerEnum>,
+    pub static_marker: Option<bool>,
+    pub async_marker: Option<bool>,
+    pub move_marker: Option<bool>,
     pub parameters: ClosureParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<_ClosureExpressionExprTransport>,
@@ -7828,18 +8057,12 @@ impl ::sittir_core::types::RenderableTransport for ContinueExpressionTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct CrateTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -7850,6 +8073,55 @@ impl ::sittir_core::types::RenderableTransport for CrateTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_crate_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for CrateTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for CrateTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for CrateTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -8140,18 +8412,12 @@ impl ::sittir_core::types::RenderableTransport for ElseClauseTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct EmptyStatementTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -8162,6 +8428,55 @@ impl ::sittir_core::types::RenderableTransport for EmptyStatementTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_empty_statement_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for EmptyStatementTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for EmptyStatementTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for EmptyStatementTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -8251,18 +8566,12 @@ impl ::sittir_core::types::RenderableTransport for EnumVariantListTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct EscapeSequenceTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -8273,6 +8582,55 @@ impl ::sittir_core::types::RenderableTransport for EscapeSequenceTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_escape_sequence_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for EscapeSequenceTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for EscapeSequenceTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for EscapeSequenceTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -8439,7 +8797,7 @@ pub struct ExternCrateDeclarationTransport {
     pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "crate"))]
-    pub crate_: _CrateEnum,
+    pub crate_: bool,
     pub name: IdentifierTransport,
     pub alias: Option<IdentifierTransport>,
 }
@@ -8698,8 +9056,8 @@ pub struct FieldPatternUFormShorthandTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub ref_marker: Option<RefMarkerEnum>,
-    pub mutable_specifier: Option<_MutableSpecifierEnum>,
+    pub ref_marker: Option<bool>,
+    pub mutable_specifier: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<_FieldPatternShorthandTransport>,
 }
@@ -8727,8 +9085,8 @@ pub struct FieldPatternUFormNamedTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub ref_marker: Option<RefMarkerEnum>,
-    pub mutable_specifier: Option<_MutableSpecifierEnum>,
+    pub ref_marker: Option<bool>,
+    pub mutable_specifier: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<FieldPatternNamedTransport>,
 }
@@ -8948,28 +9306,25 @@ impl ::napi::bindgen_prelude::FromNapiValue for FragmentSpecifierEnum {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in FragmentSpecifierEnum"))?;
-        match text.as_str() {
-            "block" => Ok(Self::Block),
-            "expr" => Ok(Self::Expr),
-            "expr_2021" => Ok(Self::Expr2021),
-            "ident" => Ok(Self::Ident),
-            "item" => Ok(Self::Item),
-            "lifetime" => Ok(Self::Lifetime),
-            "literal" => Ok(Self::Literal),
-            "meta" => Ok(Self::Meta),
-            "pat" => Ok(Self::Pat),
-            "pat_param" => Ok(Self::PatParam),
-            "path" => Ok(Self::Path),
-            "stmt" => Ok(Self::Stmt),
-            "tt" => Ok(Self::Tt),
-            "ty" => Ok(Self::Ty),
-            "vis" => Ok(Self::Vis),
+        let kind_id: u16 = u16::from_napi_value(env, napi_val)?;
+        match kind_id {
+            293 => Ok(Self::Block), // "block"
+            14 => Ok(Self::Expr), // "expr"
+            15 => Ok(Self::Expr2021), // "expr_2021"
+            16 => Ok(Self::Ident), // "ident"
+            17 => Ok(Self::Item), // "item"
+            219 => Ok(Self::Lifetime), // "lifetime"
+            19 => Ok(Self::Literal), // "literal"
+            20 => Ok(Self::Meta), // "meta"
+            21 => Ok(Self::Pat), // "pat"
+            22 => Ok(Self::PatParam), // "pat_param"
+            23 => Ok(Self::Path), // "path"
+            24 => Ok(Self::Stmt), // "stmt"
+            25 => Ok(Self::Tt), // "tt"
+            26 => Ok(Self::Ty), // "ty"
+            27 => Ok(Self::Vis), // "vis"
             other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for FragmentSpecifierEnum",
-                other
+                "unknown kind id {{other}} for FragmentSpecifierEnum",
             ))),
         }
     }
@@ -9166,7 +9521,7 @@ pub struct GenBlockTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub move_marker: Option<MoveMarkerEnum>,
+    pub move_marker: Option<bool>,
     pub block: BlockTransport,
 }
 
@@ -9278,7 +9633,7 @@ pub struct GenericTypeWithTurbofishTransport {
     pub transport_node_id: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
-    pub turbofish: GenericTypeWithTurbofishTurbofishEnum,
+    pub turbofish: bool,
     pub type_arguments: TypeArgumentsTransport,
 }
 
@@ -9320,18 +9675,12 @@ impl ::sittir_core::types::RenderableTransport for HigherRankedTraitBoundTranspo
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct IdentifierTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -9342,6 +9691,55 @@ impl ::sittir_core::types::RenderableTransport for IdentifierTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_identifier_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for IdentifierTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -9452,9 +9850,9 @@ pub struct ImplItemUFormBodyTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub unsafe_marker: Option<UnsafeMarkerEnum>,
+    pub unsafe_marker: Option<bool>,
     pub type_parameters: Option<TypeParametersTransport>,
-    pub negative: Option<ImplItemNegativeEnum>,
+    pub negative: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "trait"))]
     pub r#trait: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
@@ -9487,9 +9885,9 @@ pub struct ImplItemUFormSemiTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub unsafe_marker: Option<UnsafeMarkerEnum>,
+    pub unsafe_marker: Option<bool>,
     pub type_parameters: Option<TypeParametersTransport>,
-    pub negative: Option<ImplItemNegativeEnum>,
+    pub negative: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "trait"))]
     pub r#trait: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
@@ -9562,18 +9960,12 @@ impl ::sittir_core::types::RenderableTransport for InnerAttributeItemTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct IntegerLiteralTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -9584,6 +9976,55 @@ impl ::sittir_core::types::RenderableTransport for IntegerLiteralTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_integer_literal_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for IntegerLiteralTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for IntegerLiteralTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for IntegerLiteralTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -9682,7 +10123,7 @@ pub struct LetDeclarationTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub mutable_specifier: Option<_MutableSpecifierEnum>,
+    pub mutable_specifier: Option<bool>,
     pub pattern: PatternTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Option<_TypeTransport>,
@@ -10373,18 +10814,12 @@ impl ::sittir_core::types::RenderableTransport for MatchPatternTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct MetavariableTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -10395,6 +10830,55 @@ impl ::sittir_core::types::RenderableTransport for MetavariableTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_metavariable_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for MetavariableTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for MetavariableTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for MetavariableTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -10535,7 +11019,7 @@ pub struct MutPatternTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub mutable_specifier: _MutableSpecifierEnum,
+    pub mutable_specifier: bool,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<PatternTransport>,
 }
@@ -10550,18 +11034,12 @@ impl ::sittir_core::types::RenderableTransport for MutPatternTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct MutableSpecifierTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -10572,6 +11050,55 @@ impl ::sittir_core::types::RenderableTransport for MutableSpecifierTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_mutable_specifier_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for MutableSpecifierTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for MutableSpecifierTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for MutableSpecifierTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -10601,18 +11128,12 @@ impl ::sittir_core::types::RenderableTransport for NegativeLiteralTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct NeverTypeTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -10623,6 +11144,55 @@ impl ::sittir_core::types::RenderableTransport for NeverTypeTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_never_type_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for NeverTypeTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for NeverTypeTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for NeverTypeTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -10760,7 +11330,7 @@ pub struct ParameterTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub mutable_specifier: Option<_MutableSpecifierEnum>,
+    pub mutable_specifier: Option<bool>,
     pub pattern: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: _TypeTransport,
@@ -10996,7 +11566,7 @@ pub struct RangeExpressionBareTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub operator: OperatorEnum,
+    pub operator: bool,
 }
 
 impl ::sittir_core::types::RenderableTransport for RangeExpressionBareTransport {
@@ -11388,7 +11958,7 @@ pub struct ReferencePatternTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub mutable_specifier: Option<_MutableSpecifierEnum>,
+    pub mutable_specifier: Option<bool>,
     pub pattern: PatternTransport,
 }
 
@@ -11416,7 +11986,7 @@ pub struct ReferenceTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub lifetime: Option<LifetimeTransport>,
-    pub mutable_specifier: Option<_MutableSpecifierEnum>,
+    pub mutable_specifier: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: _TypeTransport,
 }
@@ -11431,18 +12001,12 @@ impl ::sittir_core::types::RenderableTransport for ReferenceTypeTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct RemainingFieldPatternTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -11453,6 +12017,55 @@ impl ::sittir_core::types::RenderableTransport for RemainingFieldPatternTranspor
     ) -> Result<(), ::askama::Error> {
         let s = render_remaining_field_pattern_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for RemainingFieldPatternTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for RemainingFieldPatternTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for RemainingFieldPatternTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -11618,18 +12231,12 @@ impl ::sittir_core::types::RenderableTransport for ScopedUseListTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct Self_Transport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -11640,6 +12247,55 @@ impl ::sittir_core::types::RenderableTransport for Self_Transport {
     ) -> Result<(), ::askama::Error> {
         let s = render_self_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for Self_Transport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for Self_Transport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Self_Transport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -11658,9 +12314,9 @@ pub struct SelfParameterTransport {
     pub transport_node_id: Option<f64>,
     pub reference: Option<Box<AnyTransport>>,
     pub lifetime: Option<LifetimeTransport>,
-    pub mutable_specifier: Option<_MutableSpecifierEnum>,
+    pub mutable_specifier: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "self"))]
-    pub self_: _SelfEnum,
+    pub self_: bool,
 }
 
 impl ::sittir_core::types::RenderableTransport for SelfParameterTransport {
@@ -11673,18 +12329,12 @@ impl ::sittir_core::types::RenderableTransport for SelfParameterTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ShebangTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -11695,6 +12345,55 @@ impl ::sittir_core::types::RenderableTransport for ShebangTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_shebang_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for ShebangTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for ShebangTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ShebangTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -12027,18 +12726,12 @@ impl ::sittir_core::types::RenderableTransport for StructPatternTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SuperTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -12049,6 +12742,55 @@ impl ::sittir_core::types::RenderableTransport for SuperTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_super_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for SuperTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for SuperTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SuperTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -12587,7 +13329,7 @@ pub struct TraitItemTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
-    pub unsafe_marker: Option<UnsafeMarkerEnum>,
+    pub unsafe_marker: Option<bool>,
     pub name: TypeIdentifierTransport,
     pub type_parameters: Option<TypeParametersTransport>,
     pub bounds: Option<TraitBoundsTransport>,
@@ -12995,18 +13737,12 @@ impl ::sittir_core::types::RenderableTransport for UnionItemTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct UnitExpressionTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -13020,18 +13756,61 @@ impl ::sittir_core::types::RenderableTransport for UnitExpressionTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for UnitExpressionTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for UnitExpressionTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for UnitExpressionTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct UnitTypeTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -13042,6 +13821,55 @@ impl ::sittir_core::types::RenderableTransport for UnitTypeTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_unit_type_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for UnitTypeTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for UnitTypeTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for UnitTypeTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -13218,7 +14046,7 @@ pub struct VariadicParameterTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub mutable_specifier: Option<_MutableSpecifierEnum>,
+    pub mutable_specifier: Option<bool>,
     pub pattern: Option<PatternTransport>,
 }
 
@@ -13493,18 +14321,12 @@ impl ::sittir_core::types::RenderableTransport for YieldExpressionTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct StringContentTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -13518,18 +14340,61 @@ impl ::sittir_core::types::RenderableTransport for StringContentTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for StringContentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for StringContentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for StringContentTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct RawStringLiteralContentTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -13543,18 +14408,61 @@ impl ::sittir_core::types::RenderableTransport for RawStringLiteralContentTransp
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for RawStringLiteralContentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for RawStringLiteralContentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for RawStringLiteralContentTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct FloatLiteralTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -13568,18 +14476,61 @@ impl ::sittir_core::types::RenderableTransport for FloatLiteralTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for FloatLiteralTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for FloatLiteralTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for FloatLiteralTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct OuterBlockDocCommentMarkerTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -13593,18 +14544,61 @@ impl ::sittir_core::types::RenderableTransport for OuterBlockDocCommentMarkerTra
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for OuterBlockDocCommentMarkerTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for OuterBlockDocCommentMarkerTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for OuterBlockDocCommentMarkerTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct InnerBlockDocCommentMarkerTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -13618,18 +14612,61 @@ impl ::sittir_core::types::RenderableTransport for InnerBlockDocCommentMarkerTra
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for InnerBlockDocCommentMarkerTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for InnerBlockDocCommentMarkerTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for InnerBlockDocCommentMarkerTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct LineDocContentTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -13643,18 +14680,61 @@ impl ::sittir_core::types::RenderableTransport for LineDocContentTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for LineDocContentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for LineDocContentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for LineDocContentTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct ErrorSentinelTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -13668,18 +14748,61 @@ impl ::sittir_core::types::RenderableTransport for ErrorSentinelTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for ErrorSentinelTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for ErrorSentinelTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ErrorSentinelTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct BracketTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -13693,18 +14816,61 @@ impl ::sittir_core::types::RenderableTransport for BracketTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for BracketTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for BracketTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for BracketTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct CloseBracketTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -13718,18 +14884,61 @@ impl ::sittir_core::types::RenderableTransport for CloseBracketTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for CloseBracketTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for CloseBracketTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for CloseBracketTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct SemiTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -13743,18 +14952,61 @@ impl ::sittir_core::types::RenderableTransport for SemiTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for SemiTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for SemiTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SemiTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct ArrowTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -13768,18 +15020,61 @@ impl ::sittir_core::types::RenderableTransport for ArrowTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for ArrowTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for ArrowTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ArrowTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct AnonymousTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -13793,18 +15088,61 @@ impl ::sittir_core::types::RenderableTransport for AnonymousTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AnonymousTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct BraceTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -13818,18 +15156,61 @@ impl ::sittir_core::types::RenderableTransport for BraceTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for BraceTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for BraceTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for BraceTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct CloseBraceTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -13843,18 +15224,61 @@ impl ::sittir_core::types::RenderableTransport for CloseBraceTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for CloseBraceTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for CloseBraceTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for CloseBraceTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct ParenTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -13868,18 +15292,61 @@ impl ::sittir_core::types::RenderableTransport for ParenTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for ParenTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for ParenTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ParenTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct CloseParenTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -13893,18 +15360,61 @@ impl ::sittir_core::types::RenderableTransport for CloseParenTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for CloseParenTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for CloseParenTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for CloseParenTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct ColonTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -13918,18 +15428,61 @@ impl ::sittir_core::types::RenderableTransport for ColonTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ColonTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct FnTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -13943,18 +15496,61 @@ impl ::sittir_core::types::RenderableTransport for FnTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for FnTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for FnTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for FnTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct BangTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -13968,18 +15564,61 @@ impl ::sittir_core::types::RenderableTransport for BangTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for BangTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for BangTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for BangTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct AsyncTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -13993,18 +15632,61 @@ impl ::sittir_core::types::RenderableTransport for AsyncTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AsyncTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct InTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14018,18 +15700,61 @@ impl ::sittir_core::types::RenderableTransport for InTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for InTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for InTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for InTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct MoveTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14043,18 +15768,61 @@ impl ::sittir_core::types::RenderableTransport for MoveTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for MoveTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for MoveTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for MoveTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct DotdotTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14068,18 +15836,61 @@ impl ::sittir_core::types::RenderableTransport for DotdotTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for DotdotTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for DotdotTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for DotdotTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct PubTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14093,18 +15904,61 @@ impl ::sittir_core::types::RenderableTransport for PubTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for PubTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for PubTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PubTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct RefTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14118,18 +15972,61 @@ impl ::sittir_core::types::RenderableTransport for RefTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for RefTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for RefTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for RefTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct StaticTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14143,18 +16040,61 @@ impl ::sittir_core::types::RenderableTransport for StaticTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for StaticTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for StaticTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for StaticTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct UnsafeTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14168,18 +16108,61 @@ impl ::sittir_core::types::RenderableTransport for UnsafeTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for UnsafeTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for UnsafeTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for UnsafeTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct AndandTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14193,18 +16176,61 @@ impl ::sittir_core::types::RenderableTransport for AndandTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for AndandTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for AndandTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AndandTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct CommaTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14218,18 +16244,61 @@ impl ::sittir_core::types::RenderableTransport for CommaTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for CommaTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct TokSqTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14243,18 +16312,61 @@ impl ::sittir_core::types::RenderableTransport for TokSqTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for TokSqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for TokSqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TokSqTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct AsTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14268,18 +16380,61 @@ impl ::sittir_core::types::RenderableTransport for AsTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for AsTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for AsTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AsTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct AwaitTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14293,18 +16448,61 @@ impl ::sittir_core::types::RenderableTransport for AwaitTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for AwaitTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for AwaitTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AwaitTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct BreakTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14318,18 +16516,61 @@ impl ::sittir_core::types::RenderableTransport for BreakTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for BreakTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct ConstTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14343,18 +16584,61 @@ impl ::sittir_core::types::RenderableTransport for ConstTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for ConstTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for ConstTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ConstTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct ContinueTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14368,18 +16652,61 @@ impl ::sittir_core::types::RenderableTransport for ContinueTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for ContinueTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for ContinueTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ContinueTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct DefaultTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14393,18 +16720,61 @@ impl ::sittir_core::types::RenderableTransport for DefaultTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for DefaultTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for DefaultTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for DefaultTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct EnumTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14418,18 +16788,61 @@ impl ::sittir_core::types::RenderableTransport for EnumTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for EnumTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for EnumTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for EnumTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct ForTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14443,18 +16856,61 @@ impl ::sittir_core::types::RenderableTransport for ForTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ForTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct GenTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14468,18 +16924,61 @@ impl ::sittir_core::types::RenderableTransport for GenTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for GenTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for GenTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for GenTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct IfTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14493,18 +16992,61 @@ impl ::sittir_core::types::RenderableTransport for IfTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for IfTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct ImplTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14518,18 +17060,61 @@ impl ::sittir_core::types::RenderableTransport for ImplTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for ImplTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for ImplTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ImplTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct LetTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14543,18 +17128,61 @@ impl ::sittir_core::types::RenderableTransport for LetTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for LetTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for LetTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for LetTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct LoopTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14568,18 +17196,61 @@ impl ::sittir_core::types::RenderableTransport for LoopTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for LoopTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for LoopTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for LoopTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct MatchTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14593,18 +17264,61 @@ impl ::sittir_core::types::RenderableTransport for MatchTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for MatchTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for MatchTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for MatchTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct ModTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14618,18 +17332,61 @@ impl ::sittir_core::types::RenderableTransport for ModTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for ModTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for ModTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ModTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct ReturnTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14643,18 +17400,61 @@ impl ::sittir_core::types::RenderableTransport for ReturnTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ReturnTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct StructTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14668,18 +17468,61 @@ impl ::sittir_core::types::RenderableTransport for StructTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for StructTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for StructTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for StructTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct TraitTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14693,18 +17536,61 @@ impl ::sittir_core::types::RenderableTransport for TraitTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for TraitTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for TraitTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TraitTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct TypeTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14718,18 +17604,61 @@ impl ::sittir_core::types::RenderableTransport for TypeTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for TypeTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for TypeTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TypeTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct UnionTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14743,18 +17672,61 @@ impl ::sittir_core::types::RenderableTransport for UnionTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for UnionTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for UnionTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for UnionTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct UseTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14768,18 +17740,61 @@ impl ::sittir_core::types::RenderableTransport for UseTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for UseTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for UseTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for UseTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct WhereTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14793,18 +17808,61 @@ impl ::sittir_core::types::RenderableTransport for WhereTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for WhereTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for WhereTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for WhereTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct WhileTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14818,18 +17876,61 @@ impl ::sittir_core::types::RenderableTransport for WhileTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for WhileTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct PipeTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14843,18 +17944,61 @@ impl ::sittir_core::types::RenderableTransport for PipeTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PipeTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct SlashTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14868,18 +18012,61 @@ impl ::sittir_core::types::RenderableTransport for SlashTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SlashTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct RawTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14893,18 +18080,61 @@ impl ::sittir_core::types::RenderableTransport for RawTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for RawTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for RawTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for RawTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct EqTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14918,18 +18148,61 @@ impl ::sittir_core::types::RenderableTransport for EqTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for EqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for EqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for EqTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct HashTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14943,18 +18216,61 @@ impl ::sittir_core::types::RenderableTransport for HashTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for HashTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for HashTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for HashTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct DotTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14968,18 +18284,61 @@ impl ::sittir_core::types::RenderableTransport for DotTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for DotTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct TokSlashStarTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -14993,18 +18352,61 @@ impl ::sittir_core::types::RenderableTransport for TokSlashStarTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for TokSlashStarTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for TokSlashStarTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TokSlashStarTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct TokStarSlashTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -15018,18 +18420,61 @@ impl ::sittir_core::types::RenderableTransport for TokStarSlashTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for TokStarSlashTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for TokStarSlashTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TokStarSlashTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct PlusTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -15043,18 +18488,61 @@ impl ::sittir_core::types::RenderableTransport for PlusTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PlusTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct LtTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -15068,18 +18556,61 @@ impl ::sittir_core::types::RenderableTransport for LtTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for LtTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct GtTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -15093,18 +18624,61 @@ impl ::sittir_core::types::RenderableTransport for GtTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for GtTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for GtTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for GtTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct AtTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -15118,18 +18692,61 @@ impl ::sittir_core::types::RenderableTransport for AtTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AtTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct DynTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -15143,18 +18760,61 @@ impl ::sittir_core::types::RenderableTransport for DynTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for DynTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for DynTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for DynTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct ElseTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -15168,18 +18828,61 @@ impl ::sittir_core::types::RenderableTransport for ElseTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for ElseTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for ElseTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ElseTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct ExternTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -15193,18 +18896,61 @@ impl ::sittir_core::types::RenderableTransport for ExternTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for ExternTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for ExternTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ExternTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct FatArrowTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -15218,18 +18964,61 @@ impl ::sittir_core::types::RenderableTransport for FatArrowTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for FatArrowTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for FatArrowTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for FatArrowTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct MutTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -15243,18 +19032,61 @@ impl ::sittir_core::types::RenderableTransport for MutTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for MutTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for MutTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for MutTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct MinusTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -15268,18 +19100,61 @@ impl ::sittir_core::types::RenderableTransport for MinusTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for MinusTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for MinusTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for MinusTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct AmpTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -15293,18 +19168,61 @@ impl ::sittir_core::types::RenderableTransport for AmpTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for AmpTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for AmpTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AmpTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct QuestionTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -15318,18 +19236,61 @@ impl ::sittir_core::types::RenderableTransport for QuestionTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for QuestionTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for QuestionTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for QuestionTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct TokDqTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -15343,18 +19304,61 @@ impl ::sittir_core::types::RenderableTransport for TokDqTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for TokDqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for TokDqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TokDqTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct TokDollarTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -15368,18 +19372,61 @@ impl ::sittir_core::types::RenderableTransport for TokDollarTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for TokDollarTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for TokDollarTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TokDollarTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct TryTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -15393,18 +19440,61 @@ impl ::sittir_core::types::RenderableTransport for TryTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for TryTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for TryTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TryTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct StarTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -15418,18 +19508,61 @@ impl ::sittir_core::types::RenderableTransport for StarTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for StarTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct EllipsisTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -15443,18 +19576,61 @@ impl ::sittir_core::types::RenderableTransport for EllipsisTransport {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for EllipsisTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct YieldTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub text: String,
 }
 
@@ -15465,6 +19641,55 @@ impl ::sittir_core::types::RenderableTransport for YieldTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_yield_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for YieldTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = String::from_napi_value(env, napi_val)?;
+        Ok(Self {
+            transport_source: None,
+            transport_named: None,
+            transport_span: None,
+            transport_node_id: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for YieldTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_id = obj.get("$nodeId")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_id,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for YieldTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -15501,12 +19726,12 @@ fn render_range_expression_binary_operator_transport(t: &RangeExpressionBinaryOp
     Ok(t.to_string())
 }
 
-fn render_visibility_modifier_in_path_in_transport(t: &VisibilityModifierInPathInEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
+fn render_visibility_modifier_in_path_in_transport(t: &bool) -> Result<String, ::askama::Error> {
+    Ok(if *t { "in".to_string() } else { String::new() })
 }
 
-fn render_visibility_modifier_pub_pub_transport(t: &VisibilityModifierPubPubEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
+fn render_visibility_modifier_pub_pub_transport(t: &bool) -> Result<String, ::askama::Error> {
+    Ok(if *t { "pub".to_string() } else { String::new() })
 }
 
 fn render_array_expression_list_transport(node: &ArrayExpressionListTransport) -> Result<String, ::askama::Error> {
@@ -15521,12 +19746,12 @@ fn render_array_expression_semi_transport(node: &ArrayExpressionSemiTransport) -
     Ok(node.transport_text.clone().unwrap_or_default())
 }
 
-fn render_binary_expression_operator_transport(t: &BinaryExpressionOperatorEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
+fn render_binary_expression_operator_transport(t: &bool) -> Result<String, ::askama::Error> {
+    Ok(if *t { "&&".to_string() } else { String::new() })
 }
 
-fn render_closure_expression_async_marker_transport(t: &ClosureExpressionAsyncMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
+fn render_closure_expression_async_marker_transport(t: &bool) -> Result<String, ::askama::Error> {
+    Ok(if *t { "async".to_string() } else { String::new() })
 }
 
 fn render_closure_expression_block_transport(node: &ClosureExpressionBlockTransport) -> Result<String, ::askama::Error> {
@@ -15537,16 +19762,16 @@ fn render__closure_expression_expr_transport(node: &_ClosureExpressionExprTransp
     Ok(node.transport_text.clone().unwrap_or_default())
 }
 
-fn render_closure_expression_static_marker_transport(t: &ClosureExpressionStaticMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
+fn render_closure_expression_static_marker_transport(t: &bool) -> Result<String, ::askama::Error> {
+    Ok(if *t { "static".to_string() } else { String::new() })
 }
 
 fn render_compound_assignment_expr_operator_transport(t: &CompoundAssignmentExprOperatorEnum) -> Result<String, ::askama::Error> {
     Ok(t.to_string())
 }
 
-fn render__crate_transport(t: &_CrateEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
+fn render__crate_transport(t: &bool) -> Result<String, ::askama::Error> {
+    Ok(if *t { "crate".to_string() } else { String::new() })
 }
 
 fn render__delim_token_tree_brace_transport(node: &_DelimTokenTreeBraceTransport) -> Result<String, ::askama::Error> {
@@ -15643,16 +19868,16 @@ fn render_function_type_trait_form_transport(node: &FunctionTypeTraitFormTranspo
     template.render()
 }
 
-fn render_generic_type_with_turbofish_turbofish_transport(t: &GenericTypeWithTurbofishTurbofishEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
+fn render_generic_type_with_turbofish_turbofish_transport(t: &bool) -> Result<String, ::askama::Error> {
+    Ok(if *t { "::".to_string() } else { String::new() })
 }
 
 fn render__impl_item_body_transport(node: &_ImplItemBodyTransport) -> Result<String, ::askama::Error> {
     Ok(node.transport_text.clone().unwrap_or_default())
 }
 
-fn render_impl_item_negative_transport(t: &ImplItemNegativeEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
+fn render_impl_item_negative_transport(t: &bool) -> Result<String, ::askama::Error> {
+    Ok(if *t { "!".to_string() } else { String::new() })
 }
 
 fn render_impl_item_semi_transport(t: &ImplItemSemiTransport) -> Result<String, ::askama::Error> {
@@ -15776,12 +20001,12 @@ fn render__mod_item_inline_transport(node: &_ModItemInlineTransport) -> Result<S
     Ok(node.transport_text.clone().unwrap_or_default())
 }
 
-fn render_move_marker_transport(t: &MoveMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
+fn render_move_marker_transport(t: &bool) -> Result<String, ::askama::Error> {
+    Ok(if *t { "move".to_string() } else { String::new() })
 }
 
-fn render__mutable_specifier_transport(t: &_MutableSpecifierEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
+fn render__mutable_specifier_transport(t: &bool) -> Result<String, ::askama::Error> {
+    Ok(if *t { "mut".to_string() } else { String::new() })
 }
 
 fn render_non_special_token_transport(node: &NonSpecialTokenTransport) -> Result<String, ::askama::Error> {
@@ -15792,8 +20017,8 @@ fn render_non_special_token_transport(node: &NonSpecialTokenTransport) -> Result
     Ok(out)
 }
 
-fn render_operator_transport(t: &OperatorEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
+fn render_operator_transport(t: &bool) -> Result<String, ::askama::Error> {
+    Ok(if *t { "..".to_string() } else { String::new() })
 }
 
 fn render_or_pattern_binary_transport(node: &OrPatternBinaryTransport) -> Result<String, ::askama::Error> {
@@ -15852,8 +20077,8 @@ fn render_range_pattern_prefix_transport(node: &RangePatternPrefixTransport) -> 
     Ok(node.transport_text.clone().unwrap_or_default())
 }
 
-fn render_ref_marker_transport(t: &RefMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
+fn render_ref_marker_transport(t: &bool) -> Result<String, ::askama::Error> {
+    Ok(if *t { "ref".to_string() } else { String::new() })
 }
 
 fn render_reference_expression_raw_const_transport(t: &ReferenceExpressionRawConstTransport) -> Result<String, ::askama::Error> {
@@ -15890,8 +20115,8 @@ fn render_reserved_identifier_transport(node: &ReservedIdentifierTransport) -> R
     template.render()
 }
 
-fn render__self_transport(t: &_SelfEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
+fn render__self_transport(t: &bool) -> Result<String, ::askama::Error> {
+    Ok(if *t { "self".to_string() } else { String::new() })
 }
 
 fn render_struct_item_brace_transport(node: &StructItemBraceTransport) -> Result<String, ::askama::Error> {
@@ -15989,8 +20214,8 @@ fn render_unary_expression_operator_transport(t: &UnaryExpressionOperatorEnum) -
     Ok(t.to_string())
 }
 
-fn render_unsafe_marker_transport(t: &UnsafeMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
+fn render_unsafe_marker_transport(t: &bool) -> Result<String, ::askama::Error> {
+    Ok(if *t { "unsafe".to_string() } else { String::new() })
 }
 
 fn render__visibility_modifier_crate_transport(node: &_VisibilityModifierCrateTransport) -> Result<String, ::askama::Error> {
@@ -16012,7 +20237,9 @@ fn render_visibility_modifier_in_path_transport(node: &VisibilityModifierInPathT
             leading: false,
             trailing: false,
         },
-        r#in: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.r#in as &dyn ::sittir_core::types::RenderableTransport)),
+        r#in: ::sittir_core::filters::SingleNonterminalView(
+            if node.r#in { ::sittir_core::filters::Renderable::Text("in") } else { ::sittir_core::filters::Renderable::Text("") }
+        ),
     };
     template.render()
 }
@@ -16135,9 +20362,9 @@ fn render_associated_type_transport(node: &AssociatedTypeTransport) -> Result<St
 fn render_async_block_transport(node: &AsyncBlockTransport) -> Result<String, ::askama::Error> {
     let template = AsyncBlockTemplate {
         block: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.block as &dyn ::sittir_core::types::RenderableTransport)),
-        move_marker: match &node.move_marker {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        move_marker: match node.move_marker {
+            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("move")),
+            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
     };
     template.render()
@@ -16200,7 +20427,9 @@ fn render_base_field_initializer_transport(node: &BaseFieldInitializerTransport)
 fn render_binary_expression_transport(node: &BinaryExpressionTransport) -> Result<String, ::askama::Error> {
     let template = BinaryExpressionTemplate {
         left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left as &dyn ::sittir_core::types::RenderableTransport)),
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator as &dyn ::sittir_core::types::RenderableTransport)),
+        operator: ::sittir_core::filters::SingleNonterminalView(
+            if node.operator { ::sittir_core::filters::Renderable::Text("&&") } else { ::sittir_core::filters::Renderable::Text("") }
+        ),
         right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
@@ -16344,18 +20573,18 @@ fn render_closure_expression_uform_block_transport(node: &ClosureExpressionUForm
             leading: false,
             trailing: false,
         },
-        async_marker: match &node.async_marker {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        async_marker: match node.async_marker {
+            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("async")),
+            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        move_marker: match &node.move_marker {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        move_marker: match node.move_marker {
+            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("move")),
+            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
         parameters: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.parameters as &dyn ::sittir_core::types::RenderableTransport)),
-        static_marker: match &node.static_marker {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        static_marker: match node.static_marker {
+            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("static")),
+            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
     };
     template.render()
@@ -16372,18 +20601,18 @@ fn render_closure_expression_uform_expr_transport(node: &ClosureExpressionUFormE
             leading: false,
             trailing: false,
         },
-        async_marker: match &node.async_marker {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        async_marker: match node.async_marker {
+            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("async")),
+            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        move_marker: match &node.move_marker {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        move_marker: match node.move_marker {
+            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("move")),
+            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
         parameters: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.parameters as &dyn ::sittir_core::types::RenderableTransport)),
-        static_marker: match &node.static_marker {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        static_marker: match node.static_marker {
+            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("static")),
+            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
     };
     template.render()
@@ -16747,7 +20976,9 @@ fn render_extern_crate_declaration_transport(node: &ExternCrateDeclarationTransp
             Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        crate_: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.crate_ as &dyn ::sittir_core::types::RenderableTransport)),
+        crate_: ::sittir_core::filters::SingleNonterminalView(
+            if node.crate_ { ::sittir_core::filters::Renderable::Text("crate") } else { ::sittir_core::filters::Renderable::Text("") }
+        ),
         name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name as &dyn ::sittir_core::types::RenderableTransport)),
         visibility_modifier: match &node.visibility_modifier {
             Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
@@ -16859,13 +21090,13 @@ fn render_field_pattern_uform_shorthand_transport(node: &FieldPatternUFormShorth
             leading: false,
             trailing: false,
         },
-        mutable_specifier: match &node.mutable_specifier {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        mutable_specifier: match node.mutable_specifier {
+            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("mut")),
+            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        ref_marker: match &node.ref_marker {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        ref_marker: match node.ref_marker {
+            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("ref")),
+            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
     };
     template.render()
@@ -16882,13 +21113,13 @@ fn render_field_pattern_uform_named_transport(node: &FieldPatternUFormNamedTrans
             leading: false,
             trailing: false,
         },
-        mutable_specifier: match &node.mutable_specifier {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        mutable_specifier: match node.mutable_specifier {
+            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("mut")),
+            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        ref_marker: match &node.ref_marker {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        ref_marker: match node.ref_marker {
+            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("ref")),
+            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
     };
     template.render()
@@ -17086,9 +21317,9 @@ fn render_function_type_transport(node: &FunctionTypeTransport) -> Result<String
 fn render_gen_block_transport(node: &GenBlockTransport) -> Result<String, ::askama::Error> {
     let template = GenBlockTemplate {
         block: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.block as &dyn ::sittir_core::types::RenderableTransport)),
-        move_marker: match &node.move_marker {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        move_marker: match node.move_marker {
+            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("move")),
+            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
     };
     template.render()
@@ -17128,7 +21359,9 @@ fn render_generic_type_transport(node: &GenericTypeTransport) -> Result<String, 
 
 fn render_generic_type_with_turbofish_transport(node: &GenericTypeWithTurbofishTransport) -> Result<String, ::askama::Error> {
     let template = GenericTypeWithTurbofishTemplate {
-        turbofish: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.turbofish as &dyn ::sittir_core::types::RenderableTransport)),
+        turbofish: ::sittir_core::filters::SingleNonterminalView(
+            if node.turbofish { ::sittir_core::filters::Renderable::Text("::") } else { ::sittir_core::filters::Renderable::Text("") }
+        ),
         r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.r#type.as_ref())),
         type_arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_arguments as &dyn ::sittir_core::types::RenderableTransport)),
     };
@@ -17184,9 +21417,9 @@ fn render_impl_item_uform_body_transport(node: &ImplItemUFormBodyTransport) -> R
             leading: false,
             trailing: false,
         },
-        negative: match &node.negative {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        negative: match node.negative {
+            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("!")),
+            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
         r#trait: match &node.r#trait {
             Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
@@ -17197,9 +21430,9 @@ fn render_impl_item_uform_body_transport(node: &ImplItemUFormBodyTransport) -> R
             Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        unsafe_marker: match &node.unsafe_marker {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        unsafe_marker: match node.unsafe_marker {
+            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("unsafe")),
+            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
         where_clause: match &node.where_clause {
             Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
@@ -17220,9 +21453,9 @@ fn render_impl_item_uform_semi_transport(node: &ImplItemUFormSemiTransport) -> R
             leading: false,
             trailing: false,
         },
-        negative: match &node.negative {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        negative: match node.negative {
+            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("!")),
+            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
         r#trait: match &node.r#trait {
             Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
@@ -17233,9 +21466,9 @@ fn render_impl_item_uform_semi_transport(node: &ImplItemUFormSemiTransport) -> R
             Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        unsafe_marker: match &node.unsafe_marker {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        unsafe_marker: match node.unsafe_marker {
+            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("unsafe")),
+            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
         where_clause: match &node.where_clause {
             Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
@@ -17302,9 +21535,9 @@ fn render_let_declaration_transport(node: &LetDeclarationTransport) -> Result<St
             Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        mutable_specifier: match &node.mutable_specifier {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        mutable_specifier: match node.mutable_specifier {
+            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("mut")),
+            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
         pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern as &dyn ::sittir_core::types::RenderableTransport)),
         r#type: match &node.r#type {
@@ -17679,7 +21912,9 @@ fn render_mut_pattern_transport(node: &MutPatternTransport) -> Result<String, ::
             leading: false,
             trailing: false,
         },
-        mutable_specifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.mutable_specifier as &dyn ::sittir_core::types::RenderableTransport)),
+        mutable_specifier: ::sittir_core::filters::SingleNonterminalView(
+            if node.mutable_specifier { ::sittir_core::filters::Renderable::Text("mut") } else { ::sittir_core::filters::Renderable::Text("") }
+        ),
     };
     template.render()
 }
@@ -17767,9 +22002,9 @@ fn render_ordered_field_declaration_list_transport(node: &OrderedFieldDeclaratio
 
 fn render_parameter_transport(node: &ParameterTransport) -> Result<String, ::askama::Error> {
     let template = ParameterTemplate {
-        mutable_specifier: match &node.mutable_specifier {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        mutable_specifier: match node.mutable_specifier {
+            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("mut")),
+            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
         pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.pattern.as_ref())),
         r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.r#type as &dyn ::sittir_core::types::RenderableTransport)),
@@ -17871,7 +22106,9 @@ fn render_qualified_type_transport(node: &QualifiedTypeTransport) -> Result<Stri
 
 fn render_range_expression_bare_transport(node: &RangeExpressionBareTransport) -> Result<String, ::askama::Error> {
     let template = RangeExpressionBareTemplate {
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator as &dyn ::sittir_core::types::RenderableTransport)),
+        operator: ::sittir_core::filters::SingleNonterminalView(
+            if node.operator { ::sittir_core::filters::Renderable::Text("..") } else { ::sittir_core::filters::Renderable::Text("") }
+        ),
     };
     template.render()
 }
@@ -18041,9 +22278,9 @@ fn render_reference_expression_transport(node: &ReferenceExpressionTransport) ->
 
 fn render_reference_pattern_transport(node: &ReferencePatternTransport) -> Result<String, ::askama::Error> {
     let template = ReferencePatternTemplate {
-        mutable_specifier: match &node.mutable_specifier {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        mutable_specifier: match node.mutable_specifier {
+            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("mut")),
+            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
         pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern as &dyn ::sittir_core::types::RenderableTransport)),
     };
@@ -18056,9 +22293,9 @@ fn render_reference_type_transport(node: &ReferenceTypeTransport) -> Result<Stri
             Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        mutable_specifier: match &node.mutable_specifier {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        mutable_specifier: match node.mutable_specifier {
+            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("mut")),
+            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
         r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.r#type as &dyn ::sittir_core::types::RenderableTransport)),
     };
@@ -18154,15 +22391,17 @@ fn render_self_parameter_transport(node: &SelfParameterTransport) -> Result<Stri
             Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        mutable_specifier: match &node.mutable_specifier {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        mutable_specifier: match node.mutable_specifier {
+            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("mut")),
+            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
         reference: match &node.reference {
             Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        self_: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.self_ as &dyn ::sittir_core::types::RenderableTransport)),
+        self_: ::sittir_core::filters::SingleNonterminalView(
+            if node.self_ { ::sittir_core::filters::Renderable::Text("self") } else { ::sittir_core::filters::Renderable::Text("") }
+        ),
     };
     template.render()
 }
@@ -18626,9 +22865,9 @@ fn render_trait_item_transport(node: &TraitItemTransport) -> Result<String, ::as
             Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
-        unsafe_marker: match &node.unsafe_marker {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        unsafe_marker: match node.unsafe_marker {
+            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("unsafe")),
+            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
         visibility_modifier: match &node.visibility_modifier {
             Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
@@ -18920,9 +23159,9 @@ fn render_use_wildcard_transport(node: &UseWildcardTransport) -> Result<String, 
 
 fn render_variadic_parameter_transport(node: &VariadicParameterTransport) -> Result<String, ::askama::Error> {
     let template = VariadicParameterTemplate {
-        mutable_specifier: match &node.mutable_specifier {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        mutable_specifier: match node.mutable_specifier {
+            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("mut")),
+            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
         pattern: match &node.pattern {
             Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
@@ -20502,13 +24741,13 @@ fn transport_to_node_range_expression_binary_operator(transport: RangeExpression
     ))
 }
 
-fn transport_to_node_visibility_modifier_in_path_in(transport: VisibilityModifierInPathInEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_visibility_modifier_in_path_in(transport: bool) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "__visibility_modifier_in_path_in" — no parser symbol */,
         None,
         None,
         true,
-        Some(transport.to_string()),
+        Some(if transport { "in".to_string() } else { String::new() }),
         None,
         None,
         None,
@@ -20516,13 +24755,13 @@ fn transport_to_node_visibility_modifier_in_path_in(transport: VisibilityModifie
     ))
 }
 
-fn transport_to_node_visibility_modifier_pub_pub(transport: VisibilityModifierPubPubEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_visibility_modifier_pub_pub(transport: bool) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "__visibility_modifier_pub_pub" — no parser symbol */,
         None,
         None,
         true,
-        Some(transport.to_string()),
+        Some(if transport { "pub".to_string() } else { String::new() }),
         None,
         None,
         None,
@@ -20569,13 +24808,13 @@ fn transport_to_node_array_expression_semi(transport: ArrayExpressionSemiTranspo
     ))
 }
 
-fn transport_to_node_binary_expression_operator(transport: BinaryExpressionOperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_binary_expression_operator(transport: bool) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "_binary_expression_operator" — no parser symbol */,
         None,
         None,
         true,
-        Some(transport.to_string()),
+        Some(if transport { "&&".to_string() } else { String::new() }),
         None,
         None,
         None,
@@ -20583,13 +24822,13 @@ fn transport_to_node_binary_expression_operator(transport: BinaryExpressionOpera
     ))
 }
 
-fn transport_to_node_closure_expression_async_marker(transport: ClosureExpressionAsyncMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_closure_expression_async_marker(transport: bool) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "_closure_expression_async_marker" — no parser symbol */,
         None,
         None,
         true,
-        Some(transport.to_string()),
+        Some(if transport { "async".to_string() } else { String::new() }),
         None,
         None,
         None,
@@ -20636,13 +24875,13 @@ fn transport_to_node__closure_expression_expr(transport: _ClosureExpressionExprT
     ))
 }
 
-fn transport_to_node_closure_expression_static_marker(transport: ClosureExpressionStaticMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_closure_expression_static_marker(transport: bool) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "_closure_expression_static_marker" — no parser symbol */,
         None,
         None,
         true,
-        Some(transport.to_string()),
+        Some(if transport { "static".to_string() } else { String::new() }),
         None,
         None,
         None,
@@ -20664,13 +24903,13 @@ fn transport_to_node_compound_assignment_expr_operator(transport: CompoundAssign
     ))
 }
 
-fn transport_to_node__crate(transport: _CrateEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node__crate(transport: bool) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "_crate" — no parser symbol */,
         None,
         None,
         true,
-        Some(transport.to_string()),
+        Some(if transport { "crate".to_string() } else { String::new() }),
         None,
         None,
         None,
@@ -20887,13 +25126,13 @@ fn transport_to_node_function_type_trait_form(transport: FunctionTypeTraitFormTr
     ))
 }
 
-fn transport_to_node_generic_type_with_turbofish_turbofish(transport: GenericTypeWithTurbofishTurbofishEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_generic_type_with_turbofish_turbofish(transport: bool) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "_generic_type_with_turbofish_turbofish" — no parser symbol */,
         None,
         None,
         true,
-        Some(transport.to_string()),
+        Some(if transport { "::".to_string() } else { String::new() }),
         None,
         None,
         None,
@@ -20919,13 +25158,13 @@ fn transport_to_node__impl_item_body(transport: _ImplItemBodyTransport) -> Resul
     ))
 }
 
-fn transport_to_node_impl_item_negative(transport: ImplItemNegativeEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_impl_item_negative(transport: bool) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "_impl_item_negative" — no parser symbol */,
         None,
         None,
         true,
-        Some(transport.to_string()),
+        Some(if transport { "!".to_string() } else { String::new() }),
         None,
         None,
         None,
@@ -21292,13 +25531,13 @@ fn transport_to_node__mod_item_inline(transport: _ModItemInlineTransport) -> Res
     ))
 }
 
-fn transport_to_node_move_marker(transport: MoveMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_move_marker(transport: bool) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "_move_marker" — no parser symbol */,
         None,
         None,
         true,
-        Some(transport.to_string()),
+        Some(if transport { "move".to_string() } else { String::new() }),
         None,
         None,
         None,
@@ -21306,13 +25545,13 @@ fn transport_to_node_move_marker(transport: MoveMarkerEnum) -> Result<TransportN
     ))
 }
 
-fn transport_to_node__mutable_specifier(transport: _MutableSpecifierEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node__mutable_specifier(transport: bool) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "_mutable_specifier" — no parser symbol */,
         None,
         None,
         true,
-        Some(transport.to_string()),
+        Some(if transport { "mut".to_string() } else { String::new() }),
         None,
         None,
         None,
@@ -21337,13 +25576,13 @@ fn transport_to_node_non_special_token(transport: NonSpecialTokenTransport) -> R
     ))
 }
 
-fn transport_to_node_operator(transport: OperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_operator(transport: bool) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "_operator" — no parser symbol */,
         None,
         None,
         true,
-        Some(transport.to_string()),
+        Some(if transport { "..".to_string() } else { String::new() }),
         None,
         None,
         None,
@@ -21573,13 +25812,13 @@ fn transport_to_node_range_pattern_prefix(transport: RangePatternPrefixTransport
     ))
 }
 
-fn transport_to_node_ref_marker(transport: RefMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_ref_marker(transport: bool) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "_ref_marker" — no parser symbol */,
         None,
         None,
         true,
-        Some(transport.to_string()),
+        Some(if transport { "ref".to_string() } else { String::new() }),
         None,
         None,
         None,
@@ -21635,13 +25874,13 @@ fn transport_to_node_reserved_identifier(transport: ReservedIdentifierTransport)
     ))
 }
 
-fn transport_to_node__self(transport: _SelfEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node__self(transport: bool) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "_self" — no parser symbol */,
         None,
         None,
         true,
-        Some(transport.to_string()),
+        Some(if transport { "self".to_string() } else { String::new() }),
         None,
         None,
         None,
@@ -21852,13 +26091,13 @@ fn transport_to_node_unary_expression_operator(transport: UnaryExpressionOperato
     ))
 }
 
-fn transport_to_node_unsafe_marker(transport: UnsafeMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_unsafe_marker(transport: bool) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "_unsafe_marker" — no parser symbol */,
         None,
         None,
         true,
-        Some(transport.to_string()),
+        Some(if transport { "unsafe".to_string() } else { String::new() }),
         None,
         None,
         None,

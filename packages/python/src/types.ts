@@ -3998,19 +3998,34 @@ export namespace AssignmentTyped {
 }
 
 export namespace AsyncMarker {
-  export type Transport = TerminalTransport<"_async_marker", "async">;
+  export type Transport = boolean;
 }
 
 export namespace AugmentedAssignmentOperator {
-  export type Transport = TerminalTransport<"_augmented_assignment_operator", "+=" | "-=" | "*=" | "/=" | "@=" | "//=" | "%=" | "**=" | ">>=" | "<<=" | "&=" | "^=" | "|=">;
+  export const enum Values {
+    PlusEq = TSKindId.PlusEq,
+    DashEq = TSKindId.DashEq,
+    StarEq = TSKindId.StarEq,
+    SlashEq = TSKindId.SlashEq,
+    AtEq = TSKindId.AtEq,
+    SlashSlashEq = TSKindId.SlashSlashEq,
+    PercentEq = TSKindId.PercentEq,
+    StarStarEq = TSKindId.StarStarEq,
+    GtGtEq = TSKindId.GtGtEq,
+    LtLtEq = TSKindId.LtLtEq,
+    AmpEq = TSKindId.AmpEq,
+    CaretEq = TSKindId.CaretEq,
+    PipeEq = TSKindId.PipeEq,
+  }
+  export type Transport = Values;
 }
 
 export namespace BinaryOperatorOperator {
-  export type Transport = TerminalTransport<"_binary_operator_operator", "+">;
+  export type Transport = boolean;
 }
 
 export namespace BooleanOperatorOperator {
-  export type Transport = TerminalTransport<"_boolean_operator_operator", "and">;
+  export type Transport = boolean;
 }
 
 export namespace ComprehensionClauses {
@@ -4026,7 +4041,11 @@ export namespace ComprehensionClauses {
 }
 
 export namespace _Identifier {
-  export type Transport = TerminalTransport<"_identifier", "*" | "**">;
+  export const enum Values {
+    Star = TSKindId.Star,
+    StarStar = TSKindId.StarStar,
+  }
+  export type Transport = Values;
 }
 
 export namespace ImportList {
@@ -4159,11 +4178,16 @@ export namespace _TuplePattern {
 }
 
 export namespace TypeAliasStatementType {
-  export type Transport = TerminalTransport<"_type_alias_statement_type", "type">;
+  export type Transport = boolean;
 }
 
 export namespace UnaryOperatorOperator {
-  export type Transport = TerminalTransport<"_unary_operator_operator", "+" | "-" | "~">;
+  export const enum Values {
+    Plus = TSKindId.Plus,
+    Dash = TSKindId.Dash,
+    Tilde = TSKindId.Tilde,
+  }
+  export type Transport = Values;
 }
 
 export namespace _WithClauseParen {

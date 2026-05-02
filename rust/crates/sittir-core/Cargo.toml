@@ -13,6 +13,11 @@ description = "Render / readNode / splice primitives for sittir — hot-path eng
 # `sittir-core = { features = ["napi-bindings"] }`. NOT enabled by
 # default so `cargo test -p sittir-core` builds without Node.js symbols.
 napi-bindings = ["dep:napi", "dep:napi-derive"]
+# When OFF (default / release), JS sends leaf fields as plain scalars
+# (e.g. identifier → plain string). When ON, leaf fields carry the full
+# transport object { $type, $text, $source, $span, $nodeId } — useful
+# for debugging round-trip and CST diagnostics.
+debug-transport = []
 
 [dependencies]
 serde = { workspace = true }
