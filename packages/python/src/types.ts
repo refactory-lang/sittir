@@ -2137,15 +2137,15 @@ export interface Yield {
 
 
 // Leaf node types
-export type AsyncMarker = Terminal<"_async_marker", "async">;
-export type AugmentedAssignmentOperator = Terminal<"_augmented_assignment_operator", "+=" | "-=" | "*=" | "/=" | "@=" | "//=" | "%=" | "**=" | ">>=" | "<<=" | "&=" | "^=" | "|=">;
-export type BinaryOperatorOperator = Terminal<"_binary_operator_operator", "+">;
-export type BooleanOperatorOperator = Terminal<"_boolean_operator_operator", "and">;
-export type _Identifier = Terminal<"_identifier", "*" | "**">;
+export type AsyncMarker = Terminal<TSKindId.Async, "async">;
+export type AugmentedAssignmentOperator = Terminal<TSKindId.PlusEq | TSKindId.DashEq | TSKindId.StarEq | TSKindId.SlashEq | TSKindId.AtEq | TSKindId.SlashSlashEq | TSKindId.PercentEq | TSKindId.StarStarEq | TSKindId.GtGtEq | TSKindId.LtLtEq | TSKindId.AmpEq | TSKindId.CaretEq | TSKindId.PipeEq, "+=" | "-=" | "*=" | "/=" | "@=" | "//=" | "%=" | "**=" | ">>=" | "<<=" | "&=" | "^=" | "|=">;
+export type BinaryOperatorOperator = Terminal<TSKindId.Plus, "+">;
+export type BooleanOperatorOperator = Terminal<TSKindId.And, "and">;
+export type _Identifier = Terminal<TSKindId.Star | TSKindId.StarStar, "*" | "**">;
 export type IsNot = Terminal<TSKindId.IsNot, string>;
 export type NotIn = Terminal<TSKindId.NotIn, string>;
-export type TypeAliasStatementType = Terminal<"_type_alias_statement_type", "type">;
-export type UnaryOperatorOperator = Terminal<"_unary_operator_operator", "+" | "-" | "~">;
+export type TypeAliasStatementType = Terminal<TSKindId.Type, "type">;
+export type UnaryOperatorOperator = Terminal<TSKindId.Plus | TSKindId.Dash | TSKindId.Tilde, "+" | "-" | "~">;
 export type BreakStatement = Terminal<TSKindId.BreakStatement, "break">;
 export type Comment = Terminal<TSKindId.Comment, string>;
 export type ContinueStatement = Terminal<TSKindId.ContinueStatement, "continue">;

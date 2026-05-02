@@ -7,9 +7,12 @@ import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	collectKindEntries,
+	collectCatalogKinds,
 	kindDiscriminantExpr,
+	findKindEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
+import { AssembledEnum } from '../compiler/node-map.ts';
 import { referencedKinds, resolveHiddenKeywordLiteral } from './shared.ts';
 
 export interface EmitTypeTestsConfig {
@@ -54,9 +57,43 @@ function typeTestDiscriminant(
 	return kindDiscriminantExpr(kind, nodeMap, kindEntries);
 }
 
+/**
+ * Build the expected discriminant for a type-test assertion on an enum kind.
+ *
+ * @remarks
+ * Mirrors `enumMemberDiscriminant` in `types.ts`: resolves each member
+ * value to its `TSKindId.X` entry and joins as a union. Falls back to
+ * the string kind name when no entries resolve or `kindEntries` is absent.
+ *
+ * @param node - The `AssembledEnum` node.
+ * @param kindEntries - Catalog entries for TSKindId lookup.
+ * @returns The expected discriminant expression for the type assertion.
+ */
+function enumMemberTypeTestDiscriminant(
+	node: AssembledEnum,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	if (!kindEntries) return `'${node.kind}'`;
+	const members: string[] = [];
+	for (const value of node.values) {
+		const entry = findKindEntry(kindEntries, value);
+		if (entry) {
+			members.push(`TSKindId.${entry.member}`);
+		}
+	}
+	if (members.length === 0) return 'number';
+	return members.join(' | ');
+}
+
 export function emitTypeTests(config: EmitTypeTestsConfig): string {
 	const { nodeMap } = config;
-	const allKinds = Array.from(nodeMap.nodes.keys());
+	// Use the full catalog superset (children-only kinds + anon tokens) so
+	// enum member lookups resolve anonymous tokens like "block", "expr" that
+	// aren't in nodeMap.nodes but DO have parser symbols. Matches types.ts's
+	// kindEntries construction — DRY: same universe for both surfaces.
+	const allKinds = config.generatedIdTables
+		? collectCatalogKinds(config.generatedIdTables)
+		: Array.from(nodeMap.nodes.keys());
 	const kindEntries = config.generatedIdTables
 		? collectKindEntries(allKinds, nodeMap, config.generatedIdTables)
 		: undefined;
@@ -150,9 +187,11 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
 		if (seenType.has(l.typeName)) continue;
 		seenType.add(l.typeName);
 		typeImports.add(l.typeName);
-		// Leaf kinds use Terminal<K extends string> (string $type) — Phase A does
-		// not migrate Terminal; pass isLeaf=true to keep string discriminant.
-		const discriminant = typeTestDiscriminant(l.kind, kindEntries, nodeMap, true);
+		const node = nodeMap.nodes.get(l.kind);
+		const discriminant =
+			node instanceof AssembledEnum
+				? enumMemberTypeTestDiscriminant(node, kindEntries)
+				: typeTestDiscriminant(l.kind, kindEntries, nodeMap);
 		body.push(
 			`export type _Type_${l.typeName} = _TypeAssert<_TypeExtends<${l.typeName}['$type'], ${discriminant}>>;`
 		);

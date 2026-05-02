@@ -1127,6 +1127,46 @@ function resolvePolymorphFormTypeName(form: AssembledGroup): string {
 }
 
 // ---------------------------------------------------------------------------
+// Enum member discriminant resolution
+// ---------------------------------------------------------------------------
+
+/**
+ * Build the `$type` discriminant expression for an enum kind by resolving
+ * each member value to its `TSKindId.X` entry and joining as a union.
+ *
+ * @remarks
+ * Enum kinds are codegen-only constructs — they have no parser.c symbol of
+ * their own. At runtime the `$type` will always be one of the member
+ * tokens' parser symbol IDs. Each member value (e.g. `".."`, `"u8"`) is
+ * an anonymous token that has a catalog entry via its `symbolName`. When
+ * `kindEntries` is present and at least one member resolves, the
+ * discriminant is a union of `TSKindId.X` references. Falls back to
+ * `number` when no members resolve (shouldn't happen for real grammars)
+ * or when `kindEntries` is absent.
+ *
+ * @param node - The `AssembledEnum` node whose member discriminant to build.
+ * @param kindEntries - Catalog entries for TSKindId lookup; `undefined` for
+ *   legacy callers without parser.c metadata.
+ * @returns The discriminant expression string (e.g.
+ *   `TSKindId.DotDot` or `TSKindId.U8 | TSKindId.I8 | ...`).
+ */
+function enumMemberDiscriminant(
+	node: AssembledEnum,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	if (!kindEntries) return JSON.stringify(node.kind);
+	const members: string[] = [];
+	for (const value of node.values) {
+		const entry = findKindEntry(kindEntries, value);
+		if (entry) {
+			members.push(`TSKindId.${entry.member}`);
+		}
+	}
+	if (members.length === 0) return 'number';
+	return members.join(' | ');
+}
+
+// ---------------------------------------------------------------------------
 // Leaf terminal alias emission
 // ---------------------------------------------------------------------------
 
@@ -1183,7 +1223,10 @@ function emitLeafTerminalAliases(
 		} else {
 			textType = 'string';
 		}
-		const typeDiscriminant = kindDiscriminantOrLiteral(kind, nodeMap, kindEntries);
+		const typeDiscriminant =
+			node.modelType === 'enum'
+				? enumMemberDiscriminant(node, kindEntries)
+				: kindDiscriminantOrLiteral(kind, nodeMap, kindEntries);
 		lines.push(
 			`export type ${node.typeName} = Terminal<${typeDiscriminant}, ${textType}>;`
 		);
