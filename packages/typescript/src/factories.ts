@@ -23,7 +23,7 @@ function _setFields<T, R, K extends keyof T>(
 ): T[K] | R | undefined {
   return v.length ? fn({ ...((cfg ?? {}) as T), [key]: v } as T) : cur;
 }
-const _b = {
+const _branchMethods = {
   render(this: AnyNodeData): string { return render(this); },
   toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
     if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -71,7 +71,7 @@ export function _arrowFunctionUCallSignature(config: ConfigOf<T._ArrowFunctionUC
     typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, _arrowFunctionUCallSignature, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _setField(config, _arrowFunctionUCallSignature, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _setField(config, _arrowFunctionUCallSignature, 'returnType', value, config?.returnType); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T._ArrowFunctionUCallSignatureTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -86,7 +86,7 @@ export function _arrowFunctionParameter(config: ConfigOf<T._ArrowFunctionParamet
     $named: true as const,
     $fields: fields,
     parameter(value?: T.ReservedIdentifier) { return _setField(config, _arrowFunctionParameter, 'parameter', value, config?.parameter); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T._ArrowFunctionParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -105,7 +105,7 @@ export function _callExpressionCall(config: ConfigOf<T.CallExpressionCall>) {
     function(value?: T.Expression | T.Import) { return _setField(config, _callExpressionCall, 'function', value, config?.function); },
     typeArguments(value?: T.TypeArguments | undefined) { return _setField(config, _callExpressionCall, 'typeArguments', value, config?.typeArguments); },
     arguments(value?: T.Arguments) { return _setField(config, _callExpressionCall, 'arguments', value, config?.arguments); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.CallExpressionCallTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -124,7 +124,7 @@ export function _callExpressionMember(config: ConfigOf<T.CallExpressionMember>) 
     function(value?: T.PrimaryExpression) { return _setField(config, _callExpressionMember, 'function', value, config?.function); },
     typeArguments(value?: T.TypeArguments | undefined) { return _setField(config, _callExpressionMember, 'typeArguments', value, config?.typeArguments); },
     arguments(value?: T.Arguments) { return _setField(config, _callExpressionMember, 'arguments', value, config?.arguments); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.CallExpressionMemberTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -141,7 +141,7 @@ export function _callExpressionTemplateCall(config: ConfigOf<T.CallExpressionTem
     $fields: fields,
     function(value?: T.PrimaryExpression | T.NewExpression) { return _setField(config, _callExpressionTemplateCall, 'function', value, config?.function); },
     arguments(value?: T.TemplateString) { return _setField(config, _callExpressionTemplateCall, 'arguments', value, config?.arguments); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.CallExpressionTemplateCallTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -160,7 +160,7 @@ export function _callSignature(config: ConfigOf<T._CallSignature>) {
     typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, _callSignature, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _setField(config, _callSignature, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _setField(config, _callSignature, 'returnType', value, config?.returnType); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T._CallSignatureTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -172,7 +172,7 @@ export function classBodyMember(child: (T.AbstractMethodSignature | T.IndexSigna
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ClassBodyMemberTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -193,7 +193,7 @@ export function _classBodyMethod(config: ConfigOf<T.ClassBodyMethod>) {
       if (value === undefined) return children[0];
       return _classBodyMethod({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ClassBodyMethodTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -205,7 +205,7 @@ export function classBodyMethodSig(child: (T.MethodSignature | T.FunctionSignatu
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ClassBodyMethodSigTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -217,7 +217,7 @@ export function _classHeritageExtendsClause(child: (T.ExtendsClause | T.Implemen
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T._ClassHeritageExtendsClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -229,7 +229,7 @@ export function _classHeritageImplementsClause(child: T.ImplementsClause) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T._ClassHeritageImplementsClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -250,7 +250,7 @@ export function _exportStatementDefaultDeclArm(config: ConfigOf<T.ExportStatemen
       if (value === undefined) return children[0];
       return _exportStatementDefaultDeclArm({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ExportStatementDefaultDeclArmTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -266,7 +266,7 @@ export function _exportStatementDefaultDeclArmDefaultKw(config: ConfigOf<T.Expor
       if (value === undefined) return children[0];
       return _exportStatementDefaultDeclArmDefaultKw({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ExportStatementDefaultDeclArmDefaultKwTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -287,7 +287,7 @@ export function _exportStatementDefaultDeclArmDefaultKwValue(config: ConfigOf<T.
       if (value === undefined) return children[0];
       return _exportStatementDefaultDeclArmDefaultKwValue({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ExportStatementDefaultDeclArmDefaultKwValueTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -299,7 +299,7 @@ export function exportStatementDefaultFromArm(child: (T.ExportStatementDefaultFr
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ExportStatementDefaultFromArmTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -320,7 +320,7 @@ export function exportStatementDefaultFromArmClauseFrom(config: ConfigOf<T.Expor
       if (value === undefined) return children[0];
       return exportStatementDefaultFromArmClauseFrom({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ExportStatementDefaultFromArmClauseFromTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -341,7 +341,7 @@ export function exportStatementDefaultFromArmNsFrom(config: ConfigOf<T.ExportSta
       if (value === undefined) return children[0];
       return exportStatementDefaultFromArmNsFrom({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ExportStatementDefaultFromArmNsFromTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -356,7 +356,7 @@ export function exportStatementDefaultFromArmStarFrom(config: ConfigOf<T.ExportS
     $named: true as const,
     $fields: fields,
     source(value?: T.String) { return _setField(config, exportStatementDefaultFromArmStarFrom, 'source', value, config?.source); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ExportStatementDefaultFromArmStarFromTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -368,7 +368,7 @@ export function _exportStatementEqualsExport(child: (T.Expression | T.Semicolon)
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T._ExportStatementEqualsExportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -380,7 +380,7 @@ export function _exportStatementNamespaceExport(child: (T.Identifier | T.Semicol
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T._ExportStatementNamespaceExportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -401,7 +401,7 @@ export function _exportStatementTypeExport(config: ConfigOf<T._ExportStatementTy
       if (value === undefined) return children[0];
       return _exportStatementTypeExport({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T._ExportStatementTypeExportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -418,7 +418,7 @@ export function _extendsClauseSingle(config: ConfigOf<T.ExtendsClauseSingle>) {
     $fields: fields,
     value(value?: T.Expression) { return _setField(config, _extendsClauseSingle, 'value', value, config?.value); },
     typeArguments(value?: T.TypeArguments | undefined) { return _setField(config, _extendsClauseSingle, 'typeArguments', value, config?.typeArguments); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ExtendsClauseSingleTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -441,7 +441,7 @@ export function _forHeader(config: ConfigOf<T.ForHeader>) {
       if (value === undefined) return children[0];
       return _forHeader({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ForHeaderTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -464,7 +464,7 @@ export function _forHeaderLetConstKind(config: ConfigOf<T.ForHeaderLetConstKind>
       if (value === undefined) return children[0];
       return _forHeaderLetConstKind({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ForHeaderLetConstKindTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -479,7 +479,7 @@ export function forHeaderLhs(config: ConfigOf<T.ForHeaderLhs>) {
     $named: true as const,
     $fields: fields,
     left(value?: T.LhsExpression | T.ParenthesizedExpression) { return _setField(config, forHeaderLhs, 'left', value, config?.left); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ForHeaderLhsTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -502,7 +502,7 @@ export function _forHeaderVarKind(config: ConfigOf<T.ForHeaderVarKind>) {
       if (value === undefined) return children[0];
       return _forHeaderVarKind({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ForHeaderVarKindTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -517,7 +517,7 @@ export function _fromClause(config: ConfigOf<T.FromClause>) {
     $named: true as const,
     $fields: fields,
     source(value?: T.String) { return _setField(config, _fromClause, 'source', value, config?.source); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.FromClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -529,7 +529,7 @@ export function _importClauseDefaultImport(child: (T.ImportIdentifier | T.Namesp
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T._ImportClauseDefaultImportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -541,7 +541,7 @@ export function _importClauseNamedImports(child: T.NamedImports) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T._ImportClauseNamedImportsTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -553,7 +553,7 @@ export function _importClauseNamespaceImport(child: T.NamespaceImport) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T._ImportClauseNamespaceImportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -570,7 +570,7 @@ export function _importSpecifierAs(config: ConfigOf<T.ImportSpecifierAs>) {
     $fields: fields,
     name(value?: T.ModuleExportName | T.Identifier) { return _setField(config, _importSpecifierAs, 'name', value, config?.name); },
     alias(value?: T.ImportIdentifier) { return _setField(config, _importSpecifierAs, 'alias', value, config?.alias); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ImportSpecifierAsTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -585,7 +585,7 @@ export function _importSpecifierName(config: ConfigOf<T._ImportSpecifierName>) {
     $named: true as const,
     $fields: fields,
     name(value?: T.ImportIdentifier) { return _setField(config, _importSpecifierName, 'name', value, config?.name); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T._ImportSpecifierNameTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -602,7 +602,7 @@ export function _indexSignatureColon(config: ConfigOf<T.IndexSignatureColon>) {
     $fields: fields,
     name(value?: T.ReservedIdentifier) { return _setField(config, _indexSignatureColon, 'name', value, config?.name); },
     indexType(value?: T.Type) { return _setField(config, _indexSignatureColon, 'indexType', value, config?.indexType); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.IndexSignatureColonTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -614,7 +614,7 @@ export function _indexSignatureMappedTypeClause(child: T.MappedTypeClause) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T._IndexSignatureMappedTypeClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -629,7 +629,7 @@ export function _initializer(config: ConfigOf<T.Initializer>) {
     $named: true as const,
     $fields: fields,
     value(value?: T.Expression) { return _setField(config, _initializer, 'value', value, config?.value); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.InitializerTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -646,7 +646,7 @@ export function _module(config: ConfigOf<T._Module>) {
     $fields: fields,
     name(value?: T.String | T.Identifier | T.NestedIdentifier) { return _setField(config, _module, 'name', value, config?.name); },
     body(value?: T.StatementBlock | undefined) { return _setField(config, _module, 'body', value, config?.body); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T._ModuleTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -663,7 +663,7 @@ export function _number(config: ConfigOf<T._Number>) {
     $fields: fields,
     operator(value?: T.NumberOperator) { return _setField(config, _number, 'operator', value, config?.operator); },
     argument(value?: T.Number) { return _setField(config, _number, 'argument', value, config?.argument); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T._NumberTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -688,7 +688,7 @@ export function _parameterName(config: ConfigOf<T.ParameterName>) {
       if (value === undefined) return children[0];
       return _parameterName({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ParameterNameTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -700,7 +700,7 @@ export function _parenthesizedExpressionSequence(child: T.SequenceExpression) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T._ParenthesizedExpressionSequenceTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -721,7 +721,7 @@ export function _parenthesizedExpressionTyped(config: ConfigOf<T.ParenthesizedEx
       if (value === undefined) return children[0];
       return _parenthesizedExpressionTyped({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ParenthesizedExpressionTypedTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -738,7 +738,7 @@ export function _publicFieldDefinitionAbstractFirst(config?: ConfigOf<T.PublicFi
     $fields: fields,
     get abstractMarker() { return fields.abstract_marker; },
     readonlyMarker(value?: T.ReadonlyMarker | undefined) { return _setField(config, _publicFieldDefinitionAbstractFirst, 'readonlyMarker', value, config?.readonlyMarker); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.PublicFieldDefinitionAbstractFirstTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -759,7 +759,7 @@ export function _publicFieldDefinitionAccessFirst(config: ConfigOf<T.PublicField
       if (value === undefined) return children[0];
       return _publicFieldDefinitionAccessFirst({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.PublicFieldDefinitionAccessFirstTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -774,7 +774,7 @@ export function publicFieldDefinitionAccessorOpt(_config?: ConfigOf<T.PublicFiel
     $named: true as const,
     $fields: fields,
     get accessorMarker() { return fields.accessor_marker; },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.PublicFieldDefinitionAccessorOptTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -786,7 +786,7 @@ export function publicFieldDefinitionDeclareFirst(child?: T.AccessibilityModifie
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.PublicFieldDefinitionDeclareFirstTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -803,7 +803,7 @@ export function _publicFieldDefinitionReadonlyFirst(config?: ConfigOf<T.PublicFi
     $fields: fields,
     get readonlyMarker() { return fields.readonly_marker; },
     abstractMarker(value?: T.AbstractMarker | undefined) { return _setField(config, _publicFieldDefinitionReadonlyFirst, 'abstractMarker', value, config?.abstractMarker); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.PublicFieldDefinitionReadonlyFirstTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -826,7 +826,7 @@ export function _publicFieldDefinitionStaticMods(config?: ConfigOf<T.PublicField
       if (value === undefined) return children[0];
       return _publicFieldDefinitionStaticMods({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.PublicFieldDefinitionStaticModsTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -837,7 +837,7 @@ export function _stringDouble(...children: (T.UnescapedDoubleStringFragment | T.
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T._StringDoubleTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -848,7 +848,7 @@ export function _stringSingle(...children: (T.UnescapedSingleStringFragment | T.
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T._StringSingleTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -860,7 +860,7 @@ export function typeIdentifier(child: T.Identifier) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TypeIdentifierTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -877,7 +877,7 @@ export function _typeQueryCallExpression(config: ConfigOf<T.TypeQueryCallExpress
     $fields: fields,
     function(value?: T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression) { return _setField(config, _typeQueryCallExpression, 'function', value, config?.function); },
     arguments(value?: T.Arguments) { return _setField(config, _typeQueryCallExpression, 'arguments', value, config?.arguments); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TypeQueryCallExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -894,7 +894,7 @@ export function _typeQueryCallExpressionInTypeAnnotation(config: ConfigOf<T.Type
     $fields: fields,
     function(value?: T.Import | T.TypeQueryMemberExpressionInTypeAnnotation) { return _setField(config, _typeQueryCallExpressionInTypeAnnotation, 'function', value, config?.function); },
     arguments(value?: T.Arguments) { return _setField(config, _typeQueryCallExpressionInTypeAnnotation, 'arguments', value, config?.arguments); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TypeQueryCallExpressionInTypeAnnotationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -911,7 +911,7 @@ export function _typeQueryInstantiationExpression(config: ConfigOf<T.TypeQueryIn
     $fields: fields,
     function(value?: T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression) { return _setField(config, _typeQueryInstantiationExpression, 'function', value, config?.function); },
     typeArguments(value?: T.TypeArguments) { return _setField(config, _typeQueryInstantiationExpression, 'typeArguments', value, config?.typeArguments); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TypeQueryInstantiationExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -928,7 +928,7 @@ export function _typeQueryMemberExpression(config: ConfigOf<T.TypeQueryMemberExp
     $fields: fields,
     object(value?: T.Identifier | T.This | T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression) { return _setField(config, _typeQueryMemberExpression, 'object', value, config?.object); },
     property(value?: T.PrivatePropertyIdentifier | T.Identifier) { return _setField(config, _typeQueryMemberExpression, 'property', value, config?.property); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TypeQueryMemberExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -945,7 +945,7 @@ export function _typeQueryMemberExpressionInTypeAnnotation(config: ConfigOf<T.Ty
     $fields: fields,
     object(value?: T.Import | T.TypeQueryMemberExpressionInTypeAnnotation | T.TypeQueryCallExpressionInTypeAnnotation) { return _setField(config, _typeQueryMemberExpressionInTypeAnnotation, 'object', value, config?.object); },
     property(value?: T.PrivatePropertyIdentifier | T.Identifier) { return _setField(config, _typeQueryMemberExpressionInTypeAnnotation, 'property', value, config?.property); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TypeQueryMemberExpressionInTypeAnnotationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -962,7 +962,7 @@ export function _typeQuerySubscriptExpression(config: ConfigOf<T.TypeQuerySubscr
     $fields: fields,
     object(value?: T.Identifier | T.This | T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression) { return _setField(config, _typeQuerySubscriptExpression, 'object', value, config?.object); },
     index(value?: T.PredefinedType | T.String | T.Number) { return _setField(config, _typeQuerySubscriptExpression, 'index', value, config?.index); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TypeQuerySubscriptExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -979,7 +979,7 @@ export function _updateExpressionPostfix(config: ConfigOf<T.UpdateExpressionPost
     $fields: fields,
     argument(value?: T.Expression) { return _setField(config, _updateExpressionPostfix, 'argument', value, config?.argument); },
     operator(value?: T.Operator) { return _setField(config, _updateExpressionPostfix, 'operator', value, config?.operator); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.UpdateExpressionPostfixTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -996,7 +996,7 @@ export function _updateExpressionPrefix(config: ConfigOf<T.UpdateExpressionPrefi
     $fields: fields,
     operator(value?: T.Operator) { return _setField(config, _updateExpressionPrefix, 'operator', value, config?.operator); },
     argument(value?: T.Expression) { return _setField(config, _updateExpressionPrefix, 'argument', value, config?.argument); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.UpdateExpressionPrefixTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1019,7 +1019,7 @@ export function abstractClassDeclaration(config: ConfigOf<T.AbstractClassDeclara
     typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, abstractClassDeclaration, 'typeParameters', value, config?.typeParameters); },
     classHeritage(value?: T.ClassHeritage | undefined) { return _setField(config, abstractClassDeclaration, 'classHeritage', value, config?.classHeritage); },
     body(value?: T.ClassBody) { return _setField(config, abstractClassDeclaration, 'body', value, config?.body); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.AbstractClassDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1048,7 +1048,7 @@ export function abstractMethodSignature(config: ConfigOf<T.AbstractMethodSignatu
     typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, abstractMethodSignature, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _setField(config, abstractMethodSignature, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _setField(config, abstractMethodSignature, 'returnType', value, config?.returnType); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.AbstractMethodSignatureTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1074,7 +1074,7 @@ export function addingTypeAnnotation(config: ConfigOf<T.AddingTypeAnnotation>) {
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _setField(config, addingTypeAnnotation, 'type', value, config?.type); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.AddingTypeAnnotationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1089,7 +1089,7 @@ export function ambientDeclaration(config: ConfigOf<T.AmbientDeclaration>) {
     $named: true as const,
     $fields: fields,
     declaration(value?: T.Declaration | "global" | T.StatementBlock | "module" | T.Identifier | T.Type | T.Semicolon) { return _setField(config, ambientDeclaration, 'declaration', value, config?.declaration); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.AmbientDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1100,7 +1100,7 @@ export function arguments_(...children: (T.Expression | T.SpreadElement)[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ArgumentsTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1111,7 +1111,7 @@ export function array(...children: (T.Expression | T.SpreadElement)[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ArrayTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1122,7 +1122,7 @@ export function arrayPattern(...children: (T.Pattern | T.AssignmentPattern)[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ArrayPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1137,7 +1137,7 @@ export function arrayType(config: ConfigOf<T.ArrayType>) {
     $named: true as const,
     $fields: fields,
     primaryType(value?: T.PrimaryType) { return _setField(config, arrayType, 'primaryType', value, config?.primaryType); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ArrayTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1152,7 +1152,7 @@ export function arrowFunctionParameter(config: ConfigOf<T.ArrowFunctionParameter
     $named: true as const,
     $fields: fields,
     parameter(value?: T.ReservedIdentifier) { return _setField(config, arrowFunctionParameter, 'parameter', value, config?.parameter); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ArrowFunctionParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1171,7 +1171,7 @@ export function arrowFunctionUCallSignature(config: ConfigOf<T.ArrowFunctionUCal
     typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, arrowFunctionUCallSignature, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _setField(config, arrowFunctionUCallSignature, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _setField(config, arrowFunctionUCallSignature, 'returnType', value, config?.returnType); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ArrowFunctionUCallSignatureTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1211,7 +1211,7 @@ export function arrowFunctionUFormParameter(config: Omit<ConfigOf<T.ArrowFunctio
       if (value === undefined) return inner.$fields.parameter;
       return arrowFunctionUFormParameter({ asyncMarker: config.asyncMarker, body: config.body, parameter: value });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ArrowFunctionUFormParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1249,7 +1249,7 @@ export function arrowFunctionUFormUCallSignature(config: Omit<ConfigOf<T.ArrowFu
       if (value === undefined) return inner.$fields.return_type;
       return arrowFunctionUFormUCallSignature({ asyncMarker: config.asyncMarker, body: config.body, typeParameters: inner.$fields.type_parameters, parameters: inner.$fields.parameters, returnType: value });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ArrowFunctionUFormUCallSignatureTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1266,7 +1266,7 @@ export function asExpression(config: ConfigOf<T.AsExpression>) {
     $fields: fields,
     expression(value?: T.Expression) { return _setField(config, asExpression, 'expression', value, config?.expression); },
     typeAnnotation(value?: "const" | T.Type) { return _setField(config, asExpression, 'typeAnnotation', value, config?.typeAnnotation); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.AsExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1278,7 +1278,7 @@ export function asserts(child: (T.TypePredicate | T.Identifier | T.This)) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.AssertsTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1293,7 +1293,7 @@ export function assertsAnnotation(config: ConfigOf<T.AssertsAnnotation>) {
     $named: true as const,
     $fields: fields,
     asserts(value?: T.AssertsAnnotationAsserts | T.Asserts) { return _setField(config, assertsAnnotation, 'asserts', value, config?.asserts); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.AssertsAnnotationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1312,7 +1312,7 @@ export function assignmentExpression(config: ConfigOf<T.AssignmentExpression>) {
     usingMarker(value?: T.AssignmentExpressionUsingMarker | undefined) { return _setField(config, assignmentExpression, 'usingMarker', value, config?.usingMarker); },
     left(value?: T.ParenthesizedExpression | T.LhsExpression) { return _setField(config, assignmentExpression, 'left', value, config?.left); },
     right(value?: T.Expression) { return _setField(config, assignmentExpression, 'right', value, config?.right); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.AssignmentExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1329,7 +1329,7 @@ export function assignmentPattern(config: ConfigOf<T.AssignmentPattern>) {
     $fields: fields,
     left(value?: T.Pattern) { return _setField(config, assignmentPattern, 'left', value, config?.left); },
     right(value?: T.Expression) { return _setField(config, assignmentPattern, 'right', value, config?.right); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.AssignmentPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1348,7 +1348,7 @@ export function augmentedAssignmentExpression(config: ConfigOf<T.AugmentedAssign
     left(value?: T.MemberExpression | T.SubscriptExpression | T.ReservedIdentifier | T.ParenthesizedExpression | T.NonNullExpression) { return _setField(config, augmentedAssignmentExpression, 'left', value, config?.left); },
     operator(value?: T.AugmentedAssignmentExpressionOperator) { return _setField(config, augmentedAssignmentExpression, 'operator', value, config?.operator); },
     right(value?: T.Expression) { return _setField(config, augmentedAssignmentExpression, 'right', value, config?.right); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.AugmentedAssignmentExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1363,7 +1363,7 @@ export function awaitExpression(config: ConfigOf<T.AwaitExpression>) {
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression) { return _setField(config, awaitExpression, 'expression', value, config?.expression); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.AwaitExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1382,7 +1382,7 @@ export function binaryExpression(config: ConfigOf<T.BinaryExpression>) {
     left(value?: T.Expression | T.PrivatePropertyIdentifier) { return _setField(config, binaryExpression, 'left', value, config?.left); },
     get operator() { return fields.operator; },
     right(value?: T.Expression) { return _setField(config, binaryExpression, 'right', value, config?.right); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.BinaryExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1399,7 +1399,7 @@ export function breakStatement(config: ConfigOf<T.BreakStatement>) {
     $fields: fields,
     label(value?: T.Identifier | undefined) { return _setField(config, breakStatement, 'label', value, config?.label); },
     semicolon(value?: T.Semicolon) { return _setField(config, breakStatement, 'semicolon', value, config?.semicolon); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.BreakStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1436,7 +1436,7 @@ export function callExpressionUFormCall(config: Omit<ConfigOf<T.CallExpressionUF
       if (value === undefined) return inner.$fields.arguments;
       return callExpressionUFormCall({ function: inner.$fields.function, typeArguments: inner.$fields.type_arguments, arguments: value });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.CallExpressionUFormCallTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1457,7 +1457,7 @@ export function callExpressionUFormTemplateCall(config: Omit<ConfigOf<T.CallExpr
       if (value === undefined) return inner.$fields.arguments;
       return callExpressionUFormTemplateCall({ function: inner.$fields.function, arguments: value });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.CallExpressionUFormTemplateCallTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1482,7 +1482,7 @@ export function callExpressionUFormMember(config: Omit<ConfigOf<T.CallExpression
       if (value === undefined) return inner.$fields.arguments;
       return callExpressionUFormMember({ function: inner.$fields.function, typeArguments: inner.$fields.type_arguments, arguments: value });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.CallExpressionUFormMemberTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1501,7 +1501,7 @@ export function callSignature(config: ConfigOf<T.CallSignature>) {
     typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, callSignature, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _setField(config, callSignature, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _setField(config, callSignature, 'returnType', value, config?.returnType); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.CallSignatureTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1520,7 +1520,7 @@ export function catchClause(config: ConfigOf<T.CatchClause>) {
     parameter(value?: T.Identifier | T.DestructuringPattern | undefined) { return _setField(config, catchClause, 'parameter', value, config?.parameter); },
     typeField(value?: T.TypeAnnotation | undefined) { return _setField(config, catchClause, 'type', value, config?.type); },
     body(value?: T.StatementBlock) { return _setField(config, catchClause, 'body', value, config?.body); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.CatchClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1543,7 +1543,7 @@ export function class_(config: ConfigOf<T.Class>) {
     typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, class_, 'typeParameters', value, config?.typeParameters); },
     classHeritage(value?: T.ClassHeritage | undefined) { return _setField(config, class_, 'classHeritage', value, config?.classHeritage); },
     body(value?: T.ClassBody) { return _setField(config, class_, 'body', value, config?.body); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ClassTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1554,7 +1554,7 @@ export function classBody(...children: (T.ClassBodyMethod | T.ClassBodyMethodSig
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ClassBodyTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1579,7 +1579,7 @@ export function classDeclaration(config: ConfigOf<T.ClassDeclaration>) {
     classHeritage(value?: T.ClassHeritage | undefined) { return _setField(config, classDeclaration, 'classHeritage', value, config?.classHeritage); },
     body(value?: T.ClassBody) { return _setField(config, classDeclaration, 'body', value, config?.body); },
     automaticSemicolon(value?: T.AutomaticSemicolon | undefined) { return _setField(config, classDeclaration, 'automaticSemicolon', value, config?.automaticSemicolon); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ClassDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1591,7 +1591,7 @@ export function classHeritageExtendsClause(child: (T.ExtendsClause | T.Implement
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ClassHeritageExtendsClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1603,7 +1603,7 @@ export function classHeritageImplementsClause(child: T.ImplementsClause) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ClassHeritageImplementsClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1626,7 +1626,7 @@ export function classHeritageUFormExtendsClause(config?: Omit<ConfigOf<T.ClassHe
     $named: true as const,
     $variant: 'extends_clause' as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ClassHeritageUFormExtendsClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1639,7 +1639,7 @@ export function classHeritageUFormImplementsClause(config?: Omit<ConfigOf<T.Clas
     $named: true as const,
     $variant: 'implements_clause' as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ClassHeritageUFormImplementsClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1660,7 +1660,7 @@ export function classStaticBlock(config: ConfigOf<T.ClassStaticBlock>) {
       if (value === undefined) return children[0];
       return classStaticBlock({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ClassStaticBlockTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1687,7 +1687,7 @@ export function computedPropertyName(config: ConfigOf<T.ComputedPropertyName>) {
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression) { return _setField(config, computedPropertyName, 'expression', value, config?.expression); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ComputedPropertyNameTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1708,7 +1708,7 @@ export function conditionalType(config: ConfigOf<T.ConditionalType>) {
     right(value?: T.Type) { return _setField(config, conditionalType, 'right', value, config?.right); },
     consequence(value?: T.Type) { return _setField(config, conditionalType, 'consequence', value, config?.consequence); },
     alternative(value?: T.Type) { return _setField(config, conditionalType, 'alternative', value, config?.alternative); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ConditionalTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1723,7 +1723,7 @@ export function constraint(config: ConfigOf<T.Constraint>) {
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _setField(config, constraint, 'type', value, config?.type); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ConstraintTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1744,7 +1744,7 @@ export function constructSignature(config: ConfigOf<T.ConstructSignature>) {
     typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, constructSignature, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _setField(config, constructSignature, 'parameters', value, config?.parameters); },
     typeField(value?: T.TypeAnnotation | undefined) { return _setField(config, constructSignature, 'type', value, config?.type); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ConstructSignatureTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1765,7 +1765,7 @@ export function constructorType(config: ConfigOf<T.ConstructorType>) {
     typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, constructorType, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _setField(config, constructorType, 'parameters', value, config?.parameters); },
     typeField(value?: T.Type) { return _setField(config, constructorType, 'type', value, config?.type); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ConstructorTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1782,7 +1782,7 @@ export function continueStatement(config: ConfigOf<T.ContinueStatement>) {
     $fields: fields,
     label(value?: T.Identifier | undefined) { return _setField(config, continueStatement, 'label', value, config?.label); },
     semicolon(value?: T.Semicolon) { return _setField(config, continueStatement, 'semicolon', value, config?.semicolon); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ContinueStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1797,7 +1797,7 @@ export function debuggerStatement(config: ConfigOf<T.DebuggerStatement>) {
     $named: true as const,
     $fields: fields,
     semicolon(value?: T.Semicolon) { return _setField(config, debuggerStatement, 'semicolon', value, config?.semicolon); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.DebuggerStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1809,7 +1809,7 @@ export function decorator(child: (T.Identifier | T.DecoratorMemberExpression | T
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.DecoratorTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1828,7 +1828,7 @@ export function decoratorCallExpression(config: ConfigOf<T.DecoratorCallExpressi
     function(value?: T.Identifier | T.DecoratorMemberExpression) { return _setField(config, decoratorCallExpression, 'function', value, config?.function); },
     typeArguments(value?: T.TypeArguments | undefined) { return _setField(config, decoratorCallExpression, 'typeArguments', value, config?.typeArguments); },
     arguments(value?: T.Arguments) { return _setField(config, decoratorCallExpression, 'arguments', value, config?.arguments); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.DecoratorCallExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1845,7 +1845,7 @@ export function decoratorMemberExpression(config: ConfigOf<T.DecoratorMemberExpr
     $fields: fields,
     object(value?: T.Identifier | T.DecoratorMemberExpression) { return _setField(config, decoratorMemberExpression, 'object', value, config?.object); },
     property(value?: T.Identifier) { return _setField(config, decoratorMemberExpression, 'property', value, config?.property); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.DecoratorMemberExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1857,7 +1857,7 @@ export function decoratorParenthesizedExpression(child: (T.Identifier | T.Decora
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.DecoratorParenthesizedExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1872,7 +1872,7 @@ export function defaultType(config: ConfigOf<T.DefaultType>) {
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _setField(config, defaultType, 'type', value, config?.type); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.DefaultTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1891,7 +1891,7 @@ export function doStatement(config: ConfigOf<T.DoStatement>) {
     body(value?: T.Statement) { return _setField(config, doStatement, 'body', value, config?.body); },
     condition(value?: T.ParenthesizedExpression) { return _setField(config, doStatement, 'condition', value, config?.condition); },
     semicolon(value?: T.Semicolon | undefined) { return _setField(config, doStatement, 'semicolon', value, config?.semicolon); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.DoStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1906,7 +1906,7 @@ export function elseClause(config: ConfigOf<T.ElseClause>) {
     $named: true as const,
     $fields: fields,
     statement(value?: T.Statement) { return _setField(config, elseClause, 'statement', value, config?.statement); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ElseClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1923,7 +1923,7 @@ export function enumAssignment(config: ConfigOf<T.EnumAssignment>) {
     $fields: fields,
     name(value?: T.PropertyName) { return _setField(config, enumAssignment, 'name', value, config?.name); },
     value(value?: T.Expression) { return _setField(config, enumAssignment, 'value', value, config?.value); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.EnumAssignmentTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1939,7 +1939,7 @@ export function enumBody(config: ConfigOf<T.EnumBody>) {
       if (items.length === 0) return children;
       return enumBody({ ...config, children: items });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.EnumBodyTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1958,7 +1958,7 @@ export function enumDeclaration(config: ConfigOf<T.EnumDeclaration>) {
     constMarker(value?: T.ConstMarker | undefined) { return _setField(config, enumDeclaration, 'constMarker', value, config?.constMarker); },
     name(value?: T.Identifier) { return _setField(config, enumDeclaration, 'name', value, config?.name); },
     body(value?: T.EnumBody) { return _setField(config, enumDeclaration, 'body', value, config?.body); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.EnumDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -1981,7 +1981,7 @@ export function exportClause(...children: T.ExportSpecifier[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ExportClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2000,7 +2000,7 @@ export function exportSpecifier(config: ConfigOf<T.ExportSpecifier>) {
     exportKind(value?: T.ExportSpecifierExportKind | undefined) { return _setField(config, exportSpecifier, 'exportKind', value, config?.exportKind); },
     name(value?: T.ModuleExportName) { return _setField(config, exportSpecifier, 'name', value, config?.name); },
     alias(value?: T.ModuleExportName | undefined) { return _setField(config, exportSpecifier, 'alias', value, config?.alias); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ExportSpecifierTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2021,7 +2021,7 @@ export function exportStatementTypeExport(config: ConfigOf<T.ExportStatementType
       if (value === undefined) return children[0];
       return exportStatementTypeExport({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ExportStatementTypeExportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2033,7 +2033,7 @@ export function exportStatementEqualsExport(child: (T.Expression | T.Semicolon))
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ExportStatementEqualsExportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2045,7 +2045,7 @@ export function exportStatementNamespaceExport(child: (T.Identifier | T.Semicolo
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ExportStatementNamespaceExportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2075,7 +2075,7 @@ export function exportStatementUFormDefault(config: Omit<ConfigOf<T.ExportStatem
       if (value === undefined) return children[0];
       return exportStatementUFormDefault({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ExportStatementUFormDefaultTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2092,7 +2092,7 @@ export function exportStatementUFormTypeExport(config?: Omit<ConfigOf<T.ExportSt
       if (value === undefined) return inner.$fields.source;
       return exportStatementUFormTypeExport({ source: value });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ExportStatementUFormTypeExportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2105,7 +2105,7 @@ export function exportStatementUFormEqualsExport(config?: Omit<ConfigOf<T.Export
     $named: true as const,
     $variant: 'equals_export' as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ExportStatementUFormEqualsExportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2118,7 +2118,7 @@ export function exportStatementUFormNamespaceExport(config?: Omit<ConfigOf<T.Exp
     $named: true as const,
     $variant: 'namespace_export' as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ExportStatementUFormNamespaceExportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2139,7 +2139,7 @@ export function expressionStatement(config: ConfigOf<T.ExpressionStatement>) {
       if (value === undefined) return children[0];
       return expressionStatement({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ExpressionStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2156,7 +2156,7 @@ export function extendsClause(config: ConfigOf<T.ExtendsClause>) {
     $fields: fields,
     value(...values: NonEmptyArray<T.Expression>) { return _setFields(config, extendsClause, 'value', values, config?.value); },
     typeArguments(value?: T.TypeArguments | undefined) { return _setField(config, extendsClause, 'typeArguments', value, config?.typeArguments); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ExtendsClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2171,7 +2171,7 @@ export function extendsTypeClause(config: ConfigOf<T.ExtendsTypeClause>) {
     $named: true as const,
     $fields: fields,
     typeField(...values: NonEmptyArray<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>) { return _setFields(config, extendsTypeClause, 'type', values, config?.type); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ExtendsTypeClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2197,7 +2197,7 @@ export function finallyClause(config: ConfigOf<T.FinallyClause>) {
     $named: true as const,
     $fields: fields,
     body(value?: T.StatementBlock) { return _setField(config, finallyClause, 'body', value, config?.body); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.FinallyClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2212,7 +2212,7 @@ export function flowMaybeType(config: ConfigOf<T.FlowMaybeType>) {
     $named: true as const,
     $fields: fields,
     primaryType(value?: T.PrimaryType) { return _setField(config, flowMaybeType, 'primaryType', value, config?.primaryType); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.FlowMaybeTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2239,7 +2239,7 @@ export function forInStatement(config: ConfigOf<T.ForInStatement>) {
       if (value === undefined) return children[0];
       return forInStatement({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ForInStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2260,7 +2260,7 @@ export function forStatement(config: ConfigOf<T.ForStatement>) {
     condition(value?: T.Expressions | T.EmptyStatement) { return _setField(config, forStatement, 'condition', value, config?.condition); },
     increment(value?: T.Expressions | undefined) { return _setField(config, forStatement, 'increment', value, config?.increment); },
     body(value?: T.Statement) { return _setField(config, forStatement, 'body', value, config?.body); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ForStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2271,7 +2271,7 @@ export function formalParameters(...children: T.FormalParameter[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.FormalParametersTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2302,7 +2302,7 @@ export function functionDeclaration(config: ConfigOf<T.FunctionDeclaration>) {
       if (value === undefined) return children[0];
       return functionDeclaration({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.FunctionDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2327,7 +2327,7 @@ export function functionExpression(config: ConfigOf<T.FunctionExpression>) {
     parameters(value?: T.FormalParameters) { return _setField(config, functionExpression, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _setField(config, functionExpression, 'returnType', value, config?.returnType); },
     body(value?: T.StatementBlock) { return _setField(config, functionExpression, 'body', value, config?.body); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.FunctionExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2352,7 +2352,7 @@ export function functionSignature(config: ConfigOf<T.FunctionSignature>) {
     parameters(value?: T.FormalParameters) { return _setField(config, functionSignature, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _setField(config, functionSignature, 'returnType', value, config?.returnType); },
     semicolon(value?: T.Semicolon | T.FunctionSignatureAutomaticSemicolon) { return _setField(config, functionSignature, 'semicolon', value, config?.semicolon); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.FunctionSignatureTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2371,7 +2371,7 @@ export function functionType(config: ConfigOf<T.FunctionType>) {
     typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, functionType, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _setField(config, functionType, 'parameters', value, config?.parameters); },
     returnType(value?: T.Type | T.Asserts | T.TypePredicate) { return _setField(config, functionType, 'returnType', value, config?.returnType); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.FunctionTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2396,7 +2396,7 @@ export function generatorFunction(config: ConfigOf<T.GeneratorFunction>) {
     parameters(value?: T.FormalParameters) { return _setField(config, generatorFunction, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _setField(config, generatorFunction, 'returnType', value, config?.returnType); },
     body(value?: T.StatementBlock) { return _setField(config, generatorFunction, 'body', value, config?.body); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.GeneratorFunctionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2427,7 +2427,7 @@ export function generatorFunctionDeclaration(config: ConfigOf<T.GeneratorFunctio
       if (value === undefined) return children[0];
       return generatorFunctionDeclaration({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.GeneratorFunctionDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2444,7 +2444,7 @@ export function genericType(config: ConfigOf<T.GenericType>) {
     $fields: fields,
     name(value?: T.TypeIdentifier | T.NestedTypeIdentifier) { return _setField(config, genericType, 'name', value, config?.name); },
     typeArguments(value?: T.TypeArguments) { return _setField(config, genericType, 'typeArguments', value, config?.typeArguments); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.GenericTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2487,7 +2487,7 @@ export function ifStatement(config: ConfigOf<T.IfStatement>) {
     condition(value?: T.ParenthesizedExpression) { return _setField(config, ifStatement, 'condition', value, config?.condition); },
     consequence(value?: T.Statement) { return _setField(config, ifStatement, 'consequence', value, config?.consequence); },
     alternative(value?: T.ElseClause | undefined) { return _setField(config, ifStatement, 'alternative', value, config?.alternative); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.IfStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2499,7 +2499,7 @@ export function implementsClause(...children: T.Type[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ImplementsClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2529,7 +2529,7 @@ export function importAlias(config: ConfigOf<T.ImportAlias>) {
     name(value?: T.Identifier) { return _setField(config, importAlias, 'name', value, config?.name); },
     value(value?: T.Identifier | T.NestedIdentifier) { return _setField(config, importAlias, 'value', value, config?.value); },
     semicolon(value?: T.Semicolon) { return _setField(config, importAlias, 'semicolon', value, config?.semicolon); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ImportAliasTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2544,7 +2544,7 @@ export function importAttribute(config: ConfigOf<T.ImportAttribute>) {
     $named: true as const,
     $fields: fields,
     object(value?: T.ImportAttributeObject | T.Object) { return _setField(config, importAttribute, 'object', value, config?.object); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ImportAttributeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2556,7 +2556,7 @@ export function importClauseNamespaceImport(child: T.NamespaceImport) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ImportClauseNamespaceImportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2568,7 +2568,7 @@ export function importClauseNamedImports(child: T.NamedImports) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ImportClauseNamedImportsTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2580,7 +2580,7 @@ export function importClauseDefaultImport(child: (T.ImportIdentifier | T.Namespa
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ImportClauseDefaultImportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2605,7 +2605,7 @@ export function importClauseUFormNamespaceImport(config?: Omit<ConfigOf<T.Import
     $named: true as const,
     $variant: 'namespace_import' as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ImportClauseUFormNamespaceImportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2618,7 +2618,7 @@ export function importClauseUFormNamedImports(config?: Omit<ConfigOf<T.ImportCla
     $named: true as const,
     $variant: 'named_imports' as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ImportClauseUFormNamedImportsTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2631,7 +2631,7 @@ export function importClauseUFormDefaultImport(config?: Omit<ConfigOf<T.ImportCl
     $named: true as const,
     $variant: 'default_import' as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ImportClauseUFormDefaultImportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2648,7 +2648,7 @@ export function importRequireClause(config: ConfigOf<T.ImportRequireClause>) {
     $fields: fields,
     identifier(value?: T.Identifier) { return _setField(config, importRequireClause, 'identifier', value, config?.identifier); },
     source(value?: T.String) { return _setField(config, importRequireClause, 'source', value, config?.source); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ImportRequireClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2663,7 +2663,7 @@ export function importSpecifierName(config: ConfigOf<T.ImportSpecifierName>) {
     $named: true as const,
     $fields: fields,
     name(value?: T.ImportIdentifier) { return _setField(config, importSpecifierName, 'name', value, config?.name); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ImportSpecifierNameTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2698,7 +2698,7 @@ export function importSpecifierUFormName(config: Omit<ConfigOf<T.ImportSpecifier
       if (value === undefined) return inner.$fields.name;
       return importSpecifierUFormName({ importKind: config.importKind, name: value });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ImportSpecifierUFormNameTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2727,7 +2727,7 @@ export function importSpecifierUFormAs(config: Omit<ConfigOf<T.ImportSpecifierUF
       if (value === undefined) return inner.$fields.alias;
       return importSpecifierUFormAs({ importKind: config.importKind, name: inner.$fields.name, alias: value });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ImportSpecifierUFormAsTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2748,7 +2748,7 @@ export function importStatement(config: ConfigOf<T.ImportStatement>) {
     fromClause(value?: T.ImportClause | "from" | T.String | T.ImportRequireClause) { return _setField(config, importStatement, 'fromClause', value, config?.fromClause); },
     importAttribute(value?: T.ImportAttribute | undefined) { return _setField(config, importStatement, 'importAttribute', value, config?.importAttribute); },
     semicolon(value?: T.Semicolon) { return _setField(config, importStatement, 'semicolon', value, config?.semicolon); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ImportStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2760,7 +2760,7 @@ export function indexSignatureMappedTypeClause(child: T.MappedTypeClause) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.IndexSignatureMappedTypeClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2804,7 +2804,7 @@ export function indexSignatureUFormColon(config: Omit<ConfigOf<T.IndexSignatureU
       if (value === undefined) return inner.$fields.index_type;
       return indexSignatureUFormColon({ sign: config.sign, type: config.type, name: inner.$fields.name, indexType: value });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.IndexSignatureUFormColonTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2830,7 +2830,7 @@ export function indexSignatureUFormMappedTypeClause(config: Omit<ConfigOf<T.Inde
       if (value === undefined) return fields.type;
       return indexSignatureUFormMappedTypeClause({ sign: config.sign, type: value });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.IndexSignatureUFormMappedTypeClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2845,7 +2845,7 @@ export function indexTypeQuery(config: ConfigOf<T.IndexTypeQuery>) {
     $named: true as const,
     $fields: fields,
     primaryType(value?: T.PrimaryType) { return _setField(config, indexTypeQuery, 'primaryType', value, config?.primaryType); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.IndexTypeQueryTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2862,7 +2862,7 @@ export function inferType(config: ConfigOf<T.InferType>) {
     $fields: fields,
     typeIdentifier(value?: T.TypeIdentifier) { return _setField(config, inferType, 'typeIdentifier', value, config?.typeIdentifier); },
     typeField(value?: T.Type | undefined) { return _setField(config, inferType, 'type', value, config?.type); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.InferTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2879,7 +2879,7 @@ export function instantiationExpression(config: ConfigOf<T.InstantiationExpressi
     $fields: fields,
     expression(value?: T.Expression) { return _setField(config, instantiationExpression, 'expression', value, config?.expression); },
     typeArguments(value?: T.TypeArguments) { return _setField(config, instantiationExpression, 'typeArguments', value, config?.typeArguments); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.InstantiationExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2900,7 +2900,7 @@ export function interfaceDeclaration(config: ConfigOf<T.InterfaceDeclaration>) {
     typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, interfaceDeclaration, 'typeParameters', value, config?.typeParameters); },
     extendsTypeClause(value?: T.ExtendsTypeClause | undefined) { return _setField(config, interfaceDeclaration, 'extendsTypeClause', value, config?.extendsTypeClause); },
     body(value?: T.ObjectType) { return _setField(config, interfaceDeclaration, 'body', value, config?.body); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.InterfaceDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2917,7 +2917,7 @@ export function internalModule(config: ConfigOf<T.InternalModule>) {
     $fields: fields,
     name(value?: T.String | T.Identifier | T.NestedIdentifier) { return _setField(config, internalModule, 'name', value, config?.name); },
     body(value?: T.StatementBlock | undefined) { return _setField(config, internalModule, 'body', value, config?.body); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.InternalModuleTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2934,7 +2934,7 @@ export function intersectionType(config: ConfigOf<T.IntersectionType>) {
     $fields: fields,
     left(value?: T.Type | undefined) { return _setField(config, intersectionType, 'left', value, config?.left); },
     right(value?: T.Type) { return _setField(config, intersectionType, 'right', value, config?.right); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.IntersectionTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2951,7 +2951,7 @@ export function labeledStatement(config: ConfigOf<T.LabeledStatement>) {
     $fields: fields,
     label(value?: T.StatementIdentifier) { return _setField(config, labeledStatement, 'label', value, config?.label); },
     body(value?: T.Statement) { return _setField(config, labeledStatement, 'body', value, config?.body); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.LabeledStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2970,7 +2970,7 @@ export function lexicalDeclaration(config: ConfigOf<T.LexicalDeclaration>) {
     kind(value?: T.Kind) { return _setField(config, lexicalDeclaration, 'kind', value, config?.kind); },
     declarators(...values: NonEmptyArray<T.VariableDeclarator>) { return _setFields(config, lexicalDeclaration, 'declarators', values, config?.declarators); },
     semicolon(value?: T.Semicolon) { return _setField(config, lexicalDeclaration, 'semicolon', value, config?.semicolon); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.LexicalDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2982,7 +2982,7 @@ export function literalType(child: (T._Number | T.Number | T.String | T.True | T
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.LiteralTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -2999,7 +2999,7 @@ export function lookupType(config: ConfigOf<T.LookupType>) {
     $fields: fields,
     primaryType(value?: T.PrimaryType) { return _setField(config, lookupType, 'primaryType', value, config?.primaryType); },
     indexType(value?: T.Type) { return _setField(config, lookupType, 'indexType', value, config?.indexType); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.LookupTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3018,7 +3018,7 @@ export function mappedTypeClause(config: ConfigOf<T.MappedTypeClause>) {
     name(value?: T.TypeIdentifier) { return _setField(config, mappedTypeClause, 'name', value, config?.name); },
     typeField(value?: T.Type) { return _setField(config, mappedTypeClause, 'type', value, config?.type); },
     alias(value?: T.Type | undefined) { return _setField(config, mappedTypeClause, 'alias', value, config?.alias); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.MappedTypeClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3035,7 +3035,7 @@ export function memberExpression(config: ConfigOf<T.MemberExpression>) {
     $fields: fields,
     object(value?: T.Expression | T.PrimaryExpression | T.Import) { return _setField(config, memberExpression, 'object', value, config?.object); },
     property(value?: T.PrivatePropertyIdentifier | T.Identifier) { return _setField(config, memberExpression, 'property', value, config?.property); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.MemberExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3084,7 +3084,7 @@ export function methodDefinition(config: ConfigOf<T.MethodDefinition>) {
     parameters(value?: T.FormalParameters) { return _setField(config, methodDefinition, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _setField(config, methodDefinition, 'returnType', value, config?.returnType); },
     body(value?: T.StatementBlock) { return _setField(config, methodDefinition, 'body', value, config?.body); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.MethodDefinitionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3119,7 +3119,7 @@ export function methodSignature(config: ConfigOf<T.MethodSignature>) {
     typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, methodSignature, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _setField(config, methodSignature, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _setField(config, methodSignature, 'returnType', value, config?.returnType); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.MethodSignatureTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3136,7 +3136,7 @@ export function module(config: ConfigOf<T.Module>) {
     $fields: fields,
     name(value?: T.String | T.Identifier | T.NestedIdentifier) { return _setField(config, module, 'name', value, config?.name); },
     body(value?: T.StatementBlock | undefined) { return _setField(config, module, 'body', value, config?.body); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ModuleTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3147,7 +3147,7 @@ export function namedImports(...children: T.ImportSpecifier[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.NamedImportsTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3159,7 +3159,7 @@ export function namespaceExport(child: T.ModuleExportName) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.NamespaceExportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3174,7 +3174,7 @@ export function namespaceImport(config: ConfigOf<T.NamespaceImport>) {
     $named: true as const,
     $fields: fields,
     identifier(value?: T.Identifier) { return _setField(config, namespaceImport, 'identifier', value, config?.identifier); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.NamespaceImportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3191,7 +3191,7 @@ export function nestedIdentifier(config: ConfigOf<T.NestedIdentifier>) {
     $fields: fields,
     object(value?: T.Identifier | T.NestedIdentifier) { return _setField(config, nestedIdentifier, 'object', value, config?.object); },
     property(value?: T.Identifier) { return _setField(config, nestedIdentifier, 'property', value, config?.property); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.NestedIdentifierTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3208,7 +3208,7 @@ export function nestedTypeIdentifier(config: ConfigOf<T.NestedTypeIdentifier>) {
     $fields: fields,
     module(value?: T.Identifier | T.NestedIdentifier) { return _setField(config, nestedTypeIdentifier, 'module', value, config?.module); },
     name(value?: T.TypeIdentifier) { return _setField(config, nestedTypeIdentifier, 'name', value, config?.name); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.NestedTypeIdentifierTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3227,7 +3227,7 @@ export function newExpression(config: ConfigOf<T.NewExpression>) {
     constructor(value?: T.PrimaryExpression) { return _setField(config, newExpression, 'constructor', value, config?.constructor); },
     typeArguments(value?: T.TypeArguments | undefined) { return _setField(config, newExpression, 'typeArguments', value, config?.typeArguments); },
     arguments(value?: T.Arguments | undefined) { return _setField(config, newExpression, 'arguments', value, config?.arguments); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.NewExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3242,7 +3242,7 @@ export function nonNullExpression(config: ConfigOf<T.NonNullExpression>) {
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression) { return _setField(config, nonNullExpression, 'expression', value, config?.expression); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.NonNullExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3276,7 +3276,7 @@ export function object(...children: (T.Pair | T.SpreadElement | T.MethodDefiniti
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ObjectTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3293,7 +3293,7 @@ export function objectAssignmentPattern(config: ConfigOf<T.ObjectAssignmentPatte
     $fields: fields,
     left(value?: T.ShorthandPropertyIdentifierPattern | T.DestructuringPattern) { return _setField(config, objectAssignmentPattern, 'left', value, config?.left); },
     right(value?: T.Expression) { return _setField(config, objectAssignmentPattern, 'right', value, config?.right); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ObjectAssignmentPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3304,7 +3304,7 @@ export function objectPattern(...children: (T.PairPattern | T.RestPattern | T.Ob
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ObjectPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3323,7 +3323,7 @@ export function objectType(config: ConfigOf<T.ObjectType>) {
     opening(value?: T.ObjectTypeOpening) { return _setField(config, objectType, 'opening', value, config?.opening); },
     members(...values: NonEmptyArray<"," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon>) { return _setFields(config, objectType, 'members', values, config?.members); },
     closing(value?: T.ObjectTypeClosing) { return _setField(config, objectType, 'closing', value, config?.closing); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ObjectTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3339,7 +3339,7 @@ export function objectTypeCurly(config: T.ObjectType.Curly.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ObjectTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3355,7 +3355,7 @@ export function objectTypeFlow(config: T.ObjectType.Flow.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ObjectTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3370,7 +3370,7 @@ export function omittingTypeAnnotation(config: ConfigOf<T.OmittingTypeAnnotation
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _setField(config, omittingTypeAnnotation, 'type', value, config?.type); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.OmittingTypeAnnotationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3385,7 +3385,7 @@ export function optingTypeAnnotation(config: ConfigOf<T.OptingTypeAnnotation>) {
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _setField(config, optingTypeAnnotation, 'type', value, config?.type); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.OptingTypeAnnotationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3414,7 +3414,7 @@ export function optionalParameter(config: ConfigOf<T.OptionalParameter>) {
       if (value === undefined) return children[0];
       return optionalParameter({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.OptionalParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3431,7 +3431,7 @@ export function optionalTupleParameter(config: ConfigOf<T.OptionalTupleParameter
     $fields: fields,
     name(value?: T.Identifier) { return _setField(config, optionalTupleParameter, 'name', value, config?.name); },
     typeField(value?: T.TypeAnnotation) { return _setField(config, optionalTupleParameter, 'type', value, config?.type); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.OptionalTupleParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3446,7 +3446,7 @@ export function optionalType(config: ConfigOf<T.OptionalType>) {
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _setField(config, optionalType, 'type', value, config?.type); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.OptionalTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3474,7 +3474,7 @@ export function pair(config: ConfigOf<T.Pair>) {
     $fields: fields,
     key(value?: T.PropertyName) { return _setField(config, pair, 'key', value, config?.key); },
     value(value?: T.Expression) { return _setField(config, pair, 'value', value, config?.value); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.PairTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3491,7 +3491,7 @@ export function pairPattern(config: ConfigOf<T.PairPattern>) {
     $fields: fields,
     key(value?: T.PropertyName) { return _setField(config, pairPattern, 'key', value, config?.key); },
     value(value?: T.Pattern | T.AssignmentPattern) { return _setField(config, pairPattern, 'value', value, config?.value); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.PairPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3503,7 +3503,7 @@ export function parenthesizedExpressionSequence(child: T.SequenceExpression) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ParenthesizedExpressionSequenceTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3530,7 +3530,7 @@ export function parenthesizedExpressionUFormTyped(config?: Omit<ConfigOf<T.Paren
       if (value === undefined) return inner.$fields.type;
       return parenthesizedExpressionUFormTyped({ type: value });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ParenthesizedExpressionUFormTypedTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3543,7 +3543,7 @@ export function parenthesizedExpressionUFormSequence(config?: Omit<ConfigOf<T.Pa
     $named: true as const,
     $variant: 'sequence' as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ParenthesizedExpressionUFormSequenceTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3558,7 +3558,7 @@ export function parenthesizedType(config: ConfigOf<T.ParenthesizedType>) {
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _setField(config, parenthesizedType, 'type', value, config?.type); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ParenthesizedTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3599,7 +3599,7 @@ export function program(config: ConfigOf<T.Program>) {
     $fields: fields,
     hashBangLine(value?: T.HashBangLine | undefined) { return _setField(config, program, 'hashBangLine', value, config?.hashBangLine); },
     statements(...values: T.Statement[]) { return _setFields(config, program, 'statements', values, config?.statements); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ProgramTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3626,7 +3626,7 @@ export function propertySignature(config: ConfigOf<T.PropertySignature>) {
     name(value?: T.PropertyName) { return _setField(config, propertySignature, 'name', value, config?.name); },
     optionalMarker(value?: T.OptionalMarker | undefined) { return _setField(config, propertySignature, 'optionalMarker', value, config?.optionalMarker); },
     typeField(value?: T.TypeAnnotation | undefined) { return _setField(config, propertySignature, 'type', value, config?.type); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.PropertySignatureTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3655,7 +3655,7 @@ export function publicFieldDefinition(config: ConfigOf<T.PublicFieldDefinition>)
       if (value === undefined) return children[0];
       return publicFieldDefinition({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.PublicFieldDefinitionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3670,7 +3670,7 @@ export function readonlyType(config: ConfigOf<T.ReadonlyType>) {
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _setField(config, readonlyType, 'type', value, config?.type); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ReadonlyTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3687,7 +3687,7 @@ export function regex(config: ConfigOf<T.Regex>) {
     $fields: fields,
     pattern(value?: T.RegexPattern) { return _setField(config, regex, 'pattern', value, config?.pattern); },
     flags(value?: T.RegexFlags | undefined) { return _setField(config, regex, 'flags', value, config?.flags); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.RegexTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3740,7 +3740,7 @@ export function requiredParameter(config: ConfigOf<T.RequiredParameter>) {
       if (value === undefined) return children[0];
       return requiredParameter({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.RequiredParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3752,7 +3752,7 @@ export function restPattern(child: T.LhsExpression) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.RestPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3767,7 +3767,7 @@ export function restType(config: ConfigOf<T.RestType>) {
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _setField(config, restType, 'type', value, config?.type); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.RestTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3788,7 +3788,7 @@ export function returnStatement(config: ConfigOf<T.ReturnStatement>) {
       if (value === undefined) return children[0];
       return returnStatement({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ReturnStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3805,7 +3805,7 @@ export function satisfiesExpression(config: ConfigOf<T.SatisfiesExpression>) {
     $fields: fields,
     expression(value?: T.Expression) { return _setField(config, satisfiesExpression, 'expression', value, config?.expression); },
     typeAnnotation(value?: T.Type) { return _setField(config, satisfiesExpression, 'typeAnnotation', value, config?.typeAnnotation); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.SatisfiesExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3817,7 +3817,7 @@ export function sequenceExpression(...children: T.Expression[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.SequenceExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3832,7 +3832,7 @@ export function spreadElement(config: ConfigOf<T.SpreadElement>) {
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression) { return _setField(config, spreadElement, 'expression', value, config?.expression); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.SpreadElementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3849,7 +3849,7 @@ export function statementBlock(config: ConfigOf<T.StatementBlock>) {
     $fields: fields,
     statements(...values: T.Statement[]) { return _setFields(config, statementBlock, 'statements', values, config?.statements); },
     automaticSemicolon(value?: T.AutomaticSemicolon | undefined) { return _setField(config, statementBlock, 'automaticSemicolon', value, config?.automaticSemicolon); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.StatementBlockTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3860,7 +3860,7 @@ export function stringDouble(...children: (T.UnescapedDoubleStringFragment | T.E
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.StringDoubleTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3871,7 +3871,7 @@ export function stringSingle(...children: (T.UnescapedSingleStringFragment | T.E
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.StringSingleTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3894,7 +3894,7 @@ export function stringUFormDouble(config?: Omit<ConfigOf<T.StringUFormDouble>, '
     $named: true as const,
     $variant: 'double' as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.StringUFormDoubleTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3907,7 +3907,7 @@ export function stringUFormSingle(config?: Omit<ConfigOf<T.StringUFormSingle>, '
     $named: true as const,
     $variant: 'single' as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.StringUFormSingleTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3926,7 +3926,7 @@ export function subscriptExpression(config: ConfigOf<T.SubscriptExpression>) {
     object(value?: T.Expression | T.PrimaryExpression) { return _setField(config, subscriptExpression, 'object', value, config?.object); },
     optionalChain(value?: T.OptionalChain | undefined) { return _setField(config, subscriptExpression, 'optionalChain', value, config?.optionalChain); },
     index(value?: T.Expressions) { return _setField(config, subscriptExpression, 'index', value, config?.index); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.SubscriptExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3948,7 +3948,7 @@ export function switchBody(...children: (T.SwitchCase | T.SwitchDefault)[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.SwitchBodyTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3965,7 +3965,7 @@ export function switchCase(config: ConfigOf<T.SwitchCase>) {
     $fields: fields,
     value(value?: T.Expressions) { return _setField(config, switchCase, 'value', value, config?.value); },
     body(...values: T.Statement[]) { return _setFields(config, switchCase, 'body', values, config?.body); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.SwitchCaseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3980,7 +3980,7 @@ export function switchDefault(config: ConfigOf<T.SwitchDefault>) {
     $named: true as const,
     $fields: fields,
     body(...values: T.Statement[]) { return _setFields(config, switchDefault, 'body', values, config?.body); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.SwitchDefaultTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -3997,7 +3997,7 @@ export function switchStatement(config: ConfigOf<T.SwitchStatement>) {
     $fields: fields,
     value(value?: T.ParenthesizedExpression) { return _setField(config, switchStatement, 'value', value, config?.value); },
     body(value?: T.SwitchBody) { return _setField(config, switchStatement, 'body', value, config?.body); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.SwitchStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4008,7 +4008,7 @@ export function templateLiteralType(...children: (T.TemplateChars | T.TemplateTy
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TemplateLiteralTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4019,7 +4019,7 @@ export function templateString(...children: (T.TemplateChars | T.EscapeSequence 
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TemplateStringTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4031,7 +4031,7 @@ export function templateSubstitution(child: T.Expressions) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TemplateSubstitutionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4043,7 +4043,7 @@ export function templateType(child: (T.PrimaryType | T.InferType)) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TemplateTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4062,7 +4062,7 @@ export function ternaryExpression(config: ConfigOf<T.TernaryExpression>) {
     condition(value?: T.Expression) { return _setField(config, ternaryExpression, 'condition', value, config?.condition); },
     consequence(value?: T.Expression) { return _setField(config, ternaryExpression, 'consequence', value, config?.consequence); },
     alternative(value?: T.Expression) { return _setField(config, ternaryExpression, 'alternative', value, config?.alternative); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TernaryExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4094,7 +4094,7 @@ export function throwStatement(config: ConfigOf<T.ThrowStatement>) {
       if (value === undefined) return children[0];
       return throwStatement({ ...config, children: [value] });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.ThrowStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4124,7 +4124,7 @@ export function tryStatement(config: ConfigOf<T.TryStatement>) {
     body(value?: T.StatementBlock) { return _setField(config, tryStatement, 'body', value, config?.body); },
     handler(value?: T.CatchClause | undefined) { return _setField(config, tryStatement, 'handler', value, config?.handler); },
     finalizer(value?: T.FinallyClause | undefined) { return _setField(config, tryStatement, 'finalizer', value, config?.finalizer); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TryStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4141,7 +4141,7 @@ export function tupleParameter(config: ConfigOf<T.TupleParameter>) {
     $fields: fields,
     name(value?: T.Identifier | T.RestPattern) { return _setField(config, tupleParameter, 'name', value, config?.name); },
     typeField(value?: T.TypeAnnotation) { return _setField(config, tupleParameter, 'type', value, config?.type); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TupleParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4152,7 +4152,7 @@ export function tupleType(...children: T.TupleTypeMember[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TupleTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4173,7 +4173,7 @@ export function typeAliasDeclaration(config: ConfigOf<T.TypeAliasDeclaration>) {
     typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, typeAliasDeclaration, 'typeParameters', value, config?.typeParameters); },
     value(value?: T.Type) { return _setField(config, typeAliasDeclaration, 'value', value, config?.value); },
     semicolon(value?: T.Semicolon) { return _setField(config, typeAliasDeclaration, 'semicolon', value, config?.semicolon); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TypeAliasDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4188,7 +4188,7 @@ export function typeAnnotation(config: ConfigOf<T.TypeAnnotation>) {
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _setField(config, typeAnnotation, 'type', value, config?.type); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TypeAnnotationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4200,7 +4200,7 @@ export function typeArguments(...children: T.Type[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TypeArgumentsTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4217,7 +4217,7 @@ export function typeAssertion(config: ConfigOf<T.TypeAssertion>) {
     $fields: fields,
     typeArguments(value?: T.TypeArguments) { return _setField(config, typeAssertion, 'typeArguments', value, config?.typeArguments); },
     expression(value?: T.Expression) { return _setField(config, typeAssertion, 'expression', value, config?.expression); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TypeAssertionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4238,7 +4238,7 @@ export function typeParameter(config: ConfigOf<T.TypeParameter>) {
     name(value?: T.TypeIdentifier) { return _setField(config, typeParameter, 'name', value, config?.name); },
     constraint(value?: T.Constraint | undefined) { return _setField(config, typeParameter, 'constraint', value, config?.constraint); },
     value(value?: T.DefaultType | undefined) { return _setField(config, typeParameter, 'value', value, config?.value); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TypeParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4250,7 +4250,7 @@ export function typeParameters(...children: T.TypeParameter[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TypeParametersTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4267,7 +4267,7 @@ export function typePredicate(config: ConfigOf<T.TypePredicate>) {
     $fields: fields,
     name(value?: T.PredefinedType | T.This) { return _setField(config, typePredicate, 'name', value, config?.name); },
     typeField(value?: T.Type) { return _setField(config, typePredicate, 'type', value, config?.type); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TypePredicateTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4282,7 +4282,7 @@ export function typePredicateAnnotation(config: ConfigOf<T.TypePredicateAnnotati
     $named: true as const,
     $fields: fields,
     typePredicate(value?: T.AssertsAnnotationAsserts | T.TypePredicate) { return _setField(config, typePredicateAnnotation, 'typePredicate', value, config?.typePredicate); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TypePredicateAnnotationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4294,7 +4294,7 @@ export function typeQuery(child: (T.TypeQuerySubscriptExpression | T.TypeQueryMe
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.TypeQueryTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4311,7 +4311,7 @@ export function unaryExpression(config: ConfigOf<T.UnaryExpression>) {
     $fields: fields,
     operator(value?: T.UnaryExpressionOperator) { return _setField(config, unaryExpression, 'operator', value, config?.operator); },
     argument(value?: T.Expression) { return _setField(config, unaryExpression, 'argument', value, config?.argument); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.UnaryExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4363,7 +4363,7 @@ export function unionType(config: ConfigOf<T.UnionType>) {
     $fields: fields,
     left(value?: T.Type | undefined) { return _setField(config, unionType, 'left', value, config?.left); },
     right(value?: T.Type) { return _setField(config, unionType, 'right', value, config?.right); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.UnionTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4394,7 +4394,7 @@ export function updateExpressionUFormPostfix(config: Omit<ConfigOf<T.UpdateExpre
       if (value === undefined) return inner.$fields.operator;
       return updateExpressionUFormPostfix({ argument: inner.$fields.argument, operator: value });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.UpdateExpressionUFormPostfixTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4415,7 +4415,7 @@ export function updateExpressionUFormPrefix(config: Omit<ConfigOf<T.UpdateExpres
       if (value === undefined) return inner.$fields.argument;
       return updateExpressionUFormPrefix({ operator: inner.$fields.operator, argument: value });
     },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.UpdateExpressionUFormPrefixTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4432,7 +4432,7 @@ export function variableDeclaration(config: ConfigOf<T.VariableDeclaration>) {
     $fields: fields,
     declarators(...values: NonEmptyArray<T.VariableDeclarator>) { return _setFields(config, variableDeclaration, 'declarators', values, config?.declarators); },
     semicolon(value?: T.Semicolon) { return _setField(config, variableDeclaration, 'semicolon', value, config?.semicolon); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.VariableDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4451,7 +4451,7 @@ export function variableDeclarator(config: ConfigOf<T.VariableDeclarator>) {
     name(value?: T.Identifier | T.DestructuringPattern) { return _setField(config, variableDeclarator, 'name', value, config?.name); },
     typeField(value?: T.TypeAnnotation | undefined) { return _setField(config, variableDeclarator, 'type', value, config?.type); },
     value(value?: T.Expression | undefined) { return _setField(config, variableDeclarator, 'value', value, config?.value); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.VariableDeclaratorTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4468,7 +4468,7 @@ export function whileStatement(config: ConfigOf<T.WhileStatement>) {
     $fields: fields,
     condition(value?: T.ParenthesizedExpression) { return _setField(config, whileStatement, 'condition', value, config?.condition); },
     body(value?: T.Statement) { return _setField(config, whileStatement, 'body', value, config?.body); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.WhileStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4485,7 +4485,7 @@ export function withStatement(config: ConfigOf<T.WithStatement>) {
     $fields: fields,
     object(value?: T.ParenthesizedExpression) { return _setField(config, withStatement, 'object', value, config?.object); },
     body(value?: T.Statement) { return _setField(config, withStatement, 'body', value, config?.body); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.WithStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
@@ -4500,7 +4500,7 @@ export function yieldExpression(config?: ConfigOf<T.YieldExpression>) {
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression | undefined) { return _setField(config, yieldExpression, 'expression', value, config?.expression); },
-    ..._b,
+    ..._branchMethods,
     replace(this: AnyNodeData, target: T.YieldExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }

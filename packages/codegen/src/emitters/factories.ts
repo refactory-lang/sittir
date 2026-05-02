@@ -208,7 +208,7 @@ function collectUsesHoistedPolymorphForm(nodeMap: NodeMap): boolean {
 
 /**
  * Emit the `_setField` and `_setFields` fluent setter helper function source lines,
- * plus the `_b` shared branch-methods constant and the `_leafMethods` helper.
+ * plus the `_branchMethods` shared branch-methods constant and the `_leafMethods` helper.
  *
  * @returns Array of source lines for all shared helpers (without trailing blank line).
  * @remarks
@@ -219,7 +219,7 @@ function collectUsesHoistedPolymorphForm(nodeMap: NodeMap): boolean {
  *     with the new field; getter branch returns the current value.
  *   - `_setFields` — repeated-valued fields. Setter is rest-params —
  *     empty array → return current, otherwise rebuild with the new array.
- *   - `_b` — shared `render` + `toEdit` methods spread into every branch factory.
+ *   - `_branchMethods` — shared `render` + `toEdit` methods spread into every branch factory.
  *     Only `replace` varies per factory (the target tree type).
  *   - `_leafMethods` — shared `render` + `toEdit` for leaf/keyword/enum factories
  *     where the output is a fixed text value.
@@ -249,7 +249,7 @@ function emitFluentSetterHelpers(): string[] {
 		'): T[K] | R | undefined {',
 		'  return v.length ? fn({ ...((cfg ?? {}) as T), [key]: v } as T) : cur;',
 		'}',
-		'const _b = {',
+		'const _branchMethods = {',
 		'  render(this: AnyNodeData): string { return render(this); },',
 		'  toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {',
 		'    if (typeof startOrRange === \'number\') return toEdit(this, startOrRange, endPos!);',
@@ -1646,7 +1646,7 @@ function emitPolymorphFactory(
 	if (forms.length === 0) {
 		// Defensive stub — shouldn't happen after classifier fix.
 		const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap, kindEntries);
-		return `export function ${fn}(_config?: unknown) { return { $type: ${typeExpr}, $source: 'factory' as const, $named: true as const, ..._b, replace(this: AnyNodeData, t: T.${node.treeTypeName}): Edit { const r = t.range(); return toEdit(this, r); } }; }`;
+		return `export function ${fn}(_config?: unknown) { return { $type: ${typeExpr}, $source: 'factory' as const, $named: true as const, ..._branchMethods, replace(this: AnyNodeData, t: T.${node.treeTypeName}): Edit { const r = t.range(); return toEdit(this, r); } }; }`;
 	}
 
 	const parts: string[] = [];
@@ -2237,11 +2237,11 @@ function stripUselessEscapes(pattern: string): string {
  * toEdit(...), replace(target).
  */
 function factorySuffix(treeTypeName: string): string[] {
-	// `_b` carries the shared `render` + `toEdit` methods (typed via
+	// `_branchMethods` carries the shared `render` + `toEdit` methods (typed via
 	// `this: AnyNodeData` to short-circuit TS assignability expansion).
 	// Only `replace` is per-factory (varies by tree type).
 	return [
-		`    ..._b,`,
+		`    ..._branchMethods,`,
 		`    replace(this: AnyNodeData, target: T.${treeTypeName}): Edit { const r = target.range(); return toEdit(this, r); },`
 	];
 }
