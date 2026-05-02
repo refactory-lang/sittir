@@ -8,10 +8,14 @@
  *   4. Times N iterations of render(nodeData) through the native/Askama path
  *      (skipped gracefully when the native binary is not compiled).
  *   5. Reports total time, renders/sec, mean, min, max per (grammar, backend) pair.
+ *      Memory deltas (heapUsed, heapTotal, rss) and approximate heap per render
+ *      are captured around the timed loop (after a GC cycle when --expose-gc is
+ *      available) and included in both JSON output and the stderr table.
  *
  * Usage:
  *   npx tsx packages/codegen/src/scripts/bench-render.ts
  *   BENCH_ITERATIONS=500 npx tsx packages/codegen/src/scripts/bench-render.ts
+ *   node --expose-gc $(which tsx) packages/codegen/src/scripts/bench-render.ts
  *
  * Output: JSON to stdout (one object per grammar per backend), human-readable
  * table summary to stderr.
@@ -73,6 +77,17 @@ function boundaryPathFor(grammar: Grammar): string {
 // Benchmark result shape
 // ---------------------------------------------------------------------------
 
+export interface MemoryDelta {
+	/** Delta in heapUsed (bytes) */
+	heapUsedDelta: number;
+	/** Delta in heapTotal (bytes) */
+	heapTotalDelta: number;
+	/** Delta in rss (bytes) */
+	rssDelta: number;
+	/** Approximate heap bytes allocated per render call */
+	heapPerRender: number;
+}
+
 export interface BenchResult {
 	grammar: Grammar;
 	backend: 'js' | 'native';
@@ -91,6 +106,8 @@ export interface BenchResult {
 	maxMs: number;
 	/** Number of corpus nodes sampled */
 	nodeCount: number;
+	/** Memory utilization metrics (undefined when totalRenders === 0) */
+	memory?: MemoryDelta;
 }
 
 // ---------------------------------------------------------------------------
@@ -168,7 +185,7 @@ async function loadNativeRender(
 }
 
 // ---------------------------------------------------------------------------
-// Timing helpers
+// Timing and memory helpers
 // ---------------------------------------------------------------------------
 
 function hrNow(): bigint {
@@ -179,12 +196,36 @@ function bigintToMs(ns: bigint): number {
 	return Number(ns) / 1_000_000;
 }
 
+/**
+ * Request a GC cycle if --expose-gc was passed to Node. No-op otherwise.
+ */
+function tryGc(): void {
+	(global as { gc?: () => void }).gc?.();
+}
+
+function captureMemory(): NodeJS.MemoryUsage {
+	return process.memoryUsage();
+}
+
+function memoryDelta(
+	before: NodeJS.MemoryUsage,
+	after: NodeJS.MemoryUsage,
+	totalRenders: number
+): MemoryDelta {
+	const heapUsedDelta = after.heapUsed - before.heapUsed;
+	const heapTotalDelta = after.heapTotal - before.heapTotal;
+	const rssDelta = after.rss - before.rss;
+	const heapPerRender =
+		totalRenders > 0 ? heapUsedDelta / totalRenders : 0;
+	return { heapUsedDelta, heapTotalDelta, rssDelta, heapPerRender };
+}
+
 // ---------------------------------------------------------------------------
 // Run a single (grammar, backend) benchmark
 // ---------------------------------------------------------------------------
 
 /**
- * Run N iterations of renderFn over nodes and return timing stats.
+ * Run N iterations of renderFn over nodes and return timing + memory stats.
  *
  * @param nodes - NodeData objects to render on each iteration.
  * @param renderFn - The render function to call.
@@ -220,6 +261,10 @@ function runBench(
 		}
 	}
 
+	// GC before the memory snapshot so the baseline is as clean as possible
+	tryGc();
+	const memBefore = captureMemory();
+
 	// Timed runs
 	let totalNs = 0n;
 	let minNs = BigInt(Number.MAX_SAFE_INTEGER);
@@ -243,6 +288,9 @@ function runBench(
 		}
 	}
 
+	const memAfter = captureMemory();
+	const memory = memoryDelta(memBefore, memAfter, totalRenders);
+
 	const totalMs = bigintToMs(totalNs);
 	const rendersPerSec =
 		totalMs > 0 ? Math.round((totalRenders / totalMs) * 1000) : 0;
@@ -256,7 +304,8 @@ function runBench(
 		meanMs,
 		minMs: bigintToMs(minNs === BigInt(Number.MAX_SAFE_INTEGER) ? 0n : minNs),
 		maxMs: bigintToMs(maxNs),
-		nodeCount: nodes.length
+		nodeCount: nodes.length,
+		memory
 	};
 }
 
@@ -309,6 +358,15 @@ async function benchGrammar(grammar: Grammar): Promise<BenchResult[]> {
 // Table formatting
 // ---------------------------------------------------------------------------
 
+/** Format bytes as a human-readable delta string (B / KB / MB). */
+function fmtBytes(bytes: number): string {
+	const abs = Math.abs(bytes);
+	const sign = bytes < 0 ? '-' : '+';
+	if (abs < 1024) return `${sign}${abs.toFixed(0)}B`;
+	if (abs < 1024 * 1024) return `${sign}${(abs / 1024).toFixed(1)}KB`;
+	return `${sign}${(abs / (1024 * 1024)).toFixed(2)}MB`;
+}
+
 function formatTable(results: BenchResult[]): string {
 	const cols = [
 		'grammar',
@@ -320,7 +378,10 @@ function formatTable(results: BenchResult[]): string {
 		'renders/sec',
 		'mean ms',
 		'min ms',
-		'max ms'
+		'max ms',
+		'heapUsed Δ',
+		'heap/render',
+		'rss Δ'
 	];
 	const rows: string[][] = results.map((r) => [
 		r.grammar,
@@ -332,7 +393,10 @@ function formatTable(results: BenchResult[]): string {
 		r.rendersPerSec.toString(),
 		r.meanMs.toFixed(4),
 		r.minMs.toFixed(4),
-		r.maxMs.toFixed(2)
+		r.maxMs.toFixed(2),
+		r.memory != null ? fmtBytes(r.memory.heapUsedDelta) : 'n/a',
+		r.memory != null ? fmtBytes(r.memory.heapPerRender) : 'n/a',
+		r.memory != null ? fmtBytes(r.memory.rssDelta) : 'n/a'
 	]);
 	const widths = cols.map((c, i) =>
 		Math.max(c.length, ...rows.map((r) => (r[i] ?? '').length))
@@ -378,10 +442,14 @@ const isCli = (() => {
 })();
 
 if (isCli) {
+	const gcAvailable = typeof (global as { gc?: unknown }).gc === 'function';
 	process.stderr.write(
 		`bench-render: N=${N} iterations per backend per grammar\n`
 	);
-	process.stderr.write(`bench-render: warmup=${WARMUP_ITERATIONS}\n\n`);
+	process.stderr.write(`bench-render: warmup=${WARMUP_ITERATIONS}\n`);
+	process.stderr.write(
+		`bench-render: gc=${gcAvailable ? 'available (--expose-gc)' : 'unavailable — pass node --expose-gc for cleaner memory snapshots'}\n\n`
+	);
 
 	const allResults: BenchResult[] = [];
 	for (const grammar of GRAMMARS) {
