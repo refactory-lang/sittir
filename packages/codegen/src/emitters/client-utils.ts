@@ -388,9 +388,13 @@ function emitNativeTransportProjection(lines: string[], nodeMap: NodeMap, kindEn
 	lines.push('  return alternatives.some((candidate) => {');
 	lines.push('    // Compare numeric vs numeric (kindIdFromName converts candidate string kind);');
 	lines.push('    // compare string vs string for literal terminals.');
-	lines.push('    const typeMatch = typeof vt === "number"');
-	lines.push('      ? vt === kindIdFromName(candidate.type)');
-	lines.push('      : vt === candidate.type;');
+	lines.push('    let typeMatch: boolean;');
+	lines.push('    if (typeof vt === "number") {');
+	lines.push('      try { typeMatch = vt === kindIdFromName(candidate.type); }');
+	lines.push('      catch { typeMatch = false; }');
+	lines.push('    } else {');
+	lines.push('      typeMatch = vt === candidate.type;');
+	lines.push('    }');
 	lines.push('    if (!typeMatch) return false;');
 	lines.push('    return candidate.text === undefined || value.$text === candidate.text;');
 	lines.push('  });');
