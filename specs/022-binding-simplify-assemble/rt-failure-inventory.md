@@ -77,6 +77,37 @@ Quick fix: map to actual fields (~10 min per kind).
 | Field coverage gaps              | 50 min   | +2-3    |
 | **Total**                        | **~3 hr**| **+13-17** |
 
+## Hoist Terminal Values to Slots (022 core task)
+
+Factory, readNode (JS + Rust), and wrap currently store leaf children as
+full NodeData objects (`{ $type, $text, $source, $named }`). The native
+transport already hoists these to plain strings at the slot level. Making
+all surfaces store the same shape eliminates the projection layer
+entirely — NodeData IS the transport.
+
+**Current:** `$fields.name = { $type: 1, $text: "foo", $source: "factory" }`
+**Target:**  `$fields.name = "foo"`
+
+The slot classification logic already exists: `isTerminalTransportNode`
+in `types.ts` (checks `modelType ∈ {leaf, keyword, token, enum}`), and
+`fieldTypeComponents` in `shared.ts` decomposes field content with kind
+refs. These are available to every emitter via the nodeMap — they just
+need to be applied to the factory/readNode/wrap/config surfaces, not
+only the transport surface.
+
+**Surfaces to change:**
+1. Factory emitter — terminal slots store `text` not `leafFactory(text)`
+2. readNode (JS) — terminal children → `$text` strings in `$fields`
+3. readNode (Rust/napi) — same
+4. wrap.ts — lazy getters for terminal slots return strings
+5. Config/Loose types — terminal field types become `string`
+6. Projection — becomes identity (zero conversion)
+
+**Factory round-trip impact:** resolves the napi `Failed to convert
+Object {...} into String` errors (currently ~280 rust, ~145 ts, ~65 py
+ceiling). These are leaf NodeData objects crossing the transport boundary
+where Rust expects plain strings.
+
 ## Cluster F Walker Refactor (separate track)
 
 Optional field separator whitespace — `{{ field }} separator {{ next }}` 
