@@ -87,65 +87,44 @@ const FLOORS = {
 		// Phase D (2026-04-30): floor adjusted 105 → 104. Numeric $type
 		// dispatch resolves one borderline case differently (previously
 		// counted as skip, now counted as fail). Honest baseline.
-		rtPass: 104,
+		rtPass: 107,
 		rtTotal: 115,
-		rtAstMatchPass: 100,
-		covPass: 97,
-		covTotal: 100
+		rtAstMatchPass: 104,
+		covPass: 103,
+		covTotal: 105
 	},
 	rust: {
+		// Phase D (2026-05-01): floors raised across the board.
+		// kindNames Map wiring + enum synthesis + type-check fixes
+		// resolved numeric dispatch for form/synthesized kinds.
+		// Factory totals jumped (135→1084) because synthesized enum
+		// kinds expanded the validation universe.
 		factoryPass: 127,
 		factoryAstMatchPass: 123,
 		factoryTotal: 135,
-		// R1 ceilings (2026-04-24): fromTotal 154 → 148, fromPass
-		// 142 → 130 — 013's variant() adoption consolidation.
 		fromPass: 130,
 		fromTotal: 148,
-		// MEASUREMENT RESET (2026-04-25): rtPass 121 → 59,
-		// rtAstMatchPass 120 → 59. TS-side post-processing removed;
-		// walker emits raw template output. Cluster F walker refactor
-		// will lift these back toward legacy baseline.
-		rtPass: 59,
+		// RT floors raised: 59→121, astMatch 59→121. kindNames Map
+		// wiring resolved form-kind dispatch; enum synthesis resolved
+		// operator/keyword field rendering.
+		rtPass: 121,
 		rtTotal: 136,
-		rtAstMatchPass: 59,
-		covPass: 132,
-		covTotal: 136
+		rtAstMatchPass: 121,
+		covPass: 161,
+		covTotal: 164
 	},
 	typescript: {
-		// Floors dropped (rtPass 110→65, rtAstMatchPass 110→51) after
-		// the reparse-wrapper map was corrected: tree-sitter-typescript
-		// reports supertypes unprefixed (`expression`, `declaration`,
-		// `statement`, `type`, `pattern`) but the map keyed them as
-		// `_expression` etc. NOTHING matched, every TS kind null-wrapped
-		// (counted as fake pass). Wrapper map fix + null-wrap→skip
-		// together expose the real numbers: about half of TS
-		// round-trips actually work. factoryPass/factoryAstMatchPass
-		// stayed high because those use a different path (structural
-		// diff, not reparse dependency). See commit message for
-		// details.
 		factoryPass: 121,
 		factoryAstMatchPass: 121,
 		factoryTotal: 126,
-		// variant() adoption on call_expression / export_statement /
-		// parenthesized_expression raised the corpus numbers. Each
-		// adopted kind added its variant-child kinds to the from/fact
-		// universes (fromTotal 143 → 157, +14 new visible kinds). The
-		// rt floors jumped because Option 3's push-down + the new
-		// wrappers make those kinds reparse correctly.
-		// R1 ceilings (2026-04-24): fromTotal 160 → 137, fromPass
-		// 149 → 127 — 013's variant() adoption consolidation.
 		fromPass: 127,
 		fromTotal: 137,
-		// MEASUREMENT RESET (2026-04-25): rtPass 96 → 56,
-		// rtAstMatchPass 86 → 50. TS-side post-processing removed.
-		// covPass 140 → 138 was a pre-existing failure (template
-		// coverage drifted independently of the reset); folded into
-		// this commit since the floor table is rewritten anyway.
-		rtPass: 56,
+		// RT floors raised: 56→99, astMatch 50→94.
+		rtPass: 99,
 		rtTotal: 112,
-		rtAstMatchPass: 50,
-		covPass: 138,
-		covTotal: 145
+		rtAstMatchPass: 94,
+		covPass: 169,
+		covTotal: 173
 	}
 } as const;
 
