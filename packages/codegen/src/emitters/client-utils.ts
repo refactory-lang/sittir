@@ -253,7 +253,9 @@ function emitNativeTransportProjection(lines: string[], nodeMap: NodeMap, kindEn
 	lines.push('  const resolvedKind = nativeTransportType(KIND_NAMES.get(numericType) ?? String(numericType));');
 	lines.push('');
 	lines.push('  const projected: Record<string, unknown> = {};');
+	lines.push("  const isFactory = value.$source === 'factory';");
 	lines.push('  for (const key of transportMetadataKeys) {');
+	lines.push("    if (isFactory && (key === '$span' || key === '$nodeId')) continue;");
 	lines.push('    if (key in value) projected[key] = value[key];');
 	lines.push('  }');
 	lines.push('  // Phase D: napi-rs #[napi(string_enum)] uses PascalCase variant names');
