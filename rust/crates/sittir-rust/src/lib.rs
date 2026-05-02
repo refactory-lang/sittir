@@ -10,6 +10,8 @@ use napi_derive::napi;
 use sittir_core::engine::{Engine, EngineGrammar};
 #[cfg(feature = "napi-bindings")]
 use sittir_core::types::{Edit, FormatRecord, NodeData};
+#[cfg(feature = "napi-bindings")]
+use sittir_core::{panic_msg, ParseResult, ParsedTree};
 
 #[cfg(feature = "napi-bindings")]
 use render::{render_dispatch, render_transport_parts, AnyTransport, TEMPLATE_BUNDLE_HASH};
@@ -48,7 +50,8 @@ pub struct EngineOptions {
 #[cfg(feature = "napi-bindings")]
 #[napi]
 pub struct SittirEngine {
-    inner: Engine<RustGrammar>,
+    engine: Engine<RustGrammar>,
+    parsed: Option<ParsedTree<RustGrammar>>,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -58,13 +61,14 @@ impl SittirEngine {
     pub fn new(options: Option<EngineOptions>) -> Result<Self> {
         let format = parse_format(options)?;
         Ok(Self {
-            inner: Engine::new(RustGrammar, format).map_err(Error::from_reason)?,
+            engine: Engine::new(RustGrammar, format).map_err(Error::from_reason)?,
+            parsed: None,
         })
     }
 
     #[napi(getter)]
     pub fn template_bundle_hash(&self) -> &'static str {
-        self.inner.template_bundle_hash()
+        self.engine.template_bundle_hash()
     }
 
     #[napi(getter)]
@@ -74,45 +78,63 @@ impl SittirEngine {
 
     #[napi]
     pub fn find_and_read(&mut self, source: String, pattern: String) -> Result<String> {
-        self.inner
+        self.engine
             .find_and_read(source, pattern)
             .map_err(Error::from_reason)
     }
 
     #[napi]
     pub fn parse_and_read(&mut self, source: String) -> Result<String> {
-        self.inner
-            .parse_and_read(source)
-            .map_err(Error::from_reason)
+        let mut parsed = self.engine.parse(source).map_err(Error::from_reason)?;
+        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            parsed.read_root()
+        }));
+        match result {
+            Ok(data) => {
+                let format = parsed.format().cloned();
+                self.parsed = Some(parsed);
+                serde_json::to_string(&ParseResult {
+                    node_data: &data,
+                    format,
+                })
+                .map_err(|e| Error::from_reason(format!("serialize ParseResult failed: {e}")))
+            }
+            Err(payload) => Err(Error::from_reason(panic_msg(payload, "parse_and_read panicked"))),
+        }
     }
 
     #[napi]
     pub fn read_node(&mut self, handle: f64, child_index: f64) -> Result<String> {
-        self.inner.read_node(handle, child_index).map_err(Error::from_reason)
+        let parsed = self
+            .parsed
+            .as_mut()
+            .ok_or_else(|| Error::from_reason("no tree parsed — call parseAndRead first".to_string()))?;
+        parsed
+            .read_child(handle as u32, child_index as u16)
+            .map_err(Error::from_reason)
     }
 
     /// Render a typed transport object (napi-native, numeric `$type`).
-    /// Phase B: `AnyTransport` is decoded by napi-rs directly from the JS
-    /// object — no `serde_json::Value` intermediate.
     #[napi]
     pub fn render(&self, transport: AnyTransport) -> Result<String> {
         let (node, canonical) = render_transport_parts(transport)
             .map_err(|e| Error::from_reason(format!("render_transport failed: {e}")))?;
-        self.inner
-            .render_canonical_node(&node, canonical)
+        let tree_format = self.parsed.as_ref().and_then(|pt| pt.format());
+        self.engine
+            .render_canonical_node(&node, canonical, tree_format)
             .map_err(Error::from_reason)
     }
 
     #[napi]
     pub fn apply_edits(&self, source: String, edits: Vec<Edit>) -> Result<String> {
-        self.inner
+        self.engine
             .apply_edits(source, edits)
             .map_err(Error::from_reason)
     }
 
     #[napi]
     pub fn dispose(&mut self) {
-        self.inner.dispose();
+        self.parsed = None;
     }
 }
 
