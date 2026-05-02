@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { TSKindId } from '../src/types.ts';
 
 describe('engine', () => {
 	afterEach(() => {
@@ -33,7 +34,7 @@ describe('engine', () => {
 				hashMatch: true,
 				native: {
 					SittirEngine: class {
-						render(_nodeJson: string): string {
+						render(_node: Record<string, unknown>): string {
 							return 'ok';
 						}
 						applyEdits(
@@ -47,9 +48,10 @@ describe('engine', () => {
 							return source;
 						}
 						parseAndRead(_source: string): string {
+							// Phase D: $type must be numeric (TSKindId).
 							return JSON.stringify({
 								nodeData: {
-									$type: 'identifier',
+									$type: TSKindId.Identifier,
 									$source: 'ts',
 									$named: true,
 									$text: 'x'
@@ -58,8 +60,9 @@ describe('engine', () => {
 							});
 						}
 						readNode(_nodeId: number): string {
+							// Phase D: $type must be numeric (TSKindId).
 							return JSON.stringify({
-								$type: 'identifier',
+								$type: TSKindId.Identifier,
 								$source: 'ts',
 								$named: true,
 								$text: 'x'
@@ -91,7 +94,7 @@ describe('engine', () => {
 				hashMatch: true,
 				native: {
 					SittirEngine: class {
-						render(_nodeJson: string): string {
+						render(_node: Record<string, unknown>): string {
 							return 'fn main() {}';
 						}
 						applyEdits(
@@ -113,11 +116,12 @@ describe('engine', () => {
 		const { createEngine } = await import('../src/engine.js');
 		const engine = createEngine();
 
+		// Phase D: $type must be numeric (TSKindId). String coexistence removed.
 		const node = {
-			$type: 'function_item',
+			$type: TSKindId.Identifier,
 			$source: 'factory' as const,
 			$named: true,
-			$fields: {}
+			$text: 'x'
 		};
 
 		// ignoreFormat: false or undefined should work
@@ -137,7 +141,7 @@ describe('engine', () => {
 				hashMatch: true,
 				native: {
 					SittirEngine: class {
-						render(_nodeJson: string): string {
+						render(_node: Record<string, unknown>): string {
 							return 'fn main() {}';
 						}
 						applyEdits(
@@ -151,9 +155,10 @@ describe('engine', () => {
 							return source;
 						}
 						parseAndRead(_source: string): string {
+							// Phase D: $type must be numeric (TSKindId).
 							return JSON.stringify({
 								nodeData: {
-									$type: 'identifier',
+									$type: TSKindId.Identifier,
 									$source: 'ts',
 									$named: true,
 									$text: 'x'
@@ -162,8 +167,9 @@ describe('engine', () => {
 							});
 						}
 						readNode(_nodeId: number): string {
+							// Phase D: $type must be numeric (TSKindId).
 							return JSON.stringify({
-								$type: 'identifier',
+								$type: TSKindId.Identifier,
 								$source: 'ts',
 								$named: true,
 								$text: 'x'

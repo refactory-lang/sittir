@@ -9,6 +9,7 @@ import {
 	AssembledKeyword,
 	AssembledLeaf
 } from '../compiler/node-map.ts';
+import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { SeqRule } from '../compiler/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { emitHashFiles, emitRenderModule } from '../emitters/render-module.ts';
@@ -109,9 +110,9 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 		expect(emitted.templatesRs.contents).toContain(
 			"pub struct FunctionItemTemplate<'a> {"
 		);
-		expect(emitted.templatesRs.contents).toContain("    pub name: &'a str,");
+		// Phase D: field views use SingleNonterminalView (Askama streaming) not bare &'a str.
 		expect(emitted.templatesRs.contents).toContain(
-			'        name: field_0.as_scalar(),'
+			"    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,"
 		);
 		expect(emitted.templatesRs.contents).not.toContain("    pub text: &'a str,");
 		expect(emitted.templatesRs.contents).not.toContain("    pub variant: &'a str,");
@@ -137,8 +138,43 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 			}
 		] as const;
 
-		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap());
+		// Phase D: render_dispatch uses numeric KindId matching (Phase C migration).
+		// Supply a minimal generatedIdTables so the emitter emits a numeric arm.
+		const generatedIdTables: GeneratedIdTables = {
+			kindIds: {
+				function_item: {
+					id: 42,
+					parser: {
+						cSymbol: 'sym_function_item',
+						parserName: 'function_item',
+						anon: false, aux: false, alias: false, hidden: false
+					}
+				},
+				identifier: {
+					id: 1,
+					parser: {
+						cSymbol: 'sym_identifier',
+						parserName: 'identifier',
+						anon: false, aux: false, alias: false, hidden: false
+					}
+				},
+				kw_fn: {
+					id: 2,
+					parser: {
+						cSymbol: 'anon_sym_fn',
+						parserName: 'kw_fn',
+						anon: true, aux: false, alias: false, hidden: false
+					}
+				}
+			},
+			sourceArtifact: 'parser.wasm'
+		};
 
+		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap(), generatedIdTables);
+
+		expect(emitted.templatesRs.contents).toContain(
+			'#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]'
+		);
 		expect(emitted.templatesRs.contents).toContain('fn resolve_leaf');
 		expect(emitted.templatesRs.contents).toContain('fn resolve_optional');
 		expect(emitted.templatesRs.contents).toContain('fn resolve_required');
@@ -148,8 +184,9 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 			'pub fn render_dispatch(node: &::sittir_core::types::NodeData)'
 		);
 		expect(emitted.templatesRs.contents).toContain('fn render_function_item(');
+		// Phase D: dispatch uses numeric KindId (42) not string "function_item".
 		expect(emitted.templatesRs.contents).toContain(
-			'"function_item" => render_function_item(node)'
+			'42 => render_function_item(node)'
 		);
 		expect(emitted.templatesRs.contents).toContain(
 			'resolve_field(node, "name", true)'
@@ -162,7 +199,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 			'pub struct RustGrammarMeta'
 		);
 		expect(emitted.libRs.contents).toContain(
-			'pub use templates::render_dispatch;'
+			'pub use templates::{render_dispatch, render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};'
 		);
 		expect(emitted.libRs.contents).not.toContain('RustGrammarMeta');
 	});

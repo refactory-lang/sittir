@@ -11,6 +11,7 @@ import type { FormatRecord } from '@sittir/types';
 import {
 	loadLanguageForGrammar,
 	loadWebTreeSitter,
+	loadKindIdFromName,
 	treeHandle
 } from '../../packages/codegen/src/validate/common.ts';
 
@@ -39,7 +40,9 @@ const NATIVE_ENGINE_PATH_BY_GRAMMAR = {
 export type NativeEngine = {
 	parseAndRead(src: string): string;
 	readNode(nodeId: number): string;
-	render(nodeJson: string): string;
+	// Phase B: render accepts a JS object directly (napi-native AnyTransport
+	// decoded from the object). The old string-JSON path has been removed.
+	render(transport: object): string;
 	dispose(): void;
 };
 
@@ -100,7 +103,8 @@ export async function parseTsFixture(
 	if (!tree) {
 		throw new Error(`failed to parse ${grammar} fixture source`);
 	}
-	return READ_TREE_NODE[grammar](treeHandle(tree, source));
+	const kindIdFromName = await loadKindIdFromName(grammar);
+	return READ_TREE_NODE[grammar](treeHandle(tree, source, kindIdFromName ?? undefined));
 }
 
 export function parseNativeFixture(
@@ -145,9 +149,17 @@ export function toBoundaryNodeData(nodeData: unknown): object {
 	}
 
 	const node = nodeData as Record<string, unknown>;
+	// Preserve numeric $type as-is (Phase D: TSKindId-based). Only stringify
+	// when $type is already a string (hidden/synthetic kinds like "_suite").
+	const rawType = node.$type;
+	// napi-rs #[napi(string_enum)] uses PascalCase variant names as JS values
+	// ('Ts', 'Sg', 'Factory'), but the TS side uses lowercase ('ts', 'sg',
+	// 'factory'). Capitalize the first letter at the napi transport boundary.
+	const rawSource = String(node.$source);
+	const napiSource = rawSource.charAt(0).toUpperCase() + rawSource.slice(1);
 	const boundary: Record<string, BoundaryNodeValue> = {
-		$type: String(node.$type),
-		$source: String(node.$source),
+		$type: typeof rawType === 'number' ? rawType : String(rawType),
+		$source: napiSource,
 		$named: Boolean(node.$named)
 	};
 
@@ -186,7 +198,9 @@ export function renderNativeNodeData(
 	engine: NativeEngine,
 	nodeData: object
 ): string {
-	return engine.render(JSON.stringify(nodeData));
+	// Phase B: render() accepts a JS object directly (napi-native AnyTransport
+	// decoded from the napi value). The old string-JSON path was removed.
+	return engine.render(nodeData);
 }
 
 export function createTsRenderEngine(

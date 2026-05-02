@@ -33,6 +33,8 @@ import type { AnyNodeData, NodeId } from '@sittir/types';
 import { loadRawEntries } from './node-types-loader.ts';
 import {
 	loadLanguageForGrammar,
+	loadKindNameFromId,
+	loadKindIdFromName,
 	buildReadHandle,
 	findFirst,
 	findNativeNodeId,
@@ -207,11 +209,34 @@ function checkNodeData(
 	node: TSNode,
 	data: AnyNodeData,
 	expectedFields: Set<string>,
-	overrideFields: Set<string>
+	overrideFields: Set<string>,
+	kindNameFromId?: (id: number) => string | undefined,
+	kindIdFromName?: (kind: string) => number | undefined
 ): string | null {
-	// 1. $type must match
-	if (data.$type !== kind) {
-		return `$type mismatch: expected '${kind}', got '${data.$type}'`;
+	// 1. $type must match — may be numeric (TSKindId) or string (hidden kind).
+	// kindNameFromId returns canonical sittir form which may have a leading
+	// underscore or alias suffix (e.g. '_match_block', 'scoped_type_identifier_in_expression_position')
+	// while tree-sitter's node.type reports the visible/aliased form ('block',
+	// 'scoped_type_identifier'). Accept any of these forms as a match:
+	//   (a) canonical form matches directly
+	//   (b) canonical form with leading underscore stripped matches
+	//   (c) reverse lookup: kindIdFromName(kind) == data.$type (aliased name case)
+	const rawType = data.$type;
+	if (typeof rawType === 'number') {
+		const canonicalKind = kindNameFromId?.(rawType) ?? String(rawType);
+		const canonicalVisible = canonicalKind.startsWith('_') ? canonicalKind.slice(1) : canonicalKind;
+		const expectedId = kindIdFromName?.(kind);
+		const idMatch = expectedId !== undefined && expectedId === rawType;
+		if (canonicalKind !== kind && canonicalVisible !== kind && !idMatch) {
+			return `$type mismatch: expected '${kind}', got '${canonicalKind}' (id=${rawType})`;
+		}
+	} else {
+		if (rawType !== kind) {
+			const rawVisible = String(rawType).startsWith('_') ? String(rawType).slice(1) : String(rawType);
+			if (rawVisible !== kind) {
+				return `$type mismatch: expected '${kind}', got '${String(rawType)}' (id=${rawType})`;
+			}
+		}
 	}
 
 	const liveFieldNames = collectLiveFieldNames(node);
@@ -266,6 +291,20 @@ export async function validateReadNodeRoundTrip(
 	const parser = new Parser();
 	parser.setLanguage(lang);
 
+	// Phase D: $type is numeric — load resolvers for kind-name comparison and handle setup.
+	const kindNameFromId = await loadKindNameFromId(grammar);
+	const rawKindIdFromName = await loadKindIdFromName(grammar);
+	// Wrap so unknown kind names return undefined (instead of throwing).
+	// The generated kindIdFromName throws on missing entries; readNode's
+	// resolveKindId falls back to the string kind only when the function
+	// returns undefined, not when it throws.
+	const kindIdFromName = rawKindIdFromName
+		? (name: string): number | undefined => {
+			try { return rawKindIdFromName(name); }
+			catch { return undefined; }
+		}
+		: rawKindIdFromName;
+
 	const rawEntries = loadRawEntries(grammar);
 	const kindFields = buildKindFieldMap(rawEntries);
 
@@ -292,11 +331,11 @@ export async function validateReadNodeRoundTrip(
 				continue;
 			}
 
-			const handle = buildReadHandle(grammar, tree, entry.source);
+			const handle = buildReadHandle(grammar, tree, entry.source, undefined, kindIdFromName);
 			// Native engine Rust-heap IDs differ from WASM linear-memory IDs.
 			// Skip alias-target kinds the native engine emits under a different
 			// rule name rather than falling back to a mismatched WASM ID.
-			const nativeId = findNativeNodeId(handle, kind);
+			const nativeId = findNativeNodeId(handle, kind, kindNameFromId);
 			if (nativeId === null && handle.read) {
 				skip++;
 				continue;
@@ -315,7 +354,7 @@ export async function validateReadNodeRoundTrip(
 			}
 
 			const expected = kindFields.get(kind) ?? new Set();
-			const error = checkNodeData(kind, node, data, expected, new Set());
+			const error = checkNodeData(kind, node, data, expected, new Set(), kindNameFromId, kindIdFromName);
 			if (error) {
 				issues.push({ kind, instance: entry.name, message: error });
 			} else {

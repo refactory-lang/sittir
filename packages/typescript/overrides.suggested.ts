@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  0  (0 applied, 0 held)
-// Rule promotions:   86  (78 applied, 8 held)
+// Rule promotions:   88  (80 applied, 8 held)
 // Repeated shapes:   7  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -112,7 +112,7 @@ export const suggestedRules = {
   _jsx_attribute: $ => choice($.jsx_attribute, $.jsx_expression),
 
   // [applied] promoted supertype
-  _jsx_attribute_name: $ => choice($.identifier, $.jsx_namespace_name),
+  _jsx_attribute_name: $ => choice($.jsx_identifier, $.identifier, $.jsx_namespace_name),
 
   // [applied] promoted supertype
   _jsx_attribute_value: $ => choice($._jsx_string, $.jsx_expression, $.jsx_element, $.jsx_self_closing_element),
@@ -133,6 +133,9 @@ export const suggestedRules = {
   _module_export_name: $ => choice($.identifier, $.string),
 
   // [applied] promoted supertype
+  _property_identifier: $ => choice($.identifier, $._reserved_identifier),
+
+  // [applied] promoted supertype
   _property_name: $ => choice($.identifier, $.private_property_identifier, $.string, $.number, $.computed_property_name),
 
   // [applied] promoted supertype
@@ -143,6 +146,9 @@ export const suggestedRules = {
 
   // [applied] promoted supertype
   _shorthand_property_identifier_pattern: $ => choice($.identifier, $._reserved_identifier),
+
+  // [applied] promoted supertype
+  _statement_identifier: $ => choice($.identifier, $._reserved_identifier),
 
   // [applied] promoted supertype
   _tuple_type_member: $ => choice($.tuple_parameter, $.optional_tuple_parameter, $.optional_type, $.rest_type, $.type),
@@ -160,7 +166,7 @@ export const suggestedRules = {
   primary_expression: $ => choice($.non_null_expression),
 
   // [applied] promoted supertype
-  primary_type: $ => choice($.parenthesized_type, $.predefined_type, $._type_identifier, $.nested_type_identifier, $.generic_type, $.object_type, $.array_type, $.tuple_type, $.flow_maybe_type, $.type_query, $.index_type_query, $.this, $.existential_type, $.literal_type, $.lookup_type, $.conditional_type, $.template_literal_type, $.intersection_type, $.union_type),
+  primary_type: $ => choice($.parenthesized_type, $.predefined_type, $.identifier, $.nested_type_identifier, $.generic_type, $.object_type, $.array_type, $.tuple_type, $.flow_maybe_type, $.type_query, $.index_type_query, $.this, $.existential_type, $.literal_type, $.lookup_type, $.conditional_type, $.template_literal_type, $.intersection_type, $.union_type),
 
   // [applied] promoted supertype
   statement: $ => choice($.export_statement, $.import_statement, $.debugger_statement, $.expression_statement, $.declaration, $.statement_block, $.if_statement, $.switch_statement, $.for_statement, $.for_in_statement, $.while_statement, $.do_statement, $.try_statement, $.with_statement, $.break_statement, $.continue_statement, $.return_statement, $.throw_statement, $.empty_statement, $.labeled_statement),
@@ -171,9 +177,6 @@ export const suggestedRules = {
   // --- Repeated-shape candidates (reused across ≥2 parents) ---
   // parents: _for_header_let_const_kind, _for_header_var_kind, catch_clause, variable_declarator
   _shared_2: $ => choice($._destructuring_pattern, $.identifier),
-
-  // parents: _type_query_member_expression, _type_query_member_expression_in_type_annotation, member_expression
-  _property_identifier: $ => choice($.private_property_identifier, $.property_identifier),
 
   // parents: _for_header_lhs, assignment_expression
   _expression: $ => choice($._lhs_expression, $.parenthesized_expression),
@@ -209,10 +212,12 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "_jsx_element_name", classification: "supertype", applied: true },
   { kind: "_jsx_identifier", classification: "supertype", applied: true },
   { kind: "_module_export_name", classification: "supertype", applied: true },
+  { kind: "_property_identifier", classification: "supertype", applied: true },
   { kind: "_property_name", classification: "supertype", applied: true },
   { kind: "_semicolon", classification: "supertype", applied: true },
   { kind: "_shorthand_property_identifier", classification: "supertype", applied: true },
   { kind: "_shorthand_property_identifier_pattern", classification: "supertype", applied: true },
+  { kind: "_statement_identifier", classification: "supertype", applied: true },
   { kind: "_tuple_type_member", classification: "supertype", applied: true },
   { kind: "declaration", classification: "supertype", applied: true },
   { kind: "expression", classification: "supertype", applied: true },

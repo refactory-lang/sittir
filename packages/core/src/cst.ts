@@ -17,11 +17,17 @@ function offsetToPosition(
 
 /**
  * Build a lightweight CST node tree with byte offsets.
+ *
+ * @param kindNameFromId - Optional resolver for numeric `$type` values to string
+ *   kind names (for the `CSTNode.type` display field). When absent, falls back
+ *   to `String(node.$type)` — the numeric id as a string. Callers with access
+ *   to a grammar's `kindNameFromId` function should pass it here for readable output.
  */
 export function toCst(
 	node: AnyNodeData,
 	renderer: BoundRenderer,
-	offset = 0
+	offset = 0,
+	kindNameFromId?: (id: number) => string | undefined
 ): CSTNode {
 	// When `$text` is set (leaf node) use it directly for both the
 	// returned `text` field AND the position-calc basis. Previously we
@@ -31,7 +37,7 @@ export function toCst(
 	const text = node.$text !== undefined ? node.$text : renderer.render(node);
 
 	return {
-		type: node.$type,
+		type: typeof node.$type === 'string' ? node.$type : (kindNameFromId?.(node.$type) ?? String(node.$type)),
 		text,
 		children: [],
 		isNamed: true,

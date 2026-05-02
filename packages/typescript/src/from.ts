@@ -2,6 +2,7 @@
 
 import * as F from './factories.js';
 import type * as T from './types.js';
+import { TSKindId } from './types.js';
 import type { AnyNodeData, ConfigOf } from '@sittir/types';
 import { isNodeData } from './utils.js';
 
@@ -77,7 +78,6 @@ export const _fromMap = {
   "extends_clause": extendsClauseFrom,
   "extends_type_clause": extendsTypeClauseFrom,
   "false": false_From,
-  "field_definition": fieldDefinitionFrom,
   "finally_clause": finallyClauseFrom,
   "flow_maybe_type": flowMaybeTypeFrom,
   "for_in_statement": forInStatementFrom,
@@ -91,7 +91,6 @@ export const _fromMap = {
   "generator_function_declaration": generatorFunctionDeclarationFrom,
   "generic_type": genericTypeFrom,
   "hash_bang_line": hashBangLineFrom,
-  "html_character_reference": htmlCharacterReferenceFrom,
   "identifier": identifierFrom,
   "if_statement": ifStatementFrom,
   "implements_clause": implementsClauseFrom,
@@ -114,14 +113,6 @@ export const _fromMap = {
   "interface_declaration": interfaceDeclarationFrom,
   "internal_module": internalModuleFrom,
   "intersection_type": intersectionTypeFrom,
-  "jsx_attribute": jsxAttributeFrom,
-  "jsx_closing_element": jsxClosingElementFrom,
-  "jsx_element": jsxElementFrom,
-  "jsx_expression": jsxExpressionFrom,
-  "jsx_identifier": jsxIdentifierFrom,
-  "jsx_namespace_name": jsxNamespaceNameFrom,
-  "jsx_opening_element": jsxOpeningElementFrom,
-  "jsx_self_closing_element": jsxSelfClosingElementFrom,
   "labeled_statement": labeledStatementFrom,
   "lexical_declaration": lexicalDeclarationFrom,
   "literal_type": literalTypeFrom,
@@ -204,9 +195,7 @@ export const _fromMap = {
   "type_query": typeQueryFrom,
   "unary_expression": unaryExpressionFrom,
   "undefined": undefined_From,
-  "unescaped_double_jsx_string_fragment": unescapedDoubleJsxStringFragmentFrom,
   "unescaped_double_string_fragment": unescapedDoubleStringFragmentFrom,
-  "unescaped_single_jsx_string_fragment": unescapedSingleJsxStringFragmentFrom,
   "unescaped_single_string_fragment": unescapedSingleStringFragmentFrom,
   "union_type": unionTypeFrom,
   "update_expression": updateExpressionFrom,
@@ -233,10 +222,8 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
   "escape_sequence": { factory: F.escapeSequence },
   "false": { values: ["false"], factory: () => F.false_() },
   "hash_bang_line": { factory: F.hashBangLine },
-  "html_character_reference": { factory: F.htmlCharacterReference },
   "identifier": { factory: F.identifier },
   "import": { values: ["import"], factory: () => F.import_() },
-  "jsx_identifier": { factory: F.jsxIdentifier },
   "meta_property": { factory: F.metaProperty },
   "null": { values: ["null"], factory: () => F.null_() },
   "number": { factory: F.number },
@@ -249,9 +236,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
   "this": { values: ["this"], factory: () => F.this_() },
   "true": { values: ["true"], factory: () => F.true_() },
   "undefined": { values: ["undefined"], factory: () => F.undefined_() },
-  "unescaped_double_jsx_string_fragment": { factory: F.unescapedDoubleJsxStringFragment },
   "unescaped_double_string_fragment": { factory: F.unescapedDoubleStringFragment },
-  "unescaped_single_jsx_string_fragment": { factory: F.unescapedSingleJsxStringFragment },
   "unescaped_single_string_fragment": { factory: F.unescapedSingleStringFragment },
   "html_comment": { factory: F.htmlComment },
   "||": { factory: F.oror },
@@ -395,56 +380,57 @@ function _assertNonEmpty<T>(
 
 // Interned resolver kind lists (T042i dedup)
 const _super_type: readonly string[] = ["primary_type","function_type","readonly_type","constructor_type","infer_type","_type_query_member_expression_in_type_annotation","_type_query_call_expression_in_type_annotation"];
-const _super_semicolon: readonly string[] = ["_automatic_semicolon"];
-const _super_shorthand_property_identifier: readonly string[] = ["_reserved_identifier","identifier"];
+const _super_property_identifier: readonly string[] = ["_reserved_identifier","identifier"];
 const _super_expression: readonly string[] = ["as_expression","satisfies_expression","instantiation_expression","internal_module","type_assertion","primary_expression","assignment_expression","augmented_assignment_expression","await_expression","unary_expression","binary_expression","ternary_expression","update_expression","new_expression","yield_expression"];
 const _super_identifier: readonly string[] = ["undefined","identifier"];
 const _super_import_identifier: readonly string[] = ["identifier"];
 const _super_destructuring_pattern: readonly string[] = ["object_pattern","array_pattern"];
+const _super_semicolon: readonly string[] = ["_automatic_semicolon"];
 const _super_expressions: readonly string[] = ["expression","sequence_expression"];
-const _super_jsx_identifier: readonly string[] = ["jsx_identifier","identifier"];
-const _super_jsx_attribute: readonly string[] = ["jsx_attribute","jsx_expression"];
-const _K0: readonly string[] = [];
-const _K1: readonly string[] = ["identifier","private_property_identifier","number"];
-const _K2: readonly string[] = ["string","computed_property_name"];
+const _K0: readonly string[] = ["identifier","private_property_identifier","number"];
+const _K1: readonly string[] = ["string","computed_property_name"];
+const _K2: readonly string[] = [];
 const _K3: readonly string[] = ["type_annotation","asserts_annotation","type_predicate_annotation"];
-const _K4: readonly string[] = ["function_signature","abstract_class_declaration","module","internal_module","type_alias_declaration","enum_declaration","interface_declaration","import_alias","ambient_declaration","statement_block","_property_identifier","primary_type","function_type","readonly_type","constructor_type","infer_type","_type_query_member_expression_in_type_annotation","_type_query_call_expression_in_type_annotation"];
-const _K5: readonly string[] = ["predefined_type","this"];
-const _K6: readonly string[] = ["parenthesized_type","_type_identifier","nested_type_identifier","generic_type","object_type","array_type","tuple_type","flow_maybe_type","type_query","index_type_query","literal_type","lookup_type","conditional_type","template_literal_type","intersection_type","union_type"];
-const _K7: readonly string[] = ["as_expression","satisfies_expression","instantiation_expression","internal_module","type_assertion","primary_expression","assignment_expression","augmented_assignment_expression","await_expression","unary_expression","binary_expression","ternary_expression","update_expression","new_expression","yield_expression","statement_block"];
-const _K8: readonly string[] = ["parenthesized_expression","_lhs_expression"];
-const _K9: readonly string[] = ["member_expression","subscript_expression","object_pattern","array_pattern","non_null_expression","rest_pattern"];
-const _K10: readonly string[] = ["member_expression","subscript_expression","parenthesized_expression","non_null_expression"];
-const _K11: readonly string[] = ["private_property_identifier"];
-const _K12: readonly string[] = ["import"];
-const _K13: readonly string[] = ["non_null_expression","new_expression"];
-const _K14: readonly string[] = ["decorator_member_expression"];
-const _K15: readonly string[] = ["export_statement","import_statement","debugger_statement","expression_statement","declaration","statement_block","if_statement","switch_statement","for_statement","for_in_statement","while_statement","do_statement","try_statement","with_statement","break_statement","continue_statement","return_statement","throw_statement","labeled_statement"];
-const _K16: readonly string[] = ["string"];
-const _K17: readonly string[] = ["export_clause"];
-const _K18: readonly string[] = ["_type_identifier","nested_type_identifier","generic_type"];
-const _K19: readonly string[] = ["_for_header_lhs","_for_header_var_kind","_for_header_let_const_kind"];
-const _K20: readonly string[] = ["lexical_declaration","variable_declaration","expression","sequence_expression"];
-const _K21: readonly string[] = ["_automatic_semicolon","_function_signature_automatic_semicolon"];
-const _K22: readonly string[] = ["primary_type","function_type","readonly_type","constructor_type","infer_type","_type_query_member_expression_in_type_annotation","_type_query_call_expression_in_type_annotation","asserts","type_predicate"];
-const _K23: readonly string[] = ["_type_identifier","nested_type_identifier"];
-const _K24: readonly string[] = ["nested_identifier"];
-const _K25: readonly string[] = ["import_clause","string","import_require_clause"];
-const _K26: readonly string[] = ["type_annotation","omitting_type_annotation","adding_type_annotation","opting_type_annotation"];
-const _K27: readonly string[] = ["string","nested_identifier"];
-const _K28: readonly string[] = ["nested_identifier","jsx_namespace_name"];
-const _K29: readonly string[] = ["jsx_text","html_character_reference"];
-const _K30: readonly string[] = ["jsx_element","jsx_self_closing_element","jsx_expression"];
-const _K31: readonly string[] = ["jsx_namespace_name","nested_identifier"];
-const _K32: readonly string[] = ["as_expression","satisfies_expression","instantiation_expression","internal_module","type_assertion","primary_expression","assignment_expression","augmented_assignment_expression","await_expression","unary_expression","binary_expression","ternary_expression","update_expression","new_expression","yield_expression","non_null_expression"];
-const _K33: readonly string[] = ["_property_identifier"];
-const _K34: readonly string[] = ["export_statement","property_signature","call_signature","construct_signature","index_signature","method_signature"];
-const _K35: readonly string[] = ["undefined","identifier","this"];
-const _K36: readonly string[] = ["accessibility_modifier","override_modifier"];
-const _K37: readonly string[] = ["member_expression","subscript_expression","object_pattern","array_pattern","non_null_expression","rest_pattern","assignment_pattern"];
-const _K38: readonly string[] = ["_public_field_definition_declare_first","_public_field_definition_access_first","_public_field_definition_static_mods","_public_field_definition_abstract_first","_public_field_definition_readonly_first","_public_field_definition_accessor_opt"];
-const _K39: readonly string[] = ["rest_pattern"];
-const _K40: readonly string[] = ["identifier","this","predefined_type"];
+const _K4: readonly string[] = ["identifier","_automatic_semicolon"];
+const _K5: readonly string[] = ["function_signature","abstract_class_declaration","module","internal_module","type_alias_declaration","enum_declaration","interface_declaration","import_alias","ambient_declaration","statement_block","primary_type","function_type","readonly_type","constructor_type","infer_type","_type_query_member_expression_in_type_annotation","_type_query_call_expression_in_type_annotation"];
+const _K6: readonly string[] = ["predefined_type","identifier","this"];
+const _K7: readonly string[] = ["parenthesized_type","nested_type_identifier","generic_type","object_type","array_type","tuple_type","flow_maybe_type","type_query","index_type_query","literal_type","lookup_type","conditional_type","template_literal_type","intersection_type","union_type"];
+const _K8: readonly string[] = ["as_expression","satisfies_expression","instantiation_expression","internal_module","type_assertion","primary_expression","assignment_expression","augmented_assignment_expression","await_expression","unary_expression","binary_expression","ternary_expression","update_expression","new_expression","yield_expression","statement_block"];
+const _K9: readonly string[] = ["_asserts_annotation_asserts"];
+const _K10: readonly string[] = ["asserts"];
+const _K11: readonly string[] = ["parenthesized_expression","_lhs_expression"];
+const _K12: readonly string[] = ["member_expression","subscript_expression","object_pattern","array_pattern","non_null_expression","rest_pattern"];
+const _K13: readonly string[] = ["member_expression","subscript_expression","parenthesized_expression","non_null_expression"];
+const _K14: readonly string[] = ["private_property_identifier"];
+const _K15: readonly string[] = ["import"];
+const _K16: readonly string[] = ["non_null_expression","new_expression"];
+const _K17: readonly string[] = ["decorator_member_expression"];
+const _K18: readonly string[] = ["export_statement","import_statement","debugger_statement","expression_statement","declaration","statement_block","if_statement","switch_statement","for_statement","for_in_statement","while_statement","do_statement","try_statement","with_statement","break_statement","continue_statement","return_statement","throw_statement","labeled_statement"];
+const _K19: readonly string[] = ["string"];
+const _K20: readonly string[] = ["export_clause"];
+const _K21: readonly string[] = ["_type_identifier","nested_type_identifier","generic_type"];
+const _K22: readonly string[] = ["_for_header_lhs","_for_header_var_kind","_for_header_let_const_kind"];
+const _K23: readonly string[] = ["_for_statement_initializer"];
+const _K24: readonly string[] = ["lexical_declaration","variable_declaration","expression","sequence_expression"];
+const _K25: readonly string[] = ["_automatic_semicolon","_function_signature_automatic_semicolon"];
+const _K26: readonly string[] = ["primary_type","function_type","readonly_type","constructor_type","infer_type","_type_query_member_expression_in_type_annotation","_type_query_call_expression_in_type_annotation","asserts","type_predicate"];
+const _K27: readonly string[] = ["_type_identifier","nested_type_identifier"];
+const _K28: readonly string[] = ["nested_identifier"];
+const _K29: readonly string[] = ["_import_attribute_object"];
+const _K30: readonly string[] = ["object"];
+const _K31: readonly string[] = ["import_clause","string","import_require_clause"];
+const _K32: readonly string[] = ["type_annotation","omitting_type_annotation","adding_type_annotation","opting_type_annotation"];
+const _K33: readonly string[] = ["string","nested_identifier"];
+const _K34: readonly string[] = ["as_expression","satisfies_expression","instantiation_expression","internal_module","type_assertion","primary_expression","assignment_expression","augmented_assignment_expression","await_expression","unary_expression","binary_expression","ternary_expression","update_expression","new_expression","yield_expression","non_null_expression"];
+const _K35: readonly string[] = ["private_property_identifier","identifier"];
+const _K36: readonly string[] = ["export_statement","property_signature","call_signature","construct_signature","index_signature","method_signature"];
+const _K37: readonly string[] = ["undefined","identifier","this"];
+const _K38: readonly string[] = ["accessibility_modifier","override_modifier"];
+const _K39: readonly string[] = ["member_expression","subscript_expression","object_pattern","array_pattern","non_null_expression","rest_pattern","assignment_pattern"];
+const _K40: readonly string[] = ["_public_field_definition_declare_first","_public_field_definition_access_first","_public_field_definition_static_mods","_public_field_definition_abstract_first","_public_field_definition_readonly_first","_public_field_definition_accessor_opt"];
+const _K41: readonly string[] = ["rest_pattern"];
+const _K42: readonly string[] = ["identifier","this","predefined_type"];
+const _K43: readonly string[] = ["type_predicate"];
 
 export function abstractClassDeclarationFrom(input: T.AbstractClassDeclaration.Loose): ReturnType<typeof F.abstractClassDeclaration> | T.AbstractClassDeclaration {
   if (isNodeData(input)) return input;
@@ -460,14 +446,14 @@ export function abstractClassDeclarationFrom(input: T.AbstractClassDeclaration.L
 export function abstractMethodSignatureFrom(input: T.AbstractMethodSignature.Loose): ReturnType<typeof F.abstractMethodSignature> | T.AbstractMethodSignature {
   if (isNodeData(input)) return input;
   return F.abstractMethodSignature({
-    accessibilityModifier: _resolveOneLeaf<T.AccessibilityModifier>(input.accessibilityModifier, "accessibility_modifier"),
+    accessibilityModifier: _resolveOneLeaf<T._AccessibilityModifier>(input.accessibilityModifier, "_accessibility_modifier"),
     overrideModifier: _resolveBooleanKeyword(input.overrideModifier),
-    accessorKind: _resolveOne<"get" | "set" | "*">(input.accessorKind, _K0, _K0),
-    name: _resolveOne<T.PropertyName>(input.name, _K1, _K2),
+    accessorKind: _resolveOneLeaf<T.AccessorKind>(input.accessorKind, "_accessor_kind"),
+    name: _resolveOne<T.PropertyName>(input.name, _K0, _K1),
     optionalMarker: _resolveBooleanKeyword(input.optionalMarker),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
-    returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K0, _K3),
+    returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K2, _K3),
   });
 }
 
@@ -479,19 +465,19 @@ export function accessibilityModifierFrom(input: string | T.AccessibilityModifie
 export function addingTypeAnnotationFrom(input: T.AddingTypeAnnotation.Loose): ReturnType<typeof F.addingTypeAnnotation> | T.AddingTypeAnnotation {
   if (isNodeData(input)) return input;
   return F.addingTypeAnnotation({
-    type: _resolveOne<T.Type>(input.type, _K0, _super_type),
+    type: _resolveOne<T.Type>(input.type, _K2, _super_type),
   });
 }
 
 export function ambientDeclarationFrom(input: T.AmbientDeclaration.Loose): ReturnType<typeof F.ambientDeclaration> | T.AmbientDeclaration {
   if (isNodeData(input)) return input;
   return F.ambientDeclaration({
-    declaration: _resolveOne<T.Declaration | "global" | T.StatementBlock | "module" | T.PropertyIdentifier | T.Type | T.Semicolon>(input.declaration, _super_semicolon, _K4),
+    declaration: _resolveOne<T.Declaration | "global" | T.StatementBlock | "module" | T.Identifier | T.Type | T.Semicolon>(input.declaration, _K4, _K5),
   });
 }
 
 export function arguments_From(...input: readonly (NonNullable<T.Arguments.Config['children']>[number] | T.Arguments)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'arguments') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Arguments) {
     const data = input[0];
     return F.arguments_(...((data.$children ?? []) as readonly NonNullable<T.Arguments.Config['children']>[number][]));
   }
@@ -499,7 +485,7 @@ export function arguments_From(...input: readonly (NonNullable<T.Arguments.Confi
 }
 
 export function arrayFrom(...input: readonly (NonNullable<T.Array.Config['children']>[number] | T.Array)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'array') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Array) {
     const data = input[0];
     return F.array(...((data.$children ?? []) as readonly NonNullable<T.Array.Config['children']>[number][]));
   }
@@ -507,7 +493,7 @@ export function arrayFrom(...input: readonly (NonNullable<T.Array.Config['childr
 }
 
 export function arrayPatternFrom(...input: readonly (NonNullable<T.ArrayPattern.Config['children']>[number] | T.ArrayPattern)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'array_pattern') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ArrayPattern) {
     const data = input[0];
     return F.arrayPattern(...((data.$children ?? []) as readonly NonNullable<T.ArrayPattern.Config['children']>[number][]));
   }
@@ -517,14 +503,14 @@ export function arrayPatternFrom(...input: readonly (NonNullable<T.ArrayPattern.
 export function arrayTypeFrom(input: T.ArrayType.Loose): ReturnType<typeof F.arrayType> | T.ArrayType {
   if (isNodeData(input)) return input;
   return F.arrayType({
-    primaryType: _resolveOne<T.PrimaryType>(input.primaryType, _K5, _K6),
+    primaryType: _resolveOne<T.PrimaryType>(input.primaryType, _K6, _K7),
   });
 }
 
 export function arrowFunctionParameterFrom(input: T.ArrowFunctionParameter.Loose): ReturnType<typeof F.arrowFunctionParameter> | T.ArrowFunctionParameter {
   if (isNodeData(input)) return input;
   return F.arrowFunctionParameter({
-    parameter: _resolveOne<T.ReservedIdentifier>(input.parameter, _super_shorthand_property_identifier, _K0),
+    parameter: _resolveOne<T.ReservedIdentifier>(input.parameter, _super_property_identifier, _K2),
   });
 }
 
@@ -533,7 +519,7 @@ export function arrowFunctionUCallSignatureFrom(input: T.ArrowFunctionUCallSigna
   return F.arrowFunctionUCallSignature({
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
-    returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K0, _K3),
+    returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K2, _K3),
   });
 }
 
@@ -545,31 +531,31 @@ export function arrowFunctionFrom(input?: T.ArrowFunction.Loose): ReturnType<typ
 export function arrowFunctionUFormParameterFrom(input: Omit<ConfigOf<T.ArrowFunctionUFormParameter>, '$variant'>) {
   return F.arrowFunctionUFormParameter({
     asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
-    body: _resolveOne<T.Expression | T.StatementBlock>(input.body, _K0, _K7),
-    parameter: _resolveOne<T.ReservedIdentifier>(input.parameter, _super_shorthand_property_identifier, _K0),
+    body: _resolveOne<T.Expression | T.StatementBlock>(input.body, _K2, _K8),
+    parameter: _resolveOne<T.ReservedIdentifier>(input.parameter, _super_property_identifier, _K2),
   });
 }
 
 export function arrowFunctionUFormUCallSignatureFrom(input: Omit<ConfigOf<T.ArrowFunctionUFormUCallSignature>, '$variant'>) {
   return F.arrowFunctionUFormUCallSignature({
     asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
-    body: _resolveOne<T.Expression | T.StatementBlock>(input.body, _K0, _K7),
+    body: _resolveOne<T.Expression | T.StatementBlock>(input.body, _K2, _K8),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
-    returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K0, _K3),
+    returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K2, _K3),
   });
 }
 
 export function asExpressionFrom(input: T.AsExpression.Loose): ReturnType<typeof F.asExpression> | T.AsExpression {
   if (isNodeData(input)) return input;
   return F.asExpression({
-    expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
-    typeAnnotation: _resolveOne<"const" | T.Type>(input.typeAnnotation, _K0, _super_type),
+    expression: _resolveOne<T.Expression>(input.expression, _K2, _super_expression),
+    typeAnnotation: _resolveOne<"const" | T.Type>(input.typeAnnotation, _K2, _super_type),
   });
 }
 
 export function assertsFrom(input?: NonNullable<T.Asserts.Config['children']>[number] | T.Asserts) {
-  if (isNodeData(input) && input.$type === 'asserts') {
+  if (isNodeData(input) && input.$type === TSKindId.Asserts) {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
     return F.asserts(child as Parameters<typeof F.asserts>[0]);
@@ -580,7 +566,7 @@ export function assertsFrom(input?: NonNullable<T.Asserts.Config['children']>[nu
 export function assertsAnnotationFrom(input: T.AssertsAnnotation.Loose): ReturnType<typeof F.assertsAnnotation> | T.AssertsAnnotation {
   if (isNodeData(input)) return input;
   return F.assertsAnnotation({
-    asserts: _resolveOneBranch<":" | T.Asserts>(input.asserts, "asserts"),
+    asserts: _resolveOne<T.AssertsAnnotationAsserts | T.Asserts>(input.asserts, _K9, _K10),
   });
 }
 
@@ -588,48 +574,47 @@ export function assignmentExpressionFrom(input: T.AssignmentExpression.Loose): R
   if (isNodeData(input)) return input;
   return F.assignmentExpression({
     usingMarker: _resolveBooleanKeyword(input.usingMarker),
-    left: _resolveOne<T.ParenthesizedExpression | T.LhsExpression>(input.left, _K0, _K8),
-    right: _resolveOne<T.Expression>(input.right, _K0, _super_expression),
+    left: _resolveOne<T.ParenthesizedExpression | T.LhsExpression>(input.left, _K2, _K11),
+    right: _resolveOne<T.Expression>(input.right, _K2, _super_expression),
   });
 }
 
 export function assignmentPatternFrom(input: T.AssignmentPattern.Loose): ReturnType<typeof F.assignmentPattern> | T.AssignmentPattern {
   if (isNodeData(input)) return input;
   return F.assignmentPattern({
-    left: _resolveOne<T.Pattern>(input.left, _super_identifier, _K9),
-    right: _resolveOne<T.Expression>(input.right, _K0, _super_expression),
+    left: _resolveOne<T.Pattern>(input.left, _super_identifier, _K12),
+    right: _resolveOne<T.Expression>(input.right, _K2, _super_expression),
   });
 }
 
 export function augmentedAssignmentExpressionFrom(input: T.AugmentedAssignmentExpression.Loose): ReturnType<typeof F.augmentedAssignmentExpression> | T.AugmentedAssignmentExpression {
   if (isNodeData(input)) return input;
   return F.augmentedAssignmentExpression({
-    left: _resolveOne<T.MemberExpression | T.SubscriptExpression | T.ReservedIdentifier | T.ParenthesizedExpression | T.NonNullExpression>(input.left, _super_shorthand_property_identifier, _K10),
-    operator: _resolveOne<"+=" | "-=" | "*=" | "/=" | "%=" | "^=" | "&=" | "|=" | ">>=" | ">>>=" | "<<=" | "**=" | "&&=" | "||=" | "??=">(input.operator, _K0, _K0),
-    right: _resolveOne<T.Expression>(input.right, _K0, _super_expression),
+    left: _resolveOne<T.MemberExpression | T.SubscriptExpression | T.ReservedIdentifier | T.ParenthesizedExpression | T.NonNullExpression>(input.left, _super_property_identifier, _K13),
+    operator: _resolveOneLeaf<T.AugmentedAssignmentExpressionOperator>(input.operator, "_augmented_assignment_expression_operator"),
+    right: _resolveOne<T.Expression>(input.right, _K2, _super_expression),
   });
 }
 
 export function awaitExpressionFrom(input: T.AwaitExpression.Loose): ReturnType<typeof F.awaitExpression> | T.AwaitExpression {
   if (isNodeData(input)) return input;
   return F.awaitExpression({
-    expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
+    expression: _resolveOne<T.Expression>(input.expression, _K2, _super_expression),
   });
 }
 
 export function binaryExpressionFrom(input: T.BinaryExpression.Loose): ReturnType<typeof F.binaryExpression> | T.BinaryExpression {
   if (isNodeData(input)) return input;
   return F.binaryExpression({
-    left: _resolveOne<T.Expression | T.PrivatePropertyIdentifier>(input.left, _K11, _super_expression),
-    operator: _resolveOne<"&&" | "||" | ">>" | ">>>" | "<<" | "&" | "^" | "|" | "+" | "-" | "*" | "/" | "%" | "**" | "<" | "<=" | "==" | "===" | "!=" | "!==" | ">=" | ">" | "??" | "instanceof" | "in">(input.operator, _K0, _K0),
-    right: _resolveOne<T.Expression>(input.right, _K0, _super_expression),
+    left: _resolveOne<T.Expression | T.PrivatePropertyIdentifier>(input.left, _K14, _super_expression),
+    right: _resolveOne<T.Expression>(input.right, _K2, _super_expression),
   });
 }
 
 export function breakStatementFrom(input: T.BreakStatement.Loose): ReturnType<typeof F.breakStatement> | T.BreakStatement {
   if (isNodeData(input)) return input;
   return F.breakStatement({
-    label: _resolveOneBranch<T.StatementIdentifier>(input.label, "_statement_identifier"),
+    label: _resolveOneLeaf<T.Identifier>(input.label, "identifier"),
     semicolon: _resolveOneLeaf<T.Semicolon>(input.semicolon, "_automatic_semicolon"),
   });
 }
@@ -641,7 +626,7 @@ export function callExpressionFrom(input?: T.CallExpression.Loose): ReturnType<t
 
 export function callExpressionUFormCallFrom(input: Omit<ConfigOf<T.CallExpressionUFormCall>, '$variant'>) {
   return F.callExpressionUFormCall({
-    function: _resolveOne<T.Expression | T.Import>(input.function, _K12, _super_expression),
+    function: _resolveOne<T.Expression | T.Import>(input.function, _K15, _super_expression),
     typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments"),
     arguments: _resolveOneBranch<T.Arguments>(input.arguments, "arguments"),
   });
@@ -649,7 +634,7 @@ export function callExpressionUFormCallFrom(input: Omit<ConfigOf<T.CallExpressio
 
 export function callExpressionUFormTemplateCallFrom(input: Omit<ConfigOf<T.CallExpressionUFormTemplateCall>, '$variant'>) {
   return F.callExpressionUFormTemplateCall({
-    function: _resolveOne<T.PrimaryExpression | T.NewExpression>(input.function, _K0, _K13),
+    function: _resolveOne<T.PrimaryExpression | T.NewExpression>(input.function, _K2, _K16),
     arguments: _resolveOneBranch<T.TemplateString>(input.arguments, "template_string"),
   });
 }
@@ -667,7 +652,7 @@ export function callSignatureFrom(input: T.CallSignature.Loose): ReturnType<type
   return F.callSignature({
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
-    returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K0, _K3),
+    returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K2, _K3),
   });
 }
 
@@ -692,7 +677,7 @@ export function class_From(input: T.Class.Loose): ReturnType<typeof F.class_> | 
 }
 
 export function classBodyFrom(...input: readonly (NonNullable<T.ClassBody.Config['children']>[number] | T.ClassBody)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'class_body') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ClassBody) {
     const data = input[0];
     return F.classBody(...((data.$children ?? []) as readonly NonNullable<T.ClassBody.Config['children']>[number][]));
   }
@@ -712,20 +697,10 @@ export function classDeclarationFrom(input: T.ClassDeclaration.Loose): ReturnTyp
 }
 
 export function classHeritageExtendsClauseFrom(input?: NonNullable<T.ClassHeritageExtendsClause.Config['children']>[number] | T.ClassHeritageExtendsClause) {
-  if (isNodeData(input) && input.$type === 'class_heritage_extends_clause') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.classHeritageExtendsClause(child as Parameters<typeof F.classHeritageExtendsClause>[0]);
-  }
   return F.classHeritageExtendsClause(input as Parameters<typeof F.classHeritageExtendsClause>[0]);
 }
 
 export function classHeritageImplementsClauseFrom(input?: NonNullable<T.ClassHeritageImplementsClause.Config['children']>[number] | T.ClassHeritageImplementsClause) {
-  if (isNodeData(input) && input.$type === 'class_heritage_implements_clause') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.classHeritageImplementsClause(child as Parameters<typeof F.classHeritageImplementsClause>[0]);
-  }
   return F.classHeritageImplementsClause(input as Parameters<typeof F.classHeritageImplementsClause>[0]);
 }
 
@@ -758,24 +733,24 @@ export function commentFrom(input: string | T.Comment) {
 export function computedPropertyNameFrom(input: T.ComputedPropertyName.Loose): ReturnType<typeof F.computedPropertyName> | T.ComputedPropertyName {
   if (isNodeData(input)) return input;
   return F.computedPropertyName({
-    expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
+    expression: _resolveOne<T.Expression>(input.expression, _K2, _super_expression),
   });
 }
 
 export function conditionalTypeFrom(input: T.ConditionalType.Loose): ReturnType<typeof F.conditionalType> | T.ConditionalType {
   if (isNodeData(input)) return input;
   return F.conditionalType({
-    left: _resolveOne<T.Type>(input.left, _K0, _super_type),
-    right: _resolveOne<T.Type>(input.right, _K0, _super_type),
-    consequence: _resolveOne<T.Type>(input.consequence, _K0, _super_type),
-    alternative: _resolveOne<T.Type>(input.alternative, _K0, _super_type),
+    left: _resolveOne<T.Type>(input.left, _K2, _super_type),
+    right: _resolveOne<T.Type>(input.right, _K2, _super_type),
+    consequence: _resolveOne<T.Type>(input.consequence, _K2, _super_type),
+    alternative: _resolveOne<T.Type>(input.alternative, _K2, _super_type),
   });
 }
 
 export function constraintFrom(input: T.Constraint.Loose): ReturnType<typeof F.constraint> | T.Constraint {
   if (isNodeData(input)) return input;
   return F.constraint({
-    type: _resolveOne<T.Type>(input.type, _K0, _super_type),
+    type: _resolveOne<T.Type>(input.type, _K2, _super_type),
   });
 }
 
@@ -795,14 +770,14 @@ export function constructorTypeFrom(input: T.ConstructorType.Loose): ReturnType<
     abstractMarker: _resolveBooleanKeyword(input.abstractMarker),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
-    type: _resolveOne<T.Type>(input.type, _K0, _super_type),
+    type: _resolveOne<T.Type>(input.type, _K2, _super_type),
   });
 }
 
 export function continueStatementFrom(input: T.ContinueStatement.Loose): ReturnType<typeof F.continueStatement> | T.ContinueStatement {
   if (isNodeData(input)) return input;
   return F.continueStatement({
-    label: _resolveOneBranch<T.StatementIdentifier>(input.label, "_statement_identifier"),
+    label: _resolveOneLeaf<T.Identifier>(input.label, "identifier"),
     semicolon: _resolveOneLeaf<T.Semicolon>(input.semicolon, "_automatic_semicolon"),
   });
 }
@@ -815,7 +790,7 @@ export function debuggerStatementFrom(input: T.DebuggerStatement.Loose): ReturnT
 }
 
 export function decoratorFrom(input?: NonNullable<T.Decorator.Config['children']>[number] | T.Decorator) {
-  if (isNodeData(input) && input.$type === 'decorator') {
+  if (isNodeData(input) && input.$type === TSKindId.Decorator) {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
     return F.decorator(child as Parameters<typeof F.decorator>[0]);
@@ -826,7 +801,7 @@ export function decoratorFrom(input?: NonNullable<T.Decorator.Config['children']
 export function decoratorCallExpressionFrom(input: T.DecoratorCallExpression.Loose): ReturnType<typeof F.decoratorCallExpression> | T.DecoratorCallExpression {
   if (isNodeData(input)) return input;
   return F.decoratorCallExpression({
-    function: _resolveOne<T.Identifier | T.DecoratorMemberExpression>(input.function, _super_import_identifier, _K14),
+    function: _resolveOne<T.Identifier | T.DecoratorMemberExpression>(input.function, _super_import_identifier, _K17),
     typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments"),
     arguments: _resolveOneBranch<T.Arguments>(input.arguments, "arguments"),
   });
@@ -835,13 +810,13 @@ export function decoratorCallExpressionFrom(input: T.DecoratorCallExpression.Loo
 export function decoratorMemberExpressionFrom(input: T.DecoratorMemberExpression.Loose): ReturnType<typeof F.decoratorMemberExpression> | T.DecoratorMemberExpression {
   if (isNodeData(input)) return input;
   return F.decoratorMemberExpression({
-    object: _resolveOne<T.Identifier | T.DecoratorMemberExpression>(input.object, _super_import_identifier, _K14),
-    property: _resolveOneBranch<T.PropertyIdentifier>(input.property, "_property_identifier"),
+    object: _resolveOne<T.Identifier | T.DecoratorMemberExpression>(input.object, _super_import_identifier, _K17),
+    property: _resolveOneLeaf<T.Identifier>(input.property, "identifier"),
   });
 }
 
 export function decoratorParenthesizedExpressionFrom(input?: NonNullable<T.DecoratorParenthesizedExpression.Config['children']>[number] | T.DecoratorParenthesizedExpression) {
-  if (isNodeData(input) && input.$type === 'decorator_parenthesized_expression') {
+  if (isNodeData(input) && input.$type === TSKindId.DecoratorParenthesizedExpression) {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
     return F.decoratorParenthesizedExpression(child as Parameters<typeof F.decoratorParenthesizedExpression>[0]);
@@ -852,14 +827,14 @@ export function decoratorParenthesizedExpressionFrom(input?: NonNullable<T.Decor
 export function defaultTypeFrom(input: T.DefaultType.Loose): ReturnType<typeof F.defaultType> | T.DefaultType {
   if (isNodeData(input)) return input;
   return F.defaultType({
-    type: _resolveOne<T.Type>(input.type, _K0, _super_type),
+    type: _resolveOne<T.Type>(input.type, _K2, _super_type),
   });
 }
 
 export function doStatementFrom(input: T.DoStatement.Loose): ReturnType<typeof F.doStatement> | T.DoStatement {
   if (isNodeData(input)) return input;
   return F.doStatement({
-    body: _resolveOne<T.Statement>(input.body, _K0, _K15),
+    body: _resolveOne<T.Statement>(input.body, _K2, _K18),
     condition: _resolveOneBranch<T.ParenthesizedExpression>(input.condition, "parenthesized_expression"),
     semicolon: _resolveOneLeaf<T.Semicolon>(input.semicolon, "_automatic_semicolon"),
   });
@@ -868,15 +843,15 @@ export function doStatementFrom(input: T.DoStatement.Loose): ReturnType<typeof F
 export function elseClauseFrom(input: T.ElseClause.Loose): ReturnType<typeof F.elseClause> | T.ElseClause {
   if (isNodeData(input)) return input;
   return F.elseClause({
-    statement: _resolveOne<T.Statement>(input.statement, _K0, _K15),
+    statement: _resolveOne<T.Statement>(input.statement, _K2, _K18),
   });
 }
 
 export function enumAssignmentFrom(input: T.EnumAssignment.Loose): ReturnType<typeof F.enumAssignment> | T.EnumAssignment {
   if (isNodeData(input)) return input;
   return F.enumAssignment({
-    name: _resolveOne<T.PropertyName>(input.name, _K1, _K2),
-    value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
+    name: _resolveOne<T.PropertyName>(input.name, _K0, _K1),
+    value: _resolveOne<T.Expression>(input.value, _K2, _super_expression),
   });
 }
 
@@ -899,7 +874,7 @@ export function escapeSequenceFrom(input: string | T.EscapeSequence) {
 }
 
 export function exportClauseFrom(...input: readonly (NonNullable<T.ExportClause.Config['children']>[number] | T.ExportClause)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'export_clause') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ExportClause) {
     const data = input[0];
     return F.exportClause(...((data.$children ?? []) as readonly NonNullable<T.ExportClause.Config['children']>[number][]));
   }
@@ -909,9 +884,9 @@ export function exportClauseFrom(...input: readonly (NonNullable<T.ExportClause.
 export function exportSpecifierFrom(input: T.ExportSpecifier.Loose): ReturnType<typeof F.exportSpecifier> | T.ExportSpecifier {
   if (isNodeData(input)) return input;
   return F.exportSpecifier({
-    exportKind: _resolveOne<"type" | "typeof">(input.exportKind, _K0, _K0),
-    name: _resolveOne<T.ModuleExportName>(input.name, _super_import_identifier, _K16),
-    alias: _resolveOne<T.ModuleExportName>(input.alias, _super_import_identifier, _K16),
+    exportKind: _resolveOneLeaf<T.ExportSpecifierExportKind>(input.exportKind, "_export_specifier_export_kind"),
+    name: _resolveOne<T.ModuleExportName>(input.name, _super_import_identifier, _K19),
+    alias: _resolveOne<T.ModuleExportName>(input.alias, _super_import_identifier, _K19),
   });
 }
 
@@ -919,25 +894,15 @@ export function exportStatementTypeExportFrom(input: T.ExportStatementTypeExport
   if (isNodeData(input)) return input;
   return F.exportStatementTypeExport({
     source: _resolveOneBranch<T.String>(input.source, "string"),
-    children: _resolveOne(input.children, _super_semicolon, _K17),
+    children: _resolveOne(input.children, _super_semicolon, _K20),
   });
 }
 
 export function exportStatementEqualsExportFrom(input?: NonNullable<T.ExportStatementEqualsExport.Config['children']>[number] | T.ExportStatementEqualsExport) {
-  if (isNodeData(input) && input.$type === 'export_statement_equals_export') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.exportStatementEqualsExport(child as Parameters<typeof F.exportStatementEqualsExport>[0]);
-  }
   return F.exportStatementEqualsExport(input as Parameters<typeof F.exportStatementEqualsExport>[0]);
 }
 
 export function exportStatementNamespaceExportFrom(input?: NonNullable<T.ExportStatementNamespaceExport.Config['children']>[number] | T.ExportStatementNamespaceExport) {
-  if (isNodeData(input) && input.$type === 'export_statement_namespace_export') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.exportStatementNamespaceExport(child as Parameters<typeof F.exportStatementNamespaceExport>[0]);
-  }
   return F.exportStatementNamespaceExport(input as Parameters<typeof F.exportStatementNamespaceExport>[0]);
 }
 
@@ -968,13 +933,13 @@ export function expressionStatementFrom(input: T.ExpressionStatement.Loose): Ret
   if (isNodeData(input)) return input;
   return F.expressionStatement({
     semicolon: _resolveOneLeaf<T.Semicolon>(input.semicolon, "_automatic_semicolon"),
-    children: _resolveOne(input.children, _K0, _super_expressions),
+    children: _resolveOne(input.children, _K2, _super_expressions),
   });
 }
 
 export function extendsClauseFrom(input: T.ExtendsClause.Loose): ReturnType<typeof F.extendsClause> | T.ExtendsClause {
   if (isNodeData(input)) return input;
-  const _ne_value = _resolveMany<T.Expression>(input.value, _K0, _super_expression);
+  const _ne_value = _resolveMany<T.Expression>(input.value, _K2, _super_expression);
   _assertNonEmpty(_ne_value, 'extends_clause.value');
   return F.extendsClause({
     value: _ne_value,
@@ -984,7 +949,7 @@ export function extendsClauseFrom(input: T.ExtendsClause.Loose): ReturnType<type
 
 export function extendsTypeClauseFrom(input: T.ExtendsTypeClause.Loose): ReturnType<typeof F.extendsTypeClause> | T.ExtendsTypeClause {
   if (isNodeData(input)) return input;
-  const _ne_type = _resolveMany<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>(input.type, _K0, _K18);
+  const _ne_type = _resolveMany<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>(input.type, _K2, _K21);
   _assertNonEmpty(_ne_type, 'extends_type_clause.type');
   return F.extendsTypeClause({
     type: _ne_type,
@@ -994,16 +959,6 @@ export function extendsTypeClauseFrom(input: T.ExtendsTypeClause.Loose): ReturnT
 export function false_From(input?: T.False) {
   if (isNodeData(input)) return input;
   return F.false_();
-}
-
-export function fieldDefinitionFrom(input: T.FieldDefinition.Loose): ReturnType<typeof F.fieldDefinition> | T.FieldDefinition {
-  if (isNodeData(input)) return input;
-  return F.fieldDefinition({
-    decorator: _resolveManyBranch<T.Decorator>(input.decorator, "decorator"),
-    staticMarker: _resolveBooleanKeyword(input.staticMarker),
-    property: _resolveOne<T.PropertyName>(input.property, _K1, _K2),
-    value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
-  });
 }
 
 export function finallyClauseFrom(input: T.FinallyClause.Loose): ReturnType<typeof F.finallyClause> | T.FinallyClause {
@@ -1016,7 +971,7 @@ export function finallyClauseFrom(input: T.FinallyClause.Loose): ReturnType<type
 export function flowMaybeTypeFrom(input: T.FlowMaybeType.Loose): ReturnType<typeof F.flowMaybeType> | T.FlowMaybeType {
   if (isNodeData(input)) return input;
   return F.flowMaybeType({
-    primaryType: _resolveOne<T.PrimaryType>(input.primaryType, _K5, _K6),
+    primaryType: _resolveOne<T.PrimaryType>(input.primaryType, _K6, _K7),
   });
 }
 
@@ -1024,25 +979,25 @@ export function forInStatementFrom(input: T.ForInStatement.Loose): ReturnType<ty
   if (isNodeData(input)) return input;
   return F.forInStatement({
     awaitMarker: _resolveBooleanKeyword(input.awaitMarker),
-    operator: _resolveOne<"in" | "of">(input.operator, _K0, _K0),
-    right: _resolveOne<T.Expressions>(input.right, _K0, _super_expressions),
-    body: _resolveOne<T.Statement>(input.body, _K0, _K15),
-    children: _resolveOne(input.children, _K0, _K19),
+    operator: _resolveOneLeaf<T.ForHeaderOperator>(input.operator, "__for_header_operator"),
+    right: _resolveOne<T.Expressions>(input.right, _K2, _super_expressions),
+    body: _resolveOne<T.Statement>(input.body, _K2, _K18),
+    children: _resolveOne(input.children, _K2, _K22),
   });
 }
 
 export function forStatementFrom(input: T.ForStatement.Loose): ReturnType<typeof F.forStatement> | T.ForStatement {
   if (isNodeData(input)) return input;
   return F.forStatement({
-    initializer: _resolveOne<T.LexicalDeclaration | T.VariableDeclaration | T.Expressions | T.EmptyStatement>(input.initializer, _K0, _K20),
-    condition: _resolveOne<T.Expressions | T.EmptyStatement>(input.condition, _K0, _super_expressions),
-    increment: _resolveOne<T.Expressions>(input.increment, _K0, _super_expressions),
-    body: _resolveOne<T.Statement>(input.body, _K0, _K15),
+    initializer: _resolveOne<T.LexicalDeclaration | T.VariableDeclaration | T.Expressions | T.ForStatementInitializer>(input.initializer, _K23, _K24),
+    condition: _resolveOne<T.Expressions | T.EmptyStatement>(input.condition, _K2, _super_expressions),
+    increment: _resolveOne<T.Expressions>(input.increment, _K2, _super_expressions),
+    body: _resolveOne<T.Statement>(input.body, _K2, _K18),
   });
 }
 
 export function formalParametersFrom(...input: readonly (NonNullable<T.FormalParameters.Config['children']>[number] | T.FormalParameters)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'formal_parameters') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.FormalParameters) {
     const data = input[0];
     return F.formalParameters(...((data.$children ?? []) as readonly NonNullable<T.FormalParameters.Config['children']>[number][]));
   }
@@ -1056,7 +1011,7 @@ export function functionDeclarationFrom(input: T.FunctionDeclaration.Loose): Ret
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
-    returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K0, _K3),
+    returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K2, _K3),
     body: _resolveOneBranch<T.StatementBlock>(input.body, "statement_block"),
     children: _resolveOneLeaf(input.children, "_automatic_semicolon"),
   });
@@ -1069,7 +1024,7 @@ export function functionExpressionFrom(input: T.FunctionExpression.Loose): Retur
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
-    returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K0, _K3),
+    returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K2, _K3),
     body: _resolveOneBranch<T.StatementBlock>(input.body, "statement_block"),
   });
 }
@@ -1081,8 +1036,8 @@ export function functionSignatureFrom(input: T.FunctionSignature.Loose): ReturnT
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
-    returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K0, _K3),
-    semicolon: _resolveOne<T.Semicolon | T.FunctionSignatureAutomaticSemicolon>(input.semicolon, _K21, _K0),
+    returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K2, _K3),
+    semicolon: _resolveOne<T.Semicolon | T.FunctionSignatureAutomaticSemicolon>(input.semicolon, _K25, _K2),
   });
 }
 
@@ -1091,7 +1046,7 @@ export function functionTypeFrom(input: T.FunctionType.Loose): ReturnType<typeof
   return F.functionType({
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
-    returnType: _resolveOne<T.Type | T.Asserts | T.TypePredicate>(input.returnType, _K0, _K22),
+    returnType: _resolveOne<T.Type | T.Asserts | T.TypePredicate>(input.returnType, _K2, _K26),
   });
 }
 
@@ -1102,7 +1057,7 @@ export function generatorFunctionFrom(input: T.GeneratorFunction.Loose): ReturnT
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
-    returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K0, _K3),
+    returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K2, _K3),
     body: _resolveOneBranch<T.StatementBlock>(input.body, "statement_block"),
   });
 }
@@ -1114,7 +1069,7 @@ export function generatorFunctionDeclarationFrom(input: T.GeneratorFunctionDecla
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
-    returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K0, _K3),
+    returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K2, _K3),
     body: _resolveOneBranch<T.StatementBlock>(input.body, "statement_block"),
     children: _resolveOneLeaf(input.children, "_automatic_semicolon"),
   });
@@ -1123,7 +1078,7 @@ export function generatorFunctionDeclarationFrom(input: T.GeneratorFunctionDecla
 export function genericTypeFrom(input: T.GenericType.Loose): ReturnType<typeof F.genericType> | T.GenericType {
   if (isNodeData(input)) return input;
   return F.genericType({
-    name: _resolveOne<T.TypeIdentifier | T.NestedTypeIdentifier>(input.name, _K0, _K23),
+    name: _resolveOne<T.TypeIdentifier | T.NestedTypeIdentifier>(input.name, _K2, _K27),
     typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments"),
   });
 }
@@ -1131,11 +1086,6 @@ export function genericTypeFrom(input: T.GenericType.Loose): ReturnType<typeof F
 export function hashBangLineFrom(input: string | T.HashBangLine) {
   if (typeof input !== 'string') return input;
   return F.hashBangLine(input as Parameters<typeof F.hashBangLine>[0]);
-}
-
-export function htmlCharacterReferenceFrom(input: string | T.HtmlCharacterReference) {
-  if (typeof input !== 'string') return input;
-  return F.htmlCharacterReference(input as Parameters<typeof F.htmlCharacterReference>[0]);
 }
 
 export function identifierFrom(input: string | T.Identifier) {
@@ -1147,13 +1097,13 @@ export function ifStatementFrom(input: T.IfStatement.Loose): ReturnType<typeof F
   if (isNodeData(input)) return input;
   return F.ifStatement({
     condition: _resolveOneBranch<T.ParenthesizedExpression>(input.condition, "parenthesized_expression"),
-    consequence: _resolveOne<T.Statement>(input.consequence, _K0, _K15),
+    consequence: _resolveOne<T.Statement>(input.consequence, _K2, _K18),
     alternative: _resolveOneBranch<T.ElseClause>(input.alternative, "else_clause"),
   });
 }
 
 export function implementsClauseFrom(...input: readonly (NonNullable<T.ImplementsClause.Config['children']>[number] | T.ImplementsClause)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'implements_clause') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ImplementsClause) {
     const data = input[0];
     return F.implementsClause(...((data.$children ?? []) as readonly NonNullable<T.ImplementsClause.Config['children']>[number][]));
   }
@@ -1169,7 +1119,7 @@ export function importAliasFrom(input: T.ImportAlias.Loose): ReturnType<typeof F
   if (isNodeData(input)) return input;
   return F.importAlias({
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
-    value: _resolveOne<T.Identifier | T.NestedIdentifier>(input.value, _super_import_identifier, _K24),
+    value: _resolveOne<T.Identifier | T.NestedIdentifier>(input.value, _super_import_identifier, _K28),
     semicolon: _resolveOneLeaf<T.Semicolon>(input.semicolon, "_automatic_semicolon"),
   });
 }
@@ -1177,34 +1127,19 @@ export function importAliasFrom(input: T.ImportAlias.Loose): ReturnType<typeof F
 export function importAttributeFrom(input: T.ImportAttribute.Loose): ReturnType<typeof F.importAttribute> | T.ImportAttribute {
   if (isNodeData(input)) return input;
   return F.importAttribute({
-    object: _resolveOneBranch<"with" | "assert" | T.Object>(input.object, "object"),
+    object: _resolveOne<T.ImportAttributeObject | T.Object>(input.object, _K29, _K30),
   });
 }
 
 export function importClauseNamespaceImportFrom(input?: NonNullable<T.ImportClauseNamespaceImport.Config['children']>[number] | T.ImportClauseNamespaceImport) {
-  if (isNodeData(input) && input.$type === 'import_clause_namespace_import') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.importClauseNamespaceImport(child as Parameters<typeof F.importClauseNamespaceImport>[0]);
-  }
   return F.importClauseNamespaceImport(input as Parameters<typeof F.importClauseNamespaceImport>[0]);
 }
 
 export function importClauseNamedImportsFrom(input?: NonNullable<T.ImportClauseNamedImports.Config['children']>[number] | T.ImportClauseNamedImports) {
-  if (isNodeData(input) && input.$type === 'import_clause_named_imports') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.importClauseNamedImports(child as Parameters<typeof F.importClauseNamedImports>[0]);
-  }
   return F.importClauseNamedImports(input as Parameters<typeof F.importClauseNamedImports>[0]);
 }
 
 export function importClauseDefaultImportFrom(input?: NonNullable<T.ImportClauseDefaultImport.Config['children']>[number] | T.ImportClauseDefaultImport) {
-  if (isNodeData(input) && input.$type === 'import_clause_default_import') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.importClauseDefaultImport(child as Parameters<typeof F.importClauseDefaultImport>[0]);
-  }
   return F.importClauseDefaultImport(input as Parameters<typeof F.importClauseDefaultImport>[0]);
 }
 
@@ -1247,15 +1182,15 @@ export function importSpecifierFrom(input?: T.ImportSpecifier.Loose): ReturnType
 
 export function importSpecifierUFormNameFrom(input: Omit<ConfigOf<T.ImportSpecifierUFormName>, '$variant'>) {
   return F.importSpecifierUFormName({
-    importKind: _resolveOne<"type" | "typeof">(input.importKind, _K0, _K0),
+    importKind: _resolveOneLeaf<T.ExportSpecifierExportKind>(input.importKind, "_export_specifier_export_kind"),
     name: _resolveOneLeaf<T.ImportIdentifier>(input.name, "identifier"),
   });
 }
 
 export function importSpecifierUFormAsFrom(input: Omit<ConfigOf<T.ImportSpecifierUFormAs>, '$variant'>) {
   return F.importSpecifierUFormAs({
-    importKind: _resolveOne<"type" | "typeof">(input.importKind, _K0, _K0),
-    name: _resolveOne<T.ModuleExportName | T.Identifier>(input.name, _super_import_identifier, _K16),
+    importKind: _resolveOneLeaf<T.ExportSpecifierExportKind>(input.importKind, "_export_specifier_export_kind"),
+    name: _resolveOne<T.ModuleExportName | T.Identifier>(input.name, _super_import_identifier, _K19),
     alias: _resolveOneLeaf<T.ImportIdentifier>(input.alias, "identifier"),
   });
 }
@@ -1263,19 +1198,14 @@ export function importSpecifierUFormAsFrom(input: Omit<ConfigOf<T.ImportSpecifie
 export function importStatementFrom(input: T.ImportStatement.Loose): ReturnType<typeof F.importStatement> | T.ImportStatement {
   if (isNodeData(input)) return input;
   return F.importStatement({
-    importClause: _resolveOne<"type" | "typeof">(input.importClause, _K0, _K0),
-    fromClause: _resolveOne<T.ImportClause | "from" | T.String | T.ImportRequireClause>(input.fromClause, _K0, _K25),
+    importClause: _resolveOne<"type" | "typeof">(input.importClause, _K2, _K2),
+    fromClause: _resolveOne<T.ImportClause | "from" | T.String | T.ImportRequireClause>(input.fromClause, _K2, _K31),
     importAttribute: _resolveOneBranch<T.ImportAttribute>(input.importAttribute, "import_attribute"),
     semicolon: _resolveOneLeaf<T.Semicolon>(input.semicolon, "_automatic_semicolon"),
   });
 }
 
 export function indexSignatureMappedTypeClauseFrom(input?: NonNullable<T.IndexSignatureMappedTypeClause.Config['children']>[number] | T.IndexSignatureMappedTypeClause) {
-  if (isNodeData(input) && input.$type === 'index_signature_mapped_type_clause') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.indexSignatureMappedTypeClause(child as Parameters<typeof F.indexSignatureMappedTypeClause>[0]);
-  }
   return F.indexSignatureMappedTypeClause(input as Parameters<typeof F.indexSignatureMappedTypeClause>[0]);
 }
 
@@ -1286,24 +1216,24 @@ export function indexSignatureFrom(input?: T.IndexSignature.Loose): ReturnType<t
 
 export function indexSignatureUFormColonFrom(input: Omit<ConfigOf<T.IndexSignatureUFormColon>, '$variant'>) {
   return F.indexSignatureUFormColon({
-    sign: _resolveOne<"-" | "+">(input.sign, _K0, _K0),
-    type: _resolveOne<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>(input.type, _K0, _K26),
-    name: _resolveOne<T.ReservedIdentifier>(input.name, _super_shorthand_property_identifier, _K0),
-    indexType: _resolveOne<T.Type>(input.indexType, _K0, _super_type),
+    sign: _resolveOne<"-" | "+">(input.sign, _K2, _K2),
+    type: _resolveOne<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>(input.type, _K2, _K32),
+    name: _resolveOne<T.ReservedIdentifier>(input.name, _super_property_identifier, _K2),
+    indexType: _resolveOne<T.Type>(input.indexType, _K2, _super_type),
   });
 }
 
 export function indexSignatureUFormMappedTypeClauseFrom(input: Omit<ConfigOf<T.IndexSignatureUFormMappedTypeClause>, '$variant'>) {
   return F.indexSignatureUFormMappedTypeClause({
-    sign: _resolveOne<"-" | "+">(input.sign, _K0, _K0),
-    type: _resolveOne<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>(input.type, _K0, _K26),
+    sign: _resolveOne<"-" | "+">(input.sign, _K2, _K2),
+    type: _resolveOne<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>(input.type, _K2, _K32),
   });
 }
 
 export function indexTypeQueryFrom(input: T.IndexTypeQuery.Loose): ReturnType<typeof F.indexTypeQuery> | T.IndexTypeQuery {
   if (isNodeData(input)) return input;
   return F.indexTypeQuery({
-    primaryType: _resolveOne<T.PrimaryType>(input.primaryType, _K5, _K6),
+    primaryType: _resolveOne<T.PrimaryType>(input.primaryType, _K6, _K7),
   });
 }
 
@@ -1311,14 +1241,14 @@ export function inferTypeFrom(input: T.InferType.Loose): ReturnType<typeof F.inf
   if (isNodeData(input)) return input;
   return F.inferType({
     typeIdentifier: _resolveOneBranch<T.TypeIdentifier>(input.typeIdentifier, "_type_identifier"),
-    type: _resolveOne<T.Type>(input.type, _K0, _super_type),
+    type: _resolveOne<T.Type>(input.type, _K2, _super_type),
   });
 }
 
 export function instantiationExpressionFrom(input: T.InstantiationExpression.Loose): ReturnType<typeof F.instantiationExpression> | T.InstantiationExpression {
   if (isNodeData(input)) return input;
   return F.instantiationExpression({
-    expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
+    expression: _resolveOne<T.Expression>(input.expression, _K2, _super_expression),
     typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments"),
   });
 }
@@ -1329,14 +1259,14 @@ export function interfaceDeclarationFrom(input: T.InterfaceDeclaration.Loose): R
     name: _resolveOneBranch<T.TypeIdentifier>(input.name, "_type_identifier"),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     extendsTypeClause: _resolveOneBranch<T.ExtendsTypeClause>(input.extendsTypeClause, "extends_type_clause"),
-    body: _resolveOneBranch<T.InterfaceBody>(input.body, "_interface_body"),
+    body: _resolveOneBranch<T.ObjectType>(input.body, "object_type"),
   });
 }
 
 export function internalModuleFrom(input: T.InternalModule.Loose): ReturnType<typeof F.internalModule> | T.InternalModule {
   if (isNodeData(input)) return input;
   return F.internalModule({
-    name: _resolveOne<T.String | T.Identifier | T.NestedIdentifier>(input.name, _super_import_identifier, _K27),
+    name: _resolveOne<T.String | T.Identifier | T.NestedIdentifier>(input.name, _super_import_identifier, _K33),
     body: _resolveOneBranch<T.StatementBlock>(input.body, "statement_block"),
   });
 }
@@ -1344,81 +1274,16 @@ export function internalModuleFrom(input: T.InternalModule.Loose): ReturnType<ty
 export function intersectionTypeFrom(input: T.IntersectionType.Loose): ReturnType<typeof F.intersectionType> | T.IntersectionType {
   if (isNodeData(input)) return input;
   return F.intersectionType({
-    left: _resolveOne<T.Type>(input.left, _K0, _super_type),
-    right: _resolveOne<T.Type>(input.right, _K0, _super_type),
-  });
-}
-
-export function jsxAttributeFrom(input?: NonNullable<T.JsxAttribute.Config['children']>[number] | T.JsxAttribute) {
-  if (isNodeData(input) && input.$type === 'jsx_attribute') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.jsxAttribute(child as Parameters<typeof F.jsxAttribute>[0]);
-  }
-  return F.jsxAttribute(input as Parameters<typeof F.jsxAttribute>[0]);
-}
-
-export function jsxClosingElementFrom(input?: T.JsxClosingElement.Loose): ReturnType<typeof F.jsxClosingElement> | T.JsxClosingElement {
-  if (input !== undefined && isNodeData(input)) return input;
-  return F.jsxClosingElement({
-    name: _resolveOne<T.JsxElementName>(input?.name, _super_jsx_identifier, _K28),
-  });
-}
-
-export function jsxElementFrom(input: T.JsxElement.Loose): ReturnType<typeof F.jsxElement> | T.JsxElement {
-  if (isNodeData(input)) return input;
-  return F.jsxElement({
-    openTag: _resolveOneBranch<T.JsxOpeningElement>(input.openTag, "jsx_opening_element"),
-    closeTag: _resolveOneBranch<T.JsxClosingElement>(input.closeTag, "jsx_closing_element"),
-    children: _resolveMany(input.children, _K29, _K30),
-  });
-}
-
-export function jsxExpressionFrom(input?: NonNullable<T.JsxExpression.Config['children']>[number] | T.JsxExpression) {
-  if (isNodeData(input) && input.$type === 'jsx_expression') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.jsxExpression(child as Parameters<typeof F.jsxExpression>[0]);
-  }
-  return F.jsxExpression(input as Parameters<typeof F.jsxExpression>[0]);
-}
-
-export function jsxIdentifierFrom(input: string | T.JsxIdentifier) {
-  if (typeof input !== 'string') return input;
-  return F.jsxIdentifier(input as Parameters<typeof F.jsxIdentifier>[0]);
-}
-
-export function jsxNamespaceNameFrom(...input: readonly (NonNullable<T.JsxNamespaceName.Config['children']>[number] | T.JsxNamespaceName)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'jsx_namespace_name') {
-    const data = input[0];
-    return F.jsxNamespaceName(...((data.$children ?? []) as readonly NonNullable<T.JsxNamespaceName.Config['children']>[number][]));
-  }
-  return F.jsxNamespaceName(...(input as readonly NonNullable<T.JsxNamespaceName.Config['children']>[number][]));
-}
-
-export function jsxOpeningElementFrom(input: T.JsxOpeningElement.Loose): ReturnType<typeof F.jsxOpeningElement> | T.JsxOpeningElement {
-  if (isNodeData(input)) return input;
-  return F.jsxOpeningElement({
-    name: _resolveOne<T._JsxIdentifier | T.JsxNamespaceName | T.Identifier | T.NestedIdentifier>(input.name, _super_jsx_identifier, _K31),
-    typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments"),
-    attribute: _resolveMany<T._JsxAttribute>(input.attribute, _K0, _super_jsx_attribute),
-  });
-}
-
-export function jsxSelfClosingElementFrom(input: T.JsxSelfClosingElement.Loose): ReturnType<typeof F.jsxSelfClosingElement> | T.JsxSelfClosingElement {
-  if (isNodeData(input)) return input;
-  return F.jsxSelfClosingElement({
-    name: _resolveOne<T._JsxIdentifier | T.JsxNamespaceName | T.Identifier | T.NestedIdentifier>(input.name, _super_jsx_identifier, _K31),
-    typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments"),
-    attribute: _resolveMany<T._JsxAttribute>(input.attribute, _K0, _super_jsx_attribute),
+    left: _resolveOne<T.Type>(input.left, _K2, _super_type),
+    right: _resolveOne<T.Type>(input.right, _K2, _super_type),
   });
 }
 
 export function labeledStatementFrom(input: T.LabeledStatement.Loose): ReturnType<typeof F.labeledStatement> | T.LabeledStatement {
   if (isNodeData(input)) return input;
   return F.labeledStatement({
-    label: _resolveOneBranch<T.StatementIdentifier>(input.label, "_statement_identifier"),
-    body: _resolveOne<T.Statement>(input.body, _K0, _K15),
+    label: _resolveOne<T.StatementIdentifier>(input.label, _super_property_identifier, _K2),
+    body: _resolveOne<T.Statement>(input.body, _K2, _K18),
   });
 }
 
@@ -1427,14 +1292,14 @@ export function lexicalDeclarationFrom(input: T.LexicalDeclaration.Loose): Retur
   const _ne_declarators = _resolveManyBranch<T.VariableDeclarator>(input.declarators, "variable_declarator");
   _assertNonEmpty(_ne_declarators, 'lexical_declaration.declarators');
   return F.lexicalDeclaration({
-    kind: _resolveOne<"let" | "const">(input.kind, _K0, _K0),
+    kind: _resolveOneLeaf<T.Kind>(input.kind, "_kind"),
     declarators: _ne_declarators,
     semicolon: _resolveOneLeaf<T.Semicolon>(input.semicolon, "_automatic_semicolon"),
   });
 }
 
 export function literalTypeFrom(input?: NonNullable<T.LiteralType.Config['children']>[number] | T.LiteralType) {
-  if (isNodeData(input) && input.$type === 'literal_type') {
+  if (isNodeData(input) && input.$type === TSKindId.LiteralType) {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
     return F.literalType(child as Parameters<typeof F.literalType>[0]);
@@ -1445,8 +1310,8 @@ export function literalTypeFrom(input?: NonNullable<T.LiteralType.Config['childr
 export function lookupTypeFrom(input: T.LookupType.Loose): ReturnType<typeof F.lookupType> | T.LookupType {
   if (isNodeData(input)) return input;
   return F.lookupType({
-    primaryType: _resolveOne<T.PrimaryType>(input.primaryType, _K5, _K6),
-    indexType: _resolveOne<T.Type>(input.indexType, _K0, _super_type),
+    primaryType: _resolveOne<T.PrimaryType>(input.primaryType, _K6, _K7),
+    indexType: _resolveOne<T.Type>(input.indexType, _K2, _super_type),
   });
 }
 
@@ -1454,16 +1319,16 @@ export function mappedTypeClauseFrom(input: T.MappedTypeClause.Loose): ReturnTyp
   if (isNodeData(input)) return input;
   return F.mappedTypeClause({
     name: _resolveOneBranch<T.TypeIdentifier>(input.name, "_type_identifier"),
-    type: _resolveOne<T.Type>(input.type, _K0, _super_type),
-    alias: _resolveOne<T.Type>(input.alias, _K0, _super_type),
+    type: _resolveOne<T.Type>(input.type, _K2, _super_type),
+    alias: _resolveOne<T.Type>(input.alias, _K2, _super_type),
   });
 }
 
 export function memberExpressionFrom(input: T.MemberExpression.Loose): ReturnType<typeof F.memberExpression> | T.MemberExpression {
   if (isNodeData(input)) return input;
   return F.memberExpression({
-    object: _resolveOne<T.Expression | T.PrimaryExpression | T.Import>(input.object, _K12, _K32),
-    property: _resolveOne<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(input.property, _K11, _K33),
+    object: _resolveOne<T.Expression | T.PrimaryExpression | T.Import>(input.object, _K15, _K34),
+    property: _resolveOne<T.PrivatePropertyIdentifier | T.Identifier>(input.property, _K35, _K2),
   });
 }
 
@@ -1475,17 +1340,17 @@ export function metaPropertyFrom(input: string | T.MetaProperty) {
 export function methodDefinitionFrom(input: T.MethodDefinition.Loose): ReturnType<typeof F.methodDefinition> | T.MethodDefinition {
   if (isNodeData(input)) return input;
   return F.methodDefinition({
-    accessibilityModifier: _resolveOneLeaf<T.AccessibilityModifier>(input.accessibilityModifier, "accessibility_modifier"),
+    accessibilityModifier: _resolveOneLeaf<T._AccessibilityModifier>(input.accessibilityModifier, "_accessibility_modifier"),
     staticMarker: _resolveBooleanKeyword(input.staticMarker),
     overrideModifier: _resolveBooleanKeyword(input.overrideModifier),
     readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
     asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
-    accessorKind: _resolveOne<"get" | "set" | "*">(input.accessorKind, _K0, _K0),
-    name: _resolveOne<T.PropertyName>(input.name, _K1, _K2),
+    accessorKind: _resolveOneLeaf<T.AccessorKind>(input.accessorKind, "_accessor_kind"),
+    name: _resolveOne<T.PropertyName>(input.name, _K0, _K1),
     optionalMarker: _resolveBooleanKeyword(input.optionalMarker),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
-    returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K0, _K3),
+    returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K2, _K3),
     body: _resolveOneBranch<T.StatementBlock>(input.body, "statement_block"),
   });
 }
@@ -1493,30 +1358,30 @@ export function methodDefinitionFrom(input: T.MethodDefinition.Loose): ReturnTyp
 export function methodSignatureFrom(input: T.MethodSignature.Loose): ReturnType<typeof F.methodSignature> | T.MethodSignature {
   if (isNodeData(input)) return input;
   return F.methodSignature({
-    accessibilityModifier: _resolveOneLeaf<T.AccessibilityModifier>(input.accessibilityModifier, "accessibility_modifier"),
+    accessibilityModifier: _resolveOneLeaf<T._AccessibilityModifier>(input.accessibilityModifier, "_accessibility_modifier"),
     staticMarker: _resolveBooleanKeyword(input.staticMarker),
     overrideModifier: _resolveBooleanKeyword(input.overrideModifier),
     readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
     asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
-    accessorKind: _resolveOne<"get" | "set" | "*">(input.accessorKind, _K0, _K0),
-    name: _resolveOne<T.PropertyName>(input.name, _K1, _K2),
+    accessorKind: _resolveOneLeaf<T.AccessorKind>(input.accessorKind, "_accessor_kind"),
+    name: _resolveOne<T.PropertyName>(input.name, _K0, _K1),
     optionalMarker: _resolveBooleanKeyword(input.optionalMarker),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
-    returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K0, _K3),
+    returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K2, _K3),
   });
 }
 
 export function moduleFrom(input: T.Module.Loose): ReturnType<typeof F.module> | T.Module {
   if (isNodeData(input)) return input;
   return F.module({
-    name: _resolveOne<T.String | T.Identifier | T.NestedIdentifier>(input.name, _super_import_identifier, _K27),
+    name: _resolveOne<T.String | T.Identifier | T.NestedIdentifier>(input.name, _super_import_identifier, _K33),
     body: _resolveOneBranch<T.StatementBlock>(input.body, "statement_block"),
   });
 }
 
 export function namedImportsFrom(...input: readonly (NonNullable<T.NamedImports.Config['children']>[number] | T.NamedImports)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'named_imports') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.NamedImports) {
     const data = input[0];
     return F.namedImports(...((data.$children ?? []) as readonly NonNullable<T.NamedImports.Config['children']>[number][]));
   }
@@ -1524,7 +1389,7 @@ export function namedImportsFrom(...input: readonly (NonNullable<T.NamedImports.
 }
 
 export function namespaceExportFrom(input?: NonNullable<T.NamespaceExport.Config['children']>[number] | T.NamespaceExport) {
-  if (isNodeData(input) && input.$type === 'namespace_export') {
+  if (isNodeData(input) && input.$type === TSKindId.NamespaceExport) {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
     return F.namespaceExport(child as Parameters<typeof F.namespaceExport>[0]);
@@ -1542,15 +1407,15 @@ export function namespaceImportFrom(input: T.NamespaceImport.Loose): ReturnType<
 export function nestedIdentifierFrom(input: T.NestedIdentifier.Loose): ReturnType<typeof F.nestedIdentifier> | T.NestedIdentifier {
   if (isNodeData(input)) return input;
   return F.nestedIdentifier({
-    object: _resolveOne<T.Identifier | T.NestedIdentifier>(input.object, _super_import_identifier, _K24),
-    property: _resolveOneBranch<T.PropertyIdentifier>(input.property, "_property_identifier"),
+    object: _resolveOne<T.Identifier | T.NestedIdentifier>(input.object, _super_import_identifier, _K28),
+    property: _resolveOneLeaf<T.Identifier>(input.property, "identifier"),
   });
 }
 
 export function nestedTypeIdentifierFrom(input: T.NestedTypeIdentifier.Loose): ReturnType<typeof F.nestedTypeIdentifier> | T.NestedTypeIdentifier {
   if (isNodeData(input)) return input;
   return F.nestedTypeIdentifier({
-    module: _resolveOne<T.Identifier | T.NestedIdentifier>(input.module, _super_import_identifier, _K24),
+    module: _resolveOne<T.Identifier | T.NestedIdentifier>(input.module, _super_import_identifier, _K28),
     name: _resolveOneBranch<T.TypeIdentifier>(input.name, "_type_identifier"),
   });
 }
@@ -1567,7 +1432,7 @@ export function newExpressionFrom(input: T.NewExpression.Loose): ReturnType<type
 export function nonNullExpressionFrom(input: T.NonNullExpression.Loose): ReturnType<typeof F.nonNullExpression> | T.NonNullExpression {
   if (isNodeData(input)) return input;
   return F.nonNullExpression({
-    expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
+    expression: _resolveOne<T.Expression>(input.expression, _K2, _super_expression),
   });
 }
 
@@ -1582,7 +1447,7 @@ export function numberFrom(input: string | T.Number) {
 }
 
 export function objectFrom(...input: readonly (NonNullable<T.Object.Config['children']>[number] | T.Object)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'object') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Object) {
     const data = input[0];
     return F.object(...((data.$children ?? []) as readonly NonNullable<T.Object.Config['children']>[number][]));
   }
@@ -1592,13 +1457,13 @@ export function objectFrom(...input: readonly (NonNullable<T.Object.Config['chil
 export function objectAssignmentPatternFrom(input: T.ObjectAssignmentPattern.Loose): ReturnType<typeof F.objectAssignmentPattern> | T.ObjectAssignmentPattern {
   if (isNodeData(input)) return input;
   return F.objectAssignmentPattern({
-    left: _resolveOne<T.ShorthandPropertyIdentifierPattern | T.DestructuringPattern>(input.left, _super_shorthand_property_identifier, _super_destructuring_pattern),
-    right: _resolveOne<T.Expression>(input.right, _K0, _super_expression),
+    left: _resolveOne<T.ShorthandPropertyIdentifierPattern | T.DestructuringPattern>(input.left, _super_property_identifier, _super_destructuring_pattern),
+    right: _resolveOne<T.Expression>(input.right, _K2, _super_expression),
   });
 }
 
 export function objectPatternFrom(...input: readonly (NonNullable<T.ObjectPattern.Config['children']>[number] | T.ObjectPattern)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'object_pattern') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ObjectPattern) {
     const data = input[0];
     return F.objectPattern(...((data.$children ?? []) as readonly NonNullable<T.ObjectPattern.Config['children']>[number][]));
   }
@@ -1607,26 +1472,26 @@ export function objectPatternFrom(...input: readonly (NonNullable<T.ObjectPatter
 
 export function objectTypeFrom(input: T.ObjectType.Loose): ReturnType<typeof F.objectType> | T.ObjectType {
   if (isNodeData(input)) return input;
-  const _ne_members = _resolveMany<"," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon>(input.members, _super_semicolon, _K34);
+  const _ne_members = _resolveMany<"," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon>(input.members, _super_semicolon, _K36);
   _assertNonEmpty(_ne_members, 'object_type.members');
   return F.objectType({
-    opening: _resolveOne<"{" | "{|">(input.opening, _K0, _K0),
+    opening: _resolveOneLeaf<T.ObjectTypeOpening>(input.opening, "_object_type_opening"),
     members: _ne_members,
-    closing: _resolveOne<"}" | "|}">(input.closing, _K0, _K0),
+    closing: _resolveOneLeaf<T.ObjectTypeClosing>(input.closing, "_object_type_closing"),
   });
 }
 
 export function omittingTypeAnnotationFrom(input: T.OmittingTypeAnnotation.Loose): ReturnType<typeof F.omittingTypeAnnotation> | T.OmittingTypeAnnotation {
   if (isNodeData(input)) return input;
   return F.omittingTypeAnnotation({
-    type: _resolveOne<T.Type>(input.type, _K0, _super_type),
+    type: _resolveOne<T.Type>(input.type, _K2, _super_type),
   });
 }
 
 export function optingTypeAnnotationFrom(input: T.OptingTypeAnnotation.Loose): ReturnType<typeof F.optingTypeAnnotation> | T.OptingTypeAnnotation {
   if (isNodeData(input)) return input;
   return F.optingTypeAnnotation({
-    type: _resolveOne<T.Type>(input.type, _K0, _super_type),
+    type: _resolveOne<T.Type>(input.type, _K2, _super_type),
   });
 }
 
@@ -1635,10 +1500,10 @@ export function optionalParameterFrom(input: T.OptionalParameter.Loose): ReturnT
   return F.optionalParameter({
     decorator: _resolveManyBranch<T.Decorator>(input.decorator, "decorator"),
     readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
-    pattern: _resolveOne<T.Pattern | T.This>(input.pattern, _K35, _K9),
+    pattern: _resolveOne<T.Pattern | T.This>(input.pattern, _K37, _K12),
     type: _resolveOneBranch<T.TypeAnnotation>(input.type, "type_annotation"),
-    value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
-    children: _resolveOne(input.children, _K36, _K0),
+    value: _resolveOne<T.Expression>(input.value, _K2, _super_expression),
+    children: _resolveOne(input.children, _K38, _K2),
   });
 }
 
@@ -1653,7 +1518,7 @@ export function optionalTupleParameterFrom(input: T.OptionalTupleParameter.Loose
 export function optionalTypeFrom(input: T.OptionalType.Loose): ReturnType<typeof F.optionalType> | T.OptionalType {
   if (isNodeData(input)) return input;
   return F.optionalType({
-    type: _resolveOne<T.Type>(input.type, _K0, _super_type),
+    type: _resolveOne<T.Type>(input.type, _K2, _super_type),
   });
 }
 
@@ -1665,25 +1530,20 @@ export function overrideModifierFrom(input?: T.OverrideModifier) {
 export function pairFrom(input: T.Pair.Loose): ReturnType<typeof F.pair> | T.Pair {
   if (isNodeData(input)) return input;
   return F.pair({
-    key: _resolveOne<T.PropertyName>(input.key, _K1, _K2),
-    value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
+    key: _resolveOne<T.PropertyName>(input.key, _K0, _K1),
+    value: _resolveOne<T.Expression>(input.value, _K2, _super_expression),
   });
 }
 
 export function pairPatternFrom(input: T.PairPattern.Loose): ReturnType<typeof F.pairPattern> | T.PairPattern {
   if (isNodeData(input)) return input;
   return F.pairPattern({
-    key: _resolveOne<T.PropertyName>(input.key, _K1, _K2),
-    value: _resolveOne<T.Pattern | T.AssignmentPattern>(input.value, _super_identifier, _K37),
+    key: _resolveOne<T.PropertyName>(input.key, _K0, _K1),
+    value: _resolveOne<T.Pattern | T.AssignmentPattern>(input.value, _super_identifier, _K39),
   });
 }
 
 export function parenthesizedExpressionSequenceFrom(input?: NonNullable<T.ParenthesizedExpressionSequence.Config['children']>[number] | T.ParenthesizedExpressionSequence) {
-  if (isNodeData(input) && input.$type === 'parenthesized_expression_sequence') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.parenthesizedExpressionSequence(child as Parameters<typeof F.parenthesizedExpressionSequence>[0]);
-  }
   return F.parenthesizedExpressionSequence(input as Parameters<typeof F.parenthesizedExpressionSequence>[0]);
 }
 
@@ -1705,7 +1565,7 @@ export function parenthesizedExpressionUFormSequenceFrom(input: Omit<ConfigOf<T.
 export function parenthesizedTypeFrom(input: T.ParenthesizedType.Loose): ReturnType<typeof F.parenthesizedType> | T.ParenthesizedType {
   if (isNodeData(input)) return input;
   return F.parenthesizedType({
-    type: _resolveOne<T.Type>(input.type, _K0, _super_type),
+    type: _resolveOne<T.Type>(input.type, _K2, _super_type),
   });
 }
 
@@ -1723,18 +1583,18 @@ export function programFrom(input: T.Program.Loose): ReturnType<typeof F.program
   if (isNodeData(input)) return input;
   return F.program({
     hashBangLine: _resolveOneLeaf<T.HashBangLine>(input.hashBangLine, "hash_bang_line"),
-    statements: _resolveMany<T.Statement>(input.statements, _K0, _K15),
+    statements: _resolveMany<T.Statement>(input.statements, _K2, _K18),
   });
 }
 
 export function propertySignatureFrom(input: T.PropertySignature.Loose): ReturnType<typeof F.propertySignature> | T.PropertySignature {
   if (isNodeData(input)) return input;
   return F.propertySignature({
-    accessibilityModifier: _resolveOneLeaf<T.AccessibilityModifier>(input.accessibilityModifier, "accessibility_modifier"),
+    accessibilityModifier: _resolveOneLeaf<T._AccessibilityModifier>(input.accessibilityModifier, "_accessibility_modifier"),
     staticMarker: _resolveBooleanKeyword(input.staticMarker),
     overrideModifier: _resolveBooleanKeyword(input.overrideModifier),
     readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
-    name: _resolveOne<T.PropertyName>(input.name, _K1, _K2),
+    name: _resolveOne<T.PropertyName>(input.name, _K0, _K1),
     optionalMarker: _resolveBooleanKeyword(input.optionalMarker),
     type: _resolveOneBranch<T.TypeAnnotation>(input.type, "type_annotation"),
   });
@@ -1744,18 +1604,18 @@ export function publicFieldDefinitionFrom(input: T.PublicFieldDefinition.Loose):
   if (isNodeData(input)) return input;
   return F.publicFieldDefinition({
     decorator: _resolveManyBranch<T.Decorator>(input.decorator, "decorator"),
-    name: _resolveOne<T.PropertyName>(input.name, _K1, _K2),
-    optionalityMarker: _resolveOne<"?" | "!">(input.optionalityMarker, _K0, _K0),
+    name: _resolveOne<T.PropertyName>(input.name, _K0, _K1),
+    optionalityMarker: _resolveOneLeaf<T.PublicFieldDefinitionOptionalityMarker>(input.optionalityMarker, "_public_field_definition_optionality_marker"),
     type: _resolveOneBranch<T.TypeAnnotation>(input.type, "type_annotation"),
-    value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
-    children: _resolveOne(input.children, _K0, _K38),
+    value: _resolveOne<T.Expression>(input.value, _K2, _super_expression),
+    children: _resolveOne(input.children, _K2, _K40),
   });
 }
 
 export function readonlyTypeFrom(input: T.ReadonlyType.Loose): ReturnType<typeof F.readonlyType> | T.ReadonlyType {
   if (isNodeData(input)) return input;
   return F.readonlyType({
-    type: _resolveOne<T.Type>(input.type, _K0, _super_type),
+    type: _resolveOne<T.Type>(input.type, _K2, _super_type),
   });
 }
 
@@ -1782,15 +1642,15 @@ export function requiredParameterFrom(input: T.RequiredParameter.Loose): ReturnT
   return F.requiredParameter({
     decorator: _resolveManyBranch<T.Decorator>(input.decorator, "decorator"),
     readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
-    pattern: _resolveOne<T.Pattern | T.This>(input.pattern, _K35, _K9),
+    pattern: _resolveOne<T.Pattern | T.This>(input.pattern, _K37, _K12),
     type: _resolveOneBranch<T.TypeAnnotation>(input.type, "type_annotation"),
-    value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
-    children: _resolveOne(input.children, _K36, _K0),
+    value: _resolveOne<T.Expression>(input.value, _K2, _super_expression),
+    children: _resolveOne(input.children, _K38, _K2),
   });
 }
 
 export function restPatternFrom(input?: NonNullable<T.RestPattern.Config['children']>[number] | T.RestPattern) {
-  if (isNodeData(input) && input.$type === 'rest_pattern') {
+  if (isNodeData(input) && input.$type === TSKindId.RestPattern) {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
     return F.restPattern(child as Parameters<typeof F.restPattern>[0]);
@@ -1801,7 +1661,7 @@ export function restPatternFrom(input?: NonNullable<T.RestPattern.Config['childr
 export function restTypeFrom(input: T.RestType.Loose): ReturnType<typeof F.restType> | T.RestType {
   if (isNodeData(input)) return input;
   return F.restType({
-    type: _resolveOne<T.Type>(input.type, _K0, _super_type),
+    type: _resolveOne<T.Type>(input.type, _K2, _super_type),
   });
 }
 
@@ -1809,20 +1669,20 @@ export function returnStatementFrom(input: T.ReturnStatement.Loose): ReturnType<
   if (isNodeData(input)) return input;
   return F.returnStatement({
     semicolon: _resolveOneLeaf<T.Semicolon>(input.semicolon, "_automatic_semicolon"),
-    children: _resolveOne(input.children, _K0, _super_expressions),
+    children: _resolveOne(input.children, _K2, _super_expressions),
   });
 }
 
 export function satisfiesExpressionFrom(input: T.SatisfiesExpression.Loose): ReturnType<typeof F.satisfiesExpression> | T.SatisfiesExpression {
   if (isNodeData(input)) return input;
   return F.satisfiesExpression({
-    expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
-    typeAnnotation: _resolveOne<T.Type>(input.typeAnnotation, _K0, _super_type),
+    expression: _resolveOne<T.Expression>(input.expression, _K2, _super_expression),
+    typeAnnotation: _resolveOne<T.Type>(input.typeAnnotation, _K2, _super_type),
   });
 }
 
 export function sequenceExpressionFrom(...input: readonly (NonNullable<T.SequenceExpression.Config['children']>[number] | T.SequenceExpression)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'sequence_expression') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.SequenceExpression) {
     const data = input[0];
     return F.sequenceExpression(...((data.$children ?? []) as readonly NonNullable<T.SequenceExpression.Config['children']>[number][]));
   }
@@ -1832,31 +1692,23 @@ export function sequenceExpressionFrom(...input: readonly (NonNullable<T.Sequenc
 export function spreadElementFrom(input: T.SpreadElement.Loose): ReturnType<typeof F.spreadElement> | T.SpreadElement {
   if (isNodeData(input)) return input;
   return F.spreadElement({
-    expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
+    expression: _resolveOne<T.Expression>(input.expression, _K2, _super_expression),
   });
 }
 
 export function statementBlockFrom(input: T.StatementBlock.Loose): ReturnType<typeof F.statementBlock> | T.StatementBlock {
   if (isNodeData(input)) return input;
   return F.statementBlock({
-    statements: _resolveMany<T.Statement>(input.statements, _K0, _K15),
+    statements: _resolveMany<T.Statement>(input.statements, _K2, _K18),
     automaticSemicolon: _resolveOneLeaf<T.AutomaticSemicolon>(input.automaticSemicolon, "_automatic_semicolon"),
   });
 }
 
 export function stringDoubleFrom(...input: readonly (NonNullable<T.StringDouble.Config['children']>[number] | T.StringDouble)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'string_double') {
-    const data = input[0];
-    return F.stringDouble(...((data.$children ?? []) as readonly NonNullable<T.StringDouble.Config['children']>[number][]));
-  }
   return F.stringDouble(...(input as readonly NonNullable<T.StringDouble.Config['children']>[number][]));
 }
 
 export function stringSingleFrom(...input: readonly (NonNullable<T.StringSingle.Config['children']>[number] | T.StringSingle)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'string_single') {
-    const data = input[0];
-    return F.stringSingle(...((data.$children ?? []) as readonly NonNullable<T.StringSingle.Config['children']>[number][]));
-  }
   return F.stringSingle(...(input as readonly NonNullable<T.StringSingle.Config['children']>[number][]));
 }
 
@@ -1876,9 +1728,9 @@ export function stringUFormSingleFrom(input: Omit<ConfigOf<T.StringUFormSingle>,
 export function subscriptExpressionFrom(input: T.SubscriptExpression.Loose): ReturnType<typeof F.subscriptExpression> | T.SubscriptExpression {
   if (isNodeData(input)) return input;
   return F.subscriptExpression({
-    object: _resolveOne<T.Expression | T.PrimaryExpression>(input.object, _K0, _K32),
+    object: _resolveOne<T.Expression | T.PrimaryExpression>(input.object, _K2, _K34),
     optionalChain: _resolveBooleanKeyword(input.optionalChain),
-    index: _resolveOne<T.Expressions>(input.index, _K0, _super_expressions),
+    index: _resolveOne<T.Expressions>(input.index, _K2, _super_expressions),
   });
 }
 
@@ -1888,7 +1740,7 @@ export function superFrom(input?: T.Super) {
 }
 
 export function switchBodyFrom(...input: readonly (NonNullable<T.SwitchBody.Config['children']>[number] | T.SwitchBody)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'switch_body') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.SwitchBody) {
     const data = input[0];
     return F.switchBody(...((data.$children ?? []) as readonly NonNullable<T.SwitchBody.Config['children']>[number][]));
   }
@@ -1898,15 +1750,15 @@ export function switchBodyFrom(...input: readonly (NonNullable<T.SwitchBody.Conf
 export function switchCaseFrom(input: T.SwitchCase.Loose): ReturnType<typeof F.switchCase> | T.SwitchCase {
   if (isNodeData(input)) return input;
   return F.switchCase({
-    value: _resolveOne<T.Expressions>(input.value, _K0, _super_expressions),
-    body: _resolveMany<T.Statement>(input.body, _K0, _K15),
+    value: _resolveOne<T.Expressions>(input.value, _K2, _super_expressions),
+    body: _resolveMany<T.Statement>(input.body, _K2, _K18),
   });
 }
 
 export function switchDefaultFrom(input: T.SwitchDefault.Loose): ReturnType<typeof F.switchDefault> | T.SwitchDefault {
   if (isNodeData(input)) return input;
   return F.switchDefault({
-    body: _resolveMany<T.Statement>(input.body, _K0, _K15),
+    body: _resolveMany<T.Statement>(input.body, _K2, _K18),
   });
 }
 
@@ -1919,7 +1771,7 @@ export function switchStatementFrom(input: T.SwitchStatement.Loose): ReturnType<
 }
 
 export function templateLiteralTypeFrom(...input: readonly (NonNullable<T.TemplateLiteralType.Config['children']>[number] | T.TemplateLiteralType)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'template_literal_type') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TemplateLiteralType) {
     const data = input[0];
     return F.templateLiteralType(...((data.$children ?? []) as readonly NonNullable<T.TemplateLiteralType.Config['children']>[number][]));
   }
@@ -1927,7 +1779,7 @@ export function templateLiteralTypeFrom(...input: readonly (NonNullable<T.Templa
 }
 
 export function templateStringFrom(...input: readonly (NonNullable<T.TemplateString.Config['children']>[number] | T.TemplateString)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'template_string') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TemplateString) {
     const data = input[0];
     return F.templateString(...((data.$children ?? []) as readonly NonNullable<T.TemplateString.Config['children']>[number][]));
   }
@@ -1935,7 +1787,7 @@ export function templateStringFrom(...input: readonly (NonNullable<T.TemplateStr
 }
 
 export function templateSubstitutionFrom(input?: NonNullable<T.TemplateSubstitution.Config['children']>[number] | T.TemplateSubstitution) {
-  if (isNodeData(input) && input.$type === 'template_substitution') {
+  if (isNodeData(input) && input.$type === TSKindId.TemplateSubstitution) {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
     return F.templateSubstitution(child as Parameters<typeof F.templateSubstitution>[0]);
@@ -1944,7 +1796,7 @@ export function templateSubstitutionFrom(input?: NonNullable<T.TemplateSubstitut
 }
 
 export function templateTypeFrom(input?: NonNullable<T.TemplateType.Config['children']>[number] | T.TemplateType) {
-  if (isNodeData(input) && input.$type === 'template_type') {
+  if (isNodeData(input) && input.$type === TSKindId.TemplateType) {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
     return F.templateType(child as Parameters<typeof F.templateType>[0]);
@@ -1955,9 +1807,9 @@ export function templateTypeFrom(input?: NonNullable<T.TemplateType.Config['chil
 export function ternaryExpressionFrom(input: T.TernaryExpression.Loose): ReturnType<typeof F.ternaryExpression> | T.TernaryExpression {
   if (isNodeData(input)) return input;
   return F.ternaryExpression({
-    condition: _resolveOne<T.Expression>(input.condition, _K0, _super_expression),
-    consequence: _resolveOne<T.Expression>(input.consequence, _K0, _super_expression),
-    alternative: _resolveOne<T.Expression>(input.alternative, _K0, _super_expression),
+    condition: _resolveOne<T.Expression>(input.condition, _K2, _super_expression),
+    consequence: _resolveOne<T.Expression>(input.consequence, _K2, _super_expression),
+    alternative: _resolveOne<T.Expression>(input.alternative, _K2, _super_expression),
   });
 }
 
@@ -1970,7 +1822,7 @@ export function throwStatementFrom(input: T.ThrowStatement.Loose): ReturnType<ty
   if (isNodeData(input)) return input;
   return F.throwStatement({
     semicolon: _resolveOneLeaf<T.Semicolon>(input.semicolon, "_automatic_semicolon"),
-    children: _resolveOne(input.children, _K0, _super_expressions),
+    children: _resolveOne(input.children, _K2, _super_expressions),
   });
 }
 
@@ -1991,13 +1843,13 @@ export function tryStatementFrom(input: T.TryStatement.Loose): ReturnType<typeof
 export function tupleParameterFrom(input: T.TupleParameter.Loose): ReturnType<typeof F.tupleParameter> | T.TupleParameter {
   if (isNodeData(input)) return input;
   return F.tupleParameter({
-    name: _resolveOne<T.Identifier | T.RestPattern>(input.name, _super_import_identifier, _K39),
+    name: _resolveOne<T.Identifier | T.RestPattern>(input.name, _super_import_identifier, _K41),
     type: _resolveOneBranch<T.TypeAnnotation>(input.type, "type_annotation"),
   });
 }
 
 export function tupleTypeFrom(...input: readonly (NonNullable<T.TupleType.Config['children']>[number] | T.TupleType)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'tuple_type') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TupleType) {
     const data = input[0];
     return F.tupleType(...((data.$children ?? []) as readonly NonNullable<T.TupleType.Config['children']>[number][]));
   }
@@ -2009,7 +1861,7 @@ export function typeAliasDeclarationFrom(input: T.TypeAliasDeclaration.Loose): R
   return F.typeAliasDeclaration({
     name: _resolveOneBranch<T.TypeIdentifier>(input.name, "_type_identifier"),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
-    value: _resolveOne<T.Type>(input.value, _K0, _super_type),
+    value: _resolveOne<T.Type>(input.value, _K2, _super_type),
     semicolon: _resolveOneLeaf<T.Semicolon>(input.semicolon, "_automatic_semicolon"),
   });
 }
@@ -2017,12 +1869,12 @@ export function typeAliasDeclarationFrom(input: T.TypeAliasDeclaration.Loose): R
 export function typeAnnotationFrom(input: T.TypeAnnotation.Loose): ReturnType<typeof F.typeAnnotation> | T.TypeAnnotation {
   if (isNodeData(input)) return input;
   return F.typeAnnotation({
-    type: _resolveOne<T.Type>(input.type, _K0, _super_type),
+    type: _resolveOne<T.Type>(input.type, _K2, _super_type),
   });
 }
 
 export function typeArgumentsFrom(...input: readonly (NonNullable<T.TypeArguments.Config['children']>[number] | T.TypeArguments)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'type_arguments') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TypeArguments) {
     const data = input[0];
     return F.typeArguments(...((data.$children ?? []) as readonly NonNullable<T.TypeArguments.Config['children']>[number][]));
   }
@@ -2033,7 +1885,7 @@ export function typeAssertionFrom(input: T.TypeAssertion.Loose): ReturnType<type
   if (isNodeData(input)) return input;
   return F.typeAssertion({
     typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments"),
-    expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
+    expression: _resolveOne<T.Expression>(input.expression, _K2, _super_expression),
   });
 }
 
@@ -2048,7 +1900,7 @@ export function typeParameterFrom(input: T.TypeParameter.Loose): ReturnType<type
 }
 
 export function typeParametersFrom(...input: readonly (NonNullable<T.TypeParameters.Config['children']>[number] | T.TypeParameters)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'type_parameters') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TypeParameters) {
     const data = input[0];
     return F.typeParameters(...((data.$children ?? []) as readonly NonNullable<T.TypeParameters.Config['children']>[number][]));
   }
@@ -2058,20 +1910,20 @@ export function typeParametersFrom(...input: readonly (NonNullable<T.TypeParamet
 export function typePredicateFrom(input: T.TypePredicate.Loose): ReturnType<typeof F.typePredicate> | T.TypePredicate {
   if (isNodeData(input)) return input;
   return F.typePredicate({
-    name: _resolveOne<T.PredefinedType | T.This>(input.name, _K40, _K0),
-    type: _resolveOne<T.Type>(input.type, _K0, _super_type),
+    name: _resolveOne<T.PredefinedType | T.This>(input.name, _K42, _K2),
+    type: _resolveOne<T.Type>(input.type, _K2, _super_type),
   });
 }
 
 export function typePredicateAnnotationFrom(input: T.TypePredicateAnnotation.Loose): ReturnType<typeof F.typePredicateAnnotation> | T.TypePredicateAnnotation {
   if (isNodeData(input)) return input;
   return F.typePredicateAnnotation({
-    typePredicate: _resolveOneBranch<":" | T.TypePredicate>(input.typePredicate, "type_predicate"),
+    typePredicate: _resolveOne<T.AssertsAnnotationAsserts | T.TypePredicate>(input.typePredicate, _K9, _K43),
   });
 }
 
 export function typeQueryFrom(input?: NonNullable<T.TypeQuery.Config['children']>[number] | T.TypeQuery) {
-  if (isNodeData(input) && input.$type === 'type_query') {
+  if (isNodeData(input) && input.$type === TSKindId.TypeQuery) {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
     return F.typeQuery(child as Parameters<typeof F.typeQuery>[0]);
@@ -2082,8 +1934,8 @@ export function typeQueryFrom(input?: NonNullable<T.TypeQuery.Config['children']
 export function unaryExpressionFrom(input: T.UnaryExpression.Loose): ReturnType<typeof F.unaryExpression> | T.UnaryExpression {
   if (isNodeData(input)) return input;
   return F.unaryExpression({
-    operator: _resolveOne<"!" | "~" | "-" | "+" | "typeof" | "void" | "delete">(input.operator, _K0, _K0),
-    argument: _resolveOne<T.Expression>(input.argument, _K0, _super_expression),
+    operator: _resolveOneLeaf<T.UnaryExpressionOperator>(input.operator, "_unary_expression_operator"),
+    argument: _resolveOne<T.Expression>(input.argument, _K2, _super_expression),
   });
 }
 
@@ -2092,19 +1944,9 @@ export function undefined_From(input?: T.Undefined) {
   return F.undefined_();
 }
 
-export function unescapedDoubleJsxStringFragmentFrom(input: string | T.UnescapedDoubleJsxStringFragment) {
-  if (typeof input !== 'string') return input;
-  return F.unescapedDoubleJsxStringFragment(input as Parameters<typeof F.unescapedDoubleJsxStringFragment>[0]);
-}
-
 export function unescapedDoubleStringFragmentFrom(input: string | T.UnescapedDoubleStringFragment) {
   if (typeof input !== 'string') return input;
   return F.unescapedDoubleStringFragment(input as Parameters<typeof F.unescapedDoubleStringFragment>[0]);
-}
-
-export function unescapedSingleJsxStringFragmentFrom(input: string | T.UnescapedSingleJsxStringFragment) {
-  if (typeof input !== 'string') return input;
-  return F.unescapedSingleJsxStringFragment(input as Parameters<typeof F.unescapedSingleJsxStringFragment>[0]);
 }
 
 export function unescapedSingleStringFragmentFrom(input: string | T.UnescapedSingleStringFragment) {
@@ -2115,8 +1957,8 @@ export function unescapedSingleStringFragmentFrom(input: string | T.UnescapedSin
 export function unionTypeFrom(input: T.UnionType.Loose): ReturnType<typeof F.unionType> | T.UnionType {
   if (isNodeData(input)) return input;
   return F.unionType({
-    left: _resolveOne<T.Type>(input.left, _K0, _super_type),
-    right: _resolveOne<T.Type>(input.right, _K0, _super_type),
+    left: _resolveOne<T.Type>(input.left, _K2, _super_type),
+    right: _resolveOne<T.Type>(input.right, _K2, _super_type),
   });
 }
 
@@ -2127,15 +1969,15 @@ export function updateExpressionFrom(input?: T.UpdateExpression.Loose): ReturnTy
 
 export function updateExpressionUFormPostfixFrom(input: Omit<ConfigOf<T.UpdateExpressionUFormPostfix>, '$variant'>) {
   return F.updateExpressionUFormPostfix({
-    argument: _resolveOne<T.Expression>(input.argument, _K0, _super_expression),
-    operator: _resolveOne<"++" | "--">(input.operator, _K0, _K0),
+    argument: _resolveOne<T.Expression>(input.argument, _K2, _super_expression),
+    operator: _resolveOneLeaf<T.Operator>(input.operator, "_operator"),
   });
 }
 
 export function updateExpressionUFormPrefixFrom(input: Omit<ConfigOf<T.UpdateExpressionUFormPrefix>, '$variant'>) {
   return F.updateExpressionUFormPrefix({
-    operator: _resolveOne<"++" | "--">(input.operator, _K0, _K0),
-    argument: _resolveOne<T.Expression>(input.argument, _K0, _super_expression),
+    operator: _resolveOneLeaf<T.Operator>(input.operator, "_operator"),
+    argument: _resolveOne<T.Expression>(input.argument, _K2, _super_expression),
   });
 }
 
@@ -2154,7 +1996,7 @@ export function variableDeclaratorFrom(input: T.VariableDeclarator.Loose): Retur
   return F.variableDeclarator({
     name: _resolveOne<T.Identifier | T.DestructuringPattern>(input.name, _super_import_identifier, _super_destructuring_pattern),
     type: _resolveOneBranch<T.TypeAnnotation>(input.type, "type_annotation"),
-    value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
+    value: _resolveOne<T.Expression>(input.value, _K2, _super_expression),
   });
 }
 
@@ -2162,7 +2004,7 @@ export function whileStatementFrom(input: T.WhileStatement.Loose): ReturnType<ty
   if (isNodeData(input)) return input;
   return F.whileStatement({
     condition: _resolveOneBranch<T.ParenthesizedExpression>(input.condition, "parenthesized_expression"),
-    body: _resolveOne<T.Statement>(input.body, _K0, _K15),
+    body: _resolveOne<T.Statement>(input.body, _K2, _K18),
   });
 }
 
@@ -2170,14 +2012,14 @@ export function withStatementFrom(input: T.WithStatement.Loose): ReturnType<type
   if (isNodeData(input)) return input;
   return F.withStatement({
     object: _resolveOneBranch<T.ParenthesizedExpression>(input.object, "parenthesized_expression"),
-    body: _resolveOne<T.Statement>(input.body, _K0, _K15),
+    body: _resolveOne<T.Statement>(input.body, _K2, _K18),
   });
 }
 
 export function yieldExpressionFrom(input?: T.YieldExpression.Loose): ReturnType<typeof F.yieldExpression> | T.YieldExpression {
   if (input !== undefined && isNodeData(input)) return input;
   return F.yieldExpression({
-    expression: _resolveOne<T.Expression>(input?.expression, _K0, _super_expression),
+    expression: _resolveOne<T.Expression>(input?.expression, _K2, _super_expression),
   });
 }
 

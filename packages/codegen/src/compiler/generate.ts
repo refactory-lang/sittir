@@ -4,7 +4,8 @@
  * Pipeline: evaluate → link → optimize → assemble → emitters.
  */
 
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { evaluate } from './evaluate.ts';
 import { link } from './link.ts';
 import { optimize } from './optimize.ts';
@@ -23,6 +24,7 @@ import { emitFactoryMap } from '../emitters/factory-map.ts';
 import { emitWrap } from '../emitters/wrap.ts';
 import { emitFrom } from '../emitters/from.ts';
 import { emitClientUtils } from '../emitters/client-utils.ts';
+import { emitKindIdRust } from '../emitters/kind-id-rust.ts';
 import { emitIr } from '../emitters/ir.ts';
 import { emitTests } from '../emitters/test.ts';
 import { emitTypeTests } from '../emitters/type-test.ts';
@@ -32,15 +34,19 @@ import { emitIndex } from '../emitters/index-file.ts';
 import { emitSuggested } from '../emitters/suggested.ts';
 import { emitIs } from '../emitters/is.ts';
 import { emitNodeModel } from '../emitters/node-model.ts';
+import { emitEngine } from '../emitters/engine.ts';
 import { loadGeneratedIdTables } from './generated-metadata.ts';
 
-import type { NodeMap, IncludeFilter } from './types.ts';
+import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';
 import type { EmittedTemplates } from '../emitters/templates.ts';
 import type { RoundTripDiagnostic } from '../emitters/suggested.ts';
+import type { GeneratedIdTables } from './generated-metadata.ts'; // exposed via GeneratedFiles
 
 export interface GeneratedFiles {
 	grammar: string;
 	types: string;
+	/** engine.ts — thin wrapper around createGrammarEngine from @sittir/core/engine */
+	engine: string;
 	/** Per-rule `.jinja` files (feature 011). `EmittedTemplates.bodies`
 	 *  is keyed by rule kind with the full file contents (incl.
 	 *  `@generated` header). Separator / flank metadata lives INLINE
@@ -66,8 +72,13 @@ export interface GeneratedFiles {
 	suggested: string;
 	/** is.ts — per-grammar type guards (is/assert/isTree/isNode, spec 008 US2) */
 	is: string;
+	/** kind_ids.rs — per-grammar numeric KindId constants for the Rust render crate */
+	kindIds: string;
 	/** The intermediate NodeMap — available for inspection */
 	nodeMap: NodeMap;
+	/** Generated ID tables (from parser.c) — exposed for CLI callers that need
+	 *  to pass them to Rust-render emitters such as emitRenderModule. */
+	generatedIdTables?: GeneratedIdTables;
 }
 
 export interface GenerateConfig {
@@ -151,28 +162,47 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	);
 	const generatedIdTables = await loadGeneratedIdTables(cfg.grammar);
 
+	// Authoritative inline list from the compiled grammar.json (if present).
+	// `raw.inline` only contains what the overrides callback explicitly
+	// returns — base-grammar string items in `previous` are silently dropped
+	// by evaluate's normalize() pass (which only handles symbol-ref objects).
+	// Reading grammar.json directly gives us the full merged inline list that
+	// tree-sitter itself used when compiling the parser.
+	const inlineKinds = loadGrammarJsonInlineList(cfg.grammar);
+
+	// Kinds that were synthesized by evaluate's inline-alias-source pass
+	// (synthesizeInlineAliasSources). These have no parser symbol because
+	// tree-sitter inlined the alias body at parse time — the `_doc_comment`
+	// intermediary exists only in the codegen rule map. They're intentional
+	// pipeline constructs; warn-and-skip at emit time is correct.
+	const evaluateSynthesizedKinds = collectEvaluateSynthesizedKinds(raw);
+
 	// Phase 5: Emit — every emitter consumes NodeMap directly. The
 	// ir-namespace keys are populated on each AssembledNode during
 	// assemble() (see resolveIrKeys), so emitters read node.irKey
 	// directly. No side-channel map plumbing, no NodeMap→Hydrated adapter.
 	return {
 		grammar: emitGrammar({ grammar: cfg.grammar }),
-		types: emitTypes({ grammar: cfg.grammar, nodeMap }),
+		engine: emitEngine({ grammar: cfg.grammar }),
+		types: emitTypes({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
 		jinjaTemplates: emitJinjaTemplates({ grammar: cfg.grammar, nodeMap }),
 		factories: emitFactories({
 			grammar: cfg.grammar,
 			nodeMap,
-			strict: cfg.strict
+			strict: cfg.strict,
+			generatedIdTables,
+			inlineKinds,
+			synthesizedKinds: evaluateSynthesizedKinds
 		}),
 		factoryMap: emitFactoryMap({ grammar: cfg.grammar, nodeMap }),
-		wrap: emitWrap({ grammar: cfg.grammar, nodeMap }),
-		utils: emitClientUtils({ nodeMap }),
-		from: emitFrom({ grammar: cfg.grammar, nodeMap }),
-		irNamespace: emitIr({ grammar: cfg.grammar, nodeMap }),
+		wrap: emitWrap({ grammar: cfg.grammar, nodeMap, generatedIdTables, inlineKinds, synthesizedKinds: evaluateSynthesizedKinds }),
+		utils: emitClientUtils({ nodeMap, generatedIdTables }),
+		from: emitFrom({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
+		irNamespace: emitIr({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
 		consts: emitConsts({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
 		index: emitIndex({ grammar: cfg.grammar, nodeMap }),
-		tests: emitTests({ grammar: cfg.grammar, nodeMap }),
-		typeTests: emitTypeTests({ nodeMap }),
+		tests: emitTests({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
+		typeTests: emitTypeTests({ nodeMap, generatedIdTables }),
 		config: emitConfig({ grammar: cfg.grammar }),
 		nodeModel: emitNodeModel({ grammar: cfg.grammar, nodeMap }),
 		suggested: emitSuggested({
@@ -180,7 +210,75 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			nodeMap,
 			roundTripFailures: cfg.roundTripFailures
 		}),
-		is: emitIs({ grammar: cfg.grammar, nodeMap }),
-		nodeMap
+		is: emitIs({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
+		kindIds: generatedIdTables
+			? emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables })
+			: '',
+		nodeMap,
+		generatedIdTables
 	};
+}
+
+/**
+ * Read the `inline` list from the compiled `grammar.json` artifact if present.
+ *
+ * @remarks
+ * `raw.inline` (from `evaluate()`) only contains what the overrides callback
+ * explicitly returns — base-grammar string items in the `previous` array are
+ * silently dropped by evaluate's `normalize()` pass (which only handles
+ * symbol-ref objects, not plain strings). Reading grammar.json directly gives
+ * the full merged list that tree-sitter itself used when compiling the parser,
+ * making it the authoritative source for "is this kind deliberately inlined?".
+ *
+ * Returns `undefined` when the grammar has not been compiled (no `.sittir/`
+ * directory). Callers treat `undefined` the same as an empty list — no kind
+ * is considered deliberately inlined.
+ *
+ * @param grammar - Grammar name (e.g. `'rust'`, `'typescript'`, `'python'`).
+ * @returns The `inline` string array from grammar.json, or `undefined`.
+ */
+function loadGrammarJsonInlineList(grammar: string): readonly string[] | undefined {
+	const grammarJsonPath = join(
+		process.cwd(),
+		'packages',
+		grammar,
+		'.sittir',
+		'src',
+		'grammar.json'
+	);
+	if (!existsSync(grammarJsonPath)) return undefined;
+	try {
+		const parsed = JSON.parse(readFileSync(grammarJsonPath, 'utf8')) as {
+			inline?: unknown;
+		};
+		if (Array.isArray(parsed.inline) && parsed.inline.every((v) => typeof v === 'string')) {
+			return parsed.inline as string[];
+		}
+		return undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+/**
+ * Collect kinds whose root rule was synthesized by evaluate's inline-alias-
+ * source pass (`synthesizeInlineAliasSources`). These have no parser symbol
+ * because tree-sitter inlines the alias body at parse time — the `_${target}`
+ * intermediary exists only in the codegen rule map.
+ *
+ * @remarks
+ * The provenance is set to `'evaluate-synthesized'` on the root
+ * `RuleCatalogEntry` for each synthesized rule. Emitters treat these the same
+ * as inline-list kinds: warn and skip, never throw.
+ *
+ * @param raw - The evaluated grammar, which carries the rule catalog.
+ * @returns A `ReadonlySet<string>` of synthesized kind names.
+ */
+function collectEvaluateSynthesizedKinds(raw: RawGrammar): ReadonlySet<string> {
+	const result = new Set<string>();
+	for (const [kind, rootId] of raw.ruleCatalog.rootsByKind) {
+		const entry = raw.ruleCatalog.byId.get(rootId);
+		if (entry?.provenance === 'evaluate-synthesized') result.add(kind);
+	}
+	return result;
 }

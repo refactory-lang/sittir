@@ -4,16 +4,24 @@
 // See emitters/factory-map.ts for semantics of each map.
 {
   "factoryShapes": {
-    "_arrow_function__call_signature": "config",
-    "_arrow_function_parameter": "config",
-    "_call_expression_call": "config",
-    "_call_expression_member": "config",
-    "_call_expression_template_call": "config",
+    "__for_header_operator": "text",
+    "__for_header_var_kind_kind": "text",
+    "__number_operator": "text",
+    "__public_field_definition_access_first_declare_marker": "text",
+    "__public_field_definition_accessor_opt_accessor_marker": "text",
+    "_abstract_marker": "text",
+    "_accessibility_modifier": "text",
+    "_accessor_kind": "text",
+    "_asserts_annotation_asserts": "text",
+    "_assignment_expression_using_marker": "text",
+    "_async_marker": "text",
+    "_augmented_assignment_expression_operator": "text",
+    "_binary_expression_operator": "text",
     "_class_body_member": "children",
     "_class_body_method": "config",
     "_class_body_method_sig": "children",
-    "_class_heritage_extends_clause": "children",
-    "_class_heritage_implements_clause": "children",
+    "_const_marker": "text",
+    "_export_specifier_export_kind": "text",
     "_export_statement_default_decl_arm": "config",
     "_export_statement_default_decl_arm_default_kw": "config",
     "_export_statement_default_decl_arm_default_kw_value": "config",
@@ -21,42 +29,32 @@
     "_export_statement_default_from_arm_clause_from": "config",
     "_export_statement_default_from_arm_ns_from": "config",
     "_export_statement_default_from_arm_star_from": "config",
-    "_export_statement_equals_export": "children",
-    "_export_statement_namespace_export": "children",
-    "_export_statement_type_export": "config",
     "_for_header_let_const_kind": "config",
     "_for_header_lhs": "config",
     "_for_header_var_kind": "config",
-    "_import_clause_default_import": "children",
-    "_import_clause_named_imports": "children",
-    "_import_clause_namespace_import": "children",
-    "_import_specifier_as": "config",
-    "_import_specifier_name": "config",
-    "_index_signature_colon": "config",
-    "_index_signature_mapped_type_clause": "children",
+    "_for_in_statement_await_marker": "text",
+    "_for_statement_initializer": "text",
+    "_import_attribute_object": "text",
     "_initializer": "config",
-    "_interface_body": "children",
-    "_kw_abstract_marker": "text",
-    "_kw_async_marker": "text",
-    "_kw_const_marker": "text",
-    "_kw_readonly_marker": "text",
-    "_kw_static_marker": "text",
+    "_kind": "text",
     "_lhs_expression": "children",
     "_number": "config",
-    "_parenthesized_expression_sequence": "children",
-    "_parenthesized_expression_typed": "config",
-    "_property_identifier": "children",
+    "_object_type_closing": "text",
+    "_object_type_opening": "text",
+    "_operator": "text",
+    "_optional_chain": "text",
+    "_optional_marker": "text",
+    "_override_modifier": "text",
     "_public_field_definition_abstract_first": "config",
     "_public_field_definition_access_first": "config",
     "_public_field_definition_accessor_opt": "config",
     "_public_field_definition_declare_first": "children",
+    "_public_field_definition_optionality_marker": "text",
     "_public_field_definition_readonly_first": "config",
     "_public_field_definition_static_mods": "config",
+    "_readonly_marker": "text",
     "_reserved_identifier": "text",
-    "_statement_identifier": "children",
-    "_string_double": "children",
-    "_string_fragment": "children",
-    "_string_single": "children",
+    "_static_marker": "text",
     "_type_identifier": "children",
     "_type_query_call_expression": "config",
     "_type_query_call_expression_in_type_annotation": "config",
@@ -64,8 +62,7 @@
     "_type_query_member_expression": "config",
     "_type_query_member_expression_in_type_annotation": "config",
     "_type_query_subscript_expression": "config",
-    "_update_expression_postfix": "config",
-    "_update_expression_prefix": "config",
+    "_unary_expression_operator": "text",
     "abstract_class_declaration": "config",
     "abstract_method_signature": "config",
     "accessibility_modifier": "text",
@@ -265,6 +262,7 @@
     "with_statement": "config",
     "yield_expression": "config",
     "_automatic_semicolon": "text",
+    "_template_chars": "text",
     "html_comment": "text",
     "||": "text",
     "jsx_text": "text",
@@ -273,20 +271,17 @@
     "default": "text",
     "as": "text",
     "namespace": "text",
-    "var": "text",
     "from": "text",
     "abstract": "text",
+    "accessor": "text",
     "async": "text",
+    "await": "text",
     "const": "text",
+    "declare": "text",
     "readonly": "text",
     "static": "text",
-    "declare": "text",
-    "accessor": "text",
-    "global": "text",
     "using": "text",
-    "await": "text",
-    "instanceof": "text",
-    "in": "text",
+    "global": "text",
     "break": "text",
     "catch": "text",
     "extends": "text",
@@ -306,6 +301,7 @@
     "keyof": "text",
     "infer": "text",
     "interface": "text",
+    "in": "text",
     "override": "text",
     "return": "text",
     "satisfies": "text",
@@ -315,6 +311,7 @@
     "try": "text",
     "is": "text",
     "typeof": "text",
+    "var": "text",
     "with": "text",
     "yield": "text"
   },
@@ -345,14 +342,14 @@
       "call_expression": "_type_query_call_expression"
     },
     "_type_query_member_expression.property": {
-      "property_identifier": "_property_identifier"
+      "property_identifier": "identifier"
     },
     "_type_query_member_expression_in_type_annotation.object": {
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
     "_type_query_member_expression_in_type_annotation.property": {
-      "property_identifier": "_property_identifier"
+      "property_identifier": "identifier"
     },
     "_type_query_subscript_expression.object": {
       "subscript_expression": "_type_query_subscript_expression",
@@ -360,7 +357,7 @@
       "call_expression": "_type_query_call_expression"
     },
     "ambient_declaration.declaration": {
-      "property_identifier": "_property_identifier"
+      "property_identifier": "identifier"
     },
     "arrow_function_parameter.parameter": {
       "identifier": "_reserved_identifier"
@@ -369,10 +366,10 @@
       "identifier": "_reserved_identifier"
     },
     "break_statement.label": {
-      "statement_identifier": "_statement_identifier"
+      "statement_identifier": "identifier"
     },
     "continue_statement.label": {
-      "statement_identifier": "_statement_identifier"
+      "statement_identifier": "identifier"
     },
     "decorator_call_expression.function": {
       "member_expression": "decorator_member_expression"
@@ -381,10 +378,10 @@
       "member_expression": "decorator_member_expression"
     },
     "decorator_member_expression.property": {
-      "property_identifier": "_property_identifier"
+      "property_identifier": "identifier"
     },
     "interface_declaration.body": {
-      "interface_body": "_interface_body"
+      "interface_body": "object_type"
     },
     "jsx_opening_element.name": {
       "member_expression": "nested_identifier"
@@ -396,13 +393,13 @@
       "statement_identifier": "_statement_identifier"
     },
     "member_expression.property": {
-      "property_identifier": "_property_identifier"
+      "property_identifier": "identifier"
     },
     "nested_identifier.object": {
       "member_expression": "nested_identifier"
     },
     "nested_identifier.property": {
-      "property_identifier": "_property_identifier"
+      "property_identifier": "identifier"
     },
     "object_assignment_pattern.left": {
       "shorthand_property_identifier_pattern": "_shorthand_property_identifier_pattern"
@@ -412,44 +409,11 @@
     }
   },
   "factoryFields": {
-    "_arrow_function__call_signature": [
-      "type_parameters",
-      "parameters",
-      "return_type"
-    ],
-    "_arrow_function_parameter": [
-      "parameter"
-    ],
-    "_call_expression_call": [
-      "function",
-      "type_arguments",
-      "arguments"
-    ],
-    "_call_expression_member": [
-      "function",
-      "type_arguments",
-      "arguments"
-    ],
-    "_call_expression_template_call": [
-      "function",
-      "arguments"
-    ],
     "_export_statement_default_from_arm_star_from": [
       "source"
     ],
     "_for_header_lhs": [
       "left"
-    ],
-    "_import_specifier_as": [
-      "name",
-      "alias"
-    ],
-    "_import_specifier_name": [
-      "name"
-    ],
-    "_index_signature_colon": [
-      "name",
-      "index_type"
     ],
     "_initializer": [
       "value"
@@ -492,14 +456,6 @@
     "_type_query_subscript_expression": [
       "object",
       "index"
-    ],
-    "_update_expression_postfix": [
-      "argument",
-      "operator"
-    ],
-    "_update_expression_prefix": [
-      "operator",
-      "argument"
     ],
     "abstract_class_declaration": [
       "decorator",

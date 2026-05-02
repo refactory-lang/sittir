@@ -15,7 +15,10 @@
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import type { NodeId } from '@sittir/types';
+import type { AnyTransport } from './types.js';
 import { TEMPLATE_BUNDLE_HASH } from './hash.js';
+
+const NATIVE_RENDER_TRANSPORT_ABI = 1;
 
 /** Which backend is currently serving render/read/splice. */
 export type BackendName = 'native' | 'js';
@@ -45,10 +48,11 @@ export type BackendStatus = NativeBackendStatus | JsBackendStatus;
  */
 export interface NativeEngine {
 	readonly templateBundleHash: string;
+	readonly nativeRenderTransportAbi: number;
 	parseAndRead(source: string): string;
 	findAndRead(source: string, pattern: string): string;
 	readNode(nodeId: NodeId): string;
-	render(nodeJson: string): string;
+	render(node: AnyTransport): string;
 	applyEdits(
 		source: string,
 		edits: { startPos: number; endPos: number; insertedText: string }[]
@@ -175,9 +179,11 @@ function computeBackend(): BackendStatus {
 
 	let hashMatch: boolean;
 	let nativeHash: string;
+	let nativeRenderTransportAbi: number;
 	try {
 		const engine = new loaded.SittirEngine();
 		nativeHash = engine.templateBundleHash;
+		nativeRenderTransportAbi = engine.nativeRenderTransportAbi;
 		hashMatch = nativeHash.toLowerCase() === TEMPLATE_BUNDLE_HASH.toLowerCase();
 	} catch (err) {
 		const message = err instanceof Error ? err.message : String(err);
@@ -196,6 +202,15 @@ function computeBackend(): BackendStatus {
 			);
 		}
 		return createJsStatus('template-bundle hash mismatch', false);
+	}
+
+	if (nativeRenderTransportAbi !== NATIVE_RENDER_TRANSPORT_ABI) {
+		if (forced === 'native') {
+			throw new Error(
+				`SITTIR_BACKEND=native but native render transport ABI mismatch (native=${String(nativeRenderTransportAbi)}, js=${NATIVE_RENDER_TRANSPORT_ABI})`
+			);
+		}
+		return createJsStatus('native render transport ABI mismatch');
 	}
 
 	return createNativeStatus(loaded);

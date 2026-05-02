@@ -11,9 +11,16 @@
 //! boundary contract will fail this test even before the serde
 //! `rename` attribute is set.
 
-use sittir_core::types::{FieldValue, NodeData, Source, Span};
+use sittir_core::types::{FieldValue, KindId, NodeData, Source, Span};
 use std::collections::HashMap;
 use std::collections::HashSet;
+
+// Arbitrary KindId values used for test fixtures — shape tests do not
+// depend on the actual grammar-assigned id, only on the JSON key structure.
+const K_IDENTIFIER: KindId = KindId(1);
+const K_INTEGER_LITERAL: KindId = KindId(126);
+const K_FUNCTION_ITEM: KindId = KindId(188);
+const K_BLOCK: KindId = KindId(293);
 
 /// The exact eight keys data-model.md §1 enumerates. Sorted
 /// alphabetically (after the required trio) per the determinism
@@ -37,7 +44,7 @@ fn complex_node() -> NodeData {
     fields.insert(
         "name".to_string(),
         FieldValue::Single(Box::new(NodeData {
-            type_: "identifier".to_string(),
+            type_: K_IDENTIFIER,
             source: Source::Ts,
             named: true,
             fields: None,
@@ -50,7 +57,7 @@ fn complex_node() -> NodeData {
     fields.insert(
         "values".to_string(),
         FieldValue::Multiple(vec![NodeData {
-            type_: "integer_literal".to_string(),
+            type_: K_INTEGER_LITERAL,
             source: Source::Ts,
             named: true,
             fields: None,
@@ -62,12 +69,12 @@ fn complex_node() -> NodeData {
     );
     fields.insert("op".to_string(), FieldValue::Text("+".to_string()));
     NodeData {
-        type_: "function_item".to_string(),
+        type_: K_FUNCTION_ITEM,
         source: Source::Ts,
         named: true,
         fields: Some(fields),
         children: Some(vec![NodeData {
-            type_: "block".to_string(),
+            type_: K_BLOCK,
             source: Source::Ts,
             named: true,
             fields: Some(HashMap::new()),

@@ -295,7 +295,7 @@ describe('emitConsts', () => {
 		expect(output).toContain('PubCrate = 1 << 1,');
 	});
 
-	it('emits tree-sitter numeric kind and field ID enums from generated metadata', () => {
+	it('emits tree-sitter numeric kind and field ID maps from generated metadata', () => {
 		const nodeMap = makeNodeMap([
 			[
 				'source_file',
@@ -331,13 +331,13 @@ describe('emitConsts', () => {
 			nodeMap,
 			generatedIdTables: {
 				kindIds: {
-					source_file: { id: 1, cName: 'sym_source_file' },
-					';': { id: 2, cName: 'anon_sym_SEMI' },
-					missing: { id: 99, cName: 'sym_missing' }
+					source_file: { id: 1, parser: { cSymbol: 'sym_source_file', parserName: 'source_file', anon: false, aux: false, alias: false, hidden: false } },
+					';': { id: 2, parser: { cSymbol: 'anon_sym_SEMI', parserName: 'SEMI', anon: true, aux: false, alias: false, hidden: false } },
+					missing: { id: 99, parser: { cSymbol: 'sym_missing', parserName: 'missing', anon: false, aux: false, alias: false, hidden: false } }
 				},
 				fieldIds: {
-					item: { id: 7, cName: 'field_item' },
-					missing: { id: 99, cName: 'field_missing' }
+					item: { id: 7, parser: { cSymbol: 'field_item', parserName: 'item', anon: false, aux: false, alias: false, hidden: false } },
+					missing: { id: 99, parser: { cSymbol: 'field_missing', parserName: 'missing', anon: false, aux: false, alias: false, hidden: false } }
 				},
 				sourceArtifact: 'parser.wasm'
 			}
@@ -346,11 +346,10 @@ describe('emitConsts', () => {
 		expect(output).toContain(
 			'export const TREE_SITTER_ID_SOURCE = "parser.wasm";'
 		);
-		expect(output).toContain('export const enum TSKindId {');
-		expect(output).toContain('SourceFile = 1,');
-		expect(output).toContain('AnonSemi = 2,');
-		expect(output).toContain('"source_file": TSKindId.SourceFile,');
-		expect(output).toContain('";": TSKindId.AnonSemi,');
+		expect(output).toContain('export const TREE_SITTER_KIND_ID_BY_KIND = {');
+		expect(output).toContain('"source_file": 1,');
+		expect(output).toContain('";": 2,');
+		expect(output).not.toContain('export const enum TSKindId {');
 		expect(output).not.toContain('missing');
 		expect(output).toContain('export const enum TSFieldId {');
 		expect(output).toContain('FieldItem = 7,');

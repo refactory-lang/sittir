@@ -2,6 +2,7 @@
 
 import * as F from './factories.js';
 import type * as T from './types.js';
+import { TSKindId } from './types.js';
 import type { AnyNodeData, ConfigOf } from '@sittir/types';
 import { isNodeData } from './utils.js';
 
@@ -41,7 +42,6 @@ export const _fromMap = {
   "closure_expression_expr": closureExpressionExprFrom,
   "closure_expression": closureExpressionFrom,
   "closure_parameters": closureParametersFrom,
-  "comment": commentFrom,
   "compound_assignment_expr": compoundAssignmentExprFrom,
   "const_block": constBlockFrom,
   "const_item": constItemFrom,
@@ -379,10 +379,10 @@ const _K0: readonly string[] = [];
 const _K1: readonly string[] = ["_type_identifier","scoped_type_identifier","removed_trait_bound","generic_type","function_type","tuple_type","bounded_type"];
 const _K2: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","identifier","self","unit_expression","metavariable"];
 const _K3: readonly string[] = ["unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression"];
-const _K4: readonly string[] = ["metavariable","unit_type","_primitive_type"];
-const _K5: readonly string[] = ["abstract_type","reference_type","pointer_type","generic_type","scoped_type_identifier","tuple_type","array_type","function_type","_type_identifier","macro_invocation","dynamic_type","bounded_type","removed_trait_bound"];
+const _K4: readonly string[] = ["metavariable","unit_type","identifier","_primitive_type"];
+const _K5: readonly string[] = ["abstract_type","reference_type","pointer_type","generic_type","scoped_type_identifier","tuple_type","array_type","function_type","macro_invocation","dynamic_type","bounded_type","removed_trait_bound"];
 const _K6: readonly string[] = ["expression_statement","const_item","macro_invocation","macro_definition","attribute_item","inner_attribute_item","mod_item","foreign_mod_item","struct_item","union_item","enum_item","type_item","function_item","function_signature_item","impl_item","trait_item","associated_type","let_declaration","use_declaration","extern_crate_declaration","static_item","unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression"];
-const _K7: readonly string[] = ["lifetime","abstract_type","reference_type","pointer_type","generic_type","scoped_type_identifier","tuple_type","array_type","function_type","_type_identifier","macro_invocation","dynamic_type","bounded_type","removed_trait_bound","use_bounds"];
+const _K7: readonly string[] = ["lifetime","abstract_type","reference_type","pointer_type","generic_type","scoped_type_identifier","tuple_type","array_type","function_type","macro_invocation","dynamic_type","bounded_type","removed_trait_bound","use_bounds"];
 const _K8: readonly string[] = ["unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block"];
 const _K9: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","identifier","_wildcard_pattern"];
 const _K10: readonly string[] = ["string_literal","raw_string_literal","negative_literal","scoped_identifier","generic_pattern","tuple_pattern","tuple_struct_pattern","struct_pattern","ref_pattern","slice_pattern","captured_pattern","reference_pattern","mut_pattern","range_pattern","or_pattern","const_block","macro_invocation"];
@@ -416,7 +416,7 @@ const _K37: readonly string[] = ["identifier","super"];
 const _K38: readonly string[] = ["scoped_identifier","generic_type_with_turbofish","bracketed_type","generic_type"];
 const _K39: readonly string[] = ["scoped_identifier","generic_type_with_turbofish"];
 const _K40: readonly string[] = ["expression_statement","const_item","macro_invocation","macro_definition","attribute_item","inner_attribute_item","mod_item","foreign_mod_item","struct_item","union_item","enum_item","type_item","function_item","function_signature_item","impl_item","trait_item","associated_type","let_declaration","use_declaration","extern_crate_declaration","static_item"];
-const _K41: readonly string[] = ["_kw_ref_marker","mutable_specifier"];
+const _K41: readonly string[] = ["_ref_marker","_mutable_specifier"];
 const _K42: readonly string[] = ["_type_identifier","scoped_type_identifier_in_expression_position","generic_type_with_turbofish"];
 const _K43: readonly string[] = ["_type_identifier","scoped_type_identifier"];
 const _K44: readonly string[] = ["scoped_identifier","use_as_clause","use_list","scoped_use_list","use_wildcard"];
@@ -432,7 +432,7 @@ export function abstractTypeFrom(input: T.AbstractType.Loose): ReturnType<typeof
 }
 
 export function arguments_From(...input: readonly (NonNullable<T.Arguments.Config['children']>[number] | T.Arguments)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'arguments') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Arguments) {
     const data = input[0];
     return F.arguments_(...((data.$children ?? []) as readonly NonNullable<T.Arguments.Config['children']>[number][]));
   }
@@ -505,7 +505,7 @@ export function attributeItemFrom(input: T.AttributeItem.Loose): ReturnType<type
 }
 
 export function awaitExpressionFrom(input?: NonNullable<T.AwaitExpression.Config['children']>[number] | T.AwaitExpression) {
-  if (isNodeData(input) && input.$type === 'await_expression') {
+  if (isNodeData(input) && input.$type === TSKindId.AwaitExpression) {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
     return F.awaitExpression(child as Parameters<typeof F.awaitExpression>[0]);
@@ -514,7 +514,7 @@ export function awaitExpressionFrom(input?: NonNullable<T.AwaitExpression.Config
 }
 
 export function baseFieldInitializerFrom(input?: NonNullable<T.BaseFieldInitializer.Config['children']>[number] | T.BaseFieldInitializer) {
-  if (isNodeData(input) && input.$type === 'base_field_initializer') {
+  if (isNodeData(input) && input.$type === TSKindId.BaseFieldInitializer) {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
     return F.baseFieldInitializer(child as Parameters<typeof F.baseFieldInitializer>[0]);
@@ -526,7 +526,6 @@ export function binaryExpressionFrom(input: T.BinaryExpression.Loose): ReturnTyp
   if (isNodeData(input)) return input;
   return F.binaryExpression({
     left: _resolveOne<T.Expression>(input.left, _K2, _K3),
-    operator: _resolveOne<"&&" | "||" | "&" | "|" | "^" | "==" | "!=" | "<" | "<=" | ">" | ">=" | "<<" | ">>" | "+" | "-" | "*" | "/" | "%">(input.operator, _K0, _K0),
     right: _resolveOne<T.Expression>(input.right, _K2, _K3),
   });
 }
@@ -542,7 +541,7 @@ export function blockFrom(input: T.Block.Loose): ReturnType<typeof F.block> | T.
 export function blockCommentFrom(input?: T.BlockComment.Loose): ReturnType<typeof F.blockComment> | T.BlockComment {
   if (input !== undefined && isNodeData(input)) return input;
   return F.blockComment({
-    doc: _resolveOneLeaf<T.DocComment>(input?.doc, "_doc_comment"),
+    doc: _resolveOneBranch<T.BlockCommentContent>(input?.doc, "_block_comment_content"),
   });
 }
 
@@ -560,7 +559,7 @@ export function boundedTypeFrom(input: T.BoundedType.Loose): ReturnType<typeof F
 }
 
 export function bracketedTypeFrom(input?: NonNullable<T.BracketedType.Config['children']>[number] | T.BracketedType) {
-  if (isNodeData(input) && input.$type === 'bracketed_type') {
+  if (isNodeData(input) && input.$type === TSKindId.BracketedType) {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
     return F.bracketedType(child as Parameters<typeof F.bracketedType>[0]);
@@ -631,27 +630,18 @@ export function closureExpressionUFormExprFrom(input: Omit<ConfigOf<T.ClosureExp
 }
 
 export function closureParametersFrom(...input: readonly (NonNullable<T.ClosureParameters.Config['children']>[number] | T.ClosureParameters)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'closure_parameters') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ClosureParameters) {
     const data = input[0];
     return F.closureParameters(...((data.$children ?? []) as readonly NonNullable<T.ClosureParameters.Config['children']>[number][]));
   }
   return F.closureParameters(...(input as readonly NonNullable<T.ClosureParameters.Config['children']>[number][]));
 }
 
-export function commentFrom(input?: NonNullable<T.Comment.Config['children']>[number] | T.Comment) {
-  if (isNodeData(input) && input.$type === 'comment') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.comment(child as Parameters<typeof F.comment>[0]);
-  }
-  return F.comment(input as Parameters<typeof F.comment>[0]);
-}
-
 export function compoundAssignmentExprFrom(input: T.CompoundAssignmentExpr.Loose): ReturnType<typeof F.compoundAssignmentExpr> | T.CompoundAssignmentExpr {
   if (isNodeData(input)) return input;
   return F.compoundAssignmentExpr({
     left: _resolveOne<T.Expression>(input.left, _K2, _K3),
-    operator: _resolveOne<"+=" | "-=" | "*=" | "/=" | "%=" | "&=" | "|=" | "^=" | "<<=" | ">>=">(input.operator, _K0, _K0),
+    operator: _resolveOneLeaf<T.CompoundAssignmentExprOperator>(input.operator, "_compound_assignment_expr_operator"),
     right: _resolveOne<T.Expression>(input.right, _K2, _K3),
   });
 }
@@ -695,7 +685,7 @@ export function crateFrom(input?: T.Crate) {
 }
 
 export function declarationListFrom(...input: readonly (NonNullable<T.DeclarationList.Config['children']>[number] | T.DeclarationList)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'declaration_list') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.DeclarationList) {
     const data = input[0];
     return F.declarationList(...((data.$children ?? []) as readonly NonNullable<T.DeclarationList.Config['children']>[number][]));
   }
@@ -703,26 +693,14 @@ export function declarationListFrom(...input: readonly (NonNullable<T.Declaratio
 }
 
 export function delimTokenTreeParenFrom(...input: readonly (NonNullable<T.DelimTokenTreeParen.Config['children']>[number] | T.DelimTokenTreeParen)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'delim_token_tree_paren') {
-    const data = input[0];
-    return F.delimTokenTreeParen(...((data.$children ?? []) as readonly NonNullable<T.DelimTokenTreeParen.Config['children']>[number][]));
-  }
   return F.delimTokenTreeParen(...(input as readonly NonNullable<T.DelimTokenTreeParen.Config['children']>[number][]));
 }
 
 export function delimTokenTreeBracketFrom(...input: readonly (NonNullable<T.DelimTokenTreeBracket.Config['children']>[number] | T.DelimTokenTreeBracket)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'delim_token_tree_bracket') {
-    const data = input[0];
-    return F.delimTokenTreeBracket(...((data.$children ?? []) as readonly NonNullable<T.DelimTokenTreeBracket.Config['children']>[number][]));
-  }
   return F.delimTokenTreeBracket(...(input as readonly NonNullable<T.DelimTokenTreeBracket.Config['children']>[number][]));
 }
 
 export function delimTokenTreeBraceFrom(...input: readonly (NonNullable<T.DelimTokenTreeBrace.Config['children']>[number] | T.DelimTokenTreeBrace)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'delim_token_tree_brace') {
-    const data = input[0];
-    return F.delimTokenTreeBrace(...((data.$children ?? []) as readonly NonNullable<T.DelimTokenTreeBrace.Config['children']>[number][]));
-  }
   return F.delimTokenTreeBrace(...(input as readonly NonNullable<T.DelimTokenTreeBrace.Config['children']>[number][]));
 }
 
@@ -751,7 +729,7 @@ export function dynamicTypeFrom(input: T.DynamicType.Loose): ReturnType<typeof F
 }
 
 export function elseClauseFrom(input?: NonNullable<T.ElseClause.Config['children']>[number] | T.ElseClause) {
-  if (isNodeData(input) && input.$type === 'else_clause') {
+  if (isNodeData(input) && input.$type === TSKindId.ElseClause) {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
     return F.elseClause(child as Parameters<typeof F.elseClause>[0]);
@@ -781,7 +759,7 @@ export function enumVariantFrom(input: T.EnumVariant.Loose): ReturnType<typeof F
 }
 
 export function enumVariantListFrom(...input: readonly (NonNullable<T.EnumVariantList.Config['children']>[number] | T.EnumVariantList)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'enum_variant_list') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.EnumVariantList) {
     const data = input[0];
     return F.enumVariantList(...((data.$children ?? []) as readonly NonNullable<T.EnumVariantList.Config['children']>[number][]));
   }
@@ -794,20 +772,10 @@ export function escapeSequenceFrom(input: string | T.EscapeSequence) {
 }
 
 export function expressionStatementWithSemiFrom(input?: NonNullable<T.ExpressionStatementWithSemi.Config['children']>[number] | T.ExpressionStatementWithSemi) {
-  if (isNodeData(input) && input.$type === 'expression_statement_with_semi') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.expressionStatementWithSemi(child as Parameters<typeof F.expressionStatementWithSemi>[0]);
-  }
   return F.expressionStatementWithSemi(input as Parameters<typeof F.expressionStatementWithSemi>[0]);
 }
 
 export function expressionStatementBlockEndingFrom(input?: NonNullable<T.ExpressionStatementBlockEnding.Config['children']>[number] | T.ExpressionStatementBlockEnding) {
-  if (isNodeData(input) && input.$type === 'expression_statement_block_ending') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.expressionStatementBlockEnding(child as Parameters<typeof F.expressionStatementBlockEnding>[0]);
-  }
   return F.expressionStatementBlockEnding(input as Parameters<typeof F.expressionStatementBlockEnding>[0]);
 }
 
@@ -828,7 +796,6 @@ export function externCrateDeclarationFrom(input: T.ExternCrateDeclaration.Loose
   if (isNodeData(input)) return input;
   return F.externCrateDeclaration({
     visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
-    crate: _resolveOneLeaf<T.Crate>(input.crate, "crate"),
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
     alias: _resolveOneLeaf<T.Identifier>(input.alias, "identifier"),
   });
@@ -851,7 +818,7 @@ export function fieldDeclarationFrom(input: T.FieldDeclaration.Loose): ReturnTyp
 }
 
 export function fieldDeclarationListFrom(...input: readonly (NonNullable<T.FieldDeclarationList.Config['children']>[number] | T.FieldDeclarationList)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'field_declaration_list') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.FieldDeclarationList) {
     const data = input[0];
     return F.fieldDeclarationList(...((data.$children ?? []) as readonly NonNullable<T.FieldDeclarationList.Config['children']>[number][]));
   }
@@ -876,7 +843,7 @@ export function fieldInitializerFrom(input: T.FieldInitializer.Loose): ReturnTyp
 }
 
 export function fieldInitializerListFrom(...input: readonly (NonNullable<T.FieldInitializerList.Config['children']>[number] | T.FieldInitializerList)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'field_initializer_list') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.FieldInitializerList) {
     const data = input[0];
     return F.fieldInitializerList(...((data.$children ?? []) as readonly NonNullable<T.FieldInitializerList.Config['children']>[number][]));
   }
@@ -886,7 +853,7 @@ export function fieldInitializerListFrom(...input: readonly (NonNullable<T.Field
 export function fieldPatternShorthandFrom(input: T.FieldPatternShorthand.Loose): ReturnType<typeof F.fieldPatternShorthand> | T.FieldPatternShorthand {
   if (isNodeData(input)) return input;
   return F.fieldPatternShorthand({
-    name: _resolveOneBranch<T.ShorthandFieldIdentifier>(input.name, "_shorthand_field_identifier"),
+    name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
   });
 }
 
@@ -899,7 +866,7 @@ export function fieldPatternUFormShorthandFrom(input: Omit<ConfigOf<T.FieldPatte
   return F.fieldPatternUFormShorthand({
     refMarker: _resolveBooleanKeyword(input.refMarker),
     mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
-    name: _resolveOneBranch<T.ShorthandFieldIdentifier>(input.name, "_shorthand_field_identifier"),
+    name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
   });
 }
 
@@ -923,7 +890,7 @@ export function forExpressionFrom(input: T.ForExpression.Loose): ReturnType<type
 }
 
 export function forLifetimesFrom(...input: readonly (NonNullable<T.ForLifetimes.Config['children']>[number] | T.ForLifetimes)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'for_lifetimes') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ForLifetimes) {
     const data = input[0];
     return F.forLifetimes(...((data.$children ?? []) as readonly NonNullable<T.ForLifetimes.Config['children']>[number][]));
   }
@@ -1186,7 +1153,7 @@ export function lineCommentUFormRegularDslashFrom(input: Omit<ConfigOf<T.LineCom
 
 export function lineCommentUFormDocFrom(input: Omit<ConfigOf<T.LineCommentUFormDoc>, '$variant'>) {
   return F.lineCommentUFormDoc({
-    doc: _resolveOneLeaf<T.DocComment>(input.doc, "_doc_comment"),
+    doc: _resolveOneLeaf<T.LineDocContent>(input.doc, "_line_doc_content"),
   });
 }
 
@@ -1203,26 +1170,14 @@ export function loopExpressionFrom(input: T.LoopExpression.Loose): ReturnType<ty
 }
 
 export function macroDefinitionParenFrom(...input: readonly (NonNullable<T.MacroDefinitionParen.Config['children']>[number] | T.MacroDefinitionParen)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'macro_definition_paren') {
-    const data = input[0];
-    return F.macroDefinitionParen(...((data.$children ?? []) as readonly NonNullable<T.MacroDefinitionParen.Config['children']>[number][]));
-  }
   return F.macroDefinitionParen(...(input as readonly NonNullable<T.MacroDefinitionParen.Config['children']>[number][]));
 }
 
 export function macroDefinitionBracketFrom(...input: readonly (NonNullable<T.MacroDefinitionBracket.Config['children']>[number] | T.MacroDefinitionBracket)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'macro_definition_bracket') {
-    const data = input[0];
-    return F.macroDefinitionBracket(...((data.$children ?? []) as readonly NonNullable<T.MacroDefinitionBracket.Config['children']>[number][]));
-  }
   return F.macroDefinitionBracket(...(input as readonly NonNullable<T.MacroDefinitionBracket.Config['children']>[number][]));
 }
 
 export function macroDefinitionBraceFrom(...input: readonly (NonNullable<T.MacroDefinitionBrace.Config['children']>[number] | T.MacroDefinitionBrace)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'macro_definition_brace') {
-    const data = input[0];
-    return F.macroDefinitionBrace(...((data.$children ?? []) as readonly NonNullable<T.MacroDefinitionBrace.Config['children']>[number][]));
-  }
   return F.macroDefinitionBrace(...(input as readonly NonNullable<T.MacroDefinitionBrace.Config['children']>[number][]));
 }
 
@@ -1290,7 +1245,7 @@ export function matchArmUFormBlockEndingFrom(input: Omit<ConfigOf<T.MatchArmUFor
 }
 
 export function matchBlockFrom(...input: readonly (NonNullable<T.MatchBlock.Config['children']>[number] | T.MatchBlock)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'match_block') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.MatchBlock) {
     const data = input[0];
     return F.matchBlock(...((data.$children ?? []) as readonly NonNullable<T.MatchBlock.Config['children']>[number][]));
   }
@@ -1348,7 +1303,6 @@ export function modItemUFormInlineFrom(input: Omit<ConfigOf<T.ModItemUFormInline
 export function mutPatternFrom(input: T.MutPattern.Loose): ReturnType<typeof F.mutPattern> | T.MutPattern {
   if (isNodeData(input)) return input;
   return F.mutPattern({
-    mutableSpecifier: _resolveOneLeaf<T.MutableSpecifier>(input.mutableSpecifier, "mutable_specifier"),
     children: _resolveOne(input.children, _K9, _K10),
   });
 }
@@ -1400,7 +1354,7 @@ export function parameterFrom(input: T.Parameter.Loose): ReturnType<typeof F.par
 }
 
 export function parametersFrom(...input: readonly (NonNullable<T.Parameters.Config['children']>[number] | T.Parameters)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'parameters') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Parameters) {
     const data = input[0];
     return F.parameters(...((data.$children ?? []) as readonly NonNullable<T.Parameters.Config['children']>[number][]));
   }
@@ -1408,7 +1362,7 @@ export function parametersFrom(...input: readonly (NonNullable<T.Parameters.Conf
 }
 
 export function parenthesizedExpressionFrom(input?: NonNullable<T.ParenthesizedExpression.Config['children']>[number] | T.ParenthesizedExpression) {
-  if (isNodeData(input) && input.$type === 'parenthesized_expression') {
+  if (isNodeData(input) && input.$type === TSKindId.ParenthesizedExpression) {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
     return F.parenthesizedExpression(child as Parameters<typeof F.parenthesizedExpression>[0]);
@@ -1417,11 +1371,6 @@ export function parenthesizedExpressionFrom(input?: NonNullable<T.ParenthesizedE
 }
 
 export function pointerTypeMutFrom(input?: NonNullable<T.PointerTypeMut.Config['children']>[number] | T.PointerTypeMut) {
-  if (isNodeData(input) && input.$type === 'pointer_type_mut') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.pointerTypeMut(child as Parameters<typeof F.pointerTypeMut>[0]);
-  }
   return F.pointerTypeMut(input as Parameters<typeof F.pointerTypeMut>[0]);
 }
 
@@ -1450,10 +1399,9 @@ export function qualifiedTypeFrom(input: T.QualifiedType.Loose): ReturnType<type
   });
 }
 
-export function rangeExpressionBareFrom(input: T.RangeExpressionBare.Loose): ReturnType<typeof F.rangeExpressionBare> | T.RangeExpressionBare {
-  if (isNodeData(input)) return input;
+export function rangeExpressionBareFrom(input?: T.RangeExpressionBare.Loose): ReturnType<typeof F.rangeExpressionBare> | T.RangeExpressionBare {
+  if (input !== undefined && isNodeData(input)) return input;
   return F.rangeExpressionBare({
-    operator: _resolveOne<"..">(input.operator, _K0, _K0),
   });
 }
 
@@ -1465,7 +1413,7 @@ export function rangeExpressionFrom(input?: T.RangeExpression.Loose): ReturnType
 export function rangeExpressionUFormBinaryFrom(input: Omit<ConfigOf<T.RangeExpressionUFormBinary>, '$variant'>) {
   return F.rangeExpressionUFormBinary({
     start: _resolveOne<T.Expression>(input.start, _K2, _K3),
-    operator: _resolveOne<".." | "..." | "..=">(input.operator, _K0, _K0),
+    operator: _resolveOneLeaf<T.RangeExpressionBinaryOperator>(input.operator, "__range_expression_binary_operator"),
     end: _resolveOne<T.Expression>(input.end, _K2, _K3),
   });
 }
@@ -1473,20 +1421,17 @@ export function rangeExpressionUFormBinaryFrom(input: Omit<ConfigOf<T.RangeExpre
 export function rangeExpressionUFormPostfixFrom(input: Omit<ConfigOf<T.RangeExpressionUFormPostfix>, '$variant'>) {
   return F.rangeExpressionUFormPostfix({
     start: _resolveOne<T.Expression>(input.start, _K2, _K3),
-    operator: _resolveOne<"..">(input.operator, _K0, _K0),
   });
 }
 
 export function rangeExpressionUFormPrefixFrom(input: Omit<ConfigOf<T.RangeExpressionUFormPrefix>, '$variant'>) {
   return F.rangeExpressionUFormPrefix({
-    operator: _resolveOne<"..">(input.operator, _K0, _K0),
     end: _resolveOne<T.Expression>(input.end, _K2, _K3),
   });
 }
 
-export function rangeExpressionUFormBareFrom(input: Omit<ConfigOf<T.RangeExpressionUFormBare>, '$variant'>) {
+export function rangeExpressionUFormBareFrom(_input?: Omit<ConfigOf<T.RangeExpressionUFormBare>, '$variant'>) {
   return F.rangeExpressionUFormBare({
-    operator: _resolveOne<"..">(input.operator, _K0, _K0),
   });
 }
 
@@ -1520,7 +1465,7 @@ export function rawStringLiteralFrom(input: string | T.RawStringLiteral) {
 }
 
 export function refPatternFrom(input?: NonNullable<T.RefPattern.Config['children']>[number] | T.RefPattern) {
-  if (isNodeData(input) && input.$type === 'ref_pattern') {
+  if (isNodeData(input) && input.$type === TSKindId.RefPattern) {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
     return F.refPattern(child as Parameters<typeof F.refPattern>[0]);
@@ -1554,7 +1499,7 @@ export function referenceTypeFrom(input: T.ReferenceType.Loose): ReturnType<type
 }
 
 export function removedTraitBoundFrom(input?: NonNullable<T.RemovedTraitBound.Config['children']>[number] | T.RemovedTraitBound) {
-  if (isNodeData(input) && input.$type === 'removed_trait_bound') {
+  if (isNodeData(input) && input.$type === TSKindId.RemovedTraitBound) {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
     return F.removedTraitBound(child as Parameters<typeof F.removedTraitBound>[0]);
@@ -1563,7 +1508,7 @@ export function removedTraitBoundFrom(input?: NonNullable<T.RemovedTraitBound.Co
 }
 
 export function returnExpressionFrom(input?: NonNullable<T.ReturnExpression.Config['children']>[number] | T.ReturnExpression) {
-  if (isNodeData(input) && input.$type === 'return_expression') {
+  if (isNodeData(input) && input.$type === TSKindId.ReturnExpression) {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
     return F.returnExpression(child as Parameters<typeof F.returnExpression>[0]);
@@ -1608,13 +1553,12 @@ export function selfFrom(input?: T.Self) {
   return F.self();
 }
 
-export function selfParameterFrom(input: T.SelfParameter.Loose): ReturnType<typeof F.selfParameter> | T.SelfParameter {
-  if (isNodeData(input)) return input;
+export function selfParameterFrom(input?: T.SelfParameter.Loose): ReturnType<typeof F.selfParameter> | T.SelfParameter {
+  if (input !== undefined && isNodeData(input)) return input;
   return F.selfParameter({
-    reference: _resolveBooleanKeyword(input.reference),
-    lifetime: _resolveOneBranch<T.Lifetime>(input.lifetime, "lifetime"),
-    mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
-    self: _resolveOneLeaf<T.Self>(input.self, "self"),
+    reference: _resolveBooleanKeyword(input?.reference),
+    lifetime: _resolveOneBranch<T.Lifetime>(input?.lifetime, "lifetime"),
+    mutableSpecifier: _resolveBooleanKeyword(input?.mutableSpecifier),
   });
 }
 
@@ -1632,7 +1576,7 @@ export function shorthandFieldInitializerFrom(input: T.ShorthandFieldInitializer
 }
 
 export function slicePatternFrom(...input: readonly (NonNullable<T.SlicePattern.Config['children']>[number] | T.SlicePattern)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'slice_pattern') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.SlicePattern) {
     const data = input[0];
     return F.slicePattern(...((data.$children ?? []) as readonly NonNullable<T.SlicePattern.Config['children']>[number][]));
   }
@@ -1651,7 +1595,7 @@ export function staticItemFrom(input: T.StaticItem.Loose): ReturnType<typeof F.s
   if (isNodeData(input)) return input;
   return F.staticItem({
     visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
-    mutableSpecifier: _resolveOne<"ref" | T.MutableSpecifier>(input.mutableSpecifier, _K41, _K0),
+    mutableSpecifier: _resolveOne<T.RefMarker | T._MutableSpecifier>(input.mutableSpecifier, _K41, _K0),
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
     type: _resolveOne<T._Type>(input.type, _K4, _K5),
     value: _resolveOne<T.Expression>(input.value, _K2, _K3),
@@ -1659,7 +1603,7 @@ export function staticItemFrom(input: T.StaticItem.Loose): ReturnType<typeof F.s
 }
 
 export function stringLiteralFrom(...input: readonly (NonNullable<T.StringLiteral.Config['children']>[number] | T.StringLiteral)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'string_literal') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.StringLiteral) {
     const data = input[0];
     return F.stringLiteral(...((data.$children ?? []) as readonly NonNullable<T.StringLiteral.Config['children']>[number][]));
   }
@@ -1722,12 +1666,12 @@ export function tokenBindingPatternFrom(input: T.TokenBindingPattern.Loose): Ret
   if (isNodeData(input)) return input;
   return F.tokenBindingPattern({
     name: _resolveOneLeaf<T.Metavariable>(input.name, "metavariable"),
-    type: _resolveOneLeaf<T.FragmentSpecifier>(input.type, "fragment_specifier"),
+    type: _resolveOneLeaf<T.TokenBindingPatternType>(input.type, "_token_binding_pattern_type"),
   });
 }
 
 export function tokenRepetitionFrom(...input: readonly (NonNullable<T.TokenRepetition.Config['children']>[number] | T.TokenRepetition)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'token_repetition') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TokenRepetition) {
     const data = input[0];
     return F.tokenRepetition(...((data.$children ?? []) as readonly NonNullable<T.TokenRepetition.Config['children']>[number][]));
   }
@@ -1735,7 +1679,7 @@ export function tokenRepetitionFrom(...input: readonly (NonNullable<T.TokenRepet
 }
 
 export function tokenRepetitionPatternFrom(...input: readonly (NonNullable<T.TokenRepetitionPattern.Config['children']>[number] | T.TokenRepetitionPattern)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'token_repetition_pattern') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TokenRepetitionPattern) {
     const data = input[0];
     return F.tokenRepetitionPattern(...((data.$children ?? []) as readonly NonNullable<T.TokenRepetitionPattern.Config['children']>[number][]));
   }
@@ -1743,26 +1687,14 @@ export function tokenRepetitionPatternFrom(...input: readonly (NonNullable<T.Tok
 }
 
 export function tokenTreeParenFrom(...input: readonly (NonNullable<T.TokenTreeParen.Config['children']>[number] | T.TokenTreeParen)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'token_tree_paren') {
-    const data = input[0];
-    return F.tokenTreeParen(...((data.$children ?? []) as readonly NonNullable<T.TokenTreeParen.Config['children']>[number][]));
-  }
   return F.tokenTreeParen(...(input as readonly NonNullable<T.TokenTreeParen.Config['children']>[number][]));
 }
 
 export function tokenTreeBracketFrom(...input: readonly (NonNullable<T.TokenTreeBracket.Config['children']>[number] | T.TokenTreeBracket)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'token_tree_bracket') {
-    const data = input[0];
-    return F.tokenTreeBracket(...((data.$children ?? []) as readonly NonNullable<T.TokenTreeBracket.Config['children']>[number][]));
-  }
   return F.tokenTreeBracket(...(input as readonly NonNullable<T.TokenTreeBracket.Config['children']>[number][]));
 }
 
 export function tokenTreeBraceFrom(...input: readonly (NonNullable<T.TokenTreeBrace.Config['children']>[number] | T.TokenTreeBrace)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'token_tree_brace') {
-    const data = input[0];
-    return F.tokenTreeBrace(...((data.$children ?? []) as readonly NonNullable<T.TokenTreeBrace.Config['children']>[number][]));
-  }
   return F.tokenTreeBrace(...(input as readonly NonNullable<T.TokenTreeBrace.Config['children']>[number][]));
 }
 
@@ -1784,26 +1716,14 @@ export function tokenTreeUFormBraceFrom(input: Omit<ConfigOf<T.TokenTreeUFormBra
 }
 
 export function tokenTreePatternParenFrom(...input: readonly (NonNullable<T.TokenTreePatternParen.Config['children']>[number] | T.TokenTreePatternParen)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'token_tree_pattern_paren') {
-    const data = input[0];
-    return F.tokenTreePatternParen(...((data.$children ?? []) as readonly NonNullable<T.TokenTreePatternParen.Config['children']>[number][]));
-  }
   return F.tokenTreePatternParen(...(input as readonly NonNullable<T.TokenTreePatternParen.Config['children']>[number][]));
 }
 
 export function tokenTreePatternBracketFrom(...input: readonly (NonNullable<T.TokenTreePatternBracket.Config['children']>[number] | T.TokenTreePatternBracket)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'token_tree_pattern_bracket') {
-    const data = input[0];
-    return F.tokenTreePatternBracket(...((data.$children ?? []) as readonly NonNullable<T.TokenTreePatternBracket.Config['children']>[number][]));
-  }
   return F.tokenTreePatternBracket(...(input as readonly NonNullable<T.TokenTreePatternBracket.Config['children']>[number][]));
 }
 
 export function tokenTreePatternBraceFrom(...input: readonly (NonNullable<T.TokenTreePatternBrace.Config['children']>[number] | T.TokenTreePatternBrace)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'token_tree_pattern_brace') {
-    const data = input[0];
-    return F.tokenTreePatternBrace(...((data.$children ?? []) as readonly NonNullable<T.TokenTreePatternBrace.Config['children']>[number][]));
-  }
   return F.tokenTreePatternBrace(...(input as readonly NonNullable<T.TokenTreePatternBrace.Config['children']>[number][]));
 }
 
@@ -1825,7 +1745,7 @@ export function tokenTreePatternUFormBraceFrom(input: Omit<ConfigOf<T.TokenTreeP
 }
 
 export function traitBoundsFrom(...input: readonly (NonNullable<T.TraitBounds.Config['children']>[number] | T.TraitBounds)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'trait_bounds') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TraitBounds) {
     const data = input[0];
     return F.traitBounds(...((data.$children ?? []) as readonly NonNullable<T.TraitBounds.Config['children']>[number][]));
   }
@@ -1868,7 +1788,7 @@ export function tupleExpressionFrom(input: T.TupleExpression.Loose): ReturnType<
 }
 
 export function tuplePatternFrom(...input: readonly (NonNullable<T.TuplePattern.Config['children']>[number] | T.TuplePattern)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'tuple_pattern') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TuplePattern) {
     const data = input[0];
     return F.tuplePattern(...((data.$children ?? []) as readonly NonNullable<T.TuplePattern.Config['children']>[number][]));
   }
@@ -1884,7 +1804,7 @@ export function tupleStructPatternFrom(input: T.TupleStructPattern.Loose): Retur
 }
 
 export function tupleTypeFrom(...input: readonly (NonNullable<T.TupleType.Config['children']>[number] | T.TupleType)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'tuple_type') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TupleType) {
     const data = input[0];
     return F.tupleType(...((data.$children ?? []) as readonly NonNullable<T.TupleType.Config['children']>[number][]));
   }
@@ -1892,7 +1812,7 @@ export function tupleTypeFrom(...input: readonly (NonNullable<T.TupleType.Config
 }
 
 export function typeArgumentsFrom(...input: readonly (NonNullable<T.TypeArguments.Config['children']>[number] | T.TypeArguments)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'type_arguments') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TypeArguments) {
     const data = input[0];
     return F.typeArguments(...((data.$children ?? []) as readonly NonNullable<T.TypeArguments.Config['children']>[number][]));
   }
@@ -1938,7 +1858,7 @@ export function typeParameterFrom(input: T.TypeParameter.Loose): ReturnType<type
 }
 
 export function typeParametersFrom(...input: readonly (NonNullable<T.TypeParameters.Config['children']>[number] | T.TypeParameters)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'type_parameters') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TypeParameters) {
     const data = input[0];
     return F.typeParameters(...((data.$children ?? []) as readonly NonNullable<T.TypeParameters.Config['children']>[number][]));
   }
@@ -1948,7 +1868,7 @@ export function typeParametersFrom(...input: readonly (NonNullable<T.TypeParamet
 export function unaryExpressionFrom(input: T.UnaryExpression.Loose): ReturnType<typeof F.unaryExpression> | T.UnaryExpression {
   if (isNodeData(input)) return input;
   return F.unaryExpression({
-    operator: _resolveOne<"-" | "*" | "!">(input.operator, _K0, _K0),
+    operator: _resolveOneLeaf<T.UnaryExpressionOperator>(input.operator, "_unary_expression_operator"),
     operand: _resolveOne<T.Expression>(input.operand, _K2, _K3),
   });
 }
@@ -1990,7 +1910,7 @@ export function useAsClauseFrom(input: T.UseAsClause.Loose): ReturnType<typeof F
 }
 
 export function useBoundsFrom(...input: readonly (NonNullable<T.UseBounds.Config['children']>[number] | T.UseBounds)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'use_bounds') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.UseBounds) {
     const data = input[0];
     return F.useBounds(...((data.$children ?? []) as readonly NonNullable<T.UseBounds.Config['children']>[number][]));
   }
@@ -2006,7 +1926,7 @@ export function useDeclarationFrom(input: T.UseDeclaration.Loose): ReturnType<ty
 }
 
 export function useListFrom(...input: readonly (NonNullable<T.UseList.Config['children']>[number] | T.UseList)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'use_list') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.UseList) {
     const data = input[0];
     return F.useList(...((data.$children ?? []) as readonly NonNullable<T.UseList.Config['children']>[number][]));
   }
@@ -2029,11 +1949,6 @@ export function variadicParameterFrom(input?: T.VariadicParameter.Loose): Return
 }
 
 export function visibilityModifierCrateFrom(input?: NonNullable<T.VisibilityModifierCrate.Config['children']>[number] | T.VisibilityModifierCrate) {
-  if (isNodeData(input) && input.$type === 'visibility_modifier_crate') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.visibilityModifierCrate(child as Parameters<typeof F.visibilityModifierCrate>[0]);
-  }
   return F.visibilityModifierCrate(input as Parameters<typeof F.visibilityModifierCrate>[0]);
 }
 
@@ -2057,7 +1972,7 @@ export function visibilityModifierUFormPubFrom(_input?: Omit<ConfigOf<T.Visibili
 }
 
 export function whereClauseFrom(...input: readonly (NonNullable<T.WhereClause.Config['children']>[number] | T.WhereClause)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'where_clause') {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.WhereClause) {
     const data = input[0];
     return F.whereClause(...((data.$children ?? []) as readonly NonNullable<T.WhereClause.Config['children']>[number][]));
   }
@@ -2082,7 +1997,7 @@ export function whileExpressionFrom(input: T.WhileExpression.Loose): ReturnType<
 }
 
 export function yieldExpressionFrom(input?: NonNullable<T.YieldExpression.Config['children']>[number] | T.YieldExpression) {
-  if (isNodeData(input) && input.$type === 'yield_expression') {
+  if (isNodeData(input) && input.$type === TSKindId.YieldExpression) {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
     return F.yieldExpression(child as Parameters<typeof F.yieldExpression>[0]);

@@ -1715,13 +1715,6 @@ export interface AssembledField extends AssembledChild {
 	readonly projection: KindProjection;
 }
 
-/**
- * @deprecated AssembledForm is replaced by AssembledGroup.
- * A polymorph's forms are now hidden groups synthesized from the choice branches.
- * This type alias is kept temporarily for backwards-compat with adapters/emitters.
- */
-export type AssembledForm = AssembledGroup;
-
 // --- Concrete classes per model type ---
 
 /**
@@ -3309,11 +3302,33 @@ export class AssembledEnum extends AssembledNodeBase<EnumRule> {
 		opts?: { factoryName?: string; irKey?: string }
 	) {
 		super(kind, rule, opts);
+		// Single-value enums are parameterless — they produce a fixed constant.
+		// Both keyword-style hidden rules (_kw_*) and synthesised EnumRule kinds
+		// with exactly one member qualify. Field stamp is the plain literal;
+		// child stamp wraps it in a NodeData object (Terminal-compatible shape).
+		if (this.values.length === 1) {
+			this.isParameterless = true;
+			this.stampExpression = `${JSON.stringify(this.values[0])} as const`;
+		}
 	}
 
 	/** The enum member strings (e.g. `['u8', 'u16', 'usize']`). */
 	get values(): string[] {
 		return this.rule.members.map((m) => m.value);
+	}
+
+	/**
+	 * Child-context stamp for single-value enums: wrap the literal in a
+	 * Terminal-compatible NodeData object so the parent's `$children` slot
+	 * type-checks against `Terminal<kind, text>`.
+	 *
+	 * @remarks
+	 * Only meaningful when `isParameterless` is true (single-member enum).
+	 */
+	override get stampChildExpression(): string {
+		const kind = JSON.stringify(this.kind);
+		const text = JSON.stringify(this.values[0] ?? '');
+		return `{ $type: ${kind} as const, $text: ${text} as const, $source: 'factory' as const, $named: false as const }`;
 	}
 }
 

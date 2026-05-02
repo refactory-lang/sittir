@@ -14,7 +14,15 @@ export type LeafScalarMap = {
 };
 
 export type LeafStringMap = {
+  _async_marker: "async";
+  _augmented_assignment_operator: "+=" | "-=" | "*=" | "/=" | "@=" | "//=" | "%=" | "**=" | ">>=" | "<<=" | "&=" | "^=" | "|=";
+  _binary_operator_operator: "+";
+  _boolean_operator_operator: "and";
+  _identifier: "*" | "**";
   _kw_async_marker: "async";
+  _kw_type: "type";
+  _type_alias_statement_type: "type";
+  _unary_operator_operator: "+" | "-" | "~";
   break_statement: "break";
   continue_statement: "continue";
   false: "False";
@@ -24,8 +32,6 @@ export type LeafStringMap = {
   as: "as";
   async: "async";
   assert: "assert";
-  and: "and";
-  or: "or";
   break: "break";
   case: "case";
   class: "class";
@@ -61,12 +67,10 @@ export type LeafStringMap = {
 
 export const enum SyntaxKind {
   _AsPattern = '_as_pattern',
-  AsPatternTarget = '_as_pattern_target',
   AssignmentEq = '_assignment_eq',
   AssignmentType = '_assignment_type',
   AssignmentTyped = '_assignment_typed',
   ComprehensionClauses = '_comprehension_clauses',
-  FormatExpression = '_format_expression',
   ImportList = '_import_list',
   KeyValuePattern = '_key_value_pattern',
   _ListPattern = '_list_pattern',
@@ -181,9 +185,17 @@ export const enum SyntaxKind {
   WithItem = 'with_item',
   WithStatement = 'with_statement',
   Yield = 'yield',
+  AsyncMarker = '_async_marker',
+  AugmentedAssignmentOperator = '_augmented_assignment_operator',
+  BinaryOperatorOperator = '_binary_operator_operator',
+  BooleanOperatorOperator = '_boolean_operator_operator',
+  _Identifier = '_identifier',
   IsNot = '_is_not',
   KwAsyncMarker = '_kw_async_marker',
+  KwType = '_kw_type',
   NotIn = '_not_in',
+  TypeAliasStatementType = '_type_alias_statement_type',
+  UnaryOperatorOperator = '_unary_operator_operator',
   BreakStatement = 'break_statement',
   Comment = 'comment',
   ContinueStatement = 'continue_statement',
@@ -212,8 +224,6 @@ export const enum SyntaxKind {
   As = 'as',
   Async = 'async',
   Assert = 'assert',
-  And = 'and',
-  Or = 'or',
   Break = 'break',
   Case = 'case',
   Class = 'class',
@@ -245,6 +255,861 @@ export const enum SyntaxKind {
   Try = 'try',
   While = 'while',
   With = 'with',
+}
+
+export const enum TSKindId {
+  Identifier = 1,
+  Semi = 2,
+  Import = 3,
+  Dot = 4,
+  From = 5,
+  FutureU = 6,
+  Lparen = 7,
+  Rparen = 8,
+  Comma = 9,
+  As = 10,
+  Star = 11,
+  Print = 12,
+  GtGt = 13,
+  Assert = 14,
+  ColonEq = 15,
+  Return = 16,
+  Del = 17,
+  Raise = 18,
+  Pass = 19,
+  Break = 20,
+  Continue = 21,
+  If = 22,
+  Colon = 23,
+  Elif = 24,
+  Else = 25,
+  Match = 26,
+  Case = 27,
+  Async = 28,
+  For = 29,
+  In = 30,
+  While = 31,
+  Try = 32,
+  Except = 33,
+  Star2 = 34,
+  Finally = 35,
+  With = 36,
+  Def = 37,
+  DashGt = 38,
+  StarStar = 39,
+  Global = 40,
+  Nonlocal = 41,
+  Exec = 42,
+  Eq = 43,
+  Class = 44,
+  Lbrack = 45,
+  Rbrack = 46,
+  At = 47,
+  Anonymous = 48,
+  Pipe = 49,
+  Lbrace = 50,
+  Rbrace = 51,
+  Plus = 52,
+  Dash = 53,
+  Not = 54,
+  And = 55,
+  Or = 56,
+  Slash = 57,
+  Percent = 58,
+  SlashSlash = 59,
+  Amp = 60,
+  Caret = 61,
+  LtLt = 62,
+  Tilde = 63,
+  Is = 64,
+  Lt = 65,
+  LtEq = 66,
+  EqEq = 67,
+  BangEq = 68,
+  GtEq = 69,
+  Gt = 70,
+  LtGt = 71,
+  PlusEq = 73,
+  DashEq = 74,
+  StarEq = 75,
+  SlashEq = 76,
+  AtEq = 77,
+  SlashSlashEq = 78,
+  PercentEq = 79,
+  StarStarEq = 80,
+  GtGtEq = 81,
+  LtLtEq = 82,
+  AmpEq = 83,
+  CaretEq = 84,
+  PipeEq = 85,
+  Ellipsis2 = 87,
+  EscapeSequence = 89,
+  Bslash = 90,
+  FormatSpecifierToken1 = 91,
+  TypeConversion = 92,
+  Integer = 93,
+  Float = 94,
+  True = 96,
+  False = 97,
+  None = 98,
+  Comment = 99,
+  LineContinuation = 100,
+  Newline = 101,
+  Indent = 102,
+  Dedent = 103,
+  StringStart = 104,
+  _StringContent = 105,
+  EscapeInterpolation = 106,
+  StringEnd = 107,
+  Module = 108,
+  Statement = 109,
+  SimpleStatements = 110,
+  ImportStatement = 111,
+  ImportPrefix = 112,
+  RelativeImport = 113,
+  FutureImportStatement = 114,
+  ImportFromStatement = 115,
+  ImportList = 116,
+  AliasedImport = 117,
+  WildcardImport = 118,
+  PrintStatement = 119,
+  Chevron = 120,
+  AssertStatement = 121,
+  ExpressionStatement = 122,
+  NamedExpression = 123,
+  NamedExpressionLhs = 124,
+  ReturnStatement = 125,
+  DeleteStatement = 126,
+  RaiseStatement = 127,
+  PassStatement = 128,
+  BreakStatement = 129,
+  ContinueStatement = 130,
+  IfStatement = 131,
+  ElifClause = 132,
+  ElseClause = 133,
+  MatchStatement = 134,
+  MatchBlock = 135,
+  CaseClause = 136,
+  ForStatement = 137,
+  WhileStatement = 138,
+  TryStatement = 139,
+  ExceptClause = 140,
+  FinallyClause = 141,
+  WithStatement = 142,
+  WithClause = 143,
+  WithItem = 144,
+  FunctionDefinition = 145,
+  Parameters = 146,
+  LambdaParameters = 147,
+  ListSplat = 148,
+  DictionarySplat = 149,
+  GlobalStatement = 150,
+  NonlocalStatement = 151,
+  ExecStatement = 152,
+  TypeAliasStatement = 153,
+  ClassDefinition = 154,
+  TypeParameter = 155,
+  ParenthesizedListSplat = 156,
+  ArgumentList = 157,
+  DecoratedDefinition = 158,
+  Decorator = 159,
+  Block = 160,
+  ExpressionList = 161,
+  DottedName = 162,
+  CasePattern = 163,
+  SimplePattern = 164,
+  _AsPattern = 165,
+  UnionPattern = 166,
+  _ListPattern = 167,
+  _TuplePattern = 168,
+  DictPattern = 169,
+  KeyValuePattern = 170,
+  KeywordPattern = 171,
+  SplatPattern = 172,
+  ClassPattern = 173,
+  ComplexPattern = 174,
+  _Parameters = 175,
+  Patterns = 176,
+  Parameter = 177,
+  Pattern = 178,
+  TuplePattern = 179,
+  ListPattern = 180,
+  DefaultParameter = 181,
+  TypedDefaultParameter = 182,
+  ListSplatPattern = 183,
+  DictionarySplatPattern = 184,
+  AsPattern = 185,
+  ExpressionWithinForInClause = 186,
+  Expression = 187,
+  PrimaryExpression = 188,
+  NotOperator = 189,
+  BooleanOperator = 190,
+  BinaryOperator = 191,
+  UnaryOperator = 192,
+  NotIn = 193,
+  IsNot = 194,
+  ComparisonOperator = 195,
+  Lambda = 196,
+  LambdaWithinForInClause = 197,
+  Assignment = 198,
+  AugmentedAssignment = 199,
+  PatternList = 200,
+  RightHandSide = 201,
+  Yield = 202,
+  Attribute = 203,
+  Subscript = 204,
+  Slice = 205,
+  Call = 206,
+  TypedParameter = 207,
+  Type = 208,
+  SplatType = 209,
+  GenericType = 210,
+  UnionType = 211,
+  ConstrainedType = 212,
+  MemberType = 213,
+  KeywordArgument = 214,
+  List = 215,
+  Set = 216,
+  Tuple = 217,
+  Dictionary = 218,
+  Pair = 219,
+  ListComprehension = 220,
+  DictionaryComprehension = 221,
+  SetComprehension = 222,
+  GeneratorExpression = 223,
+  ComprehensionClauses = 224,
+  ParenthesizedExpression = 225,
+  CollectionElements = 226,
+  ForInClause = 227,
+  IfClause = 228,
+  ConditionalExpression = 229,
+  ConcatenatedString = 230,
+  String = 231,
+  StringContent = 232,
+  Interpolation = 233,
+  FExpression = 234,
+  NotEscapeSequence = 235,
+  FormatSpecifier = 236,
+  Await = 237,
+  PositionalSeparator = 238,
+  KeywordSeparator = 239,
+  AssignmentEq = 240,
+  AssignmentType = 241,
+  AssignmentTyped = 242,
+  _ExpressionStatementTuple = 243,
+  _WithClauseBare = 244,
+  _WithClauseParen = 245,
+  MatchBlockBlock = 246,
+  DictPatternKv = 247,
+  SimplePatternNegative = 248,
+  _KwReal = 249,
+  KwAsyncMarker = 250,
+  KwType = 251,
+  ModuleRepeat1 = 252,
+  _SimpleStatementsRepeat1 = 253,
+  ImportPrefixRepeat1 = 254,
+  _ImportListRepeat1 = 255,
+  PrintStatementRepeat1 = 256,
+  AssertStatementRepeat1 = 257,
+  IfStatementRepeat1 = 258,
+  MatchStatementRepeat1 = 259,
+  CaseClauseRepeat1 = 260,
+  TryStatementRepeat1 = 261,
+  ExceptClauseRepeat1 = 262,
+  GlobalStatementRepeat1 = 263,
+  TypeParameterRepeat1 = 264,
+  ArgumentListRepeat1 = 265,
+  DecoratedDefinitionRepeat1 = 266,
+  DottedNameRepeat1 = 267,
+  UnionPatternRepeat1 = 268,
+  DictPatternRepeat1 = 269,
+  _ParametersRepeat1 = 270,
+  _PatternsRepeat1 = 271,
+  ComparisonOperatorRepeat1 = 272,
+  SubscriptRepeat1 = 273,
+  DictionaryRepeat1 = 274,
+  _ComprehensionClausesRepeat1 = 275,
+  _CollectionElementsRepeat1 = 276,
+  ForInClauseRepeat1 = 277,
+  ConcatenatedStringRepeat1 = 278,
+  StringRepeat1 = 279,
+  StringContentRepeat1 = 280,
+  FormatSpecifierRepeat1 = 281,
+  _WithClauseBareRepeat1 = 282,
+  _MatchBlockBlockRepeat1 = 283,
+  _AsPatternTarget = 284,
+  _FormatExpression = 285,
+}
+
+export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
+  [1, "identifier"],
+  [2, "semi"],
+  [3, "import"],
+  [4, "dot"],
+  [5, "from"],
+  [6, "__future__"],
+  [7, "lparen"],
+  [8, "rparen"],
+  [9, "comma"],
+  [10, "as"],
+  [11, "star"],
+  [12, "print"],
+  [13, "gt_gt"],
+  [14, "assert"],
+  [15, "colon_eq"],
+  [16, "return"],
+  [17, "del"],
+  [18, "raise"],
+  [19, "pass"],
+  [20, "break"],
+  [21, "continue"],
+  [22, "if"],
+  [23, "colon"],
+  [24, "elif"],
+  [25, "else"],
+  [26, "match"],
+  [27, "case"],
+  [28, "async"],
+  [29, "for"],
+  [30, "in"],
+  [31, "while"],
+  [32, "try"],
+  [33, "except"],
+  [34, "star2"],
+  [35, "finally"],
+  [36, "with"],
+  [37, "def"],
+  [38, "dash_gt"],
+  [39, "star_star"],
+  [40, "global"],
+  [41, "nonlocal"],
+  [42, "exec"],
+  [43, "eq"],
+  [44, "class"],
+  [45, "lbrack"],
+  [46, "rbrack"],
+  [47, "at"],
+  [48, "_"],
+  [49, "pipe"],
+  [50, "lbrace"],
+  [51, "rbrace"],
+  [52, "plus"],
+  [53, "dash"],
+  [54, "not"],
+  [55, "and"],
+  [56, "or"],
+  [57, "slash"],
+  [58, "percent"],
+  [59, "slash_slash"],
+  [60, "amp"],
+  [61, "caret"],
+  [62, "lt_lt"],
+  [63, "tilde"],
+  [64, "is"],
+  [65, "lt"],
+  [66, "lt_eq"],
+  [67, "eq_eq"],
+  [68, "bang_eq"],
+  [69, "gt_eq"],
+  [70, "gt"],
+  [71, "lt_gt"],
+  [73, "plus_eq"],
+  [74, "dash_eq"],
+  [75, "star_eq"],
+  [76, "slash_eq"],
+  [77, "at_eq"],
+  [78, "slash_slash_eq"],
+  [79, "percent_eq"],
+  [80, "star_star_eq"],
+  [81, "gt_gt_eq"],
+  [82, "lt_lt_eq"],
+  [83, "amp_eq"],
+  [84, "caret_eq"],
+  [85, "pipe_eq"],
+  [87, "ellipsis"],
+  [89, "escape_sequence"],
+  [90, "bslash"],
+  [91, "format_specifier_token1"],
+  [92, "type_conversion"],
+  [93, "integer"],
+  [94, "float"],
+  [96, "true"],
+  [97, "false"],
+  [98, "none"],
+  [99, "comment"],
+  [100, "line_continuation"],
+  [101, "_newline"],
+  [102, "_indent"],
+  [103, "_dedent"],
+  [104, "string_start"],
+  [105, "_string_content"],
+  [106, "escape_interpolation"],
+  [107, "string_end"],
+  [108, "module"],
+  [109, "_statement"],
+  [110, "_simple_statements"],
+  [111, "import_statement"],
+  [112, "import_prefix"],
+  [113, "relative_import"],
+  [114, "future_import_statement"],
+  [115, "import_from_statement"],
+  [116, "_import_list"],
+  [117, "aliased_import"],
+  [118, "wildcard_import"],
+  [119, "print_statement"],
+  [120, "chevron"],
+  [121, "assert_statement"],
+  [122, "expression_statement"],
+  [123, "named_expression"],
+  [124, "_named_expression_lhs"],
+  [125, "return_statement"],
+  [126, "delete_statement"],
+  [127, "raise_statement"],
+  [128, "pass_statement"],
+  [129, "break_statement"],
+  [130, "continue_statement"],
+  [131, "if_statement"],
+  [132, "elif_clause"],
+  [133, "else_clause"],
+  [134, "match_statement"],
+  [135, "_match_block"],
+  [136, "case_clause"],
+  [137, "for_statement"],
+  [138, "while_statement"],
+  [139, "try_statement"],
+  [140, "except_clause"],
+  [141, "finally_clause"],
+  [142, "with_statement"],
+  [143, "with_clause"],
+  [144, "with_item"],
+  [145, "function_definition"],
+  [146, "parameters"],
+  [147, "lambda_parameters"],
+  [148, "list_splat"],
+  [149, "dictionary_splat"],
+  [150, "global_statement"],
+  [151, "nonlocal_statement"],
+  [152, "exec_statement"],
+  [153, "type_alias_statement"],
+  [154, "class_definition"],
+  [155, "type_parameter"],
+  [156, "parenthesized_list_splat"],
+  [157, "argument_list"],
+  [158, "decorated_definition"],
+  [159, "decorator"],
+  [160, "block"],
+  [161, "expression_list"],
+  [162, "dotted_name"],
+  [163, "case_pattern"],
+  [164, "_simple_pattern"],
+  [165, "_as_pattern"],
+  [166, "union_pattern"],
+  [167, "_list_pattern"],
+  [168, "_tuple_pattern"],
+  [169, "dict_pattern"],
+  [170, "_key_value_pattern"],
+  [171, "keyword_pattern"],
+  [172, "splat_pattern"],
+  [173, "class_pattern"],
+  [174, "complex_pattern"],
+  [175, "_parameters"],
+  [176, "_patterns"],
+  [177, "parameter"],
+  [178, "pattern"],
+  [179, "tuple_pattern"],
+  [180, "list_pattern"],
+  [181, "default_parameter"],
+  [182, "typed_default_parameter"],
+  [183, "list_splat_pattern"],
+  [184, "dictionary_splat_pattern"],
+  [185, "as_pattern"],
+  [186, "_expression_within_for_in_clause"],
+  [187, "expression"],
+  [188, "primary_expression"],
+  [189, "not_operator"],
+  [190, "boolean_operator"],
+  [191, "binary_operator"],
+  [192, "unary_operator"],
+  [193, "_not_in"],
+  [194, "_is_not"],
+  [195, "comparison_operator"],
+  [196, "lambda"],
+  [197, "lambda_within_for_in_clause"],
+  [198, "assignment"],
+  [199, "augmented_assignment"],
+  [200, "pattern_list"],
+  [201, "_right_hand_side"],
+  [202, "yield"],
+  [203, "attribute"],
+  [204, "subscript"],
+  [205, "slice"],
+  [206, "call"],
+  [207, "typed_parameter"],
+  [208, "type"],
+  [209, "splat_type"],
+  [210, "generic_type"],
+  [211, "union_type"],
+  [212, "constrained_type"],
+  [213, "member_type"],
+  [214, "keyword_argument"],
+  [215, "list"],
+  [216, "set"],
+  [217, "tuple"],
+  [218, "dictionary"],
+  [219, "pair"],
+  [220, "list_comprehension"],
+  [221, "dictionary_comprehension"],
+  [222, "set_comprehension"],
+  [223, "generator_expression"],
+  [224, "_comprehension_clauses"],
+  [225, "parenthesized_expression"],
+  [226, "_collection_elements"],
+  [227, "for_in_clause"],
+  [228, "if_clause"],
+  [229, "conditional_expression"],
+  [230, "concatenated_string"],
+  [231, "string"],
+  [232, "string_content"],
+  [233, "interpolation"],
+  [234, "_f_expression"],
+  [235, "_not_escape_sequence"],
+  [236, "format_specifier"],
+  [237, "await"],
+  [238, "positional_separator"],
+  [239, "keyword_separator"],
+  [240, "_assignment_eq"],
+  [241, "_assignment_type"],
+  [242, "_assignment_typed"],
+  [243, "_expression_statement_tuple"],
+  [244, "_with_clause_bare"],
+  [245, "_with_clause_paren"],
+  [246, "_match_block_block"],
+  [247, "_dict_pattern_kv"],
+  [248, "_simple_pattern_negative"],
+  [249, "_kw_real"],
+  [250, "_kw_async_marker"],
+  [251, "_kw_type"],
+  [252, "module_repeat1"],
+  [253, "_simple_statements_repeat1"],
+  [254, "import_prefix_repeat1"],
+  [255, "_import_list_repeat1"],
+  [256, "print_statement_repeat1"],
+  [257, "assert_statement_repeat1"],
+  [258, "if_statement_repeat1"],
+  [259, "match_statement_repeat1"],
+  [260, "case_clause_repeat1"],
+  [261, "try_statement_repeat1"],
+  [262, "except_clause_repeat1"],
+  [263, "global_statement_repeat1"],
+  [264, "type_parameter_repeat1"],
+  [265, "argument_list_repeat1"],
+  [266, "decorated_definition_repeat1"],
+  [267, "dotted_name_repeat1"],
+  [268, "union_pattern_repeat1"],
+  [269, "dict_pattern_repeat1"],
+  [270, "_parameters_repeat1"],
+  [271, "_patterns_repeat1"],
+  [272, "comparison_operator_repeat1"],
+  [273, "subscript_repeat1"],
+  [274, "dictionary_repeat1"],
+  [275, "_comprehension_clauses_repeat1"],
+  [276, "_collection_elements_repeat1"],
+  [277, "for_in_clause_repeat1"],
+  [278, "concatenated_string_repeat1"],
+  [279, "string_repeat1"],
+  [280, "string_content_repeat1"],
+  [281, "format_specifier_repeat1"],
+  [282, "_with_clause_bare_repeat1"],
+  [283, "_match_block_block_repeat1"],
+  [284, "_as_pattern_target"],
+  [285, "_format_expression"],
+]);
+
+export function kindIdFromName(kindName: string): TSKindId {
+  switch (kindName) {
+    case "identifier": return TSKindId.Identifier;
+    case "semi": return TSKindId.Semi;
+    case "import": return TSKindId.Import;
+    case "dot": return TSKindId.Dot;
+    case "from": return TSKindId.From;
+    case "__future__": return TSKindId.FutureU;
+    case "lparen": return TSKindId.Lparen;
+    case "rparen": return TSKindId.Rparen;
+    case "comma": return TSKindId.Comma;
+    case "as": return TSKindId.As;
+    case "star": return TSKindId.Star;
+    case "print": return TSKindId.Print;
+    case "gt_gt": return TSKindId.GtGt;
+    case "assert": return TSKindId.Assert;
+    case "colon_eq": return TSKindId.ColonEq;
+    case "return": return TSKindId.Return;
+    case "del": return TSKindId.Del;
+    case "raise": return TSKindId.Raise;
+    case "pass": return TSKindId.Pass;
+    case "break": return TSKindId.Break;
+    case "continue": return TSKindId.Continue;
+    case "if": return TSKindId.If;
+    case "colon": return TSKindId.Colon;
+    case "elif": return TSKindId.Elif;
+    case "else": return TSKindId.Else;
+    case "match": return TSKindId.Match;
+    case "case": return TSKindId.Case;
+    case "async": return TSKindId.Async;
+    case "for": return TSKindId.For;
+    case "in": return TSKindId.In;
+    case "while": return TSKindId.While;
+    case "try": return TSKindId.Try;
+    case "except": return TSKindId.Except;
+    case "star2": return TSKindId.Star2;
+    case "finally": return TSKindId.Finally;
+    case "with": return TSKindId.With;
+    case "def": return TSKindId.Def;
+    case "dash_gt": return TSKindId.DashGt;
+    case "star_star": return TSKindId.StarStar;
+    case "global": return TSKindId.Global;
+    case "nonlocal": return TSKindId.Nonlocal;
+    case "exec": return TSKindId.Exec;
+    case "eq": return TSKindId.Eq;
+    case "class": return TSKindId.Class;
+    case "lbrack": return TSKindId.Lbrack;
+    case "rbrack": return TSKindId.Rbrack;
+    case "at": return TSKindId.At;
+    case "_": return TSKindId.Anonymous;
+    case "pipe": return TSKindId.Pipe;
+    case "lbrace": return TSKindId.Lbrace;
+    case "rbrace": return TSKindId.Rbrace;
+    case "plus": return TSKindId.Plus;
+    case "dash": return TSKindId.Dash;
+    case "not": return TSKindId.Not;
+    case "and": return TSKindId.And;
+    case "or": return TSKindId.Or;
+    case "slash": return TSKindId.Slash;
+    case "percent": return TSKindId.Percent;
+    case "slash_slash": return TSKindId.SlashSlash;
+    case "amp": return TSKindId.Amp;
+    case "caret": return TSKindId.Caret;
+    case "lt_lt": return TSKindId.LtLt;
+    case "tilde": return TSKindId.Tilde;
+    case "is": return TSKindId.Is;
+    case "lt": return TSKindId.Lt;
+    case "lt_eq": return TSKindId.LtEq;
+    case "eq_eq": return TSKindId.EqEq;
+    case "bang_eq": return TSKindId.BangEq;
+    case "gt_eq": return TSKindId.GtEq;
+    case "gt": return TSKindId.Gt;
+    case "lt_gt": return TSKindId.LtGt;
+    case "plus_eq": return TSKindId.PlusEq;
+    case "dash_eq": return TSKindId.DashEq;
+    case "star_eq": return TSKindId.StarEq;
+    case "slash_eq": return TSKindId.SlashEq;
+    case "at_eq": return TSKindId.AtEq;
+    case "slash_slash_eq": return TSKindId.SlashSlashEq;
+    case "percent_eq": return TSKindId.PercentEq;
+    case "star_star_eq": return TSKindId.StarStarEq;
+    case "gt_gt_eq": return TSKindId.GtGtEq;
+    case "lt_lt_eq": return TSKindId.LtLtEq;
+    case "amp_eq": return TSKindId.AmpEq;
+    case "caret_eq": return TSKindId.CaretEq;
+    case "pipe_eq": return TSKindId.PipeEq;
+    case "ellipsis": return TSKindId.Ellipsis2;
+    case "escape_sequence": return TSKindId.EscapeSequence;
+    case "bslash": return TSKindId.Bslash;
+    case "format_specifier_token1": return TSKindId.FormatSpecifierToken1;
+    case "type_conversion": return TSKindId.TypeConversion;
+    case "integer": return TSKindId.Integer;
+    case "float": return TSKindId.Float;
+    case "true": return TSKindId.True;
+    case "false": return TSKindId.False;
+    case "none": return TSKindId.None;
+    case "comment": return TSKindId.Comment;
+    case "line_continuation": return TSKindId.LineContinuation;
+    case "_newline": return TSKindId.Newline;
+    case "_indent": return TSKindId.Indent;
+    case "_dedent": return TSKindId.Dedent;
+    case "string_start": return TSKindId.StringStart;
+    case "_string_content": return TSKindId._StringContent;
+    case "escape_interpolation": return TSKindId.EscapeInterpolation;
+    case "string_end": return TSKindId.StringEnd;
+    case "module": return TSKindId.Module;
+    case "_statement": return TSKindId.Statement;
+    case "_simple_statements": return TSKindId.SimpleStatements;
+    case "import_statement": return TSKindId.ImportStatement;
+    case "import_prefix": return TSKindId.ImportPrefix;
+    case "relative_import": return TSKindId.RelativeImport;
+    case "future_import_statement": return TSKindId.FutureImportStatement;
+    case "import_from_statement": return TSKindId.ImportFromStatement;
+    case "_import_list": return TSKindId.ImportList;
+    case "aliased_import": return TSKindId.AliasedImport;
+    case "wildcard_import": return TSKindId.WildcardImport;
+    case "print_statement": return TSKindId.PrintStatement;
+    case "chevron": return TSKindId.Chevron;
+    case "assert_statement": return TSKindId.AssertStatement;
+    case "expression_statement": return TSKindId.ExpressionStatement;
+    case "named_expression": return TSKindId.NamedExpression;
+    case "_named_expression_lhs": return TSKindId.NamedExpressionLhs;
+    case "return_statement": return TSKindId.ReturnStatement;
+    case "delete_statement": return TSKindId.DeleteStatement;
+    case "raise_statement": return TSKindId.RaiseStatement;
+    case "pass_statement": return TSKindId.PassStatement;
+    case "break_statement": return TSKindId.BreakStatement;
+    case "continue_statement": return TSKindId.ContinueStatement;
+    case "if_statement": return TSKindId.IfStatement;
+    case "elif_clause": return TSKindId.ElifClause;
+    case "else_clause": return TSKindId.ElseClause;
+    case "match_statement": return TSKindId.MatchStatement;
+    case "_match_block": return TSKindId.MatchBlock;
+    case "case_clause": return TSKindId.CaseClause;
+    case "for_statement": return TSKindId.ForStatement;
+    case "while_statement": return TSKindId.WhileStatement;
+    case "try_statement": return TSKindId.TryStatement;
+    case "except_clause": return TSKindId.ExceptClause;
+    case "finally_clause": return TSKindId.FinallyClause;
+    case "with_statement": return TSKindId.WithStatement;
+    case "with_clause": return TSKindId.WithClause;
+    case "with_item": return TSKindId.WithItem;
+    case "function_definition": return TSKindId.FunctionDefinition;
+    case "parameters": return TSKindId.Parameters;
+    case "lambda_parameters": return TSKindId.LambdaParameters;
+    case "list_splat": return TSKindId.ListSplat;
+    case "dictionary_splat": return TSKindId.DictionarySplat;
+    case "global_statement": return TSKindId.GlobalStatement;
+    case "nonlocal_statement": return TSKindId.NonlocalStatement;
+    case "exec_statement": return TSKindId.ExecStatement;
+    case "type_alias_statement": return TSKindId.TypeAliasStatement;
+    case "class_definition": return TSKindId.ClassDefinition;
+    case "type_parameter": return TSKindId.TypeParameter;
+    case "parenthesized_list_splat": return TSKindId.ParenthesizedListSplat;
+    case "argument_list": return TSKindId.ArgumentList;
+    case "decorated_definition": return TSKindId.DecoratedDefinition;
+    case "decorator": return TSKindId.Decorator;
+    case "block": return TSKindId.Block;
+    case "expression_list": return TSKindId.ExpressionList;
+    case "dotted_name": return TSKindId.DottedName;
+    case "case_pattern": return TSKindId.CasePattern;
+    case "_simple_pattern": return TSKindId.SimplePattern;
+    case "_as_pattern": return TSKindId._AsPattern;
+    case "union_pattern": return TSKindId.UnionPattern;
+    case "_list_pattern": return TSKindId._ListPattern;
+    case "_tuple_pattern": return TSKindId._TuplePattern;
+    case "dict_pattern": return TSKindId.DictPattern;
+    case "_key_value_pattern": return TSKindId.KeyValuePattern;
+    case "keyword_pattern": return TSKindId.KeywordPattern;
+    case "splat_pattern": return TSKindId.SplatPattern;
+    case "class_pattern": return TSKindId.ClassPattern;
+    case "complex_pattern": return TSKindId.ComplexPattern;
+    case "_parameters": return TSKindId._Parameters;
+    case "_patterns": return TSKindId.Patterns;
+    case "parameter": return TSKindId.Parameter;
+    case "pattern": return TSKindId.Pattern;
+    case "tuple_pattern": return TSKindId.TuplePattern;
+    case "list_pattern": return TSKindId.ListPattern;
+    case "default_parameter": return TSKindId.DefaultParameter;
+    case "typed_default_parameter": return TSKindId.TypedDefaultParameter;
+    case "list_splat_pattern": return TSKindId.ListSplatPattern;
+    case "dictionary_splat_pattern": return TSKindId.DictionarySplatPattern;
+    case "as_pattern": return TSKindId.AsPattern;
+    case "_expression_within_for_in_clause": return TSKindId.ExpressionWithinForInClause;
+    case "expression": return TSKindId.Expression;
+    case "primary_expression": return TSKindId.PrimaryExpression;
+    case "not_operator": return TSKindId.NotOperator;
+    case "boolean_operator": return TSKindId.BooleanOperator;
+    case "binary_operator": return TSKindId.BinaryOperator;
+    case "unary_operator": return TSKindId.UnaryOperator;
+    case "_not_in": return TSKindId.NotIn;
+    case "_is_not": return TSKindId.IsNot;
+    case "comparison_operator": return TSKindId.ComparisonOperator;
+    case "lambda": return TSKindId.Lambda;
+    case "lambda_within_for_in_clause": return TSKindId.LambdaWithinForInClause;
+    case "assignment": return TSKindId.Assignment;
+    case "augmented_assignment": return TSKindId.AugmentedAssignment;
+    case "pattern_list": return TSKindId.PatternList;
+    case "_right_hand_side": return TSKindId.RightHandSide;
+    case "yield": return TSKindId.Yield;
+    case "attribute": return TSKindId.Attribute;
+    case "subscript": return TSKindId.Subscript;
+    case "slice": return TSKindId.Slice;
+    case "call": return TSKindId.Call;
+    case "typed_parameter": return TSKindId.TypedParameter;
+    case "type": return TSKindId.Type;
+    case "splat_type": return TSKindId.SplatType;
+    case "generic_type": return TSKindId.GenericType;
+    case "union_type": return TSKindId.UnionType;
+    case "constrained_type": return TSKindId.ConstrainedType;
+    case "member_type": return TSKindId.MemberType;
+    case "keyword_argument": return TSKindId.KeywordArgument;
+    case "list": return TSKindId.List;
+    case "set": return TSKindId.Set;
+    case "tuple": return TSKindId.Tuple;
+    case "dictionary": return TSKindId.Dictionary;
+    case "pair": return TSKindId.Pair;
+    case "list_comprehension": return TSKindId.ListComprehension;
+    case "dictionary_comprehension": return TSKindId.DictionaryComprehension;
+    case "set_comprehension": return TSKindId.SetComprehension;
+    case "generator_expression": return TSKindId.GeneratorExpression;
+    case "_comprehension_clauses": return TSKindId.ComprehensionClauses;
+    case "parenthesized_expression": return TSKindId.ParenthesizedExpression;
+    case "_collection_elements": return TSKindId.CollectionElements;
+    case "for_in_clause": return TSKindId.ForInClause;
+    case "if_clause": return TSKindId.IfClause;
+    case "conditional_expression": return TSKindId.ConditionalExpression;
+    case "concatenated_string": return TSKindId.ConcatenatedString;
+    case "string": return TSKindId.String;
+    case "string_content": return TSKindId.StringContent;
+    case "interpolation": return TSKindId.Interpolation;
+    case "_f_expression": return TSKindId.FExpression;
+    case "_not_escape_sequence": return TSKindId.NotEscapeSequence;
+    case "format_specifier": return TSKindId.FormatSpecifier;
+    case "await": return TSKindId.Await;
+    case "positional_separator": return TSKindId.PositionalSeparator;
+    case "keyword_separator": return TSKindId.KeywordSeparator;
+    case "_assignment_eq": return TSKindId.AssignmentEq;
+    case "_assignment_type": return TSKindId.AssignmentType;
+    case "_assignment_typed": return TSKindId.AssignmentTyped;
+    case "_expression_statement_tuple": return TSKindId._ExpressionStatementTuple;
+    case "_with_clause_bare": return TSKindId._WithClauseBare;
+    case "_with_clause_paren": return TSKindId._WithClauseParen;
+    case "_match_block_block": return TSKindId.MatchBlockBlock;
+    case "_dict_pattern_kv": return TSKindId.DictPatternKv;
+    case "_simple_pattern_negative": return TSKindId.SimplePatternNegative;
+    case "_kw_real": return TSKindId._KwReal;
+    case "_kw_async_marker": return TSKindId.KwAsyncMarker;
+    case "_kw_type": return TSKindId.KwType;
+    case "module_repeat1": return TSKindId.ModuleRepeat1;
+    case "_simple_statements_repeat1": return TSKindId._SimpleStatementsRepeat1;
+    case "import_prefix_repeat1": return TSKindId.ImportPrefixRepeat1;
+    case "_import_list_repeat1": return TSKindId._ImportListRepeat1;
+    case "print_statement_repeat1": return TSKindId.PrintStatementRepeat1;
+    case "assert_statement_repeat1": return TSKindId.AssertStatementRepeat1;
+    case "if_statement_repeat1": return TSKindId.IfStatementRepeat1;
+    case "match_statement_repeat1": return TSKindId.MatchStatementRepeat1;
+    case "case_clause_repeat1": return TSKindId.CaseClauseRepeat1;
+    case "try_statement_repeat1": return TSKindId.TryStatementRepeat1;
+    case "except_clause_repeat1": return TSKindId.ExceptClauseRepeat1;
+    case "global_statement_repeat1": return TSKindId.GlobalStatementRepeat1;
+    case "type_parameter_repeat1": return TSKindId.TypeParameterRepeat1;
+    case "argument_list_repeat1": return TSKindId.ArgumentListRepeat1;
+    case "decorated_definition_repeat1": return TSKindId.DecoratedDefinitionRepeat1;
+    case "dotted_name_repeat1": return TSKindId.DottedNameRepeat1;
+    case "union_pattern_repeat1": return TSKindId.UnionPatternRepeat1;
+    case "dict_pattern_repeat1": return TSKindId.DictPatternRepeat1;
+    case "_parameters_repeat1": return TSKindId._ParametersRepeat1;
+    case "_patterns_repeat1": return TSKindId._PatternsRepeat1;
+    case "comparison_operator_repeat1": return TSKindId.ComparisonOperatorRepeat1;
+    case "subscript_repeat1": return TSKindId.SubscriptRepeat1;
+    case "dictionary_repeat1": return TSKindId.DictionaryRepeat1;
+    case "_comprehension_clauses_repeat1": return TSKindId._ComprehensionClausesRepeat1;
+    case "_collection_elements_repeat1": return TSKindId._CollectionElementsRepeat1;
+    case "for_in_clause_repeat1": return TSKindId.ForInClauseRepeat1;
+    case "concatenated_string_repeat1": return TSKindId.ConcatenatedStringRepeat1;
+    case "string_repeat1": return TSKindId.StringRepeat1;
+    case "string_content_repeat1": return TSKindId.StringContentRepeat1;
+    case "format_specifier_repeat1": return TSKindId.FormatSpecifierRepeat1;
+    case "_with_clause_bare_repeat1": return TSKindId._WithClauseBareRepeat1;
+    case "_match_block_block_repeat1": return TSKindId._MatchBlockBlockRepeat1;
+    case "_as_pattern_target": return TSKindId._AsPatternTarget;
+    case "_format_expression": return TSKindId._FormatExpression;
+    default: throw new TypeError(`unknown kind name ${kindName}`);
+  }
 }
 
 // Scoped enums per supertype
@@ -418,31 +1283,26 @@ export const enum PrimaryExpressionKind {
 
 // Node types — concrete interfaces
 export interface _AsPattern {
-  readonly $type: '_as_pattern';
+  readonly $type: TSKindId._AsPattern;
   readonly $children: readonly [CasePattern | Identifier];
 }
 
-export interface AsPatternTarget {
-  readonly $type: '_as_pattern_target';
-  readonly $children: readonly [Expression];
-}
-
 export interface AssignmentEq {
-  readonly $type: '_assignment_eq';
+  readonly $type: TSKindId.AssignmentEq;
   readonly $fields: {
     readonly right: RightHandSide;
   };
 }
 
 export interface AssignmentType {
-  readonly $type: '_assignment_type';
+  readonly $type: TSKindId.AssignmentType;
   readonly $fields: {
     readonly type: Type;
   };
 }
 
 export interface AssignmentTyped {
-  readonly $type: '_assignment_typed';
+  readonly $type: TSKindId.AssignmentTyped;
   readonly $fields: {
     readonly type: Type;
     readonly right: RightHandSide;
@@ -450,24 +1310,19 @@ export interface AssignmentTyped {
 }
 
 export interface ComprehensionClauses {
-  readonly $type: '_comprehension_clauses';
+  readonly $type: TSKindId.ComprehensionClauses;
   readonly $children: readonly (ForInClause | ForInClause | IfClause)[];
 }
 
-export interface FormatExpression {
-  readonly $type: '_format_expression';
-  readonly $children: readonly [Interpolation];
-}
-
 export interface ImportList {
-  readonly $type: '_import_list';
+  readonly $type: TSKindId.ImportList;
   readonly $fields: {
     readonly name: NonEmptyArray<DottedName | AliasedImport>;
   };
 }
 
 export interface KeyValuePattern {
-  readonly $type: '_key_value_pattern';
+  readonly $type: TSKindId.KeyValuePattern;
   readonly $fields: {
     readonly key: SimplePattern;
     readonly value: CasePattern;
@@ -475,49 +1330,49 @@ export interface KeyValuePattern {
 }
 
 export interface _ListPattern {
-  readonly $type: '_list_pattern';
+  readonly $type: TSKindId._ListPattern;
   readonly $children: readonly (CasePattern)[];
 }
 
 export interface MatchBlock {
-  readonly $type: '_match_block';
+  readonly $type: TSKindId.MatchBlock;
   readonly $children: readonly [MatchBlockBlock];
 }
 
 export interface MatchBlockBlock {
-  readonly $type: '_match_block_block';
+  readonly $type: TSKindId.MatchBlockBlock;
   readonly $fields: {
     readonly alternative: readonly (CaseClause)[];
   };
 }
 
 export interface SimplePatternNegative {
-  readonly $type: '_simple_pattern_negative';
+  readonly $type: TSKindId.SimplePatternNegative;
   readonly $children: readonly [Integer | Float];
 }
 
 export interface SimpleStatements {
-  readonly $type: '_simple_statements';
+  readonly $type: TSKindId.SimpleStatements;
   readonly $children: NonEmptyArray<SimpleStatement>;
 }
 
 export interface Suite {
-  readonly $type: '_suite';
+  readonly $type: "_suite";
   readonly $children: readonly [SimpleStatements | Block | Newline];
 }
 
 export interface _TuplePattern {
-  readonly $type: '_tuple_pattern';
+  readonly $type: TSKindId._TuplePattern;
   readonly $children: readonly (CasePattern)[];
 }
 
 export interface _WithClauseParen {
-  readonly $type: '_with_clause_paren';
+  readonly $type: TSKindId._WithClauseParen;
   readonly $children: NonEmptyArray<WithItem>;
 }
 
 export interface AliasedImport {
-  readonly $type: 'aliased_import';
+  readonly $type: TSKindId.AliasedImport;
   readonly $fields: {
     readonly name: DottedName;
     readonly alias: Identifier;
@@ -525,12 +1380,12 @@ export interface AliasedImport {
 }
 
 export interface ArgumentList {
-  readonly $type: 'argument_list';
+  readonly $type: TSKindId.ArgumentList;
   readonly $children: readonly (Expression | Expression | ListSplat | ListSplat | DictionarySplat | DictionarySplat | ParenthesizedListSplat | ParenthesizedListSplat | KeywordArgument | KeywordArgument)[];
 }
 
 export interface AsPattern {
-  readonly $type: 'as_pattern';
+  readonly $type: TSKindId.AsPattern;
   readonly $fields: {
     readonly expression: Expression;
     readonly alias: AsPatternTarget;
@@ -538,12 +1393,12 @@ export interface AsPattern {
 }
 
 export interface AssertStatement {
-  readonly $type: 'assert_statement';
+  readonly $type: TSKindId.AssertStatement;
   readonly $children: NonEmptyArray<Expression>;
 }
 
 export interface AssignmentUFormEq {
-  readonly $type: 'assignment';
+  readonly $type: TSKindId.Assignment;
   readonly $variant: 'eq';
   readonly $fields: {
     readonly left: LeftHandSide;
@@ -552,7 +1407,7 @@ export interface AssignmentUFormEq {
 }
 
 export interface AssignmentUFormType {
-  readonly $type: 'assignment';
+  readonly $type: TSKindId.Assignment;
   readonly $variant: 'type';
   readonly $fields: {
     readonly left: LeftHandSide;
@@ -561,7 +1416,7 @@ export interface AssignmentUFormType {
 }
 
 export interface AssignmentUFormTyped {
-  readonly $type: 'assignment';
+  readonly $type: TSKindId.Assignment;
   readonly $variant: 'typed';
   readonly $fields: {
     readonly left: LeftHandSide;
@@ -571,7 +1426,7 @@ export interface AssignmentUFormTyped {
 
 export type Assignment = AssignmentUFormEq | AssignmentUFormType | AssignmentUFormTyped;
 export interface Attribute {
-  readonly $type: 'attribute';
+  readonly $type: TSKindId.Attribute;
   readonly $fields: {
     readonly object: PrimaryExpression;
     readonly attribute: Identifier;
@@ -579,46 +1434,46 @@ export interface Attribute {
 }
 
 export interface AugmentedAssignment {
-  readonly $type: 'augmented_assignment';
+  readonly $type: TSKindId.AugmentedAssignment;
   readonly $fields: {
     readonly left: LeftHandSide;
-    readonly operator: "+=" | "-=" | "*=" | "/=" | "@=" | "//=" | "%=" | "**=" | ">>=" | "<<=" | "&=" | "^=" | "|=";
+    readonly operator: AugmentedAssignmentOperator;
     readonly right: RightHandSide;
   };
 }
 
 export interface Await {
-  readonly $type: 'await';
+  readonly $type: TSKindId.Await;
   readonly $fields: {
     readonly primary_expression: PrimaryExpression;
   };
 }
 
 export interface BinaryOperator {
-  readonly $type: 'binary_operator';
+  readonly $type: TSKindId.BinaryOperator;
   readonly $fields: {
     readonly left: PrimaryExpression;
-    readonly operator: "+" | "-" | "*" | "@" | "/" | "%" | "//" | "**" | "|" | "&" | "^" | "<<" | ">>";
+    readonly operator: AutoStamp<BinaryOperatorOperator>;
     readonly right: PrimaryExpression;
   };
 }
 
 export interface Block {
-  readonly $type: 'block';
+  readonly $type: TSKindId.Block;
   readonly $children: readonly (Statement)[];
 }
 
 export interface BooleanOperator {
-  readonly $type: 'boolean_operator';
+  readonly $type: TSKindId.BooleanOperator;
   readonly $fields: {
     readonly left: Expression;
-    readonly operator: "and" | "or";
+    readonly operator: AutoStamp<BooleanOperatorOperator>;
     readonly right: Expression;
   };
 }
 
 export interface Call {
-  readonly $type: 'call';
+  readonly $type: TSKindId.Call;
   readonly $fields: {
     readonly function: PrimaryExpression;
     readonly arguments: GeneratorExpression | ArgumentList;
@@ -626,7 +1481,7 @@ export interface Call {
 }
 
 export interface CaseClause {
-  readonly $type: 'case_clause';
+  readonly $type: TSKindId.CaseClause;
   readonly $fields: {
     readonly guard?: IfClause;
     readonly consequence: Suite;
@@ -635,19 +1490,19 @@ export interface CaseClause {
 }
 
 export interface CasePattern {
-  readonly $type: 'case_pattern';
+  readonly $type: TSKindId.CasePattern;
   readonly $children: readonly [_AsPattern | KeywordPattern | SimplePattern];
 }
 
 export interface Chevron {
-  readonly $type: 'chevron';
+  readonly $type: TSKindId.Chevron;
   readonly $fields: {
     readonly expression: Expression;
   };
 }
 
 export interface ClassDefinition {
-  readonly $type: 'class_definition';
+  readonly $type: TSKindId.ClassDefinition;
   readonly $fields: {
     readonly name: Identifier;
     readonly type_parameters?: TypeParameter;
@@ -657,7 +1512,7 @@ export interface ClassDefinition {
 }
 
 export interface ClassPattern {
-  readonly $type: 'class_pattern';
+  readonly $type: TSKindId.ClassPattern;
   readonly $fields: {
     readonly dotted_name: DottedName;
     readonly arguments: readonly (CasePattern)[];
@@ -665,7 +1520,7 @@ export interface ClassPattern {
 }
 
 export interface ComparisonOperator {
-  readonly $type: 'comparison_operator';
+  readonly $type: TSKindId.ComparisonOperator;
   readonly $fields: {
     readonly left: PrimaryExpression;
     readonly operators: NonEmptyArray<Bitflag<Operators, "<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not">>;
@@ -673,7 +1528,7 @@ export interface ComparisonOperator {
 }
 
 export interface ComplexPattern {
-  readonly $type: 'complex_pattern';
+  readonly $type: TSKindId.ComplexPattern;
   readonly $fields: {
     readonly real?: BooleanKeyword<"-">;
     readonly imaginary: Integer | Float;
@@ -682,12 +1537,12 @@ export interface ComplexPattern {
 }
 
 export interface ConcatenatedString {
-  readonly $type: 'concatenated_string';
+  readonly $type: TSKindId.ConcatenatedString;
   readonly $children: NonEmptyArray<String | String>;
 }
 
 export interface ConditionalExpression {
-  readonly $type: 'conditional_expression';
+  readonly $type: TSKindId.ConditionalExpression;
   readonly $fields: {
     readonly body: Expression;
     readonly condition: Expression;
@@ -696,7 +1551,7 @@ export interface ConditionalExpression {
 }
 
 export interface ConstrainedType {
-  readonly $type: 'constrained_type';
+  readonly $type: TSKindId.ConstrainedType;
   readonly $fields: {
     readonly base_type: Type;
     readonly constraint: Type;
@@ -704,7 +1559,7 @@ export interface ConstrainedType {
 }
 
 export interface DecoratedDefinition {
-  readonly $type: 'decorated_definition';
+  readonly $type: TSKindId.DecoratedDefinition;
   readonly $fields: {
     readonly definition: ClassDefinition | FunctionDefinition;
   };
@@ -712,7 +1567,7 @@ export interface DecoratedDefinition {
 }
 
 export interface Decorator {
-  readonly $type: 'decorator';
+  readonly $type: TSKindId.Decorator;
   readonly $fields: {
     readonly expression: Expression;
     readonly newline?: string;
@@ -720,7 +1575,7 @@ export interface Decorator {
 }
 
 export interface DefaultParameter {
-  readonly $type: 'default_parameter';
+  readonly $type: TSKindId.DefaultParameter;
   readonly $fields: {
     readonly name: Identifier | TuplePattern;
     readonly value: Expression;
@@ -728,22 +1583,22 @@ export interface DefaultParameter {
 }
 
 export interface DeleteStatement {
-  readonly $type: 'delete_statement';
+  readonly $type: TSKindId.DeleteStatement;
   readonly $children: readonly [Expressions];
 }
 
 export interface DictPattern {
-  readonly $type: 'dict_pattern';
+  readonly $type: TSKindId.DictPattern;
   readonly $children: readonly (DictPatternKv)[];
 }
 
 export interface Dictionary {
-  readonly $type: 'dictionary';
+  readonly $type: TSKindId.Dictionary;
   readonly $children: readonly (Pair | DictionarySplat)[];
 }
 
 export interface DictionaryComprehension {
-  readonly $type: 'dictionary_comprehension';
+  readonly $type: TSKindId.DictionaryComprehension;
   readonly $fields: {
     readonly body: Pair;
   };
@@ -751,24 +1606,24 @@ export interface DictionaryComprehension {
 }
 
 export interface DictionarySplat {
-  readonly $type: 'dictionary_splat';
+  readonly $type: TSKindId.DictionarySplat;
   readonly $fields: {
     readonly expression: Expression;
   };
 }
 
 export interface DictionarySplatPattern {
-  readonly $type: 'dictionary_splat_pattern';
+  readonly $type: TSKindId.DictionarySplatPattern;
   readonly $children: readonly [Identifier | KeywordIdentifier | Subscript | Attribute];
 }
 
 export interface DottedName {
-  readonly $type: 'dotted_name';
+  readonly $type: TSKindId.DottedName;
   readonly $children: NonEmptyArray<Identifier>;
 }
 
 export interface ElifClause {
-  readonly $type: 'elif_clause';
+  readonly $type: TSKindId.ElifClause;
   readonly $fields: {
     readonly condition: Expression;
     readonly consequence: Suite;
@@ -776,14 +1631,14 @@ export interface ElifClause {
 }
 
 export interface ElseClause {
-  readonly $type: 'else_clause';
+  readonly $type: TSKindId.ElseClause;
   readonly $fields: {
     readonly body: Suite;
   };
 }
 
 export interface ExceptClause {
-  readonly $type: 'except_clause';
+  readonly $type: TSKindId.ExceptClause;
   readonly $fields: {
     readonly value?: NonEmptyArray<Expression>;
     readonly alias?: Expression;
@@ -792,7 +1647,7 @@ export interface ExceptClause {
 }
 
 export interface ExecStatement {
-  readonly $type: 'exec_statement';
+  readonly $type: TSKindId.ExecStatement;
   readonly $fields: {
     readonly code: String | Identifier;
     readonly in_clause?: NonEmptyArray<"in" | Expression>;
@@ -800,41 +1655,41 @@ export interface ExecStatement {
 }
 
 export interface ExpressionList {
-  readonly $type: 'expression_list';
+  readonly $type: TSKindId.ExpressionList;
   readonly $children: NonEmptyArray<Expression | Expression>;
 }
 
 export interface ExpressionStatementTuple {
-  readonly $type: 'expression_statement_tuple';
+  readonly $type: "expression_statement_tuple";
   readonly $children: NonEmptyArray<Expression>;
 }
 
 export interface ExpressionStatementUFormTuple {
-  readonly $type: 'expression_statement';
+  readonly $type: TSKindId.ExpressionStatement;
   readonly $variant: 'tuple';
 }
 
 export type ExpressionStatement = ExpressionStatementUFormTuple;
 export interface FinallyClause {
-  readonly $type: 'finally_clause';
+  readonly $type: TSKindId.FinallyClause;
   readonly $fields: {
     readonly block: Suite;
   };
 }
 
 export interface ForInClause {
-  readonly $type: 'for_in_clause';
+  readonly $type: TSKindId.ForInClause;
   readonly $fields: {
-    readonly async_marker?: BooleanKeyword<"async">;
+    readonly async_marker?: BooleanKeyword<AsyncMarker>;
     readonly left: LeftHandSide;
     readonly right: NonEmptyArray<ExpressionWithinForInClause>;
   };
 }
 
 export interface ForStatement {
-  readonly $type: 'for_statement';
+  readonly $type: TSKindId.ForStatement;
   readonly $fields: {
-    readonly async_marker?: BooleanKeyword<"async">;
+    readonly async_marker?: BooleanKeyword<AsyncMarker>;
     readonly left: LeftHandSide;
     readonly right: Expressions;
     readonly body: Suite;
@@ -843,14 +1698,14 @@ export interface ForStatement {
 }
 
 export interface FormatSpecifier {
-  readonly $type: 'format_specifier';
-  readonly $children: readonly (FormatExpression)[];
+  readonly $type: TSKindId.FormatSpecifier;
+  readonly $children: readonly (Interpolation)[];
 }
 
 export interface FunctionDefinition {
-  readonly $type: 'function_definition';
+  readonly $type: TSKindId.FunctionDefinition;
   readonly $fields: {
-    readonly async_marker?: BooleanKeyword<"async">;
+    readonly async_marker?: BooleanKeyword<AsyncMarker>;
     readonly name: Identifier;
     readonly type_parameters?: TypeParameter;
     readonly parameters: Parameters;
@@ -860,14 +1715,14 @@ export interface FunctionDefinition {
 }
 
 export interface FutureImportStatement {
-  readonly $type: 'future_import_statement';
+  readonly $type: TSKindId.FutureImportStatement;
   readonly $fields: {
     readonly name: NonEmptyArray<DottedName | AliasedImport>;
   };
 }
 
 export interface GeneratorExpression {
-  readonly $type: 'generator_expression';
+  readonly $type: TSKindId.GeneratorExpression;
   readonly $fields: {
     readonly body: Expression;
   };
@@ -875,7 +1730,7 @@ export interface GeneratorExpression {
 }
 
 export interface GenericType {
-  readonly $type: 'generic_type';
+  readonly $type: TSKindId.GenericType;
   readonly $fields: {
     readonly identifier: Identifier;
     readonly type_parameter: TypeParameter;
@@ -883,19 +1738,19 @@ export interface GenericType {
 }
 
 export interface GlobalStatement {
-  readonly $type: 'global_statement';
+  readonly $type: TSKindId.GlobalStatement;
   readonly $children: NonEmptyArray<Identifier>;
 }
 
 export interface IfClause {
-  readonly $type: 'if_clause';
+  readonly $type: TSKindId.IfClause;
   readonly $fields: {
     readonly expression: Expression;
   };
 }
 
 export interface IfStatement {
-  readonly $type: 'if_statement';
+  readonly $type: TSKindId.IfStatement;
   readonly $fields: {
     readonly condition: Expression;
     readonly consequence: Suite;
@@ -904,7 +1759,7 @@ export interface IfStatement {
 }
 
 export interface ImportFromStatement {
-  readonly $type: 'import_from_statement';
+  readonly $type: TSKindId.ImportFromStatement;
   readonly $fields: {
     readonly module_name: RelativeImport | DottedName;
   };
@@ -912,14 +1767,14 @@ export interface ImportFromStatement {
 }
 
 export interface ImportStatement {
-  readonly $type: 'import_statement';
+  readonly $type: TSKindId.ImportStatement;
   readonly $fields: {
     readonly name: NonEmptyArray<DottedName | AliasedImport>;
   };
 }
 
 export interface Interpolation {
-  readonly $type: 'interpolation';
+  readonly $type: TSKindId.Interpolation;
   readonly $fields: {
     readonly expression: FExpression;
     readonly type_conversion?: TypeConversion;
@@ -928,7 +1783,7 @@ export interface Interpolation {
 }
 
 export interface KeywordArgument {
-  readonly $type: 'keyword_argument';
+  readonly $type: TSKindId.KeywordArgument;
   readonly $fields: {
     readonly name: Identifier | KeywordIdentifier;
     readonly value: Expression;
@@ -936,7 +1791,7 @@ export interface KeywordArgument {
 }
 
 export interface KeywordPattern {
-  readonly $type: 'keyword_pattern';
+  readonly $type: TSKindId.KeywordPattern;
   readonly $fields: {
     readonly identifier: Identifier;
     readonly simple_pattern: SimplePattern;
@@ -944,7 +1799,7 @@ export interface KeywordPattern {
 }
 
 export interface Lambda {
-  readonly $type: 'lambda';
+  readonly $type: TSKindId.Lambda;
   readonly $fields: {
     readonly parameters?: LambdaParameters;
     readonly body: Expression;
@@ -952,12 +1807,12 @@ export interface Lambda {
 }
 
 export interface LambdaParameters {
-  readonly $type: 'lambda_parameters';
+  readonly $type: TSKindId.LambdaParameters;
   readonly $children: NonEmptyArray<Parameter>;
 }
 
 export interface LambdaWithinForInClause {
-  readonly $type: 'lambda_within_for_in_clause';
+  readonly $type: TSKindId.LambdaWithinForInClause;
   readonly $fields: {
     readonly parameters?: LambdaParameters;
     readonly body: ExpressionWithinForInClause;
@@ -965,12 +1820,12 @@ export interface LambdaWithinForInClause {
 }
 
 export interface List {
-  readonly $type: 'list';
+  readonly $type: TSKindId.List;
   readonly $children: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
 }
 
 export interface ListComprehension {
-  readonly $type: 'list_comprehension';
+  readonly $type: TSKindId.ListComprehension;
   readonly $fields: {
     readonly body: Expression;
   };
@@ -978,24 +1833,24 @@ export interface ListComprehension {
 }
 
 export interface ListPattern {
-  readonly $type: 'list_pattern';
+  readonly $type: TSKindId.ListPattern;
   readonly $children: readonly (Pattern)[];
 }
 
 export interface ListSplat {
-  readonly $type: 'list_splat';
+  readonly $type: TSKindId.ListSplat;
   readonly $fields: {
     readonly expression: Expression;
   };
 }
 
 export interface ListSplatPattern {
-  readonly $type: 'list_splat_pattern';
+  readonly $type: TSKindId.ListSplatPattern;
   readonly $children: readonly [Identifier | KeywordIdentifier | Subscript | Attribute];
 }
 
 export interface MatchStatement {
-  readonly $type: 'match_statement';
+  readonly $type: TSKindId.MatchStatement;
   readonly $fields: {
     readonly subject: NonEmptyArray<Expression>;
     readonly body: MatchBlock;
@@ -1003,7 +1858,7 @@ export interface MatchStatement {
 }
 
 export interface MemberType {
-  readonly $type: 'member_type';
+  readonly $type: TSKindId.MemberType;
   readonly $fields: {
     readonly base_type: Type;
     readonly identifier: Identifier;
@@ -1011,12 +1866,12 @@ export interface MemberType {
 }
 
 export interface Module {
-  readonly $type: 'module';
+  readonly $type: TSKindId.Module;
   readonly $children: readonly (Statement)[];
 }
 
 export interface NamedExpression {
-  readonly $type: 'named_expression';
+  readonly $type: TSKindId.NamedExpression;
   readonly $fields: {
     readonly name: NamedExpressionLhs;
     readonly value: Expression;
@@ -1024,19 +1879,19 @@ export interface NamedExpression {
 }
 
 export interface NonlocalStatement {
-  readonly $type: 'nonlocal_statement';
+  readonly $type: TSKindId.NonlocalStatement;
   readonly $children: NonEmptyArray<Identifier>;
 }
 
 export interface NotOperator {
-  readonly $type: 'not_operator';
+  readonly $type: TSKindId.NotOperator;
   readonly $fields: {
     readonly argument: Expression;
   };
 }
 
 export interface Pair {
-  readonly $type: 'pair';
+  readonly $type: TSKindId.Pair;
   readonly $fields: {
     readonly key: Expression;
     readonly value: Expression;
@@ -1044,27 +1899,27 @@ export interface Pair {
 }
 
 export interface Parameters {
-  readonly $type: 'parameters';
+  readonly $type: TSKindId.Parameters;
   readonly $children: readonly (Parameter)[];
 }
 
 export interface ParenthesizedExpression {
-  readonly $type: 'parenthesized_expression';
+  readonly $type: TSKindId.ParenthesizedExpression;
   readonly $children: readonly [Expression | Yield];
 }
 
 export interface ParenthesizedListSplat {
-  readonly $type: 'parenthesized_list_splat';
+  readonly $type: TSKindId.ParenthesizedListSplat;
   readonly $children: readonly [ParenthesizedListSplat | ListSplat];
 }
 
 export interface PatternList {
-  readonly $type: 'pattern_list';
+  readonly $type: TSKindId.PatternList;
   readonly $children: NonEmptyArray<Pattern | Pattern>;
 }
 
 export interface PrintStatement {
-  readonly $type: 'print_statement';
+  readonly $type: TSKindId.PrintStatement;
   readonly $fields: {
     readonly argument: readonly (Expression)[];
   };
@@ -1072,7 +1927,7 @@ export interface PrintStatement {
 }
 
 export interface RaiseStatement {
-  readonly $type: 'raise_statement';
+  readonly $type: TSKindId.RaiseStatement;
   readonly $fields: {
     readonly cause?: Expression;
   };
@@ -1080,7 +1935,7 @@ export interface RaiseStatement {
 }
 
 export interface RelativeImport {
-  readonly $type: 'relative_import';
+  readonly $type: TSKindId.RelativeImport;
   readonly $fields: {
     readonly import_prefix: ImportPrefix;
     readonly dotted_name?: DottedName;
@@ -1088,17 +1943,17 @@ export interface RelativeImport {
 }
 
 export interface ReturnStatement {
-  readonly $type: 'return_statement';
+  readonly $type: TSKindId.ReturnStatement;
   readonly $children: readonly [Expressions];
 }
 
 export interface Set {
-  readonly $type: 'set';
+  readonly $type: TSKindId.Set;
   readonly $children: NonEmptyArray<Expression | Yield | ListSplat | ParenthesizedListSplat>;
 }
 
 export interface SetComprehension {
-  readonly $type: 'set_comprehension';
+  readonly $type: TSKindId.SetComprehension;
   readonly $fields: {
     readonly body: Expression;
   };
@@ -1106,7 +1961,7 @@ export interface SetComprehension {
 }
 
 export interface Slice {
-  readonly $type: 'slice';
+  readonly $type: TSKindId.Slice;
   readonly $fields: {
     readonly start?: Expression;
     readonly stop?: Expression;
@@ -1115,22 +1970,22 @@ export interface Slice {
 }
 
 export interface SplatPattern {
-  readonly $type: 'splat_pattern';
+  readonly $type: TSKindId.SplatPattern;
   readonly $fields: {
-    readonly identifier: "*" | "**";
+    readonly identifier: _Identifier;
   };
   readonly $children: readonly [Identifier];
 }
 
 export interface SplatType {
-  readonly $type: 'splat_type';
+  readonly $type: TSKindId.SplatType;
   readonly $fields: {
-    readonly identifier: "*" | "**" | Identifier;
+    readonly identifier: _Identifier | Identifier;
   };
 }
 
 export interface String {
-  readonly $type: 'string';
+  readonly $type: TSKindId.String;
   readonly $fields: {
     readonly string_start: StringStart;
     readonly content: readonly (Interpolation | StringContent)[];
@@ -1139,12 +1994,12 @@ export interface String {
 }
 
 export interface StringContent {
-  readonly $type: 'string_content';
+  readonly $type: TSKindId.StringContent;
   readonly $children: NonEmptyArray<EscapeInterpolation | EscapeSequence | "\\" | _StringContent>;
 }
 
 export interface Subscript {
-  readonly $type: 'subscript';
+  readonly $type: TSKindId.Subscript;
   readonly $fields: {
     readonly value: PrimaryExpression;
     readonly subscript: NonEmptyArray<Expression | Slice>;
@@ -1152,7 +2007,7 @@ export interface Subscript {
 }
 
 export interface TryStatement {
-  readonly $type: 'try_statement';
+  readonly $type: TSKindId.TryStatement;
   readonly $fields: {
     readonly body: Suite;
     readonly except_clauses: readonly (ExceptClause)[];
@@ -1162,36 +2017,36 @@ export interface TryStatement {
 }
 
 export interface Tuple {
-  readonly $type: 'tuple';
+  readonly $type: TSKindId.Tuple;
   readonly $children: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
 }
 
 export interface TuplePattern {
-  readonly $type: 'tuple_pattern';
+  readonly $type: TSKindId.TuplePattern;
   readonly $children: readonly (Pattern)[];
 }
 
 export interface Type {
-  readonly $type: 'type';
+  readonly $type: TSKindId.Type;
   readonly $children: readonly [Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType];
 }
 
 export interface TypeAliasStatement {
-  readonly $type: 'type_alias_statement';
+  readonly $type: TSKindId.TypeAliasStatement;
   readonly $fields: {
-    readonly type: AutoStamp<"type">;
+    readonly type: AutoStamp<TypeAliasStatementType>;
     readonly left: Type;
     readonly right: Type;
   };
 }
 
 export interface TypeParameter {
-  readonly $type: 'type_parameter';
+  readonly $type: TSKindId.TypeParameter;
   readonly $children: NonEmptyArray<Type>;
 }
 
 export interface TypedDefaultParameter {
-  readonly $type: 'typed_default_parameter';
+  readonly $type: TSKindId.TypedDefaultParameter;
   readonly $fields: {
     readonly name: Identifier;
     readonly type: Type;
@@ -1200,7 +2055,7 @@ export interface TypedDefaultParameter {
 }
 
 export interface TypedParameter {
-  readonly $type: 'typed_parameter';
+  readonly $type: TSKindId.TypedParameter;
   readonly $fields: {
     readonly type: Type;
   };
@@ -1208,20 +2063,20 @@ export interface TypedParameter {
 }
 
 export interface UnaryOperator {
-  readonly $type: 'unary_operator';
+  readonly $type: TSKindId.UnaryOperator;
   readonly $fields: {
-    readonly operator: "+" | "-" | "~";
+    readonly operator: UnaryOperatorOperator;
     readonly argument: PrimaryExpression;
   };
 }
 
 export interface UnionPattern {
-  readonly $type: 'union_pattern';
+  readonly $type: TSKindId.UnionPattern;
   readonly $children: NonEmptyArray<SimplePattern | SimplePattern>;
 }
 
 export interface UnionType {
-  readonly $type: 'union_type';
+  readonly $type: TSKindId.UnionType;
   readonly $fields: {
     readonly left: Type;
     readonly right: Type;
@@ -1229,7 +2084,7 @@ export interface UnionType {
 }
 
 export interface WhileStatement {
-  readonly $type: 'while_statement';
+  readonly $type: TSKindId.WhileStatement;
   readonly $fields: {
     readonly condition: Expression;
     readonly body: Suite;
@@ -1238,86 +2093,93 @@ export interface WhileStatement {
 }
 
 export interface WithClauseBare {
-  readonly $type: 'with_clause_bare';
+  readonly $type: "with_clause_bare";
   readonly $children: NonEmptyArray<WithItem>;
 }
 
 export interface WithClauseParen {
-  readonly $type: 'with_clause_paren';
+  readonly $type: "with_clause_paren";
   readonly $children: NonEmptyArray<WithItem>;
 }
 
 export interface WithClauseUFormBare {
-  readonly $type: 'with_clause';
+  readonly $type: TSKindId.WithClause;
   readonly $variant: 'bare';
 }
 
 export interface WithClauseUFormParen {
-  readonly $type: 'with_clause';
+  readonly $type: TSKindId.WithClause;
   readonly $variant: 'paren';
   readonly $children: readonly [_WithClauseParen];
 }
 
 export type WithClause = WithClauseUFormBare | WithClauseUFormParen;
 export interface WithItem {
-  readonly $type: 'with_item';
+  readonly $type: TSKindId.WithItem;
   readonly $fields: {
     readonly value: Expression;
   };
 }
 
 export interface WithStatement {
-  readonly $type: 'with_statement';
+  readonly $type: TSKindId.WithStatement;
   readonly $fields: {
-    readonly async_marker?: BooleanKeyword<"async">;
+    readonly async_marker?: BooleanKeyword<AsyncMarker>;
     readonly with_clause: WithClause;
     readonly body: Suite;
   };
 }
 
 export interface Yield {
-  readonly $type: 'yield';
+  readonly $type: TSKindId.Yield;
   readonly $children: readonly [Expression | Expressions];
 }
 
 
 // Leaf node types
-export type IsNot = Terminal<"_is_not", string>;
-export type NotIn = Terminal<"_not_in", string>;
-export type BreakStatement = Terminal<"break_statement", "break">;
-export type Comment = Terminal<"comment", string>;
-export type ContinueStatement = Terminal<"continue_statement", "continue">;
-export type EscapeSequence = Terminal<"escape_sequence", string>;
-export type False = Terminal<"false", "False">;
-export type Float = Terminal<"float", string>;
-export type Identifier = Terminal<"identifier", string>;
-export type ImportPrefix = Terminal<"import_prefix", string>;
-export type Integer = Terminal<"integer", string>;
-export type LineContinuation = Terminal<"line_continuation", string>;
-export type None = Terminal<"none", "None">;
-export type PassStatement = Terminal<"pass_statement", "pass">;
-export type True = Terminal<"true", "True">;
-export type TypeConversion = Terminal<"type_conversion", string>;
-export type Newline = Terminal<"_newline", string>;
-export type Indent = Terminal<"_indent", string>;
-export type Dedent = Terminal<"_dedent", string>;
-export type StringStart = Terminal<"string_start", string>;
-export type _StringContent = Terminal<"_string_content", string>;
-export type EscapeInterpolation = Terminal<"escape_interpolation", string>;
-export type StringEnd = Terminal<"string_end", string>;
+export type AsyncMarker = Terminal<TSKindId.Async, "async">;
+export type AugmentedAssignmentOperator = Terminal<TSKindId.PlusEq | TSKindId.DashEq | TSKindId.StarEq | TSKindId.SlashEq | TSKindId.AtEq | TSKindId.SlashSlashEq | TSKindId.PercentEq | TSKindId.StarStarEq | TSKindId.GtGtEq | TSKindId.LtLtEq | TSKindId.AmpEq | TSKindId.CaretEq | TSKindId.PipeEq, "+=" | "-=" | "*=" | "/=" | "@=" | "//=" | "%=" | "**=" | ">>=" | "<<=" | "&=" | "^=" | "|=">;
+export type BinaryOperatorOperator = Terminal<TSKindId.Plus, "+">;
+export type BooleanOperatorOperator = Terminal<TSKindId.And, "and">;
+export type _Identifier = Terminal<TSKindId.Star | TSKindId.StarStar, "*" | "**">;
+export type IsNot = Terminal<TSKindId.IsNot, string>;
+export type NotIn = Terminal<TSKindId.NotIn, string>;
+export type TypeAliasStatementType = Terminal<TSKindId.Type, "type">;
+export type UnaryOperatorOperator = Terminal<TSKindId.Plus | TSKindId.Dash | TSKindId.Tilde, "+" | "-" | "~">;
+export type BreakStatement = Terminal<TSKindId.BreakStatement, "break">;
+export type Comment = Terminal<TSKindId.Comment, string>;
+export type ContinueStatement = Terminal<TSKindId.ContinueStatement, "continue">;
+export type EscapeSequence = Terminal<TSKindId.EscapeSequence, string>;
+export type False = Terminal<TSKindId.False, "False">;
+export type Float = Terminal<TSKindId.Float, string>;
+export type Identifier = Terminal<TSKindId.Identifier, string>;
+export type ImportPrefix = Terminal<TSKindId.ImportPrefix, string>;
+export type Integer = Terminal<TSKindId.Integer, string>;
+export type LineContinuation = Terminal<TSKindId.LineContinuation, string>;
+export type None = Terminal<TSKindId.None, "None">;
+export type PassStatement = Terminal<TSKindId.PassStatement, "pass">;
+export type True = Terminal<TSKindId.True, "True">;
+export type TypeConversion = Terminal<TSKindId.TypeConversion, string>;
+export type Newline = Terminal<TSKindId.Newline, string>;
+export type Indent = Terminal<TSKindId.Indent, string>;
+export type Dedent = Terminal<TSKindId.Dedent, string>;
+export type StringStart = Terminal<TSKindId.StringStart, string>;
+export type _StringContent = Terminal<TSKindId._StringContent, string>;
+export type EscapeInterpolation = Terminal<TSKindId.EscapeInterpolation, string>;
+export type StringEnd = Terminal<TSKindId.StringEnd, string>;
 export type CloseBracket = Terminal<"]", string>;
 export type CloseParen = Terminal<")", string>;
 export type CloseBrace = Terminal<"}", string>;
-export type Except = Terminal<"except", string>;
+export type Except = Terminal<TSKindId.Except, string>;
+
+export type AsPatternTarget = Terminal<"as_pattern_target", string>;
 
 // Tree types
 export interface _AsPatternTree extends AnyTreeNode { readonly type: "_as_pattern"; }
-export interface AsPatternTargetTree extends AnyTreeNode { readonly type: "_as_pattern_target"; }
 export interface AssignmentEqTree extends AnyTreeNode { readonly type: "_assignment_eq"; }
 export interface AssignmentTypeTree extends AnyTreeNode { readonly type: "_assignment_type"; }
 export interface AssignmentTypedTree extends AnyTreeNode { readonly type: "_assignment_typed"; }
 export interface ComprehensionClausesTree extends AnyTreeNode { readonly type: "_comprehension_clauses"; }
-export interface FormatExpressionTree extends AnyTreeNode { readonly type: "_format_expression"; }
 export interface ImportListTree extends AnyTreeNode { readonly type: "_import_list"; }
 export interface KeyValuePatternTree extends AnyTreeNode { readonly type: "_key_value_pattern"; }
 export interface _ListPatternTree extends AnyTreeNode { readonly type: "_list_pattern"; }
@@ -1438,8 +2300,15 @@ export interface WithClauseUFormParenTree extends TreeNode<'with_clause'> {}
 export interface WithItemTree extends TreeNode<'with_item'> {}
 export interface WithStatementTree extends TreeNode<'with_statement'> {}
 export interface YieldTree extends TreeNode<'yield'> {}
+export interface AsyncMarkerTree extends AnyTreeNode { readonly type: "_async_marker"; }
+export interface AugmentedAssignmentOperatorTree extends AnyTreeNode { readonly type: "_augmented_assignment_operator"; }
+export interface BinaryOperatorOperatorTree extends AnyTreeNode { readonly type: "_binary_operator_operator"; }
+export interface BooleanOperatorOperatorTree extends AnyTreeNode { readonly type: "_boolean_operator_operator"; }
+export interface _IdentifierTree extends AnyTreeNode { readonly type: "_identifier"; }
 export interface IsNotTree extends AnyTreeNode { readonly type: "_is_not"; }
 export interface NotInTree extends AnyTreeNode { readonly type: "_not_in"; }
+export interface TypeAliasStatementTypeTree extends AnyTreeNode { readonly type: "_type_alias_statement_type"; }
+export interface UnaryOperatorOperatorTree extends AnyTreeNode { readonly type: "_unary_operator_operator"; }
 export interface BreakStatementTree extends AnyTreeNode { readonly type: "break_statement"; }
 export interface CommentTree extends TreeNode<'comment'> {}
 export interface ContinueStatementTree extends AnyTreeNode { readonly type: "continue_statement"; }
@@ -1468,8 +2337,6 @@ export interface ExceptTree extends AnyTreeNode { readonly type: "except"; }
 export interface AsTree extends AnyTreeNode { readonly type: "as"; }
 export interface AsyncTree extends AnyTreeNode { readonly type: "async"; }
 export interface AssertTree extends AnyTreeNode { readonly type: "assert"; }
-export interface AndTree extends AnyTreeNode { readonly type: "and"; }
-export interface OrTree extends AnyTreeNode { readonly type: "or"; }
 export interface BreakTree extends AnyTreeNode { readonly type: "break"; }
 export interface CaseTree extends AnyTreeNode { readonly type: "case"; }
 export interface ClassTree extends AnyTreeNode { readonly type: "class"; }
@@ -1692,23 +2559,21 @@ export type PrimaryExpression =
 export type PrimaryExpressionTree = AwaitTree | BinaryOperatorTree | IdentifierTree | KeywordIdentifierTree | StringTree | ConcatenatedStringTree | IntegerTree | FloatTree | TrueTree | FalseTree | NoneTree | UnaryOperatorTree | AttributeTree | SubscriptTree | CallTree | ListTree | ListComprehensionTree | DictionaryTree | DictionaryComprehensionTree | SetTree | SetComprehensionTree | TupleTree | ParenthesizedExpressionTree | GeneratorExpressionTree | ListSplatPatternTree;
 
 // Token type aliases (only tokens referenced in field/child unions)
-export type Ellipsis2 = Terminal<"ellipsis">;
+export type Ellipsis2 = Terminal<TSKindId.Ellipsis2>;
 export interface Ellipsis2Tree extends AnyTreeNode { readonly type: "ellipsis"; }
-export type KeywordSeparator = Terminal<"keyword_separator">;
+export type KeywordSeparator = Terminal<TSKindId.KeywordSeparator>;
 export interface KeywordSeparatorTree extends AnyTreeNode { readonly type: "keyword_separator"; }
-export type PositionalSeparator = Terminal<"positional_separator">;
+export type PositionalSeparator = Terminal<TSKindId.PositionalSeparator>;
 export interface PositionalSeparatorTree extends AnyTreeNode { readonly type: "positional_separator"; }
-export type WildcardImport = Terminal<"wildcard_import">;
+export type WildcardImport = Terminal<TSKindId.WildcardImport>;
 export interface WildcardImportTree extends AnyTreeNode { readonly type: "wildcard_import"; }
 
 export type PythonNode =
   | _AsPattern
-  | AsPatternTarget
   | AssignmentEq
   | AssignmentType
   | AssignmentTyped
   | ComprehensionClauses
-  | FormatExpression
   | ImportList
   | KeyValuePattern
   | _ListPattern
@@ -1827,12 +2692,10 @@ export type PythonNode =
 
 export interface KindMap {
   '_as_pattern': _AsPattern;
-  '_as_pattern_target': AsPatternTarget;
   '_assignment_eq': AssignmentEq;
   '_assignment_type': AssignmentType;
   '_assignment_typed': AssignmentTyped;
   '_comprehension_clauses': ComprehensionClauses;
-  '_format_expression': FormatExpression;
   '_import_list': ImportList;
   '_key_value_pattern': KeyValuePattern;
   '_list_pattern': _ListPattern;
@@ -1947,8 +2810,15 @@ export interface KindMap {
   'with_item': WithItem;
   'with_statement': WithStatement;
   'yield': Yield;
+  '_async_marker': AsyncMarker;
+  '_augmented_assignment_operator': AugmentedAssignmentOperator;
+  '_binary_operator_operator': BinaryOperatorOperator;
+  '_boolean_operator_operator': BooleanOperatorOperator;
+  '_identifier': _Identifier;
   '_is_not': IsNot;
   '_not_in': NotIn;
+  '_type_alias_statement_type': TypeAliasStatementType;
+  '_unary_operator_operator': UnaryOperatorOperator;
   'break_statement': BreakStatement;
   'comment': Comment;
   'continue_statement': ContinueStatement;
@@ -1984,12 +2854,10 @@ export interface VariantMap {
 
 // Per-kind namespace interfaces — one computed base per kind (spec 008 US1)
 export interface _AsPatternNs extends NodeNs<_AsPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AsPatternTargetNs extends NodeNs<AsPatternTarget, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AssignmentEqNs extends NodeNs<AssignmentEq, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AssignmentTypeNs extends NodeNs<AssignmentType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AssignmentTypedNs extends NodeNs<AssignmentTyped, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ComprehensionClausesNs extends NodeNs<ComprehensionClauses, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface FormatExpressionNs extends NodeNs<FormatExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ImportListNs extends NodeNs<ImportList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface KeyValuePatternNs extends NodeNs<KeyValuePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _ListPatternNs extends NodeNs<_ListPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -2107,12 +2975,10 @@ export interface YieldNs extends NodeNs<Yield, LeafScalarMap, LeafStringMap, Nam
 
 export interface NamespaceMap {
   '_as_pattern': _AsPatternNs;
-  '_as_pattern_target': AsPatternTargetNs;
   '_assignment_eq': AssignmentEqNs;
   '_assignment_type': AssignmentTypeNs;
   '_assignment_typed': AssignmentTypedNs;
   '_comprehension_clauses': ComprehensionClausesNs;
-  '_format_expression': FormatExpressionNs;
   '_import_list': ImportListNs;
   '_key_value_pattern': KeyValuePatternNs;
   '_list_pattern': _ListPatternNs;
@@ -2243,13 +3109,6 @@ export namespace _AsPattern {
   export type Tree = TreeFor<'_as_pattern'>;
   export type Kind = '_as_pattern';
 }
-export namespace AsPatternTarget {
-  export type Config = ConfigFor<'_as_pattern_target'>;
-  export type Fluent = FluentFor<'_as_pattern_target'>;
-  export type Loose = LooseFor<'_as_pattern_target'>;
-  export type Tree = TreeFor<'_as_pattern_target'>;
-  export type Kind = '_as_pattern_target';
-}
 export namespace AssignmentEq {
   export type Config = ConfigFor<'_assignment_eq'>;
   export type Fluent = FluentFor<'_assignment_eq'>;
@@ -2277,13 +3136,6 @@ export namespace ComprehensionClauses {
   export type Loose = LooseFor<'_comprehension_clauses'>;
   export type Tree = TreeFor<'_comprehension_clauses'>;
   export type Kind = '_comprehension_clauses';
-}
-export namespace FormatExpression {
-  export type Config = ConfigFor<'_format_expression'>;
-  export type Fluent = FluentFor<'_format_expression'>;
-  export type Loose = LooseFor<'_format_expression'>;
-  export type Tree = TreeFor<'_format_expression'>;
-  export type Kind = '_format_expression';
 }
 export namespace ImportList {
   export type Config = ConfigFor<'_import_list'>;
@@ -3083,3 +3935,2483 @@ export namespace Yield {
   export type Tree = TreeFor<'yield'>;
   export type Kind = 'yield';
 }
+
+// Native render transport types — data-only JS → native boundary
+export interface TerminalTransport<ID extends number = number, V extends string = string> {
+  readonly $type: ID;
+  readonly $source?: 'ts' | 'sg' | 'factory';
+  readonly $named?: boolean;
+  readonly $text: V;
+  readonly $span?: { readonly start: number; readonly end: number };
+  readonly $nodeId?: number;
+}
+
+export interface LiteralTransport<ID extends number = number, V extends string = string> extends TerminalTransport<ID, V> {}
+
+export namespace _AsPattern {
+  export interface Transport {
+    readonly $type: TSKindId._AsPattern;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [CasePattern.Transport | Identifier.Transport];
+  }
+}
+
+export namespace AssignmentEq {
+  export interface Transport {
+    readonly $type: TSKindId.AssignmentEq;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly right: RightHandSide.Transport;
+  }
+}
+
+export namespace AssignmentType {
+  export interface Transport {
+    readonly $type: TSKindId.AssignmentType;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type: Type.Transport;
+  }
+}
+
+export namespace AssignmentTyped {
+  export interface Transport {
+    readonly $type: TSKindId.AssignmentTyped;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type: Type.Transport;
+    readonly right: RightHandSide.Transport;
+  }
+}
+
+export namespace AsyncMarker {
+  export type Transport = boolean;
+}
+
+export namespace AugmentedAssignmentOperator {
+  export const enum Values {
+    PlusEq = TSKindId.PlusEq,
+    DashEq = TSKindId.DashEq,
+    StarEq = TSKindId.StarEq,
+    SlashEq = TSKindId.SlashEq,
+    AtEq = TSKindId.AtEq,
+    SlashSlashEq = TSKindId.SlashSlashEq,
+    PercentEq = TSKindId.PercentEq,
+    StarStarEq = TSKindId.StarStarEq,
+    GtGtEq = TSKindId.GtGtEq,
+    LtLtEq = TSKindId.LtLtEq,
+    AmpEq = TSKindId.AmpEq,
+    CaretEq = TSKindId.CaretEq,
+    PipeEq = TSKindId.PipeEq,
+  }
+  export type Transport = Values;
+}
+
+export namespace BinaryOperatorOperator {
+  export type Transport = boolean;
+}
+
+export namespace BooleanOperatorOperator {
+  export type Transport = boolean;
+}
+
+export namespace ComprehensionClauses {
+  export interface Transport {
+    readonly $type: TSKindId.ComprehensionClauses;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (ForInClause.Transport | IfClause.Transport)[];
+  }
+}
+
+export namespace _Identifier {
+  export const enum Values {
+    Star = TSKindId.Star,
+    StarStar = TSKindId.StarStar,
+  }
+  export type Transport = Values;
+}
+
+export namespace ImportList {
+  export interface Transport {
+    readonly $type: TSKindId.ImportList;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: readonly (DottedName.Transport | AliasedImport.Transport)[];
+  }
+}
+
+export namespace IsNot {
+  export type Transport = TerminalTransport<TSKindId.IsNot, string>;
+}
+
+export namespace KeyValuePattern {
+  export interface Transport {
+    readonly $type: TSKindId.KeyValuePattern;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly key: SimplePattern.Transport;
+    readonly value: CasePattern.Transport;
+  }
+}
+
+export namespace KwAsyncMarker {
+  export type Transport = TerminalTransport<TSKindId.Async, "async">;
+}
+
+export namespace KwType {
+  export type Transport = TerminalTransport<TSKindId.Type, "type">;
+}
+
+export namespace _ListPattern {
+  export interface Transport {
+    readonly $type: TSKindId._ListPattern;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (CasePattern.Transport)[];
+  }
+}
+
+export namespace MatchBlock {
+  export interface Transport {
+    readonly $type: TSKindId.MatchBlock;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [MatchBlockBlock.Transport];
+  }
+}
+
+export namespace MatchBlockBlock {
+  export interface Transport {
+    readonly $type: TSKindId.MatchBlockBlock;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly alternative: readonly (CaseClause.Transport)[];
+  }
+}
+
+export namespace NotEscapeSequence {
+  export type Transport = TerminalTransport<TSKindId.NotEscapeSequence, "\\">;
+}
+
+export namespace NotIn {
+  export type Transport = TerminalTransport<TSKindId.NotIn, string>;
+}
+
+export namespace SimplePatternNegative {
+  export interface Transport {
+    readonly $type: TSKindId.SimplePatternNegative;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [Integer.Transport | Float.Transport];
+  }
+}
+
+export namespace SimpleStatements {
+  export interface Transport {
+    readonly $type: TSKindId.SimpleStatements;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (SimpleStatement.Transport)[];
+  }
+}
+
+export namespace Suite {
+  export interface Transport {
+    readonly $type: "_suite";
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [SimpleStatements.Transport | Block.Transport | Newline.Transport];
+  }
+}
+
+export namespace _TuplePattern {
+  export interface Transport {
+    readonly $type: TSKindId._TuplePattern;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (CasePattern.Transport)[];
+  }
+}
+
+export namespace TypeAliasStatementType {
+  export type Transport = boolean;
+}
+
+export namespace UnaryOperatorOperator {
+  export const enum Values {
+    Plus = TSKindId.Plus,
+    Dash = TSKindId.Dash,
+    Tilde = TSKindId.Tilde,
+  }
+  export type Transport = Values;
+}
+
+export namespace _WithClauseParen {
+  export interface Transport {
+    readonly $type: TSKindId._WithClauseParen;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (WithItem.Transport)[];
+  }
+}
+
+export namespace AliasedImport {
+  export interface Transport {
+    readonly $type: TSKindId.AliasedImport;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: DottedName.Transport;
+    readonly alias: Identifier.Transport;
+  }
+}
+
+export namespace ArgumentList {
+  export interface Transport {
+    readonly $type: TSKindId.ArgumentList;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children?: readonly (Expression.Transport | ListSplat.Transport | DictionarySplat.Transport | ParenthesizedListSplat.Transport | KeywordArgument.Transport)[];
+  }
+}
+
+export namespace AsPattern {
+  export interface Transport {
+    readonly $type: TSKindId.AsPattern;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly expression: Expression.Transport;
+    readonly alias: TerminalTransport;
+  }
+}
+
+export namespace AssertStatement {
+  export interface Transport {
+    readonly $type: TSKindId.AssertStatement;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Expression.Transport)[];
+  }
+}
+
+export namespace AssignmentUFormEq {
+  export interface Transport {
+    readonly $type: TSKindId.Assignment;
+    readonly $variant: 'eq';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly left: LeftHandSide.Transport;
+    readonly $children: readonly [AssignmentEq.Transport];
+  }
+}
+
+export namespace AssignmentUFormType {
+  export interface Transport {
+    readonly $type: TSKindId.Assignment;
+    readonly $variant: 'type';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly left: LeftHandSide.Transport;
+    readonly $children: readonly [AssignmentType.Transport];
+  }
+}
+
+export namespace AssignmentUFormTyped {
+  export interface Transport {
+    readonly $type: TSKindId.Assignment;
+    readonly $variant: 'typed';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly left: LeftHandSide.Transport;
+    readonly $children: readonly [AssignmentTyped.Transport];
+  }
+}
+
+export namespace Assignment {
+  export type Transport = AssignmentUFormEq.Transport | AssignmentUFormType.Transport | AssignmentUFormTyped.Transport;
+}
+
+export namespace Attribute {
+  export interface Transport {
+    readonly $type: TSKindId.Attribute;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly object: PrimaryExpression.Transport;
+    readonly attribute: Identifier.Transport;
+  }
+}
+
+export namespace AugmentedAssignment {
+  export interface Transport {
+    readonly $type: TSKindId.AugmentedAssignment;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly left: LeftHandSide.Transport;
+    readonly operator: AugmentedAssignmentOperator.Transport;
+    readonly right: RightHandSide.Transport;
+  }
+}
+
+export namespace Await {
+  export interface Transport {
+    readonly $type: TSKindId.Await;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly primary_expression: PrimaryExpression.Transport;
+  }
+}
+
+export namespace BinaryOperator {
+  export interface Transport {
+    readonly $type: TSKindId.BinaryOperator;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly left: PrimaryExpression.Transport;
+    readonly operator: BinaryOperatorOperator.Transport;
+    readonly right: PrimaryExpression.Transport;
+  }
+}
+
+export namespace Block {
+  export interface Transport {
+    readonly $type: TSKindId.Block;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Statement.Transport)[];
+  }
+}
+
+export namespace BooleanOperator {
+  export interface Transport {
+    readonly $type: TSKindId.BooleanOperator;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly left: Expression.Transport;
+    readonly operator: BooleanOperatorOperator.Transport;
+    readonly right: Expression.Transport;
+  }
+}
+
+export namespace BreakStatement {
+  export type Transport = TerminalTransport<TSKindId.BreakStatement, "break">;
+}
+
+export namespace Call {
+  export interface Transport {
+    readonly $type: TSKindId.Call;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly function: PrimaryExpression.Transport;
+    readonly arguments: GeneratorExpression.Transport | ArgumentList.Transport;
+  }
+}
+
+export namespace CaseClause {
+  export interface Transport {
+    readonly $type: TSKindId.CaseClause;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly guard?: IfClause.Transport;
+    readonly consequence: Suite.Transport;
+    readonly $children: readonly (CasePattern.Transport)[];
+  }
+}
+
+export namespace CasePattern {
+  export interface Transport {
+    readonly $type: TSKindId.CasePattern;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [_AsPattern.Transport | KeywordPattern.Transport | SimplePattern.Transport];
+  }
+}
+
+export namespace Chevron {
+  export interface Transport {
+    readonly $type: TSKindId.Chevron;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly expression: Expression.Transport;
+  }
+}
+
+export namespace ClassDefinition {
+  export interface Transport {
+    readonly $type: TSKindId.ClassDefinition;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: Identifier.Transport;
+    readonly type_parameters?: TypeParameter.Transport;
+    readonly superclasses?: ArgumentList.Transport;
+    readonly body: Suite.Transport;
+  }
+}
+
+export namespace ClassPattern {
+  export interface Transport {
+    readonly $type: TSKindId.ClassPattern;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly dotted_name: DottedName.Transport;
+    readonly arguments: readonly (CasePattern.Transport)[];
+  }
+}
+
+export namespace Comment {
+  export type Transport = TerminalTransport<TSKindId.Comment, string>;
+}
+
+export namespace ComparisonOperator {
+  export interface Transport {
+    readonly $type: TSKindId.ComparisonOperator;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly left: PrimaryExpression.Transport;
+    readonly operators: readonly (LiteralTransport<TSKindId.Lt, "<"> | LiteralTransport<TSKindId.LtEq, "<="> | LiteralTransport<TSKindId.EqEq, "=="> | LiteralTransport<TSKindId.BangEq, "!="> | LiteralTransport<TSKindId.GtEq, ">="> | LiteralTransport<TSKindId.Gt, ">"> | LiteralTransport<TSKindId.LtGt, "<>"> | LiteralTransport<TSKindId.In, "in"> | LiteralTransport<number, "not in"> | LiteralTransport<TSKindId.Is, "is"> | LiteralTransport<number, "is not">)[];
+  }
+}
+
+export namespace ComplexPattern {
+  export interface Transport {
+    readonly $type: TSKindId.ComplexPattern;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly real?: LiteralTransport<TSKindId.Dash, "-">;
+    readonly imaginary: Integer.Transport | Float.Transport;
+    readonly $children: readonly [Integer.Transport | Float.Transport];
+  }
+}
+
+export namespace ConcatenatedString {
+  export interface Transport {
+    readonly $type: TSKindId.ConcatenatedString;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (String.Transport)[];
+  }
+}
+
+export namespace ConditionalExpression {
+  export interface Transport {
+    readonly $type: TSKindId.ConditionalExpression;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly body: Expression.Transport;
+    readonly condition: Expression.Transport;
+    readonly alternative: Expression.Transport;
+  }
+}
+
+export namespace ConstrainedType {
+  export interface Transport {
+    readonly $type: TSKindId.ConstrainedType;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly base_type: Type.Transport;
+    readonly constraint: Type.Transport;
+  }
+}
+
+export namespace ContinueStatement {
+  export type Transport = TerminalTransport<TSKindId.ContinueStatement, "continue">;
+}
+
+export namespace DecoratedDefinition {
+  export interface Transport {
+    readonly $type: TSKindId.DecoratedDefinition;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly definition: ClassDefinition.Transport | FunctionDefinition.Transport;
+    readonly $children: readonly (Decorator.Transport)[];
+  }
+}
+
+export namespace Decorator {
+  export interface Transport {
+    readonly $type: TSKindId.Decorator;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly expression: Expression.Transport;
+    readonly newline?: TerminalTransport;
+  }
+}
+
+export namespace DefaultParameter {
+  export interface Transport {
+    readonly $type: TSKindId.DefaultParameter;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: Identifier.Transport | TuplePattern.Transport;
+    readonly value: Expression.Transport;
+  }
+}
+
+export namespace DeleteStatement {
+  export interface Transport {
+    readonly $type: TSKindId.DeleteStatement;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [Expressions.Transport];
+  }
+}
+
+export namespace DictPattern {
+  export interface Transport {
+    readonly $type: TSKindId.DictPattern;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (DictPatternKv.Transport)[];
+  }
+}
+
+export namespace Dictionary {
+  export interface Transport {
+    readonly $type: TSKindId.Dictionary;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Pair.Transport | DictionarySplat.Transport)[];
+  }
+}
+
+export namespace DictionaryComprehension {
+  export interface Transport {
+    readonly $type: TSKindId.DictionaryComprehension;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly body: Pair.Transport;
+    readonly $children: readonly [ComprehensionClauses.Transport];
+  }
+}
+
+export namespace DictionarySplat {
+  export interface Transport {
+    readonly $type: TSKindId.DictionarySplat;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly expression: Expression.Transport;
+  }
+}
+
+export namespace DictionarySplatPattern {
+  export interface Transport {
+    readonly $type: TSKindId.DictionarySplatPattern;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [Identifier.Transport | KeywordIdentifier.Transport | Subscript.Transport | Attribute.Transport];
+  }
+}
+
+export namespace DottedName {
+  export interface Transport {
+    readonly $type: TSKindId.DottedName;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Identifier.Transport)[];
+  }
+}
+
+export namespace ElifClause {
+  export interface Transport {
+    readonly $type: TSKindId.ElifClause;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly condition: Expression.Transport;
+    readonly consequence: Suite.Transport;
+  }
+}
+
+export namespace Ellipsis2 {
+  export type Transport = TerminalTransport<TSKindId.Ellipsis2, "...">;
+}
+
+export namespace ElseClause {
+  export interface Transport {
+    readonly $type: TSKindId.ElseClause;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly body: Suite.Transport;
+  }
+}
+
+export namespace EscapeSequence {
+  export type Transport = TerminalTransport<TSKindId.EscapeSequence, string>;
+}
+
+export namespace ExceptClause {
+  export interface Transport {
+    readonly $type: TSKindId.ExceptClause;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly value?: readonly (Expression.Transport)[];
+    readonly alias?: Expression.Transport;
+    readonly $children: readonly [Suite.Transport];
+  }
+}
+
+export namespace ExecStatement {
+  export interface Transport {
+    readonly $type: TSKindId.ExecStatement;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly code: String.Transport | Identifier.Transport;
+    readonly in_clause?: readonly (LiteralTransport<TSKindId.In, "in"> | Expression.Transport)[];
+  }
+}
+
+export namespace ExpressionList {
+  export interface Transport {
+    readonly $type: TSKindId.ExpressionList;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Expression.Transport)[];
+  }
+}
+
+export namespace ExpressionStatementTuple {
+  export interface Transport {
+    readonly $type: "expression_statement_tuple";
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Expression.Transport)[];
+  }
+}
+
+export namespace ExpressionStatementUFormTuple {
+  export interface Transport {
+    readonly $type: TSKindId.ExpressionStatement;
+    readonly $variant: 'tuple';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [ExpressionStatementTuple.Transport];
+  }
+}
+
+export namespace ExpressionStatement {
+  export type Transport = ExpressionStatementUFormTuple.Transport;
+}
+
+export namespace False {
+  export type Transport = TerminalTransport<TSKindId.False, "False">;
+}
+
+export namespace FinallyClause {
+  export interface Transport {
+    readonly $type: TSKindId.FinallyClause;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly block: Suite.Transport;
+  }
+}
+
+export namespace Float {
+  export type Transport = TerminalTransport<TSKindId.Float, string>;
+}
+
+export namespace ForInClause {
+  export interface Transport {
+    readonly $type: TSKindId.ForInClause;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly async_marker?: AsyncMarker.Transport;
+    readonly left: LeftHandSide.Transport;
+    readonly right: readonly (ExpressionWithinForInClause.Transport)[];
+  }
+}
+
+export namespace ForStatement {
+  export interface Transport {
+    readonly $type: TSKindId.ForStatement;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly async_marker?: AsyncMarker.Transport;
+    readonly left: LeftHandSide.Transport;
+    readonly right: Expressions.Transport;
+    readonly body: Suite.Transport;
+    readonly alternative?: ElseClause.Transport;
+  }
+}
+
+export namespace FormatSpecifier {
+  export interface Transport {
+    readonly $type: TSKindId.FormatSpecifier;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Interpolation.Transport)[];
+  }
+}
+
+export namespace FunctionDefinition {
+  export interface Transport {
+    readonly $type: TSKindId.FunctionDefinition;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly async_marker?: AsyncMarker.Transport;
+    readonly name: Identifier.Transport;
+    readonly type_parameters?: TypeParameter.Transport;
+    readonly parameters: Parameters.Transport;
+    readonly return_type?: Type.Transport;
+    readonly body: Suite.Transport;
+  }
+}
+
+export namespace FutureImportStatement {
+  export interface Transport {
+    readonly $type: TSKindId.FutureImportStatement;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: readonly (DottedName.Transport | AliasedImport.Transport)[];
+  }
+}
+
+export namespace GeneratorExpression {
+  export interface Transport {
+    readonly $type: TSKindId.GeneratorExpression;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly body: Expression.Transport;
+    readonly $children: readonly [ComprehensionClauses.Transport];
+  }
+}
+
+export namespace GenericType {
+  export interface Transport {
+    readonly $type: TSKindId.GenericType;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly identifier: Identifier.Transport;
+    readonly type_parameter: TypeParameter.Transport;
+  }
+}
+
+export namespace GlobalStatement {
+  export interface Transport {
+    readonly $type: TSKindId.GlobalStatement;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Identifier.Transport)[];
+  }
+}
+
+export namespace Identifier {
+  export type Transport = TerminalTransport<TSKindId.Identifier, string>;
+}
+
+export namespace IfClause {
+  export interface Transport {
+    readonly $type: TSKindId.IfClause;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly expression: Expression.Transport;
+  }
+}
+
+export namespace IfStatement {
+  export interface Transport {
+    readonly $type: TSKindId.IfStatement;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly condition: Expression.Transport;
+    readonly consequence: Suite.Transport;
+    readonly alternative?: readonly (ElifClause.Transport | ElseClause.Transport)[];
+  }
+}
+
+export namespace ImportFromStatement {
+  export interface Transport {
+    readonly $type: TSKindId.ImportFromStatement;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly module_name: RelativeImport.Transport | DottedName.Transport;
+    readonly $children: readonly [WildcardImport.Transport];
+  }
+}
+
+export namespace ImportPrefix {
+  export type Transport = TerminalTransport<TSKindId.ImportPrefix, string>;
+}
+
+export namespace ImportStatement {
+  export interface Transport {
+    readonly $type: TSKindId.ImportStatement;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: readonly (DottedName.Transport | AliasedImport.Transport)[];
+  }
+}
+
+export namespace Integer {
+  export type Transport = TerminalTransport<TSKindId.Integer, string>;
+}
+
+export namespace Interpolation {
+  export interface Transport {
+    readonly $type: TSKindId.Interpolation;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly expression: FExpression.Transport;
+    readonly type_conversion?: TypeConversion.Transport;
+    readonly format_specifier?: FormatSpecifier.Transport;
+  }
+}
+
+export namespace KeywordArgument {
+  export interface Transport {
+    readonly $type: TSKindId.KeywordArgument;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: Identifier.Transport | KeywordIdentifier.Transport;
+    readonly value: Expression.Transport;
+  }
+}
+
+export namespace KeywordPattern {
+  export interface Transport {
+    readonly $type: TSKindId.KeywordPattern;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly identifier: Identifier.Transport;
+    readonly simple_pattern: SimplePattern.Transport;
+  }
+}
+
+export namespace KeywordSeparator {
+  export type Transport = TerminalTransport<TSKindId.KeywordSeparator, "*">;
+}
+
+export namespace Lambda {
+  export interface Transport {
+    readonly $type: TSKindId.Lambda;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly parameters?: LambdaParameters.Transport;
+    readonly body: Expression.Transport;
+  }
+}
+
+export namespace LambdaParameters {
+  export interface Transport {
+    readonly $type: TSKindId.LambdaParameters;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Parameter.Transport)[];
+  }
+}
+
+export namespace LambdaWithinForInClause {
+  export interface Transport {
+    readonly $type: TSKindId.LambdaWithinForInClause;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly parameters?: LambdaParameters.Transport;
+    readonly body: ExpressionWithinForInClause.Transport;
+  }
+}
+
+export namespace LineContinuation {
+  export type Transport = TerminalTransport<TSKindId.LineContinuation, string>;
+}
+
+export namespace List {
+  export interface Transport {
+    readonly $type: TSKindId.List;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Expression.Transport | Yield.Transport | ListSplat.Transport | ParenthesizedListSplat.Transport)[];
+  }
+}
+
+export namespace ListComprehension {
+  export interface Transport {
+    readonly $type: TSKindId.ListComprehension;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly body: Expression.Transport;
+    readonly $children: readonly [ComprehensionClauses.Transport];
+  }
+}
+
+export namespace ListPattern {
+  export interface Transport {
+    readonly $type: TSKindId.ListPattern;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Pattern.Transport)[];
+  }
+}
+
+export namespace ListSplat {
+  export interface Transport {
+    readonly $type: TSKindId.ListSplat;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly expression: Expression.Transport;
+  }
+}
+
+export namespace ListSplatPattern {
+  export interface Transport {
+    readonly $type: TSKindId.ListSplatPattern;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [Identifier.Transport | KeywordIdentifier.Transport | Subscript.Transport | Attribute.Transport];
+  }
+}
+
+export namespace MatchStatement {
+  export interface Transport {
+    readonly $type: TSKindId.MatchStatement;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly subject: readonly (Expression.Transport)[];
+    readonly body: MatchBlock.Transport;
+  }
+}
+
+export namespace MemberType {
+  export interface Transport {
+    readonly $type: TSKindId.MemberType;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly base_type: Type.Transport;
+    readonly identifier: Identifier.Transport;
+  }
+}
+
+export namespace Module {
+  export interface Transport {
+    readonly $type: TSKindId.Module;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Statement.Transport)[];
+  }
+}
+
+export namespace NamedExpression {
+  export interface Transport {
+    readonly $type: TSKindId.NamedExpression;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: NamedExpressionLhs.Transport;
+    readonly value: Expression.Transport;
+  }
+}
+
+export namespace None {
+  export type Transport = TerminalTransport<TSKindId.None, "None">;
+}
+
+export namespace NonlocalStatement {
+  export interface Transport {
+    readonly $type: TSKindId.NonlocalStatement;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Identifier.Transport)[];
+  }
+}
+
+export namespace NotOperator {
+  export interface Transport {
+    readonly $type: TSKindId.NotOperator;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly argument: Expression.Transport;
+  }
+}
+
+export namespace Pair {
+  export interface Transport {
+    readonly $type: TSKindId.Pair;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly key: Expression.Transport;
+    readonly value: Expression.Transport;
+  }
+}
+
+export namespace Parameters {
+  export interface Transport {
+    readonly $type: TSKindId.Parameters;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Parameter.Transport)[];
+  }
+}
+
+export namespace ParenthesizedExpression {
+  export interface Transport {
+    readonly $type: TSKindId.ParenthesizedExpression;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [Expression.Transport | Yield.Transport];
+  }
+}
+
+export namespace ParenthesizedListSplat {
+  export interface Transport {
+    readonly $type: TSKindId.ParenthesizedListSplat;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [ParenthesizedListSplat.Transport | ListSplat.Transport];
+  }
+}
+
+export namespace PassStatement {
+  export type Transport = TerminalTransport<TSKindId.PassStatement, "pass">;
+}
+
+export namespace PatternList {
+  export interface Transport {
+    readonly $type: TSKindId.PatternList;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Pattern.Transport)[];
+  }
+}
+
+export namespace PositionalSeparator {
+  export type Transport = TerminalTransport<TSKindId.PositionalSeparator, "/">;
+}
+
+export namespace PrintStatement {
+  export interface Transport {
+    readonly $type: TSKindId.PrintStatement;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly argument: readonly (Expression.Transport)[];
+    readonly $children?: readonly [Chevron.Transport];
+  }
+}
+
+export namespace RaiseStatement {
+  export interface Transport {
+    readonly $type: TSKindId.RaiseStatement;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly cause?: Expression.Transport;
+    readonly $children?: readonly [Expressions.Transport];
+  }
+}
+
+export namespace RelativeImport {
+  export interface Transport {
+    readonly $type: TSKindId.RelativeImport;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly import_prefix: ImportPrefix.Transport;
+    readonly dotted_name?: DottedName.Transport;
+  }
+}
+
+export namespace ReturnStatement {
+  export interface Transport {
+    readonly $type: TSKindId.ReturnStatement;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children?: readonly [Expressions.Transport];
+  }
+}
+
+export namespace Set {
+  export interface Transport {
+    readonly $type: TSKindId.Set;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Expression.Transport | Yield.Transport | ListSplat.Transport | ParenthesizedListSplat.Transport)[];
+  }
+}
+
+export namespace SetComprehension {
+  export interface Transport {
+    readonly $type: TSKindId.SetComprehension;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly body: Expression.Transport;
+    readonly $children: readonly [ComprehensionClauses.Transport];
+  }
+}
+
+export namespace Slice {
+  export interface Transport {
+    readonly $type: TSKindId.Slice;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly start?: Expression.Transport;
+    readonly stop?: Expression.Transport;
+    readonly step?: Expression.Transport;
+  }
+}
+
+export namespace SplatPattern {
+  export interface Transport {
+    readonly $type: TSKindId.SplatPattern;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly identifier: _Identifier.Transport;
+    readonly $children: readonly [Identifier.Transport];
+  }
+}
+
+export namespace SplatType {
+  export interface Transport {
+    readonly $type: TSKindId.SplatType;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly identifier: _Identifier.Transport | Identifier.Transport;
+  }
+}
+
+export namespace String {
+  export interface Transport {
+    readonly $type: TSKindId.String;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly string_start: StringStart.Transport;
+    readonly content: readonly (Interpolation.Transport | StringContent.Transport)[];
+    readonly string_end: StringEnd.Transport;
+  }
+}
+
+export namespace StringContent {
+  export interface Transport {
+    readonly $type: TSKindId.StringContent;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (EscapeInterpolation.Transport | EscapeSequence.Transport | TerminalTransport<TSKindId.Bslash, "\\"> | _StringContent.Transport)[];
+  }
+}
+
+export namespace Subscript {
+  export interface Transport {
+    readonly $type: TSKindId.Subscript;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly value: PrimaryExpression.Transport;
+    readonly subscript: readonly (Expression.Transport | Slice.Transport)[];
+  }
+}
+
+export namespace True {
+  export type Transport = TerminalTransport<TSKindId.True, "True">;
+}
+
+export namespace TryStatement {
+  export interface Transport {
+    readonly $type: TSKindId.TryStatement;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly body: Suite.Transport;
+    readonly except_clauses: readonly (ExceptClause.Transport)[];
+    readonly else_clause?: ElseClause.Transport;
+    readonly finally_clause?: FinallyClause.Transport;
+  }
+}
+
+export namespace Tuple {
+  export interface Transport {
+    readonly $type: TSKindId.Tuple;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Expression.Transport | Yield.Transport | ListSplat.Transport | ParenthesizedListSplat.Transport)[];
+  }
+}
+
+export namespace TuplePattern {
+  export interface Transport {
+    readonly $type: TSKindId.TuplePattern;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Pattern.Transport)[];
+  }
+}
+
+export namespace Type {
+  export interface Transport {
+    readonly $type: TSKindId.Type;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [Expression.Transport | SplatType.Transport | GenericType.Transport | UnionType.Transport | ConstrainedType.Transport | MemberType.Transport];
+  }
+}
+
+export namespace TypeAliasStatement {
+  export interface Transport {
+    readonly $type: TSKindId.TypeAliasStatement;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type: TypeAliasStatementType.Transport;
+    readonly left: Type.Transport;
+    readonly right: Type.Transport;
+  }
+}
+
+export namespace TypeConversion {
+  export type Transport = TerminalTransport<TSKindId.TypeConversion, string>;
+}
+
+export namespace TypeParameter {
+  export interface Transport {
+    readonly $type: TSKindId.TypeParameter;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (Type.Transport)[];
+  }
+}
+
+export namespace TypedDefaultParameter {
+  export interface Transport {
+    readonly $type: TSKindId.TypedDefaultParameter;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly name: Identifier.Transport;
+    readonly type: Type.Transport;
+    readonly value: Expression.Transport;
+  }
+}
+
+export namespace TypedParameter {
+  export interface Transport {
+    readonly $type: TSKindId.TypedParameter;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly type: Type.Transport;
+    readonly $children: readonly [Identifier.Transport | ListSplatPattern.Transport | DictionarySplatPattern.Transport];
+  }
+}
+
+export namespace UnaryOperator {
+  export interface Transport {
+    readonly $type: TSKindId.UnaryOperator;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly operator: UnaryOperatorOperator.Transport;
+    readonly argument: PrimaryExpression.Transport;
+  }
+}
+
+export namespace UnionPattern {
+  export interface Transport {
+    readonly $type: TSKindId.UnionPattern;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (SimplePattern.Transport)[];
+  }
+}
+
+export namespace UnionType {
+  export interface Transport {
+    readonly $type: TSKindId.UnionType;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly left: Type.Transport;
+    readonly right: Type.Transport;
+  }
+}
+
+export namespace WhileStatement {
+  export interface Transport {
+    readonly $type: TSKindId.WhileStatement;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly condition: Expression.Transport;
+    readonly body: Suite.Transport;
+    readonly alternative?: ElseClause.Transport;
+  }
+}
+
+export namespace WildcardImport {
+  export type Transport = TerminalTransport<TSKindId.WildcardImport, "*">;
+}
+
+export namespace WithClauseBare {
+  export interface Transport {
+    readonly $type: "with_clause_bare";
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (WithItem.Transport)[];
+  }
+}
+
+export namespace WithClauseParen {
+  export interface Transport {
+    readonly $type: "with_clause_paren";
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly (WithItem.Transport)[];
+  }
+}
+
+export namespace WithClauseUFormBare {
+  export interface Transport {
+    readonly $type: TSKindId.WithClause;
+    readonly $variant: 'bare';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [WithClauseBare.Transport];
+  }
+}
+
+export namespace WithClauseUFormParen {
+  export interface Transport {
+    readonly $type: TSKindId.WithClause;
+    readonly $variant: 'paren';
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [_WithClauseParen.Transport];
+  }
+}
+
+export namespace WithClause {
+  export type Transport = WithClauseUFormBare.Transport | WithClauseUFormParen.Transport;
+}
+
+export namespace WithItem {
+  export interface Transport {
+    readonly $type: TSKindId.WithItem;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly value: Expression.Transport;
+  }
+}
+
+export namespace WithStatement {
+  export interface Transport {
+    readonly $type: TSKindId.WithStatement;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly async_marker?: AsyncMarker.Transport;
+    readonly with_clause: WithClause.Transport;
+    readonly body: Suite.Transport;
+  }
+}
+
+export namespace Yield {
+  export interface Transport {
+    readonly $type: TSKindId.Yield;
+    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeId?: number;
+    readonly $children: readonly [Expression.Transport | Expressions.Transport];
+  }
+}
+
+export namespace Newline {
+  export type Transport = TerminalTransport<TSKindId.Newline, string>;
+}
+
+export namespace Indent {
+  export type Transport = TerminalTransport<TSKindId.Indent, string>;
+}
+
+export namespace Dedent {
+  export type Transport = TerminalTransport<TSKindId.Dedent, string>;
+}
+
+export namespace StringStart {
+  export type Transport = TerminalTransport<TSKindId.StringStart, string>;
+}
+
+export namespace _StringContent {
+  export type Transport = TerminalTransport<TSKindId._StringContent, string>;
+}
+
+export namespace EscapeInterpolation {
+  export type Transport = TerminalTransport<TSKindId.EscapeInterpolation, string>;
+}
+
+export namespace StringEnd {
+  export type Transport = TerminalTransport<TSKindId.StringEnd, string>;
+}
+
+export namespace CloseBracket {
+  export type Transport = TerminalTransport<TSKindId.Rbrack, string>;
+}
+
+export namespace CloseParen {
+  export type Transport = TerminalTransport<TSKindId.Rparen, string>;
+}
+
+export namespace CloseBrace {
+  export type Transport = TerminalTransport<TSKindId.Rbrace, string>;
+}
+
+export namespace Except {
+  export type Transport = TerminalTransport<TSKindId.Except, string>;
+}
+
+export namespace As {
+  export type Transport = TerminalTransport<TSKindId.As, "as">;
+}
+
+export namespace Eq {
+  export type Transport = TerminalTransport<TSKindId.Eq, "=">;
+}
+
+export namespace Colon {
+  export type Transport = TerminalTransport<TSKindId.Colon, ":">;
+}
+
+export namespace Async {
+  export type Transport = TerminalTransport<TSKindId.Async, "async">;
+}
+
+export namespace Bracket {
+  export type Transport = TerminalTransport<TSKindId.Lbrack, "[">;
+}
+
+export namespace TokBs {
+  export type Transport = TerminalTransport<TSKindId.Bslash, "\\">;
+}
+
+export namespace Minus {
+  export type Transport = TerminalTransport<TSKindId.Dash, "-">;
+}
+
+export namespace Paren {
+  export type Transport = TerminalTransport<TSKindId.Lparen, "(">;
+}
+
+export namespace Comma {
+  export type Transport = TerminalTransport<TSKindId.Comma, ",">;
+}
+
+export namespace Assert {
+  export type Transport = TerminalTransport<TSKindId.Assert, "assert">;
+}
+
+export namespace Dot {
+  export type Transport = TerminalTransport<TSKindId.Dot, ".">;
+}
+
+export namespace Break {
+  export type Transport = TerminalTransport<TSKindId.Break, "break">;
+}
+
+export namespace Case {
+  export type Transport = TerminalTransport<TSKindId.Case, "case">;
+}
+
+export namespace Shr {
+  export type Transport = TerminalTransport<TSKindId.GtGt, ">>">;
+}
+
+export namespace Class {
+  export type Transport = TerminalTransport<TSKindId.Class, "class">;
+}
+
+export namespace If {
+  export type Transport = TerminalTransport<TSKindId.If, "if">;
+}
+
+export namespace Else {
+  export type Transport = TerminalTransport<TSKindId.Else, "else">;
+}
+
+export namespace Continue {
+  export type Transport = TerminalTransport<TSKindId.Continue, "continue">;
+}
+
+export namespace At {
+  export type Transport = TerminalTransport<TSKindId.At, "@">;
+}
+
+export namespace Del {
+  export type Transport = TerminalTransport<TSKindId.Del, "del">;
+}
+
+export namespace Brace {
+  export type Transport = TerminalTransport<TSKindId.Lbrace, "{">;
+}
+
+export namespace Starstar {
+  export type Transport = TerminalTransport<TSKindId.StarStar, "**">;
+}
+
+export namespace Elif {
+  export type Transport = TerminalTransport<TSKindId.Elif, "elif">;
+}
+
+export namespace Ellipsis {
+  export type Transport = TerminalTransport<number, "...">;
+}
+
+export namespace Star {
+  export type Transport = TerminalTransport<TSKindId.Star, "*">;
+}
+
+export namespace Exec {
+  export type Transport = TerminalTransport<TSKindId.Exec, "exec">;
+}
+
+export namespace In {
+  export type Transport = TerminalTransport<TSKindId.In, "in">;
+}
+
+export namespace False2 {
+  export type Transport = TerminalTransport<number, "False">;
+}
+
+export namespace Finally {
+  export type Transport = TerminalTransport<TSKindId.Finally, "finally">;
+}
+
+export namespace For {
+  export type Transport = TerminalTransport<TSKindId.For, "for">;
+}
+
+export namespace Def {
+  export type Transport = TerminalTransport<TSKindId.Def, "def">;
+}
+
+export namespace Arrow {
+  export type Transport = TerminalTransport<TSKindId.DashGt, "->">;
+}
+
+export namespace From {
+  export type Transport = TerminalTransport<TSKindId.From, "from">;
+}
+
+export namespace FutureU {
+  export type Transport = TerminalTransport<TSKindId.FutureU, "__future__">;
+}
+
+export namespace Import {
+  export type Transport = TerminalTransport<TSKindId.Import, "import">;
+}
+
+export namespace Global {
+  export type Transport = TerminalTransport<TSKindId.Global, "global">;
+}
+
+export namespace Match {
+  export type Transport = TerminalTransport<TSKindId.Match, "match">;
+}
+
+export namespace Coloneq {
+  export type Transport = TerminalTransport<TSKindId.ColonEq, ":=">;
+}
+
+export namespace None2 {
+  export type Transport = TerminalTransport<number, "None">;
+}
+
+export namespace Nonlocal {
+  export type Transport = TerminalTransport<TSKindId.Nonlocal, "nonlocal">;
+}
+
+export namespace Not {
+  export type Transport = TerminalTransport<TSKindId.Not, "not">;
+}
+
+export namespace Pass {
+  export type Transport = TerminalTransport<TSKindId.Pass, "pass">;
+}
+
+export namespace Slash {
+  export type Transport = TerminalTransport<TSKindId.Slash, "/">;
+}
+
+export namespace Print {
+  export type Transport = TerminalTransport<TSKindId.Print, "print">;
+}
+
+export namespace Raise {
+  export type Transport = TerminalTransport<TSKindId.Raise, "raise">;
+}
+
+export namespace Return {
+  export type Transport = TerminalTransport<TSKindId.Return, "return">;
+}
+
+export namespace Anonymous {
+  export type Transport = TerminalTransport<TSKindId.Anonymous, "_">;
+}
+
+export namespace True2 {
+  export type Transport = TerminalTransport<number, "True">;
+}
+
+export namespace Try {
+  export type Transport = TerminalTransport<TSKindId.Try, "try">;
+}
+
+export namespace Pipe {
+  export type Transport = TerminalTransport<TSKindId.Pipe, "|">;
+}
+
+export namespace While {
+  export type Transport = TerminalTransport<TSKindId.While, "while">;
+}
+
+export namespace With {
+  export type Transport = TerminalTransport<TSKindId.With, "with">;
+}
+
+export namespace CompoundStatement {
+  export type Transport = IfStatement.Transport | ForStatement.Transport | WhileStatement.Transport | TryStatement.Transport | WithStatement.Transport | FunctionDefinition.Transport | ClassDefinition.Transport | DecoratedDefinition.Transport | MatchStatement.Transport;
+}
+
+export namespace DictPatternKv {
+  export type Transport = KeyValuePattern.Transport | SplatPattern.Transport;
+}
+
+export namespace ExpressionWithinForInClause {
+  export type Transport = LambdaWithinForInClause.Transport;
+}
+
+export namespace Expressions {
+  export type Transport = ExpressionList.Transport;
+}
+
+export namespace FExpression {
+  export type Transport = ExpressionList.Transport | PatternList.Transport | Yield.Transport;
+}
+
+export namespace LeftHandSide {
+  export type Transport = PatternList.Transport;
+}
+
+export namespace NamedExpressionLhs {
+  export type Transport = Identifier.Transport;
+}
+
+export namespace RightHandSide {
+  export type Transport = ExpressionList.Transport | Assignment.Transport | AugmentedAssignment.Transport | PatternList.Transport | Yield.Transport;
+}
+
+export namespace SimplePattern {
+  export type Transport = ClassPattern.Transport | SplatPattern.Transport | UnionPattern.Transport | _ListPattern.Transport | _TuplePattern.Transport | DictPattern.Transport | String.Transport | ConcatenatedString.Transport | True.Transport | False.Transport | None.Transport | SimplePatternNegative.Transport | ComplexPattern.Transport | DottedName.Transport;
+}
+
+export namespace SimpleStatement {
+  export type Transport = FutureImportStatement.Transport | ImportStatement.Transport | ImportFromStatement.Transport | PrintStatement.Transport | AssertStatement.Transport | ExpressionStatement.Transport | ReturnStatement.Transport | DeleteStatement.Transport | RaiseStatement.Transport | PassStatement.Transport | BreakStatement.Transport | ContinueStatement.Transport | GlobalStatement.Transport | NonlocalStatement.Transport | ExecStatement.Transport | TypeAliasStatement.Transport;
+}
+
+export namespace Statement {
+  export type Transport = SimpleStatements.Transport | IfStatement.Transport | ForStatement.Transport | WhileStatement.Transport | TryStatement.Transport | WithStatement.Transport | FunctionDefinition.Transport | ClassDefinition.Transport | DecoratedDefinition.Transport | MatchStatement.Transport;
+}
+
+export namespace Expression {
+  export type Transport = ComparisonOperator.Transport | NotOperator.Transport | BooleanOperator.Transport | Lambda.Transport | ConditionalExpression.Transport | NamedExpression.Transport | AsPattern.Transport;
+}
+
+export namespace KeywordIdentifier {
+  export type Transport = Identifier.Transport;
+}
+
+export namespace Parameter {
+  export type Transport = Identifier.Transport | TypedParameter.Transport | DefaultParameter.Transport | TypedDefaultParameter.Transport | ListSplatPattern.Transport | TuplePattern.Transport | KeywordSeparator.Transport | PositionalSeparator.Transport | DictionarySplatPattern.Transport;
+}
+
+export namespace Pattern {
+  export type Transport = Identifier.Transport | Subscript.Transport | Attribute.Transport | ListSplatPattern.Transport | TuplePattern.Transport | ListPattern.Transport;
+}
+
+export namespace PrimaryExpression {
+  export type Transport = Await.Transport | BinaryOperator.Transport | Identifier.Transport | String.Transport | ConcatenatedString.Transport | Integer.Transport | Float.Transport | True.Transport | False.Transport | None.Transport | UnaryOperator.Transport | Attribute.Transport | Subscript.Transport | Call.Transport | List.Transport | ListComprehension.Transport | Dictionary.Transport | DictionaryComprehension.Transport | Set.Transport | SetComprehension.Transport | Tuple.Transport | ParenthesizedExpression.Transport | GeneratorExpression.Transport | Ellipsis2.Transport | ListSplatPattern.Transport;
+}
+
+export type TransportFor<K extends SyntaxKind | keyof KindMap> =
+  K extends "_as_pattern" ? _AsPattern.Transport :
+  K extends "_assignment_eq" ? AssignmentEq.Transport :
+  K extends "_assignment_type" ? AssignmentType.Transport :
+  K extends "_assignment_typed" ? AssignmentTyped.Transport :
+  K extends "_async_marker" ? AsyncMarker.Transport :
+  K extends "_augmented_assignment_operator" ? AugmentedAssignmentOperator.Transport :
+  K extends "_binary_operator_operator" ? BinaryOperatorOperator.Transport :
+  K extends "_boolean_operator_operator" ? BooleanOperatorOperator.Transport :
+  K extends "_comprehension_clauses" ? ComprehensionClauses.Transport :
+  K extends "_identifier" ? _Identifier.Transport :
+  K extends "_import_list" ? ImportList.Transport :
+  K extends "_is_not" ? IsNot.Transport :
+  K extends "_key_value_pattern" ? KeyValuePattern.Transport :
+  K extends "_kw_async_marker" ? KwAsyncMarker.Transport :
+  K extends "_kw_type" ? KwType.Transport :
+  K extends "_list_pattern" ? _ListPattern.Transport :
+  K extends "_match_block" ? MatchBlock.Transport :
+  K extends "_match_block_block" ? MatchBlockBlock.Transport :
+  K extends "_not_escape_sequence" ? NotEscapeSequence.Transport :
+  K extends "_not_in" ? NotIn.Transport :
+  K extends "_simple_pattern_negative" ? SimplePatternNegative.Transport :
+  K extends "_simple_statements" ? SimpleStatements.Transport :
+  K extends "_suite" ? Suite.Transport :
+  K extends "_tuple_pattern" ? _TuplePattern.Transport :
+  K extends "_type_alias_statement_type" ? TypeAliasStatementType.Transport :
+  K extends "_unary_operator_operator" ? UnaryOperatorOperator.Transport :
+  K extends "_with_clause_paren" ? _WithClauseParen.Transport :
+  K extends "aliased_import" ? AliasedImport.Transport :
+  K extends "argument_list" ? ArgumentList.Transport :
+  K extends "as_pattern" ? AsPattern.Transport :
+  K extends "assert_statement" ? AssertStatement.Transport :
+  K extends "assignment" ? Assignment.Transport :
+  K extends "attribute" ? Attribute.Transport :
+  K extends "augmented_assignment" ? AugmentedAssignment.Transport :
+  K extends "await" ? Await.Transport :
+  K extends "binary_operator" ? BinaryOperator.Transport :
+  K extends "block" ? Block.Transport :
+  K extends "boolean_operator" ? BooleanOperator.Transport :
+  K extends "break_statement" ? BreakStatement.Transport :
+  K extends "call" ? Call.Transport :
+  K extends "case_clause" ? CaseClause.Transport :
+  K extends "case_pattern" ? CasePattern.Transport :
+  K extends "chevron" ? Chevron.Transport :
+  K extends "class_definition" ? ClassDefinition.Transport :
+  K extends "class_pattern" ? ClassPattern.Transport :
+  K extends "comment" ? Comment.Transport :
+  K extends "comparison_operator" ? ComparisonOperator.Transport :
+  K extends "complex_pattern" ? ComplexPattern.Transport :
+  K extends "concatenated_string" ? ConcatenatedString.Transport :
+  K extends "conditional_expression" ? ConditionalExpression.Transport :
+  K extends "constrained_type" ? ConstrainedType.Transport :
+  K extends "continue_statement" ? ContinueStatement.Transport :
+  K extends "decorated_definition" ? DecoratedDefinition.Transport :
+  K extends "decorator" ? Decorator.Transport :
+  K extends "default_parameter" ? DefaultParameter.Transport :
+  K extends "delete_statement" ? DeleteStatement.Transport :
+  K extends "dict_pattern" ? DictPattern.Transport :
+  K extends "dictionary" ? Dictionary.Transport :
+  K extends "dictionary_comprehension" ? DictionaryComprehension.Transport :
+  K extends "dictionary_splat" ? DictionarySplat.Transport :
+  K extends "dictionary_splat_pattern" ? DictionarySplatPattern.Transport :
+  K extends "dotted_name" ? DottedName.Transport :
+  K extends "elif_clause" ? ElifClause.Transport :
+  K extends "ellipsis" ? Ellipsis2.Transport :
+  K extends "else_clause" ? ElseClause.Transport :
+  K extends "escape_sequence" ? EscapeSequence.Transport :
+  K extends "except_clause" ? ExceptClause.Transport :
+  K extends "exec_statement" ? ExecStatement.Transport :
+  K extends "expression_list" ? ExpressionList.Transport :
+  K extends "expression_statement_tuple" ? ExpressionStatementTuple.Transport :
+  K extends "expression_statement" ? ExpressionStatement.Transport :
+  K extends "false" ? False.Transport :
+  K extends "finally_clause" ? FinallyClause.Transport :
+  K extends "float" ? Float.Transport :
+  K extends "for_in_clause" ? ForInClause.Transport :
+  K extends "for_statement" ? ForStatement.Transport :
+  K extends "format_specifier" ? FormatSpecifier.Transport :
+  K extends "function_definition" ? FunctionDefinition.Transport :
+  K extends "future_import_statement" ? FutureImportStatement.Transport :
+  K extends "generator_expression" ? GeneratorExpression.Transport :
+  K extends "generic_type" ? GenericType.Transport :
+  K extends "global_statement" ? GlobalStatement.Transport :
+  K extends "identifier" ? Identifier.Transport :
+  K extends "if_clause" ? IfClause.Transport :
+  K extends "if_statement" ? IfStatement.Transport :
+  K extends "import_from_statement" ? ImportFromStatement.Transport :
+  K extends "import_prefix" ? ImportPrefix.Transport :
+  K extends "import_statement" ? ImportStatement.Transport :
+  K extends "integer" ? Integer.Transport :
+  K extends "interpolation" ? Interpolation.Transport :
+  K extends "keyword_argument" ? KeywordArgument.Transport :
+  K extends "keyword_pattern" ? KeywordPattern.Transport :
+  K extends "keyword_separator" ? KeywordSeparator.Transport :
+  K extends "lambda" ? Lambda.Transport :
+  K extends "lambda_parameters" ? LambdaParameters.Transport :
+  K extends "lambda_within_for_in_clause" ? LambdaWithinForInClause.Transport :
+  K extends "line_continuation" ? LineContinuation.Transport :
+  K extends "list" ? List.Transport :
+  K extends "list_comprehension" ? ListComprehension.Transport :
+  K extends "list_pattern" ? ListPattern.Transport :
+  K extends "list_splat" ? ListSplat.Transport :
+  K extends "list_splat_pattern" ? ListSplatPattern.Transport :
+  K extends "match_statement" ? MatchStatement.Transport :
+  K extends "member_type" ? MemberType.Transport :
+  K extends "module" ? Module.Transport :
+  K extends "named_expression" ? NamedExpression.Transport :
+  K extends "none" ? None.Transport :
+  K extends "nonlocal_statement" ? NonlocalStatement.Transport :
+  K extends "not_operator" ? NotOperator.Transport :
+  K extends "pair" ? Pair.Transport :
+  K extends "parameters" ? Parameters.Transport :
+  K extends "parenthesized_expression" ? ParenthesizedExpression.Transport :
+  K extends "parenthesized_list_splat" ? ParenthesizedListSplat.Transport :
+  K extends "pass_statement" ? PassStatement.Transport :
+  K extends "pattern_list" ? PatternList.Transport :
+  K extends "positional_separator" ? PositionalSeparator.Transport :
+  K extends "print_statement" ? PrintStatement.Transport :
+  K extends "raise_statement" ? RaiseStatement.Transport :
+  K extends "relative_import" ? RelativeImport.Transport :
+  K extends "return_statement" ? ReturnStatement.Transport :
+  K extends "set" ? Set.Transport :
+  K extends "set_comprehension" ? SetComprehension.Transport :
+  K extends "slice" ? Slice.Transport :
+  K extends "splat_pattern" ? SplatPattern.Transport :
+  K extends "splat_type" ? SplatType.Transport :
+  K extends "string" ? String.Transport :
+  K extends "string_content" ? StringContent.Transport :
+  K extends "subscript" ? Subscript.Transport :
+  K extends "true" ? True.Transport :
+  K extends "try_statement" ? TryStatement.Transport :
+  K extends "tuple" ? Tuple.Transport :
+  K extends "tuple_pattern" ? TuplePattern.Transport :
+  K extends "type" ? Type.Transport :
+  K extends "type_alias_statement" ? TypeAliasStatement.Transport :
+  K extends "type_conversion" ? TypeConversion.Transport :
+  K extends "type_parameter" ? TypeParameter.Transport :
+  K extends "typed_default_parameter" ? TypedDefaultParameter.Transport :
+  K extends "typed_parameter" ? TypedParameter.Transport :
+  K extends "unary_operator" ? UnaryOperator.Transport :
+  K extends "union_pattern" ? UnionPattern.Transport :
+  K extends "union_type" ? UnionType.Transport :
+  K extends "while_statement" ? WhileStatement.Transport :
+  K extends "wildcard_import" ? WildcardImport.Transport :
+  K extends "with_clause_bare" ? WithClauseBare.Transport :
+  K extends "with_clause_paren" ? WithClauseParen.Transport :
+  K extends "with_clause" ? WithClause.Transport :
+  K extends "with_item" ? WithItem.Transport :
+  K extends "with_statement" ? WithStatement.Transport :
+  K extends "yield" ? Yield.Transport :
+  K extends "_newline" ? Newline.Transport :
+  K extends "_indent" ? Indent.Transport :
+  K extends "_dedent" ? Dedent.Transport :
+  K extends "string_start" ? StringStart.Transport :
+  K extends "_string_content" ? _StringContent.Transport :
+  K extends "escape_interpolation" ? EscapeInterpolation.Transport :
+  K extends "string_end" ? StringEnd.Transport :
+  K extends "]" ? CloseBracket.Transport :
+  K extends ")" ? CloseParen.Transport :
+  K extends "}" ? CloseBrace.Transport :
+  K extends "except" ? Except.Transport :
+  K extends "as" ? As.Transport :
+  K extends "=" ? Eq.Transport :
+  K extends ":" ? Colon.Transport :
+  K extends "async" ? Async.Transport :
+  K extends "[" ? Bracket.Transport :
+  K extends "\\" ? TokBs.Transport :
+  K extends "-" ? Minus.Transport :
+  K extends "(" ? Paren.Transport :
+  K extends "," ? Comma.Transport :
+  K extends "assert" ? Assert.Transport :
+  K extends "." ? Dot.Transport :
+  K extends "break" ? Break.Transport :
+  K extends "case" ? Case.Transport :
+  K extends ">>" ? Shr.Transport :
+  K extends "class" ? Class.Transport :
+  K extends "if" ? If.Transport :
+  K extends "else" ? Else.Transport :
+  K extends "continue" ? Continue.Transport :
+  K extends "@" ? At.Transport :
+  K extends "del" ? Del.Transport :
+  K extends "{" ? Brace.Transport :
+  K extends "**" ? Starstar.Transport :
+  K extends "elif" ? Elif.Transport :
+  K extends "..." ? Ellipsis.Transport :
+  K extends "*" ? Star.Transport :
+  K extends "exec" ? Exec.Transport :
+  K extends "in" ? In.Transport :
+  K extends "False" ? False2.Transport :
+  K extends "finally" ? Finally.Transport :
+  K extends "for" ? For.Transport :
+  K extends "def" ? Def.Transport :
+  K extends "->" ? Arrow.Transport :
+  K extends "from" ? From.Transport :
+  K extends "__future__" ? FutureU.Transport :
+  K extends "import" ? Import.Transport :
+  K extends "global" ? Global.Transport :
+  K extends "match" ? Match.Transport :
+  K extends ":=" ? Coloneq.Transport :
+  K extends "None" ? None2.Transport :
+  K extends "nonlocal" ? Nonlocal.Transport :
+  K extends "not" ? Not.Transport :
+  K extends "pass" ? Pass.Transport :
+  K extends "/" ? Slash.Transport :
+  K extends "print" ? Print.Transport :
+  K extends "raise" ? Raise.Transport :
+  K extends "return" ? Return.Transport :
+  K extends "_" ? Anonymous.Transport :
+  K extends "True" ? True2.Transport :
+  K extends "try" ? Try.Transport :
+  K extends "|" ? Pipe.Transport :
+  K extends "while" ? While.Transport :
+  K extends "with" ? With.Transport :
+  never;
+
+export type AnyTransport =
+  | _AsPattern.Transport
+  | AssignmentEq.Transport
+  | AssignmentType.Transport
+  | AssignmentTyped.Transport
+  | AsyncMarker.Transport
+  | AugmentedAssignmentOperator.Transport
+  | BinaryOperatorOperator.Transport
+  | BooleanOperatorOperator.Transport
+  | ComprehensionClauses.Transport
+  | _Identifier.Transport
+  | ImportList.Transport
+  | IsNot.Transport
+  | KeyValuePattern.Transport
+  | KwAsyncMarker.Transport
+  | KwType.Transport
+  | _ListPattern.Transport
+  | MatchBlock.Transport
+  | MatchBlockBlock.Transport
+  | NotEscapeSequence.Transport
+  | NotIn.Transport
+  | SimplePatternNegative.Transport
+  | SimpleStatements.Transport
+  | Suite.Transport
+  | _TuplePattern.Transport
+  | TypeAliasStatementType.Transport
+  | UnaryOperatorOperator.Transport
+  | _WithClauseParen.Transport
+  | AliasedImport.Transport
+  | ArgumentList.Transport
+  | AsPattern.Transport
+  | AssertStatement.Transport
+  | Assignment.Transport
+  | Attribute.Transport
+  | AugmentedAssignment.Transport
+  | Await.Transport
+  | BinaryOperator.Transport
+  | Block.Transport
+  | BooleanOperator.Transport
+  | BreakStatement.Transport
+  | Call.Transport
+  | CaseClause.Transport
+  | CasePattern.Transport
+  | Chevron.Transport
+  | ClassDefinition.Transport
+  | ClassPattern.Transport
+  | Comment.Transport
+  | ComparisonOperator.Transport
+  | ComplexPattern.Transport
+  | ConcatenatedString.Transport
+  | ConditionalExpression.Transport
+  | ConstrainedType.Transport
+  | ContinueStatement.Transport
+  | DecoratedDefinition.Transport
+  | Decorator.Transport
+  | DefaultParameter.Transport
+  | DeleteStatement.Transport
+  | DictPattern.Transport
+  | Dictionary.Transport
+  | DictionaryComprehension.Transport
+  | DictionarySplat.Transport
+  | DictionarySplatPattern.Transport
+  | DottedName.Transport
+  | ElifClause.Transport
+  | Ellipsis2.Transport
+  | ElseClause.Transport
+  | EscapeSequence.Transport
+  | ExceptClause.Transport
+  | ExecStatement.Transport
+  | ExpressionList.Transport
+  | ExpressionStatementTuple.Transport
+  | ExpressionStatement.Transport
+  | False.Transport
+  | FinallyClause.Transport
+  | Float.Transport
+  | ForInClause.Transport
+  | ForStatement.Transport
+  | FormatSpecifier.Transport
+  | FunctionDefinition.Transport
+  | FutureImportStatement.Transport
+  | GeneratorExpression.Transport
+  | GenericType.Transport
+  | GlobalStatement.Transport
+  | Identifier.Transport
+  | IfClause.Transport
+  | IfStatement.Transport
+  | ImportFromStatement.Transport
+  | ImportPrefix.Transport
+  | ImportStatement.Transport
+  | Integer.Transport
+  | Interpolation.Transport
+  | KeywordArgument.Transport
+  | KeywordPattern.Transport
+  | KeywordSeparator.Transport
+  | Lambda.Transport
+  | LambdaParameters.Transport
+  | LambdaWithinForInClause.Transport
+  | LineContinuation.Transport
+  | List.Transport
+  | ListComprehension.Transport
+  | ListPattern.Transport
+  | ListSplat.Transport
+  | ListSplatPattern.Transport
+  | MatchStatement.Transport
+  | MemberType.Transport
+  | Module.Transport
+  | NamedExpression.Transport
+  | None.Transport
+  | NonlocalStatement.Transport
+  | NotOperator.Transport
+  | Pair.Transport
+  | Parameters.Transport
+  | ParenthesizedExpression.Transport
+  | ParenthesizedListSplat.Transport
+  | PassStatement.Transport
+  | PatternList.Transport
+  | PositionalSeparator.Transport
+  | PrintStatement.Transport
+  | RaiseStatement.Transport
+  | RelativeImport.Transport
+  | ReturnStatement.Transport
+  | Set.Transport
+  | SetComprehension.Transport
+  | Slice.Transport
+  | SplatPattern.Transport
+  | SplatType.Transport
+  | String.Transport
+  | StringContent.Transport
+  | Subscript.Transport
+  | True.Transport
+  | TryStatement.Transport
+  | Tuple.Transport
+  | TuplePattern.Transport
+  | Type.Transport
+  | TypeAliasStatement.Transport
+  | TypeConversion.Transport
+  | TypeParameter.Transport
+  | TypedDefaultParameter.Transport
+  | TypedParameter.Transport
+  | UnaryOperator.Transport
+  | UnionPattern.Transport
+  | UnionType.Transport
+  | WhileStatement.Transport
+  | WildcardImport.Transport
+  | WithClauseBare.Transport
+  | WithClauseParen.Transport
+  | WithClause.Transport
+  | WithItem.Transport
+  | WithStatement.Transport
+  | Yield.Transport
+  | Newline.Transport
+  | Indent.Transport
+  | Dedent.Transport
+  | StringStart.Transport
+  | _StringContent.Transport
+  | EscapeInterpolation.Transport
+  | StringEnd.Transport
+  | CloseBracket.Transport
+  | CloseParen.Transport
+  | CloseBrace.Transport
+  | Except.Transport
+  | As.Transport
+  | Eq.Transport
+  | Colon.Transport
+  | Async.Transport
+  | Bracket.Transport
+  | TokBs.Transport
+  | Minus.Transport
+  | Paren.Transport
+  | Comma.Transport
+  | Assert.Transport
+  | Dot.Transport
+  | Break.Transport
+  | Case.Transport
+  | Shr.Transport
+  | Class.Transport
+  | If.Transport
+  | Else.Transport
+  | Continue.Transport
+  | At.Transport
+  | Del.Transport
+  | Brace.Transport
+  | Starstar.Transport
+  | Elif.Transport
+  | Ellipsis.Transport
+  | Star.Transport
+  | Exec.Transport
+  | In.Transport
+  | False2.Transport
+  | Finally.Transport
+  | For.Transport
+  | Def.Transport
+  | Arrow.Transport
+  | From.Transport
+  | FutureU.Transport
+  | Import.Transport
+  | Global.Transport
+  | Match.Transport
+  | Coloneq.Transport
+  | None2.Transport
+  | Nonlocal.Transport
+  | Not.Transport
+  | Pass.Transport
+  | Slash.Transport
+  | Print.Transport
+  | Raise.Transport
+  | Return.Transport
+  | Anonymous.Transport
+  | True2.Transport
+  | Try.Transport
+  | Pipe.Transport
+  | While.Transport
+  | With.Transport
+  | LiteralTransport<TSKindId.Lt, "<">
+  | LiteralTransport<TSKindId.LtEq, "<=">
+  | LiteralTransport<TSKindId.EqEq, "==">
+  | LiteralTransport<TSKindId.BangEq, "!=">
+  | LiteralTransport<TSKindId.GtEq, ">=">
+  | LiteralTransport<TSKindId.Gt, ">">
+  | LiteralTransport<TSKindId.LtGt, "<>">
+  | LiteralTransport<number, "not in">
+  | LiteralTransport<TSKindId.Is, "is">
+  | LiteralTransport<number, "is not">
+;

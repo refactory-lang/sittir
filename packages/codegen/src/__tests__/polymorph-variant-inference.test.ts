@@ -7,10 +7,34 @@
  * exported name may shift under the in-flight `PolymorphVariantDescriptor`
  * refactor — tests assert PUBLIC BEHAVIOR by calling `nodeToConfig` and
  * reading `config.$variant`.
+ *
+ * Phase D: $type is numeric. Tests use small integer IDs and a local
+ * kindNameFromId resolver to keep fixtures readable.
  */
 
 import { describe, it, expect } from 'vitest';
 import { nodeToConfig, type NodeToConfigOpts } from '../validate/common.ts';
+
+// ---------------------------------------------------------------------------
+// Minimal numeric kind catalog for test fixtures
+// ---------------------------------------------------------------------------
+const KIND = {
+	assignment: 1,
+	assignment_eq: 2,
+	assignment_type: 3,
+	some_unregistered: 4,
+	range_expression: 5,
+	integer_literal: 6,
+	plain_kind: 7,
+	x: 8,
+	dotdot: 9,
+} as const;
+
+const kindNames: ReadonlyMap<number, string> = new Map(
+	Object.entries(KIND).map(([name, id]) => [id, name])
+);
+
+const kindNameFromId = (id: number): string | undefined => kindNames.get(id);
 
 // ---------------------------------------------------------------------------
 // Override path — $variant derives from the kind of the first NAMED child.
@@ -20,13 +44,14 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 	const makeOpts = (childKind: Record<string, string>): NodeToConfigOpts => ({
 		polymorphVariants: {
 			assignment: { source: 'override', childKind }
-		}
+		},
+		kindNameFromId
 	});
 
 	it('stamps $variant when the first named child kind is registered', () => {
 		const data = {
-			$type: 'assignment',
-			$children: [{ $type: 'assignment_eq', $named: true }]
+			$type: KIND.assignment,
+			$children: [{ $type: KIND.assignment_eq, $named: true }]
 		};
 		const cfg = nodeToConfig(
 			data,
@@ -37,8 +62,8 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 
 	it('does NOT stamp $variant when the first child kind is absent from the map', () => {
 		const data = {
-			$type: 'assignment',
-			$children: [{ $type: 'some_unregistered', $named: true }]
+			$type: KIND.assignment,
+			$children: [{ $type: KIND.some_unregistered, $named: true }]
 		};
 		const cfg = nodeToConfig(data, makeOpts({ assignment_eq: 'eq' }));
 		expect('$variant' in cfg).toBe(false);
@@ -46,10 +71,10 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 
 	it('skips anonymous tokens — uses the first NAMED child', () => {
 		const data = {
-			$type: 'assignment',
+			$type: KIND.assignment,
 			$children: [
-				{ $type: '=', $named: false },
-				{ $type: 'assignment_eq', $named: true }
+				{ $type: KIND.dotdot, $named: false },
+				{ $type: KIND.assignment_eq, $named: true }
 			]
 		};
 		const cfg = nodeToConfig(data, makeOpts({ assignment_eq: 'eq' }));
@@ -57,13 +82,13 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 	});
 
 	it('does NOT stamp $variant when the node has no children at all', () => {
-		const data = { $type: 'assignment' };
+		const data = { $type: KIND.assignment };
 		const cfg = nodeToConfig(data, makeOpts({ assignment_eq: 'eq' }));
 		expect('$variant' in cfg).toBe(false);
 	});
 
 	it('does NOT stamp $variant when $children is empty', () => {
-		const data = { $type: 'assignment', $children: [] };
+		const data = { $type: KIND.assignment, $children: [] };
 		const cfg = nodeToConfig(data, makeOpts({ assignment_eq: 'eq' }));
 		expect('$variant' in cfg).toBe(false);
 	});
@@ -79,15 +104,16 @@ describe('nodeToConfig — polymorph $variant (promoted source)', () => {
 	): NodeToConfigOpts => ({
 		polymorphVariants: {
 			range_expression: { source: 'promoted', fields }
-		}
+		},
+		kindNameFromId
 	});
 
 	it('stamps the form whose every listed field appears on the derived config', () => {
 		const data = {
-			$type: 'range_expression',
+			$type: KIND.range_expression,
 			$fields: {
-				start: { $type: 'integer_literal', $text: '0', $named: true },
-				end: { $type: 'integer_literal', $text: '10', $named: true }
+				start: { $type: KIND.integer_literal, $text: '0', $named: true },
+				end: { $type: KIND.integer_literal, $text: '10', $named: true }
 			}
 		};
 		const cfg = nodeToConfig(
@@ -102,11 +128,11 @@ describe('nodeToConfig — polymorph $variant (promoted source)', () => {
 
 	it('picks the MOST-SPECIFIC form when one fields set is a superset of another', () => {
 		const data = {
-			$type: 'range_expression',
+			$type: KIND.range_expression,
 			$fields: {
-				start: { $type: 'integer_literal', $text: '0', $named: true },
-				end: { $type: 'integer_literal', $text: '10', $named: true },
-				operator: { $type: '..', $named: false }
+				start: { $type: KIND.integer_literal, $text: '0', $named: true },
+				end: { $type: KIND.integer_literal, $text: '10', $named: true },
+				operator: { $type: KIND.dotdot, $named: false }
 			}
 		};
 		// Both `binary` (2 fields) and `ternary` (3 fields) match; ternary wins.
@@ -122,9 +148,9 @@ describe('nodeToConfig — polymorph $variant (promoted source)', () => {
 
 	it('falls back to the zero-field form when no other form matches', () => {
 		const data = {
-			$type: 'range_expression',
+			$type: KIND.range_expression,
 			$fields: {
-				nomatch: { $type: 'integer_literal', $text: '1', $named: true }
+				nomatch: { $type: KIND.integer_literal, $text: '1', $named: true }
 			}
 		};
 		const cfg = nodeToConfig(
@@ -139,9 +165,9 @@ describe('nodeToConfig — polymorph $variant (promoted source)', () => {
 
 	it('does NOT stamp $variant when no form matches and no zero-field fallback exists', () => {
 		const data = {
-			$type: 'range_expression',
+			$type: KIND.range_expression,
 			$fields: {
-				nomatch: { $type: 'integer_literal', $text: '1', $named: true }
+				nomatch: { $type: KIND.integer_literal, $text: '1', $named: true }
 			}
 		};
 		const cfg = nodeToConfig(
@@ -162,23 +188,24 @@ describe('nodeToConfig — polymorph $variant (promoted source)', () => {
 describe('nodeToConfig — polymorph $variant (no descriptor)', () => {
 	it('does NOT stamp $variant when polymorphVariants is absent', () => {
 		const data = {
-			$type: 'assignment',
-			$children: [{ $type: 'assignment_eq', $named: true }]
+			$type: KIND.assignment,
+			$children: [{ $type: KIND.assignment_eq, $named: true }]
 		};
-		const cfg = nodeToConfig(data);
+		const cfg = nodeToConfig(data, { kindNameFromId });
 		expect('$variant' in cfg).toBe(false);
 	});
 
 	it('does NOT stamp $variant when the parent kind has no descriptor entry', () => {
 		const data = {
-			$type: 'plain_kind',
-			$fields: { x: { $type: 'x', $text: 'x', $named: true } }
+			$type: KIND.plain_kind,
+			$fields: { x: { $type: KIND.x, $text: 'x', $named: true } }
 		};
 		const cfg = nodeToConfig(data, {
 			polymorphVariants: {
 				// different kind — should not fire
 				assignment: { source: 'override', childKind: { assignment_eq: 'eq' } }
-			}
+			},
+			kindNameFromId
 		});
 		expect('$variant' in cfg).toBe(false);
 	});

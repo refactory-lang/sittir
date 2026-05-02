@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { TSKindId } from '../src/types.ts';
 
 describe('engine', () => {
 	afterEach(() => {
@@ -33,7 +34,7 @@ describe('engine', () => {
 				hashMatch: true,
 				native: {
 					SittirEngine: class {
-						render(_nodeJson: string): string {
+						render(_node: Record<string, unknown>): string {
 							return 'ok';
 						}
 						applyEdits(
@@ -49,7 +50,7 @@ describe('engine', () => {
 						parseAndRead(_source: string): string {
 							return JSON.stringify({
 								nodeData: {
-									$type: 'identifier',
+									$type: TSKindId.Identifier,
 									$source: 'ts',
 									$named: true,
 									$text: 'x'
@@ -59,7 +60,7 @@ describe('engine', () => {
 						}
 						readNode(_nodeId: number): string {
 							return JSON.stringify({
-								$type: 'identifier',
+								$type: TSKindId.Identifier,
 								$source: 'ts',
 								$named: true,
 								$text: 'x'
@@ -91,7 +92,7 @@ describe('engine', () => {
 				hashMatch: true,
 				native: {
 					SittirEngine: class {
-						render(_nodeJson: string): string {
+						render(_node: Record<string, unknown>): string {
 							return 'def main(): pass';
 						}
 						applyEdits(
@@ -114,7 +115,7 @@ describe('engine', () => {
 		const engine = createEngine();
 
 		const node = {
-			$type: 'identifier',
+			$type: 1 as const, // TSKindId.Identifier = 1 (see packages/python/src/types.ts)
 			$source: 'factory' as const,
 			$named: true,
 			$text: 'x'
@@ -137,7 +138,7 @@ describe('engine', () => {
 				hashMatch: true,
 				native: {
 					SittirEngine: class {
-						render(_nodeJson: string): string {
+						render(_node: Record<string, unknown>): string {
 							return 'def main(): pass';
 						}
 						applyEdits(
@@ -153,7 +154,7 @@ describe('engine', () => {
 						parseAndRead(_source: string): string {
 							return JSON.stringify({
 								nodeData: {
-									$type: 'identifier',
+									$type: TSKindId.Identifier,
 									$source: 'ts',
 									$named: true,
 									$text: 'x'
@@ -163,7 +164,7 @@ describe('engine', () => {
 						}
 						readNode(_nodeId: number): string {
 							return JSON.stringify({
-								$type: 'identifier',
+								$type: TSKindId.Identifier,
 								$source: 'ts',
 								$named: true,
 								$text: 'x'

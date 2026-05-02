@@ -38,253 +38,433 @@ pub fn lower(s: &str) -> Result<String, askama::Error> {
     Ok(s.to_lowercase())
 }
 
-#[inline]
-fn string_as_str(s: &String) -> &str {
-    s.as_str()
+/// Closed renderable family. Per-grammar generated render crates extend this
+/// via newtype wrappers; sittir-core itself only carries the grammar-agnostic
+/// variants. Keep the family closed and explicit (no trait objects at the
+/// public boundary).
+#[derive(Clone, Copy)]
+pub enum Renderable<'a> {
+    /// Final, render-ready text.
+    Text(&'a str),
+    /// Streaming join over a borrowed slice of `Renderable`s.
+    Joined(Joined<'a>),
+    /// Heterogeneous slot value — streams via `RenderableTransport::render_into`
+    /// without an intermediate `String` allocation.
+    Transport(&'a dyn crate::types::RenderableTransport),
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct ListView<'a> {
-    pub items: &'a [String],
-    pub separator: &'static str,
+impl std::fmt::Debug for Renderable<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Text(s) => f.debug_tuple("Text").field(s).finish(),
+            Self::Joined(j) => f.debug_tuple("Joined").field(j).finish(),
+            Self::Transport(_) => f.debug_tuple("Transport").field(&"<dyn RenderableTransport>").finish(),
+        }
+    }
+}
+
+impl std::fmt::Display for Renderable<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Text(s) => f.write_str(s),
+            Self::Joined(j) => std::fmt::Display::fmt(j, f),
+            Self::Transport(t) => t.render_into(f).map_err(|_| std::fmt::Error),
+        }
+    }
+}
+
+impl ::askama::FastWritable for Renderable<'_> {
+    fn write_into<W: std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+        values: &dyn ::askama::Values,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            Self::Text(s) => dest.write_str(s).map_err(::askama::Error::from),
+            Self::Joined(j) => j.write_into(dest, values),
+            Self::Transport(t) => write_transport_into(*t, dest),
+        }
+    }
+}
+
+/// Bridge `RenderableTransport::render_into` (which takes `&mut dyn Write`)
+/// from a generic `FastWritable::write_into` context (which has `W: Write +
+/// ?Sized`). When `W` is `?Sized` (e.g. `dyn Write`), `&mut W` cannot be
+/// directly coerced to `&mut dyn Write` in a generic context. This sized
+/// wrapper bridges the gap: `WriteForwarder<W>` is always `Sized` (it holds a
+/// pointer), so it can be coerced to `&mut dyn Write`.
+fn write_transport_into<W: std::fmt::Write + ?Sized>(
+    t: &dyn crate::types::RenderableTransport,
+    dest: &mut W,
+) -> Result<(), ::askama::Error> {
+    struct WriteForwarder<'a, W: ?Sized>(&'a mut W);
+    impl<W: std::fmt::Write + ?Sized> std::fmt::Write for WriteForwarder<'_, W> {
+        fn write_str(&mut self, s: &str) -> std::fmt::Result {
+            self.0.write_str(s)
+        }
+        fn write_fmt(&mut self, args: std::fmt::Arguments<'_>) -> std::fmt::Result {
+            self.0.write_fmt(args)
+        }
+    }
+    t.render_into(&mut WriteForwarder(dest))
+}
+
+/// Streaming join wrapper. Borrows a slice of [`Renderable`]s and a separator,
+/// and streams them into any [`fmt::Write`] target without allocating an
+/// intermediate `String`. Returned (inside `askama::filters::Safe`) by
+/// `joinby` and the `joinWith*` filter family.
+#[derive(Debug, Clone, Copy)]
+pub struct Joined<'a> {
+    pub items: &'a [Renderable<'a>],
+    pub separator: &'a str,
     pub leading: bool,
     pub trailing: bool,
 }
 
-impl ListView<'_> {
-    pub fn is_empty(&self) -> bool {
-        self.items.is_empty()
+impl<'a> Joined<'a> {
+    pub fn new(
+        items: &'a [Renderable<'a>],
+        separator: &'a str,
+        leading: bool,
+        trailing: bool,
+    ) -> Self {
+        Self { items, separator, leading, trailing }
     }
 }
 
-pub struct ListViewIter<'a> {
-    inner: std::iter::Map<std::slice::Iter<'a, String>, fn(&'a String) -> &'a str>,
+impl std::fmt::Display for Joined<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if self.items.is_empty() {
+            return Ok(());
+        }
+        if self.leading {
+            f.write_str(self.separator)?;
+        }
+        let mut first = true;
+        for item in self.items {
+            if !first {
+                f.write_str(self.separator)?;
+            }
+            std::fmt::Display::fmt(item, f)?;
+            first = false;
+        }
+        if self.trailing {
+            f.write_str(self.separator)?;
+        }
+        Ok(())
+    }
 }
 
-impl<'a> Iterator for ListViewIter<'a> {
-    type Item = &'a str;
+impl ::askama::FastWritable for Joined<'_> {
+    fn write_into<W: std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+        values: &dyn ::askama::Values,
+    ) -> Result<(), ::askama::Error> {
+        if self.items.is_empty() {
+            return Ok(());
+        }
+        if self.leading {
+            dest.write_str(self.separator).map_err(::askama::Error::from)?;
+        }
+        let mut first = true;
+        for item in self.items {
+            if !first {
+                dest.write_str(self.separator).map_err(::askama::Error::from)?;
+            }
+            item.write_into(dest, values)?;
+            first = false;
+        }
+        if self.trailing {
+            dest.write_str(self.separator).map_err(::askama::Error::from)?;
+        }
+        Ok(())
+    }
+}
 
+#[derive(Debug, Clone, Copy)]
+pub struct ListNonterminalView<'a> {
+    pub items: &'a [Renderable<'a>],
+    pub separator: &'a str,
+    pub leading: bool,
+    pub trailing: bool,
+}
+
+impl<'a> ListNonterminalView<'a> {
+    pub fn is_empty(&self) -> bool {
+        self.items.is_empty()
+    }
+
+    pub fn as_joined(&self) -> Joined<'a> {
+        Joined {
+            items: self.items,
+            separator: self.separator,
+            leading: self.leading,
+            trailing: self.trailing,
+        }
+    }
+}
+
+impl fmt::Display for ListNonterminalView<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Display::fmt(&self.as_joined(), f)
+    }
+}
+
+impl ::askama::FastWritable for ListNonterminalView<'_> {
+    fn write_into<W: std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+        values: &dyn ::askama::Values,
+    ) -> Result<(), ::askama::Error> {
+        self.as_joined().write_into(dest, values)
+    }
+}
+
+pub struct ListNonterminalViewIter<'a> {
+    inner: std::slice::Iter<'a, Renderable<'a>>,
+}
+
+impl<'a> Iterator for ListNonterminalViewIter<'a> {
+    type Item = &'a Renderable<'a>;
     fn next(&mut self) -> Option<Self::Item> {
         self.inner.next()
     }
 }
 
-impl<'a> IntoIterator for &'a ListView<'a> {
-    type Item = &'a str;
-    type IntoIter = ListViewIter<'a>;
-
+impl<'a> IntoIterator for &'a ListNonterminalView<'a> {
+    type Item = &'a Renderable<'a>;
+    type IntoIter = ListNonterminalViewIter<'a>;
     fn into_iter(self) -> Self::IntoIter {
-        ListViewIter {
-            inner: self.items.iter().map(string_as_str as fn(&'a String) -> &'a str),
-        }
+        ListNonterminalViewIter { inner: self.items.iter() }
     }
 }
 
-impl fmt::Display for ListView<'_> {
+/// Required-cardinality nonterminal slot — always one occurrence.
+/// Generated when the codegen knows at emission time that the slot is
+/// non-optional and non-list (e.g. a tree-sitter `field('name', $.x)`
+/// where the rule shape forbids absence and repetition).
+#[derive(Debug, Clone, Copy)]
+pub struct SingleNonterminalView<'a>(pub Renderable<'a>);
+
+impl<'a> SingleNonterminalView<'a> {
+    pub fn new(r: Renderable<'a>) -> Self {
+        Self(r)
+    }
+}
+
+impl fmt::Display for SingleNonterminalView<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let rendered =
-            joinby(self, self.separator, self.leading, self.trailing).map_err(|_| fmt::Error)?;
-        f.write_str(&rendered)
+        fmt::Display::fmt(&self.0, f)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum FieldView<'a> {
-    Missing,
-    Scalar(&'a str),
-    List(ListView<'a>),
-}
-
-pub enum FieldViewIter<'a> {
-    Missing(std::option::IntoIter<&'a str>),
-    Scalar(std::option::IntoIter<&'a str>),
-    List(ListViewIter<'a>),
-}
-
-impl<'a> Iterator for FieldViewIter<'a> {
-    type Item = &'a str;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        match self {
-            Self::Missing(inner) | Self::Scalar(inner) => inner.next(),
-            Self::List(inner) => inner.next(),
-        }
+impl ::askama::FastWritable for SingleNonterminalView<'_> {
+    fn write_into<W: std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+        values: &dyn ::askama::Values,
+    ) -> Result<(), ::askama::Error> {
+        self.0.write_into(dest, values)
     }
 }
 
-impl<'a> IntoIterator for &'a FieldView<'a> {
-    type Item = &'a str;
-    type IntoIter = FieldViewIter<'a>;
-
+impl<'a> IntoIterator for &'a SingleNonterminalView<'a> {
+    type Item = &'a Renderable<'a>;
+    type IntoIter = std::option::IntoIter<&'a Renderable<'a>>;
     fn into_iter(self) -> Self::IntoIter {
-        match self {
-            FieldView::Missing => FieldViewIter::Missing(None.into_iter()),
-            FieldView::Scalar(text) => FieldViewIter::Scalar(Some(*text).into_iter()),
-            FieldView::List(view) => FieldViewIter::List(view.into_iter()),
-        }
+        Some(&self.0).into_iter()
     }
 }
 
-impl fmt::Display for FieldView<'_> {
+/// Optional-cardinality nonterminal slot — zero or one occurrence.
+/// Generated when the codegen knows at emission time that the slot is
+/// optional and non-list. `Present` carries a renderable; `Missing`
+/// emits nothing under Display / FastWritable, distinguishing it from
+/// `Present(Renderable::Text(""))`.
+#[derive(Debug, Clone, Copy)]
+pub enum OptionalNonterminalView<'a> {
+    Missing,
+    Present(Renderable<'a>),
+}
+
+impl fmt::Display for OptionalNonterminalView<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Missing => Ok(()),
-            Self::Scalar(text) => f.write_str(text),
-            Self::List(view) => fmt::Display::fmt(view, f),
+            Self::Present(r) => fmt::Display::fmt(r, f),
         }
     }
 }
 
-pub trait JoinSource {
-    fn len(&self) -> usize;
-    fn item(&self, index: usize) -> &str;
+impl ::askama::FastWritable for OptionalNonterminalView<'_> {
+    fn write_into<W: std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+        values: &dyn ::askama::Values,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            Self::Missing => Ok(()),
+            Self::Present(r) => r.write_into(dest, values),
+        }
+    }
+}
 
-    fn leading_sep_for(&self, _sep: &str) -> bool {
+impl<'a> IntoIterator for &'a OptionalNonterminalView<'a> {
+    type Item = &'a Renderable<'a>;
+    type IntoIter = std::option::IntoIter<&'a Renderable<'a>>;
+    fn into_iter(self) -> Self::IntoIter {
+        match self {
+            OptionalNonterminalView::Missing => None.into_iter(),
+            OptionalNonterminalView::Present(r) => Some(r).into_iter(),
+        }
+    }
+}
+
+/// Cardinality-ambiguous nonterminal slot — escape hatch for cases
+/// where codegen genuinely cannot determine slot cardinality at
+/// emission time (today: polymorph forms that disagree on whether a
+/// slot is single or list — see `node-map.ts:3091`). Should be rare;
+/// prefer `SingleNonterminalView` / `OptionalNonterminalView` /
+/// `ListNonterminalView` whenever cardinality is known.
+#[derive(Debug, Clone, Copy)]
+pub enum NonterminalView<'a> {
+    Missing,
+    One(Renderable<'a>),
+    Many(ListNonterminalView<'a>),
+}
+
+impl fmt::Display for NonterminalView<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Missing => Ok(()),
+            Self::One(r) => fmt::Display::fmt(r, f),
+            Self::Many(view) => fmt::Display::fmt(view, f),
+        }
+    }
+}
+
+impl ::askama::FastWritable for NonterminalView<'_> {
+    fn write_into<W: std::fmt::Write + ?Sized>(
+        &self,
+        dest: &mut W,
+        values: &dyn ::askama::Values,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            Self::Missing => Ok(()),
+            Self::One(r) => r.write_into(dest, values),
+            Self::Many(v) => v.write_into(dest, values),
+        }
+    }
+}
+
+/// Iterator over the `Renderable`s a `NonterminalView` exposes. `Missing` yields
+/// none, `One(r)` yields a single reference, `Many(view)` defers to the
+/// `ListNonterminalView` iterator.
+pub enum NonterminalViewIter<'a> {
+    Missing,
+    One(std::option::IntoIter<&'a Renderable<'a>>),
+    Many(ListNonterminalViewIter<'a>),
+}
+
+impl<'a> Iterator for NonterminalViewIter<'a> {
+    type Item = &'a Renderable<'a>;
+    fn next(&mut self) -> Option<Self::Item> {
+        match self {
+            Self::Missing => None,
+            Self::One(inner) => inner.next(),
+            Self::Many(inner) => inner.next(),
+        }
+    }
+}
+
+impl<'a> IntoIterator for &'a NonterminalView<'a> {
+    type Item = &'a Renderable<'a>;
+    type IntoIter = NonterminalViewIter<'a>;
+    fn into_iter(self) -> Self::IntoIter {
+        match self {
+            NonterminalView::Missing => NonterminalViewIter::Missing,
+            NonterminalView::One(r) => NonterminalViewIter::One(Some(r).into_iter()),
+            NonterminalView::Many(view) => NonterminalViewIter::Many(view.into_iter()),
+        }
+    }
+}
+
+/// Trait for types that can supply a slice of [`Renderable`]s for joining.
+///
+/// Replaces the string-based `JoinSource` from Task 2 scaffolding.
+/// `ListNonterminalView` and `NonterminalView` are the primary implementors; the old
+/// string-slice impls (`[S]`, `Vec<S>`, `[S; N]`) are removed because
+/// the join filters now operate exclusively on `Renderable`-backed views.
+pub trait JoinSource<'a> {
+    fn renderables(&self) -> &'a [Renderable<'a>];
+    fn separator(&self) -> &'a str;
+    fn leading(&self) -> bool {
         false
     }
-
-    fn trailing_sep_for(&self, _sep: &str) -> bool {
+    fn trailing(&self) -> bool {
         false
     }
 }
 
-impl<S: AsRef<str>> JoinSource for [S] {
-    fn len(&self) -> usize {
-        <[S]>::len(self)
+impl<'a> JoinSource<'a> for ListNonterminalView<'a> {
+    fn renderables(&self) -> &'a [Renderable<'a>] {
+        self.items
     }
-
-    fn item(&self, index: usize) -> &str {
-        self[index].as_ref()
+    fn separator(&self) -> &'a str {
+        self.separator
     }
-}
-
-impl<S: AsRef<str>> JoinSource for Vec<S> {
-    fn len(&self) -> usize {
-        self.as_slice().len()
+    fn leading(&self) -> bool {
+        self.leading
     }
-
-    fn item(&self, index: usize) -> &str {
-        self.as_slice()[index].as_ref()
+    fn trailing(&self) -> bool {
+        self.trailing
     }
 }
 
-impl<S: AsRef<str>, const N: usize> JoinSource for [S; N] {
-    fn len(&self) -> usize {
-        self.as_slice().len()
-    }
-
-    fn item(&self, index: usize) -> &str {
-        self.as_slice()[index].as_ref()
-    }
-}
-
-impl JoinSource for ListView<'_> {
-    fn len(&self) -> usize {
-        self.items.len()
-    }
-
-    fn item(&self, index: usize) -> &str {
-        self.items[index].as_str()
-    }
-
-    fn leading_sep_for(&self, sep: &str) -> bool {
-        self.separator == sep && self.leading
-    }
-
-    fn trailing_sep_for(&self, sep: &str) -> bool {
-        self.separator == sep && self.trailing
-    }
-}
-
-impl JoinSource for FieldView<'_> {
-    fn len(&self) -> usize {
+impl<'a> JoinSource<'a> for NonterminalView<'a> {
+    fn renderables(&self) -> &'a [Renderable<'a>] {
         match self {
-            Self::Missing => 0,
-            Self::Scalar(text) => usize::from(!text.is_empty()),
-            Self::List(view) => view.len(),
+            Self::Missing | Self::One(_) => &[],
+            Self::Many(view) => view.items,
         }
     }
-
-    fn item(&self, index: usize) -> &str {
+    fn separator(&self) -> &'a str {
         match self {
-            Self::Missing => panic!("FieldView::Missing has no join items"),
-            Self::Scalar(text) => {
-                debug_assert_eq!(index, 0);
-                text
-            }
-            Self::List(view) => view.item(index),
+            Self::Many(view) => view.separator,
+            _ => "",
         }
     }
-
-    fn leading_sep_for(&self, sep: &str) -> bool {
-        matches!(self, Self::List(view) if view.leading_sep_for(sep))
+    fn leading(&self) -> bool {
+        matches!(self, Self::Many(v) if v.leading)
     }
-
-    fn trailing_sep_for(&self, sep: &str) -> bool {
-        matches!(self, Self::List(view) if view.trailing_sep_for(sep))
+    fn trailing(&self) -> bool {
+        matches!(self, Self::Many(v) if v.trailing)
     }
 }
 
-/// Join a pre-rendered sequence with a separator, with optional leading +
-/// trailing separator flanks.
-pub fn joinby<T: JoinSource + ?Sized>(
-    xs: &T,
-    sep: &str,
+/// Join a `Renderable`-backed sequence with a separator, with optional
+/// leading + trailing separator flanks.
+///
+/// Returns `Safe<Joined<'a>>` so Askama can stream the result into its
+/// output buffer without an intermediate `String` allocation. The
+/// `join_with_line_comment_fix` and `ends_line_comment` helpers from the
+/// string-backed era are removed here; Task 4's `from_transport` bridge
+/// must surface line-comment-ending leaves with their trailing `\n`
+/// already inside `Renderable::Text(...)` so the separator is never
+/// emitted after them.
+pub fn joinby<'a, T: JoinSource<'a> + ?Sized>(
+    xs: &'a T,
+    sep: &'a str,
     leading: bool,
     trailing: bool,
-) -> Result<String, askama::Error> {
-    if xs.len() == 0 {
-        return Ok(String::new());
-    }
-    let prefix = if leading { sep } else { "" };
-    let suffix = if trailing { sep } else { "" };
-    let joined = join_with_line_comment_fix(xs, sep);
-    Ok(format!("{prefix}{joined}{suffix}"))
-}
-
-/// Detect whether a rendered child ends with a `//` or `#` line-terminated
-/// comment. Mirrors the TS `endsLineComment` helper in
-/// `packages/core/src/templates/nunjucks-env.ts` — used by the join helpers
-/// to force a `\n` separator after a line-comment-ending child so the
-/// following sibling doesn't get folded into the comment at reparse time.
-fn ends_line_comment(s: &str) -> bool {
-    let trimmed = s.trim_end_matches([' ', '\t']);
-    if trimmed.ends_with('\n') {
-        return false;
-    }
-    // Find the start of the last line (everything after the final `\n`).
-    let last_line_start = trimmed.rfind('\n').map_or(0, |i| i + 1);
-    let last_line = &trimmed[last_line_start..];
-    let stripped = last_line.trim_start();
-    stripped.starts_with("//") || stripped.starts_with('#')
-}
-
-/// Join `xs` with `sep`, but force `\n` instead of `sep` after any element
-/// that ends with a line-terminated comment (`//` or `#`). Joining with
-/// ` ` would otherwise fold the next sibling into the comment at reparse
-/// time. Cluster J (016): mirrors the TS Nunjucks `join` filter so the
-/// two engines stay byte-identical on fixtures containing `// comment`
-/// followed by a statement (e.g. rust block round-trip).
-fn join_with_line_comment_fix<T: JoinSource + ?Sized>(xs: &T, sep: &str) -> String {
-    if xs.len() == 0 {
-        return String::new();
-    }
-    if xs.len() == 1 {
-        return xs.item(0).to_string();
-    }
-    let mut out = String::new();
-    for i in 0..xs.len() {
-        let s = xs.item(i);
-        out.push_str(s);
-        if i + 1 < xs.len() {
-            if ends_line_comment(s) {
-                out.push('\n');
-            } else {
-                out.push_str(sep);
-            }
-        }
-    }
-    out
+) -> Result<askama::filters::Safe<Joined<'a>>, askama::Error> {
+    Ok(askama::filters::Safe(Joined {
+        items: xs.renderables(),
+        separator: sep,
+        leading,
+        trailing,
+    }))
 }
 
 /// Minimal askama values bridge for flank-aware filters.
@@ -338,6 +518,12 @@ pub trait PresenceCheck {
     fn is_present_check(&self) -> bool;
 }
 
+// NOTE: each of `str` / `&str` / `String` / `&String` needs its own
+// impl. Deref coercion does NOT apply to `T: PresenceCheck + ?Sized`
+// trait bounds — the askama filter macros monomorphize each call site
+// with the concrete reference type, so collapsing to a single
+// `impl for str` causes E0277 at every call site that uses `&str`.
+
 impl PresenceCheck for str {
     fn is_present_check(&self) -> bool {
         !self.trim().is_empty()
@@ -362,18 +548,34 @@ impl PresenceCheck for &String {
     }
 }
 
-impl PresenceCheck for ListView<'_> {
+impl PresenceCheck for ListNonterminalView<'_> {
     fn is_present_check(&self) -> bool {
         !self.items.is_empty()
     }
 }
 
-impl PresenceCheck for FieldView<'_> {
+impl PresenceCheck for SingleNonterminalView<'_> {
+    fn is_present_check(&self) -> bool {
+        // A required-cardinality slot is by definition always present.
+        // We still check for empty rendered text so templates that gate
+        // on `{% if foo | isPresent %}` behave consistently with the
+        // umbrella case for empty text leaves.
+        true
+    }
+}
+
+impl PresenceCheck for OptionalNonterminalView<'_> {
+    fn is_present_check(&self) -> bool {
+        matches!(self, Self::Present(_))
+    }
+}
+
+impl PresenceCheck for NonterminalView<'_> {
     fn is_present_check(&self) -> bool {
         match self {
             Self::Missing => false,
-            Self::Scalar(text) => !text.trim().is_empty(),
-            Self::List(view) => view.is_present_check(),
+            Self::One(_) => true,
+            Self::Many(view) => view.is_present_check(),
         }
     }
 }
@@ -465,50 +667,49 @@ fn flank_match(values: &dyn askama::Values, key: &str, sep: &str) -> bool {
     }
 }
 
-/// Askama filter — `{{ children | joinWithTrailing(",") }}`. Emits a
-/// trailing `sep` iff the children list captured a trailing anonymous
-/// token whose text matches `sep`. Source: the generated render
-/// crate's Askama values bag under key `"trailing_anon"`.
+/// Plain Rust implementation for `joinWithTrailing` — callable from both
+/// Rust tests and via the per-grammar `#[askama::filter_fn]` wrapper in
+/// generated render crates.
+///
+/// Emits a trailing `sep` iff the children list captured a trailing anonymous
+/// token whose text matches `sep`. Source: the generated render crate's
+/// Askama values bag under key `"trailing_anon"`.
 ///
 /// On a context with no flank metadata the filter degrades to plain
 /// `join` — matches TS engine behavior when the children array has no
 /// `_trailing_anon` property.
-#[askama::filter_fn]
 #[allow(non_snake_case)]
-pub fn joinWithTrailing<T: JoinSource + ?Sized>(
-    xs: &T,
+pub fn joinWithTrailing<'a, T: JoinSource<'a> + ?Sized>(
+    xs: &'a T,
     values: &dyn askama::Values,
-    sep: &str,
-) -> Result<String, askama::Error> {
-    let trailing = xs.trailing_sep_for(sep) || flank_match(values, "trailing_anon", sep);
+    sep: &'a str,
+) -> Result<askama::filters::Safe<Joined<'a>>, askama::Error> {
+    let trailing = xs.trailing() || flank_match(values, "trailing_anon", sep);
     joinby(xs, sep, false, trailing)
 }
 
-/// Askama filter — `{{ children | joinWithLeading(",") }}`. Symmetric to
+/// Plain Rust implementation for `joinWithLeading`. Symmetric to
 /// `joinWithTrailing`: emits a leading `sep` iff the children list
 /// captured a leading anonymous token whose text matches `sep`.
-#[askama::filter_fn]
 #[allow(non_snake_case)]
-pub fn joinWithLeading<T: JoinSource + ?Sized>(
-    xs: &T,
+pub fn joinWithLeading<'a, T: JoinSource<'a> + ?Sized>(
+    xs: &'a T,
     values: &dyn askama::Values,
-    sep: &str,
-) -> Result<String, askama::Error> {
-    let leading = xs.leading_sep_for(sep) || flank_match(values, "leading_anon", sep);
+    sep: &'a str,
+) -> Result<askama::filters::Safe<Joined<'a>>, askama::Error> {
+    let leading = xs.leading() || flank_match(values, "leading_anon", sep);
     joinby(xs, sep, leading, false)
 }
 
-/// Askama filter — `{{ children | joinWithFlanks(",") }}`. Both
-/// directions; emits each flank independently iff its captured anon
-/// text matches `sep`.
-#[askama::filter_fn]
+/// Plain Rust implementation for `joinWithFlanks`. Both directions;
+/// emits each flank independently iff its captured anon text matches `sep`.
 #[allow(non_snake_case)]
-pub fn joinWithFlanks<T: JoinSource + ?Sized>(
-    xs: &T,
+pub fn joinWithFlanks<'a, T: JoinSource<'a> + ?Sized>(
+    xs: &'a T,
     values: &dyn askama::Values,
-    sep: &str,
-) -> Result<String, askama::Error> {
-    let leading = xs.leading_sep_for(sep) || flank_match(values, "leading_anon", sep);
-    let trailing = xs.trailing_sep_for(sep) || flank_match(values, "trailing_anon", sep);
+    sep: &'a str,
+) -> Result<askama::filters::Safe<Joined<'a>>, askama::Error> {
+    let leading = xs.leading() || flank_match(values, "leading_anon", sep);
+    let trailing = xs.trailing() || flank_match(values, "trailing_anon", sep);
     joinby(xs, sep, leading, trailing)
 }

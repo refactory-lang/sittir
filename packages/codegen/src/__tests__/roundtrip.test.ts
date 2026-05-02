@@ -91,7 +91,7 @@ describe('NodeMap structure', () => {
 		for (const [kind, node] of result.nodeMap.nodes) {
 			if (node.modelType === 'group') {
 				groupCount++;
-				if (kind.startsWith('assignment_')) assignmentVariantKinds.add(kind);
+				if (kind.startsWith('_assignment_')) assignmentVariantKinds.add(kind);
 			}
 			if (node.modelType === 'polymorph') polymorphCount++;
 		}

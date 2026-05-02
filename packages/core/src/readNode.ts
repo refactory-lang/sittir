@@ -72,6 +72,14 @@ export interface TreeHandle {
 	 * Callers can also set this manually to apply a house-style config.
 	 */
 	format?: FormatRecord;
+	/**
+	 * Phase D: convert a tree-sitter string kind name to the numeric
+	 * `TSKindId` value used as `$type` in `AnyNodeData`. Required for
+	 * JS-side (WASM) reads — the native (napi) path produces numeric IDs
+	 * directly via `tree.read`. If absent on a JS-side handle, `readNode`
+	 * throws to surface the misconfiguration immediately.
+	 */
+	kindIdFromName?: (kind: string) => number | undefined;
 }
 
 function toNodeId(id: number): NodeId {
@@ -121,6 +129,13 @@ export function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {
 	// native-only — no circular recursion risk.
 	if (tree.read) return tree.read(nodeId);
 
+	// Phase D: capture optional kindIdFromName resolver. When absent (e.g. in
+	// unit-test handles with no real grammar), readNode falls back to the string
+	// kind name as $type. This is valid because AnyNodeData.$type is `string |
+	// number`: numeric for parser.c-derived kinds (the normal production path),
+	// string for hidden/synthetic kinds (e.g. "_suite") and test fixtures.
+	const kindIdFromName = tree.kindIdFromName;
+
 	const node = nodeId != null ? tree.nodeById(nodeId) : tree.rootNode;
 
 	// `Object.create(null)` avoids prototype pollution on field names
@@ -136,12 +151,29 @@ export function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {
 		Object.create(null);
 	const children: AnyNodeData[] = [];
 
+	/**
+	 * Resolve a tree-sitter kind string to its numeric TSKindId, falling back
+	 * to the string kind name when no resolver is configured. The string
+	 * fallback is intentional for hidden/synthetic kinds and unit-test handles
+	 * that have no grammar backing.
+	 */
+	function resolveKindId(kind: string): number {
+		if (kindIdFromName) {
+			const id = kindIdFromName(kind);
+			if (id !== undefined) return id;
+		}
+		// No resolver or kind not in catalog — return 0 as sentinel.
+		// This path should only fire for unit-test handles with no grammar
+		// backing. Production grammars always supply kindIdFromName.
+		return 0;
+	}
+
 	const allChildren = node.children();
 	for (let i = 0; i < allChildren.length; i++) {
 		const child = allChildren[i]!;
 
 		const entry: AnyNodeData = {
-			$type: child.type,
+			$type: resolveKindId(child.type),
 			$source: 'ts',
 			$text: child.text(),
 			$span: { start: child.range().start.index, end: child.range().end.index },
@@ -188,7 +220,7 @@ export function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {
 	const hasStructure = Object.keys(fields).length > 0 || children.length > 0;
 
 	return {
-		$type: node.type,
+		$type: resolveKindId(node.type),
 		$source: 'ts',
 		// Branch nodes: emit $text only when DEBUG_TEXT is enabled.
 		// Leaf nodes (no $fields / $children) always carry $text so the

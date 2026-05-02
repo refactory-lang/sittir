@@ -112,11 +112,13 @@ export function emitConsts(config: EmitConstsConfig): string {
 	lines.push('');
 
 	// Type aliases
+	// Note: `AnyOperator` (not `Operator`) to avoid collision with concrete
+	// grammar terminal types named `_operator` that `types.ts` exports.
 	lines.push('export type NodeKind = (typeof NODE_KINDS)[number];');
 	lines.push('export type LeafKind = (typeof LEAF_KINDS)[number];');
 	lines.push('export type AnyKind = (typeof ALL_KINDS)[number];');
 	lines.push('export type Keyword = (typeof KEYWORDS)[number];');
-	lines.push('export type Operator = (typeof OPERATORS)[number];');
+	lines.push('export type AnyOperator = (typeof OPERATORS)[number];');
 	lines.push('');
 
 	emitTreeSitterIdConsts(lines, {
@@ -155,11 +157,13 @@ export function emitConsts(config: EmitConstsConfig): string {
 	emitBitflagConstEnums(lines, nodeMap);
 
 	// Enum values
+	const emittedValueTypes = new Set<string>();
 	for (const ek of enumEntries.sort((a, b) => a.kind.localeCompare(b.kind))) {
 		const constName = ek.kind.toUpperCase() + 'S';
 		const typeName =
 			ek.kind
 				.split('_')
+				.filter(Boolean)
 				.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
 				.join('') + 'Value';
 
@@ -169,7 +173,14 @@ export function emitConsts(config: EmitConstsConfig): string {
 			lines.push(`  '${v.replace(/'/g, "\\'")}',`);
 		}
 		lines.push('] as const;');
-		lines.push(`export type ${typeName} = (typeof ${constName})[number];`);
+		// Emit the type alias only once per unique name — hidden kinds like
+		// `_accessibility_modifier` and their visible counterparts like
+		// `accessibility_modifier` resolve to the same PascalCase type name.
+		// Emitting both would produce a duplicate identifier TS2300 error.
+		if (!emittedValueTypes.has(typeName)) {
+			emittedValueTypes.add(typeName);
+			lines.push(`export type ${typeName} = (typeof ${constName})[number];`);
+		}
 		lines.push('');
 	}
 
@@ -213,14 +224,13 @@ function emitTreeSitterIdConsts(
 	}
 	lines.push('');
 
-	emitIdEnumBlock(lines, {
-		enumName: 'TSKindId',
+	emitIdMaps(lines, {
 		forwardName: 'TREE_SITTER_KIND_ID_BY_KIND',
 		reverseName: 'TREE_SITTER_KIND_BY_KIND_ID',
 		jsonName: 'TREE_SITTER_KIND_ID_JSON',
-		recordType: 'Record<string, TSKindId>',
 		entries: kindEntries
 	});
+	lines.push('');
 
 	emitIdEnumBlock(lines, {
 		enumName: 'TSFieldId',
@@ -280,6 +290,40 @@ function emitIdEnumBlock(
 	lines.push('');
 }
 
+function emitIdMaps(
+	lines: string[],
+	config: {
+		readonly forwardName: string;
+		readonly reverseName: string;
+		readonly jsonName: string;
+		readonly entries: readonly IdEnumEntry[];
+	}
+): void {
+	if (config.entries.length === 0) return;
+
+	lines.push(`export const ${config.forwardName} = {`);
+	for (const entry of config.entries) {
+		lines.push(`  ${JSON.stringify(entry.key)}: ${entry.id},`);
+	}
+	lines.push('} as const satisfies Record<string, number>;');
+	lines.push('');
+
+	lines.push(`export const ${config.reverseName} = {`);
+	for (const entry of config.entries) {
+		lines.push(`  [${entry.id}]: ${JSON.stringify(entry.key)},`);
+	}
+	lines.push('} as const;');
+	lines.push('');
+
+	lines.push(`export const ${config.jsonName} = [`);
+	for (const entry of config.entries) {
+		lines.push(
+			`  { name: ${JSON.stringify(entry.key)}, id: ${entry.id}, enumName: ${JSON.stringify(entry.memberName)}, cName: ${JSON.stringify(entry.cName ?? null)} },`
+		);
+	}
+	lines.push('] as const;');
+}
+
 function collectIdEntries(
 	keys: readonly string[],
 	ids: GeneratedIdTable | undefined
@@ -296,24 +340,25 @@ function collectIdEntries(
 		)
 		.sort(
 			(a, b) =>
-				a.entry.id - b.entry.id ||
+				(a.entry.id ?? -1) - (b.entry.id ?? -1) ||
 				a.key.localeCompare(b.key) ||
-				(a.entry.cName ?? '').localeCompare(b.entry.cName ?? '')
+				(a.entry.parser?.cSymbol ?? '').localeCompare(b.entry.parser?.cSymbol ?? '')
 		);
 
 	for (const { key, entry } of keyedEntries) {
+		const cSymbol = entry.parser?.cSymbol;
 		const baseName =
-			entry.cName && /^[A-Za-z_]\w*$/.test(entry.cName)
-				? treeSitterCNameMemberName(entry.cName)
+			cSymbol && /^[A-Za-z_]\w*$/.test(cSymbol)
+				? treeSitterCNameMemberName(cSymbol)
 				: treeSitterIdMemberName(key);
 		const existingKey = usedNames.get(baseName);
 		const memberName =
 			existingKey === undefined || existingKey === key
 				? baseName
-				: `${baseName}_${entry.id}`;
+				: `${baseName}_${entry.id ?? ''}`;
 		usedNames.set(memberName, key);
 		if (existingKey === undefined) usedNames.set(baseName, key);
-		result.push({ key, id: entry.id, cName: entry.cName, memberName });
+		result.push({ key, id: entry.id ?? -1, cName: cSymbol, memberName });
 	}
 
 	return result;

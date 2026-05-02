@@ -16,5 +16,10 @@ export {
 	metricsEnabled
 } from './metrics.ts';
 export type { MetricsFile, PerKindMetrics, FfiMetrics } from './metrics.ts';
-export { assertNativeNodeData, isNativeNodeData } from './native-boundary.ts';
+export {
+	assertRenderableNodeData,
+	isRenderableNodeData,
+	assertNativeNodeData,
+	isNativeNodeData
+} from './native-boundary.ts';
 export { applyFormat, rebaseTrivia } from './format.ts';

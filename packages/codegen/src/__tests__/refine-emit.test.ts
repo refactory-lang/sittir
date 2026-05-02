@@ -25,6 +25,7 @@ import { emitTypes } from '../emitters/types.ts';
 import { emitFactories } from '../emitters/factories.ts';
 import { emitIr } from '../emitters/ir.ts';
 import { createEmptyRuleCatalog } from '../compiler/rule-catalog.ts';
+import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 
 // ---------------------------------------------------------------------------
 // Synthetic grammar: `iface_body` with curly `{...}` and flow `{|...|}` forms
@@ -163,15 +164,27 @@ describe('link-refine — resolveRefinePath + narrowedFieldLiteralsForForm', () 
 // ---------------------------------------------------------------------------
 
 function runPipeline(forms: RefineForm[]) {
-	const raw = makeRefineRaw(forms);
-	const linked = link(raw);
-	const optimized = optimize(linked);
-	const nodeMap = assemble(optimized);
+ 	const raw = makeRefineRaw(forms);
+ 	const linked = link(raw);
+ 	const optimized = optimize(linked);
+ 	const nodeMap = assemble(optimized);
+	const generatedIdTables = makeGeneratedIdTables();
+ 	return {
+ 		nodeMap,
+ 		typesSrc: emitTypes({ grammar: 'synth', nodeMap, generatedIdTables }),
+ 		factoriesSrc: emitFactories({ grammar: 'synth', nodeMap }),
+ 		irSrc: emitIr({ grammar: 'synth', nodeMap })
+ 	};
+}
+
+function makeGeneratedIdTables(): GeneratedIdTables {
 	return {
-		nodeMap,
-		typesSrc: emitTypes({ grammar: 'synth', nodeMap }),
-		factoriesSrc: emitFactories({ grammar: 'synth', nodeMap }),
-		irSrc: emitIr({ grammar: 'synth', nodeMap })
+		kindIds: {
+			iface_body: { id: 11, parser: { cSymbol: 'sym_iface_body', parserName: 'iface_body', anon: false, aux: false, alias: false, hidden: false } },
+			iface_body_curly: { id: 17, parser: { cSymbol: 'sym_iface_body_curly', parserName: 'iface_body_curly', anon: false, aux: false, alias: false, hidden: false } },
+			iface_body_flow: { id: 23, parser: { cSymbol: 'sym_iface_body_flow', parserName: 'iface_body_flow', anon: false, aux: false, alias: false, hidden: false } }
+		},
+		sourceArtifact: 'parser.wasm'
 	};
 }
 
@@ -211,7 +224,11 @@ describe('types emitter — per-form namespace sugar', () => {
 		const linked = link(noRefine);
 		const optimized = optimize(linked);
 		const nodeMap = assemble(optimized);
-		const src = emitTypes({ grammar: 'synth', nodeMap });
+		const src = emitTypes({
+			grammar: 'synth',
+			nodeMap,
+			generatedIdTables: makeGeneratedIdTables()
+		});
 		// No sub-namespaces.
 		expect(src).not.toMatch(/namespace Curly/);
 		expect(src).not.toMatch(/namespace Flow/);

@@ -12,7 +12,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { ir } from '../src/index.ts';
+import { ir, TSKindId } from '../src/index.ts';
 
 describe('python type_alias_statement collision (spec 008 US7)', () => {
 	it('$type holds the kind discriminant, $fields.type holds the `type` keyword field', () => {
@@ -21,8 +21,8 @@ describe('python type_alias_statement collision (spec 008 US7)', () => {
 			right: { $type: 'type', $text: 'u64' } as any
 		});
 
-		// Kind discriminant
-		expect(node.$type).toBe('type_alias_statement');
+		// Kind discriminant — numeric TSKindId post Phase A KindID migration
+		expect(node.$type).toBe(TSKindId.TypeAliasStatement);
 
 		// `type` keyword field — auto-stamped by the factory (ADR-0010)
 		expect(node.$fields).toBeDefined();

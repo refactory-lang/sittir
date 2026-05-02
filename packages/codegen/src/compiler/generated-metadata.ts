@@ -10,16 +10,28 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { createRequire } from 'node:module';
 import { loadWebTreeSitter } from '../validate/common.ts';
-import type {
-	GeneratedMetadata,
-	GeneratedMetadataCatalog,
-	RuleCatalog
+import {
+	KindPresenceFlag,
+	type GeneratedMetadata,
+	type GeneratedMetadataCatalog,
+	type KindParserMetadata,
+	type RuleCatalog
 } from './types.ts';
 import type * as TS from 'web-tree-sitter';
 
+/**
+ * One row of the parser symbol catalog (KindID runtime migration design,
+ * 2026-04-30). When `id` / `parser` are absent, the kind exists in the
+ * codegen rule set but tree-sitter inlined it during parser compilation —
+ * presence is `TSGrammar` only, not `TSInternals`. A row's mere existence
+ * here is the canonical record of "this kind is reachable from the
+ * grammar"; downstream code reads `parser` to discover whether it also
+ * surfaces at runtime.
+ */
 export interface GeneratedIdEntry {
-	readonly id: number;
-	readonly cName?: string;
+	readonly id?: number;
+	/** Parser-origin metadata; absent iff the kind has no parser symbol. */
+	readonly parser?: KindParserMetadata;
 }
 
 export type GeneratedIdTable =
@@ -126,13 +138,32 @@ export function deriveGeneratedMetadata(
 	const fieldByName = new Map<string, GeneratedMetadata>();
 	const kindIds = toEntries(tables.kindIds);
 	const fieldIds = toEntries(tables.fieldIds);
+	const kindIdLookup = new Map(kindIds);
 
-	for (const [kind, entry] of kindIds) {
-		if (!ruleCatalog.rootsByKind.has(kind)) continue;
-		kindByName.set(kind, {
-			kindId: entry.id,
-			sourceArtifact: tables.sourceArtifact
-		});
+	// Every kind in the rule catalog gets a catalog row, even when
+	// tree-sitter inlined it (no parser symbol). This is the DRY source:
+	// one entry per codegen rule. `presence` carries the file/runtime
+	// existence flags (TSGrammar / TSNodeTypes / TSInternals); `parser`
+	// carries the parser-origin metadata when applicable. `uses` is
+	// populated by downstream NodeMap classification (Readable /
+	// Buildable / Renderable). Per KindID runtime migration design
+	// (2026-04-30).
+	for (const kind of ruleCatalog.rootsByKind.keys()) {
+		const parserEntry = kindIdLookup.get(kind);
+		const basePresence = KindPresenceFlag.TSGrammar;
+		if (parserEntry) {
+			kindByName.set(kind, {
+				kindId: parserEntry.id,
+				parser: parserEntry.parser,
+				presence: basePresence | KindPresenceFlag.TSInternals,
+				sourceArtifact: tables.sourceArtifact
+			});
+		} else {
+			kindByName.set(kind, {
+				presence: basePresence,
+				sourceArtifact: tables.sourceArtifact
+			});
+		}
 	}
 
 	const knownEdgeNames = collectEdgeNames(ruleCatalog);
@@ -140,6 +171,8 @@ export function deriveGeneratedMetadata(
 		if (!knownEdgeNames.has(field)) continue;
 		fieldByName.set(field, {
 			fieldId: entry.id,
+			parser: entry.parser,
+			presence: KindPresenceFlag.TSGrammar | KindPresenceFlag.TSInternals,
 			sourceArtifact: tables.sourceArtifact
 		});
 	}
@@ -304,12 +337,32 @@ function joinIdNames(
 	names: ReadonlyMap<string, string>,
 	fallbackName: (cName: string) => string
 ): Map<string, GeneratedIdEntry> {
+	// The join key is the **prefix-stripped C symbol name** (per the KindID
+	// runtime migration design, 2026-04-30): `sym__array_expression_list`
+	// becomes `_array_expression_list`, distinct from the visible
+	// `sym_array_expression_list` (would-be `array_expression_list`). The
+	// lookup table `ts_symbol_names[]` is intentionally lossy — it
+	// canonicalizes display labels and collapses `sym__as_pattern` and
+	// `sym_as_pattern` to the same `"as_pattern"` string — so it can NOT be
+	// used as the identity key. The symbol name survives as a diagnostic
+	// label on the catalog row.
 	const result = new Map<string, GeneratedIdEntry>();
 	for (const entry of ids.values()) {
-		const name = names.get(entry.cName) ?? fallbackName(entry.cName);
-		const existing = result.get(name);
-		if (existing && !shouldReplaceSymbol(existing.cName, entry.cName)) continue;
-		result.set(name, { id: entry.id, cName: entry.cName });
+		const key = fallbackName(entry.cName);
+		const existing = result.get(key);
+		if (existing && existing.parser && !shouldReplaceSymbol(existing.parser.cSymbol, entry.cName)) {
+			continue;
+		}
+		const parser: KindParserMetadata = {
+			cSymbol: entry.cName,
+			parserName: key,
+			symbolName: names.get(entry.cName),
+			anon: entry.cName.startsWith('anon_sym_'),
+			aux: entry.cName.startsWith('aux_sym_'),
+			alias: entry.cName.startsWith('alias_sym_'),
+			hidden: key.startsWith('_')
+		};
+		result.set(key, { id: entry.id, parser });
 	}
 	return result;
 }
@@ -326,8 +379,27 @@ function shouldReplaceSymbol(
 
 function deriveSymbolRuntimeName(cName: string): string {
 	if (cName.startsWith('sym_')) return cName.slice('sym_'.length);
-	if (cName.startsWith('anon_sym_')) return cName.slice('anon_sym_'.length);
+	// Anonymous tokens (`anon_sym_LPAREN`, `anon_sym_PLUS`, `anon_sym_RBRACE`)
+	// arrive in parser.c with all-caps tail names. Lowercase them so the
+	// catalog `key` is consistently snake-case across all kinds (aligns with
+	// `call_expression`, `_array_expression_list`, etc.) and the downstream
+	// PascalCase / SCREAMING_SNAKE_CASE conversions produce sane
+	// identifiers. Without this, `LPAREN` stays uppercase, the
+	// `toScreamingSnakeCase` regex inserts `_` before every letter, and the
+	// emitted Rust constant becomes `L_P_A_R_E_N` instead of `LPAREN`.
+	// The original C-side name is preserved in `parser.cSymbol`; the literal
+	// punctuation text is preserved in `parser.symbolName`.
+	if (cName.startsWith('anon_sym_')) {
+		return cName.slice('anon_sym_'.length).toLowerCase();
+	}
 	if (cName.startsWith('aux_sym_')) return cName.slice('aux_sym_'.length);
+	// `alias_sym_<target>` is the parser symbol for an aliased kind. The
+	// codegen rule that produces it is the hidden source (leading
+	// underscore) — e.g. tree-sitter-rust aliases `_field_identifier` →
+	// `field_identifier`, which appears in parser.c as
+	// `alias_sym_field_identifier`. Map back to the hidden source name so
+	// the join hits the codegen-side rule key.
+	if (cName.startsWith('alias_sym_')) return `_${cName.slice('alias_sym_'.length)}`;
 	return cName;
 }
 

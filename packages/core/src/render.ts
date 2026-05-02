@@ -44,6 +44,8 @@ interface InternalRenderContext {
 	prefix: string;
 	format?: FormatRecord;
 	ignoreFormat?: boolean;
+	/** Static kind-name table from `config.kindNames`. */
+	kindNames?: ReadonlyMap<number, string>;
 }
 
 function buildRenderContext(
@@ -63,8 +65,34 @@ function buildRenderContext(
 		varPattern,
 		prefix,
 		format: options?.format,
-		ignoreFormat: options?.ignoreFormat
+		ignoreFormat: options?.ignoreFormat,
+		kindNames: config.kindNames
 	};
+}
+
+// ---------------------------------------------------------------------------
+// Kind-name resolution helper
+// ---------------------------------------------------------------------------
+
+/**
+ * Resolve a `$type` value (numeric or string) to a string kind name.
+ *
+ * - **Numeric**: translated via `kindNameFromId` (grammar-package resolver).
+ *   Falls back to `String(type)` when the resolver is absent or returns
+ *   undefined (e.g. unit-test configs, unknown IDs).
+ * - **String**: returned as-is — hidden/synthetic kinds (e.g. `"_suite"`)
+ *   have no parser.c entry and therefore carry their kind name directly as
+ *   the `$type` value.
+ *
+ * @param type       `AnyNodeData.$type` (string | number)
+ * @param kindNameFromId  Optional id→name resolver from `RulesConfig`.
+ */
+function resolveKindName(
+	type: number | string,
+	ctx: InternalRenderContext
+): string {
+	if (typeof type === 'string') return type;
+	return ctx.kindNames?.get(type) ?? String(type);
 }
 
 // ---------------------------------------------------------------------------
@@ -82,7 +110,8 @@ function buildRenderContext(
 function resolveTemplate(
 	rule: TemplateRule,
 	node: AnyNodeData,
-	varPattern: RegExp
+	varPattern: RegExp,
+	ctx: InternalRenderContext
 ): string {
 	if (typeof rule === 'string') return rule;
 
@@ -108,7 +137,7 @@ function resolveTemplate(
 		//    placeholders all resolve against the incoming node.
 		//    Prefers the variant with the MOST resolved variables when
 		//    several partially match, falling back to the first entry.
-		const picked = pickTemplate(Object.values(obj.variants), node, varPattern);
+		const picked = pickTemplate(Object.values(obj.variants), node, varPattern, ctx);
 		if (picked !== null) return picked;
 		return Object.values(obj.variants)[0]!;
 	}
@@ -270,7 +299,11 @@ export function prepare(
 		);
 	}
 
-	const rule = ctx.config.rules[node.$type];
+	// Resolve a string kind name for rules-map lookup. Handles both numeric
+	// (parser.c-derived) and string (hidden/synthetic) $type values.
+	const ruleKey = resolveKindName(node.$type, ctx);
+
+	const rule = ctx.config.rules[ruleKey];
 	if (!rule) {
 		// Token-shaped named kinds — tree-sitter rules that resolve to a
 		// single string literal (rust `mod_item_external`/`never_type`,
@@ -287,7 +320,7 @@ export function prepare(
 		// named fields or named children) still throws.
 		const fallbackText = collectAnonText(node);
 		if (fallbackText !== null) return { kind: 'text', text: fallbackText };
-		throw new Error(`No render rule for '${node.$type}'`);
+		throw new Error(`No render rule for '${ruleKey}'`);
 	}
 
 	const ruleObj =
@@ -298,7 +331,7 @@ export function prepare(
 	const { varPattern, prefix } = ctx;
 
 	// Resolve template — handles simple and named-variant forms.
-	const rawTemplate = resolveTemplate(rule, node, varPattern);
+	const rawTemplate = resolveTemplate(rule, node, varPattern, ctx);
 
 	// Trim trailing newline from YAML | block scalar
 	const tmpl = rawTemplate.endsWith('\n')
@@ -308,6 +341,13 @@ export function prepare(
 	// Consumption model: track which children indices have been used.
 	// $$$CHILDREN renders only the unconsumed remainder.
 	const consumed = new Set<number>();
+
+	/**
+	 * Compare a child's $type (numeric or string) to a string kind name.
+	 * Uses resolveKindName for resolution (handles both numeric and string $type).
+	 */
+	const childKindMatches = (c: AnyNodeData, kindName: string): boolean =>
+		resolveKindName(c.$type, ctx) === kindName;
 
 	const resolveSlot = (pfx: string, name: string): string => {
 		const fieldKey = name.toLowerCase();
@@ -535,7 +575,7 @@ export function prepare(
 			const idx = node.$children.findIndex(
 				(c: any, i: number) =>
 					!consumed.has(i) &&
-					c?.$type === fieldKey &&
+					childKindMatches(c as AnyNodeData, fieldKey) &&
 					(c as AnyNodeData).$named !== false
 			);
 			if (idx >= 0) {
@@ -548,7 +588,7 @@ export function prepare(
 						const c = node.$children[i] as AnyNodeData;
 						if (
 							!consumed.has(i) &&
-							c?.$type === fieldKey &&
+							childKindMatches(c, fieldKey) &&
 							c.$named !== false
 						) {
 							consumed.add(i);
@@ -652,7 +692,11 @@ function resolveFormat(
 	ctx: InternalRenderContext
 ): FormatRecord | undefined {
 	if (ctx.ignoreFormat) return undefined;
-	return node.$format ?? ctx.format?.kinds?.[node.$type] ?? ctx.format;
+	// FormatRecord.kinds is string-keyed; resolve $type to a string kind name.
+	// resolveKindName handles both numeric (parser.c-derived) and string (hidden)
+	// $type values.
+	const kindKey = resolveKindName(node.$type, ctx);
+	return node.$format ?? ctx.format?.kinds?.[kindKey] ?? ctx.format;
 }
 
 /** Apply the resolved FormatRecord for this node to `canonical`, or return `canonical` unchanged. */
@@ -672,8 +716,13 @@ function withFormat(
 function pickTemplate(
 	templates: string[],
 	node: AnyNodeData,
-	varPattern: RegExp
+	varPattern: RegExp,
+	ctx: InternalRenderContext
 ): string | null {
+	/** Compare a child's $type (numeric or string) to a string kind name. */
+	const childKindMatches = (c: AnyNodeData, kindName: string): boolean =>
+		resolveKindName(c.$type, ctx) === kindName;
+
 	// Score each template by variable resolution against the node.
 	// Lower `unresolved` is better — a template with all variables
 	// resolved beats one with any phantoms. On ties, prefer more total
@@ -698,7 +747,7 @@ function pickTemplate(
 				return '';
 			}
 			if (node.$children && Array.isArray(node.$children)) {
-				if (node.$children.some((c: any) => c?.$type === fieldKey)) {
+				if (node.$children.some((c: any) => childKindMatches(c as AnyNodeData, fieldKey))) {
 					resolved++;
 					return '';
 				}
@@ -1122,6 +1171,14 @@ function renderNunjucks(
 		);
 	}
 
+	const kindName = resolveKindName(node.$type, ctx);
+	if (kindName === undefined) {
+		throw new Error(
+			`render: cannot resolve $type ${node.$type} — kindNames table required. ` +
+				`The grammar package's RulesConfig must supply 'kindNames'.`
+		);
+	}
+
 	// Canonical-hidden short-circuit (Option Y): when render is called
 	// with a non-canonicalized NodeData (visible `$type` for a hidden
 	// alias-source kind), look up the underscore-prefixed template
@@ -1130,9 +1187,9 @@ function renderNunjucks(
 	// `wrapNode`'s alias remap) so this fallback covers the rarer
 	// case where a parser-output node reaches render before being
 	// wrapped (e.g. tests that bypass the wrap layer).
-	let templateName = `${node.$type}.jinja`;
+	let templateName = `${kindName}.jinja`;
 	if (!templateFileExists(templatesDir, templateName)) {
-		const hiddenTemplateName = `_${node.$type}.jinja`;
+		const hiddenTemplateName = `_${kindName}.jinja`;
 		if (templateFileExists(templatesDir, hiddenTemplateName)) {
 			templateName = hiddenTemplateName;
 		} else {
@@ -1140,7 +1197,7 @@ function renderNunjucks(
 			// the token-shaped-kind path (FR-017 / T027a). Filesystem check
 			// distinguishes "file absent" (→ fallback) from "file present but
 			// malformed" (→ propagate Nunjucks's compile error).
-			const fallback = tokenShapedFallback(node);
+			const fallback = tokenShapedFallback(node, kindName);
 			return withFormat(fallback, node, ctx);
 		}
 	}
@@ -1154,7 +1211,7 @@ function renderNunjucks(
 	} catch (err) {
 		const cause = err instanceof Error ? err.message : String(err);
 		throw new Error(
-			`render: template '${templateName}' (rule '${node.$type}') failed — ${cause}`,
+			`render: template '${templateName}' (rule '${kindName}') failed — ${cause}`,
 			{
 				cause: err
 			}
@@ -1173,12 +1230,17 @@ function renderNunjucks(
  * `SITTIR_DEBUG_TEXT` is not set). A node with named structure but no
  * template is an error — the grammar declared a rule the renderer doesn't
  * know how to render.
+ *
+ * @param node - The node being rendered.
+ * @param kindName - The resolved string kind name (already de-numericised by
+ *   the caller so error messages stay human-readable even when `node.$type`
+ *   is a numeric TSKindId).
  */
-function tokenShapedFallback(node: AnyNodeData): string {
+function tokenShapedFallback(node: AnyNodeData, kindName: string): string {
 	const fallbackText = collectAnonText(node);
 	if (fallbackText !== null) return fallbackText;
 	throw new Error(
-		`No render template for '${node.$type}' (no <kind>.jinja file and node has named fields/children)`
+		`No render template for '${kindName}' (no <kind>.jinja file and node has named fields/children)`
 	);
 }
 
@@ -1384,7 +1446,7 @@ export function createRendererFromConfig(
 		// whitespace artifacts indicate walker bugs (template emits a
 		// trailing/leading space when an optional field is absent) and
 		// must surface, not be hidden. Native engine matches this contract.
-		return withMetrics(grammar, node.$type, () => {
+		return withMetrics(grammar, resolveKindName(node.$type, ctx), () => {
 			if (nunjucksEnv || templatesDir) {
 				return renderNunjucks(node, ctx, nunjucksEnv, templatesDir);
 			}

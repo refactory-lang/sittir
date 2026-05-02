@@ -12,11 +12,17 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts';
+import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type {
 	AssembledNode,
 	AssembledSupertype
 } from '../compiler/node-map.ts';
 import { isValidIdent } from './shared.ts';
+import {
+	collectKindEntries,
+	collectCatalogKinds,
+	hasCatalogEntry
+} from './kind-discriminant.ts';
 import {
 	collectRefineKindInfos,
 	refineFormFactoryName,
@@ -27,10 +33,19 @@ import type { RefineKindInfo } from './refine-emit.ts';
 export interface EmitIrConfig {
 	grammar: string;
 	nodeMap: NodeMap;
+	generatedIdTables?: GeneratedIdTables;
 }
 
 export function emitIr(config: EmitIrConfig): string {
-	const { nodeMap } = config;
+	const { nodeMap, generatedIdTables } = config;
+
+	const kindEntries = generatedIdTables
+		? collectKindEntries(
+				collectCatalogKinds(generatedIdTables),
+				nodeMap,
+				generatedIdTables
+			)
+		: undefined;
 
 	const refineInfos = collectRefineKindInfos(nodeMap);
 	const refineByKind = new Map<string, RefineKindInfo>();
@@ -103,6 +118,9 @@ export function emitIr(config: EmitIrConfig): string {
 				sub.modelType === 'token'
 			)
 				continue;
+			// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
+			// never appear at runtime; no factory was emitted for them.
+			if (kindEntries && !hasCatalogEntry(kindEntries, subKind)) continue;
 			const memberKey = memberKeyFor(subKind, kind);
 			if (!isValidIdent(memberKey) || usedMemberKeys.has(memberKey)) continue;
 			usedMemberKeys.add(memberKey);
@@ -156,7 +174,9 @@ export function emitIr(config: EmitIrConfig): string {
 			node.modelType !== 'polymorph'
 		)
 			continue;
-
+		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
+		// never appear at runtime; no factory was emitted for them.
+		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		lines.push(`  ${node.irKey}: ${bundleExpr(node, refineByKind.get(kind))},`);
 	}
 	lines.push('');
@@ -167,6 +187,9 @@ export function emitIr(config: EmitIrConfig): string {
 		if (node.modelType !== 'keyword') continue;
 		if (!node.irKey || !node.rawFactoryName) continue;
 		if (!isValidIdent(node.irKey)) continue;
+		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
+		// never appear at runtime; no factory was emitted for them.
+		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		lines.push(`  ${node.irKey}: F.${node.rawFactoryName},`);
 	}
 	lines.push('');
@@ -177,6 +200,9 @@ export function emitIr(config: EmitIrConfig): string {
 		if (node.modelType !== 'leaf' && node.modelType !== 'enum') continue;
 		if (!node.irKey || !node.rawFactoryName) continue;
 		if (!isValidIdent(node.irKey)) continue;
+		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
+		// never appear at runtime; no factory was emitted for them.
+		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		lines.push(`  ${node.irKey}: F.${node.rawFactoryName},`);
 	}
 	if (groupNames.length > 0) {

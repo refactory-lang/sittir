@@ -5,19 +5,19 @@
 {
   "factoryShapes": {
     "_as_pattern": "children",
-    "_as_pattern_target": "children",
-    "_assignment_eq": "config",
-    "_assignment_type": "config",
-    "_assignment_typed": "config",
+    "_async_marker": "text",
+    "_augmented_assignment_operator": "text",
+    "_binary_operator_operator": "text",
+    "_boolean_operator_operator": "text",
     "_comprehension_clauses": "children",
-    "_format_expression": "children",
-    "_kw_async_marker": "text",
+    "_identifier": "text",
     "_match_block": "children",
     "_match_block_block": "config",
     "_simple_pattern_negative": "text",
     "_simple_statements": "children",
     "_suite": "children",
-    "_with_clause_paren": "children",
+    "_type_alias_statement_type": "text",
+    "_unary_operator_operator": "text",
     "aliased_import": "config",
     "argument_list": "children",
     "as_pattern": "config",
@@ -148,8 +148,6 @@
     "as": "text",
     "async": "text",
     "assert": "text",
-    "and": "text",
-    "or": "text",
     "break": "text",
     "case": "text",
     "class": "text",
@@ -181,24 +179,11 @@
     "with": "text"
   },
   "fieldAliasMap": {
-    "as_pattern.alias": {
-      "as_pattern_target": "_as_pattern_target"
-    },
     "match_statement.body": {
       "block": "_match_block"
     }
   },
   "factoryFields": {
-    "_assignment_eq": [
-      "right"
-    ],
-    "_assignment_type": [
-      "type"
-    ],
-    "_assignment_typed": [
-      "type",
-      "right"
-    ],
     "_match_block_block": [
       "alternative"
     ],

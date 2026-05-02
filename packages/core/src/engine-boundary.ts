@@ -4,11 +4,18 @@
 // import engine helpers from this subpath so the generic engine facade does not
 // blur together with render/read/edit primitives.
 
-export { createJsEngine, resolveEngineFormat } from './engine.ts';
+export { createJsEngine, resolveEngineFormat, createGrammarEngine } from './engine.ts';
 export type {
 	SittirEngineLike,
 	SittirEngineReader,
 	ParseAndReadResult,
-	JsEngineOptions
+	JsEngineOptions,
+	GrammarEngineConfig,
+	EngineOptions
 } from './engine.ts';
-export { assertNativeNodeData, isNativeNodeData } from './native-boundary.ts';
+export {
+	assertRenderableNodeData,
+	isRenderableNodeData,
+	assertNativeNodeData,
+	isNativeNodeData
+} from './native-boundary.ts';

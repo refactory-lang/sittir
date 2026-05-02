@@ -118,7 +118,7 @@ async function main(): Promise<void> {
 			//   - typescript: `@sittir/core` createRenderer + .jinja
 			//                 templates (the current default).
 			//   - native:     `@sittir/<lang>-native` napi `.node`
-			//                 → `SittirEngine.render(JSON.stringify(nodeData))`.
+			//                 → `SittirEngine.render(nodeData)`.
 			//                 No web-tree-sitter; the napi crate
 			//                 uses the `tree_sitter` Rust crate +
 			//                 `tree_sitter_<lang>::LANGUAGE`.
@@ -377,7 +377,7 @@ export async function probe(
 		rendered =
 			opts.engine === 'native'
 				? nativeEngine
-					? nativeEngine.render(JSON.stringify(stripBigInts(nodeData)))
+					? nativeEngine.render(await nativeRenderPayload(grammar, nodeData))
 					: await renderNodeDataNative(grammar, nodeData)
 				: opts.baselineDir
 					? await renderNodeDataFromPath(
@@ -542,7 +542,7 @@ async function renderNodeDataFromPath(
 interface NativeProbeEngine {
 	parseAndRead(source: string): string;
 	readNode(nodeId: NodeId): string;
-	render(nodeJson: string): string;
+	render(node: Record<string, unknown>): string;
 }
 const nativePackages: Record<string, string> = {
 	rust: 'sittir-rust',
@@ -579,8 +579,28 @@ async function loadNativeEngine(grammar: string): Promise<NativeProbeEngine> {
 	return new mod.SittirEngine();
 }
 
+async function nativeRenderPayload(
+	grammar: string,
+	nodeData: unknown
+): Promise<Record<string, unknown>> {
+	const thisFile = import.meta.url;
+	const utilsPath = new URL(`../../../${grammar}/src/utils.ts`, thisFile).href;
+	const utils = (await import(utilsPath)) as {
+		toNativeRenderTransport?: (node: unknown) => unknown;
+	};
+	const project = utils.toNativeRenderTransport;
+	if (!project) {
+		throw new Error(`native transport projector missing for grammar '${grammar}'`);
+	}
+	const payload = project(stripBigInts(nodeData));
+	if (payload === null || typeof payload !== 'object' || Array.isArray(payload)) {
+		throw new Error('native render payload must be a transport object');
+	}
+	return payload as Record<string, unknown>;
+}
+
 /** @internal — render via the native napi engine.
- *  `SittirEngine.render(JSON.stringify(nodeData))` — stateless, no
+ *  `SittirEngine.render(nodeData)` — stateless, no
  *  parse / tree dependency. The native crate uses the `tree_sitter`
  *  Rust crate + `tree_sitter_<lang>::LANGUAGE`; zero web-tree-sitter
  *  on this path. */
@@ -589,8 +609,7 @@ async function renderNodeDataNative(
 	nodeData: unknown
 ): Promise<string> {
 	const engine = await loadNativeEngine(grammar);
-	const json = JSON.stringify(stripBigInts(nodeData));
-	return engine.render(json);
+	return engine.render(await nativeRenderPayload(grammar, nodeData));
 }
 
 /** @internal — load `readTreeNode` from an explicit `src/wrap.ts`

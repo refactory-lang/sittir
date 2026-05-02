@@ -13,6 +13,18 @@ import { createRendererFromConfig } from './render.ts';
 import type { BoundRenderer } from './render.ts';
 
 /**
+ * Options accepted by the `createRenderer(templatesDir, options)` overload.
+ */
+export interface CreateRendererOptions {
+	/**
+	 * Static lookup table: numeric KindId → kind name string. Pre-computed
+	 * at codegen time. Used by the Nunjucks render path to resolve template
+	 * filenames from numeric `$type`. Pure `Map.get()` at runtime.
+	 */
+	kindNames?: ReadonlyMap<number, string>;
+}
+
+/**
  * Create a renderer bound to a specific templates source.
  *
  * - `templatesDir: string` — directory containing per-rule `.jinja`
@@ -20,11 +32,19 @@ import type { BoundRenderer } from './render.ts';
  * - `config: RulesConfig` — pre-built rules map. Uses the legacy
  *   regex-substitutor render path. Intended for in-memory unit
  *   tests; production grammars ship `.jinja` files on disk.
+ *
+ * The optional `options` argument (directory-path overload only) allows
+ * injecting a `kindNameFromId` resolver for Phase A/B coexistence where
+ * factory/wrap output carries numeric TSKindId values in `$type`.
  */
-export function createRenderer(templatesDir: string): BoundRenderer;
+export function createRenderer(
+	templatesDir: string,
+	options?: CreateRendererOptions
+): BoundRenderer;
 export function createRenderer(config: RulesConfig): BoundRenderer;
 export function createRenderer(
-	pathOrConfig: string | RulesConfig
+	pathOrConfig: string | RulesConfig,
+	options?: CreateRendererOptions
 ): BoundRenderer {
 	if (typeof pathOrConfig !== 'string') {
 		return createRendererFromConfig(pathOrConfig);
@@ -40,7 +60,8 @@ export function createRenderer(
 		extensions: [],
 		expandoChar: null,
 		metadata: { grammarSha: '' },
-		rules: {}
+		rules: {},
+		kindNames: options?.kindNames
 	};
 	return createRendererFromConfig(emptyConfig, { templatesDir: pathOrConfig });
 }

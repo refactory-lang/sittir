@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 241,
+  "nodeCount": 233,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -44,26 +44,6 @@
   ],
   "nodes": [
     {
-      "kind": "%",
-      "modelType": "token",
-      "typeName": "Percent",
-      "irKey": "percent",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"%\" as const",
-      "text": "%"
-    },
-    {
-      "kind": "&",
-      "modelType": "token",
-      "typeName": "Amp",
-      "irKey": "amp",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"&\" as const",
-      "text": "&"
-    },
-    {
       "kind": "(",
       "modelType": "token",
       "typeName": "Paren",
@@ -100,16 +80,6 @@
       "isParameterless": true,
       "stampExpression": "\"**\" as const",
       "text": "**"
-    },
-    {
-      "kind": "+",
-      "modelType": "token",
-      "typeName": "Plus",
-      "irKey": "plus",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"+\" as const",
-      "text": "+"
     },
     {
       "kind": ",",
@@ -172,16 +142,6 @@
       "text": "/"
     },
     {
-      "kind": "//",
-      "modelType": "token",
-      "typeName": "Slashslash",
-      "irKey": "slashslash",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"//\" as const",
-      "text": "//"
-    },
-    {
       "kind": ":",
       "modelType": "token",
       "typeName": "Colon",
@@ -200,16 +160,6 @@
       "isParameterless": true,
       "stampExpression": "\":=\" as const",
       "text": ":="
-    },
-    {
-      "kind": "<<",
-      "modelType": "token",
-      "typeName": "Shl",
-      "irKey": "shl",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"<<\" as const",
-      "text": "<<"
     },
     {
       "kind": "=",
@@ -300,16 +250,6 @@
       "hidden": false
     },
     {
-      "kind": "^",
-      "modelType": "token",
-      "typeName": "Caret",
-      "irKey": "caret",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"^\" as const",
-      "text": "^"
-    },
-    {
       "kind": "_",
       "modelType": "keyword",
       "typeName": "Anonymous",
@@ -363,31 +303,6 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "_as_pattern_target",
-      "modelType": "container",
-      "typeName": "AsPatternTarget",
-      "factoryName": "asPatternTarget",
-      "irKey": "asPatternTarget",
-      "hidden": false,
-      "children": [
-        {
-          "name": "expression",
-          "propertyName": "expression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "expression",
               "unresolved": true
             }
           ]
@@ -521,6 +436,68 @@
         }
       ],
       "children": []
+    },
+    {
+      "kind": "_async_marker",
+      "modelType": "enum",
+      "typeName": "AsyncMarker",
+      "factoryName": "asyncMarker",
+      "irKey": "asyncMarker",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"async\" as const",
+      "values": [
+        "async"
+      ]
+    },
+    {
+      "kind": "_augmented_assignment_operator",
+      "modelType": "enum",
+      "typeName": "AugmentedAssignmentOperator",
+      "factoryName": "augmentedAssignmentOperator",
+      "irKey": "augmentedAssignmentOperator",
+      "hidden": false,
+      "values": [
+        "+=",
+        "-=",
+        "*=",
+        "/=",
+        "@=",
+        "//=",
+        "%=",
+        "**=",
+        ">>=",
+        "<<=",
+        "&=",
+        "^=",
+        "|="
+      ]
+    },
+    {
+      "kind": "_binary_operator_operator",
+      "modelType": "enum",
+      "typeName": "BinaryOperatorOperator",
+      "factoryName": "binaryOperatorOperator",
+      "irKey": "binaryOperatorOperator",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"+\" as const",
+      "values": [
+        "+"
+      ]
+    },
+    {
+      "kind": "_boolean_operator_operator",
+      "modelType": "enum",
+      "typeName": "BooleanOperatorOperator",
+      "factoryName": "booleanOperatorOperator",
+      "irKey": "booleanOperatorOperator",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"and\" as const",
+      "values": [
+        "and"
+      ]
     },
     {
       "kind": "_collection_elements",
@@ -670,28 +647,15 @@
       ]
     },
     {
-      "kind": "_format_expression",
-      "modelType": "container",
-      "typeName": "FormatExpression",
-      "factoryName": "formatExpression",
-      "irKey": "format",
+      "kind": "_identifier",
+      "modelType": "enum",
+      "typeName": "_Identifier",
+      "factoryName": "_identifier",
+      "irKey": "_identifier",
       "hidden": false,
-      "children": [
-        {
-          "name": "interpolation",
-          "propertyName": "interpolation",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "interpolation",
-              "unresolved": true
-            }
-          ]
-        }
+      "values": [
+        "*",
+        "**"
       ]
     },
     {
@@ -820,6 +784,17 @@
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
       "text": "async"
+    },
+    {
+      "kind": "_kw_type",
+      "modelType": "keyword",
+      "typeName": "KwType",
+      "factoryName": "kwType",
+      "irKey": "kwType",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"type\" as const",
+      "text": "type"
     },
     {
       "kind": "_left_hand_side",
@@ -1198,6 +1173,32 @@
       ]
     },
     {
+      "kind": "_type_alias_statement_type",
+      "modelType": "enum",
+      "typeName": "TypeAliasStatementType",
+      "factoryName": "typeAliasStatementType",
+      "irKey": "typeAliasStatementType",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"type\" as const",
+      "values": [
+        "type"
+      ]
+    },
+    {
+      "kind": "_unary_operator_operator",
+      "modelType": "enum",
+      "typeName": "UnaryOperatorOperator",
+      "factoryName": "unaryOperatorOperator",
+      "irKey": "unaryOperatorOperator",
+      "hidden": false,
+      "values": [
+        "+",
+        "-",
+        "~"
+      ]
+    },
+    {
       "kind": "_with_clause_bare",
       "modelType": "multi",
       "typeName": "_WithClauseBare",
@@ -1292,16 +1293,6 @@
         }
       ],
       "children": []
-    },
-    {
-      "kind": "and",
-      "modelType": "keyword",
-      "typeName": "And",
-      "irKey": "and",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"and\" as const",
-      "text": "and"
     },
     {
       "kind": "argument_list",
@@ -1470,7 +1461,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_as_pattern_target",
+              "name": "as_pattern_target",
               "unresolved": true
             }
           ],
@@ -1478,11 +1469,8 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_as_pattern_target"
+              "as_pattern_target"
             ]
-          },
-          "aliasSources": {
-            "as_pattern_target": "_as_pattern_target"
           }
         }
       ],
@@ -1691,162 +1679,6 @@
       ]
     },
     {
-      "kind": "assignment__form_eq",
-      "modelType": "group",
-      "typeName": "AssignmentUFormEq",
-      "factoryName": "assignmentUFormEq",
-      "irKey": "assignmentUFormEq",
-      "hidden": false,
-      "name": "eq",
-      "parentKind": "assignment",
-      "fields": [
-        {
-          "name": "left",
-          "propertyName": "left",
-          "paramName": "left",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_left_hand_side",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_left_hand_side"
-            ]
-          }
-        }
-      ],
-      "children": [
-        {
-          "name": "assignment_eq",
-          "propertyName": "assignmentEq",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_assignment_eq",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "assignment__form_type",
-      "modelType": "group",
-      "typeName": "AssignmentUFormType",
-      "factoryName": "assignmentUFormType",
-      "irKey": "assignmentUFormType",
-      "hidden": false,
-      "name": "type",
-      "parentKind": "assignment",
-      "fields": [
-        {
-          "name": "left",
-          "propertyName": "left",
-          "paramName": "left",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_left_hand_side",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_left_hand_side"
-            ]
-          }
-        }
-      ],
-      "children": [
-        {
-          "name": "assignment_type",
-          "propertyName": "assignmentType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_assignment_type",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "assignment__form_typed",
-      "modelType": "group",
-      "typeName": "AssignmentUFormTyped",
-      "factoryName": "assignmentUFormTyped",
-      "irKey": "assignmentUFormTyped",
-      "hidden": false,
-      "name": "typed",
-      "parentKind": "assignment",
-      "fields": [
-        {
-          "name": "left",
-          "propertyName": "left",
-          "paramName": "left",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_left_hand_side",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_left_hand_side"
-            ]
-          }
-        }
-      ],
-      "children": [
-        {
-          "name": "assignment_typed",
-          "propertyName": "assignmentTyped",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_assignment_typed",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
-    },
-    {
       "kind": "async",
       "modelType": "keyword",
       "typeName": "Async",
@@ -1953,75 +1785,18 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "+="
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "-="
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "*="
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "/="
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "@="
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "//="
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "%="
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "**="
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": ">>="
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "<<="
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "&="
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "^="
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "|="
+              "name": "_augmented_assignment_operator",
+              "unresolved": true
             }
           ],
           "source": "grammar",
           "projection": {
             "typeName": "",
-            "kinds": []
+            "kinds": [
+              "_augmented_assignment_operator"
+            ]
           }
         },
         {
@@ -2124,75 +1899,18 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "+"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "-"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "*"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "@"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "/"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "%"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "//"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "**"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "|"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "&"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "^"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "<<"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": ">>"
+              "name": "_binary_operator_operator",
+              "unresolved": true
             }
           ],
           "source": "grammar",
           "projection": {
             "typeName": "",
-            "kinds": []
+            "kinds": [
+              "_binary_operator_operator"
+            ]
           }
         },
         {
@@ -2286,20 +2004,18 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "and"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "or"
+              "name": "_boolean_operator_operator",
+              "unresolved": true
             }
           ],
           "source": "grammar",
           "projection": {
             "typeName": "",
-            "kinds": []
+            "kinds": [
+              "_boolean_operator_operator"
+            ]
           }
         },
         {
@@ -4002,34 +3718,6 @@
       ]
     },
     {
-      "kind": "expression_statement__form_tuple",
-      "modelType": "group",
-      "typeName": "ExpressionStatementUFormTuple",
-      "factoryName": "expressionStatementUFormTuple",
-      "irKey": "expressionStatementUFormTuple",
-      "hidden": false,
-      "name": "tuple",
-      "parentKind": "expression_statement",
-      "fields": [],
-      "children": [
-        {
-          "name": "expression_statement_tuple",
-          "propertyName": "expressionStatementTuple",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_expression_statement_tuple",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
-    },
-    {
       "kind": "expression_statement_tuple",
       "modelType": "container",
       "typeName": "ExpressionStatementTuple",
@@ -4147,7 +3835,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_async_marker",
+              "name": "_async_marker",
               "unresolved": true
             }
           ],
@@ -4155,7 +3843,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_async_marker"
+              "_async_marker"
             ]
           }
         },
@@ -4227,7 +3915,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_async_marker",
+              "name": "_async_marker",
               "unresolved": true
             }
           ],
@@ -4235,7 +3923,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_async_marker"
+              "_async_marker"
             ]
           }
         },
@@ -4352,7 +4040,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_format_expression",
+              "name": "interpolation",
               "unresolved": true
             }
           ]
@@ -4388,7 +4076,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_async_marker",
+              "name": "_async_marker",
               "unresolved": true
             }
           ],
@@ -4396,7 +4084,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_async_marker"
+              "_async_marker"
             ]
           }
         },
@@ -5893,16 +5581,6 @@
       "children": []
     },
     {
-      "kind": "or",
-      "modelType": "keyword",
-      "typeName": "Or",
-      "irKey": "or",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"or\" as const",
-      "text": "or"
-    },
-    {
       "kind": "pair",
       "modelType": "branch",
       "typeName": "Pair",
@@ -6631,20 +6309,18 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "*"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "**"
+              "name": "_identifier",
+              "unresolved": true
             }
           ],
           "source": "override",
           "projection": {
             "typeName": "",
-            "kinds": []
+            "kinds": [
+              "_identifier"
+            ]
           }
         }
       ],
@@ -6683,14 +6359,10 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "*"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "**"
+              "name": "_identifier",
+              "unresolved": true
             },
             {
               "kind": "node-ref",
@@ -6703,6 +6375,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
+              "_identifier",
               "identifier"
             ]
           }
@@ -7283,15 +6956,18 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "type"
+              "name": "_type_alias_statement_type",
+              "unresolved": true
             }
           ],
           "source": "override",
           "projection": {
             "typeName": "",
-            "kinds": []
+            "kinds": [
+              "_type_alias_statement_type"
+            ]
           }
         },
         {
@@ -7555,25 +7231,18 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "+"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "-"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "~"
+              "name": "_unary_operator_operator",
+              "unresolved": true
             }
           ],
           "source": "grammar",
           "projection": {
             "typeName": "",
-            "kinds": []
+            "kinds": [
+              "_unary_operator_operator"
+            ]
           }
         },
         {
@@ -7869,62 +7538,6 @@
       ]
     },
     {
-      "kind": "with_clause__form_bare",
-      "modelType": "group",
-      "typeName": "WithClauseUFormBare",
-      "factoryName": "withClauseUFormBare",
-      "irKey": "withClauseUFormBare",
-      "hidden": false,
-      "name": "bare",
-      "parentKind": "with_clause",
-      "fields": [],
-      "children": [
-        {
-          "name": "with_clause_bare",
-          "propertyName": "withClauseBare",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_with_clause_bare",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "with_clause__form_paren",
-      "modelType": "group",
-      "typeName": "WithClauseUFormParen",
-      "factoryName": "withClauseUFormParen",
-      "irKey": "withClauseUFormParen",
-      "hidden": false,
-      "name": "paren",
-      "parentKind": "with_clause",
-      "fields": [],
-      "children": [
-        {
-          "name": "with_clause_paren",
-          "propertyName": "withClauseParen",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_with_clause_paren",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
-    },
-    {
       "kind": "with_clause_bare",
       "modelType": "container",
       "typeName": "WithClauseBare",
@@ -8029,7 +7642,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_async_marker",
+              "name": "_async_marker",
               "unresolved": true
             }
           ],
@@ -8037,7 +7650,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_async_marker"
+              "_async_marker"
             ]
           }
         },

@@ -2,8 +2,12 @@
 //! shape defined in `sittir_core::types`. Spec 012 T011 — enforces
 //! the invariants in data-model.md §1.
 
-use sittir_core::types::{Edit, FieldValue, NodeData, Source, Span};
+use sittir_core::types::{Edit, FieldValue, KindId, NodeData, Source, Span};
 use std::collections::HashMap;
+
+// KindId fixtures — values match the Rust grammar's parser.c symbol ids.
+const K_IDENTIFIER: KindId = KindId(1);
+const K_FUNCTION_ITEM: KindId = KindId(188);
 
 /// Parse `s` to `serde_json::Value` so we can inspect the literal wire
 /// keys (not just the strong-typed round trip).
@@ -15,7 +19,7 @@ fn wire(s: &str) -> serde_json::Value {
 /// field present except `children` + `fields` (leaves have no kids).
 fn sample_leaf() -> NodeData {
     NodeData {
-        type_: "identifier".to_string(),
+        type_: K_IDENTIFIER,
         source: Source::Ts,
         named: true,
         fields: None,
@@ -35,7 +39,7 @@ fn sample_branch() -> NodeData {
         FieldValue::Single(Box::new(sample_leaf())),
     );
     NodeData {
-        type_: "function_item".to_string(),
+        type_: K_FUNCTION_ITEM,
         source: Source::Ts,
         named: true,
         fields: Some(fields),
@@ -172,9 +176,10 @@ fn edit_uses_camelcase_on_the_wire() {
 #[test]
 fn deserialization_accepts_missing_optionals() {
     // Minimal shape — required trio only, everything else defaulted.
-    let minimal = r#"{"$type":"identifier","$source":"ts","$named":true}"#;
+    // $type is now a numeric KindId on the wire (Phase B-inverse).
+    let minimal = r#"{"$type":1,"$source":"ts","$named":true}"#;
     let parsed: NodeData = serde_json::from_str(minimal).unwrap();
-    assert_eq!(parsed.type_, "identifier");
+    assert_eq!(parsed.type_, K_IDENTIFIER);
     assert_eq!(parsed.source, Source::Ts);
     assert!(parsed.named);
     assert!(parsed.fields.is_none());

@@ -136,7 +136,10 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 							: 'promoted'
 						: 'promoted';
 				const forms = buildAssembledFormGroups(kind, polyForms, polySource);
-				for (const form of forms) nodes.set(form.kind, form);
+				// Forms don't get top-level nodeMap entries — they're
+				// nested inside the parent polymorph's forms array.
+				// The polymorph itself + visible variant children (below)
+				// are the nodeMap-level entries.
 				for (const child of buildVisibleVariantChildGroups(
 					polySource,
 					polyForms,

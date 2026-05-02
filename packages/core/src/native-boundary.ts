@@ -1,8 +1,4 @@
-import type {
-	AnyNodeData,
-	NativeFieldValue,
-	NativeNodeData
-} from '@sittir/types';
+import type { AnyNodeData, NodeFieldValue } from '@sittir/types';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -40,7 +36,7 @@ function assertFiniteNumber(
 function assertNativeSource(
 	value: unknown,
 	path: string
-): asserts value is NativeNodeData['$source'] {
+): asserts value is 'ts' | 'sg' | 'factory' {
 	if (value !== 'ts' && value !== 'sg' && value !== 'factory') {
 		throw new TypeError(
 			`${path} must be one of "ts", "sg", or "factory", got ${describe(value)}`
@@ -59,7 +55,7 @@ function assertNativeSpan(value: unknown, path: string): void {
 function assertNativeFieldValue(
 	value: unknown,
 	path: string
-): asserts value is NativeFieldValue {
+): asserts value is NodeFieldValue {
 	if (typeof value === 'string') return;
 	if (Array.isArray(value)) {
 		for (const [index, item] of value.entries()) {
@@ -91,14 +87,38 @@ function assertNativeChildren(value: unknown, path: string): void {
 	}
 }
 
+/**
+ * Internal recursive validator for the native render boundary.
+ *
+ * Checks all runtime invariants required before passing a NodeData tree to the
+ * native (napi) render engine:
+ *  - `$type` is a finite number (parser.c-derived numeric KindId, Phase D)
+ *  - `$source` is one of `'ts' | 'sg' | 'factory'`
+ *  - `$named` is a boolean
+ *  - `$format` is absent (must be passed separately via TreeHandle.format)
+ *  - no function-valued properties (methods like `render()` cannot cross napi)
+ *  - nested `$fields` and `$children` satisfy the same constraints recursively
+ */
 function assertNativeNodeDataInternal(
 	value: unknown,
 	path: string
-): asserts value is NativeNodeData {
+): asserts value is AnyNodeData {
 	if (!isRecord(value)) {
 		throw new TypeError(`${path} must be an object, got ${describe(value)}`);
 	}
-	assertString(value.$type, `${path}.$type`);
+	// Reject any property whose value is a function — methods like `render()`
+	// can't cross the napi boundary.
+	for (const [key, v] of Object.entries(value)) {
+		if (typeof v === 'function') {
+			throw new TypeError(
+				`${path}.${key} is a function — only plain data objects can cross the native render boundary`
+			);
+		}
+	}
+	// Phase D: $type must be a numeric KindId. String $type is no longer accepted.
+	if (typeof value.$type !== 'number') {
+		throw new TypeError(`${path}.$type must be a number, got ${describe(value.$type)}`);
+	}
 	assertNativeSource(value.$source, `${path}.$source`);
 	assertBoolean(value.$named, `${path}.$named`);
 	if (value.$format !== undefined) {
@@ -116,17 +136,49 @@ function assertNativeNodeDataInternal(
 		assertFiniteNumber(value.$nodeId, `${path}.$nodeId`);
 }
 
-export function isNativeNodeData(node: AnyNodeData): node is NativeNodeData {
+/**
+ * Type guard — returns `true` iff `node` passes all runtime invariants
+ * required by the native (napi) render boundary.
+ *
+ * @see {@link assertRenderableNodeData} for the throwing variant.
+ */
+export function isRenderableNodeData(node: AnyNodeData): boolean {
 	try {
-		assertNativeNodeData(node);
+		assertRenderableNodeData(node);
 		return true;
 	} catch {
 		return false;
 	}
 }
 
-export function assertNativeNodeData(
+/**
+ * Assertion — throws `TypeError` if `node` violates any runtime invariant
+ * required by the native (napi) render boundary.
+ *
+ * Checks performed:
+ *  - `$type` is a finite number
+ *  - `$source` is one of `'ts' | 'sg' | 'factory'`
+ *  - `$named` is a boolean
+ *  - `$format` is absent
+ *  - no function-valued properties
+ *  - `$fields` and `$children` satisfy the same constraints recursively
+ *
+ * @see {@link isRenderableNodeData} for the non-throwing predicate.
+ */
+export function assertRenderableNodeData(
 	node: AnyNodeData
-): asserts node is NativeNodeData {
+): asserts node is AnyNodeData {
 	assertNativeNodeDataInternal(node, 'node');
 }
+
+// ---------------------------------------------------------------------------
+// Backward-compatible aliases — kept so grammar packages compiled against the
+// old names continue to link without regeneration. Deprecated: prefer the
+// `isRenderableNodeData` / `assertRenderableNodeData` names.
+// ---------------------------------------------------------------------------
+
+/** @deprecated Use {@link isRenderableNodeData} instead. */
+export const isNativeNodeData = isRenderableNodeData;
+
+/** @deprecated Use {@link assertRenderableNodeData} instead. */
+export const assertNativeNodeData = assertRenderableNodeData;

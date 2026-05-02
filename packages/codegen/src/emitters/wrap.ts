@@ -14,21 +14,58 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts';
+import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type {
 	AssembledField,
 	AssembledChild,
 	AssembledNode,
 	AssembledPolymorph
 } from '../compiler/node-map.ts';
-import { isValidIdent, isMultiple } from './shared.ts';
+import {
+	collectAliasTargetToSourceMap,
+	isValidIdent,
+	isMultiple
+} from './shared.ts';
+import {
+	collectKindEntries,
+	kindIdMemberName,
+	hasCatalogEntry,
+	collectCatalogKinds,
+	type KindEnumEntry
+} from './kind-discriminant.ts';
 
 export interface EmitWrapConfig {
 	grammar: string;
 	nodeMap: NodeMap;
+	/**
+	 * Parser-symbol ID tables (from `loadGeneratedIdTables`). When present,
+	 * per-kind wrap functions stamp `$type: TSKindId.X` to convert the string
+	 * from core's readNode to the numeric runtime discriminant. When absent,
+	 * $type is inherited from data (string passthrough — legacy mode).
+	 */
+	generatedIdTables?: GeneratedIdTables;
+	/**
+	 * Kind names listed in the grammar's `inline:` array. When a kind has no
+	 * parser symbol AND appears here, it's a deliberately inlined rule — warn
+	 * and skip. When absent from this list, it's a codegen bug — throw.
+	 */
+	inlineKinds?: readonly string[];
+	/**
+	 * Kind names synthesized by evaluate's inline-alias-source pass. No parser
+	 * symbol by design; warn and skip.
+	 */
+	synthesizedKinds?: ReadonlySet<string>;
 }
 
 export function emitWrap(config: EmitWrapConfig): string {
-	const { nodeMap } = config;
+	const { nodeMap, generatedIdTables, inlineKinds, synthesizedKinds } = config;
+
+	// Collect KindEnumEntry table for numeric $type stamping when
+	// generatedIdTables is present (Phase A KindID migration). Undefined
+	// for legacy callers — per-kind wrap functions then inherit $type from data.
+	const kindEntries = generatedIdTables
+		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
+		: undefined;
 
 	const typeImports = collectTypeImports(nodeMap);
 	// Multi-line import for readability — see factories.ts.
@@ -49,8 +86,31 @@ export function emitWrap(config: EmitWrapConfig): string {
 	// no multiple-cardinality alias-source fields).
 	// ------------------------------------------------------------------
 	const bodyLines: string[] = [];
-	for (const [, node] of nodeMap.nodes) {
-		const source = renderWrapForNode(node);
+	for (const [kind, node] of nodeMap.nodes) {
+		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
+		// never appear at runtime; wrap functions for them are dead code.
+		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) {
+			if (inlineKinds?.includes(kind)) {
+				console.warn(
+					`[codegen] '${kind}' is in inline: array — no parser symbol expected. ` +
+					`Skipping wrap emission. ` +
+					// TODO: map inlined-kind factories to their decomposition (the
+					// concrete kinds the inlined rule expands to).
+					`Future: map to decomposition.`
+				);
+			} else if (synthesizedKinds?.has(kind)) {
+				// Intentionally synthesized by evaluate — no parser symbol by design.
+				// Warn-and-skip, same treatment as inline-list kinds.
+			} else {
+				console.warn(
+					`[codegen] VAPORIZED: '${kind}' has no parser symbol and is ` +
+					`NOT in the grammar's inline: array. Skipping wrap ` +
+					`emission. Investigate why tree-sitter dropped this rule.`
+				);
+			}
+			continue;
+		}
+		const source = renderWrapForNode(node, kindEntries, nodeMap);
 		if (source === undefined) continue;
 		bodyLines.push(source);
 		bodyLines.push('');
@@ -73,6 +133,9 @@ export function emitWrap(config: EmitWrapConfig): string {
 		'// Spec 008 US4 — import _NodeData (== AnyNodeData) from @sittir/types',
 		'// instead of re-declaring locally. Single source of truth.',
 		"import type { AnyNodeData as _NodeData, WrappedNode, AnyNodeData, NodeId } from '@sittir/types';",
+		// When kindEntries is present, import TSKindId for per-kind $type stamping
+		// (Phase A KindID migration: wrap normalizes string $type from core to numeric).
+		...(kindEntries ? ["import { TSKindId } from './types.js';"] : []),
 		...(typeImportLine ? [typeImportLine] : []),
 		'',
 		'// Drill-in helpers — call back through `readTreeNode` so the same',
@@ -138,6 +201,9 @@ export function emitWrap(config: EmitWrapConfig): string {
 	);
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!node.factoryName) continue;
+		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
+		// never appear in a parsed tree; no wrap entry is needed.
+		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		if (
 			node.modelType === 'branch' ||
 			node.modelType === 'container' ||
@@ -149,8 +215,19 @@ export function emitWrap(config: EmitWrapConfig): string {
 			node.modelType === 'enum' ||
 			node.modelType === 'keyword'
 		) {
-			// Terminal nodes have no subtree to drill into — pass through.
-			lines.push(`  '${kind}': (d) => d,`);
+			// Terminal nodes have no subtree to drill into — pass through,
+			// but stamp numeric $type when kindEntries is present (Phase B-inverse:
+			// readNode returns string $type from the JS wasm path; wrap normalizes it).
+			if (kindEntries) {
+				const entry = kindEntries.find((e) => e.kind === kind);
+				if (entry) {
+					lines.push(`  '${kind}': (d) => ({ ...d, $type: TSKindId.${kindIdMemberName(nodeMap, kind)} as number }),`);
+				} else {
+					lines.push(`  '${kind}': (d) => d,`);
+				}
+			} else {
+				lines.push(`  '${kind}': (d) => d,`);
+			}
 		}
 	}
 	lines.push('};');
@@ -176,10 +253,26 @@ export function emitWrap(config: EmitWrapConfig): string {
 	// ------------------------------------------------------------------
 	// Public entry points
 	// ------------------------------------------------------------------
+	// Import KIND_NAMES when kindEntries is present so wrapNode can resolve
+	// numeric $type (from the native path) to a string for the dispatch tables.
+	if (kindEntries) {
+		lines.push("import { KIND_NAMES } from './types.js';");
+	}
 	lines.push('/** Wrap a NodeData into its lazy read-only view. */');
 	lines.push(
 		'export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {'
 	);
+	lines.push('  // Phase B-inverse bridge: the native path now returns numeric $type');
+	lines.push('  // (KindId) from Rust; the JS wasm path still returns string $type.');
+	lines.push('  // Resolve to a kind-name string for the string-keyed dispatch tables,');
+	lines.push('  // then per-kind wrap functions stamp the numeric TSKindId.$type on output.');
+	if (kindEntries) {
+		lines.push('  const rawType = typeof data.$type === "number"');
+		lines.push('    ? KIND_NAMES.get(data.$type as never) ?? String(data.$type)');
+		lines.push('    : (data.$type as unknown as string);');
+	} else {
+		lines.push('  const rawType = data.$type as unknown as string;');
+	}
 	lines.push('  // Canonical-hidden remap (Option Y): parser-output `$type`');
 	lines.push(
 		'  // is the visible alias target (e.g. `range_pattern_left_with_right`);'
@@ -188,11 +281,11 @@ export function emitWrap(config: EmitWrapConfig): string {
 		'  // remap to the hidden alias source (`_range_pattern_left_with_right`)'
 	);
 	lines.push('  // so dispatch + downstream consumers see the canonical form.');
-	lines.push('  const canonical = _aliasTargetToSource[data.$type];');
+	lines.push('  const canonical = _aliasTargetToSource[rawType];');
 	lines.push('  if (canonical !== undefined) {');
-	lines.push('    data = { ...data, $type: canonical };');
+	lines.push('    data = { ...data, $type: canonical as unknown as number };');
 	lines.push('  }');
-	lines.push('  const fn = _wrapTable[data.$type];');
+	lines.push('  const fn = _wrapTable[canonical ?? rawType];');
 	lines.push('  if (!fn) return data; // unknown kind — return as-is');
 	lines.push('  return fn(data, tree);');
 	lines.push('}');
@@ -251,9 +344,22 @@ export function emitWrap(config: EmitWrapConfig): string {
 	lines.push('  asType?: { from: string; to: string },');
 	lines.push('): unknown {');
 	lines.push('  let data = readNode(tree, nodeId);');
-	lines.push('  if (asType && data.$type === asType.from) {');
-	lines.push('    data = { ...data, $type: asType.to };');
-	lines.push('  }');
+	lines.push('  // Phase B-inverse: asType comparison must handle both string and numeric $type.');
+	lines.push('  // When numeric (native path), convert to kind-name first for comparison.');
+	if (kindEntries) {
+		lines.push('  if (asType) {');
+		lines.push('    const currentType = typeof data.$type === "number"');
+		lines.push('      ? KIND_NAMES.get(data.$type as never) ?? String(data.$type)');
+		lines.push('      : (data.$type as unknown as string);');
+		lines.push('    if (currentType === asType.from) {');
+		lines.push('      data = { ...data, $type: asType.to as unknown as number };');
+		lines.push('    }');
+		lines.push('  }');
+	} else {
+		lines.push('  if (asType && (data.$type as unknown as string) === asType.from) {');
+		lines.push('    data = { ...data, $type: asType.to as unknown as number };');
+		lines.push('  }');
+	}
 	lines.push('  return wrapNode(data, tree);');
 	lines.push('}');
 	lines.push('');
@@ -264,46 +370,6 @@ export function emitWrap(config: EmitWrapConfig): string {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-/**
- * Compute the alias-target → alias-source map for the canonical-hidden
- * remap (Option Y).
- *
- * @remarks
- * For every hidden alias-source kind (`_x` whose visible name `x` is
- * what tree-sitter parses to via `alias($._x, $.x)`), record the entry
- * `{ x: '_x' }`. The set of alias-source hidden kinds is identical to
- * the set computed in `markUserFacing` (assemble.ts) — kinds whose
- * `_`-prefixed name appears as a child reference in some other rule.
- * Re-derived here from `userFacing === true && kind.startsWith('_')`,
- * which `markUserFacing` already gates on the same predicate.
- *
- * Excludes kinds whose stripped name collides with an existing visible
- * kind in the NodeMap — the visible kind's `wrap${TypeName}` dispatch
- * must continue to handle the visible-typed parser output. (Polymorph
- * parents are always visible; their `_x` form children are excluded.)
- *
- * @param nodeMap - The fully assembled node map for the grammar.
- * @returns Map keyed on visible alias-target name; values are the
- *   canonical hidden alias-source name (with leading `_`).
- */
-function collectAliasTargetToSourceMap(nodeMap: NodeMap): Map<string, string> {
-	const out = new Map<string, string>();
-	for (const [kind, node] of nodeMap.nodes) {
-		if (!kind.startsWith('_')) continue;
-		if (!node.userFacing) continue;
-		// Polymorph parent kinds and tokens never participate in the
-		// alias-source rewrite — only field-carrying alias sources do.
-		if (node.modelType === 'token' || node.modelType === 'multi') continue;
-		const visible = kind.replace(/^_+/, '');
-		if (visible.length === 0) continue;
-		// Skip when the visible name belongs to a distinct kind in the
-		// NodeMap — that kind owns its own dispatch; we'd hijack it.
-		if (nodeMap.nodes.has(visible)) continue;
-		out.set(visible, kind);
-	}
-	return out;
-}
 
 /**
  * Collects the set of concrete interface type names that need to be imported
@@ -333,18 +399,22 @@ function collectTypeImports(nodeMap: NodeMap): Set<string> {
 // Per-node wrap dispatch
 // ---------------------------------------------------------------------------
 
-function renderWrapForNode(node: AssembledNode): string | undefined {
+function renderWrapForNode(
+	node: AssembledNode,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap
+): string | undefined {
 	if (!node.rawFactoryName) return undefined;
 
 	switch (node.modelType) {
 		case 'branch':
-			return emitFieldCarryingWrap(node, node.fields, node.children ?? []);
+			return emitFieldCarryingWrap(node, node.fields, node.children ?? [], kindEntries, nodeMap);
 		case 'container':
-			return emitFieldCarryingWrap(node, [], node.children);
+			return emitFieldCarryingWrap(node, [], node.children, kindEntries, nodeMap);
 		case 'polymorph': {
 			const { fields, children } =
 				mergePolymorphFormsIntoFieldsAndChildren(node);
-			return emitFieldCarryingWrap(node, fields, children);
+			return emitFieldCarryingWrap(node, fields, children, kindEntries, nodeMap);
 		}
 		default:
 			return undefined;
@@ -519,13 +589,23 @@ function emitWrappedNodeCast(lines: string[], typeName: string): void {
 function emitFieldCarryingWrap(
 	node: WrapNode,
 	fields: readonly AssembledField[],
-	children: readonly AssembledChild[]
+	children: readonly AssembledChild[],
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap
 ): string {
 	const fn = `wrap${node.typeName}`;
 	const lines: string[] = [];
 	emitWrapFunctionSignature(lines, fn, node.typeName);
 	lines.push('  return {');
 	lines.push('    ...data,');
+	// Phase A KindID migration: override $type with the numeric TSKindId.X
+	// discriminant to convert the string $type arriving from core's readNode.
+	if (kindEntries) {
+		const entry = kindEntries.find((e) => e.kind === node.kind);
+		if (entry) {
+			lines.push(`    $type: TSKindId.${kindIdMemberName(nodeMap, node.kind)} as number,`);
+		}
+	}
 
 	for (const f of fields) {
 		// Avoid shadowing built-in property names on the returned view.

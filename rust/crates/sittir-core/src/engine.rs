@@ -118,10 +118,22 @@ impl<G: EngineGrammar> Engine<G> {
             let snippet: String = node_json.chars().take(80).collect();
             format!("parse NodeData JSON failed: {e} (json: {snippet:?})")
         })?;
+        self.render_node_data(node)
+    }
+
+    pub fn render_node_data(&self, node: NodeData) -> Result<String, String> {
         let canonical = self
             .grammar
             .render(&node)
             .map_err(|e| format!("render_dispatch failed: {e}"))?;
+        self.render_canonical_node(&node, canonical)
+    }
+
+    pub fn render_canonical_node(
+        &self,
+        node: &NodeData,
+        canonical: String,
+    ) -> Result<String, String> {
         let effective_format = resolve_render_format(
             &node,
             self.engine_format.as_ref(),
@@ -187,5 +199,97 @@ fn panic_msg(payload: Box<dyn std::any::Any + Send>, fallback: &str) -> String {
         s.to_string()
     } else {
         fallback.to_string()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::types::{FormatBoundary, FormatRecord};
+
+    #[derive(Clone, Copy)]
+    struct TestGrammar;
+
+    impl EngineGrammar for TestGrammar {
+        fn configure_parser(
+            self,
+            parser: &mut tree_sitter::Parser,
+        ) -> std::result::Result<(), String> {
+            let language: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
+            parser
+                .set_language(&language)
+                .map_err(|e| format!("failed to set parser language: {e}"))
+        }
+
+        fn template_bundle_hash(self) -> &'static str {
+            "test"
+        }
+
+        fn render(self, node: &NodeData) -> std::result::Result<String, String> {
+            Ok(format!("rendered:{}", node.type_))
+        }
+    }
+
+    fn format_record(prefix: &str, suffix: &str) -> FormatRecord {
+        FormatRecord {
+            boundary: Some(FormatBoundary {
+                leading: Some(prefix.to_string()),
+                trailing: Some(suffix.to_string()),
+            }),
+            slots: None,
+            literals: None,
+            trivia: None,
+            kinds: None,
+        }
+    }
+
+    fn node(source: Source) -> NodeData {
+        // KindId(1) is the `identifier` symbol in the Rust grammar (see
+        // kind_ids.rs); used for test assertions. The render fn below formats
+        // the numeric id — tests assert on the number, not the name.
+        NodeData {
+            type_: crate::types::KindId(1),
+            source,
+            named: true,
+            fields: None,
+            children: None,
+            text: Some("x".to_string()),
+            span: None,
+            node_id: None,
+        }
+    }
+
+    #[test]
+    fn render_node_data_preserves_engine_format() {
+        let engine = Engine::new(TestGrammar, Some(format_record("<<", ">>"))).unwrap();
+
+        let rendered = engine.render_node_data(node(Source::Factory)).unwrap();
+
+        // KindId(1) Display → "1"; the TestGrammar render fn formats the KindId.
+        assert_eq!(rendered, "<<rendered:1>>");
+    }
+
+    #[test]
+    fn render_canonical_node_preserves_tree_format_for_tree_nodes() {
+        let mut engine = Engine::new(TestGrammar, None).unwrap();
+        engine.tree_format = Some(format_record("[", "]"));
+
+        let rendered = engine
+            .render_canonical_node(&node(Source::Ts), "canonical".to_string())
+            .unwrap();
+
+        assert_eq!(rendered, "[canonical]");
+    }
+
+    #[test]
+    fn render_canonical_node_does_not_apply_tree_format_to_factory_nodes() {
+        let mut engine = Engine::new(TestGrammar, None).unwrap();
+        engine.tree_format = Some(format_record("[", "]"));
+
+        let rendered = engine
+            .render_canonical_node(&node(Source::Factory), "canonical".to_string())
+            .unwrap();
+
+        assert_eq!(rendered, "canonical");
     }
 }

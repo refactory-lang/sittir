@@ -21,12 +21,29 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts';
+import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledSupertype } from '../compiler/node-map.ts';
 import { snakeToCamel } from '../compiler/node-map.ts';
+import { assertNever } from '../polymorph-variant.ts';
+import {
+	collectKindEntries,
+	kindDiscriminantExpr,
+	kindIdMemberName,
+	type KindEnumEntry
+} from './kind-discriminant.ts';
+import { collectAllKinds } from './types.ts';
 
 export interface EmitIsConfig {
 	grammar: string;
 	nodeMap: NodeMap;
+	/**
+	 * Parser-symbol ID tables (from `loadGeneratedIdTables`). When present,
+	 * guards compare BOTH numeric `TSKindId.X` and string kind-name during
+	 * Phase A coexistence. Kinds with no parser symbol (TSGrammar-only) are
+	 * skipped — they can never appear at runtime. When absent (legacy /
+	 * unit-test callers), guards compare string kind-names only.
+	 */
+	generatedIdTables?: GeneratedIdTables;
 }
 
 const toCamelCase = snakeToCamel;
@@ -90,15 +107,44 @@ function safeGuardKey(camel: string): string {
 }
 
 export function emitIs(config: EmitIsConfig): string {
-	const { nodeMap } = config;
+	const { nodeMap, generatedIdTables } = config;
+
+	// Collect KindEnumEntry table for numeric $type coexistence when
+	// generatedIdTables is present (Phase A KindID migration). Undefined
+	// for legacy callers / unit tests — those fall back to string-only guards.
+	//
+	// `is.kind()` guards are about user-facing rule names — restrict to
+	// `collectAllKinds(nodeMap)` (rule roots) so we don't expose anon-sym
+	// tokens or children-only kinds as guard targets. The runtime-dispatch
+	// surfaces (TSKindId / kindIdFromName / AnyTransport / kind_ids.rs) source
+	// from the catalog superset instead via `collectCatalogKinds`.
+	const allKinds = collectAllKinds(nodeMap);
+	const kindEntries: readonly KindEnumEntry[] | undefined = generatedIdTables
+		? collectKindEntries(allKinds, nodeMap, generatedIdTables)
+		: undefined;
+
+	// Build a fast lookup map: kind → numeric id, for guard body emission.
+	const kindIdByKind = new Map<string, number>();
+	if (kindEntries) {
+		for (const e of kindEntries) kindIdByKind.set(e.kind, e.id);
+	}
 
 	// Collect structural kinds with data interfaces (those that emitTypes
 	// emits NodeNs entries for). These are the kinds that get per-kind
 	// is.<camel> guards.
+	//
+	// When kindEntries is present, kinds that have NO parser symbol
+	// (TSGrammar-only — inlined by tree-sitter, never present at runtime)
+	// are skipped entirely. They can't appear on a parsed or factory-produced
+	// node so a guard for them would always return false and mislead callers.
 	const structuralKinds: Array<{
 		kind: string;
 		typeName: string;
 		guardKey: string;
+		/** TSKindId enum member name (e.g. 'FunctionItem'); present when kindEntries available. */
+		member?: string;
+		/** Numeric TSKindId; undefined when kind has no parser symbol. */
+		numericId?: number;
 	}> = [];
 	const usedCamelKeys = new Set<string>();
 
@@ -107,6 +153,14 @@ export function emitIs(config: EmitIsConfig): string {
 			case 'branch':
 			case 'container':
 			case 'polymorph': {
+				const numericId = kindIdByKind.get(kind);
+				// TSGrammar-only skip: when kindEntries is available and this kind
+				// has no parser symbol, do not emit a guard for it — it has no
+				// runtime presence and the guard would always return false.
+				if (kindEntries && numericId === undefined) {
+					// TSGrammar-only — no runtime presence; skip guard emission.
+					break;
+				}
 				const camel = toCamelCase(kind);
 				const guardKey = safeGuardKey(camel);
 				// Collision detection — mirrors types emitter FR-017.
@@ -117,9 +171,25 @@ export function emitIs(config: EmitIsConfig): string {
 					);
 				}
 				usedCamelKeys.add(guardKey);
-				structuralKinds.push({ kind, typeName: node.typeName, guardKey });
+				const member = kindEntries ? kindIdMemberName(nodeMap, kind) : undefined;
+				structuralKinds.push({ kind, typeName: node.typeName, guardKey, member, numericId });
 				break;
 			}
+			case 'leaf':
+			case 'keyword':
+			case 'enum':
+			case 'token':
+			case 'group':
+			case 'multi':
+			case 'supertype':
+				// Per-kind guards exist only for structural kinds (branch /
+				// container / polymorph). Leaves / keywords / enums use shape
+				// guards (isNode / isTree) instead; tokens, groups, multi,
+				// and supertypes have no per-kind guard surface. Supertypes
+				// get their own guards in a separate pass below.
+				break;
+			default:
+				assertNever(node);
 		}
 	}
 
@@ -130,6 +200,8 @@ export function emitIs(config: EmitIsConfig): string {
 		typeName: string;
 		guardKey: string;
 		memberKinds: string[];
+		/** Numeric IDs of member kinds (Phase A coexistence); empty = string-only. */
+		memberIds: number[];
 	}> = [];
 	for (const [kind, node] of nodeMap.nodes) {
 		if (node.modelType !== 'supertype') continue;
@@ -140,12 +212,16 @@ export function emitIs(config: EmitIsConfig): string {
 		const guardKey = safeGuardKey(camel);
 		// Resolve subtypes to concrete kinds (skip if missing — supertype
 		// might reference hidden rules that didn't produce a data
-		// interface; those aren't narrowable).
+		// interface; those aren't narrowable). Also collect numeric IDs
+		// for Phase A coexistence guards.
 		const memberKinds: string[] = [];
+		const memberIds: number[] = [];
 		for (const sub of st.subtypes) {
 			const subNode = nodeMap.nodes.get(sub);
 			if (!subNode) continue;
 			memberKinds.push(sub);
+			const numId = kindIdByKind.get(sub);
+			if (numId !== undefined) memberIds.push(numId);
 		}
 		if (memberKinds.length === 0) continue;
 		// Supertype name collision with per-kind guard is possible (e.g.
@@ -153,7 +229,7 @@ export function emitIs(config: EmitIsConfig): string {
 		// it would shadow — the per-kind takes precedence.
 		if (usedCamelKeys.has(guardKey)) continue;
 		usedCamelKeys.add(guardKey);
-		supertypes.push({ kind, typeName, guardKey, memberKinds });
+		supertypes.push({ kind, typeName, guardKey, memberKinds, memberIds });
 	}
 
 	// Type imports — only supertype typeNames are referenced at the type
@@ -172,6 +248,11 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push(
 		"import type { AnyNodeData, AnyTreeNodeOf as AnyTreeNode } from '@sittir/types';"
 	);
+	// When kindEntries is present, emit a value-import for TSKindId so guard
+	// bodies can compare numeric discriminants (Phase D numeric-only path).
+	if (kindEntries) {
+		lines.push("import { TSKindId } from './types.js';");
+	}
 	const typeImportList = [...typeImports].sort();
 	if (typeImportList.length > 0) {
 		lines.push('import type {');
@@ -188,16 +269,23 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push('// IsGuards — per-kind + supertype type-narrowing guards.');
 	lines.push('export interface IsGuards {');
 	for (const s of structuralKinds) {
+		const narrowType = s.member ? `TSKindId.${s.member}` : 'number';
 		lines.push(
-			`    ${s.guardKey}<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '${s.kind}' };`
+			`    ${s.guardKey}<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: ${narrowType} };`
 		);
 	}
 	lines.push(
-		`    kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): v is { readonly $type: K & string };`
+		`    kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };`
 	);
+	// Supertype guards accept `string | number` $type because the supertype union
+	// may include Terminal<K> leaf types (e.g. Identifier, True, False) whose
+	// $type is a string literal. The parameter must be wide enough to satisfy
+	// TS2677 ("type predicate's type must be assignable to its parameter's type").
+	// The runtime guard body (_sg) only matches numeric IDs in Phase D, so
+	// passing a string-$type value safely returns false.
 	for (const s of supertypes) {
 		lines.push(
-			`    ${s.guardKey}(v: { readonly $type: string }): v is ${s.typeName};`
+			`    ${s.guardKey}(v: { readonly $type: string | number }): v is ${s.typeName};`
 		);
 	}
 	lines.push('}');
@@ -209,60 +297,138 @@ export function emitIs(config: EmitIsConfig): string {
 	);
 	lines.push('export interface AssertGuards {');
 	for (const s of structuralKinds) {
+		const narrowType = s.member ? `TSKindId.${s.member}` : 'number';
 		lines.push(
-			`    ${s.guardKey}(v: { readonly $type: string }): asserts v is { readonly $type: '${s.kind}' };`
+			`    ${s.guardKey}(v: { readonly $type: number }): asserts v is { readonly $type: ${narrowType} };`
 		);
 	}
 	lines.push(
-		`    kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): asserts v is { readonly $type: K & string };`
+		`    kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };`
 	);
 	for (const s of supertypes) {
 		lines.push(
-			`    ${s.guardKey}(v: { readonly $type: string }): asserts v is ${s.typeName};`
+			`    ${s.guardKey}(v: { readonly $type: string | number }): asserts v is ${s.typeName};`
 		);
 	}
 	lines.push('}');
 	lines.push('');
 
 	// Runtime construction.
-	lines.push(
-		'// Runtime: kind guards = string equality; supertype guards = Set.has.'
-	);
-	lines.push(
-		'// Building from literal string arrays keeps the runtime footprint minimal.'
-	);
-	lines.push(
-		'function _g(k: string): (v: { readonly $type: string }) => boolean {'
-	);
-	lines.push('    return (v) => v.$type === k;');
-	lines.push('}');
-	lines.push(
-		'function _sg(ks: ReadonlySet<string>): (v: { readonly $type: string }) => boolean {'
-	);
-	lines.push('    return (v) => ks.has(v.$type);');
-	lines.push('}');
+	if (kindEntries) {
+		// Phase D: all producers emit numeric $type. Guards compare numeric
+		// TSKindId only — the string-comparison arm has been removed.
+		lines.push('// Runtime: kind guards compare numeric TSKindId only (Phase D).');
+		lines.push(
+			'function _g(id: number): (v: { readonly $type: number }) => boolean {'
+		);
+		lines.push('    return (v) => v.$type === id;');
+		lines.push('}');
+		lines.push(
+			'function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boolean {'
+		);
+		lines.push('    return (v) => ids.has(v.$type);');
+		lines.push('}');
+	} else {
+		// Legacy / unit-test callers without generatedIdTables: string-only
+		// fallback. This path is only reached in tests that bypass the full
+		// codegen pipeline and do not supply generatedIdTables.
+		lines.push(
+			'// Runtime: kind guards = string equality; supertype guards = Set.has.'
+		);
+		lines.push(
+			'// Building from literal string arrays keeps the runtime footprint minimal.'
+		);
+		lines.push(
+			'function _g(k: string): (v: { readonly $type: number }) => boolean {'
+		);
+		lines.push('    return (v) => (v.$type as unknown) === k;');
+		lines.push('}');
+		lines.push(
+			'function _sg(ks: ReadonlySet<string>): (v: { readonly $type: number }) => boolean {'
+		);
+		lines.push('    return (v) => ks.has(v.$type as unknown as string);');
+		lines.push('}');
+	}
 	lines.push('');
 
 	// Per-supertype Sets, one per supertype. Declared before `is` so the
 	// object-literal construction can reference them.
+	// Phase D: when kindEntries is present, only the numeric id set is needed.
+	// The string-name set is kept for the legacy no-kindEntries path only.
 	for (const s of supertypes) {
-		const members = s.memberKinds.map((k) => JSON.stringify(k)).join(', ');
-		lines.push(
-			`const _supertype_${s.guardKey} = new Set<string>([${members}]);`
-		);
+		if (kindEntries) {
+			if (s.memberIds.length > 0) {
+				const ids = s.memberIds.join(', ');
+				lines.push(
+					`const _supertype_${s.guardKey}_ids = new Set<number>([${ids}]);`
+				);
+			}
+		} else {
+			const members = s.memberKinds.map((k) => JSON.stringify(k)).join(', ');
+			lines.push(
+				`const _supertype_${s.guardKey} = new Set<string>([${members}]);`
+			);
+		}
 	}
 	if (supertypes.length > 0) lines.push('');
+
+	// Phase A coexistence: kind-name → numeric TSKindId map for the generic
+	// `is.kind(v, k)` guard. When `v.$type` is numeric (factory/wrap output)
+	// and `k` is a string kind-name, we need to translate `k` to its numeric
+	// form before comparing. Map drops to undefined for kinds without a parser
+	// symbol; the guard returns false in that case (TSGrammar-only kinds can
+	// never match a numeric runtime $type anyway).
+	if (kindEntries && kindEntries.length > 0) {
+		const entries = kindEntries
+			.map(
+				(e) =>
+					`    [${JSON.stringify(e.kind)}, TSKindId.${e.member}]`
+			)
+			.join(',\n');
+		lines.push('const _kindIdByKind = new Map<string, number>([');
+		lines.push(entries + ',');
+		lines.push(']);');
+		lines.push('');
+	}
 
 	// The is const — per-kind, kind(), supertype methods.
 	lines.push('export const is = {');
 	for (const s of structuralKinds) {
-		lines.push(`    ${s.guardKey}: _g(${JSON.stringify(s.kind)}),`);
+		if (kindEntries && s.numericId !== undefined) {
+			// Phase D: numeric-only comparison.
+			const expr = kindDiscriminantExpr(s.kind, nodeMap, kindEntries);
+			lines.push(`    ${s.guardKey}: _g(${expr}),`);
+		} else {
+			lines.push(`    ${s.guardKey}: _g(${JSON.stringify(s.kind)}),`);
+		}
 	}
-	lines.push(
-		`    kind: (v: { readonly $type: string }, k: string): boolean => v.$type === k,`
-	);
+	if (kindEntries) {
+		// Phase D: kind() compares only numeric $type via the map lookup.
+		lines.push(
+			`    kind: (v: { readonly $type: number }, k: string): boolean => {`
+		);
+		lines.push(`        const id = _kindIdByKind.get(k);`);
+		lines.push(`        return id !== undefined && v.$type === id;`);
+		lines.push(`    },`);
+	} else {
+		// Legacy / unit-test callers without generatedIdTables: string equality.
+		lines.push(
+			`    kind: (v: { readonly $type: number }, k: string): boolean => (v.$type as unknown) === k,`
+		);
+	}
 	for (const s of supertypes) {
-		lines.push(`    ${s.guardKey}: _sg(_supertype_${s.guardKey}),`);
+		if (kindEntries && s.memberIds.length > 0) {
+			lines.push(
+				`    ${s.guardKey}: _sg(_supertype_${s.guardKey}_ids),`
+			);
+		} else if (kindEntries) {
+			// All member kinds are TSGrammar-only; emit with empty id set.
+			lines.push(
+				`    ${s.guardKey}: _sg(new Set<number>()),`
+			);
+		} else {
+			lines.push(`    ${s.guardKey}: _sg(_supertype_${s.guardKey}),`);
+		}
 	}
 	lines.push('} as unknown as IsGuards;');
 	lines.push('');
@@ -340,16 +506,13 @@ export function emitIs(config: EmitIsConfig): string {
 	);
 	lines.push('}');
 	lines.push('');
+	// isNode accepts string | number $type: hidden/synthetic kinds (e.g. "_suite")
+	// have no parser.c entry and emit string $type; AnyNodeData.$type: string | number.
 	lines.push(
-		'export function isNode<T extends { readonly $type: K }, K extends keyof NamespaceMap & string>('
-	);
-	lines.push('    v: T,');
-	lines.push(`): v is T & NamespaceMap[K]['Node'];`);
-	lines.push(
-		'export function isNode(v: { readonly $type: string }): v is AnyNodeData;'
+		'export function isNode(v: { readonly $type: string | number }): v is AnyNodeData;'
 	);
 	lines.push(
-		'export function isNode(v: { readonly $type: string }): boolean {'
+		'export function isNode(v: { readonly $type: string | number }): boolean {'
 	);
 	lines.push('    const o = v as { $fields?: unknown; $text?: unknown };');
 	// `typeof null === 'object'` — explicitly exclude null before accepting

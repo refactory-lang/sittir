@@ -24,8 +24,6 @@ import type { CamelCase } from 'type-fest';
 
 export type {
 	AnyNodeData,
-	NativeNodeData,
-	NativeFieldValue,
 	NodeId,
 	NodeFieldValue,
 	NodeChildValue,
@@ -128,11 +126,13 @@ type BitflagEnum<T> = T extends { readonly __bitflag__?: infer E } ? E : never;
 
 /**
  * Terminal node shape — shared by every leaf, keyword, and enum.
- * `K` pins the `$type` discriminant; `V` narrows `$text` to a specific
+ * `ID` pins the `$type` discriminant — numeric TSKindId for parser.c-
+ * derived kinds, string literal for evaluate-synthesized enum kinds
+ * that have no parser symbol. `V` narrows `$text` to a specific
  * literal or literal union (defaulting to `string` for open-valued leaves).
  */
-export interface Terminal<K extends string, V extends string = string> {
-	readonly $type: K;
+export interface Terminal<ID extends number | string = number, V extends string = string> {
+	readonly $type: ID;
 	readonly $text: V;
 }
 
@@ -395,10 +395,16 @@ import type { ByteRange } from './core-types.ts';
 // KindOf<T> — extract type string from a typed node
 // ---------------------------------------------------------------------------
 
-/** Extract the kind string(s) from a node type's `$type` property. */
+/** Extract the kind string(s) from a node type's `$type` property.
+ * For leaf/terminal types (Terminal<K>), returns K. For structural types
+ * with numeric TSKindId discriminants, returns the numeric discriminant type.
+ * Phase A: both string and number discriminants are accepted.
+ */
 export type KindOf<T> = T extends { readonly $type: infer K extends string }
 	? K
-	: never;
+	: T extends { readonly $type: infer N extends number }
+		? N
+		: never;
 
 // ---------------------------------------------------------------------------
 // FluentNode<G, K> — generic fluent builder type for factory outputs
@@ -491,7 +497,7 @@ export type FluentNode<K extends string, C = unknown> = {
  * ```
  */
 export type RuntimeNodeOf<T> = T extends {
-	readonly $type: infer _K extends string;
+	readonly $type: infer _K extends number;
 }
 	? Simplify<
 			{
@@ -502,7 +508,11 @@ export type RuntimeNodeOf<T> = T extends {
 				? {}
 				: { readonly $fields: FieldsOf<T> }) &
 				RuntimeChildSlots<T> &
-				NodeMethods<T['$type']>
+				// Phase A KindID migration: $type is now numeric for structural types.
+				// NodeMethods<K> uses K as a string kind for replace(target); fall back
+				// to `string` when $type is numeric (structural node). Leaf types
+				// (Terminal<K extends string>) still resolve to the specific K.
+				NodeMethods<T['$type'] extends string ? T['$type'] : string>
 		>
 	: never;
 
@@ -510,7 +520,7 @@ export type RuntimeNodeOf<T> = T extends {
  * FluentNodeOf<T> — RuntimeNodeOf + fluent setters (camelCase setter names
  * derived from snake_case field names via SetterKey/CamelCase).
  */
-export type FluentNodeOf<T> = T extends { readonly $type: string }
+export type FluentNodeOf<T> = T extends { readonly $type: number }
 	? RuntimeNodeOf<T> & FluentSetters<FieldsOf<T>, never, RuntimeNodeOf<T>>
 	: never;
 
@@ -866,7 +876,7 @@ type IsUnion<T, B = T> = T extends unknown
 	: never;
 
 /** True when T is a single concrete node type (literal `$type`), false when a union. */
-type IsSingleType<T> = [T] extends [{ readonly $type: string }]
+type IsSingleType<T> = [T] extends [{ readonly $type: number }]
 	? IsUnion<T> extends true
 		? false
 		: true
@@ -916,7 +926,7 @@ type IsHomogeneous<T, NsMap> = [NsMap] extends [never]
 	? false
 	: keyof NsMap extends never
 		? false
-		: [T] extends [{ readonly $type: string }]
+		: [T] extends [{ readonly $type: number }]
 			? Equals<
 					UnionOfArmsLoose<T, NsMap>,
 					UnionToIntersection<UnionOfArmsLoose<T, NsMap>>
@@ -1042,7 +1052,7 @@ type WidenValue<
 							| T
 							| (K extends keyof Strings ? Strings[K] : string)
 							| (K extends keyof Scalars ? Scalars[K] : never)
-					: [T] extends [{ readonly $type: string }]
+					: [T] extends [{ readonly $type: number }]
 						? // Branch(es) — decide single/homogeneous/heterogeneous ONCE for the
 							// whole union, then emit accordingly.
 							IsSingleType<T> extends true
@@ -1099,7 +1109,7 @@ type WidenChildSlot<
  * @param Strings - Leaf-kind → narrowed string projection (e.g. `{ boolean_literal: 'true' | 'false' }`).
  */
 export interface NodeNs<
-	T extends { readonly $type: string },
+	T extends { readonly $type: string | number },
 	Scalars = {},
 	Strings = {},
 	NsMap = {}

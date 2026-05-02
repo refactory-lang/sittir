@@ -918,7 +918,8 @@ function grammarFn(
 	// downstream to point at. Synthesize `_${target}` with the inline
 	// body so the `_X → X` invariant holds uniformly — every alias
 	// target has a named hidden source in the rules map.
-	synthesizeInlineAliasSources(rules, provenanceByKind);
+	synthesizeInlineAliasSources(rules, provenanceByKind, externals);
+	synthesizeFieldEnumRules(rules, provenanceByKind);
 	const identified = buildRuleCatalog(rules, provenanceByKind);
 	const references = attachReferenceRuleIds(refs, identified.ruleCatalog);
 
@@ -947,9 +948,9 @@ function grammarFn(
 
 /**
  * For every `alias(inlineContent, $.target)` whose source isn't a
- * bare symbol reference to an existing rule, synthesize a hidden
- * rule `_${target}` carrying the inline content and rewrite the
- * alias's source to point at it.
+ * bare symbol reference to an existing rule or external token,
+ * synthesize a hidden rule `_${target}` carrying the inline content
+ * and rewrite the alias's source to point at it.
  *
  * Before:
  *    alias(choice('u8','u16',...), $.primitive_type)
@@ -968,30 +969,47 @@ function grammarFn(
  * Also: the rules map now has a single named entry per alias target
  * (the `_${target}` source) without adding entries for visible-only
  * kinds — matching tree-sitter's declaration view.
+ *
+ * External scanner tokens (listed in `externals`) are treated the same
+ * as declared rules: they already have parser-assigned symbol IDs and
+ * need no synthetic source. `alias($._line_doc_content, $.doc_comment)`
+ * must NOT produce `_doc_comment` — the source is an external with its
+ * own parser identity; the visible target `doc_comment` is the alias
+ * destination, not a hidden kind.
  */
 function synthesizeInlineAliasSources(
 	rules: Record<string, Rule>,
-	provenanceByKind: Map<string, RuleProvenance>
+	provenanceByKind: Map<string, RuleProvenance>,
+	externals: readonly string[]
 ): void {
+	const externalSet = new Set(externals);
 	const ruleEntries = Object.entries(rules);
 	for (const [name, rule] of ruleEntries) {
-		rules[name] = rewriteInlineAliases(rule, rules, provenanceByKind);
+		rules[name] = rewriteInlineAliases(rule, rules, provenanceByKind, externalSet);
 	}
 }
 
 function rewriteInlineAliases(
 	rule: Rule,
 	rules: Record<string, Rule>,
-	provenanceByKind: Map<string, RuleProvenance>
+	provenanceByKind: Map<string, RuleProvenance>,
+	externals: ReadonlySet<string>
 ): Rule {
 	const recurse = (r: Rule): Rule =>
-		rewriteInlineAliases(r, rules, provenanceByKind);
+		rewriteInlineAliases(r, rules, provenanceByKind, externals);
 	switch (rule.type) {
 		case 'alias':
 			if (rule.named && rule.value) {
 				const inner = rule.content;
-				const isBareSymbolToExistingRule =
-					inner.type === 'symbol' && rules[inner.name] !== undefined;
+				// Treat both declared rules AND external scanner tokens as
+				// "existing" sources — externals already carry parser-assigned
+				// symbol IDs and must not trigger `_${target}` synthesis.
+				// Without this guard, `alias($._line_doc_content, $.doc_comment)`
+				// would synthesize the fictitious hidden kind `_doc_comment`
+				// because `_line_doc_content` is external (not in `rules`).
+				const isBareSymbolToKnownSource =
+					inner.type === 'symbol' &&
+					(rules[inner.name] !== undefined || externals.has(inner.name));
 				// Also skip when the alias TARGET is already a declared
 				// kind: `alias(inlineBody, $.existingKind)` just relabels
 				// the inline body as that existing kind. Tree-sitter
@@ -1000,12 +1018,10 @@ function rewriteInlineAliases(
 				// Synthesizing `_existingKind` would collide with /
 				// over-ride the existing kind's meaning.
 				const targetAlreadyExists = rules[rule.value] !== undefined;
-				if (!targetAlreadyExists) {
+				if (!targetAlreadyExists && !isBareSymbolToKnownSource) {
 					const syntheticHiddenName = `_${rule.value}`;
 					if (!rules[syntheticHiddenName]) {
-						rules[syntheticHiddenName] = isBareSymbolToExistingRule
-							? inner
-							: recurse(rule.content);
+						rules[syntheticHiddenName] = recurse(rule.content);
 						provenanceByKind.set(syntheticHiddenName, 'evaluate-synthesized');
 					}
 					return {
@@ -1032,6 +1048,613 @@ function rewriteInlineAliases(
 			} as Rule;
 		default:
 			return rule;
+	}
+}
+
+// ---------------------------------------------------------------------------
+// synthesizeFieldEnumRules — promote inline field-enums to named hidden rules
+// ---------------------------------------------------------------------------
+
+/**
+ * Post-evaluation pass: detect `field(name, enum([...]))` patterns inside
+ * every rule and synthesize a named hidden rule for each one. Replace the
+ * field's inline enum content with a `SymbolRule` referencing the new rule.
+ *
+ * @remarks
+ * A field whose content is a choice-of-literals (already collapsed to
+ * `EnumRule` by `choice()`) represents a closed, compile-time-known set of
+ * operator/punctuation tokens. Promoting these to named hidden rules enables
+ * downstream emitters to generate a compact Rust enum with KindId-backed
+ * discriminants rather than a heap-allocated `text: String` field.
+ *
+ * Also follows single-step symbol indirections: when a field's content is a
+ * bare `SymbolRule` referencing a rule that resolves to a `StringRule` or
+ * `EnumRule` (e.g. `field('mutability', $.mutable_specifier)` where
+ * `mutable_specifier` = `'mut'`), the target rule's literals are collected
+ * and a new enum kind is synthesized in the same way.
+ *
+ * Synthesized rules carry provenance `'evaluate-synthesized'` so emitters
+ * recognize them as intentional codegen artifacts with no parser symbol.
+ *
+ * Deduplication: fields with identical member sets (across different parent
+ * kinds) share a single synthesized enum kind. The canonical name is chosen
+ * in priority order:
+ *   1. An existing grammar rule with the same literal set → `_<ruleName>`.
+ *   2. The field name, when shared across ≥2 parent kinds → `_<fieldName>`.
+ *   3. Fall back: `_<firstParentKind>_<fieldName>` for the first occurrence.
+ *
+ * @param rules - Mutable rules map; synthesized rules are added in place.
+ * @param provenanceByKind - Provenance map; entries are added for each new kind.
+ */
+function synthesizeFieldEnumRules(
+	rules: Record<string, Rule>,
+	provenanceByKind: Map<string, RuleProvenance>
+): void {
+	// First pass: collect all (parentKind, fieldName, members) triples so we
+	// can count how often each field name appears with the same member set and
+	// build the canonical-name dedup map before any rewriting happens.
+	const fieldOccurrences = collectFieldEnumOccurrences(rules);
+	const memberKeyToCanonicalName = buildCanonicalEnumNames(
+		fieldOccurrences,
+		rules
+	);
+
+	// Second pass: rewrite rules using the pre-computed canonical names.
+	const rewrites = new Map<string, Rule>();
+	const newRules = new Map<string, EnumRule>();
+
+	for (const [parentKind, rule] of Object.entries(rules)) {
+		const rewritten = rewriteFieldEnums(
+			rule,
+			parentKind,
+			rules,
+			newRules,
+			memberKeyToCanonicalName
+		);
+		if (rewritten !== rule) rewrites.set(parentKind, rewritten);
+	}
+
+	// Apply rule rewrites.
+	for (const [kind, newRule] of rewrites) {
+		rules[kind] = newRule;
+	}
+
+	// Register synthesized enum rules.
+	for (const [kindName, enumRule] of newRules) {
+		if (!rules[kindName]) {
+			rules[kindName] = enumRule;
+			provenanceByKind.set(kindName, 'evaluate-synthesized');
+		}
+	}
+
+	// Cleanup pass: remove pre-existing enum rules that are superseded by a
+	// canonical name for the same member set. This handles the multi-pass
+	// evaluation pattern where the base grammar's synthesized enum kinds
+	// (e.g. `_update_expression_operator`) remain in the rules map when the
+	// override grammar synthesizes a better canonical name (`_operator`) for
+	// the same member set. Only remove rules whose provenance is
+	// 'evaluate-synthesized' (i.e., created by a previous synthesis pass)
+	// AND whose member set now has a different canonical name.
+	purgeSupersededEnumRules(rules, provenanceByKind, memberKeyToCanonicalName);
+}
+
+/**
+ * Remove pre-existing hidden enum rules that are superseded by the current
+ * pass's canonical name for the same member set.
+ *
+ * For example: the base grammar synthesizes `_update_expression_operator` for
+ * `["++","--"]`. The override pass assigns `_operator` as the canonical name
+ * for the same member set (the wire-deposited `_operator` is already present).
+ * The old `_update_expression_operator` is no longer needed and should be
+ * removed so it doesn't pollute downstream emitters.
+ *
+ * Criteria for removal:
+ * - Hidden rule (name starts with `_`).
+ * - Is an EnumRule.
+ * - Its sorted member set maps to a DIFFERENT canonical name in
+ *   `memberKeyToCanonicalName` (i.e., this name is not the canonical one).
+ *
+ * We do NOT require the rule to be in the current pass's `provenanceByKind`
+ * because it may have been synthesized in an earlier pass (base grammar) and
+ * carried forward through the rules-merge path.
+ *
+ * @param rules - Mutable rules map; superseded entries are deleted in place.
+ * @param provenanceByKind - Provenance map; entries for deleted kinds are removed.
+ * @param memberKeyToCanonicalName - The current pass's canonical name map.
+ */
+function purgeSupersededEnumRules(
+	rules: Record<string, Rule>,
+	provenanceByKind: Map<string, RuleProvenance>,
+	memberKeyToCanonicalName: Map<string, string>
+): void {
+	for (const [name, rule] of Object.entries(rules)) {
+		// Only consider hidden enum rules — visible grammar rules and non-enum
+		// rules must never be removed here.
+		if (!name.startsWith('_')) continue;
+		if (rule.type !== 'enum') continue;
+
+		const memberKey = [...(rule.members as StringRule[])]
+			.map((m) => m.value)
+			.sort()
+			.join(',');
+		const canonicalName = memberKeyToCanonicalName.get(memberKey);
+		if (canonicalName !== undefined && canonicalName !== name) {
+			// This rule is superseded — remove it.
+			delete rules[name];
+			provenanceByKind.delete(name);
+		}
+	}
+}
+
+/** A field-enum candidate discovered during the first collection pass. */
+interface FieldEnumOccurrence {
+	/** The grammar kind that owns the field. */
+	readonly parentKind: string;
+	/** The field name (e.g. `'mutable_specifier'`). */
+	readonly fieldName: string;
+	/** The sorted, comma-joined literal values — used as the dedup key. */
+	readonly memberKey: string;
+	/** The actual member list for constructing the EnumRule. */
+	readonly members: StringRule[];
+}
+
+/**
+ * Scan all rules for `field(name, enumContent)` patterns and return every
+ * qualifying (parentKind × fieldName × memberSet) triple.
+ *
+ * @param rules - The full grammar rules map after evaluate-time synthesis.
+ * @returns Array of occurrence records, one per qualifying field position.
+ */
+function collectFieldEnumOccurrences(
+	rules: Record<string, Rule>
+): FieldEnumOccurrence[] {
+	const occurrences: FieldEnumOccurrence[] = [];
+	for (const [parentKind, rule] of Object.entries(rules)) {
+		walkFieldEnums(rule, parentKind, rules, occurrences);
+	}
+	return occurrences;
+}
+
+/**
+ * Recursively walk a rule tree collecting qualifying field-enum positions.
+ *
+ * @param rule - Current rule node.
+ * @param parentKind - Grammar kind that owns this subtree.
+ * @param rules - Full rules map for symbol resolution.
+ * @param out - Accumulator for discovered occurrences.
+ */
+function walkFieldEnums(
+	rule: Rule,
+	parentKind: string,
+	rules: Record<string, Rule>,
+	out: FieldEnumOccurrence[]
+): void {
+	switch (rule.type) {
+		case 'field': {
+			// Peel one level of repeat/repeat1 wrapper so that
+			// `field(name, repeat(choice('a','b')))` is treated the same as
+			// `field(name, choice('a','b'))` for occurrence collection purposes.
+			// The repeat wrapper is preserved in the rewrite pass below.
+			const enumContent = peelRepeatWrapper(rule.content);
+			const members = resolveToEnumMembers(enumContent, rules);
+			if (members !== null && members.length > 0) {
+				const memberKey = [...members]
+					.map((m) => m.value)
+					.sort()
+					.join(',');
+				out.push({ parentKind, fieldName: rule.name, memberKey, members });
+			}
+			// Always recurse into content — a field can nest other fields.
+			walkFieldEnums(rule.content, parentKind, rules, out);
+			return;
+		}
+		case 'seq':
+		case 'choice':
+			for (const m of rule.members) walkFieldEnums(m, parentKind, rules, out);
+			return;
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'variant':
+		case 'clause':
+		case 'group':
+		case 'token':
+			walkFieldEnums(
+				(rule as { content: Rule }).content,
+				parentKind,
+				rules,
+				out
+			);
+			return;
+		default:
+			return;
+	}
+}
+
+/**
+ * Build a `Map<memberKey, canonicalKindName>` for all discovered field-enum
+ * occurrences using the priority-order naming strategy:
+ *
+ *   1. The field name matches an existing grammar rule with the same members →
+ *      `_<fieldName>`.
+ *   2. Field name shared across ≥2 distinct parent kinds → `_<fieldName>`.
+ *   3. First-occurrence fallback → `_<firstParentKind>_<fieldName>`.
+ *
+ * When two different member sets would produce the same candidate name, the
+ * lower-priority group falls back to `_<firstParentKind>_<fieldName>` to
+ * avoid silent name collisions.
+ *
+ * @param occurrences - All qualifying field-enum occurrences from the first pass.
+ * @param rules - Full grammar rules map for checking existing rule names.
+ * @returns Map from `memberKey` to the chosen canonical hidden kind name.
+ */
+function buildCanonicalEnumNames(
+	occurrences: FieldEnumOccurrence[],
+	rules: Record<string, Rule>
+): Map<string, string> {
+	// Group occurrences by memberKey.
+	const byKey = new Map<string, FieldEnumOccurrence[]>();
+	for (const occ of occurrences) {
+		let group = byKey.get(occ.memberKey);
+		if (!group) {
+			group = [];
+			byKey.set(occ.memberKey, group);
+		}
+		group.push(occ);
+	}
+
+	// Two-pass name assignment to detect and resolve collisions.
+	// Pass 1: compute candidate names without collision awareness.
+	const candidates = new Map<string, { memberKey: string; priority: number }>();
+	const result = new Map<string, string>();
+
+	for (const [memberKey, group] of byKey) {
+		const first = group[0]!;
+		const { name, priority } = deriveCandidateName(group, first, rules);
+
+		const existing = candidates.get(name);
+		if (existing === undefined) {
+			// No collision — claim this name.
+			candidates.set(name, { memberKey, priority });
+			result.set(memberKey, name);
+		} else {
+			// Collision: two different member sets want the same name.
+			// The higher-priority group keeps the name; lower falls back
+			// to `_<firstParentKind>_<fieldName>`.
+			if (priority < existing.priority) {
+				// Current group wins — demote the earlier claimant.
+				const demoted = existing.memberKey;
+				const demotedGroup = byKey.get(demoted)!;
+				result.set(demoted, fallbackName(demotedGroup[0]!));
+				candidates.set(name, { memberKey, priority });
+				result.set(memberKey, name);
+			} else {
+				// Current group loses — use fallback name.
+				result.set(memberKey, fallbackName(first));
+			}
+		}
+	}
+
+	return result;
+}
+
+/**
+ * Compute the fallback canonical name for a field-enum occurrence when no
+ * higher-priority name can be assigned: `_<firstParentKind>_<fieldName>`.
+ */
+function fallbackName(occ: FieldEnumOccurrence): string {
+	return `_${occ.parentKind}_${occ.fieldName}`;
+}
+
+/**
+ * Derive a candidate canonical hidden kind name (with priority) for a group
+ * of occurrences that share the same member set.
+ *
+ * Priority values (lower number = higher priority):
+ *   1. Field name matches an existing grammar rule with the same literal set →
+ *      `_<fieldName>`. Handles `mutable_specifier = 'mut'` cases.
+ *   2. All occurrences share the same field name AND ≥2 distinct parents →
+ *      `_<fieldName>`.
+ *   3. Fallback → `_<firstParentKind>_<fieldName>`.
+ *
+ * @param group - All occurrences sharing this member set.
+ * @param first - The first occurrence (used for naming).
+ * @param rules - Grammar rules map for existing-rule lookup.
+ * @returns The candidate name and its priority level (1 = highest).
+ */
+function deriveCandidateName(
+	group: FieldEnumOccurrence[],
+	first: FieldEnumOccurrence,
+	rules: Record<string, Rule>
+): { name: string; priority: number } {
+	const allSameFieldName = group.every((o) => o.fieldName === first.fieldName);
+
+	if (allSameFieldName) {
+		// Priority 1: field name matches an existing grammar rule with same members.
+		const existingMatch = fieldNameMatchesGrammarRule(
+			first.fieldName,
+			first.members,
+			rules
+		);
+		if (existingMatch) {
+			return { name: `_${first.fieldName}`, priority: 1 };
+		}
+
+		// Priority 2: shared field name across ≥2 distinct parent kinds.
+		const distinctParents = new Set(group.map((o) => o.parentKind)).size;
+		if (distinctParents >= 2) {
+			return { name: `_${first.fieldName}`, priority: 2 };
+		}
+	}
+
+	// Priority 3: fallback — first parent + field name.
+	return { name: fallbackName(first), priority: 3 };
+}
+
+/**
+ * Check whether a grammar rule named `fieldName` exists and resolves to the
+ * same literal set as `members`. Used by `deriveCanonicalName` for priority-1
+ * matching: if `field('mutable_specifier', ...)` and `rules['mutable_specifier']
+ * = 'mut'`, the field name is itself the canonical name.
+ *
+ * @param fieldName - The field name to look up in `rules`.
+ * @param members - The expected literal members for comparison.
+ * @param rules - Full grammar rules map.
+ * @returns `true` when `rules[fieldName]` resolves to the same member set.
+ */
+function fieldNameMatchesGrammarRule(
+	fieldName: string,
+	members: StringRule[],
+	rules: Record<string, Rule>
+): boolean {
+	const rule = rules[fieldName];
+	if (rule === undefined) return false;
+
+	const resolved = resolveToEnumMembersOneLevelDeep(rule);
+	if (resolved === null) return false;
+
+	const targetKey = [...members]
+		.map((m) => m.value)
+		.sort()
+		.join(',');
+	const ruleKey = [...resolved]
+		.map((m) => m.value)
+		.sort()
+		.join(',');
+	return ruleKey === targetKey;
+}
+
+/**
+ * Walk a rule tree and rewrite every `field(name, inlineEnum)` to
+ * `field(name, symbol(<canonicalEnumKindName>))`, collecting the synthesized
+ * enum rules into `newRules`.
+ *
+ * @param rule - The rule tree to walk and potentially rewrite.
+ * @param parentKind - The grammar kind that owns this rule (for naming).
+ * @param rules - The full rules map for symbol-reference resolution.
+ * @param newRules - Accumulator for synthesized `EnumRule` entries.
+ * @param memberKeyToCanonicalName - Pre-computed dedup map from the first pass.
+ * @returns The rewritten rule (may be structurally identical if no change was needed).
+ */
+function rewriteFieldEnums(
+	rule: Rule,
+	parentKind: string,
+	rules: Record<string, Rule>,
+	newRules: Map<string, EnumRule>,
+	memberKeyToCanonicalName: Map<string, string>
+): Rule {
+	const recurse = (r: Rule): Rule =>
+		rewriteFieldEnums(r, parentKind, rules, newRules, memberKeyToCanonicalName);
+
+	switch (rule.type) {
+		case 'field': {
+			const synthesized = tryExtractFieldEnum(
+				rule.content,
+				rules,
+				memberKeyToCanonicalName
+			);
+			if (synthesized !== null) {
+				const { enumKindName, enumRule, replacementContent } = synthesized;
+				if (!newRules.has(enumKindName)) {
+					newRules.set(enumKindName, enumRule);
+				}
+				// Replace the field's inline content with the replacement content rule.
+				// For bare enum: symbol(enumKindName).
+				// For repeat/repeat1(enum): repeat/repeat1(symbol(enumKindName)).
+				return {
+					type: 'field',
+					name: rule.name,
+					content: replacementContent,
+					source: rule.source,
+					nameFrom: rule.nameFrom,
+					blockBearer: rule.blockBearer
+				} satisfies FieldRule;
+			}
+			// Content isn't an enum candidate — recurse to find nested fields.
+			const newContent = recurse(rule.content);
+			if (newContent === rule.content) return rule;
+			return { ...rule, content: newContent } as FieldRule;
+		}
+		case 'seq':
+		case 'choice': {
+			const newMembers = rule.members.map(recurse);
+			if (newMembers.every((m, i) => m === rule.members[i])) return rule;
+			return { ...rule, members: newMembers } as Rule;
+		}
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'variant':
+		case 'clause':
+		case 'group':
+		case 'token': {
+			const newContent = recurse((rule as { content: Rule }).content);
+			if (newContent === (rule as { content: Rule }).content) return rule;
+			return { ...rule, content: newContent } as Rule;
+		}
+		default:
+			return rule;
+	}
+}
+
+/**
+ * Try to extract an enum definition from a field's content.
+ *
+ * Returns `{ enumKindName, enumRule, replacementContent }` when the content
+ * resolves to a closed set of string literals, or `null` when it does not
+ * qualify.
+ *
+ * Qualifying shapes:
+ *
+ * 1. `EnumRule` (inline `choice('+', '-', ...)` already collapsed) — use
+ *    its members directly. `replacementContent` is `symbol(enumKindName)`.
+ *
+ * 2. `StringRule` (single literal inline in the field position) — wrap in
+ *    a 1-member enum. `replacementContent` is `symbol(enumKindName)`.
+ *
+ * 3. `SymbolRule` whose referent in `rules` resolves to a `StringRule` or
+ *    `EnumRule` — use that rule's literals. Follows exactly one level of
+ *    indirection (symbol → literal | enum).
+ *    `replacementContent` is `symbol(enumKindName)`.
+ *
+ * 4. `repeat(X)` or `repeat1(X)` where `X` resolves to one of the above —
+ *    the repeat wrapper is preserved in `replacementContent`:
+ *    `repeat(symbol(enumKindName))` or `repeat1(symbol(enumKindName))`.
+ *
+ * The canonical kind name is looked up from `memberKeyToCanonicalName` rather
+ * than derived from the parent/field context — ensuring all identical member
+ * sets share one synthesized rule regardless of where they appear.
+ *
+ * @param content - The field's current content rule.
+ * @param rules - Full rules map for symbol resolution.
+ * @param memberKeyToCanonicalName - Pre-computed dedup map (first pass).
+ * @returns Synthesized kind name, enum rule, and the replacement content rule,
+ *   or `null` when the content does not qualify.
+ */
+function tryExtractFieldEnum(
+	content: Rule,
+	rules: Record<string, Rule>,
+	memberKeyToCanonicalName: Map<string, string>
+): { enumKindName: string; enumRule: EnumRule; replacementContent: Rule } | null {
+	// Peel one level of repeat/repeat1 wrapper so `field(name, repeat(enum))`
+	// is handled alongside `field(name, enum)`. The wrapper type is remembered
+	// so the rewrite can restore it around the synthesized symbol reference.
+	const repeatWrapperType =
+		content.type === 'repeat' || content.type === 'repeat1'
+			? content.type
+			: null;
+	const innerContent = repeatWrapperType !== null
+		? (content as RepeatRule | Repeat1Rule).content
+		: content;
+
+	const members = resolveToEnumMembers(innerContent, rules);
+	if (members === null || members.length === 0) return null;
+
+	const memberKey = [...members]
+		.map((m) => m.value)
+		.sort()
+		.join(',');
+	const enumKindName = memberKeyToCanonicalName.get(memberKey);
+	if (enumKindName === undefined) return null;
+
+	const enumRule: EnumRule = {
+		type: 'enum',
+		members,
+		source: 'grammar'
+	};
+
+	const symRule: SymbolRule = { type: 'symbol', name: enumKindName, hidden: true };
+	const replacementContent: Rule =
+		repeatWrapperType === null
+			? symRule
+			: repeatWrapperType === 'repeat'
+				? { ...(content as RepeatRule), content: symRule }
+				: { ...(content as Repeat1Rule), content: symRule };
+
+	return { enumKindName, enumRule, replacementContent };
+}
+
+/**
+ * Peel one level of `repeat` or `repeat1` wrapper from a rule, returning
+ * the inner content. Returns the rule unchanged when it is not a repeat
+ * wrapper. Used by occurrence-collection and field-extraction passes to
+ * treat `field(name, repeat(enum))` the same as `field(name, enum)`.
+ *
+ * @param rule - The rule to inspect.
+ * @returns The inner content when `rule` is a `repeat` or `repeat1`,
+ *   otherwise `rule` itself.
+ */
+function peelRepeatWrapper(rule: Rule): Rule {
+	if (rule.type === 'repeat' || rule.type === 'repeat1') return rule.content;
+	return rule;
+}
+
+/**
+ * Resolve a rule to an ordered list of string members if it represents a
+ * closed set of literals. Returns `null` when the rule cannot be reduced to
+ * an all-literal set.
+ *
+ * @param rule - The rule to inspect.
+ * @param rules - Full rules map for one-level symbol indirection.
+ * @returns An array of `StringRule` members, or `null`.
+ * @remarks
+ * Only one level of symbol indirection is followed. Chains like
+ * `symbol → symbol → enum` are intentionally NOT followed — deeper
+ * resolution belongs in Link, and multi-level chains are uncommon for
+ * operator fields.
+ */
+function resolveToEnumMembers(
+	rule: Rule,
+	rules: Record<string, Rule>
+): StringRule[] | null {
+	switch (rule.type) {
+		case 'enum':
+			// Already a collapsed choice-of-strings.
+			return rule.members as StringRule[];
+		case 'string':
+			// Single inline literal — wrap as a 1-member enum.
+			return [rule];
+		case 'symbol': {
+			// Follow one level of symbol indirection.
+			const target = rules[rule.name];
+			if (target === undefined) return null;
+			return resolveToEnumMembersOneLevelDeep(target);
+		}
+		default:
+			return null;
+	}
+}
+
+/**
+ * Resolve a target rule to enum members without further symbol indirection.
+ *
+ * @param target - The resolved rule (one hop from a symbol reference).
+ * @returns An array of `StringRule` members, or `null` when the target is
+ *   not a literal or all-literal choice/enum.
+ * @remarks
+ * Kept separate from {@link resolveToEnumMembers} to make the "one-level
+ * indirection" constraint explicit and prevent accidental chain following.
+ * A `ChoiceRule` reaching here is the raw evaluate-time form — all-string
+ * choices should already have been collapsed to `EnumRule` by `choice()`,
+ * but handle the raw form defensively.
+ */
+function resolveToEnumMembersOneLevelDeep(target: Rule): StringRule[] | null {
+	switch (target.type) {
+		case 'string':
+			return [target];
+		case 'enum':
+			return target.members as StringRule[];
+		case 'choice': {
+			// Defensive: all-string choice not yet collapsed (should not occur
+			// in normal evaluate output, but handle gracefully).
+			if (target.members.length === 0) return null;
+			const allStrings = target.members.every(
+				(m): m is StringRule => m.type === 'string'
+			);
+			return allStrings ? target.members : null;
+		}
+		default:
+			return null;
 	}
 }
 

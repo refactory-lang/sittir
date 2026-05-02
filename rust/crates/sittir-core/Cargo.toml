@@ -7,6 +7,18 @@ license.workspace = true
 repository.workspace = true
 description = "Render / readNode / splice primitives for sittir — hot-path engine shared across per-grammar render crates."
 
+[features]
+# Enable napi FromNapiValue / ToNapiValue impls for core boundary types
+# (Source, Span, Edit). Activated by the per-grammar napi crates via
+# `sittir-core = { features = ["napi-bindings"] }`. NOT enabled by
+# default so `cargo test -p sittir-core` builds without Node.js symbols.
+napi-bindings = ["dep:napi", "dep:napi-derive"]
+# When OFF (default / release), JS sends leaf fields as plain scalars
+# (e.g. identifier → plain string). When ON, leaf fields carry the full
+# transport object { $type, $text, $source, $span, $nodeId } — useful
+# for debugging round-trip and CST diagnostics.
+debug-transport = []
+
 [dependencies]
 serde = { workspace = true }
 serde_json = { workspace = true }
@@ -18,8 +30,8 @@ tree-sitter = { workspace = true }
 # still holds. The actual .node artifact is linked by the
 # sittir-* grammar binding crates; this dep only buys us the boundary
 # attribute on `Edit`.
-napi = { version = "3", default-features = false, features = ["napi4"] }
-napi-derive = "3"
+napi = { version = "3", default-features = false, features = ["napi4"], optional = true }
+napi-derive = { version = "3", optional = true }
 # ast-grep-core is named in spec 012 T003 but deferred from Phase 1;
 # the version conflict that previously blocked it (grammar crates
 # requiring tree-sitter ^0.24/^0.25 while ast-grep-core >=0.40 requires

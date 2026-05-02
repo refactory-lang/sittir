@@ -16,7 +16,7 @@
  * See ADR-0010 phase 2 for the full design.
  */
 
-import type { Rule, ChoiceRule, FieldRule, EnumRule } from './rule.ts';
+import type { Rule, ChoiceRule, FieldRule, EnumRule, SymbolRule } from './rule.ts';
 import {
 	isChoice,
 	isEnum,
@@ -25,7 +25,8 @@ import {
 	isSeq,
 	isOptional,
 	isRepeat,
-	isRepeat1
+	isRepeat1,
+	isSymbol
 } from './rule.ts';
 import type { RefineForm } from './types.ts';
 import { parsePath } from '../dsl/transform/transform-path.ts';
@@ -59,15 +60,20 @@ export interface RefinePathResolution {
  * @param kind - Rule kind being validated (used in error messages).
  * @param rule - Post-link rule tree for `kind`.
  * @param forms - Ordered list of refine forms declared for `kind`.
+ * @param rules - Optional rules map for resolving symbol references
+ *   introduced by evaluate's field-enum synthesis pass. When a path
+ *   terminus resolves to a `SymbolRule`, the target rule is looked up
+ *   here to retrieve the underlying `EnumRule`.
  */
 export function validateRefineForms(
 	kind: string,
 	rule: Rule,
-	forms: readonly RefineForm[]
+	forms: readonly RefineForm[],
+	rules?: Readonly<Record<string, Rule>>
 ): void {
 	for (const form of forms) {
 		for (const [pathStr, selection] of Object.entries(form.selections)) {
-			const resolution = resolveRefinePath(kind, form.name, pathStr, rule);
+			const resolution = resolveRefinePath(kind, form.name, pathStr, rule, rules);
 			validateSelection(kind, form.name, pathStr, resolution.choice, selection);
 		}
 	}
@@ -80,6 +86,8 @@ export function validateRefineForms(
  * @param formName - Refine form name (used in error messages).
  * @param pathStr - The path string as declared in the refine() call.
  * @param rule - Post-link rule tree for `kind`.
+ * @param rules - Optional rules map for resolving symbol references
+ *   introduced by evaluate's field-enum synthesis pass.
  * @returns A {@link RefinePathResolution} carrying the choice and the
  *   enclosing field name (when the terminal step was a `name:` segment).
  * @throws When the path doesn't resolve, or resolves to a non-choice.
@@ -88,7 +96,8 @@ export function resolveRefinePath(
 	kind: string,
 	formName: string,
 	pathStr: string,
-	rule: Rule
+	rule: Rule,
+	rules?: Readonly<Record<string, Rule>>
 ): RefinePathResolution {
 	const segments = parsePath(pathStr);
 	if (segments.length === 0) {
@@ -104,7 +113,7 @@ export function resolveRefinePath(
 		cur = res.next;
 		if (seg.kind === 'fieldName') fieldName = seg.name;
 	}
-	const final = unwrapToChoice(cur);
+	const final = unwrapToChoice(cur, rules);
 	if (!final) {
 		throw new Error(
 			`refine(${kind}) form '${formName}': path '${pathStr}' does not resolve to a choice (got '${cur.type}')`
@@ -183,7 +192,21 @@ function stepPath(
  * without further adaptation. The discriminant is still useful
  * information downstream so we surface it here instead of collapsing.
  */
-function unwrapToChoice(rule: Rule): ChoiceRule | EnumRule | undefined {
+/**
+ * Unwrap wrappers to reach a `ChoiceRule` or `EnumRule`.
+ *
+ * @param rule - The rule to unwrap.
+ * @param rules - Optional rules map for resolving synthesized symbol
+ *   references. When `rule` is a `SymbolRule` whose name starts with `_`
+ *   (a synthesized field-enum hidden rule), the target is looked up in
+ *   `rules` and unwrapped. One level of indirection only.
+ * @returns The underlying choice or enum, or `undefined` when the rule
+ *   does not reduce to one.
+ */
+function unwrapToChoice(
+	rule: Rule,
+	rules?: Readonly<Record<string, Rule>>
+): ChoiceRule | EnumRule | undefined {
 	let cur = rule;
 	for (;;) {
 		if (isChoice(cur)) return cur;
@@ -191,6 +214,16 @@ function unwrapToChoice(rule: Rule): ChoiceRule | EnumRule | undefined {
 		if (isOptional(cur) || isRepeat(cur) || isRepeat1(cur)) {
 			cur = cur.content;
 			continue;
+		}
+		// Follow one level of symbol indirection for synthesized field-enum
+		// hidden rules (e.g. `_binary_expression_operator` synthesized by
+		// evaluate's `synthesizeFieldEnumRules` pass). Without this, refine()
+		// paths that previously terminated at an inline EnumRule now see a
+		// SymbolRule and fail validation.
+		if (isSymbol(cur) && rules !== undefined) {
+			const target = rules[cur.name];
+			if (target !== undefined && (isEnum(target) || isChoice(target)))
+				return target;
 		}
 		return undefined;
 	}

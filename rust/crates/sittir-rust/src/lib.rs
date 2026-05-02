@@ -12,7 +12,10 @@ use sittir_core::engine::{Engine, EngineGrammar};
 use sittir_core::types::{Edit, FormatRecord, NodeData};
 
 #[cfg(feature = "napi-bindings")]
-use render::{render_dispatch, TEMPLATE_BUNDLE_HASH};
+use render::{render_dispatch, render_transport_parts, AnyTransport, TEMPLATE_BUNDLE_HASH};
+
+#[cfg(feature = "napi-bindings")]
+const NATIVE_RENDER_TRANSPORT_ABI: u32 = 1;
 
 #[cfg(feature = "napi-bindings")]
 #[derive(Clone, Copy)]
@@ -64,6 +67,11 @@ impl SittirEngine {
         self.inner.template_bundle_hash()
     }
 
+    #[napi(getter)]
+    pub fn native_render_transport_abi(&self) -> u32 {
+        NATIVE_RENDER_TRANSPORT_ABI
+    }
+
     #[napi]
     pub fn find_and_read(&mut self, source: String, pattern: String) -> Result<String> {
         self.inner
@@ -83,9 +91,16 @@ impl SittirEngine {
         self.inner.read_node(node_id).map_err(Error::from_reason)
     }
 
+    /// Render a typed transport object (napi-native, numeric `$type`).
+    /// Phase B: `AnyTransport` is decoded by napi-rs directly from the JS
+    /// object — no `serde_json::Value` intermediate.
     #[napi]
-    pub fn render(&self, node_json: String) -> Result<String> {
-        self.inner.render(node_json).map_err(Error::from_reason)
+    pub fn render(&self, transport: AnyTransport) -> Result<String> {
+        let (node, canonical) = render_transport_parts(transport)
+            .map_err(|e| Error::from_reason(format!("render_transport failed: {e}")))?;
+        self.inner
+            .render_canonical_node(&node, canonical)
+            .map_err(Error::from_reason)
     }
 
     #[napi]

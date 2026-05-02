@@ -1,4 +1,15 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+
+vi.mock('../compiler/generated-metadata.ts', async () => {
+	const actual = await vi.importActual<
+		typeof import('../compiler/generated-metadata.ts')
+	>('../compiler/generated-metadata.ts');
+	return {
+		...actual,
+		loadGeneratedIdTables: vi.fn(async () => undefined)
+	};
+});
+
 import { generate } from '../compiler/generate.ts';
 
 describe('generate — new pipeline end-to-end', () => {
@@ -11,6 +22,8 @@ describe('generate — new pipeline end-to-end', () => {
 		// All files should be non-empty strings
 		expect(result.grammar.length).toBeGreaterThan(0);
 		expect(result.types.length).toBeGreaterThan(0);
+		expect(result.types).toContain('readonly $type: "');
+		expect(result.types).not.toContain('export const enum TSKindId {');
 		expect(result.factories.length).toBeGreaterThan(0);
 		expect(result.consts.length).toBeGreaterThan(0);
 		expect(result.index.length).toBeGreaterThan(0);

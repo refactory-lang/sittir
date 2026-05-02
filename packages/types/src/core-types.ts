@@ -52,7 +52,11 @@ export type NodeId = number & { readonly [nodeIdBrand]: true };
  * instead of structural `isNodeData` probing.
  */
 export interface AnyNodeData {
-	$type: string;
+	/**
+	 * Kind discriminant. Numeric (TSKindId) for parser.c-derived kinds.
+	 * String for synthesized kinds pending numeric ID assignment.
+	 */
+	$type: number | string;
 	/** Which producer emitted this node. */
 	$source?: 'ts' | 'sg' | 'factory';
 	/** Variant subtype name — set by factory, absent on readNode output. */
@@ -89,22 +93,6 @@ export interface AnyNodeData {
 	 *  (ctx.format) for this specific node. Never set by inference — inferred format
 	 *  lives on TreeHandle.format. Absent on all factory and readNode output. */
 	$format?: FormatRecord;
-}
-
-export type NativeFieldValue =
-	| NativeNodeData
-	| readonly NativeNodeData[]
-	| string;
-
-export interface NativeNodeData {
-	readonly $type: string;
-	readonly $source: 'ts' | 'sg' | 'factory';
-	readonly $named: boolean;
-	readonly $fields?: { readonly [key: string]: NativeFieldValue };
-	readonly $children?: readonly NativeNodeData[];
-	readonly $text?: string;
-	readonly $span?: { readonly start: number; readonly end: number };
-	readonly $nodeId?: NodeId;
 }
 
 // ---------------------------------------------------------------------------
@@ -168,6 +156,13 @@ export interface RulesConfig {
 		treeSitterVersion?: string;
 	};
 	rules: Record<string, TemplateRule>;
+	/**
+	 * Static lookup table: numeric KindId → kind name string. Pre-computed
+	 * at codegen time from the parser symbol catalog. Used by the JS
+	 * Nunjucks render path to resolve template filenames from numeric
+	 * `$type`. Pure `Map.get()` at runtime — no function call, no throw.
+	 */
+	kindNames?: ReadonlyMap<number, string>;
 }
 
 // ---------------------------------------------------------------------------

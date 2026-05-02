@@ -4,66 +4,34 @@
 // See emitters/factory-map.ts for semantics of each map.
 {
   "factoryShapes": {
-    "_array_expression_list": "config",
-    "_array_expression_semi": "config",
-    "_closure_expression_block": "config",
-    "_closure_expression_expr": "config",
-    "_delim_token_tree_brace": "children",
-    "_delim_token_tree_bracket": "children",
-    "_delim_token_tree_paren": "children",
-    "_doc_comment": "text",
-    "_expression_statement_block_ending": "children",
-    "_expression_statement_with_semi": "children",
+    "__range_expression_binary_operator": "text",
+    "__visibility_modifier_in_path_in": "text",
+    "__visibility_modifier_pub_pub": "text",
+    "_binary_expression_operator": "text",
+    "_closure_expression_async_marker": "text",
+    "_closure_expression_static_marker": "text",
+    "_compound_assignment_expr_operator": "text",
+    "_crate": "text",
     "_field_identifier": "children",
-    "_field_pattern_named": "config",
-    "_field_pattern_shorthand": "config",
-    "_foreign_mod_item_body": "config",
     "_function_type_fn_form": "children",
     "_function_type_trait_form": "config",
-    "_impl_item_body": "config",
-    "_kw_async_marker": "text",
-    "_kw_move_marker": "text",
-    "_kw_ref_marker": "text",
-    "_kw_static_marker": "text",
-    "_kw_unsafe_marker": "text",
+    "_generic_type_with_turbofish_turbofish": "text",
+    "_impl_item_negative": "text",
     "_let_chain": "children",
-    "_line_comment_content": "text",
-    "_line_comment_doc": "config",
-    "_line_comment_regular_dslash": "text",
-    "_macro_definition_brace": "children",
-    "_macro_definition_bracket": "children",
-    "_macro_definition_paren": "children",
-    "_match_arm_block_ending": "config",
-    "_match_arm_with_comma": "config",
-    "_mod_item_inline": "config",
-    "_or_pattern_binary": "config",
-    "_or_pattern_prefix": "config",
-    "_pointer_type_const": "text",
-    "_pointer_type_mut": "children",
+    "_move_marker": "text",
+    "_mutable_specifier": "text",
+    "_operator": "text",
     "_primitive_type": "text",
-    "_range_expression_bare": "config",
-    "_range_expression_binary": "config",
-    "_range_expression_postfix": "config",
-    "_range_expression_prefix": "config",
-    "_range_pattern_left_with_right": "config",
-    "_range_pattern_prefix": "config",
+    "_ref_marker": "text",
     "_reference_expression_raw_const": "text",
     "_reference_expression_raw_mut": "children",
     "_reserved_identifier": "children",
-    "_shorthand_field_identifier": "children",
-    "_string_content": "children",
-    "_struct_item_brace": "config",
-    "_struct_item_tuple": "config",
-    "_token_tree_brace": "children",
-    "_token_tree_bracket": "children",
-    "_token_tree_paren": "children",
-    "_token_tree_pattern_brace": "children",
-    "_token_tree_pattern_bracket": "children",
-    "_token_tree_pattern_paren": "children",
+    "_self": "text",
+    "_token_binding_pattern_type": "text",
     "_type_identifier": "children",
-    "_visibility_modifier_crate": "children",
+    "_unary_expression_operator": "text",
+    "_unsafe_marker": "text",
     "_visibility_modifier_in_path": "config",
-    "_visibility_modifier_pub": "config",
     "abstract_type": "config",
     "arguments": "children",
     "array_expression": "config",
@@ -244,9 +212,12 @@
     "string_content": "text",
     "raw_string_literal_content": "text",
     "float_literal": "text",
+    "_line_doc_content": "text",
     "fn": "text",
     "async": "text",
+    "in": "text",
     "move": "text",
+    "pub": "text",
     "ref": "text",
     "static": "text",
     "unsafe": "text",
@@ -265,7 +236,6 @@
     "loop": "text",
     "match": "text",
     "mod": "text",
-    "pub": "text",
     "return": "text",
     "struct": "text",
     "trait": "text",
@@ -275,7 +245,6 @@
     "where": "text",
     "while": "text",
     "raw": "text",
-    "in": "text",
     "dyn": "text",
     "else": "text",
     "extern": "text",
@@ -285,22 +254,22 @@
   },
   "fieldAliasMap": {
     "_field_pattern_shorthand.name": {
-      "shorthand_field_identifier": "_shorthand_field_identifier"
+      "shorthand_field_identifier": "identifier"
     },
     "_line_comment_doc.doc": {
-      "doc_comment": "_doc_comment"
+      "doc_comment": "_line_doc_content"
     },
     "block_comment.doc": {
-      "doc_comment": "_doc_comment"
+      "doc_comment": "_block_comment_content"
     },
     "field_pattern_shorthand.name": {
-      "shorthand_field_identifier": "_shorthand_field_identifier"
+      "shorthand_field_identifier": "identifier"
     },
     "macro_invocation.token_tree": {
       "token_tree": "delim_token_tree"
     },
     "raw_string_literal.string_content": {
-      "string_content": "_string_content"
+      "string_content": "raw_string_literal_content"
     },
     "scoped_identifier.path": {
       "generic_type": "generic_type_with_turbofish"
@@ -322,74 +291,8 @@
     }
   },
   "factoryFields": {
-    "_array_expression_semi": [
-      "attributes",
-      "elements",
-      "length"
-    ],
-    "_closure_expression_block": [
-      "return_type",
-      "body"
-    ],
-    "_closure_expression_expr": [
-      "body"
-    ],
-    "_field_pattern_named": [
-      "name",
-      "pattern"
-    ],
-    "_field_pattern_shorthand": [
-      "name"
-    ],
-    "_foreign_mod_item_body": [
-      "body"
-    ],
     "_function_type_trait_form": [
       "trait"
-    ],
-    "_impl_item_body": [
-      "body"
-    ],
-    "_line_comment_doc": [
-      "doc"
-    ],
-    "_match_arm_block_ending": [
-      "value"
-    ],
-    "_match_arm_with_comma": [
-      "value"
-    ],
-    "_mod_item_inline": [
-      "body"
-    ],
-    "_or_pattern_binary": [
-      "left",
-      "right"
-    ],
-    "_or_pattern_prefix": [
-      "right"
-    ],
-    "_range_expression_bare": [
-      "operator"
-    ],
-    "_range_expression_binary": [
-      "start",
-      "operator",
-      "end"
-    ],
-    "_range_expression_postfix": [
-      "start",
-      "operator"
-    ],
-    "_range_expression_prefix": [
-      "operator",
-      "end"
-    ],
-    "_range_pattern_left_with_right": [
-      "right"
-    ],
-    "_range_pattern_prefix": [
-      "right"
     ],
     "abstract_type": [
       "type_parameters",

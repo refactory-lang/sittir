@@ -386,6 +386,61 @@ on each rerun, not just aggregate pass/fail totals:
 
 Aggregate totals can hide kinds falling out of the validation universe.
 
+### KindID identity comes from `parser.c`, not `ts_symbol_names[]`
+
+For the KindID runtime migration, the authoritative identity source is
+`packages/<lang>/.sittir/src/parser.c` `enum ts_symbol_identifiers`.
+Do **not** key KindID metadata off `ts_symbol_names[]` or `parser.wasm` —
+the name table is display/debug data and can collapse distinct parser
+symbols (`sym__as_pattern` vs `sym_as_pattern` both → `"as_pattern"`).
+There is no `parser.wasm` fallback for KindID identity.
+
+Derive parser-side identity by stripping only the prefix family:
+
+- `sym_foo -> foo`
+- `anon_sym_PLUS -> PLUS`
+- `aux_sym_bar_repeat1 -> bar_repeat1`
+- `alias_sym_baz -> baz`
+
+Retain the parser scaffolding as explicit metadata flags instead of
+baking it into ad hoc name cleanup:
+
+- `anon`
+- `aux`
+- `alias`
+- `hidden` (`parserName.startsWith('_')`)
+
+### KindID metadata uses `key` + presence/uses flags
+
+For KindID work, `key` is the canonical cross-pipeline join term — the
+existing Sittir-facing value used across grammar/node-types/runtime
+surfaces. Do not force minimally-cleaned parser names like `PLUS` to
+become the global join term just because they came from `parser.c`.
+
+The grammar-wide symbol catalog should cover every parser symbol and
+separate:
+
+- parser identity (`id`, `parser.cSymbol`, `parser.parserName`,
+  `parser.displayName`, parser-origin flags)
+- canonical `key` (optional when a parser symbol does not map to an
+  existing Sittir-facing surface)
+- JS/native emitted names
+- where the symbol exists (`KindPresenceFlag`)
+- what Sittir can do with it (`KindUseFlag`)
+
+Use these two flag sets:
+
+- `KindPresenceFlag`: `TSGrammar`, `TSNodeTypes`, `TSRuntime`
+- `KindUseFlag`: `Readable`, `Buildable`, `Renderable`
+
+JS/native naming is intentionally asymmetric:
+
+- JS/TS: `enumName: 'AsPattern'`, `methodName: 'asPattern'`
+- native: `enumName: 'as_pattern'`, `methodName: 'as_pattern'`
+
+Emitters should read those names from the catalog instead of re-deriving
+them independently.
+
 <!-- MANUAL ADDITIONS END -->
 
 ## Active Technologies

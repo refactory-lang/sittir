@@ -159,11 +159,11 @@ export function withMetrics<T>(grammar: string, kind: string, fn: () => T): T {
 
 /**
  * Record a single FFI (napi) round-trip cost. Called by boundary.ts around
- * each `engine.render(JSON.stringify(node))` call when SITTIR_METRICS=1.
+ * each native `engine.render(node)` call when SITTIR_METRICS=1.
  *
  * @param grammar - Grammar name (used for per-kind correlation).
  * @param kind - Node kind (used to attribute `napiCopyBytes` to the right bucket).
- * @param payloadBytes - `JSON.stringify(node).length` — proxy for wire size.
+ * @param payloadBytes - Serialized object length proxy for wire size.
  * @param roundtripMs - Elapsed time from stringify to napi return, milliseconds.
  * @param outputBytes - Length of the returned string from napi.
  */

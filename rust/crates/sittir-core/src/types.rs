@@ -1,9 +1,11 @@
-//! Primitive `NodeData` + `FieldValue` + `Span` + `Source` + `Edit` —
-//! the 8-`$`-field boundary shape that crosses JS↔Rust. See
+//! Primitive `NodeData` + `FieldValue` + `Span` + `Source` + `Edit` +
+//! `KindId` — the 8-`$`-field boundary shape that crosses JS↔Rust, plus
+//! the numeric kind discriminant for the KindID runtime migration. See
 //! data-model.md §1 for the authoritative contract.
 //!
 //! Spec 012 tasks T009 + T010. Serde rename + skip-if-none invariants
 //! tested in `tests/boundary_roundtrip.rs` (T011).
+//! `KindId` serde/conversion tests in `tests/kind_id.rs`.
 //!
 //! Invariants (enforced by struct + serde attributes):
 //! - `$type`, `$source`, `$named` are required on the wire.
@@ -23,16 +25,67 @@
 //! boundary and would be serialized dead weight on every hop
 //! (Constitution Principle X exception, documented in data-model.md §1).
 
+#[cfg(feature = "napi-bindings")]
 use napi_derive::napi;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
+/// Numeric runtime kind discriminant. The wire shape (`$type` on
+/// `AnyTransport` JSON) uses this directly. Per the KindID runtime
+/// migration design (2026-04-30): u16 is wide enough for any
+/// tree-sitter grammar's parser symbol space (rust grammar ≈ 411
+/// symbols, well under u16 max = 65535).
+///
+/// `KindId` is a transparent newtype so `serde` decodes JSON numeric
+/// `$type` directly into it without an enum variant table — per-
+/// grammar `AnyTransport` enums dispatch on the inner u16.
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash,
+    ::serde::Serialize, ::serde::Deserialize,
+)]
+#[serde(transparent)]
+#[repr(transparent)]
+pub struct KindId(pub u16);
+
+impl KindId {
+    pub const fn new(id: u16) -> Self {
+        Self(id)
+    }
+    pub const fn get(self) -> u16 {
+        self.0
+    }
+}
+
+impl ::std::fmt::Display for KindId {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::std::fmt::Display::fmt(&self.0, f)
+    }
+}
+
+impl From<u16> for KindId {
+    fn from(id: u16) -> Self {
+        Self(id)
+    }
+}
+
+impl From<KindId> for u16 {
+    fn from(id: KindId) -> u16 {
+        id.0
+    }
+}
+
 /// Primitive NodeData — the wire shape. Exactly eight `$`-prefixed
 /// top-level fields. Enrichment (`$variant`, etc.) is TS-side only.
+///
+/// `type_` is a numeric `KindId` (parser.c-derived symbol ID) rather than
+/// a string kind name. JSON wire shape is `{"$type": 42}` — `KindId` is
+/// `#[serde(transparent)]` so serde handles the u16 ↔ JSON number mapping
+/// without an explicit custom impl. Phase B-inverse of the KindID runtime
+/// migration (2026-04-30).
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct NodeData {
     #[serde(rename = "$type")]
-    pub type_: String,
+    pub type_: KindId,
 
     #[serde(rename = "$source")]
     pub source: Source,
@@ -68,6 +121,11 @@ pub struct NodeData {
 /// tree; `Sg` = ast-grep path; `Factory` = constructed on the TS side.
 ///
 /// Serialized as `"ts"` / `"sg"` / `"factory"` (rename_all = lowercase).
+/// `#[napi(string_enum)]` (gated on napi-bindings feature) adds
+/// `FromNapiValue` / `ToNapiValue` via napi-rs string enum mapping.
+/// The feature gate prevents napi C-symbol leakage into sittir-core
+/// test binaries that build without Node.js.
+#[cfg_attr(feature = "napi-bindings", napi(string_enum))]
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum Source {
@@ -89,6 +147,11 @@ pub enum FieldValue {
 
 /// Byte-range for a `NodeData` within its source string. `start`/`end`
 /// are UTF-8 byte offsets (ast-grep / tree-sitter convention).
+/// `#[napi(object)]` (gated on napi-bindings feature) adds
+/// `FromNapiValue` / `ToNapiValue` so transport structs can include
+/// `Option<Span>` fields. Feature gate prevents napi C-symbol leakage
+/// into sittir-core test binaries.
+#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Span {
     pub start: u32,
@@ -97,18 +160,48 @@ pub struct Span {
 
 /// A single replacement against a source string. Napi boundary type.
 ///
-/// `#[napi(object)]` auto-generates the N-API mapping with camelCase
-/// field renaming — TS side sees `{ startPos, endPos, insertedText }`
-/// per contracts/napi-api.md. `serde` mirrors that with camelCase so
-/// `apply_edits` can accept JSON payloads in the TS-forced-backend
-/// round-trip path.
-#[napi(object)]
+/// `#[napi(object)]` (gated on napi-bindings feature) auto-generates
+/// the N-API mapping with camelCase field renaming — TS side sees
+/// `{ startPos, endPos, insertedText }` per contracts/napi-api.md.
+/// `serde` mirrors that with camelCase so `apply_edits` can accept
+/// JSON payloads in the TS-forced-backend round-trip path.
+#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Edit {
     pub start_pos: u32,
     pub end_pos: u32,
     pub inserted_text: String,
+}
+
+/// Implemented by codegen on every transport struct and on `AnyTransport`.
+/// Enables structured render directly into any `Write` target without an
+/// intermediate `String`. The `render_to_string` provided default allocates
+/// once (for the output) rather than pre-allocating per child.
+///
+/// Object-safe by design: `render_into` takes `&mut dyn std::fmt::Write`
+/// rather than a generic `W`, so the trait can be used as `dyn
+/// RenderableTransport` in heterogeneous template struct fields (the
+/// `Renderable::Transport` variant in `sittir_core::filters`).
+///
+/// Codegen emits `impl RenderableTransport for <Kind>Transport` for every
+/// kind, delegating to the per-kind `render_<kind>_transport` function. The
+/// `AnyTransport` enum also implements this trait by delegating to
+/// `render_transport_dispatch`, enabling zero-copy streaming through
+/// `Renderable::Transport(&node.field as &dyn RenderableTransport)`.
+pub trait RenderableTransport {
+    /// Render this transport value into `dest`.
+    fn render_into(
+        &self,
+        dest: &mut dyn std::fmt::Write,
+    ) -> Result<(), ::askama::Error>;
+
+    /// Convenience: render to a fresh `String`. Calls `render_into` once.
+    fn render_to_string(&self) -> Result<String, ::askama::Error> {
+        let mut s = String::new();
+        self.render_into(&mut s)?;
+        Ok(s)
+    }
 }
 
 /// Leading / trailing delimiters for a format region. Mirrors

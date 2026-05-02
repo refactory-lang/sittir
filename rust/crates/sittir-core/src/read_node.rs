@@ -25,7 +25,7 @@
 //!   space on both engines so drill-in dispatch (`engine.readNode(id)`
 //!   vs JS `tree.nodeById(id)`) is symmetric.
 
-use crate::types::{FieldValue, NodeData, Source, Span};
+use crate::types::{FieldValue, KindId, NodeData, Source, Span};
 use std::collections::HashMap;
 
 /// Read a tree-sitter node (or the whole tree's root) into a primitive
@@ -74,7 +74,10 @@ fn find_by_id<'a>(node: tree_sitter::Node<'a>, target: u64) -> Option<tree_sitte
 fn read_ts_node(node: tree_sitter::Node<'_>, source: &str) -> NodeData {
     let assigned_id = node.id() as u64;
 
-    let kind = node.kind().to_string();
+    // Phase B-inverse: use tree-sitter's numeric kind_id() directly instead
+    // of the string kind() so NodeData.type_: KindId flows end-to-end without
+    // a heap-allocated String per node.
+    let kind = KindId(node.kind_id());
 
     let named = node.is_named();
     let byte_range = node.byte_range();
