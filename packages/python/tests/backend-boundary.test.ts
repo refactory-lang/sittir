@@ -4,7 +4,7 @@ import { TEMPLATE_BUNDLE_HASH } from '../src/hash.ts';
 // TSKindId.Identifier = 1, TSKindId.ArgumentList = 157 (see packages/python/src/types.ts)
 const identifier = {
 	$type: 1, // TSKindId.Identifier
-	$source: 'factory',
+	$source: 2,
 	$named: true,
 	$text: 'x'
 } as const;
@@ -85,11 +85,11 @@ describe('boundary', () => {
 
 		const { render } = await import('../src/boundary.ts');
 		expect(render(identifier)).toBe('ok:1'); // $type is now numeric (TSKindId.Identifier = 1)
-		// Phase D: $source is capitalized at the transport boundary ('factory' → 'Factory')
+		// $source is numeric: 2 = factory
 		expect(renderSpy).toHaveBeenCalledWith(
 			expect.objectContaining({
 				$type: 1, // TSKindId.Identifier
-				$source: 'Factory',
+				$source: 2,
 				$named: true,
 				$text: 'x'
 			})
@@ -117,7 +117,7 @@ describe('boundary', () => {
 		const { render } = await import('../src/boundary.ts');
 		const invalidNode = {
 			$type: 157, // TSKindId.ArgumentList
-			$source: 'factory',
+			$source: 2,
 			$named: true,
 			$children: [identifier, 'oops']
 		} as const;

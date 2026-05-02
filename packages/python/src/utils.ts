@@ -29,7 +29,7 @@ export function isNodeData(v: unknown): v is AnyNodeData {
   return (o['$fields'] !== null && typeof o['$fields'] === 'object')
     || typeof o['$text'] === 'string'
     || Array.isArray(o['$children'])
-    || o['$source'] === 'ts' || o['$source'] === 'sg' || o['$source'] === 'factory';
+    || o['$source'] === 0 || o['$source'] === 1 || o['$source'] === 2;
 }
 
 /**
@@ -291,18 +291,12 @@ function projectTransportValue(value: unknown, path: string): unknown {
   const resolvedKind = nativeTransportType(KIND_NAMES.get(numericType) ?? String(numericType));
 
   const projected: Record<string, unknown> = {};
-  const isFactory = value.$source === 'factory';
+  const isFactory = value.$source === 2;
   for (const key of transportMetadataKeys) {
     if (isFactory && (key === '$span' || key === '$nodeHandle' || key === '$childIndex')) continue;
     if (key in value) projected[key] = value[key];
   }
-  // Phase D: napi-rs #[napi(string_enum)] uses PascalCase variant names
-  // ('Ts', 'Sg', 'Factory'), but the TS/serde side uses lowercase ('ts',
-  // 'sg', 'factory'). Capitalize at the transport boundary.
-  if (typeof projected.$source === 'string') {
-    const s = projected.$source;
-    projected.$source = s.charAt(0).toUpperCase() + s.slice(1);
-  }
+  // $source is numeric (0=ts, 1=sg, 2=factory) — passes through unchanged.
   // Temporarily store string kind for routing; converted to numeric below.
   projected.$type = resolvedKind;
 
@@ -1122,9 +1116,8 @@ function assertOptionalSpan(value: unknown, path: string): void {
 
 function assertOptionalMetadata(node: Record<string, unknown>, path: string): void {
   const source = node.$source;
-  if (source !== undefined && source !== 'ts' && source !== 'sg' && source !== 'factory' &&
-      source !== 'Ts' && source !== 'Sg' && source !== 'Factory') {
-    throw new TypeError(`${path}.$source must be ts, sg, or factory`);
+  if (source !== undefined && source !== 0 && source !== 1 && source !== 2) {
+    throw new TypeError(`${path}.$source must be 0 (ts), 1 (sg), or 2 (factory)`);
   }
   assertOptionalBoolean(node.$named, `${path}.$named`);
   assertOptionalString(node.$text, `${path}.$text`);

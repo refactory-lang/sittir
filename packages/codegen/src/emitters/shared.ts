@@ -370,7 +370,7 @@ export function isAutoStampSlot(
  * Two expression shapes:
  * - **Inline literal** (TerminalValue): `JSON.stringify(value) + " as const"`
  * - **Referenced keyword** (hidden AssembledKeyword NodeRef): NodeData object literal
- *   `{ $type: '...', $text: '...', $source: 'factory' as const, $named: true as const }`
+ *   `{ $type: '...', $text: '...', $source: 2 as const, $named: true as const }`
  * - **Referenced parameterless compound**: factory call expression from
  *   `ref.stampExpression` — e.g. `"breakExpression()"`.
  *
@@ -400,7 +400,7 @@ export function stampExpressionFor(
 	if (isTerminalValue(v)) {
 		if (context === 'child') {
 			const text = JSON.stringify(v.value);
-			return `{ $type: ${text} as const, $text: ${text} as const, $source: 'factory' as const, $named: false as const }`;
+			return `{ $type: ${text} as const, $text: ${text} as const, $source: 2 as const, $named: false as const }`;
 		}
 		return `${JSON.stringify(v.value)} as const`;
 	}

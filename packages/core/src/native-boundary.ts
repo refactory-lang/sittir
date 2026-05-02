@@ -36,10 +36,10 @@ function assertFiniteNumber(
 function assertNativeSource(
 	value: unknown,
 	path: string
-): asserts value is 'ts' | 'sg' | 'factory' {
-	if (value !== 'ts' && value !== 'sg' && value !== 'factory') {
+): asserts value is 0 | 1 | 2 {
+	if (value !== 0 && value !== 1 && value !== 2) {
 		throw new TypeError(
-			`${path} must be one of "ts", "sg", or "factory", got ${describe(value)}`
+			`${path} must be 0 (ts), 1 (sg), or 2 (factory), got ${describe(value)}`
 		);
 	}
 }
@@ -93,7 +93,7 @@ function assertNativeChildren(value: unknown, path: string): void {
  * Checks all runtime invariants required before passing a NodeData tree to the
  * native (napi) render engine:
  *  - `$type` is a finite number (parser.c-derived numeric KindId, Phase D)
- *  - `$source` is one of `'ts' | 'sg' | 'factory'`
+ *  - `$source` is one of `0 | 1 | 2` (ts, sg, factory)
  *  - `$named` is a boolean
  *  - `$format` is absent (must be passed separately via TreeHandle.format)
  *  - no function-valued properties (methods like `render()` cannot cross napi)
@@ -159,7 +159,7 @@ export function isRenderableNodeData(node: AnyNodeData): boolean {
  *
  * Checks performed:
  *  - `$type` is a finite number
- *  - `$source` is one of `'ts' | 'sg' | 'factory'`
+ *  - `$source` is one of `0 | 1 | 2` (ts, sg, factory)
  *  - `$named` is a boolean
  *  - `$format` is absent
  *  - no function-valued properties

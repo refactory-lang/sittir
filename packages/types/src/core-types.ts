@@ -58,8 +58,8 @@ export interface AnyNodeData {
 	 * String for synthesized kinds pending numeric ID assignment.
 	 */
 	$type: number | string;
-	/** Which producer emitted this node. */
-	$source?: 'ts' | 'sg' | 'factory';
+	/** Which producer emitted this node. 0=ts, 1=sg, 2=factory. */
+	$source?: 0 | 1 | 2;
 	/** Variant subtype name — set by factory, absent on readNode output. */
 	$variant?: string;
 	$fields?: { readonly [key: string]: NodeFieldValue };

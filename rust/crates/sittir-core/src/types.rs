@@ -125,18 +125,76 @@ pub struct NodeData {
 /// Where a `NodeData` originated. `Ts` = `readNode` over a tree-sitter
 /// tree; `Sg` = ast-grep path; `Factory` = constructed on the TS side.
 ///
-/// Serialized as `"ts"` / `"sg"` / `"factory"` (rename_all = lowercase).
-/// `#[napi(string_enum)]` (gated on napi-bindings feature) adds
-/// `FromNapiValue` / `ToNapiValue` via napi-rs string enum mapping.
-/// The feature gate prevents napi C-symbol leakage into sittir-core
-/// test binaries that build without Node.js.
-#[cfg_attr(feature = "napi-bindings", napi(string_enum))]
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "lowercase")]
+/// Wire shape is a numeric u8: 0 = Ts, 1 = Sg, 2 = Factory.
+/// Eliminates the napi string_enum PascalCase casing mismatch that caused
+/// `value "ts" does not match any variant of enum Source` errors.
+///
+/// napi `FromNapiValue`/`ToNapiValue` impls (gated on napi-bindings
+/// feature) read/write a JS number. The feature gate prevents napi
+/// C-symbol leakage into sittir-core test binaries.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u8)]
 pub enum Source {
-    Ts,
-    Sg,
-    Factory,
+    Ts = 0,
+    Sg = 1,
+    Factory = 2,
+}
+
+impl Serialize for Source {
+    fn serialize<S: serde::Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
+        s.serialize_u8(*self as u8)
+    }
+}
+
+impl<'de> Deserialize<'de> for Source {
+    fn deserialize<D: serde::Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
+        let v = u8::deserialize(d)?;
+        match v {
+            0 => Ok(Source::Ts),
+            1 => Ok(Source::Sg),
+            2 => Ok(Source::Factory),
+            _ => Err(serde::de::Error::custom(format!("invalid source: {v}"))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl napi::bindgen_prelude::FromNapiValue for Source {
+    unsafe fn from_napi_value(
+        env: napi::sys::napi_env,
+        val: napi::sys::napi_value,
+    ) -> napi::Result<Self> {
+        let n = u32::from_napi_value(env, val)?;
+        match n {
+            0 => Ok(Source::Ts),
+            1 => Ok(Source::Sg),
+            2 => Ok(Source::Factory),
+            _ => Err(napi::Error::from_reason(format!("invalid source: {n}"))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl napi::bindgen_prelude::ToNapiValue for Source {
+    unsafe fn to_napi_value(
+        env: napi::sys::napi_env,
+        val: Self,
+    ) -> napi::Result<napi::sys::napi_value> {
+        u32::to_napi_value(env, val as u32)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl napi::bindgen_prelude::ValidateNapiValue for Source {}
+
+#[cfg(feature = "napi-bindings")]
+impl napi::bindgen_prelude::TypeName for Source {
+    fn type_name() -> &'static str {
+        "Source"
+    }
+    fn value_type() -> napi::ValueType {
+        napi::ValueType::Number
+    }
 }
 
 /// Value stored in a `NodeData`'s `$fields` map. Untagged so the wire

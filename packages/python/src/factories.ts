@@ -52,7 +52,7 @@ function _bf<T>(v: unknown, kinds: readonly string[], texts: readonly string[], 
   if (typeof v !== 'number') return v as readonly T[];
   const out: T[] = [];
   for (let i = 0; i < kinds.length; i++) {
-    if ((v & (1 << i)) !== 0) out.push({ $type: kinds[i]!, $text: texts[i]!, $named: named, $source: 'factory' } as unknown as T);
+    if ((v & (1 << i)) !== 0) out.push({ $type: kinds[i]!, $text: texts[i]!, $named: named, $source: 2 } as unknown as T);
   }
   return out;
 }
@@ -64,7 +64,7 @@ export function _asPattern(child: (T.CasePattern | T.Identifier)) {
   const children = [child];
   return {
     $type: TSKindId._AsPattern as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -78,7 +78,7 @@ export function _assignmentEq(config: ConfigOf<T.AssignmentEq>) {
   };
   return {
     $type: TSKindId.AssignmentEq as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     right(value?: T.RightHandSide) { return _setField(config, _assignmentEq, 'right', value, config?.right); },
@@ -93,7 +93,7 @@ export function _assignmentType(config: ConfigOf<T.AssignmentType>) {
   };
   return {
     $type: TSKindId.AssignmentType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _setField(config, _assignmentType, 'type', value, config?.type); },
@@ -109,7 +109,7 @@ export function _assignmentTyped(config: ConfigOf<T.AssignmentTyped>) {
   };
   return {
     $type: TSKindId.AssignmentTyped as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _setField(config, _assignmentTyped, 'type', value, config?.type); },
@@ -122,7 +122,7 @@ export function _assignmentTyped(config: ConfigOf<T.AssignmentTyped>) {
 export function comprehensionClauses(...children: (T.ForInClause | T.IfClause)[]) {
   return {
     $type: TSKindId.ComprehensionClauses as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -136,7 +136,7 @@ export function _importList(config: ConfigOf<T.ImportList>) {
   };
   return {
     $type: TSKindId.ImportList as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(...values: NonEmptyArray<T.DottedName | T.AliasedImport>) { return _setFields(config, _importList, 'name', values, config?.name); },
@@ -149,7 +149,7 @@ export function isNot(text: string) {
   if (text.length === 0) throw new Error(`_is_not: text must be non-empty`);
   return {
     $type: TSKindId.IsNot as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -164,7 +164,7 @@ export function _keyValuePattern(config: ConfigOf<T.KeyValuePattern>) {
   };
   return {
     $type: TSKindId.KeyValuePattern as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     key(value?: T.SimplePattern) { return _setField(config, _keyValuePattern, 'key', value, config?.key); },
@@ -177,7 +177,7 @@ export function _keyValuePattern(config: ConfigOf<T.KeyValuePattern>) {
 export function _listPattern(...children: T.CasePattern[]) {
   return {
     $type: TSKindId._ListPattern as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -189,7 +189,7 @@ export function matchBlock(child: T.MatchBlockBlock) {
   const children = [child];
   return {
     $type: TSKindId.MatchBlock as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -203,7 +203,7 @@ export function _matchBlockBlock(config: ConfigOf<T.MatchBlockBlock>) {
   };
   return {
     $type: TSKindId.MatchBlockBlock as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     alternative(...values: T.CaseClause[]) { return _setFields(config, _matchBlockBlock, 'alternative', values, config?.alternative); },
@@ -216,7 +216,7 @@ export function notIn(text: string) {
   if (text.length === 0) throw new Error(`_not_in: text must be non-empty`);
   return {
     $type: TSKindId.NotIn as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -227,7 +227,7 @@ export function notIn(text: string) {
 export function simplePatternNegative(text: string) {
   return {
     $type: TSKindId.SimplePatternNegative as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -239,7 +239,7 @@ export function simpleStatements(...children: T.SimpleStatement[]) {
   _assertNonEmpty(children, '_simple_statements.children');
   return {
     $type: TSKindId.SimpleStatements as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -250,7 +250,7 @@ export function simpleStatements(...children: T.SimpleStatement[]) {
 export function _tuplePattern(...children: T.CasePattern[]) {
   return {
     $type: TSKindId._TuplePattern as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -262,7 +262,7 @@ export function _withClauseParen(...children: T.WithItem[]) {
   _assertNonEmpty(children, '_with_clause_paren.children');
   return {
     $type: TSKindId._WithClauseParen as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -277,7 +277,7 @@ export function aliasedImport(config: ConfigOf<T.AliasedImport>) {
   };
   return {
     $type: TSKindId.AliasedImport as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(value?: T.DottedName) { return _setField(config, aliasedImport, 'name', value, config?.name); },
@@ -290,7 +290,7 @@ export function aliasedImport(config: ConfigOf<T.AliasedImport>) {
 export function argumentList(...children: (T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument)[]) {
   return {
     $type: TSKindId.ArgumentList as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -305,7 +305,7 @@ export function asPattern(config: ConfigOf<T.AsPattern>) {
   };
   return {
     $type: TSKindId.AsPattern as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression) { return _setField(config, asPattern, 'expression', value, config?.expression); },
@@ -319,7 +319,7 @@ export function assertStatement(...children: T.Expression[]) {
   _assertNonEmpty(children, 'assert_statement.children');
   return {
     $type: TSKindId.AssertStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -346,7 +346,7 @@ export function assignmentUFormEq(config: Omit<ConfigOf<T.AssignmentUFormEq>, '$
   const children = [inner] as const;
   return {
     $type: TSKindId.Assignment as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'eq' as const,
     $fields: fields,
@@ -371,7 +371,7 @@ export function assignmentUFormType(config: Omit<ConfigOf<T.AssignmentUFormType>
   const children = [inner] as const;
   return {
     $type: TSKindId.Assignment as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'type' as const,
     $fields: fields,
@@ -396,7 +396,7 @@ export function assignmentUFormTyped(config: Omit<ConfigOf<T.AssignmentUFormType
   const children = [inner] as const;
   return {
     $type: TSKindId.Assignment as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'typed' as const,
     $fields: fields,
@@ -425,7 +425,7 @@ export function attribute(config: ConfigOf<T.Attribute>) {
   };
   return {
     $type: TSKindId.Attribute as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     object(value?: T.PrimaryExpression) { return _setField(config, attribute, 'object', value, config?.object); },
@@ -443,7 +443,7 @@ export function augmentedAssignment(config: ConfigOf<T.AugmentedAssignment>) {
   };
   return {
     $type: TSKindId.AugmentedAssignment as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     left(value?: T.LeftHandSide) { return _setField(config, augmentedAssignment, 'left', value, config?.left); },
@@ -460,7 +460,7 @@ export function await_(config: ConfigOf<T.Await>) {
   };
   return {
     $type: TSKindId.Await as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     primaryExpression(value?: T.PrimaryExpression) { return _setField(config, await_, 'primaryExpression', value, config?.primaryExpression); },
@@ -477,7 +477,7 @@ export function binaryOperator(config: ConfigOf<T.BinaryOperator>) {
   };
   return {
     $type: TSKindId.BinaryOperator as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     left(value?: T.PrimaryExpression) { return _setField(config, binaryOperator, 'left', value, config?.left); },
@@ -491,7 +491,7 @@ export function binaryOperator(config: ConfigOf<T.BinaryOperator>) {
 export function block(...children: T.Statement[]) {
   return {
     $type: TSKindId.Block as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -507,7 +507,7 @@ export function booleanOperator(config: ConfigOf<T.BooleanOperator>) {
   };
   return {
     $type: TSKindId.BooleanOperator as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     left(value?: T.Expression) { return _setField(config, booleanOperator, 'left', value, config?.left); },
@@ -521,7 +521,7 @@ export function booleanOperator(config: ConfigOf<T.BooleanOperator>) {
 export function breakStatement() {
   return {
     $type: TSKindId.BreakStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: 'break' as const,
     ..._leafMethods('break' as const),
@@ -536,7 +536,7 @@ export function call(config: ConfigOf<T.Call>) {
   };
   return {
     $type: TSKindId.Call as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     function(value?: T.PrimaryExpression) { return _setField(config, call, 'function', value, config?.function); },
@@ -554,7 +554,7 @@ export function caseClause(config: ConfigOf<T.CaseClause>) {
   const children = config.children ?? [];
   return {
     $type: TSKindId.CaseClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -574,7 +574,7 @@ export function casePattern(child: (T._AsPattern | T.KeywordPattern | T.SimplePa
   const children = [child];
   return {
     $type: TSKindId.CasePattern as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -588,7 +588,7 @@ export function chevron(config: ConfigOf<T.Chevron>) {
   };
   return {
     $type: TSKindId.Chevron as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression) { return _setField(config, chevron, 'expression', value, config?.expression); },
@@ -606,7 +606,7 @@ export function classDefinition(config: ConfigOf<T.ClassDefinition>) {
   };
   return {
     $type: TSKindId.ClassDefinition as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(value?: T.Identifier) { return _setField(config, classDefinition, 'name', value, config?.name); },
@@ -625,7 +625,7 @@ export function classPattern(config: ConfigOf<T.ClassPattern>) {
   };
   return {
     $type: TSKindId.ClassPattern as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     dottedName(value?: T.DottedName) { return _setField(config, classPattern, 'dottedName', value, config?.dottedName); },
@@ -639,7 +639,7 @@ export function comment(text: string) {
   if (text.length === 0) throw new Error(`comment: text must be non-empty`);
   return {
     $type: TSKindId.Comment as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -654,7 +654,7 @@ export function comparisonOperator(config: ConfigOf<T.ComparisonOperator>) {
   };
   return {
     $type: TSKindId.ComparisonOperator as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     left(value?: T.PrimaryExpression) { return _setField(config, comparisonOperator, 'left', value, config?.left); },
@@ -672,7 +672,7 @@ export function complexPattern(config: ConfigOf<T.ComplexPattern>) {
   const children = config.children ?? [];
   return {
     $type: TSKindId.ComplexPattern as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -691,7 +691,7 @@ export function concatenatedString(...children: T.String[]) {
   _assertNonEmpty(children, 'concatenated_string.children');
   return {
     $type: TSKindId.ConcatenatedString as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -707,7 +707,7 @@ export function conditionalExpression(config: ConfigOf<T.ConditionalExpression>)
   };
   return {
     $type: TSKindId.ConditionalExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     body(value?: T.Expression) { return _setField(config, conditionalExpression, 'body', value, config?.body); },
@@ -725,7 +725,7 @@ export function constrainedType(config: ConfigOf<T.ConstrainedType>) {
   };
   return {
     $type: TSKindId.ConstrainedType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     baseType(value?: T.Type) { return _setField(config, constrainedType, 'baseType', value, config?.baseType); },
@@ -738,7 +738,7 @@ export function constrainedType(config: ConfigOf<T.ConstrainedType>) {
 export function continueStatement() {
   return {
     $type: TSKindId.ContinueStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: 'continue' as const,
     ..._leafMethods('continue' as const),
@@ -753,7 +753,7 @@ export function decoratedDefinition(config: ConfigOf<T.DecoratedDefinition>) {
   const children = config.children ?? [];
   return {
     $type: TSKindId.DecoratedDefinition as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -775,7 +775,7 @@ export function decorator(config: ConfigOf<T.Decorator>) {
   };
   return {
     $type: TSKindId.Decorator as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression) { return _setField(config, decorator, 'expression', value, config?.expression); },
@@ -792,7 +792,7 @@ export function defaultParameter(config: ConfigOf<T.DefaultParameter>) {
   };
   return {
     $type: TSKindId.DefaultParameter as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(value?: T.Identifier | T.TuplePattern) { return _setField(config, defaultParameter, 'name', value, config?.name); },
@@ -806,7 +806,7 @@ export function deleteStatement(child: T.Expressions) {
   const children = [child];
   return {
     $type: TSKindId.DeleteStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -817,7 +817,7 @@ export function deleteStatement(child: T.Expressions) {
 export function dictPattern(...children: T.DictPatternKv[]) {
   return {
     $type: TSKindId.DictPattern as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -828,7 +828,7 @@ export function dictPattern(...children: T.DictPatternKv[]) {
 export function dictionary(...children: (T.Pair | T.DictionarySplat)[]) {
   return {
     $type: TSKindId.Dictionary as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -843,7 +843,7 @@ export function dictionaryComprehension(config: ConfigOf<T.DictionaryComprehensi
   const children = config.children ?? [];
   return {
     $type: TSKindId.DictionaryComprehension as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -863,7 +863,7 @@ export function dictionarySplat(config: ConfigOf<T.DictionarySplat>) {
   };
   return {
     $type: TSKindId.DictionarySplat as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression) { return _setField(config, dictionarySplat, 'expression', value, config?.expression); },
@@ -876,7 +876,7 @@ export function dictionarySplatPattern(child: (T.Identifier | T.KeywordIdentifie
   const children = [child];
   return {
     $type: TSKindId.DictionarySplatPattern as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -888,7 +888,7 @@ export function dottedName(...children: T.Identifier[]) {
   _assertNonEmpty(children, 'dotted_name.children');
   return {
     $type: TSKindId.DottedName as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -903,7 +903,7 @@ export function elifClause(config: ConfigOf<T.ElifClause>) {
   };
   return {
     $type: TSKindId.ElifClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     condition(value?: T.Expression) { return _setField(config, elifClause, 'condition', value, config?.condition); },
@@ -919,7 +919,7 @@ export function elseClause(config: ConfigOf<T.ElseClause>) {
   };
   return {
     $type: TSKindId.ElseClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     body(value?: T.Suite) { return _setField(config, elseClause, 'body', value, config?.body); },
@@ -932,7 +932,7 @@ export function escapeSequence(text: string) {
   if (text.length === 0) throw new Error(`escape_sequence: text must be non-empty`);
   return {
     $type: TSKindId.EscapeSequence as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -948,7 +948,7 @@ export function exceptClause(config: ConfigOf<T.ExceptClause>) {
   const children = config.children ?? [];
   return {
     $type: TSKindId.ExceptClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -970,7 +970,7 @@ export function execStatement(config: ConfigOf<T.ExecStatement>) {
   };
   return {
     $type: TSKindId.ExecStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     code(value?: T.String | T.Identifier) { return _setField(config, execStatement, 'code', value, config?.code); },
@@ -984,7 +984,7 @@ export function expressionList(...children: T.Expression[]) {
   _assertNonEmpty(children, 'expression_list.children');
   return {
     $type: TSKindId.ExpressionList as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -996,7 +996,7 @@ export function expressionStatementTuple(...children: T.Expression[]) {
   _assertNonEmpty(children, 'expression_statement_tuple.children');
   return {
     $type: TSKindId._ExpressionStatementTuple as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1010,7 +1010,7 @@ export function expressionStatement(config: Omit<ConfigOf<T.ExpressionStatementU
 export function expressionStatementUFormTuple(_config?: Omit<ConfigOf<T.ExpressionStatementUFormTuple>, '$variant'>) {
   return {
     $type: TSKindId.ExpressionStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'tuple' as const,
     ..._branchMethods,
@@ -1021,7 +1021,7 @@ export function expressionStatementUFormTuple(_config?: Omit<ConfigOf<T.Expressi
 export function false_() {
   return {
     $type: TSKindId.False as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: 'False' as const,
     ..._leafMethods('False' as const),
@@ -1035,7 +1035,7 @@ export function finallyClause(config: ConfigOf<T.FinallyClause>) {
   };
   return {
     $type: TSKindId.FinallyClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     block(value?: T.Suite) { return _setField(config, finallyClause, 'block', value, config?.block); },
@@ -1048,7 +1048,7 @@ export function float(text: string) {
   if (text.length === 0) throw new Error(`float: text must be non-empty`);
   return {
     $type: TSKindId.Float as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -1064,7 +1064,7 @@ export function forInClause(config: ConfigOf<T.ForInClause>) {
   };
   return {
     $type: TSKindId.ForInClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     asyncMarker(value?: T.AsyncMarker | undefined) { return _setField(config, forInClause, 'asyncMarker', value, config?.asyncMarker); },
@@ -1085,7 +1085,7 @@ export function forStatement(config: ConfigOf<T.ForStatement>) {
   };
   return {
     $type: TSKindId.ForStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     asyncMarker(value?: T.AsyncMarker | undefined) { return _setField(config, forStatement, 'asyncMarker', value, config?.asyncMarker); },
@@ -1101,7 +1101,7 @@ export function forStatement(config: ConfigOf<T.ForStatement>) {
 export function formatSpecifier(...children: T.Interpolation[]) {
   return {
     $type: TSKindId.FormatSpecifier as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1120,7 +1120,7 @@ export function functionDefinition(config: ConfigOf<T.FunctionDefinition>) {
   };
   return {
     $type: TSKindId.FunctionDefinition as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     asyncMarker(value?: T.AsyncMarker | undefined) { return _setField(config, functionDefinition, 'asyncMarker', value, config?.asyncMarker); },
@@ -1140,7 +1140,7 @@ export function futureImportStatement(config: ConfigOf<T.FutureImportStatement>)
   };
   return {
     $type: TSKindId.FutureImportStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(...values: NonEmptyArray<T.DottedName | T.AliasedImport>) { return _setFields(config, futureImportStatement, 'name', values, config?.name); },
@@ -1156,7 +1156,7 @@ export function generatorExpression(config: ConfigOf<T.GeneratorExpression>) {
   const children = config.children ?? [];
   return {
     $type: TSKindId.GeneratorExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -1177,7 +1177,7 @@ export function genericType(config: ConfigOf<T.GenericType>) {
   };
   return {
     $type: TSKindId.GenericType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     identifier(value?: T.Identifier) { return _setField(config, genericType, 'identifier', value, config?.identifier); },
@@ -1191,7 +1191,7 @@ export function globalStatement(...children: T.Identifier[]) {
   _assertNonEmpty(children, 'global_statement.children');
   return {
     $type: TSKindId.GlobalStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1203,7 +1203,7 @@ export function identifier(text: string) {
   if (text.length === 0) throw new Error(`identifier: text must be non-empty`); if (!_leafRe_identifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`);
   return {
     $type: TSKindId.Identifier as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -1217,7 +1217,7 @@ export function ifClause(config: ConfigOf<T.IfClause>) {
   };
   return {
     $type: TSKindId.IfClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression) { return _setField(config, ifClause, 'expression', value, config?.expression); },
@@ -1234,7 +1234,7 @@ export function ifStatement(config: ConfigOf<T.IfStatement>) {
   };
   return {
     $type: TSKindId.IfStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     condition(value?: T.Expression) { return _setField(config, ifStatement, 'condition', value, config?.condition); },
@@ -1251,7 +1251,7 @@ export function importFromStatement(config: ConfigOf<T.ImportFromStatement>) {
   };
   return {
     $type: TSKindId.ImportFromStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     moduleName(value?: T.RelativeImport | T.DottedName) { return _setField(config, importFromStatement, 'moduleName', value, config?.moduleName); },
@@ -1264,7 +1264,7 @@ export function importPrefix(text: string) {
   if (text.length === 0) throw new Error(`import_prefix: text must be non-empty`);
   return {
     $type: TSKindId.ImportPrefix as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -1278,7 +1278,7 @@ export function importStatement(config: ConfigOf<T.ImportStatement>) {
   };
   return {
     $type: TSKindId.ImportStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(...values: NonEmptyArray<T.DottedName | T.AliasedImport>) { return _setFields(config, importStatement, 'name', values, config?.name); },
@@ -1291,7 +1291,7 @@ export function integer(text: string) {
   if (text.length === 0) throw new Error(`integer: text must be non-empty`);
   return {
     $type: TSKindId.Integer as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -1307,7 +1307,7 @@ export function interpolation(config: ConfigOf<T.Interpolation>) {
   };
   return {
     $type: TSKindId.Interpolation as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     expression(value?: T.FExpression) { return _setField(config, interpolation, 'expression', value, config?.expression); },
@@ -1325,7 +1325,7 @@ export function keywordArgument(config: ConfigOf<T.KeywordArgument>) {
   };
   return {
     $type: TSKindId.KeywordArgument as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(value?: T.Identifier | T.KeywordIdentifier) { return _setField(config, keywordArgument, 'name', value, config?.name); },
@@ -1342,7 +1342,7 @@ export function keywordPattern(config: ConfigOf<T.KeywordPattern>) {
   };
   return {
     $type: TSKindId.KeywordPattern as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     identifier(value?: T.Identifier) { return _setField(config, keywordPattern, 'identifier', value, config?.identifier); },
@@ -1359,7 +1359,7 @@ export function lambda(config: ConfigOf<T.Lambda>) {
   };
   return {
     $type: TSKindId.Lambda as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     parameters(value?: T.LambdaParameters | undefined) { return _setField(config, lambda, 'parameters', value, config?.parameters); },
@@ -1373,7 +1373,7 @@ export function lambdaParameters(...children: T.Parameter[]) {
   _assertNonEmpty(children, 'lambda_parameters.children');
   return {
     $type: TSKindId.LambdaParameters as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1388,7 +1388,7 @@ export function lambdaWithinForInClause(config: ConfigOf<T.LambdaWithinForInClau
   };
   return {
     $type: TSKindId.LambdaWithinForInClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     parameters(value?: T.LambdaParameters | undefined) { return _setField(config, lambdaWithinForInClause, 'parameters', value, config?.parameters); },
@@ -1402,7 +1402,7 @@ export function lineContinuation(text: string) {
   if (text.length === 0) throw new Error(`line_continuation: text must be non-empty`);
   return {
     $type: TSKindId.LineContinuation as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -1413,7 +1413,7 @@ export function lineContinuation(text: string) {
 export function list(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) {
   return {
     $type: TSKindId.List as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1428,7 +1428,7 @@ export function listComprehension(config: ConfigOf<T.ListComprehension>) {
   const children = config.children ?? [];
   return {
     $type: TSKindId.ListComprehension as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -1445,7 +1445,7 @@ export function listComprehension(config: ConfigOf<T.ListComprehension>) {
 export function listPattern(...children: T.Pattern[]) {
   return {
     $type: TSKindId.ListPattern as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1459,7 +1459,7 @@ export function listSplat(config: ConfigOf<T.ListSplat>) {
   };
   return {
     $type: TSKindId.ListSplat as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression) { return _setField(config, listSplat, 'expression', value, config?.expression); },
@@ -1472,7 +1472,7 @@ export function listSplatPattern(child: (T.Identifier | T.KeywordIdentifier | T.
   const children = [child];
   return {
     $type: TSKindId.ListSplatPattern as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1487,7 +1487,7 @@ export function matchStatement(config: ConfigOf<T.MatchStatement>) {
   };
   return {
     $type: TSKindId.MatchStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     subject(...values: NonEmptyArray<T.Expression>) { return _setFields(config, matchStatement, 'subject', values, config?.subject); },
@@ -1504,7 +1504,7 @@ export function memberType(config: ConfigOf<T.MemberType>) {
   };
   return {
     $type: TSKindId.MemberType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     baseType(value?: T.Type) { return _setField(config, memberType, 'baseType', value, config?.baseType); },
@@ -1517,7 +1517,7 @@ export function memberType(config: ConfigOf<T.MemberType>) {
 export function module(...children: T.Statement[]) {
   return {
     $type: TSKindId.Module as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1532,7 +1532,7 @@ export function namedExpression(config: ConfigOf<T.NamedExpression>) {
   };
   return {
     $type: TSKindId.NamedExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(value?: T.NamedExpressionLhs) { return _setField(config, namedExpression, 'name', value, config?.name); },
@@ -1545,7 +1545,7 @@ export function namedExpression(config: ConfigOf<T.NamedExpression>) {
 export function none() {
   return {
     $type: TSKindId.None as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: 'None' as const,
     ..._leafMethods('None' as const),
@@ -1557,7 +1557,7 @@ export function nonlocalStatement(...children: T.Identifier[]) {
   _assertNonEmpty(children, 'nonlocal_statement.children');
   return {
     $type: TSKindId.NonlocalStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1571,7 +1571,7 @@ export function notOperator(config: ConfigOf<T.NotOperator>) {
   };
   return {
     $type: TSKindId.NotOperator as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     argument(value?: T.Expression) { return _setField(config, notOperator, 'argument', value, config?.argument); },
@@ -1587,7 +1587,7 @@ export function pair(config: ConfigOf<T.Pair>) {
   };
   return {
     $type: TSKindId.Pair as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     key(value?: T.Expression) { return _setField(config, pair, 'key', value, config?.key); },
@@ -1600,7 +1600,7 @@ export function pair(config: ConfigOf<T.Pair>) {
 export function parameters(...children: T.Parameter[]) {
   return {
     $type: TSKindId.Parameters as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1612,7 +1612,7 @@ export function parenthesizedExpression(child: (T.Expression | T.Yield)) {
   const children = [child];
   return {
     $type: TSKindId.ParenthesizedExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1624,7 +1624,7 @@ export function parenthesizedListSplat(child: (T.ParenthesizedListSplat | T.List
   const children = [child];
   return {
     $type: TSKindId.ParenthesizedListSplat as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1635,7 +1635,7 @@ export function parenthesizedListSplat(child: (T.ParenthesizedListSplat | T.List
 export function passStatement() {
   return {
     $type: TSKindId.PassStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: 'pass' as const,
     ..._leafMethods('pass' as const),
@@ -1647,7 +1647,7 @@ export function patternList(...children: T.Pattern[]) {
   _assertNonEmpty(children, 'pattern_list.children');
   return {
     $type: TSKindId.PatternList as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1662,7 +1662,7 @@ export function printStatement(config: ConfigOf<T.PrintStatement>) {
   const children = config.children ?? [];
   return {
     $type: TSKindId.PrintStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -1683,7 +1683,7 @@ export function raiseStatement(config?: ConfigOf<T.RaiseStatement>) {
   const children = config?.children ?? [];
   return {
     $type: TSKindId.RaiseStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -1704,7 +1704,7 @@ export function relativeImport(config: ConfigOf<T.RelativeImport>) {
   };
   return {
     $type: TSKindId.RelativeImport as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     importPrefix(value?: T.ImportPrefix) { return _setField(config, relativeImport, 'importPrefix', value, config?.importPrefix); },
@@ -1718,7 +1718,7 @@ export function returnStatement(child?: T.Expressions) {
   const children = child != null ? [child] : [];
   return {
     $type: TSKindId.ReturnStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1730,7 +1730,7 @@ export function set(...children: (T.Expression | T.Yield | T.ListSplat | T.Paren
   _assertNonEmpty(children, 'set.children');
   return {
     $type: TSKindId.Set as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1745,7 +1745,7 @@ export function setComprehension(config: ConfigOf<T.SetComprehension>) {
   const children = config.children ?? [];
   return {
     $type: TSKindId.SetComprehension as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -1767,7 +1767,7 @@ export function slice(config?: ConfigOf<T.Slice>) {
   };
   return {
     $type: TSKindId.Slice as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     start(value?: T.Expression | undefined) { return _setField(config, slice, 'start', value, config?.start); },
@@ -1785,7 +1785,7 @@ export function splatPattern(config: ConfigOf<T.SplatPattern>) {
   const children = config.children ?? [];
   return {
     $type: TSKindId.SplatPattern as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -1805,7 +1805,7 @@ export function splatType(config: ConfigOf<T.SplatType>) {
   };
   return {
     $type: TSKindId.SplatType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     identifier(value?: T._Identifier | T.Identifier) { return _setField(config, splatType, 'identifier', value, config?.identifier); },
@@ -1817,7 +1817,7 @@ export function splatType(config: ConfigOf<T.SplatType>) {
 export function string(text: string) {
   return {
     $type: TSKindId.String as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -1829,7 +1829,7 @@ export function stringContent(...children: (T.EscapeInterpolation | T.EscapeSequ
   _assertNonEmpty(children, 'string_content.children');
   return {
     $type: TSKindId.StringContent as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1844,7 +1844,7 @@ export function subscript(config: ConfigOf<T.Subscript>) {
   };
   return {
     $type: TSKindId.Subscript as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     value(value?: T.PrimaryExpression) { return _setField(config, subscript, 'value', value, config?.value); },
@@ -1857,7 +1857,7 @@ export function subscript(config: ConfigOf<T.Subscript>) {
 export function true_() {
   return {
     $type: TSKindId.True as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: 'True' as const,
     ..._leafMethods('True' as const),
@@ -1874,7 +1874,7 @@ export function tryStatement(config: ConfigOf<T.TryStatement>) {
   };
   return {
     $type: TSKindId.TryStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     body(value?: T.Suite) { return _setField(config, tryStatement, 'body', value, config?.body); },
@@ -1889,7 +1889,7 @@ export function tryStatement(config: ConfigOf<T.TryStatement>) {
 export function tuple(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) {
   return {
     $type: TSKindId.Tuple as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1900,7 +1900,7 @@ export function tuple(...children: (T.Expression | T.Yield | T.ListSplat | T.Par
 export function tuplePattern(...children: T.Pattern[]) {
   return {
     $type: TSKindId.TuplePattern as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1912,7 +1912,7 @@ export function type(child: (T.Expression | T.SplatType | T.GenericType | T.Unio
   const children = [child];
   return {
     $type: TSKindId.Type as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1928,7 +1928,7 @@ export function typeAliasStatement(config: ConfigOf<T.TypeAliasStatement>) {
   };
   return {
     $type: TSKindId.TypeAliasStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     get typeField() { return fields.type; },
@@ -1943,7 +1943,7 @@ export function typeConversion(text: string) {
   if (text.length === 0) throw new Error(`type_conversion: text must be non-empty`); if (!_leafRe_typeConversion.test(text)) throw new Error(`type_conversion: text does not match pattern: ${text}`);
   return {
     $type: TSKindId.TypeConversion as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -1955,7 +1955,7 @@ export function typeParameter(...children: T.Type[]) {
   _assertNonEmpty(children, 'type_parameter.children');
   return {
     $type: TSKindId.TypeParameter as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1971,7 +1971,7 @@ export function typedDefaultParameter(config: ConfigOf<T.TypedDefaultParameter>)
   };
   return {
     $type: TSKindId.TypedDefaultParameter as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(value?: T.Identifier) { return _setField(config, typedDefaultParameter, 'name', value, config?.name); },
@@ -1989,7 +1989,7 @@ export function typedParameter(config: ConfigOf<T.TypedParameter>) {
   const children = config.children ?? [];
   return {
     $type: TSKindId.TypedParameter as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -2010,7 +2010,7 @@ export function unaryOperator(config: ConfigOf<T.UnaryOperator>) {
   };
   return {
     $type: TSKindId.UnaryOperator as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     operator(value?: T.UnaryOperatorOperator) { return _setField(config, unaryOperator, 'operator', value, config?.operator); },
@@ -2024,7 +2024,7 @@ export function unionPattern(...children: T.SimplePattern[]) {
   _assertNonEmpty(children, 'union_pattern.children');
   return {
     $type: TSKindId.UnionPattern as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -2039,7 +2039,7 @@ export function unionType(config: ConfigOf<T.UnionType>) {
   };
   return {
     $type: TSKindId.UnionType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     left(value?: T.Type) { return _setField(config, unionType, 'left', value, config?.left); },
@@ -2057,7 +2057,7 @@ export function whileStatement(config: ConfigOf<T.WhileStatement>) {
   };
   return {
     $type: TSKindId.WhileStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     condition(value?: T.Expression) { return _setField(config, whileStatement, 'condition', value, config?.condition); },
@@ -2072,7 +2072,7 @@ export function withClauseBare(...children: T.WithItem[]) {
   _assertNonEmpty(children, 'with_clause_bare.children');
   return {
     $type: TSKindId._WithClauseBare as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -2084,7 +2084,7 @@ export function withClauseParen(...children: T.WithItem[]) {
   _assertNonEmpty(children, 'with_clause_paren.children');
   return {
     $type: TSKindId._WithClauseParen as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -2104,7 +2104,7 @@ export function withClause(config: ConfigOf<T.WithClauseUFormBare> | ConfigOf<T.
 export function withClauseUFormBare(_config?: Omit<ConfigOf<T.WithClauseUFormBare>, '$variant'>) {
   return {
     $type: TSKindId.WithClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'bare' as const,
     ..._branchMethods,
@@ -2116,7 +2116,7 @@ export function withClauseUFormParen(config?: Omit<ConfigOf<T.WithClauseUFormPar
   const children = [inner] as const;
   return {
     $type: TSKindId.WithClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'paren' as const,
     $children: children,
@@ -2131,7 +2131,7 @@ export function withItem(config: ConfigOf<T.WithItem>) {
   };
   return {
     $type: TSKindId.WithItem as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     value(value?: T.Expression) { return _setField(config, withItem, 'value', value, config?.value); },
@@ -2148,7 +2148,7 @@ export function withStatement(config: ConfigOf<T.WithStatement>) {
   };
   return {
     $type: TSKindId.WithStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     asyncMarker(value?: T.AsyncMarker | undefined) { return _setField(config, withStatement, 'asyncMarker', value, config?.asyncMarker); },
@@ -2163,7 +2163,7 @@ export function yield_(child: (T.Expression | T.Expressions)) {
   const children = [child];
   return {
     $type: TSKindId.Yield as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -2175,7 +2175,7 @@ export function newline(text: string) {
   if (text.length === 0) throw new Error(`_newline: text must be non-empty`);
   return {
     $type: TSKindId.Newline as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -2187,7 +2187,7 @@ export function indent(text: string) {
   if (text.length === 0) throw new Error(`_indent: text must be non-empty`);
   return {
     $type: TSKindId.Indent as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -2199,7 +2199,7 @@ export function dedent(text: string) {
   if (text.length === 0) throw new Error(`_dedent: text must be non-empty`);
   return {
     $type: TSKindId.Dedent as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -2211,7 +2211,7 @@ export function stringStart(text: string) {
   if (text.length === 0) throw new Error(`string_start: text must be non-empty`);
   return {
     $type: TSKindId.StringStart as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -2223,7 +2223,7 @@ export function _stringContent(text: string) {
   if (text.length === 0) throw new Error(`_string_content: text must be non-empty`);
   return {
     $type: TSKindId._StringContent as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -2235,7 +2235,7 @@ export function escapeInterpolation(text: string) {
   if (text.length === 0) throw new Error(`escape_interpolation: text must be non-empty`);
   return {
     $type: TSKindId.EscapeInterpolation as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -2247,7 +2247,7 @@ export function stringEnd(text: string) {
   if (text.length === 0) throw new Error(`string_end: text must be non-empty`);
   return {
     $type: TSKindId.StringEnd as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -2259,7 +2259,7 @@ export function closeBracket(text: string) {
   if (text.length === 0) throw new Error(`]: text must be non-empty`);
   return {
     $type: TSKindId.Rbrack as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -2271,7 +2271,7 @@ export function closeParen(text: string) {
   if (text.length === 0) throw new Error(`): text must be non-empty`);
   return {
     $type: TSKindId.Rparen as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -2283,7 +2283,7 @@ export function closeBrace(text: string) {
   if (text.length === 0) throw new Error(`}: text must be non-empty`);
   return {
     $type: TSKindId.Rbrace as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -2295,7 +2295,7 @@ export function except(text: string) {
   if (text.length === 0) throw new Error(`except: text must be non-empty`);
   return {
     $type: TSKindId.Except as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),

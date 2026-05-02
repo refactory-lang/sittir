@@ -95,7 +95,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push("    || typeof o['$text'] === 'string'");
 	lines.push("    || Array.isArray(o['$children'])");
 	lines.push(
-		"    || o['$source'] === 'ts' || o['$source'] === 'sg' || o['$source'] === 'factory';"
+		"    || o['$source'] === 0 || o['$source'] === 1 || o['$source'] === 2;"
 	);
 	lines.push('}');
 	lines.push('');
@@ -253,18 +253,12 @@ function emitNativeTransportProjection(lines: string[], nodeMap: NodeMap, kindEn
 	lines.push('  const resolvedKind = nativeTransportType(KIND_NAMES.get(numericType) ?? String(numericType));');
 	lines.push('');
 	lines.push('  const projected: Record<string, unknown> = {};');
-	lines.push("  const isFactory = value.$source === 'factory';");
+	lines.push("  const isFactory = value.$source === 2;");
 	lines.push('  for (const key of transportMetadataKeys) {');
 	lines.push("    if (isFactory && (key === '$span' || key === '$nodeHandle' || key === '$childIndex')) continue;");
 	lines.push('    if (key in value) projected[key] = value[key];');
 	lines.push('  }');
-	lines.push('  // Phase D: napi-rs #[napi(string_enum)] uses PascalCase variant names');
-	lines.push("  // ('Ts', 'Sg', 'Factory'), but the TS/serde side uses lowercase ('ts',");
-	lines.push("  // 'sg', 'factory'). Capitalize at the transport boundary.");
-	lines.push("  if (typeof projected.$source === 'string') {");
-	lines.push('    const s = projected.$source;');
-	lines.push("    projected.$source = s.charAt(0).toUpperCase() + s.slice(1);");
-	lines.push('  }');
+	lines.push('  // $source is numeric (0=ts, 1=sg, 2=factory) — passes through unchanged.');
 	lines.push('  // Temporarily store string kind for routing; converted to numeric below.');
 	lines.push('  projected.$type = resolvedKind;');
 	lines.push('');
@@ -775,18 +769,11 @@ function emitNativeTransportAssertions(
 		'function assertOptionalMetadata(node: Record<string, unknown>, path: string): void {'
 	);
 	lines.push('  const source = node.$source;');
-	// Phase D: napi-rs #[napi(string_enum)] maps Rust PascalCase variants to JS
-	// ('Ts', 'Sg', 'Factory'). The TS/serde side uses lowercase ('ts', 'sg',
-	// 'factory'). projectTransportValue capitalizes before sending to Rust; the
-	// JS-side validator accepts both cases.
 	lines.push(
-		"  if (source !== undefined && source !== 'ts' && source !== 'sg' && source !== 'factory' &&"
+		"  if (source !== undefined && source !== 0 && source !== 1 && source !== 2) {"
 	);
 	lines.push(
-		"      source !== 'Ts' && source !== 'Sg' && source !== 'Factory') {"
-	);
-	lines.push(
-		'    throw new TypeError(`${path}.$source must be ts, sg, or factory`);'
+		'    throw new TypeError(`${path}.$source must be 0 (ts), 1 (sg), or 2 (factory)`);'
 	);
 	lines.push('  }');
 	lines.push('  assertOptionalBoolean(node.$named, `${path}.$named`);');

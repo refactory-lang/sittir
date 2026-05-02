@@ -63,7 +63,7 @@ describe('typescript Phase D: numeric-only $type guards', () => {
 	it('per-kind guard accepts numeric $type from factory output', () => {
 		const node = {
 			$type: TSKindId.ClassDeclaration,
-			$source: 'factory',
+			$source: 2,
 			$named: true,
 			$fields: {}
 		} as const;
@@ -73,7 +73,7 @@ describe('typescript Phase D: numeric-only $type guards', () => {
 	it('per-kind guard rejects string $type (Phase D — string arm removed)', () => {
 		const node = {
 			$type: 'class_declaration',
-			$source: 'ts',
+			$source: 0,
 			$named: true,
 			$fields: {}
 		} as unknown as { readonly $type: string | number };
@@ -83,7 +83,7 @@ describe('typescript Phase D: numeric-only $type guards', () => {
 	it('per-kind guard rejects mismatched numeric $type', () => {
 		const node = {
 			$type: TSKindId.FunctionDeclaration,
-			$source: 'factory',
+			$source: 2,
 			$named: true,
 			$fields: {}
 		} as const;
@@ -93,7 +93,7 @@ describe('typescript Phase D: numeric-only $type guards', () => {
 	it('is.kind() accepts numeric $type from factory output', () => {
 		const node = {
 			$type: TSKindId.ClassDeclaration,
-			$source: 'factory',
+			$source: 2,
 			$named: true,
 			$fields: {}
 		} as const;
@@ -103,7 +103,7 @@ describe('typescript Phase D: numeric-only $type guards', () => {
 	it('is.kind() rejects string $type (Phase D — string arm removed)', () => {
 		const node = {
 			$type: 'class_declaration',
-			$source: 'ts',
+			$source: 0,
 			$named: true,
 			$fields: {}
 		} as unknown as { readonly $type: string | number };
@@ -113,7 +113,7 @@ describe('typescript Phase D: numeric-only $type guards', () => {
 	it('is.kind() rejects mismatched numeric $type', () => {
 		const node = {
 			$type: TSKindId.FunctionDeclaration,
-			$source: 'factory',
+			$source: 2,
 			$named: true,
 			$fields: {}
 		} as const;
@@ -123,7 +123,7 @@ describe('typescript Phase D: numeric-only $type guards', () => {
 	it('supertype guard accepts numeric $type member from factory', () => {
 		const node = {
 			$type: TSKindId.BinaryExpression,
-			$source: 'factory',
+			$source: 2,
 			$named: true,
 			$fields: {}
 		} as const;
@@ -133,7 +133,7 @@ describe('typescript Phase D: numeric-only $type guards', () => {
 	it('supertype guard rejects string $type (Phase D — numeric-only set)', () => {
 		const node = {
 			$type: 'binary_expression',
-			$source: 'ts',
+			$source: 0,
 			$named: true,
 			$fields: {}
 		} as const;
@@ -145,7 +145,7 @@ describe('typescript Phase D: numeric-only $type guards', () => {
 	it('assert.classDeclaration passes on numeric $type from factory', () => {
 		const node = {
 			$type: TSKindId.ClassDeclaration,
-			$source: 'factory',
+			$source: 2,
 			$named: true,
 			$fields: {}
 		} as const;

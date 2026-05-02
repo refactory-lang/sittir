@@ -102,9 +102,9 @@ describe('readNode — fname / anonymous-keyword collision', () => {
 			{ type: ';', text: ';', named: false, id: 5 }
 		]);
 		const data = readNode(handle);
-		// Provenance tag — readNode output must carry $source: 'ts'
+		// Provenance tag — readNode output must carry $source: 0 (ts)
 		// so `.from()` can dispatch by equality rather than structural probing.
-		expect(data.$source).toBe('ts');
+		expect(data.$source).toBe(0);
 		expect(data.$fields?.type).toBeDefined();
 		// $fields.type is the NAMED RHS, not an array and not the anon.
 		const t = data.$fields!.type as {

@@ -51,7 +51,7 @@ describe('engine', () => {
 							return JSON.stringify({
 								nodeData: {
 									$type: TSKindId.Identifier,
-									$source: 'ts',
+									$source: 0,
 									$named: true,
 									$text: 'x'
 								},
@@ -61,7 +61,7 @@ describe('engine', () => {
 						readNode(_nodeId: number): string {
 							return JSON.stringify({
 								$type: TSKindId.Identifier,
-								$source: 'ts',
+								$source: 0,
 								$named: true,
 								$text: 'x'
 							});
@@ -116,7 +116,7 @@ describe('engine', () => {
 
 		const node = {
 			$type: TSKindId.Identifier,
-			$source: 'factory' as const,
+			$source: 2 as const,
 			$named: true,
 			$text: 'x'
 		};
@@ -155,7 +155,7 @@ describe('engine', () => {
 							return JSON.stringify({
 								nodeData: {
 									$type: TSKindId.Identifier,
-									$source: 'ts',
+									$source: 0,
 									$named: true,
 									$text: 'x'
 								},
@@ -165,7 +165,7 @@ describe('engine', () => {
 						readNode(_nodeId: number): string {
 							return JSON.stringify({
 								$type: TSKindId.Identifier,
-								$source: 'ts',
+								$source: 0,
 								$named: true,
 								$text: 'x'
 							});

@@ -384,7 +384,7 @@ export function createJsEngine(options: JsEngineOptions): SittirEngineLike {
 		if (ignoreFormat) return canonical;
 
 		// Resolve effective format: engine config wins, then tree format (if not detached).
-		const detached = node.$source === 'factory';
+		const detached = node.$source === 2;
 		const effective = resolveEngineFormat(engineFormat, treeFormat, detached);
 
 		// Apply format if resolved.

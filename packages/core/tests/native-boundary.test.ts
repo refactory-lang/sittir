@@ -14,7 +14,7 @@ const MOCK_KIND_ID = 42;
 
 const leaf: AnyNodeData = {
 	$type: MOCK_KIND_ID,
-	$source: 'factory',
+	$source: 2,
 	$named: true,
 	$text: 'name'
 };
@@ -44,7 +44,7 @@ describe('native render boundary', () => {
 	it('rejects non-data values at the native transport boundary', async () => {
 		const invalidNode = {
 			$type: MOCK_KIND_ID,
-			$source: 'factory',
+			$source: 2,
 			$named: true,
 			$text: 'x',
 			render: () => 'nope'
@@ -57,7 +57,7 @@ describe('native render boundary', () => {
 	it('rejects string $type (must be numeric Phase D)', () => {
 		const withStringType = {
 			$type: 'identifier',
-			$source: 'factory' as const,
+			$source: 2 as const,
 			$named: true,
 			$text: 'x'
 		};

@@ -128,13 +128,10 @@ fn no_unexpected_top_level_keys() {
 }
 
 #[test]
-fn source_enum_serializes_as_lowercase() {
-    assert_eq!(serde_json::to_string(&Source::Ts).unwrap(), "\"ts\"");
-    assert_eq!(serde_json::to_string(&Source::Sg).unwrap(), "\"sg\"");
-    assert_eq!(
-        serde_json::to_string(&Source::Factory).unwrap(),
-        "\"factory\""
-    );
+fn source_enum_serializes_as_numeric() {
+    assert_eq!(serde_json::to_string(&Source::Ts).unwrap(), "0");
+    assert_eq!(serde_json::to_string(&Source::Sg).unwrap(), "1");
+    assert_eq!(serde_json::to_string(&Source::Factory).unwrap(), "2");
 }
 
 #[test]
@@ -184,7 +181,7 @@ fn edit_uses_camelcase_on_the_wire() {
 fn deserialization_accepts_missing_optionals() {
     // Minimal shape — required trio only, everything else defaulted.
     // $type is now a numeric KindId on the wire (Phase B-inverse).
-    let minimal = r#"{"$type":1,"$source":"ts","$named":true}"#;
+    let minimal = r#"{"$type":1,"$source":0,"$named":true}"#;
     let parsed: NodeData = serde_json::from_str(minimal).unwrap();
     assert_eq!(parsed.type_, K_IDENTIFIER);
     assert_eq!(parsed.source, Source::Ts);

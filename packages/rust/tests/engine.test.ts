@@ -52,7 +52,7 @@ describe('engine', () => {
 							return JSON.stringify({
 								nodeData: {
 									$type: TSKindId.Identifier,
-									$source: 'ts',
+									$source: 0,
 									$named: true,
 									$text: 'x'
 								},
@@ -63,7 +63,7 @@ describe('engine', () => {
 							// Phase D: $type must be numeric (TSKindId).
 							return JSON.stringify({
 								$type: TSKindId.Identifier,
-								$source: 'ts',
+								$source: 0,
 								$named: true,
 								$text: 'x'
 							});
@@ -119,7 +119,7 @@ describe('engine', () => {
 		// Phase D: $type must be numeric (TSKindId). String coexistence removed.
 		const node = {
 			$type: TSKindId.Identifier,
-			$source: 'factory' as const,
+			$source: 2 as const,
 			$named: true,
 			$text: 'x'
 		};
@@ -159,7 +159,7 @@ describe('engine', () => {
 							return JSON.stringify({
 								nodeData: {
 									$type: TSKindId.Identifier,
-									$source: 'ts',
+									$source: 0,
 									$named: true,
 									$text: 'x'
 								},
@@ -170,7 +170,7 @@ describe('engine', () => {
 							// Phase D: $type must be numeric (TSKindId).
 							return JSON.stringify({
 								$type: TSKindId.Identifier,
-								$source: 'ts',
+								$source: 0,
 								$named: true,
 								$text: 'x'
 							});

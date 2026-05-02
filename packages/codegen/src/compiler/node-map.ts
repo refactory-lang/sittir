@@ -3238,7 +3238,7 @@ export class AssembledKeyword extends AssembledNodeBase<StringRule> {
 	override get stampChildExpression(): string {
 		const kind = JSON.stringify(this.kind);
 		const text = JSON.stringify(this.rule.value);
-		return `{ $type: ${kind} as const, $text: ${text} as const, $source: 'factory' as const, $named: true as const }`;
+		return `{ $type: ${kind} as const, $text: ${text} as const, $source: 2 as const, $named: true as const }`;
 	}
 }
 
@@ -3289,7 +3289,7 @@ export class AssembledToken extends AssembledNodeBase<StringRule | TokenRule> {
 		if (this.rule.type !== 'string') return undefined;
 		const kind = JSON.stringify(this.kind);
 		const text = JSON.stringify(this.rule.value);
-		return `{ $type: ${kind} as const, $text: ${text} as const, $source: 'factory' as const, $named: false as const }`;
+		return `{ $type: ${kind} as const, $text: ${text} as const, $source: 2 as const, $named: false as const }`;
 	}
 }
 
@@ -3328,7 +3328,7 @@ export class AssembledEnum extends AssembledNodeBase<EnumRule> {
 	override get stampChildExpression(): string {
 		const kind = JSON.stringify(this.kind);
 		const text = JSON.stringify(this.values[0] ?? '');
-		return `{ $type: ${kind} as const, $text: ${text} as const, $source: 'factory' as const, $named: false as const }`;
+		return `{ $type: ${kind} as const, $text: ${text} as const, $source: 2 as const, $named: false as const }`;
 	}
 }
 

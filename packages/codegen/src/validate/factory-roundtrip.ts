@@ -117,7 +117,7 @@ function findNodeAt(node: TSNode, kind: string, offset: number): TSNode | null {
 function stripToFactory(data: AnyNodeData): AnyNodeData {
 	const result: AnyNodeData = {
 		$type: data.$type,
-		$source: 'factory',
+		$source: 2,
 		$named: true
 	};
 

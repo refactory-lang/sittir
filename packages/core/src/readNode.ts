@@ -200,7 +200,7 @@ export function readNode(tree: TreeHandle, handle?: number, childIndex?: number)
 
 		const entry: AnyNodeData = {
 			$type: resolveKindId(child.type),
-			$source: 'ts',
+			$source: 0,
 			$text: child.text(),
 			$span: { start: child.range().start.index, end: child.range().end.index },
 			$nodeHandle: parentHandle,
@@ -248,7 +248,7 @@ export function readNode(tree: TreeHandle, handle?: number, childIndex?: number)
 
 	return {
 		$type: resolveKindId(node.type),
-		$source: 'ts',
+		$source: 0,
 		// Branch nodes: emit $text only when DEBUG_TEXT is enabled.
 		// Leaf nodes (no $fields / $children) always carry $text so the
 		// render fast-path and all leaf-consuming callers work correctly.

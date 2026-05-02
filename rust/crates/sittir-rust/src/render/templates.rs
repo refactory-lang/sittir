@@ -5248,8 +5248,10 @@ pub struct ArrayExpressionListTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub attributes: Vec<AttributeItemTransport>,
     pub elements: Vec<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -5277,8 +5279,10 @@ pub struct ArrayExpressionSemiTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub attributes: Vec<AttributeItemTransport>,
     pub elements: ExpressionTransport,
     pub length: ExpressionTransport,
@@ -5305,8 +5309,10 @@ pub struct ClosureExpressionBlockTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub return_type: Option<_TypeTransport>,
     pub body: BlockTransport,
 }
@@ -5332,8 +5338,10 @@ pub struct _ClosureExpressionExprTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub body: ExpressionTransport,
 }
 
@@ -5444,8 +5452,10 @@ pub struct _DelimTokenTreeBraceTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<DelimTokensTransport>,
 }
@@ -5471,8 +5481,10 @@ pub struct _DelimTokenTreeBracketTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<DelimTokensTransport>,
 }
@@ -5498,8 +5510,10 @@ pub struct _DelimTokenTreeParenTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<DelimTokensTransport>,
 }
@@ -5525,8 +5539,10 @@ pub struct _ExpressionStatementBlockEndingTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ExpressionEndingWithBlockTransport,
 }
@@ -5552,8 +5568,10 @@ pub struct _ExpressionStatementWithSemiTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ExpressionTransport,
 }
@@ -5579,8 +5597,10 @@ pub struct FieldIdentifierTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: IdentifierTransport,
 }
@@ -5606,8 +5626,10 @@ pub struct FieldPatternNamedTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub name: FieldIdentifierTransport,
     pub pattern: PatternTransport,
 }
@@ -5633,8 +5655,10 @@ pub struct _FieldPatternShorthandTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub name: IdentifierTransport,
 }
 
@@ -5659,8 +5683,10 @@ pub struct _ForeignModItemBodyTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub body: DeclarationListTransport,
 }
 
@@ -5679,7 +5705,8 @@ pub struct ForeignModItemSemiTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -5720,12 +5747,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForeignModItemSemiTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -5752,8 +5781,10 @@ pub struct FunctionTypeFnFormTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<FunctionModifiersTransport>,
 }
@@ -5779,8 +5810,10 @@ pub struct FunctionTypeTraitFormTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "trait"))]
     pub r#trait: Box<AnyTransport>,
 }
@@ -5806,8 +5839,10 @@ pub struct _ImplItemBodyTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub body: DeclarationListTransport,
 }
 
@@ -5826,7 +5861,8 @@ pub struct ImplItemSemiTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -5867,12 +5903,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplItemSemiTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -5893,7 +5931,8 @@ pub struct InnerLineDocCommentMarkerTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -5934,12 +5973,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for InnerLineDocCommentMarkerTranspo
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -5960,7 +6001,8 @@ pub struct KwAsyncMarkerTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -6001,12 +6043,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAsyncMarkerTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -6027,7 +6071,8 @@ pub struct KwInTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -6068,12 +6113,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwInTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -6094,7 +6141,8 @@ pub struct KwMoveMarkerTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -6135,12 +6183,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwMoveMarkerTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -6161,7 +6211,8 @@ pub struct KwNegativeTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -6202,12 +6253,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwNegativeTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -6228,7 +6281,8 @@ pub struct KwOperatorTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -6269,12 +6323,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwOperatorTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -6295,7 +6351,8 @@ pub struct KwPubTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -6336,12 +6393,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwPubTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -6362,7 +6421,8 @@ pub struct KwRefMarkerTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -6403,12 +6463,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwRefMarkerTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -6429,7 +6491,8 @@ pub struct KwStaticMarkerTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -6470,12 +6533,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwStaticMarkerTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -6496,7 +6561,8 @@ pub struct KwTurbofishTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -6537,12 +6603,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwTurbofishTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -6563,7 +6631,8 @@ pub struct KwUnsafeMarkerTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -6604,12 +6673,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwUnsafeMarkerTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -6636,8 +6707,10 @@ pub struct LetChainTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: LetChainChildTransport,
 }
@@ -6657,7 +6730,8 @@ pub struct LineCommentContentTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -6698,12 +6772,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineCommentContentTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -6730,8 +6806,10 @@ pub struct LineCommentDocTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub doc: LineDocContentTransport,
 }
 
@@ -6750,7 +6828,8 @@ pub struct LineCommentRegularDslashTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -6791,12 +6870,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineCommentRegularDslashTranspor
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -6823,8 +6904,10 @@ pub struct _MacroDefinitionBraceTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<MacroRuleTransport>>,
 }
@@ -6850,8 +6933,10 @@ pub struct _MacroDefinitionBracketTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<MacroRuleTransport>>,
 }
@@ -6877,8 +6962,10 @@ pub struct _MacroDefinitionParenTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<MacroRuleTransport>>,
 }
@@ -6904,8 +6991,10 @@ pub struct _MatchArmBlockEndingTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub value: ExpressionEndingWithBlockTransport,
 }
 
@@ -6930,8 +7019,10 @@ pub struct MatchArmWithCommaTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub value: ExpressionTransport,
 }
 
@@ -6950,7 +7041,8 @@ pub struct ModItemExternalTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -6991,12 +7083,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModItemExternalTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -7023,8 +7117,10 @@ pub struct _ModItemInlineTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub body: DeclarationListTransport,
 }
 
@@ -7049,8 +7145,10 @@ pub struct NonSpecialTokenTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: NonSpecialTokenChildTransport,
 }
@@ -7076,8 +7174,10 @@ pub struct OrPatternBinaryTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub left: PatternTransport,
     pub right: PatternTransport,
 }
@@ -7103,8 +7203,10 @@ pub struct OrPatternPrefixTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub right: PatternTransport,
 }
 
@@ -7123,7 +7225,8 @@ pub struct OuterLineDocCommentMarkerTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -7164,12 +7267,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for OuterLineDocCommentMarkerTranspo
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -7190,7 +7295,8 @@ pub struct PointerTypeConstTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -7231,12 +7337,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PointerTypeConstTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -7263,8 +7371,10 @@ pub struct _PointerTypeMutTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: MutableSpecifierTransport,
 }
@@ -7404,8 +7514,10 @@ pub struct _RangeExpressionBareTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub operator: bool,
 }
 
@@ -7430,8 +7542,10 @@ pub struct RangeExpressionBinaryTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub start: ExpressionTransport,
     pub operator: RangeExpressionBinaryOperatorEnum,
     pub end: ExpressionTransport,
@@ -7458,8 +7572,10 @@ pub struct RangeExpressionPostfixTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub start: ExpressionTransport,
     pub operator: bool,
 }
@@ -7485,8 +7601,10 @@ pub struct RangeExpressionPrefixTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub operator: bool,
     pub end: ExpressionTransport,
 }
@@ -7506,7 +7624,8 @@ pub struct RangePatternLeftBareTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -7547,12 +7666,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternLeftBareTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -7579,8 +7700,10 @@ pub struct RangePatternLeftWithRightTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub right: Box<AnyTransport>,
 }
 
@@ -7605,8 +7728,10 @@ pub struct RangePatternPrefixTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub right: Box<AnyTransport>,
 }
 
@@ -7625,7 +7750,8 @@ pub struct ReferenceExpressionRawConstTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -7666,12 +7792,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReferenceExpressionRawConstTrans
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -7698,8 +7826,10 @@ pub struct ReferenceExpressionRawMutTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: MutableSpecifierTransport,
 }
@@ -7725,8 +7855,10 @@ pub struct ReservedIdentifierTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: IdentifierTransport,
 }
@@ -7752,8 +7884,10 @@ pub struct StructItemBraceTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub body: FieldDeclarationListTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<WhereClauseTransport>,
@@ -7780,8 +7914,10 @@ pub struct StructItemTupleTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub body: OrderedFieldDeclarationListTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<WhereClauseTransport>,
@@ -7802,7 +7938,8 @@ pub struct StructItemUnitTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -7843,12 +7980,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructItemUnitTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -7981,8 +8120,10 @@ pub struct _TokenTreeBraceTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokensTransport>,
 }
@@ -8008,8 +8149,10 @@ pub struct _TokenTreeBracketTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokensTransport>,
 }
@@ -8035,8 +8178,10 @@ pub struct _TokenTreeParenTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokensTransport>,
 }
@@ -8062,8 +8207,10 @@ pub struct _TokenTreePatternBraceTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokenPatternTransport>,
 }
@@ -8089,8 +8236,10 @@ pub struct _TokenTreePatternBracketTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokenPatternTransport>,
 }
@@ -8116,8 +8265,10 @@ pub struct _TokenTreePatternParenTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokenPatternTransport>,
 }
@@ -8143,8 +8294,10 @@ pub struct TypeIdentifierTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: IdentifierTransport,
 }
@@ -8228,8 +8381,10 @@ pub struct _VisibilityModifierCrateTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: CrateTransport,
 }
@@ -8255,8 +8410,10 @@ pub struct VisibilityModifierInPathTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "in"))]
     pub r#in: bool,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -8284,8 +8441,10 @@ pub struct VisibilityModifierPubTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "pub"))]
     pub r#pub: bool,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -8307,7 +8466,8 @@ pub struct WildcardPatternTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -8348,12 +8508,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for WildcardPatternTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -8380,8 +8542,10 @@ pub struct AbstractTypeTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub type_parameters: Option<TypeParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "trait"))]
     pub r#trait: Box<AnyTransport>,
@@ -8408,8 +8572,10 @@ pub struct ArgumentsTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<ArgumentsChildTransport>,
 }
@@ -8475,8 +8641,10 @@ pub struct ArrayExpressionUFormSemiTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ArrayExpressionSemiTransport,
 }
@@ -8502,8 +8670,10 @@ pub struct ArrayExpressionUFormListTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ArrayExpressionListTransport,
 }
@@ -8529,8 +8699,10 @@ pub struct ArrayTypeTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub element: _TypeTransport,
     pub length: Option<ExpressionTransport>,
 }
@@ -8556,8 +8728,10 @@ pub struct AssignmentExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub left: ExpressionTransport,
     pub right: ExpressionTransport,
 }
@@ -8583,8 +8757,10 @@ pub struct AssociatedTypeTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub name: TypeIdentifierTransport,
     pub type_parameters: Option<TypeParametersTransport>,
     pub bounds: Option<TraitBoundsTransport>,
@@ -8612,8 +8788,10 @@ pub struct AsyncBlockTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub move_marker: Option<bool>,
     pub block: BlockTransport,
 }
@@ -8639,8 +8817,10 @@ pub struct AttributeTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: PathTransport,
 }
@@ -8666,8 +8846,10 @@ pub struct AttributeItemTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub attribute: AttributeTransport,
 }
 
@@ -8692,8 +8874,10 @@ pub struct AwaitExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ExpressionTransport,
 }
@@ -8719,8 +8903,10 @@ pub struct BaseFieldInitializerTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ExpressionTransport,
 }
@@ -8746,8 +8932,10 @@ pub struct BinaryExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub left: ExpressionTransport,
     pub operator: bool,
     pub right: ExpressionTransport,
@@ -8774,8 +8962,10 @@ pub struct BlockTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub label: Option<LabelTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<AnyTransport>,
@@ -8802,8 +8992,10 @@ pub struct BlockCommentTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub doc: Option<Box<AnyTransport>>,
 }
 
@@ -8882,8 +9074,10 @@ pub struct BoundedTypeTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub left: Box<AnyTransport>,
     pub right: Box<AnyTransport>,
 }
@@ -8909,8 +9103,10 @@ pub struct BracketedTypeTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: BracketedTypeChildTransport,
 }
@@ -8936,8 +9132,10 @@ pub struct BreakExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub label: Option<LabelTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<ExpressionTransport>,
@@ -8964,8 +9162,10 @@ pub struct CallExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub function: ExpressionExceptRangeTransport,
     pub arguments: ArgumentsTransport,
 }
@@ -8991,8 +9191,10 @@ pub struct CapturedPatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub identifier: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: PatternTransport,
@@ -9013,7 +9215,8 @@ pub struct CharLiteralTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -9054,12 +9257,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharLiteralTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -9086,8 +9291,10 @@ pub struct ClosureExpressionExprTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub body: ExpressionTransport,
 }
 
@@ -9152,8 +9359,10 @@ pub struct ClosureExpressionUFormBlockTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub static_marker: Option<bool>,
     pub async_marker: Option<bool>,
     pub move_marker: Option<bool>,
@@ -9183,8 +9392,10 @@ pub struct ClosureExpressionUFormExprTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub static_marker: Option<bool>,
     pub async_marker: Option<bool>,
     pub move_marker: Option<bool>,
@@ -9214,8 +9425,10 @@ pub struct ClosureParametersTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<ClosureParametersChildTransport>,
 }
@@ -9241,8 +9454,10 @@ pub struct CommentTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: CommentChildTransport,
 }
@@ -9268,8 +9483,10 @@ pub struct CompoundAssignmentExprTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub left: ExpressionTransport,
     pub operator: CompoundAssignmentExprOperatorEnum,
     pub right: ExpressionTransport,
@@ -9296,8 +9513,10 @@ pub struct ConstBlockTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub body: BlockTransport,
 }
 
@@ -9322,8 +9541,10 @@ pub struct ConstItemTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
@@ -9352,8 +9573,10 @@ pub struct ConstParameterTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: _TypeTransport,
@@ -9381,8 +9604,10 @@ pub struct ContinueExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub label: Option<LabelTransport>,
 }
 
@@ -9401,7 +9626,8 @@ pub struct CrateTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -9442,12 +9668,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for CrateTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -9474,8 +9702,10 @@ pub struct DeclarationListTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<DeclarationStatementTransport>,
 }
@@ -9501,8 +9731,10 @@ pub struct DelimTokenTreeParenTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<DelimTokensTransport>,
 }
@@ -9528,8 +9760,10 @@ pub struct DelimTokenTreeBracketTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<DelimTokensTransport>,
 }
@@ -9555,8 +9789,10 @@ pub struct DelimTokenTreeBraceTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<DelimTokensTransport>,
 }
@@ -9626,8 +9862,10 @@ pub struct DelimTokenTreeUFormParenTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _DelimTokenTreeParenTransport,
 }
@@ -9653,8 +9891,10 @@ pub struct DelimTokenTreeUFormBracketTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _DelimTokenTreeBracketTransport,
 }
@@ -9680,8 +9920,10 @@ pub struct DelimTokenTreeUFormBraceTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _DelimTokenTreeBraceTransport,
 }
@@ -9707,8 +9949,10 @@ pub struct DynamicTypeTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "trait"))]
     pub r#trait: Box<AnyTransport>,
 }
@@ -9734,8 +9978,10 @@ pub struct ElseClauseTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ExpressionEndingWithBlockTransport,
 }
@@ -9755,7 +10001,8 @@ pub struct EmptyStatementTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -9796,12 +10043,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for EmptyStatementTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -9828,8 +10077,10 @@ pub struct EnumItemTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: TypeIdentifierTransport,
     pub type_parameters: Option<TypeParametersTransport>,
@@ -9858,8 +10109,10 @@ pub struct EnumVariantTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: IdentifierTransport,
     pub body: Option<Box<AnyTransport>>,
@@ -9887,8 +10140,10 @@ pub struct EnumVariantListTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<EnumVariantListChildTransport>,
 }
@@ -9908,7 +10163,8 @@ pub struct EscapeSequenceTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -9949,12 +10205,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for EscapeSequenceTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -9981,8 +10239,10 @@ pub struct ExpressionStatementWithSemiTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ExpressionTransport,
 }
@@ -10008,8 +10268,10 @@ pub struct ExpressionStatementBlockEndingTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ExpressionEndingWithBlockTransport,
 }
@@ -10075,8 +10337,10 @@ pub struct ExpressionStatementUFormWithSemiTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _ExpressionStatementWithSemiTransport,
 }
@@ -10102,8 +10366,10 @@ pub struct ExpressionStatementUFormBlockEndingTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _ExpressionStatementBlockEndingTransport,
 }
@@ -10129,8 +10395,10 @@ pub struct ExternCrateDeclarationTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "crate"))]
     pub crate_: bool,
@@ -10159,8 +10427,10 @@ pub struct ExternModifierTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub string_literal: Option<StringLiteralTransport>,
 }
 
@@ -10185,8 +10455,10 @@ pub struct FieldDeclarationTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: FieldIdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
@@ -10214,8 +10486,10 @@ pub struct FieldDeclarationListTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<FieldDeclarationListChildTransport>,
 }
@@ -10241,8 +10515,10 @@ pub struct FieldExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub value: ExpressionTransport,
     pub field: Box<AnyTransport>,
 }
@@ -10268,8 +10544,10 @@ pub struct FieldInitializerTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub field: Box<AnyTransport>,
     pub value: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -10297,8 +10575,10 @@ pub struct FieldInitializerListTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<FieldInitializerListChildTransport>,
 }
@@ -10324,8 +10604,10 @@ pub struct FieldPatternShorthandTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub name: IdentifierTransport,
 }
 
@@ -10390,8 +10672,10 @@ pub struct FieldPatternUFormShorthandTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub ref_marker: Option<bool>,
     pub mutable_specifier: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -10419,8 +10703,10 @@ pub struct FieldPatternUFormNamedTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub ref_marker: Option<bool>,
     pub mutable_specifier: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -10448,8 +10734,10 @@ pub struct ForExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub label: Option<LabelTransport>,
     pub pattern: PatternTransport,
     pub value: ExpressionTransport,
@@ -10477,8 +10765,10 @@ pub struct ForLifetimesTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<LifetimeTransport>,
 }
@@ -10504,8 +10794,10 @@ pub struct ForeignModItemBodyTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub body: DeclarationListTransport,
 }
 
@@ -10570,8 +10862,10 @@ pub struct ForeignModItemUFormSemiTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub extern_modifier: ExternModifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -10599,8 +10893,10 @@ pub struct ForeignModItemUFormBodyTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub extern_modifier: ExternModifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -10734,8 +11030,10 @@ pub struct FunctionItemTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub function_modifiers: Option<FunctionModifiersTransport>,
     pub name: PathTransport,
@@ -10767,8 +11065,10 @@ pub struct FunctionModifiersTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub modifier: Vec<ExternModifierTransport>,
 }
 
@@ -10793,8 +11093,10 @@ pub struct FunctionSignatureItemTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub function_modifiers: Option<FunctionModifiersTransport>,
     pub name: PathTransport,
@@ -10825,8 +11127,10 @@ pub struct FunctionTypeTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub for_lifetimes: Option<ForLifetimesTransport>,
     pub parameters: ParametersTransport,
     pub return_type: Option<_TypeTransport>,
@@ -10855,8 +11159,10 @@ pub struct GenBlockTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub move_marker: Option<bool>,
     pub block: BlockTransport,
 }
@@ -10882,8 +11188,10 @@ pub struct GenericFunctionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub function: ExpressionExceptRangeTransport,
     pub type_arguments: TypeArgumentsTransport,
 }
@@ -10909,8 +11217,10 @@ pub struct GenericPatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub type_arguments: TypeArgumentsTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: PathTransport,
@@ -10937,8 +11247,10 @@ pub struct GenericTypeTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
     pub type_arguments: TypeArgumentsTransport,
@@ -10965,8 +11277,10 @@ pub struct GenericTypeWithTurbofishTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
     pub turbofish: bool,
@@ -10994,8 +11308,10 @@ pub struct HigherRankedTraitBoundTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub type_parameters: TypeParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: _TypeTransport,
@@ -11016,7 +11332,8 @@ pub struct IdentifierTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -11057,12 +11374,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -11089,8 +11408,10 @@ pub struct IfExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub condition: ConditionTransport,
     pub consequence: BlockTransport,
     pub alternative: Option<ElseClauseTransport>,
@@ -11117,8 +11438,10 @@ pub struct ImplItemBodyTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub body: DeclarationListTransport,
 }
 
@@ -11183,8 +11506,10 @@ pub struct ImplItemUFormBodyTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub unsafe_marker: Option<bool>,
     pub type_parameters: Option<TypeParametersTransport>,
     pub negative: Option<bool>,
@@ -11218,8 +11543,10 @@ pub struct ImplItemUFormSemiTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub unsafe_marker: Option<bool>,
     pub type_parameters: Option<TypeParametersTransport>,
     pub negative: Option<bool>,
@@ -11253,8 +11580,10 @@ pub struct IndexExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub object: ExpressionTransport,
     pub index: ExpressionTransport,
 }
@@ -11280,8 +11609,10 @@ pub struct InnerAttributeItemTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub attribute: AttributeTransport,
 }
 
@@ -11300,7 +11631,8 @@ pub struct IntegerLiteralTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -11341,12 +11673,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerLiteralTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -11373,8 +11707,10 @@ pub struct LabelTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub identifier: IdentifierTransport,
 }
 
@@ -11399,8 +11735,10 @@ pub struct LastMatchArmTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub pattern: MatchPatternTransport,
     pub value: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -11428,8 +11766,10 @@ pub struct LetConditionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub pattern: PatternTransport,
     pub value: ExpressionTransport,
 }
@@ -11455,8 +11795,10 @@ pub struct LetDeclarationTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub mutable_specifier: Option<bool>,
     pub pattern: PatternTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
@@ -11486,8 +11828,10 @@ pub struct LifetimeTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub identifier: IdentifierTransport,
 }
 
@@ -11512,8 +11856,10 @@ pub struct LifetimeParameterTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub name: LifetimeTransport,
     pub bounds: Option<TraitBoundsTransport>,
 }
@@ -11583,8 +11929,10 @@ pub struct LineCommentUFormRegularDslashTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: LineCommentRegularDslashTransport,
 }
@@ -11610,8 +11958,10 @@ pub struct LineCommentUFormDocTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: LineCommentDocTransport,
 }
@@ -11637,8 +11987,10 @@ pub struct LineCommentUFormContentTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: LineCommentContentTransport,
 }
@@ -11664,8 +12016,10 @@ pub struct LoopExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub label: Option<LabelTransport>,
     pub body: BlockTransport,
 }
@@ -11691,8 +12045,10 @@ pub struct MacroDefinitionParenTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<MacroRuleTransport>>,
 }
@@ -11718,8 +12074,10 @@ pub struct MacroDefinitionBracketTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<MacroRuleTransport>>,
 }
@@ -11745,8 +12103,10 @@ pub struct MacroDefinitionBraceTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<MacroRuleTransport>>,
 }
@@ -11816,8 +12176,10 @@ pub struct MacroDefinitionUFormParenTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub name: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _MacroDefinitionParenTransport,
@@ -11844,8 +12206,10 @@ pub struct MacroDefinitionUFormBracketTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub name: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _MacroDefinitionBracketTransport,
@@ -11872,8 +12236,10 @@ pub struct MacroDefinitionUFormBraceTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub name: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _MacroDefinitionBraceTransport,
@@ -11900,8 +12266,10 @@ pub struct MacroInvocationTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "macro"))]
     pub r#macro: Box<AnyTransport>,
     pub token_tree: Box<AnyTransport>,
@@ -11928,8 +12296,10 @@ pub struct MacroRuleTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub left: Box<AnyTransport>,
     pub right: Box<AnyTransport>,
 }
@@ -11955,8 +12325,10 @@ pub struct MatchArmBlockEndingTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub value: ExpressionEndingWithBlockTransport,
 }
 
@@ -12021,8 +12393,10 @@ pub struct MatchArmUFormWithCommaTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub pattern: MatchPatternTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<MatchArmUFormWithCommaChildTransport>,
@@ -12049,8 +12423,10 @@ pub struct MatchArmUFormBlockEndingTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub pattern: MatchPatternTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<MatchArmUFormBlockEndingChildTransport>,
@@ -12077,8 +12453,10 @@ pub struct MatchBlockTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<MatchBlockChildTransport>>,
 }
@@ -12104,8 +12482,10 @@ pub struct MatchExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub value: ExpressionTransport,
     pub body: MatchBlockTransport,
 }
@@ -12131,8 +12511,10 @@ pub struct MatchPatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub condition: Option<ConditionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: PatternTransport,
@@ -12153,7 +12535,8 @@ pub struct MetavariableTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -12194,12 +12577,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetavariableTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -12226,8 +12611,10 @@ pub struct ModItemInlineTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub body: DeclarationListTransport,
 }
 
@@ -12292,8 +12679,10 @@ pub struct ModItemUFormExternalTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -12321,8 +12710,10 @@ pub struct ModItemUFormInlineTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -12350,8 +12741,10 @@ pub struct MutPatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub mutable_specifier: bool,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: PatternTransport,
@@ -12372,7 +12765,8 @@ pub struct MutableSpecifierTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -12413,12 +12807,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for MutableSpecifierTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -12445,8 +12841,10 @@ pub struct NegativeLiteralTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub value: Box<AnyTransport>,
 }
 
@@ -12465,7 +12863,8 @@ pub struct NeverTypeTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -12506,12 +12905,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for NeverTypeTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -12578,8 +12979,10 @@ pub struct OrPatternUFormBinaryTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: OrPatternBinaryTransport,
 }
@@ -12605,8 +13008,10 @@ pub struct OrPatternUFormPrefixTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: OrPatternPrefixTransport,
 }
@@ -12632,8 +13037,10 @@ pub struct OrderedFieldDeclarationListTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Vec<_TypeTransport>,
 }
@@ -12659,8 +13066,10 @@ pub struct ParameterTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub mutable_specifier: Option<bool>,
     pub pattern: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
@@ -12688,8 +13097,10 @@ pub struct ParametersTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<ParametersChildTransport>,
 }
@@ -12715,8 +13126,10 @@ pub struct ParenthesizedExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ExpressionTransport,
 }
@@ -12742,8 +13155,10 @@ pub struct PointerTypeMutTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: MutableSpecifierTransport,
 }
@@ -12809,8 +13224,10 @@ pub struct PointerTypeUFormConstTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: _TypeTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -12838,8 +13255,10 @@ pub struct PointerTypeUFormMutTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: _TypeTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -12867,8 +13286,10 @@ pub struct QualifiedTypeTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: _TypeTransport,
     pub alias: _TypeTransport,
@@ -12895,8 +13316,10 @@ pub struct RangeExpressionBareTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub operator: bool,
 }
 
@@ -12969,8 +13392,10 @@ pub struct RangeExpressionUFormBinaryTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: RangeExpressionBinaryTransport,
 }
@@ -12996,8 +13421,10 @@ pub struct RangeExpressionUFormPostfixTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: RangeExpressionPostfixTransport,
 }
@@ -13023,8 +13450,10 @@ pub struct RangeExpressionUFormPrefixTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: RangeExpressionPrefixTransport,
 }
@@ -13050,8 +13479,10 @@ pub struct RangeExpressionUFormBareTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _RangeExpressionBareTransport,
 }
@@ -13121,8 +13552,10 @@ pub struct RangePatternUFormLeftWithRightTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub left: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: RangePatternLeftWithRightTransport,
@@ -13149,8 +13582,10 @@ pub struct RangePatternUFormLeftBareTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub left: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: RangePatternLeftBareTransport,
@@ -13177,8 +13612,10 @@ pub struct RangePatternUFormPrefixTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: RangePatternPrefixTransport,
 }
@@ -13204,8 +13641,10 @@ pub struct RawStringLiteralTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub raw_string_literal_start: Option<Box<AnyTransport>>,
     pub string_content: RawStringLiteralContentTransport,
     pub raw_string_literal_end: Option<Box<AnyTransport>>,
@@ -13232,8 +13671,10 @@ pub struct RefPatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: PatternTransport,
 }
@@ -13259,8 +13700,10 @@ pub struct ReferenceExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub value: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ReferenceExpressionChildTransport,
@@ -13287,8 +13730,10 @@ pub struct ReferencePatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub mutable_specifier: Option<bool>,
     pub pattern: PatternTransport,
 }
@@ -13314,8 +13759,10 @@ pub struct ReferenceTypeTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub lifetime: Option<LifetimeTransport>,
     pub mutable_specifier: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
@@ -13337,7 +13784,8 @@ pub struct RemainingFieldPatternTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -13378,12 +13826,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for RemainingFieldPatternTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -13410,8 +13860,10 @@ pub struct RemovedTraitBoundTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _TypeTransport,
 }
@@ -13437,8 +13889,10 @@ pub struct ReturnExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<ExpressionTransport>,
 }
@@ -13464,8 +13918,10 @@ pub struct ScopedIdentifierTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub path: Option<Box<AnyTransport>>,
     pub name: PathTransport,
 }
@@ -13491,8 +13947,10 @@ pub struct ScopedTypeIdentifierTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub path: Option<Box<AnyTransport>>,
     pub name: TypeIdentifierTransport,
 }
@@ -13518,8 +13976,10 @@ pub struct ScopedTypeIdentifierInExpressionPositionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub path: Option<Box<AnyTransport>>,
     pub name: TypeIdentifierTransport,
 }
@@ -13545,8 +14005,10 @@ pub struct ScopedUseListTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub path: Option<PathTransport>,
     pub list: UseListTransport,
 }
@@ -13566,7 +14028,8 @@ pub struct Self_Transport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -13607,12 +14070,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for Self_Transport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -13639,8 +14104,10 @@ pub struct SelfParameterTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub reference: Option<Box<AnyTransport>>,
     pub lifetime: Option<LifetimeTransport>,
     pub mutable_specifier: Option<bool>,
@@ -13663,7 +14130,8 @@ pub struct ShebangTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -13704,12 +14172,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ShebangTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -13736,8 +14206,10 @@ pub struct ShorthandFieldInitializerTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub attributes: Vec<AttributeItemTransport>,
     pub identifier: IdentifierTransport,
 }
@@ -13763,8 +14235,10 @@ pub struct SlicePatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<PatternTransport>,
 }
@@ -13790,8 +14264,10 @@ pub struct SourceFileTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub shebang: Option<ShebangTransport>,
     pub statements: Vec<StatementTransport>,
 }
@@ -13817,8 +14293,10 @@ pub struct StaticItemTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub mutable_specifier: Option<Box<AnyTransport>>,
     pub name: IdentifierTransport,
@@ -13848,8 +14326,10 @@ pub struct StringLiteralTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<StringLiteralChildTransport>,
 }
@@ -13875,8 +14355,10 @@ pub struct StructExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub name: Box<AnyTransport>,
     pub body: FieldInitializerListTransport,
 }
@@ -13946,8 +14428,10 @@ pub struct StructItemUFormBraceTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: TypeIdentifierTransport,
     pub type_parameters: Option<TypeParametersTransport>,
@@ -13976,8 +14460,10 @@ pub struct StructItemUFormTupleTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: TypeIdentifierTransport,
     pub type_parameters: Option<TypeParametersTransport>,
@@ -14006,8 +14492,10 @@ pub struct StructItemUFormUnitTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: TypeIdentifierTransport,
     pub type_parameters: Option<TypeParametersTransport>,
@@ -14036,8 +14524,10 @@ pub struct StructPatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -14059,7 +14549,8 @@ pub struct SuperTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -14100,12 +14591,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for SuperTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -14132,8 +14625,10 @@ pub struct TokenBindingPatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub name: MetavariableTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: TokenBindingPatternTypeEnum,
@@ -14160,8 +14655,10 @@ pub struct TokenRepetitionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokensTransport>,
 }
@@ -14187,8 +14684,10 @@ pub struct TokenRepetitionPatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokenPatternTransport>,
 }
@@ -14214,8 +14713,10 @@ pub struct TokenTreeParenTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokensTransport>,
 }
@@ -14241,8 +14742,10 @@ pub struct TokenTreeBracketTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokensTransport>,
 }
@@ -14268,8 +14771,10 @@ pub struct TokenTreeBraceTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokensTransport>,
 }
@@ -14339,8 +14844,10 @@ pub struct TokenTreeUFormParenTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _TokenTreeParenTransport,
 }
@@ -14366,8 +14873,10 @@ pub struct TokenTreeUFormBracketTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _TokenTreeBracketTransport,
 }
@@ -14393,8 +14902,10 @@ pub struct TokenTreeUFormBraceTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _TokenTreeBraceTransport,
 }
@@ -14420,8 +14931,10 @@ pub struct TokenTreePatternParenTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokenPatternTransport>,
 }
@@ -14447,8 +14960,10 @@ pub struct TokenTreePatternBracketTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokenPatternTransport>,
 }
@@ -14474,8 +14989,10 @@ pub struct TokenTreePatternBraceTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokenPatternTransport>,
 }
@@ -14545,8 +15062,10 @@ pub struct TokenTreePatternUFormParenTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _TokenTreePatternParenTransport,
 }
@@ -14572,8 +15091,10 @@ pub struct TokenTreePatternUFormBracketTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _TokenTreePatternBracketTransport,
 }
@@ -14599,8 +15120,10 @@ pub struct TokenTreePatternUFormBraceTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _TokenTreePatternBraceTransport,
 }
@@ -14626,8 +15149,10 @@ pub struct TraitBoundsTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TraitBoundsChildTransport>,
 }
@@ -14653,8 +15178,10 @@ pub struct TraitItemTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub unsafe_marker: Option<bool>,
     pub name: TypeIdentifierTransport,
@@ -14685,8 +15212,10 @@ pub struct TryBlockTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub block: BlockTransport,
 }
 
@@ -14711,8 +15240,10 @@ pub struct TryExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub value: ExpressionTransport,
 }
 
@@ -14737,8 +15268,10 @@ pub struct TupleExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub attributes: Vec<AttributeItemTransport>,
     pub elements: Option<Vec<ExpressionTransport>>,
 }
@@ -14764,8 +15297,10 @@ pub struct TuplePatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<AnyTransport>,
 }
@@ -14791,8 +15326,10 @@ pub struct TupleStructPatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -14820,8 +15357,10 @@ pub struct TupleTypeTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<_TypeTransport>,
 }
@@ -14847,8 +15386,10 @@ pub struct TypeArgumentsTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TypeArgumentsChildTransport>,
 }
@@ -14874,8 +15415,10 @@ pub struct TypeBindingTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub name: TypeIdentifierTransport,
     pub type_arguments: Option<TypeArgumentsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
@@ -14903,8 +15446,10 @@ pub struct TypeCastExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub value: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: _TypeTransport,
@@ -14931,8 +15476,10 @@ pub struct TypeItemTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: TypeIdentifierTransport,
     pub type_parameters: Option<TypeParametersTransport>,
@@ -14963,8 +15510,10 @@ pub struct TypeParameterTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub name: TypeIdentifierTransport,
     pub bounds: Option<TraitBoundsTransport>,
     pub default_type: Option<_TypeTransport>,
@@ -14991,8 +15540,10 @@ pub struct TypeParametersTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TypeParametersChildTransport>,
 }
@@ -15018,8 +15569,10 @@ pub struct UnaryExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub operator: UnaryExpressionOperatorEnum,
     pub operand: ExpressionTransport,
 }
@@ -15045,8 +15598,10 @@ pub struct UnionItemTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: TypeIdentifierTransport,
     pub type_parameters: Option<TypeParametersTransport>,
@@ -15069,7 +15624,8 @@ pub struct UnitExpressionTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -15110,12 +15666,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnitExpressionTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -15136,7 +15694,8 @@ pub struct UnitTypeTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -15177,12 +15736,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnitTypeTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -15209,8 +15770,10 @@ pub struct UnsafeBlockTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub block: BlockTransport,
 }
 
@@ -15235,8 +15798,10 @@ pub struct UseAsClauseTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub path: PathTransport,
     pub alias: IdentifierTransport,
 }
@@ -15262,8 +15827,10 @@ pub struct UseBoundsTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<UseBoundsChildTransport>,
 }
@@ -15289,8 +15856,10 @@ pub struct UseDeclarationTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub argument: UseClauseTransport,
 }
@@ -15316,8 +15885,10 @@ pub struct UseListTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<UseClauseTransport>,
 }
@@ -15343,8 +15914,10 @@ pub struct UseWildcardTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub path: Option<PathTransport>,
 }
 
@@ -15369,8 +15942,10 @@ pub struct VariadicParameterTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub mutable_specifier: Option<bool>,
     pub pattern: Option<PatternTransport>,
 }
@@ -15396,8 +15971,10 @@ pub struct VisibilityModifierCrateTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: CrateTransport,
 }
@@ -15467,8 +16044,10 @@ pub struct VisibilityModifierUFormInPathTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: VisibilityModifierInPathTransport,
 }
@@ -15494,8 +16073,10 @@ pub struct VisibilityModifierUFormCrateTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _VisibilityModifierCrateTransport,
 }
@@ -15521,8 +16102,10 @@ pub struct VisibilityModifierUFormPubTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: VisibilityModifierPubTransport,
 }
@@ -15548,8 +16131,10 @@ pub struct WhereClauseTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<WherePredicateTransport>,
 }
@@ -15575,8 +16160,10 @@ pub struct WherePredicateTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub left: Box<AnyTransport>,
     pub bounds: TraitBoundsTransport,
 }
@@ -15602,8 +16189,10 @@ pub struct WhileExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub label: Option<LabelTransport>,
     pub condition: ConditionTransport,
     pub body: BlockTransport,
@@ -15630,8 +16219,10 @@ pub struct YieldExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<ExpressionTransport>,
 }
@@ -15651,7 +16242,8 @@ pub struct StringContentTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -15692,12 +16284,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -15718,7 +16312,8 @@ pub struct RawStringLiteralContentTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -15759,12 +16354,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for RawStringLiteralContentTransport
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -15785,7 +16382,8 @@ pub struct FloatLiteralTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -15826,12 +16424,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for FloatLiteralTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -15852,7 +16452,8 @@ pub struct OuterBlockDocCommentMarkerTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -15893,12 +16494,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for OuterBlockDocCommentMarkerTransp
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -15919,7 +16522,8 @@ pub struct InnerBlockDocCommentMarkerTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -15960,12 +16564,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for InnerBlockDocCommentMarkerTransp
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -15986,7 +16592,8 @@ pub struct LineDocContentTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -16027,12 +16634,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineDocContentTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -16053,7 +16662,8 @@ pub struct ErrorSentinelTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -16094,12 +16704,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ErrorSentinelTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -16120,7 +16732,8 @@ pub struct BracketTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -16161,12 +16774,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -16187,7 +16802,8 @@ pub struct CloseBracketTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -16228,12 +16844,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseBracketTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -16254,7 +16872,8 @@ pub struct SemiTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -16295,12 +16914,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for SemiTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -16321,7 +16942,8 @@ pub struct ArrowTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -16362,12 +16984,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -16388,7 +17012,8 @@ pub struct AnonymousTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -16429,12 +17054,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -16455,7 +17082,8 @@ pub struct BraceTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -16496,12 +17124,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for BraceTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -16522,7 +17152,8 @@ pub struct CloseBraceTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -16563,12 +17194,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseBraceTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -16589,7 +17222,8 @@ pub struct ParenTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -16630,12 +17264,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -16656,7 +17292,8 @@ pub struct CloseParenTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -16697,12 +17334,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseParenTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -16723,7 +17362,8 @@ pub struct ColonTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -16764,12 +17404,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -16790,7 +17432,8 @@ pub struct FnTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -16831,12 +17474,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for FnTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -16857,7 +17502,8 @@ pub struct BangTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -16898,12 +17544,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -16924,7 +17572,8 @@ pub struct AsyncTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -16965,12 +17614,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -16991,7 +17642,8 @@ pub struct InTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -17032,12 +17684,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for InTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -17058,7 +17712,8 @@ pub struct MoveTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -17099,12 +17754,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for MoveTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -17125,7 +17782,8 @@ pub struct DotdotTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -17166,12 +17824,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotdotTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -17192,7 +17852,8 @@ pub struct PubTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -17233,12 +17894,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PubTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -17259,7 +17922,8 @@ pub struct RefTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -17300,12 +17964,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for RefTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -17326,7 +17992,8 @@ pub struct StaticTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -17367,12 +18034,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for StaticTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -17393,7 +18062,8 @@ pub struct UnsafeTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -17434,12 +18104,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnsafeTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -17460,7 +18132,8 @@ pub struct AndandTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -17501,12 +18174,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AndandTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -17527,7 +18202,8 @@ pub struct CommaTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -17568,12 +18244,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -17594,7 +18272,8 @@ pub struct TokSqTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -17635,12 +18314,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokSqTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -17661,7 +18342,8 @@ pub struct AsTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -17702,12 +18384,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -17728,7 +18412,8 @@ pub struct AwaitTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -17769,12 +18454,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AwaitTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -17795,7 +18482,8 @@ pub struct BreakTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -17836,12 +18524,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -17862,7 +18552,8 @@ pub struct ConstTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -17903,12 +18594,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -17929,7 +18622,8 @@ pub struct ContinueTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -17970,12 +18664,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -17996,7 +18692,8 @@ pub struct DefaultTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -18037,12 +18734,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefaultTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -18063,7 +18762,8 @@ pub struct EnumTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -18104,12 +18804,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -18130,7 +18832,8 @@ pub struct ForTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -18171,12 +18874,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -18197,7 +18902,8 @@ pub struct GenTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -18238,12 +18944,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -18264,7 +18972,8 @@ pub struct IfTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -18305,12 +19014,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -18331,7 +19042,8 @@ pub struct ImplTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -18372,12 +19084,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -18398,7 +19112,8 @@ pub struct LetTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -18439,12 +19154,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for LetTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -18465,7 +19182,8 @@ pub struct LoopTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -18506,12 +19224,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for LoopTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -18532,7 +19252,8 @@ pub struct MatchTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -18573,12 +19294,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -18599,7 +19322,8 @@ pub struct ModTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -18640,12 +19364,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -18666,7 +19392,8 @@ pub struct ReturnTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -18707,12 +19434,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -18733,7 +19462,8 @@ pub struct StructTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -18774,12 +19504,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -18800,7 +19532,8 @@ pub struct TraitTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -18841,12 +19574,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TraitTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -18867,7 +19602,8 @@ pub struct TypeTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -18908,12 +19644,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -18934,7 +19672,8 @@ pub struct UnionTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -18975,12 +19714,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnionTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -19001,7 +19742,8 @@ pub struct UseTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -19042,12 +19784,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for UseTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -19068,7 +19812,8 @@ pub struct WhereTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -19109,12 +19854,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhereTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -19135,7 +19882,8 @@ pub struct WhileTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -19176,12 +19924,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -19202,7 +19952,8 @@ pub struct PipeTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -19243,12 +19994,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -19269,7 +20022,8 @@ pub struct SlashTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -19310,12 +20064,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -19336,7 +20092,8 @@ pub struct RawTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -19377,12 +20134,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for RawTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -19403,7 +20162,8 @@ pub struct EqTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -19444,12 +20204,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -19470,7 +20232,8 @@ pub struct HashTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -19511,12 +20274,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for HashTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -19537,7 +20302,8 @@ pub struct DotTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -19578,12 +20344,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -19604,7 +20372,8 @@ pub struct TokSlashStarTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -19645,12 +20414,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokSlashStarTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -19671,7 +20442,8 @@ pub struct TokStarSlashTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -19712,12 +20484,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokStarSlashTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -19738,7 +20512,8 @@ pub struct PlusTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -19779,12 +20554,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -19805,7 +20582,8 @@ pub struct LtTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -19846,12 +20624,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -19872,7 +20652,8 @@ pub struct GtTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -19913,12 +20694,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -19939,7 +20722,8 @@ pub struct AtTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -19980,12 +20764,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -20006,7 +20792,8 @@ pub struct DynTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -20047,12 +20834,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DynTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -20073,7 +20862,8 @@ pub struct ElseTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -20114,12 +20904,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -20140,7 +20932,8 @@ pub struct ExternTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -20181,12 +20974,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExternTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -20207,7 +21002,8 @@ pub struct FatArrowTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -20248,12 +21044,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for FatArrowTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -20274,7 +21072,8 @@ pub struct MutTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -20315,12 +21114,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for MutTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -20341,7 +21142,8 @@ pub struct MinusTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -20382,12 +21184,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for MinusTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -20408,7 +21212,8 @@ pub struct AmpTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -20449,12 +21254,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -20475,7 +21282,8 @@ pub struct QuestionTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -20516,12 +21324,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for QuestionTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -20542,7 +21352,8 @@ pub struct TokDqTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -20583,12 +21394,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokDqTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -20609,7 +21422,8 @@ pub struct TokDollarTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -20650,12 +21464,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokDollarTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -20676,7 +21492,8 @@ pub struct TryTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -20717,12 +21534,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -20743,7 +21562,8 @@ pub struct StarTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -20784,12 +21604,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -20810,7 +21632,8 @@ pub struct EllipsisTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -20851,12 +21674,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -20877,7 +21702,8 @@ pub struct YieldTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -20918,12 +21744,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -25399,7 +26227,7 @@ fn transport_node_data(
     default_named: bool,
     text: Option<String>,
     span: Option<::sittir_core::types::Span>,
-    _node_id: Option<u64>,
+    node_id: Option<u64>,
     fields: Option<TransportHashMap<String, TransportFieldValue>>,
     children: Option<Vec<TransportNodeData>>,
 ) -> TransportNodeData {
@@ -25411,8 +26239,7 @@ fn transport_node_data(
         children,
         text,
         span,
-        node_handle: None,
-        child_index: None,
+        node_id,
     }
 }
 
