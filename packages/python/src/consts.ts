@@ -126,25 +126,21 @@ export const LEAF_KINDS = [
   ']',
   '_',
   '__future__',
+  '_async_marker',
   '_augmented_assignment_operator',
   '_binary_operator_operator',
   '_boolean_operator_operator',
   '_dedent',
-  '_for_in_clause_async_marker',
-  '_for_statement_async_marker',
-  '_function_definition_async_marker',
+  '_identifier',
   '_indent',
   '_is_not',
   '_kw_async_marker',
   '_kw_type',
   '_newline',
   '_not_in',
-  '_splat_pattern_identifier',
-  '_splat_type_identifier',
   '_string_content',
   '_type_alias_statement_type',
   '_unary_operator_operator',
-  '_with_statement_async_marker',
   'as',
   'assert',
   'async',
@@ -1423,6 +1419,12 @@ export const enum Operators {
   IsNot = 1 << 10,
 }
 
+/** Valid values for `_async_marker` nodes. */
+export const _ASYNC_MARKERS = [
+  'async',
+] as const;
+export type AsyncMarkerValue = (typeof _ASYNC_MARKERS)[number];
+
 /** Valid values for `_augmented_assignment_operator` nodes. */
 export const _AUGMENTED_ASSIGNMENT_OPERATORS = [
   '+=',
@@ -1453,37 +1455,12 @@ export const _BOOLEAN_OPERATOR_OPERATORS = [
 ] as const;
 export type BooleanOperatorOperatorValue = (typeof _BOOLEAN_OPERATOR_OPERATORS)[number];
 
-/** Valid values for `_for_in_clause_async_marker` nodes. */
-export const _FOR_IN_CLAUSE_ASYNC_MARKERS = [
-  'async',
-] as const;
-export type ForInClauseAsyncMarkerValue = (typeof _FOR_IN_CLAUSE_ASYNC_MARKERS)[number];
-
-/** Valid values for `_for_statement_async_marker` nodes. */
-export const _FOR_STATEMENT_ASYNC_MARKERS = [
-  'async',
-] as const;
-export type ForStatementAsyncMarkerValue = (typeof _FOR_STATEMENT_ASYNC_MARKERS)[number];
-
-/** Valid values for `_function_definition_async_marker` nodes. */
-export const _FUNCTION_DEFINITION_ASYNC_MARKERS = [
-  'async',
-] as const;
-export type FunctionDefinitionAsyncMarkerValue = (typeof _FUNCTION_DEFINITION_ASYNC_MARKERS)[number];
-
-/** Valid values for `_splat_pattern_identifier` nodes. */
-export const _SPLAT_PATTERN_IDENTIFIERS = [
+/** Valid values for `_identifier` nodes. */
+export const _IDENTIFIERS = [
   '*',
   '**',
 ] as const;
-export type SplatPatternIdentifierValue = (typeof _SPLAT_PATTERN_IDENTIFIERS)[number];
-
-/** Valid values for `_splat_type_identifier` nodes. */
-export const _SPLAT_TYPE_IDENTIFIERS = [
-  '*',
-  '**',
-] as const;
-export type SplatTypeIdentifierValue = (typeof _SPLAT_TYPE_IDENTIFIERS)[number];
+export type IdentifierValue = (typeof _IDENTIFIERS)[number];
 
 /** Valid values for `_type_alias_statement_type` nodes. */
 export const _TYPE_ALIAS_STATEMENT_TYPES = [
@@ -1498,9 +1475,3 @@ export const _UNARY_OPERATOR_OPERATORS = [
   '~',
 ] as const;
 export type UnaryOperatorOperatorValue = (typeof _UNARY_OPERATOR_OPERATORS)[number];
-
-/** Valid values for `_with_statement_async_marker` nodes. */
-export const _WITH_STATEMENT_ASYNC_MARKERS = [
-  'async',
-] as const;
-export type WithStatementAsyncMarkerValue = (typeof _WITH_STATEMENT_ASYNC_MARKERS)[number];

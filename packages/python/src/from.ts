@@ -341,7 +341,7 @@ const _K10: readonly string[] = ["relative_import","dotted_name"];
 const _K11: readonly string[] = ["true","false","none"];
 const _K12: readonly string[] = ["class_pattern","splat_pattern","union_pattern","_list_pattern","_tuple_pattern","dict_pattern","string","concatenated_string","_simple_pattern_negative","complex_pattern","dotted_name"];
 const _K13: readonly string[] = ["keyword_identifier"];
-const _K14: readonly string[] = ["_splat_type_identifier","identifier"];
+const _K14: readonly string[] = ["_identifier","identifier"];
 const _K15: readonly string[] = ["comparison_operator","not_operator","boolean_operator","lambda","primary_expression","conditional_expression","named_expression","as_pattern","slice"];
 const _K16: readonly string[] = ["list_splat_pattern","dictionary_splat_pattern"];
 
@@ -1105,7 +1105,7 @@ export function sliceFrom(input?: T.Slice.Loose): ReturnType<typeof F.slice> | T
 export function splatPatternFrom(input: T.SplatPattern.Loose): ReturnType<typeof F.splatPattern> | T.SplatPattern {
   if (isNodeData(input)) return input;
   return F.splatPattern({
-    identifier: _resolveOneLeaf<T.SplatPatternIdentifier>(input.identifier, "_splat_pattern_identifier"),
+    identifier: _resolveOneLeaf<T._Identifier>(input.identifier, "_identifier"),
     children: _resolveOneLeaf(input.children, "identifier"),
   });
 }
@@ -1113,7 +1113,7 @@ export function splatPatternFrom(input: T.SplatPattern.Loose): ReturnType<typeof
 export function splatTypeFrom(input: T.SplatType.Loose): ReturnType<typeof F.splatType> | T.SplatType {
   if (isNodeData(input)) return input;
   return F.splatType({
-    identifier: _resolveOne<T.SplatTypeIdentifier | T.Identifier>(input.identifier, _K14, _K0),
+    identifier: _resolveOne<T._Identifier | T.Identifier>(input.identifier, _K14, _K0),
   });
 }
 

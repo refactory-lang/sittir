@@ -80,6 +80,7 @@ type NativeTransportRawChildRule = { readonly childrenRequired: boolean; readonl
 type NativeTransportVariantRule = { readonly variant: string; readonly fields: readonly NativeTransportFieldRule[]; readonly children?: { readonly required: boolean; readonly alternatives: readonly NativeTransportAlternative[] } };
 
 const nativeTransportAliasTargetToSource: Record<string, string> = {
+  "async_marker": "_async_marker",
   "augmented_assignment_operator": "_augmented_assignment_operator",
   "binary_operator_operator": "_binary_operator_operator",
   "boolean_operator_operator": "_boolean_operator_operator",
@@ -88,9 +89,6 @@ const nativeTransportAliasTargetToSource: Record<string, string> = {
   "expression_within_for_in_clause": "_expression_within_for_in_clause",
   "expressions": "_expressions",
   "f_expression": "_f_expression",
-  "for_in_clause_async_marker": "_for_in_clause_async_marker",
-  "for_statement_async_marker": "_for_statement_async_marker",
-  "function_definition_async_marker": "_function_definition_async_marker",
   "left_hand_side": "_left_hand_side",
   "match_block": "_match_block",
   "match_block_block": "_match_block_block",
@@ -101,13 +99,10 @@ const nativeTransportAliasTargetToSource: Record<string, string> = {
   "simple_pattern_negative": "_simple_pattern_negative",
   "simple_statement": "_simple_statement",
   "simple_statements": "_simple_statements",
-  "splat_pattern_identifier": "_splat_pattern_identifier",
-  "splat_type_identifier": "_splat_type_identifier",
   "statement": "_statement",
   "suite": "_suite",
   "type_alias_statement_type": "_type_alias_statement_type",
   "unary_operator_operator": "_unary_operator_operator",
-  "with_statement_async_marker": "_with_statement_async_marker",
 };
 
 const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildRule> = {
@@ -1203,6 +1198,12 @@ function assertAssignmentTypedTransport(node: Record<string, unknown>, path: str
   if (node["right"] !== undefined) assertTransportValue(node["right"], `${path}.right`, [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"expression_list"},{"type":"assignment"},{"type":"augmented_assignment"},{"type":"pattern_list"},{"type":"yield"}] as const);
 }
 
+function assertAsyncMarkerTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_async_marker");
+  assertOptionalMetadata(node, path);
+  assertTextIn(node.$text, `${path}.$text`, ["async"] as const);
+}
+
 function assertAugmentedAssignmentOperatorTransport(node: Record<string, unknown>, path: string): void {
   assertTransportKind(node, path, "_augmented_assignment_operator");
   assertOptionalMetadata(node, path);
@@ -1233,22 +1234,10 @@ function assertComprehensionClausesTransport(node: Record<string, unknown>, path
   }
 }
 
-function assertForInClauseAsyncMarkerTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "_for_in_clause_async_marker");
+function assert_IdentifierTransport(node: Record<string, unknown>, path: string): void {
+  assertTransportKind(node, path, "_identifier");
   assertOptionalMetadata(node, path);
-  assertTextIn(node.$text, `${path}.$text`, ["async"] as const);
-}
-
-function assertForStatementAsyncMarkerTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "_for_statement_async_marker");
-  assertOptionalMetadata(node, path);
-  assertTextIn(node.$text, `${path}.$text`, ["async"] as const);
-}
-
-function assertFunctionDefinitionAsyncMarkerTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "_function_definition_async_marker");
-  assertOptionalMetadata(node, path);
-  assertTextIn(node.$text, `${path}.$text`, ["async"] as const);
+  assertTextIn(node.$text, `${path}.$text`, ["*","**"] as const);
 }
 
 function assertImportListTransport(node: Record<string, unknown>, path: string): void {
@@ -1352,18 +1341,6 @@ function assertSimpleStatementsTransport(node: Record<string, unknown>, path: st
   }
 }
 
-function assertSplatPatternIdentifierTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "_splat_pattern_identifier");
-  assertOptionalMetadata(node, path);
-  assertTextIn(node.$text, `${path}.$text`, ["*","**"] as const);
-}
-
-function assertSplatTypeIdentifierTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "_splat_type_identifier");
-  assertOptionalMetadata(node, path);
-  assertTextIn(node.$text, `${path}.$text`, ["*","**"] as const);
-}
-
 function assertSuiteTransport(node: Record<string, unknown>, path: string): void {
   assertTransportKind(node, path, "_suite");
   assertOptionalMetadata(node, path);
@@ -1410,12 +1387,6 @@ function assert_WithClauseParenTransport(node: Record<string, unknown>, path: st
       assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"with_item"}] as const);
     }
   }
-}
-
-function assertWithStatementAsyncMarkerTransport(node: Record<string, unknown>, path: string): void {
-  assertTransportKind(node, path, "_with_statement_async_marker");
-  assertOptionalMetadata(node, path);
-  assertTextIn(node.$text, `${path}.$text`, ["async"] as const);
 }
 
 function assertAliasedImportTransport(node: Record<string, unknown>, path: string): void {
@@ -1951,7 +1922,7 @@ function assertFloatTransport(node: Record<string, unknown>, path: string): void
 function assertForInClauseTransport(node: Record<string, unknown>, path: string): void {
   assertTransportKind(node, path, "for_in_clause");
   assertOptionalMetadata(node, path);
-  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"_for_in_clause_async_marker","text":"async"}] as const);
+  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"_async_marker","text":"async"}] as const);
   if (node["left"] === undefined) throw new TypeError(`${path}.left` + ' is required');
   if (node["left"] !== undefined) assertTransportValue(node["left"], `${path}.left`, [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"list_pattern"},{"type":"pattern_list"}] as const);
   if (node["right"] === undefined) throw new TypeError(`${path}.right` + ' is required');
@@ -1961,7 +1932,7 @@ function assertForInClauseTransport(node: Record<string, unknown>, path: string)
 function assertForStatementTransport(node: Record<string, unknown>, path: string): void {
   assertTransportKind(node, path, "for_statement");
   assertOptionalMetadata(node, path);
-  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"_for_statement_async_marker","text":"async"}] as const);
+  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"_async_marker","text":"async"}] as const);
   if (node["left"] === undefined) throw new TypeError(`${path}.left` + ' is required');
   if (node["left"] !== undefined) assertTransportValue(node["left"], `${path}.left`, [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"list_pattern"},{"type":"pattern_list"}] as const);
   if (node["right"] === undefined) throw new TypeError(`${path}.right` + ' is required');
@@ -1986,7 +1957,7 @@ function assertFormatSpecifierTransport(node: Record<string, unknown>, path: str
 function assertFunctionDefinitionTransport(node: Record<string, unknown>, path: string): void {
   assertTransportKind(node, path, "function_definition");
   assertOptionalMetadata(node, path);
-  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"_function_definition_async_marker","text":"async"}] as const);
+  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"_async_marker","text":"async"}] as const);
   if (node["name"] === undefined) throw new TypeError(`${path}.name` + ' is required');
   if (node["name"] !== undefined) assertTransportValue(node["name"], `${path}.name`, [{"type":"identifier"}] as const);
   if (node["type_parameters"] !== undefined) assertTransportValue(node["type_parameters"], `${path}.type_parameters`, [{"type":"type_parameter"}] as const);
@@ -2434,7 +2405,7 @@ function assertSplatPatternTransport(node: Record<string, unknown>, path: string
   assertTransportKind(node, path, "splat_pattern");
   assertOptionalMetadata(node, path);
   if (node["identifier"] === undefined) throw new TypeError(`${path}.identifier` + ' is required');
-  if (node["identifier"] !== undefined) assertTransportValue(node["identifier"], `${path}.identifier`, [{"type":"_splat_pattern_identifier","text":"*"},{"type":"_splat_pattern_identifier","text":"**"}] as const);
+  if (node["identifier"] !== undefined) assertTransportValue(node["identifier"], `${path}.identifier`, [{"type":"_identifier","text":"*"},{"type":"_identifier","text":"**"}] as const);
   if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
   if (node.$children !== undefined) {
     if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
@@ -2448,7 +2419,7 @@ function assertSplatTypeTransport(node: Record<string, unknown>, path: string): 
   assertTransportKind(node, path, "splat_type");
   assertOptionalMetadata(node, path);
   if (node["identifier"] === undefined) throw new TypeError(`${path}.identifier` + ' is required');
-  if (node["identifier"] !== undefined) assertTransportValue(node["identifier"], `${path}.identifier`, [{"type":"_splat_type_identifier","text":"*"},{"type":"_splat_type_identifier","text":"**"},{"type":"identifier"}] as const);
+  if (node["identifier"] !== undefined) assertTransportValue(node["identifier"], `${path}.identifier`, [{"type":"_identifier","text":"*"},{"type":"_identifier","text":"**"},{"type":"identifier"}] as const);
 }
 
 function assertStringTransport(node: Record<string, unknown>, path: string): void {
@@ -2710,7 +2681,7 @@ function assertWithItemTransport(node: Record<string, unknown>, path: string): v
 function assertWithStatementTransport(node: Record<string, unknown>, path: string): void {
   assertTransportKind(node, path, "with_statement");
   assertOptionalMetadata(node, path);
-  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"_with_statement_async_marker","text":"async"}] as const);
+  if (node["async_marker"] !== undefined) assertTransportValue(node["async_marker"], `${path}.async_marker`, [{"type":"_async_marker","text":"async"}] as const);
   if (node["with_clause"] === undefined) throw new TypeError(`${path}.with_clause` + ' is required');
   if (node["with_clause"] !== undefined) assertTransportValue(node["with_clause"], `${path}.with_clause`, [{"type":"with_clause"}] as const);
   if (node["body"] === undefined) throw new TypeError(`${path}.body` + ' is required');

@@ -88,36 +88,23 @@ pub mod filters {
 
 #[derive(Debug, Clone)]
 pub enum AnyTransport {
-    ForHeaderKind(ForHeaderKindEnum),
-    ForHeaderLetConstKindKind(ForHeaderLetConstKindKindEnum),
     ForHeaderOperator(ForHeaderOperatorEnum),
     ForHeaderVarKindKind(ForHeaderVarKindKindEnum),
     NumberOperator(NumberOperatorEnum),
-    ParameterNameReadonlyMarker(ParameterNameReadonlyMarkerEnum),
-    PublicFieldDefinitionAbstractFirstAbstractMarker(PublicFieldDefinitionAbstractFirstAbstractMarkerEnum),
-    PublicFieldDefinitionAbstractFirstReadonlyMarker(PublicFieldDefinitionAbstractFirstReadonlyMarkerEnum),
     PublicFieldDefinitionAccessFirstDeclareMarker(PublicFieldDefinitionAccessFirstDeclareMarkerEnum),
     PublicFieldDefinitionAccessorOptAccessorMarker(PublicFieldDefinitionAccessorOptAccessorMarkerEnum),
-    PublicFieldDefinitionReadonlyFirstAbstractMarker(PublicFieldDefinitionReadonlyFirstAbstractMarkerEnum),
-    PublicFieldDefinitionReadonlyFirstReadonlyMarker(PublicFieldDefinitionReadonlyFirstReadonlyMarkerEnum),
-    PublicFieldDefinitionStaticModsReadonlyMarker(PublicFieldDefinitionStaticModsReadonlyMarkerEnum),
-    PublicFieldDefinitionStaticModsStaticMarker(PublicFieldDefinitionStaticModsStaticMarkerEnum),
-    UpdateExpressionPostfixOperator(UpdateExpressionPostfixOperatorEnum),
-    UpdateExpressionPrefixOperator(UpdateExpressionPrefixOperatorEnum),
-    AbstractMethodSignatureAccessibilityModifier(AbstractMethodSignatureAccessibilityModifierEnum),
-    AbstractMethodSignatureAccessorKind(AbstractMethodSignatureAccessorKindEnum),
-    AbstractMethodSignatureOptionalMarker(AbstractMethodSignatureOptionalMarkerEnum),
-    AbstractMethodSignatureOverrideModifier(AbstractMethodSignatureOverrideModifierEnum),
+    AbstractMarker(AbstractMarkerEnum),
+    _AccessibilityModifier(_AccessibilityModifierEnum),
+    AccessorKind(AccessorKindEnum),
     _ArrowFunctionUCallSignature(_ArrowFunctionUCallSignatureTransport),
-    ArrowFunctionAsyncMarker(ArrowFunctionAsyncMarkerEnum),
     _ArrowFunctionParameter(_ArrowFunctionParameterTransport),
     AssertsAnnotationAsserts(AssertsAnnotationAssertsEnum),
     AssignmentExpressionUsingMarker(AssignmentExpressionUsingMarkerEnum),
+    AsyncMarker(AsyncMarkerEnum),
     AugmentedAssignmentExpressionOperator(AugmentedAssignmentExpressionOperatorEnum),
     BinaryExpressionOperator(BinaryExpressionOperatorEnum),
     CallExpressionCall(CallExpressionCallTransport),
     CallExpressionMember(CallExpressionMemberTransport),
-    CallExpressionOptionalChain(CallExpressionOptionalChainEnum),
     CallExpressionTemplateCall(CallExpressionTemplateCallTransport),
     _CallSignature(_CallSignatureTransport),
     ClassBodyMember(ClassBodyMemberTransport),
@@ -125,9 +112,7 @@ pub enum AnyTransport {
     ClassBodyMethodSig(ClassBodyMethodSigTransport),
     _ClassHeritageExtendsClause(_ClassHeritageExtendsClauseTransport),
     _ClassHeritageImplementsClause(_ClassHeritageImplementsClauseTransport),
-    ConstructSignatureAbstractMarker(ConstructSignatureAbstractMarkerEnum),
-    ConstructorTypeAbstractMarker(ConstructorTypeAbstractMarkerEnum),
-    EnumDeclarationConstMarker(EnumDeclarationConstMarkerEnum),
+    ConstMarker(ConstMarkerEnum),
     ExportSpecifierExportKind(ExportSpecifierExportKindEnum),
     ExportStatementDefaultDeclArm(ExportStatementDefaultDeclArmTransport),
     ExportStatementDefaultDeclArmDefaultKw(ExportStatementDefaultDeclArmDefaultKwTransport),
@@ -140,7 +125,6 @@ pub enum AnyTransport {
     _ExportStatementNamespaceExport(_ExportStatementNamespaceExportTransport),
     _ExportStatementTypeExport(_ExportStatementTypeExportTransport),
     ExtendsClauseSingle(ExtendsClauseSingleTransport),
-    FieldDefinitionStaticMarker(FieldDefinitionStaticMarkerEnum),
     ForHeader(ForHeaderTransport),
     ForHeaderLetConstKind(ForHeaderLetConstKindTransport),
     ForHeaderLhs(ForHeaderLhsTransport),
@@ -148,23 +132,18 @@ pub enum AnyTransport {
     ForInStatementAwaitMarker(ForInStatementAwaitMarkerEnum),
     ForStatementInitializer(ForStatementInitializerEnum),
     FromClause(FromClauseTransport),
-    FunctionDeclarationAsyncMarker(FunctionDeclarationAsyncMarkerEnum),
-    FunctionExpressionAsyncMarker(FunctionExpressionAsyncMarkerEnum),
-    FunctionSignatureAsyncMarker(FunctionSignatureAsyncMarkerEnum),
-    GeneratorFunctionAsyncMarker(GeneratorFunctionAsyncMarkerEnum),
-    GeneratorFunctionDeclarationAsyncMarker(GeneratorFunctionDeclarationAsyncMarkerEnum),
     ImportAttributeObject(ImportAttributeObjectEnum),
     _ImportClauseDefaultImport(_ImportClauseDefaultImportTransport),
     _ImportClauseNamedImports(_ImportClauseNamedImportsTransport),
     _ImportClauseNamespaceImport(_ImportClauseNamespaceImportTransport),
     ImportSpecifierAs(ImportSpecifierAsTransport),
-    ImportSpecifierImportKind(ImportSpecifierImportKindEnum),
     _ImportSpecifierName(_ImportSpecifierNameTransport),
     IndexSignatureColon(IndexSignatureColonTransport),
     _IndexSignatureMappedTypeClause(_IndexSignatureMappedTypeClauseTransport),
     Initializer(InitializerTransport),
     JsxStartOpeningElement(JsxStartOpeningElementTransport),
     JsxString(JsxStringTransport),
+    Kind(KindEnum),
     KwAbstractMarker(KwAbstractMarkerTransport),
     KwAccessorMarker(KwAccessorMarkerTransport),
     KwAsserts(KwAssertsTransport),
@@ -177,35 +156,18 @@ pub enum AnyTransport {
     KwStaticMarker(KwStaticMarkerTransport),
     KwTypePredicate(KwTypePredicateTransport),
     KwUsingMarker(KwUsingMarkerTransport),
-    LexicalDeclarationKind(LexicalDeclarationKindEnum),
     LhsExpression(LhsExpressionTransport),
-    MemberExpressionOptionalChain(MemberExpressionOptionalChainEnum),
-    MethodDefinitionAccessibilityModifier(MethodDefinitionAccessibilityModifierEnum),
-    MethodDefinitionAccessorKind(MethodDefinitionAccessorKindEnum),
-    MethodDefinitionAsyncMarker(MethodDefinitionAsyncMarkerEnum),
-    MethodDefinitionOptionalMarker(MethodDefinitionOptionalMarkerEnum),
-    MethodDefinitionOverrideModifier(MethodDefinitionOverrideModifierEnum),
-    MethodDefinitionReadonlyMarker(MethodDefinitionReadonlyMarkerEnum),
-    MethodDefinitionStaticMarker(MethodDefinitionStaticMarkerEnum),
-    MethodSignatureAccessibilityModifier(MethodSignatureAccessibilityModifierEnum),
-    MethodSignatureAccessorKind(MethodSignatureAccessorKindEnum),
-    MethodSignatureAsyncMarker(MethodSignatureAsyncMarkerEnum),
-    MethodSignatureOptionalMarker(MethodSignatureOptionalMarkerEnum),
-    MethodSignatureOverrideModifier(MethodSignatureOverrideModifierEnum),
-    MethodSignatureReadonlyMarker(MethodSignatureReadonlyMarkerEnum),
-    MethodSignatureStaticMarker(MethodSignatureStaticMarkerEnum),
     _Module(_ModuleTransport),
     _Number(_NumberTransport),
     ObjectTypeClosing(ObjectTypeClosingEnum),
     ObjectTypeOpening(ObjectTypeOpeningEnum),
+    Operator(OperatorEnum),
+    OptionalChain(OptionalChainEnum),
+    OptionalMarker(OptionalMarkerEnum),
+    _OverrideModifier(_OverrideModifierEnum),
     ParameterName(ParameterNameTransport),
     _ParenthesizedExpressionSequence(_ParenthesizedExpressionSequenceTransport),
     ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
-    PropertySignatureAccessibilityModifier(PropertySignatureAccessibilityModifierEnum),
-    PropertySignatureOptionalMarker(PropertySignatureOptionalMarkerEnum),
-    PropertySignatureOverrideModifier(PropertySignatureOverrideModifierEnum),
-    PropertySignatureReadonlyMarker(PropertySignatureReadonlyMarkerEnum),
-    PropertySignatureStaticMarker(PropertySignatureStaticMarkerEnum),
     PublicFieldDefinitionAbstractFirst(PublicFieldDefinitionAbstractFirstTransport),
     PublicFieldDefinitionAccessFirst(PublicFieldDefinitionAccessFirstTransport),
     PublicFieldDefinitionAccessorOpt(PublicFieldDefinitionAccessorOptTransport),
@@ -213,13 +175,12 @@ pub enum AnyTransport {
     PublicFieldDefinitionOptionalityMarker(PublicFieldDefinitionOptionalityMarkerEnum),
     PublicFieldDefinitionReadonlyFirst(PublicFieldDefinitionReadonlyFirstTransport),
     PublicFieldDefinitionStaticMods(PublicFieldDefinitionStaticModsTransport),
+    ReadonlyMarker(ReadonlyMarkerEnum),
     ReservedIdentifier(ReservedIdentifierTransport),
+    StaticMarker(StaticMarkerEnum),
     _StringDouble(_StringDoubleTransport),
     _StringSingle(_StringSingleTransport),
-    SubscriptExpressionOptionalChain(SubscriptExpressionOptionalChainEnum),
     TypeIdentifier(TypeIdentifierTransport),
-    TypeParameterConstMarker(TypeParameterConstMarkerEnum),
-    TypePredicateAnnotationTypePredicate(TypePredicateAnnotationTypePredicateEnum),
     TypeQueryCallExpression(TypeQueryCallExpressionTransport),
     TypeQueryCallExpressionInTypeAnnotation(TypeQueryCallExpressionInTypeAnnotationTransport),
     TypeQueryInstantiationExpression(TypeQueryInstantiationExpressionTransport),
@@ -227,7 +188,6 @@ pub enum AnyTransport {
     TypeQueryMemberExpressionInTypeAnnotation(TypeQueryMemberExpressionInTypeAnnotationTransport),
     TypeQuerySubscriptExpression(TypeQuerySubscriptExpressionTransport),
     UnaryExpressionOperator(UnaryExpressionOperatorEnum),
-    UpdateExpressionOperator(UpdateExpressionOperatorEnum),
     UpdateExpressionPostfix(UpdateExpressionPostfixTransport),
     UpdateExpressionPrefix(UpdateExpressionPrefixTransport),
     AbstractClassDeclaration(AbstractClassDeclarationTransport),
@@ -362,7 +322,6 @@ pub enum AnyTransport {
     ObjectType(ObjectTypeTransport),
     OmittingTypeAnnotation(OmittingTypeAnnotationTransport),
     OptingTypeAnnotation(OptingTypeAnnotationTransport),
-    OptionalChain(OptionalChainTransport),
     OptionalParameter(OptionalParameterTransport),
     OptionalTupleParameter(OptionalTupleParameterTransport),
     OptionalType(OptionalTypeTransport),
@@ -1271,10 +1230,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             // kind: opting_type_annotation (OPTING_TYPE_ANNOTATION)
             301 => Ok(AnyTransport::OptingTypeAnnotation(
                 OptingTypeAnnotationTransport::from_napi_value(env, napi_val)?
-            )),
-            // kind: optional_chain (OPTIONAL_CHAIN)
-            230 => Ok(AnyTransport::OptionalChain(
-                OptionalChainTransport::from_napi_value(env, napi_val)?
             )),
             // kind: optional_parameter (OPTIONAL_PARAMETER)
             297 => Ok(AnyTransport::OptionalParameter(
@@ -3439,112 +3394,6 @@ impl ::sittir_core::types::RenderableTransport for TypeTransport {
 
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ForHeaderKindEnum {
-    Var,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderKindEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in ForHeaderKindEnum"))?;
-        match text.as_str() {
-            "var" => Ok(Self::Var),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for ForHeaderKindEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ForHeaderKindEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ForHeaderKindEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for ForHeaderKindEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::Var => "var",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for ForHeaderKindEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::Var => "var",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ForHeaderLetConstKindKindEnum {
-    Var,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLetConstKindKindEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in ForHeaderLetConstKindKindEnum"))?;
-        match text.as_str() {
-            "var" => Ok(Self::Var),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for ForHeaderLetConstKindKindEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ForHeaderLetConstKindKindEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ForHeaderLetConstKindKindEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for ForHeaderLetConstKindKindEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::Var => "var",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for ForHeaderLetConstKindKindEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::Var => "var",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ForHeaderOperatorEnum {
     InKw,
     OfKw,
@@ -3712,165 +3561,6 @@ impl ::sittir_core::types::RenderableTransport for NumberOperatorEnum {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ParameterNameReadonlyMarkerEnum {
-    ReadonlyKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ParameterNameReadonlyMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in ParameterNameReadonlyMarkerEnum"))?;
-        match text.as_str() {
-            "readonly" => Ok(Self::ReadonlyKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for ParameterNameReadonlyMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ParameterNameReadonlyMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ParameterNameReadonlyMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for ParameterNameReadonlyMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::ReadonlyKw => "readonly",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for ParameterNameReadonlyMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::ReadonlyKw => "readonly",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PublicFieldDefinitionAbstractFirstAbstractMarkerEnum {
-    AbstractKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionAbstractFirstAbstractMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in PublicFieldDefinitionAbstractFirstAbstractMarkerEnum"))?;
-        match text.as_str() {
-            "abstract" => Ok(Self::AbstractKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for PublicFieldDefinitionAbstractFirstAbstractMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PublicFieldDefinitionAbstractFirstAbstractMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("PublicFieldDefinitionAbstractFirstAbstractMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for PublicFieldDefinitionAbstractFirstAbstractMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::AbstractKw => "abstract",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for PublicFieldDefinitionAbstractFirstAbstractMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::AbstractKw => "abstract",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PublicFieldDefinitionAbstractFirstReadonlyMarkerEnum {
-    ReadonlyKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionAbstractFirstReadonlyMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in PublicFieldDefinitionAbstractFirstReadonlyMarkerEnum"))?;
-        match text.as_str() {
-            "readonly" => Ok(Self::ReadonlyKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for PublicFieldDefinitionAbstractFirstReadonlyMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PublicFieldDefinitionAbstractFirstReadonlyMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("PublicFieldDefinitionAbstractFirstReadonlyMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for PublicFieldDefinitionAbstractFirstReadonlyMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::ReadonlyKw => "readonly",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for PublicFieldDefinitionAbstractFirstReadonlyMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::ReadonlyKw => "readonly",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum PublicFieldDefinitionAccessFirstDeclareMarkerEnum {
     DeclareKw,
 }
@@ -3977,23 +3667,23 @@ impl ::sittir_core::types::RenderableTransport for PublicFieldDefinitionAccessor
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PublicFieldDefinitionReadonlyFirstAbstractMarkerEnum {
+pub enum AbstractMarkerEnum {
     AbstractKw,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionReadonlyFirstAbstractMarkerEnum {
+impl ::napi::bindgen_prelude::FromNapiValue for AbstractMarkerEnum {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in PublicFieldDefinitionReadonlyFirstAbstractMarkerEnum"))?;
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in AbstractMarkerEnum"))?;
         match text.as_str() {
             "abstract" => Ok(Self::AbstractKw),
             other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for PublicFieldDefinitionReadonlyFirstAbstractMarkerEnum",
+                "unknown $text value {:?} for AbstractMarkerEnum",
                 other
             ))),
         }
@@ -4001,16 +3691,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionReadonlyFir
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PublicFieldDefinitionReadonlyFirstAbstractMarkerEnum {
+impl ::napi::bindgen_prelude::ToNapiValue for AbstractMarkerEnum {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("PublicFieldDefinitionReadonlyFirstAbstractMarkerEnum is receive-only"))
+        Err(::napi::Error::from_reason("AbstractMarkerEnum is receive-only"))
     }
 }
 
-impl ::std::fmt::Display for PublicFieldDefinitionReadonlyFirstAbstractMarkerEnum {
+impl ::std::fmt::Display for AbstractMarkerEnum {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         f.write_str(match self {
             Self::AbstractKw => "abstract",
@@ -4018,7 +3708,7 @@ impl ::std::fmt::Display for PublicFieldDefinitionReadonlyFirstAbstractMarkerEnu
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for PublicFieldDefinitionReadonlyFirstAbstractMarkerEnum {
+impl ::sittir_core::types::RenderableTransport for AbstractMarkerEnum {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4030,300 +3720,27 @@ impl ::sittir_core::types::RenderableTransport for PublicFieldDefinitionReadonly
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PublicFieldDefinitionReadonlyFirstReadonlyMarkerEnum {
-    ReadonlyKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionReadonlyFirstReadonlyMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in PublicFieldDefinitionReadonlyFirstReadonlyMarkerEnum"))?;
-        match text.as_str() {
-            "readonly" => Ok(Self::ReadonlyKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for PublicFieldDefinitionReadonlyFirstReadonlyMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PublicFieldDefinitionReadonlyFirstReadonlyMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("PublicFieldDefinitionReadonlyFirstReadonlyMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for PublicFieldDefinitionReadonlyFirstReadonlyMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::ReadonlyKw => "readonly",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for PublicFieldDefinitionReadonlyFirstReadonlyMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::ReadonlyKw => "readonly",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PublicFieldDefinitionStaticModsReadonlyMarkerEnum {
-    ReadonlyKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionStaticModsReadonlyMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in PublicFieldDefinitionStaticModsReadonlyMarkerEnum"))?;
-        match text.as_str() {
-            "readonly" => Ok(Self::ReadonlyKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for PublicFieldDefinitionStaticModsReadonlyMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PublicFieldDefinitionStaticModsReadonlyMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("PublicFieldDefinitionStaticModsReadonlyMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for PublicFieldDefinitionStaticModsReadonlyMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::ReadonlyKw => "readonly",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for PublicFieldDefinitionStaticModsReadonlyMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::ReadonlyKw => "readonly",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PublicFieldDefinitionStaticModsStaticMarkerEnum {
-    StaticKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionStaticModsStaticMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in PublicFieldDefinitionStaticModsStaticMarkerEnum"))?;
-        match text.as_str() {
-            "static" => Ok(Self::StaticKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for PublicFieldDefinitionStaticModsStaticMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PublicFieldDefinitionStaticModsStaticMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("PublicFieldDefinitionStaticModsStaticMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for PublicFieldDefinitionStaticModsStaticMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::StaticKw => "static",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for PublicFieldDefinitionStaticModsStaticMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::StaticKw => "static",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum UpdateExpressionPostfixOperatorEnum {
-    V2b_2b,
-    V2d_2d,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for UpdateExpressionPostfixOperatorEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in UpdateExpressionPostfixOperatorEnum"))?;
-        match text.as_str() {
-            "++" => Ok(Self::V2b_2b),
-            "--" => Ok(Self::V2d_2d),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for UpdateExpressionPostfixOperatorEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for UpdateExpressionPostfixOperatorEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("UpdateExpressionPostfixOperatorEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for UpdateExpressionPostfixOperatorEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::V2b_2b => "++",
-            Self::V2d_2d => "--",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for UpdateExpressionPostfixOperatorEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::V2b_2b => "++",
-            Self::V2d_2d => "--",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum UpdateExpressionPrefixOperatorEnum {
-    V2b_2b,
-    V2d_2d,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for UpdateExpressionPrefixOperatorEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in UpdateExpressionPrefixOperatorEnum"))?;
-        match text.as_str() {
-            "++" => Ok(Self::V2b_2b),
-            "--" => Ok(Self::V2d_2d),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for UpdateExpressionPrefixOperatorEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for UpdateExpressionPrefixOperatorEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("UpdateExpressionPrefixOperatorEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for UpdateExpressionPrefixOperatorEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::V2b_2b => "++",
-            Self::V2d_2d => "--",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for UpdateExpressionPrefixOperatorEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::V2b_2b => "++",
-            Self::V2d_2d => "--",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum AbstractMethodSignatureAccessibilityModifierEnum {
+pub enum _AccessibilityModifierEnum {
     PublicKw,
     PrivateKw,
     ProtectedKw,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureAccessibilityModifierEnum {
+impl ::napi::bindgen_prelude::FromNapiValue for _AccessibilityModifierEnum {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in AbstractMethodSignatureAccessibilityModifierEnum"))?;
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in _AccessibilityModifierEnum"))?;
         match text.as_str() {
             "public" => Ok(Self::PublicKw),
             "private" => Ok(Self::PrivateKw),
             "protected" => Ok(Self::ProtectedKw),
             other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for AbstractMethodSignatureAccessibilityModifierEnum",
+                "unknown $text value {:?} for _AccessibilityModifierEnum",
                 other
             ))),
         }
@@ -4331,16 +3748,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureAccessibi
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AbstractMethodSignatureAccessibilityModifierEnum {
+impl ::napi::bindgen_prelude::ToNapiValue for _AccessibilityModifierEnum {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("AbstractMethodSignatureAccessibilityModifierEnum is receive-only"))
+        Err(::napi::Error::from_reason("_AccessibilityModifierEnum is receive-only"))
     }
 }
 
-impl ::std::fmt::Display for AbstractMethodSignatureAccessibilityModifierEnum {
+impl ::std::fmt::Display for _AccessibilityModifierEnum {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         f.write_str(match self {
             Self::PublicKw => "public",
@@ -4350,7 +3767,7 @@ impl ::std::fmt::Display for AbstractMethodSignatureAccessibilityModifierEnum {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for AbstractMethodSignatureAccessibilityModifierEnum {
+impl ::sittir_core::types::RenderableTransport for _AccessibilityModifierEnum {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4364,27 +3781,27 @@ impl ::sittir_core::types::RenderableTransport for AbstractMethodSignatureAccess
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum AbstractMethodSignatureAccessorKindEnum {
+pub enum AccessorKindEnum {
     Get,
     Set,
     Star,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureAccessorKindEnum {
+impl ::napi::bindgen_prelude::FromNapiValue for AccessorKindEnum {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in AbstractMethodSignatureAccessorKindEnum"))?;
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in AccessorKindEnum"))?;
         match text.as_str() {
             "get" => Ok(Self::Get),
             "set" => Ok(Self::Set),
             "*" => Ok(Self::Star),
             other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for AbstractMethodSignatureAccessorKindEnum",
+                "unknown $text value {:?} for AccessorKindEnum",
                 other
             ))),
         }
@@ -4392,16 +3809,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureAccessorK
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AbstractMethodSignatureAccessorKindEnum {
+impl ::napi::bindgen_prelude::ToNapiValue for AccessorKindEnum {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("AbstractMethodSignatureAccessorKindEnum is receive-only"))
+        Err(::napi::Error::from_reason("AccessorKindEnum is receive-only"))
     }
 }
 
-impl ::std::fmt::Display for AbstractMethodSignatureAccessorKindEnum {
+impl ::std::fmt::Display for AccessorKindEnum {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         f.write_str(match self {
             Self::Get => "get",
@@ -4411,7 +3828,7 @@ impl ::std::fmt::Display for AbstractMethodSignatureAccessorKindEnum {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for AbstractMethodSignatureAccessorKindEnum {
+impl ::sittir_core::types::RenderableTransport for AccessorKindEnum {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4420,112 +3837,6 @@ impl ::sittir_core::types::RenderableTransport for AbstractMethodSignatureAccess
             Self::Get => "get",
             Self::Set => "set",
             Self::Star => "*",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum AbstractMethodSignatureOptionalMarkerEnum {
-    Question,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureOptionalMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in AbstractMethodSignatureOptionalMarkerEnum"))?;
-        match text.as_str() {
-            "?" => Ok(Self::Question),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for AbstractMethodSignatureOptionalMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AbstractMethodSignatureOptionalMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("AbstractMethodSignatureOptionalMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for AbstractMethodSignatureOptionalMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::Question => "?",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for AbstractMethodSignatureOptionalMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::Question => "?",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum AbstractMethodSignatureOverrideModifierEnum {
-    OverrideKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureOverrideModifierEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in AbstractMethodSignatureOverrideModifierEnum"))?;
-        match text.as_str() {
-            "override" => Ok(Self::OverrideKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for AbstractMethodSignatureOverrideModifierEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AbstractMethodSignatureOverrideModifierEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("AbstractMethodSignatureOverrideModifierEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for AbstractMethodSignatureOverrideModifierEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::OverrideKw => "override",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for AbstractMethodSignatureOverrideModifierEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::OverrideKw => "override",
         }).map_err(::askama::Error::from)
     }
 }
@@ -4555,59 +3866,6 @@ impl ::sittir_core::types::RenderableTransport for _ArrowFunctionUCallSignatureT
     ) -> Result<(), ::askama::Error> {
         let s = render__arrow_function_ucall_signature_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ArrowFunctionAsyncMarkerEnum {
-    AsyncKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArrowFunctionAsyncMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in ArrowFunctionAsyncMarkerEnum"))?;
-        match text.as_str() {
-            "async" => Ok(Self::AsyncKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for ArrowFunctionAsyncMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArrowFunctionAsyncMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ArrowFunctionAsyncMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for ArrowFunctionAsyncMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::AsyncKw => "async",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for ArrowFunctionAsyncMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::AsyncKw => "async",
-        }).map_err(::askama::Error::from)
     }
 }
 
@@ -4739,6 +3997,59 @@ impl ::sittir_core::types::RenderableTransport for AssignmentExpressionUsingMark
     ) -> Result<(), ::askama::Error> {
         dest.write_str(match self {
             Self::Using => "using",
+        }).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AsyncMarkerEnum {
+    AsyncKw,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for AsyncMarkerEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in AsyncMarkerEnum"))?;
+        match text.as_str() {
+            "async" => Ok(Self::AsyncKw),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for AsyncMarkerEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AsyncMarkerEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("AsyncMarkerEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for AsyncMarkerEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::AsyncKw => "async",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for AsyncMarkerEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::AsyncKw => "async",
         }).map_err(::askama::Error::from)
     }
 }
@@ -4961,59 +4272,6 @@ impl ::sittir_core::types::RenderableTransport for CallExpressionMemberTransport
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum CallExpressionOptionalChainEnum {
-    QuestionDot,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionOptionalChainEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in CallExpressionOptionalChainEnum"))?;
-        match text.as_str() {
-            "?." => Ok(Self::QuestionDot),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for CallExpressionOptionalChainEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for CallExpressionOptionalChainEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("CallExpressionOptionalChainEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for CallExpressionOptionalChainEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::QuestionDot => "?.",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for CallExpressionOptionalChainEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::QuestionDot => "?.",
-        }).map_err(::askama::Error::from)
-    }
-}
-
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct CallExpressionTemplateCallTransport {
@@ -5206,129 +4464,23 @@ impl ::sittir_core::types::RenderableTransport for _ClassHeritageImplementsClaus
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ConstructSignatureAbstractMarkerEnum {
-    AbstractKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ConstructSignatureAbstractMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in ConstructSignatureAbstractMarkerEnum"))?;
-        match text.as_str() {
-            "abstract" => Ok(Self::AbstractKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for ConstructSignatureAbstractMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ConstructSignatureAbstractMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ConstructSignatureAbstractMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for ConstructSignatureAbstractMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::AbstractKw => "abstract",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for ConstructSignatureAbstractMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::AbstractKw => "abstract",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ConstructorTypeAbstractMarkerEnum {
-    AbstractKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ConstructorTypeAbstractMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in ConstructorTypeAbstractMarkerEnum"))?;
-        match text.as_str() {
-            "abstract" => Ok(Self::AbstractKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for ConstructorTypeAbstractMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ConstructorTypeAbstractMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ConstructorTypeAbstractMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for ConstructorTypeAbstractMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::AbstractKw => "abstract",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for ConstructorTypeAbstractMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::AbstractKw => "abstract",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum EnumDeclarationConstMarkerEnum {
+pub enum ConstMarkerEnum {
     ConstKw,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for EnumDeclarationConstMarkerEnum {
+impl ::napi::bindgen_prelude::FromNapiValue for ConstMarkerEnum {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in EnumDeclarationConstMarkerEnum"))?;
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in ConstMarkerEnum"))?;
         match text.as_str() {
             "const" => Ok(Self::ConstKw),
             other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for EnumDeclarationConstMarkerEnum",
+                "unknown $text value {:?} for ConstMarkerEnum",
                 other
             ))),
         }
@@ -5336,16 +4488,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumDeclarationConstMarkerEnum {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for EnumDeclarationConstMarkerEnum {
+impl ::napi::bindgen_prelude::ToNapiValue for ConstMarkerEnum {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("EnumDeclarationConstMarkerEnum is receive-only"))
+        Err(::napi::Error::from_reason("ConstMarkerEnum is receive-only"))
     }
 }
 
-impl ::std::fmt::Display for EnumDeclarationConstMarkerEnum {
+impl ::std::fmt::Display for ConstMarkerEnum {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         f.write_str(match self {
             Self::ConstKw => "const",
@@ -5353,7 +4505,7 @@ impl ::std::fmt::Display for EnumDeclarationConstMarkerEnum {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for EnumDeclarationConstMarkerEnum {
+impl ::sittir_core::types::RenderableTransport for ConstMarkerEnum {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5722,59 +4874,6 @@ impl ::sittir_core::types::RenderableTransport for ExtendsClauseSingleTransport 
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum FieldDefinitionStaticMarkerEnum {
-    StaticKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for FieldDefinitionStaticMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in FieldDefinitionStaticMarkerEnum"))?;
-        match text.as_str() {
-            "static" => Ok(Self::StaticKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for FieldDefinitionStaticMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FieldDefinitionStaticMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("FieldDefinitionStaticMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for FieldDefinitionStaticMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::StaticKw => "static",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for FieldDefinitionStaticMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::StaticKw => "static",
-        }).map_err(::askama::Error::from)
-    }
-}
-
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ForHeaderTransport {
@@ -5817,7 +4916,7 @@ pub struct ForHeaderLetConstKindTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub kind: ForHeaderLetConstKindKindEnum,
+    pub kind: KindEnum,
     pub left: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<AutomaticSemicolonTransport>>,
@@ -6021,271 +5120,6 @@ impl ::sittir_core::types::RenderableTransport for FromClauseTransport {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum FunctionDeclarationAsyncMarkerEnum {
-    AsyncKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for FunctionDeclarationAsyncMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in FunctionDeclarationAsyncMarkerEnum"))?;
-        match text.as_str() {
-            "async" => Ok(Self::AsyncKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for FunctionDeclarationAsyncMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FunctionDeclarationAsyncMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("FunctionDeclarationAsyncMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for FunctionDeclarationAsyncMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::AsyncKw => "async",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for FunctionDeclarationAsyncMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::AsyncKw => "async",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum FunctionExpressionAsyncMarkerEnum {
-    AsyncKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for FunctionExpressionAsyncMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in FunctionExpressionAsyncMarkerEnum"))?;
-        match text.as_str() {
-            "async" => Ok(Self::AsyncKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for FunctionExpressionAsyncMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FunctionExpressionAsyncMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("FunctionExpressionAsyncMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for FunctionExpressionAsyncMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::AsyncKw => "async",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for FunctionExpressionAsyncMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::AsyncKw => "async",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum FunctionSignatureAsyncMarkerEnum {
-    AsyncKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for FunctionSignatureAsyncMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in FunctionSignatureAsyncMarkerEnum"))?;
-        match text.as_str() {
-            "async" => Ok(Self::AsyncKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for FunctionSignatureAsyncMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FunctionSignatureAsyncMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("FunctionSignatureAsyncMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for FunctionSignatureAsyncMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::AsyncKw => "async",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for FunctionSignatureAsyncMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::AsyncKw => "async",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum GeneratorFunctionAsyncMarkerEnum {
-    AsyncKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for GeneratorFunctionAsyncMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in GeneratorFunctionAsyncMarkerEnum"))?;
-        match text.as_str() {
-            "async" => Ok(Self::AsyncKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for GeneratorFunctionAsyncMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for GeneratorFunctionAsyncMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("GeneratorFunctionAsyncMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for GeneratorFunctionAsyncMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::AsyncKw => "async",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for GeneratorFunctionAsyncMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::AsyncKw => "async",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum GeneratorFunctionDeclarationAsyncMarkerEnum {
-    AsyncKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for GeneratorFunctionDeclarationAsyncMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in GeneratorFunctionDeclarationAsyncMarkerEnum"))?;
-        match text.as_str() {
-            "async" => Ok(Self::AsyncKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for GeneratorFunctionDeclarationAsyncMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for GeneratorFunctionDeclarationAsyncMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("GeneratorFunctionDeclarationAsyncMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for GeneratorFunctionDeclarationAsyncMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::AsyncKw => "async",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for GeneratorFunctionDeclarationAsyncMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::AsyncKw => "async",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ImportAttributeObjectEnum {
     WithKw,
     Assert,
@@ -6450,63 +5284,6 @@ impl ::sittir_core::types::RenderableTransport for ImportSpecifierAsTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ImportSpecifierImportKindEnum {
-    TypeKw,
-    TypeofKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ImportSpecifierImportKindEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in ImportSpecifierImportKindEnum"))?;
-        match text.as_str() {
-            "type" => Ok(Self::TypeKw),
-            "typeof" => Ok(Self::TypeofKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for ImportSpecifierImportKindEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ImportSpecifierImportKindEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ImportSpecifierImportKindEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for ImportSpecifierImportKindEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::TypeKw => "type",
-            Self::TypeofKw => "typeof",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for ImportSpecifierImportKindEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::TypeKw => "type",
-            Self::TypeofKw => "typeof",
-        }).map_err(::askama::Error::from)
-    }
-}
-
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct _ImportSpecifierNameTransport {
@@ -6665,6 +5442,63 @@ impl ::sittir_core::types::RenderableTransport for JsxStringTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_jsx_string_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum KindEnum {
+    LetKw,
+    ConstKw,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for KindEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in KindEnum"))?;
+        match text.as_str() {
+            "let" => Ok(Self::LetKw),
+            "const" => Ok(Self::ConstKw),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for KindEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for KindEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("KindEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for KindEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::LetKw => "let",
+            Self::ConstKw => "const",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for KindEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::LetKw => "let",
+            Self::ConstKw => "const",
+        }).map_err(::askama::Error::from)
     }
 }
 
@@ -6968,63 +5802,6 @@ impl ::sittir_core::types::RenderableTransport for KwUsingMarkerTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum LexicalDeclarationKindEnum {
-    LetKw,
-    ConstKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LexicalDeclarationKindEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in LexicalDeclarationKindEnum"))?;
-        match text.as_str() {
-            "let" => Ok(Self::LetKw),
-            "const" => Ok(Self::ConstKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for LexicalDeclarationKindEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LexicalDeclarationKindEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("LexicalDeclarationKindEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for LexicalDeclarationKindEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::LetKw => "let",
-            Self::ConstKw => "const",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for LexicalDeclarationKindEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::LetKw => "let",
-            Self::ConstKw => "const",
-        }).map_err(::askama::Error::from)
-    }
-}
-
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct LhsExpressionTransport {
@@ -7049,833 +5826,6 @@ impl ::sittir_core::types::RenderableTransport for LhsExpressionTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_lhs_expression_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MemberExpressionOptionalChainEnum {
-    QuestionDot,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionOptionalChainEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in MemberExpressionOptionalChainEnum"))?;
-        match text.as_str() {
-            "?." => Ok(Self::QuestionDot),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for MemberExpressionOptionalChainEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MemberExpressionOptionalChainEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("MemberExpressionOptionalChainEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for MemberExpressionOptionalChainEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::QuestionDot => "?.",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for MemberExpressionOptionalChainEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::QuestionDot => "?.",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MethodDefinitionAccessibilityModifierEnum {
-    PublicKw,
-    PrivateKw,
-    ProtectedKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionAccessibilityModifierEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in MethodDefinitionAccessibilityModifierEnum"))?;
-        match text.as_str() {
-            "public" => Ok(Self::PublicKw),
-            "private" => Ok(Self::PrivateKw),
-            "protected" => Ok(Self::ProtectedKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for MethodDefinitionAccessibilityModifierEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MethodDefinitionAccessibilityModifierEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("MethodDefinitionAccessibilityModifierEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for MethodDefinitionAccessibilityModifierEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::PublicKw => "public",
-            Self::PrivateKw => "private",
-            Self::ProtectedKw => "protected",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for MethodDefinitionAccessibilityModifierEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::PublicKw => "public",
-            Self::PrivateKw => "private",
-            Self::ProtectedKw => "protected",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MethodDefinitionAccessorKindEnum {
-    Get,
-    Set,
-    Star,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionAccessorKindEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in MethodDefinitionAccessorKindEnum"))?;
-        match text.as_str() {
-            "get" => Ok(Self::Get),
-            "set" => Ok(Self::Set),
-            "*" => Ok(Self::Star),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for MethodDefinitionAccessorKindEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MethodDefinitionAccessorKindEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("MethodDefinitionAccessorKindEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for MethodDefinitionAccessorKindEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::Get => "get",
-            Self::Set => "set",
-            Self::Star => "*",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for MethodDefinitionAccessorKindEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::Get => "get",
-            Self::Set => "set",
-            Self::Star => "*",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MethodDefinitionAsyncMarkerEnum {
-    AsyncKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionAsyncMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in MethodDefinitionAsyncMarkerEnum"))?;
-        match text.as_str() {
-            "async" => Ok(Self::AsyncKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for MethodDefinitionAsyncMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MethodDefinitionAsyncMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("MethodDefinitionAsyncMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for MethodDefinitionAsyncMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::AsyncKw => "async",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for MethodDefinitionAsyncMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::AsyncKw => "async",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MethodDefinitionOptionalMarkerEnum {
-    Question,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionOptionalMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in MethodDefinitionOptionalMarkerEnum"))?;
-        match text.as_str() {
-            "?" => Ok(Self::Question),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for MethodDefinitionOptionalMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MethodDefinitionOptionalMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("MethodDefinitionOptionalMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for MethodDefinitionOptionalMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::Question => "?",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for MethodDefinitionOptionalMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::Question => "?",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MethodDefinitionOverrideModifierEnum {
-    OverrideKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionOverrideModifierEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in MethodDefinitionOverrideModifierEnum"))?;
-        match text.as_str() {
-            "override" => Ok(Self::OverrideKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for MethodDefinitionOverrideModifierEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MethodDefinitionOverrideModifierEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("MethodDefinitionOverrideModifierEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for MethodDefinitionOverrideModifierEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::OverrideKw => "override",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for MethodDefinitionOverrideModifierEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::OverrideKw => "override",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MethodDefinitionReadonlyMarkerEnum {
-    ReadonlyKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionReadonlyMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in MethodDefinitionReadonlyMarkerEnum"))?;
-        match text.as_str() {
-            "readonly" => Ok(Self::ReadonlyKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for MethodDefinitionReadonlyMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MethodDefinitionReadonlyMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("MethodDefinitionReadonlyMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for MethodDefinitionReadonlyMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::ReadonlyKw => "readonly",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for MethodDefinitionReadonlyMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::ReadonlyKw => "readonly",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MethodDefinitionStaticMarkerEnum {
-    StaticKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionStaticMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in MethodDefinitionStaticMarkerEnum"))?;
-        match text.as_str() {
-            "static" => Ok(Self::StaticKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for MethodDefinitionStaticMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MethodDefinitionStaticMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("MethodDefinitionStaticMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for MethodDefinitionStaticMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::StaticKw => "static",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for MethodDefinitionStaticMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::StaticKw => "static",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MethodSignatureAccessibilityModifierEnum {
-    PublicKw,
-    PrivateKw,
-    ProtectedKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureAccessibilityModifierEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in MethodSignatureAccessibilityModifierEnum"))?;
-        match text.as_str() {
-            "public" => Ok(Self::PublicKw),
-            "private" => Ok(Self::PrivateKw),
-            "protected" => Ok(Self::ProtectedKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for MethodSignatureAccessibilityModifierEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MethodSignatureAccessibilityModifierEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("MethodSignatureAccessibilityModifierEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for MethodSignatureAccessibilityModifierEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::PublicKw => "public",
-            Self::PrivateKw => "private",
-            Self::ProtectedKw => "protected",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for MethodSignatureAccessibilityModifierEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::PublicKw => "public",
-            Self::PrivateKw => "private",
-            Self::ProtectedKw => "protected",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MethodSignatureAccessorKindEnum {
-    Get,
-    Set,
-    Star,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureAccessorKindEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in MethodSignatureAccessorKindEnum"))?;
-        match text.as_str() {
-            "get" => Ok(Self::Get),
-            "set" => Ok(Self::Set),
-            "*" => Ok(Self::Star),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for MethodSignatureAccessorKindEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MethodSignatureAccessorKindEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("MethodSignatureAccessorKindEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for MethodSignatureAccessorKindEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::Get => "get",
-            Self::Set => "set",
-            Self::Star => "*",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for MethodSignatureAccessorKindEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::Get => "get",
-            Self::Set => "set",
-            Self::Star => "*",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MethodSignatureAsyncMarkerEnum {
-    AsyncKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureAsyncMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in MethodSignatureAsyncMarkerEnum"))?;
-        match text.as_str() {
-            "async" => Ok(Self::AsyncKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for MethodSignatureAsyncMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MethodSignatureAsyncMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("MethodSignatureAsyncMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for MethodSignatureAsyncMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::AsyncKw => "async",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for MethodSignatureAsyncMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::AsyncKw => "async",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MethodSignatureOptionalMarkerEnum {
-    Question,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureOptionalMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in MethodSignatureOptionalMarkerEnum"))?;
-        match text.as_str() {
-            "?" => Ok(Self::Question),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for MethodSignatureOptionalMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MethodSignatureOptionalMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("MethodSignatureOptionalMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for MethodSignatureOptionalMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::Question => "?",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for MethodSignatureOptionalMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::Question => "?",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MethodSignatureOverrideModifierEnum {
-    OverrideKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureOverrideModifierEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in MethodSignatureOverrideModifierEnum"))?;
-        match text.as_str() {
-            "override" => Ok(Self::OverrideKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for MethodSignatureOverrideModifierEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MethodSignatureOverrideModifierEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("MethodSignatureOverrideModifierEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for MethodSignatureOverrideModifierEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::OverrideKw => "override",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for MethodSignatureOverrideModifierEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::OverrideKw => "override",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MethodSignatureReadonlyMarkerEnum {
-    ReadonlyKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureReadonlyMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in MethodSignatureReadonlyMarkerEnum"))?;
-        match text.as_str() {
-            "readonly" => Ok(Self::ReadonlyKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for MethodSignatureReadonlyMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MethodSignatureReadonlyMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("MethodSignatureReadonlyMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for MethodSignatureReadonlyMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::ReadonlyKw => "readonly",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for MethodSignatureReadonlyMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::ReadonlyKw => "readonly",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MethodSignatureStaticMarkerEnum {
-    StaticKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureStaticMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in MethodSignatureStaticMarkerEnum"))?;
-        match text.as_str() {
-            "static" => Ok(Self::StaticKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for MethodSignatureStaticMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MethodSignatureStaticMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("MethodSignatureStaticMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for MethodSignatureStaticMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::StaticKw => "static",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for MethodSignatureStaticMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::StaticKw => "static",
-        }).map_err(::askama::Error::from)
     }
 }
 
@@ -8047,6 +5997,222 @@ impl ::sittir_core::types::RenderableTransport for ObjectTypeOpeningEnum {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum OperatorEnum {
+    V2b_2b,
+    V2d_2d,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for OperatorEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in OperatorEnum"))?;
+        match text.as_str() {
+            "++" => Ok(Self::V2b_2b),
+            "--" => Ok(Self::V2d_2d),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for OperatorEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for OperatorEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("OperatorEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for OperatorEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::V2b_2b => "++",
+            Self::V2d_2d => "--",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for OperatorEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::V2b_2b => "++",
+            Self::V2d_2d => "--",
+        }).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum OptionalChainEnum {
+    QuestionDot,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for OptionalChainEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in OptionalChainEnum"))?;
+        match text.as_str() {
+            "?." => Ok(Self::QuestionDot),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for OptionalChainEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for OptionalChainEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("OptionalChainEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for OptionalChainEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::QuestionDot => "?.",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for OptionalChainEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::QuestionDot => "?.",
+        }).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum OptionalMarkerEnum {
+    Question,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for OptionalMarkerEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in OptionalMarkerEnum"))?;
+        match text.as_str() {
+            "?" => Ok(Self::Question),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for OptionalMarkerEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for OptionalMarkerEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("OptionalMarkerEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for OptionalMarkerEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::Question => "?",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for OptionalMarkerEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::Question => "?",
+        }).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum _OverrideModifierEnum {
+    OverrideKw,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for _OverrideModifierEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in _OverrideModifierEnum"))?;
+        match text.as_str() {
+            "override" => Ok(Self::OverrideKw),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for _OverrideModifierEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for _OverrideModifierEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("_OverrideModifierEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for _OverrideModifierEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::OverrideKw => "override",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for _OverrideModifierEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::OverrideKw => "override",
+        }).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ParameterNameTransport {
@@ -8061,7 +6227,7 @@ pub struct ParameterNameTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub decorator: Vec<DecoratorTransport>,
-    pub readonly_marker: Option<ParameterNameReadonlyMarkerEnum>,
+    pub readonly_marker: Option<ReadonlyMarkerEnum>,
     pub pattern: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<Box<AnyTransport>>>,
@@ -8133,279 +6299,6 @@ impl ::sittir_core::types::RenderableTransport for ParenthesizedExpressionTypedT
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PropertySignatureAccessibilityModifierEnum {
-    PublicKw,
-    PrivateKw,
-    ProtectedKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureAccessibilityModifierEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in PropertySignatureAccessibilityModifierEnum"))?;
-        match text.as_str() {
-            "public" => Ok(Self::PublicKw),
-            "private" => Ok(Self::PrivateKw),
-            "protected" => Ok(Self::ProtectedKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for PropertySignatureAccessibilityModifierEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PropertySignatureAccessibilityModifierEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("PropertySignatureAccessibilityModifierEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for PropertySignatureAccessibilityModifierEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::PublicKw => "public",
-            Self::PrivateKw => "private",
-            Self::ProtectedKw => "protected",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for PropertySignatureAccessibilityModifierEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::PublicKw => "public",
-            Self::PrivateKw => "private",
-            Self::ProtectedKw => "protected",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PropertySignatureOptionalMarkerEnum {
-    Question,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureOptionalMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in PropertySignatureOptionalMarkerEnum"))?;
-        match text.as_str() {
-            "?" => Ok(Self::Question),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for PropertySignatureOptionalMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PropertySignatureOptionalMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("PropertySignatureOptionalMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for PropertySignatureOptionalMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::Question => "?",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for PropertySignatureOptionalMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::Question => "?",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PropertySignatureOverrideModifierEnum {
-    OverrideKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureOverrideModifierEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in PropertySignatureOverrideModifierEnum"))?;
-        match text.as_str() {
-            "override" => Ok(Self::OverrideKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for PropertySignatureOverrideModifierEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PropertySignatureOverrideModifierEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("PropertySignatureOverrideModifierEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for PropertySignatureOverrideModifierEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::OverrideKw => "override",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for PropertySignatureOverrideModifierEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::OverrideKw => "override",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PropertySignatureReadonlyMarkerEnum {
-    ReadonlyKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureReadonlyMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in PropertySignatureReadonlyMarkerEnum"))?;
-        match text.as_str() {
-            "readonly" => Ok(Self::ReadonlyKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for PropertySignatureReadonlyMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PropertySignatureReadonlyMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("PropertySignatureReadonlyMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for PropertySignatureReadonlyMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::ReadonlyKw => "readonly",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for PropertySignatureReadonlyMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::ReadonlyKw => "readonly",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PropertySignatureStaticMarkerEnum {
-    StaticKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureStaticMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in PropertySignatureStaticMarkerEnum"))?;
-        match text.as_str() {
-            "static" => Ok(Self::StaticKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for PropertySignatureStaticMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PropertySignatureStaticMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("PropertySignatureStaticMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for PropertySignatureStaticMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::StaticKw => "static",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for PropertySignatureStaticMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::StaticKw => "static",
-        }).map_err(::askama::Error::from)
-    }
-}
-
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct PublicFieldDefinitionAbstractFirstTransport {
@@ -8419,8 +6312,8 @@ pub struct PublicFieldDefinitionAbstractFirstTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub abstract_marker: PublicFieldDefinitionAbstractFirstAbstractMarkerEnum,
-    pub readonly_marker: Option<PublicFieldDefinitionAbstractFirstReadonlyMarkerEnum>,
+    pub abstract_marker: AbstractMarkerEnum,
+    pub readonly_marker: Option<ReadonlyMarkerEnum>,
 }
 
 impl ::sittir_core::types::RenderableTransport for PublicFieldDefinitionAbstractFirstTransport {
@@ -8584,8 +6477,8 @@ pub struct PublicFieldDefinitionReadonlyFirstTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub readonly_marker: PublicFieldDefinitionReadonlyFirstReadonlyMarkerEnum,
-    pub abstract_marker: Option<PublicFieldDefinitionReadonlyFirstAbstractMarkerEnum>,
+    pub readonly_marker: ReadonlyMarkerEnum,
+    pub abstract_marker: Option<AbstractMarkerEnum>,
 }
 
 impl ::sittir_core::types::RenderableTransport for PublicFieldDefinitionReadonlyFirstTransport {
@@ -8611,8 +6504,8 @@ pub struct PublicFieldDefinitionStaticModsTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub static_marker: PublicFieldDefinitionStaticModsStaticMarkerEnum,
-    pub readonly_marker: Option<PublicFieldDefinitionStaticModsReadonlyMarkerEnum>,
+    pub static_marker: StaticMarkerEnum,
+    pub readonly_marker: Option<ReadonlyMarkerEnum>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<OverrideModifierTransport>>,
 }
@@ -8624,6 +6517,59 @@ impl ::sittir_core::types::RenderableTransport for PublicFieldDefinitionStaticMo
     ) -> Result<(), ::askama::Error> {
         let s = render_public_field_definition_static_mods_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ReadonlyMarkerEnum {
+    ReadonlyKw,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ReadonlyMarkerEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in ReadonlyMarkerEnum"))?;
+        match text.as_str() {
+            "readonly" => Ok(Self::ReadonlyKw),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for ReadonlyMarkerEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ReadonlyMarkerEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ReadonlyMarkerEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for ReadonlyMarkerEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::ReadonlyKw => "readonly",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for ReadonlyMarkerEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::ReadonlyKw => "readonly",
+        }).map_err(::askama::Error::from)
     }
 }
 
@@ -8649,6 +6595,59 @@ impl ::sittir_core::types::RenderableTransport for ReservedIdentifierTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_reserved_identifier_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum StaticMarkerEnum {
+    StaticKw,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for StaticMarkerEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in StaticMarkerEnum"))?;
+        match text.as_str() {
+            "static" => Ok(Self::StaticKw),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for StaticMarkerEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for StaticMarkerEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("StaticMarkerEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for StaticMarkerEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::StaticKw => "static",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for StaticMarkerEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::StaticKw => "static",
+        }).map_err(::askama::Error::from)
     }
 }
 
@@ -8706,59 +6705,6 @@ impl ::sittir_core::types::RenderableTransport for _StringSingleTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum SubscriptExpressionOptionalChainEnum {
-    QuestionDot,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionOptionalChainEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in SubscriptExpressionOptionalChainEnum"))?;
-        match text.as_str() {
-            "?." => Ok(Self::QuestionDot),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for SubscriptExpressionOptionalChainEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for SubscriptExpressionOptionalChainEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("SubscriptExpressionOptionalChainEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for SubscriptExpressionOptionalChainEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::QuestionDot => "?.",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for SubscriptExpressionOptionalChainEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::QuestionDot => "?.",
-        }).map_err(::askama::Error::from)
-    }
-}
-
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TypeIdentifierTransport {
@@ -8783,112 +6729,6 @@ impl ::sittir_core::types::RenderableTransport for TypeIdentifierTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_type_identifier_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum TypeParameterConstMarkerEnum {
-    ConstKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TypeParameterConstMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in TypeParameterConstMarkerEnum"))?;
-        match text.as_str() {
-            "const" => Ok(Self::ConstKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for TypeParameterConstMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TypeParameterConstMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TypeParameterConstMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for TypeParameterConstMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::ConstKw => "const",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for TypeParameterConstMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::ConstKw => "const",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum TypePredicateAnnotationTypePredicateEnum {
-    Colon,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TypePredicateAnnotationTypePredicateEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in TypePredicateAnnotationTypePredicateEnum"))?;
-        match text.as_str() {
-            ":" => Ok(Self::Colon),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for TypePredicateAnnotationTypePredicateEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TypePredicateAnnotationTypePredicateEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TypePredicateAnnotationTypePredicateEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for TypePredicateAnnotationTypePredicateEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::Colon => ":",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for TypePredicateAnnotationTypePredicateEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::Colon => ":",
-        }).map_err(::askama::Error::from)
     }
 }
 
@@ -9131,63 +6971,6 @@ impl ::sittir_core::types::RenderableTransport for UnaryExpressionOperatorEnum {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum UpdateExpressionOperatorEnum {
-    V2b_2b,
-    V2d_2d,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for UpdateExpressionOperatorEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in UpdateExpressionOperatorEnum"))?;
-        match text.as_str() {
-            "++" => Ok(Self::V2b_2b),
-            "--" => Ok(Self::V2d_2d),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for UpdateExpressionOperatorEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for UpdateExpressionOperatorEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("UpdateExpressionOperatorEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for UpdateExpressionOperatorEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::V2b_2b => "++",
-            Self::V2d_2d => "--",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for UpdateExpressionOperatorEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::V2b_2b => "++",
-            Self::V2d_2d => "--",
-        }).map_err(::askama::Error::from)
-    }
-}
-
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct UpdateExpressionPostfixTransport {
@@ -9202,7 +6985,7 @@ pub struct UpdateExpressionPostfixTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub argument: ExpressionTransport,
-    pub operator: UpdateExpressionPostfixOperatorEnum,
+    pub operator: OperatorEnum,
 }
 
 impl ::sittir_core::types::RenderableTransport for UpdateExpressionPostfixTransport {
@@ -9228,7 +7011,7 @@ pub struct UpdateExpressionPrefixTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub operator: UpdateExpressionPrefixOperatorEnum,
+    pub operator: OperatorEnum,
     pub argument: ExpressionTransport,
 }
 
@@ -9285,11 +7068,11 @@ pub struct AbstractMethodSignatureTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub accessibility_modifier: Option<AbstractMethodSignatureAccessibilityModifierEnum>,
-    pub override_modifier: Option<AbstractMethodSignatureOverrideModifierEnum>,
-    pub accessor_kind: Option<AbstractMethodSignatureAccessorKindEnum>,
+    pub accessibility_modifier: Option<_AccessibilityModifierEnum>,
+    pub override_modifier: Option<_OverrideModifierEnum>,
+    pub accessor_kind: Option<AccessorKindEnum>,
     pub name: PropertyNameTransport,
-    pub optional_marker: Option<AbstractMethodSignatureOptionalMarkerEnum>,
+    pub optional_marker: Option<OptionalMarkerEnum>,
     pub type_parameters: Option<TypeParametersTransport>,
     pub parameters: FormalParametersTransport,
     pub return_type: Option<Box<AnyTransport>>,
@@ -9633,7 +7416,7 @@ pub struct ArrowFunctionUFormParameterTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub async_marker: Option<ArrowFunctionAsyncMarkerEnum>,
+    pub async_marker: Option<AsyncMarkerEnum>,
     pub body: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<_ArrowFunctionParameterTransport>,
@@ -9662,7 +7445,7 @@ pub struct ArrowFunctionUFormUCallSignatureTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub async_marker: Option<ArrowFunctionAsyncMarkerEnum>,
+    pub async_marker: Option<AsyncMarkerEnum>,
     pub body: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<_ArrowFunctionUCallSignatureTransport>,
@@ -10488,7 +8271,7 @@ pub struct ConstructSignatureTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub abstract_marker: Option<ConstructSignatureAbstractMarkerEnum>,
+    pub abstract_marker: Option<AbstractMarkerEnum>,
     pub type_parameters: Option<TypeParametersTransport>,
     pub parameters: FormalParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
@@ -10518,7 +8301,7 @@ pub struct ConstructorTypeTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub abstract_marker: Option<ConstructorTypeAbstractMarkerEnum>,
+    pub abstract_marker: Option<AbstractMarkerEnum>,
     pub type_parameters: Option<TypeParametersTransport>,
     pub parameters: FormalParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
@@ -10870,7 +8653,7 @@ pub struct EnumDeclarationTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub const_marker: Option<EnumDeclarationConstMarkerEnum>,
+    pub const_marker: Option<ConstMarkerEnum>,
     pub name: IdentifierTransport,
     pub body: EnumBodyTransport,
 }
@@ -11349,7 +9132,7 @@ pub struct FieldDefinitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub decorator: Vec<DecoratorTransport>,
-    pub static_marker: Option<FieldDefinitionStaticMarkerEnum>,
+    pub static_marker: Option<StaticMarkerEnum>,
     pub property: PropertyNameTransport,
     pub value: Option<ExpressionTransport>,
 }
@@ -11516,7 +9299,7 @@ pub struct FunctionDeclarationTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub async_marker: Option<FunctionDeclarationAsyncMarkerEnum>,
+    pub async_marker: Option<AsyncMarkerEnum>,
     pub name: IdentifierTransport,
     pub type_parameters: Option<TypeParametersTransport>,
     pub parameters: FormalParametersTransport,
@@ -11549,7 +9332,7 @@ pub struct FunctionExpressionTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub async_marker: Option<FunctionExpressionAsyncMarkerEnum>,
+    pub async_marker: Option<AsyncMarkerEnum>,
     pub name: Option<IdentifierTransport>,
     pub type_parameters: Option<TypeParametersTransport>,
     pub parameters: FormalParametersTransport,
@@ -11580,7 +9363,7 @@ pub struct FunctionSignatureTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub async_marker: Option<FunctionSignatureAsyncMarkerEnum>,
+    pub async_marker: Option<AsyncMarkerEnum>,
     pub name: IdentifierTransport,
     pub type_parameters: Option<TypeParametersTransport>,
     pub parameters: FormalParametersTransport,
@@ -11639,7 +9422,7 @@ pub struct GeneratorFunctionTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub async_marker: Option<GeneratorFunctionAsyncMarkerEnum>,
+    pub async_marker: Option<AsyncMarkerEnum>,
     pub name: Option<IdentifierTransport>,
     pub type_parameters: Option<TypeParametersTransport>,
     pub parameters: FormalParametersTransport,
@@ -11670,7 +9453,7 @@ pub struct GeneratorFunctionDeclarationTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub async_marker: Option<GeneratorFunctionDeclarationAsyncMarkerEnum>,
+    pub async_marker: Option<AsyncMarkerEnum>,
     pub name: IdentifierTransport,
     pub type_parameters: Option<TypeParametersTransport>,
     pub parameters: FormalParametersTransport,
@@ -12238,7 +10021,7 @@ pub struct ImportSpecifierUFormNameTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub import_kind: Option<ImportSpecifierImportKindEnum>,
+    pub import_kind: Option<ExportSpecifierExportKindEnum>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<_ImportSpecifierNameTransport>,
 }
@@ -12266,7 +10049,7 @@ pub struct ImportSpecifierUFormAsTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub import_kind: Option<ImportSpecifierImportKindEnum>,
+    pub import_kind: Option<ExportSpecifierExportKindEnum>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<ImportSpecifierAsTransport>,
 }
@@ -12858,7 +10641,7 @@ pub struct LexicalDeclarationTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub kind: LexicalDeclarationKindEnum,
+    pub kind: KindEnum,
     pub declarators: Vec<VariableDeclaratorTransport>,
     pub semicolon: SemicolonTransport,
 }
@@ -13021,14 +10804,14 @@ pub struct MethodDefinitionTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub accessibility_modifier: Option<MethodDefinitionAccessibilityModifierEnum>,
-    pub static_marker: Option<MethodDefinitionStaticMarkerEnum>,
-    pub override_modifier: Option<MethodDefinitionOverrideModifierEnum>,
-    pub readonly_marker: Option<MethodDefinitionReadonlyMarkerEnum>,
-    pub async_marker: Option<MethodDefinitionAsyncMarkerEnum>,
-    pub accessor_kind: Option<MethodDefinitionAccessorKindEnum>,
+    pub accessibility_modifier: Option<_AccessibilityModifierEnum>,
+    pub static_marker: Option<StaticMarkerEnum>,
+    pub override_modifier: Option<_OverrideModifierEnum>,
+    pub readonly_marker: Option<ReadonlyMarkerEnum>,
+    pub async_marker: Option<AsyncMarkerEnum>,
+    pub accessor_kind: Option<AccessorKindEnum>,
     pub name: PropertyNameTransport,
-    pub optional_marker: Option<MethodDefinitionOptionalMarkerEnum>,
+    pub optional_marker: Option<OptionalMarkerEnum>,
     pub type_parameters: Option<TypeParametersTransport>,
     pub parameters: FormalParametersTransport,
     pub return_type: Option<Box<AnyTransport>>,
@@ -13058,14 +10841,14 @@ pub struct MethodSignatureTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub accessibility_modifier: Option<MethodSignatureAccessibilityModifierEnum>,
-    pub static_marker: Option<MethodSignatureStaticMarkerEnum>,
-    pub override_modifier: Option<MethodSignatureOverrideModifierEnum>,
-    pub readonly_marker: Option<MethodSignatureReadonlyMarkerEnum>,
-    pub async_marker: Option<MethodSignatureAsyncMarkerEnum>,
-    pub accessor_kind: Option<MethodSignatureAccessorKindEnum>,
+    pub accessibility_modifier: Option<_AccessibilityModifierEnum>,
+    pub static_marker: Option<StaticMarkerEnum>,
+    pub override_modifier: Option<_OverrideModifierEnum>,
+    pub readonly_marker: Option<ReadonlyMarkerEnum>,
+    pub async_marker: Option<AsyncMarkerEnum>,
+    pub accessor_kind: Option<AccessorKindEnum>,
     pub name: PropertyNameTransport,
-    pub optional_marker: Option<MethodSignatureOptionalMarkerEnum>,
+    pub optional_marker: Option<OptionalMarkerEnum>,
     pub type_parameters: Option<TypeParametersTransport>,
     pub parameters: FormalParametersTransport,
     pub return_type: Option<Box<AnyTransport>>,
@@ -13511,31 +11294,6 @@ impl ::sittir_core::types::RenderableTransport for OptingTypeAnnotationTransport
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct OptionalChainTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub text: String,
-}
-
-impl ::sittir_core::types::RenderableTransport for OptionalChainTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        let s = render_optional_chain_transport(self)?;
-        dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
 pub struct OptionalParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<::sittir_core::types::Source>,
@@ -13548,7 +11306,7 @@ pub struct OptionalParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub decorator: Vec<DecoratorTransport>,
-    pub readonly_marker: Option<ParameterNameReadonlyMarkerEnum>,
+    pub readonly_marker: Option<ReadonlyMarkerEnum>,
     pub pattern: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Option<TypeAnnotationTransport>,
@@ -13939,12 +11697,12 @@ pub struct PropertySignatureTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub accessibility_modifier: Option<PropertySignatureAccessibilityModifierEnum>,
-    pub static_marker: Option<PropertySignatureStaticMarkerEnum>,
-    pub override_modifier: Option<PropertySignatureOverrideModifierEnum>,
-    pub readonly_marker: Option<PropertySignatureReadonlyMarkerEnum>,
+    pub accessibility_modifier: Option<_AccessibilityModifierEnum>,
+    pub static_marker: Option<StaticMarkerEnum>,
+    pub override_modifier: Option<_OverrideModifierEnum>,
+    pub readonly_marker: Option<ReadonlyMarkerEnum>,
     pub name: PropertyNameTransport,
-    pub optional_marker: Option<PropertySignatureOptionalMarkerEnum>,
+    pub optional_marker: Option<OptionalMarkerEnum>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Option<TypeAnnotationTransport>,
 }
@@ -14110,7 +11868,7 @@ pub struct RequiredParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub decorator: Vec<DecoratorTransport>,
-    pub readonly_marker: Option<ParameterNameReadonlyMarkerEnum>,
+    pub readonly_marker: Option<ReadonlyMarkerEnum>,
     pub pattern: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Option<TypeAnnotationTransport>,
@@ -14480,7 +12238,7 @@ pub struct SubscriptExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub object: Box<AnyTransport>,
-    pub optional_chain: Option<SubscriptExpressionOptionalChainEnum>,
+    pub optional_chain: Option<OptionalChainEnum>,
     pub index: ExpressionsTransport,
 }
 
@@ -15046,7 +12804,7 @@ pub struct TypeParameterTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub const_marker: Option<TypeParameterConstMarkerEnum>,
+    pub const_marker: Option<ConstMarkerEnum>,
     pub name: TypeIdentifierTransport,
     pub constraint: Option<ConstraintTransport>,
     pub value: Option<DefaultTypeTransport>,
@@ -17783,14 +15541,6 @@ impl ::askama::FastWritable for Renderable<'_> {
     }
 }
 
-fn render_for_header_kind_transport(t: &ForHeaderKindEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_for_header_let_const_kind_kind_transport(t: &ForHeaderLetConstKindKindEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
 fn render_for_header_operator_transport(t: &ForHeaderOperatorEnum) -> Result<String, ::askama::Error> {
     Ok(t.to_string())
 }
@@ -17803,18 +15553,6 @@ fn render_number_operator_transport(t: &NumberOperatorEnum) -> Result<String, ::
     Ok(t.to_string())
 }
 
-fn render_parameter_name_readonly_marker_transport(t: &ParameterNameReadonlyMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_public_field_definition_abstract_first_abstract_marker_transport(t: &PublicFieldDefinitionAbstractFirstAbstractMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_public_field_definition_abstract_first_readonly_marker_transport(t: &PublicFieldDefinitionAbstractFirstReadonlyMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
 fn render_public_field_definition_access_first_declare_marker_transport(t: &PublicFieldDefinitionAccessFirstDeclareMarkerEnum) -> Result<String, ::askama::Error> {
     Ok(t.to_string())
 }
@@ -17823,52 +15561,20 @@ fn render_public_field_definition_accessor_opt_accessor_marker_transport(t: &Pub
     Ok(t.to_string())
 }
 
-fn render_public_field_definition_readonly_first_abstract_marker_transport(t: &PublicFieldDefinitionReadonlyFirstAbstractMarkerEnum) -> Result<String, ::askama::Error> {
+fn render_abstract_marker_transport(t: &AbstractMarkerEnum) -> Result<String, ::askama::Error> {
     Ok(t.to_string())
 }
 
-fn render_public_field_definition_readonly_first_readonly_marker_transport(t: &PublicFieldDefinitionReadonlyFirstReadonlyMarkerEnum) -> Result<String, ::askama::Error> {
+fn render__accessibility_modifier_transport(t: &_AccessibilityModifierEnum) -> Result<String, ::askama::Error> {
     Ok(t.to_string())
 }
 
-fn render_public_field_definition_static_mods_readonly_marker_transport(t: &PublicFieldDefinitionStaticModsReadonlyMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_public_field_definition_static_mods_static_marker_transport(t: &PublicFieldDefinitionStaticModsStaticMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_update_expression_postfix_operator_transport(t: &UpdateExpressionPostfixOperatorEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_update_expression_prefix_operator_transport(t: &UpdateExpressionPrefixOperatorEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_abstract_method_signature_accessibility_modifier_transport(t: &AbstractMethodSignatureAccessibilityModifierEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_abstract_method_signature_accessor_kind_transport(t: &AbstractMethodSignatureAccessorKindEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_abstract_method_signature_optional_marker_transport(t: &AbstractMethodSignatureOptionalMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_abstract_method_signature_override_modifier_transport(t: &AbstractMethodSignatureOverrideModifierEnum) -> Result<String, ::askama::Error> {
+fn render_accessor_kind_transport(t: &AccessorKindEnum) -> Result<String, ::askama::Error> {
     Ok(t.to_string())
 }
 
 fn render__arrow_function_ucall_signature_transport(node: &_ArrowFunctionUCallSignatureTransport) -> Result<String, ::askama::Error> {
     Ok(node.transport_text.clone().unwrap_or_default())
-}
-
-fn render_arrow_function_async_marker_transport(t: &ArrowFunctionAsyncMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
 }
 
 fn render__arrow_function_parameter_transport(node: &_ArrowFunctionParameterTransport) -> Result<String, ::askama::Error> {
@@ -17880,6 +15586,10 @@ fn render_asserts_annotation_asserts_transport(t: &AssertsAnnotationAssertsEnum)
 }
 
 fn render_assignment_expression_using_marker_transport(t: &AssignmentExpressionUsingMarkerEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
+}
+
+fn render_async_marker_transport(t: &AsyncMarkerEnum) -> Result<String, ::askama::Error> {
     Ok(t.to_string())
 }
 
@@ -17897,10 +15607,6 @@ fn render_call_expression_call_transport(node: &CallExpressionCallTransport) -> 
 
 fn render_call_expression_member_transport(node: &CallExpressionMemberTransport) -> Result<String, ::askama::Error> {
     Ok(node.transport_text.clone().unwrap_or_default())
-}
-
-fn render_call_expression_optional_chain_transport(t: &CallExpressionOptionalChainEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
 }
 
 fn render_call_expression_template_call_transport(node: &CallExpressionTemplateCallTransport) -> Result<String, ::askama::Error> {
@@ -17981,15 +15687,7 @@ fn render__class_heritage_implements_clause_transport(node: &_ClassHeritageImple
     Ok(out)
 }
 
-fn render_construct_signature_abstract_marker_transport(t: &ConstructSignatureAbstractMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_constructor_type_abstract_marker_transport(t: &ConstructorTypeAbstractMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_enum_declaration_const_marker_transport(t: &EnumDeclarationConstMarkerEnum) -> Result<String, ::askama::Error> {
+fn render_const_marker_transport(t: &ConstMarkerEnum) -> Result<String, ::askama::Error> {
     Ok(t.to_string())
 }
 
@@ -18136,10 +15834,6 @@ fn render_extends_clause_single_transport(node: &ExtendsClauseSingleTransport) -
     Ok(node.transport_text.clone().unwrap_or_default())
 }
 
-fn render_field_definition_static_marker_transport(t: &FieldDefinitionStaticMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
 fn render_for_header_transport(node: &ForHeaderTransport) -> Result<String, ::askama::Error> {
     let mut out = String::new();
     for child in node.children.iter() {
@@ -18194,26 +15888,6 @@ fn render_from_clause_transport(node: &FromClauseTransport) -> Result<String, ::
     Ok(node.transport_text.clone().unwrap_or_default())
 }
 
-fn render_function_declaration_async_marker_transport(t: &FunctionDeclarationAsyncMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_function_expression_async_marker_transport(t: &FunctionExpressionAsyncMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_function_signature_async_marker_transport(t: &FunctionSignatureAsyncMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_generator_function_async_marker_transport(t: &GeneratorFunctionAsyncMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_generator_function_declaration_async_marker_transport(t: &GeneratorFunctionDeclarationAsyncMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
 fn render_import_attribute_object_transport(t: &ImportAttributeObjectEnum) -> Result<String, ::askama::Error> {
     Ok(t.to_string())
 }
@@ -18244,10 +15918,6 @@ fn render__import_clause_namespace_import_transport(node: &_ImportClauseNamespac
 
 fn render_import_specifier_as_transport(node: &ImportSpecifierAsTransport) -> Result<String, ::askama::Error> {
     Ok(node.transport_text.clone().unwrap_or_default())
-}
-
-fn render_import_specifier_import_kind_transport(t: &ImportSpecifierImportKindEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
 }
 
 fn render__import_specifier_name_transport(node: &_ImportSpecifierNameTransport) -> Result<String, ::askama::Error> {
@@ -18283,6 +15953,10 @@ fn render_jsx_string_transport(node: &JsxStringTransport) -> Result<String, ::as
         out.push_str(&child.as_ref().render_to_string()?);
     }
     Ok(out)
+}
+
+fn render_kind_transport(t: &KindEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
 }
 
 fn render_kw_abstract_marker_transport(t: &KwAbstractMarkerTransport) -> Result<String, ::askama::Error> {
@@ -18333,10 +16007,6 @@ fn render_kw_using_marker_transport(t: &KwUsingMarkerTransport) -> Result<String
     Ok(t.text.clone())
 }
 
-fn render_lexical_declaration_kind_transport(t: &LexicalDeclarationKindEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
 fn render_lhs_expression_transport(node: &LhsExpressionTransport) -> Result<String, ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
@@ -18350,66 +16020,6 @@ fn render_lhs_expression_transport(node: &LhsExpressionTransport) -> Result<Stri
         },
     };
     template.render()
-}
-
-fn render_member_expression_optional_chain_transport(t: &MemberExpressionOptionalChainEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_method_definition_accessibility_modifier_transport(t: &MethodDefinitionAccessibilityModifierEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_method_definition_accessor_kind_transport(t: &MethodDefinitionAccessorKindEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_method_definition_async_marker_transport(t: &MethodDefinitionAsyncMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_method_definition_optional_marker_transport(t: &MethodDefinitionOptionalMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_method_definition_override_modifier_transport(t: &MethodDefinitionOverrideModifierEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_method_definition_readonly_marker_transport(t: &MethodDefinitionReadonlyMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_method_definition_static_marker_transport(t: &MethodDefinitionStaticMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_method_signature_accessibility_modifier_transport(t: &MethodSignatureAccessibilityModifierEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_method_signature_accessor_kind_transport(t: &MethodSignatureAccessorKindEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_method_signature_async_marker_transport(t: &MethodSignatureAsyncMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_method_signature_optional_marker_transport(t: &MethodSignatureOptionalMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_method_signature_override_modifier_transport(t: &MethodSignatureOverrideModifierEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_method_signature_readonly_marker_transport(t: &MethodSignatureReadonlyMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_method_signature_static_marker_transport(t: &MethodSignatureStaticMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
 }
 
 fn render__module_transport(node: &_ModuleTransport) -> Result<String, ::askama::Error> {
@@ -18429,6 +16039,22 @@ fn render_object_type_closing_transport(t: &ObjectTypeClosingEnum) -> Result<Str
 }
 
 fn render_object_type_opening_transport(t: &ObjectTypeOpeningEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
+}
+
+fn render_operator_transport(t: &OperatorEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
+}
+
+fn render_optional_chain_transport(t: &OptionalChainEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
+}
+
+fn render_optional_marker_transport(t: &OptionalMarkerEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
+}
+
+fn render__override_modifier_transport(t: &_OverrideModifierEnum) -> Result<String, ::askama::Error> {
     Ok(t.to_string())
 }
 
@@ -18456,26 +16082,6 @@ fn render_parenthesized_expression_typed_transport(node: &ParenthesizedExpressio
         out.push_str(&render_expression_transport(child)?);
     }
     Ok(out)
-}
-
-fn render_property_signature_accessibility_modifier_transport(t: &PropertySignatureAccessibilityModifierEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_property_signature_optional_marker_transport(t: &PropertySignatureOptionalMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_property_signature_override_modifier_transport(t: &PropertySignatureOverrideModifierEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_property_signature_readonly_marker_transport(t: &PropertySignatureReadonlyMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_property_signature_static_marker_transport(t: &PropertySignatureStaticMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
 }
 
 fn render_public_field_definition_abstract_first_transport(node: &PublicFieldDefinitionAbstractFirstTransport) -> Result<String, ::askama::Error> {
@@ -18567,8 +16173,16 @@ fn render_public_field_definition_static_mods_transport(node: &PublicFieldDefini
     template.render()
 }
 
+fn render_readonly_marker_transport(t: &ReadonlyMarkerEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
+}
+
 fn render_reserved_identifier_transport(t: &ReservedIdentifierTransport) -> Result<String, ::askama::Error> {
     Ok(t.text.clone())
+}
+
+fn render_static_marker_transport(t: &StaticMarkerEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
 }
 
 fn render__string_double_transport(node: &_StringDoubleTransport) -> Result<String, ::askama::Error> {
@@ -18587,10 +16201,6 @@ fn render__string_single_transport(node: &_StringSingleTransport) -> Result<Stri
     Ok(out)
 }
 
-fn render_subscript_expression_optional_chain_transport(t: &SubscriptExpressionOptionalChainEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
 fn render_type_identifier_transport(node: &TypeIdentifierTransport) -> Result<String, ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
@@ -18604,14 +16214,6 @@ fn render_type_identifier_transport(node: &TypeIdentifierTransport) -> Result<St
         },
     };
     template.render()
-}
-
-fn render_type_parameter_const_marker_transport(t: &TypeParameterConstMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_type_predicate_annotation_type_predicate_transport(t: &TypePredicateAnnotationTypePredicateEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
 }
 
 fn render_type_query_call_expression_transport(node: &TypeQueryCallExpressionTransport) -> Result<String, ::askama::Error> {
@@ -18663,10 +16265,6 @@ fn render_type_query_subscript_expression_transport(node: &TypeQuerySubscriptExp
 }
 
 fn render_unary_expression_operator_transport(t: &UnaryExpressionOperatorEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_update_expression_operator_transport(t: &UpdateExpressionOperatorEnum) -> Result<String, ::askama::Error> {
     Ok(t.to_string())
 }
 
@@ -20695,10 +18293,6 @@ fn render_opting_type_annotation_transport(node: &OptingTypeAnnotationTransport)
     template.render()
 }
 
-fn render_optional_chain_transport(t: &OptionalChainTransport) -> Result<String, ::askama::Error> {
-    Ok(t.text.clone())
-}
-
 fn render_optional_parameter_transport(node: &OptionalParameterTransport) -> Result<String, ::askama::Error> {
     let children_owned: &[Box<AnyTransport>] = node.children.as_deref().unwrap_or(&[]);
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_owned.iter()
@@ -22165,36 +19759,23 @@ fn render_type_transport(t: &TypeTransport) -> Result<String, ::askama::Error> {
 
 pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::askama::Error> {
     match transport {
-        AnyTransport::ForHeaderKind(t) => render_for_header_kind_transport(t),
-        AnyTransport::ForHeaderLetConstKindKind(t) => render_for_header_let_const_kind_kind_transport(t),
         AnyTransport::ForHeaderOperator(t) => render_for_header_operator_transport(t),
         AnyTransport::ForHeaderVarKindKind(t) => render_for_header_var_kind_kind_transport(t),
         AnyTransport::NumberOperator(t) => render_number_operator_transport(t),
-        AnyTransport::ParameterNameReadonlyMarker(t) => render_parameter_name_readonly_marker_transport(t),
-        AnyTransport::PublicFieldDefinitionAbstractFirstAbstractMarker(t) => render_public_field_definition_abstract_first_abstract_marker_transport(t),
-        AnyTransport::PublicFieldDefinitionAbstractFirstReadonlyMarker(t) => render_public_field_definition_abstract_first_readonly_marker_transport(t),
         AnyTransport::PublicFieldDefinitionAccessFirstDeclareMarker(t) => render_public_field_definition_access_first_declare_marker_transport(t),
         AnyTransport::PublicFieldDefinitionAccessorOptAccessorMarker(t) => render_public_field_definition_accessor_opt_accessor_marker_transport(t),
-        AnyTransport::PublicFieldDefinitionReadonlyFirstAbstractMarker(t) => render_public_field_definition_readonly_first_abstract_marker_transport(t),
-        AnyTransport::PublicFieldDefinitionReadonlyFirstReadonlyMarker(t) => render_public_field_definition_readonly_first_readonly_marker_transport(t),
-        AnyTransport::PublicFieldDefinitionStaticModsReadonlyMarker(t) => render_public_field_definition_static_mods_readonly_marker_transport(t),
-        AnyTransport::PublicFieldDefinitionStaticModsStaticMarker(t) => render_public_field_definition_static_mods_static_marker_transport(t),
-        AnyTransport::UpdateExpressionPostfixOperator(t) => render_update_expression_postfix_operator_transport(t),
-        AnyTransport::UpdateExpressionPrefixOperator(t) => render_update_expression_prefix_operator_transport(t),
-        AnyTransport::AbstractMethodSignatureAccessibilityModifier(t) => render_abstract_method_signature_accessibility_modifier_transport(t),
-        AnyTransport::AbstractMethodSignatureAccessorKind(t) => render_abstract_method_signature_accessor_kind_transport(t),
-        AnyTransport::AbstractMethodSignatureOptionalMarker(t) => render_abstract_method_signature_optional_marker_transport(t),
-        AnyTransport::AbstractMethodSignatureOverrideModifier(t) => render_abstract_method_signature_override_modifier_transport(t),
+        AnyTransport::AbstractMarker(t) => render_abstract_marker_transport(t),
+        AnyTransport::_AccessibilityModifier(t) => render__accessibility_modifier_transport(t),
+        AnyTransport::AccessorKind(t) => render_accessor_kind_transport(t),
         AnyTransport::_ArrowFunctionUCallSignature(t) => render__arrow_function_ucall_signature_transport(t),
-        AnyTransport::ArrowFunctionAsyncMarker(t) => render_arrow_function_async_marker_transport(t),
         AnyTransport::_ArrowFunctionParameter(t) => render__arrow_function_parameter_transport(t),
         AnyTransport::AssertsAnnotationAsserts(t) => render_asserts_annotation_asserts_transport(t),
         AnyTransport::AssignmentExpressionUsingMarker(t) => render_assignment_expression_using_marker_transport(t),
+        AnyTransport::AsyncMarker(t) => render_async_marker_transport(t),
         AnyTransport::AugmentedAssignmentExpressionOperator(t) => render_augmented_assignment_expression_operator_transport(t),
         AnyTransport::BinaryExpressionOperator(t) => render_binary_expression_operator_transport(t),
         AnyTransport::CallExpressionCall(t) => render_call_expression_call_transport(t),
         AnyTransport::CallExpressionMember(t) => render_call_expression_member_transport(t),
-        AnyTransport::CallExpressionOptionalChain(t) => render_call_expression_optional_chain_transport(t),
         AnyTransport::CallExpressionTemplateCall(t) => render_call_expression_template_call_transport(t),
         AnyTransport::_CallSignature(t) => render__call_signature_transport(t),
         AnyTransport::ClassBodyMember(t) => render_class_body_member_transport(t),
@@ -22202,9 +19783,7 @@ pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::a
         AnyTransport::ClassBodyMethodSig(t) => render_class_body_method_sig_transport(t),
         AnyTransport::_ClassHeritageExtendsClause(t) => render__class_heritage_extends_clause_transport(t),
         AnyTransport::_ClassHeritageImplementsClause(t) => render__class_heritage_implements_clause_transport(t),
-        AnyTransport::ConstructSignatureAbstractMarker(t) => render_construct_signature_abstract_marker_transport(t),
-        AnyTransport::ConstructorTypeAbstractMarker(t) => render_constructor_type_abstract_marker_transport(t),
-        AnyTransport::EnumDeclarationConstMarker(t) => render_enum_declaration_const_marker_transport(t),
+        AnyTransport::ConstMarker(t) => render_const_marker_transport(t),
         AnyTransport::ExportSpecifierExportKind(t) => render_export_specifier_export_kind_transport(t),
         AnyTransport::ExportStatementDefaultDeclArm(t) => render_export_statement_default_decl_arm_transport(t),
         AnyTransport::ExportStatementDefaultDeclArmDefaultKw(t) => render_export_statement_default_decl_arm_default_kw_transport(t),
@@ -22217,7 +19796,6 @@ pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::a
         AnyTransport::_ExportStatementNamespaceExport(t) => render__export_statement_namespace_export_transport(t),
         AnyTransport::_ExportStatementTypeExport(t) => render__export_statement_type_export_transport(t),
         AnyTransport::ExtendsClauseSingle(t) => render_extends_clause_single_transport(t),
-        AnyTransport::FieldDefinitionStaticMarker(t) => render_field_definition_static_marker_transport(t),
         AnyTransport::ForHeader(t) => render_for_header_transport(t),
         AnyTransport::ForHeaderLetConstKind(t) => render_for_header_let_const_kind_transport(t),
         AnyTransport::ForHeaderLhs(t) => render_for_header_lhs_transport(t),
@@ -22225,23 +19803,18 @@ pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::a
         AnyTransport::ForInStatementAwaitMarker(t) => render_for_in_statement_await_marker_transport(t),
         AnyTransport::ForStatementInitializer(t) => render_for_statement_initializer_transport(t),
         AnyTransport::FromClause(t) => render_from_clause_transport(t),
-        AnyTransport::FunctionDeclarationAsyncMarker(t) => render_function_declaration_async_marker_transport(t),
-        AnyTransport::FunctionExpressionAsyncMarker(t) => render_function_expression_async_marker_transport(t),
-        AnyTransport::FunctionSignatureAsyncMarker(t) => render_function_signature_async_marker_transport(t),
-        AnyTransport::GeneratorFunctionAsyncMarker(t) => render_generator_function_async_marker_transport(t),
-        AnyTransport::GeneratorFunctionDeclarationAsyncMarker(t) => render_generator_function_declaration_async_marker_transport(t),
         AnyTransport::ImportAttributeObject(t) => render_import_attribute_object_transport(t),
         AnyTransport::_ImportClauseDefaultImport(t) => render__import_clause_default_import_transport(t),
         AnyTransport::_ImportClauseNamedImports(t) => render__import_clause_named_imports_transport(t),
         AnyTransport::_ImportClauseNamespaceImport(t) => render__import_clause_namespace_import_transport(t),
         AnyTransport::ImportSpecifierAs(t) => render_import_specifier_as_transport(t),
-        AnyTransport::ImportSpecifierImportKind(t) => render_import_specifier_import_kind_transport(t),
         AnyTransport::_ImportSpecifierName(t) => render__import_specifier_name_transport(t),
         AnyTransport::IndexSignatureColon(t) => render_index_signature_colon_transport(t),
         AnyTransport::_IndexSignatureMappedTypeClause(t) => render__index_signature_mapped_type_clause_transport(t),
         AnyTransport::Initializer(t) => render_initializer_transport(t),
         AnyTransport::JsxStartOpeningElement(t) => render_jsx_start_opening_element_transport(t),
         AnyTransport::JsxString(t) => render_jsx_string_transport(t),
+        AnyTransport::Kind(t) => render_kind_transport(t),
         AnyTransport::KwAbstractMarker(t) => render_kw_abstract_marker_transport(t),
         AnyTransport::KwAccessorMarker(t) => render_kw_accessor_marker_transport(t),
         AnyTransport::KwAsserts(t) => render_kw_asserts_transport(t),
@@ -22254,35 +19827,18 @@ pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::a
         AnyTransport::KwStaticMarker(t) => render_kw_static_marker_transport(t),
         AnyTransport::KwTypePredicate(t) => render_kw_type_predicate_transport(t),
         AnyTransport::KwUsingMarker(t) => render_kw_using_marker_transport(t),
-        AnyTransport::LexicalDeclarationKind(t) => render_lexical_declaration_kind_transport(t),
         AnyTransport::LhsExpression(t) => render_lhs_expression_transport(t),
-        AnyTransport::MemberExpressionOptionalChain(t) => render_member_expression_optional_chain_transport(t),
-        AnyTransport::MethodDefinitionAccessibilityModifier(t) => render_method_definition_accessibility_modifier_transport(t),
-        AnyTransport::MethodDefinitionAccessorKind(t) => render_method_definition_accessor_kind_transport(t),
-        AnyTransport::MethodDefinitionAsyncMarker(t) => render_method_definition_async_marker_transport(t),
-        AnyTransport::MethodDefinitionOptionalMarker(t) => render_method_definition_optional_marker_transport(t),
-        AnyTransport::MethodDefinitionOverrideModifier(t) => render_method_definition_override_modifier_transport(t),
-        AnyTransport::MethodDefinitionReadonlyMarker(t) => render_method_definition_readonly_marker_transport(t),
-        AnyTransport::MethodDefinitionStaticMarker(t) => render_method_definition_static_marker_transport(t),
-        AnyTransport::MethodSignatureAccessibilityModifier(t) => render_method_signature_accessibility_modifier_transport(t),
-        AnyTransport::MethodSignatureAccessorKind(t) => render_method_signature_accessor_kind_transport(t),
-        AnyTransport::MethodSignatureAsyncMarker(t) => render_method_signature_async_marker_transport(t),
-        AnyTransport::MethodSignatureOptionalMarker(t) => render_method_signature_optional_marker_transport(t),
-        AnyTransport::MethodSignatureOverrideModifier(t) => render_method_signature_override_modifier_transport(t),
-        AnyTransport::MethodSignatureReadonlyMarker(t) => render_method_signature_readonly_marker_transport(t),
-        AnyTransport::MethodSignatureStaticMarker(t) => render_method_signature_static_marker_transport(t),
         AnyTransport::_Module(t) => render__module_transport(t),
         AnyTransport::_Number(t) => render__number_transport(t),
         AnyTransport::ObjectTypeClosing(t) => render_object_type_closing_transport(t),
         AnyTransport::ObjectTypeOpening(t) => render_object_type_opening_transport(t),
+        AnyTransport::Operator(t) => render_operator_transport(t),
+        AnyTransport::OptionalChain(t) => render_optional_chain_transport(t),
+        AnyTransport::OptionalMarker(t) => render_optional_marker_transport(t),
+        AnyTransport::_OverrideModifier(t) => render__override_modifier_transport(t),
         AnyTransport::ParameterName(t) => render_parameter_name_transport(t),
         AnyTransport::_ParenthesizedExpressionSequence(t) => render__parenthesized_expression_sequence_transport(t),
         AnyTransport::ParenthesizedExpressionTyped(t) => render_parenthesized_expression_typed_transport(t),
-        AnyTransport::PropertySignatureAccessibilityModifier(t) => render_property_signature_accessibility_modifier_transport(t),
-        AnyTransport::PropertySignatureOptionalMarker(t) => render_property_signature_optional_marker_transport(t),
-        AnyTransport::PropertySignatureOverrideModifier(t) => render_property_signature_override_modifier_transport(t),
-        AnyTransport::PropertySignatureReadonlyMarker(t) => render_property_signature_readonly_marker_transport(t),
-        AnyTransport::PropertySignatureStaticMarker(t) => render_property_signature_static_marker_transport(t),
         AnyTransport::PublicFieldDefinitionAbstractFirst(t) => render_public_field_definition_abstract_first_transport(t),
         AnyTransport::PublicFieldDefinitionAccessFirst(t) => render_public_field_definition_access_first_transport(t),
         AnyTransport::PublicFieldDefinitionAccessorOpt(t) => render_public_field_definition_accessor_opt_transport(t),
@@ -22290,13 +19846,12 @@ pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::a
         AnyTransport::PublicFieldDefinitionOptionalityMarker(t) => render_public_field_definition_optionality_marker_transport(t),
         AnyTransport::PublicFieldDefinitionReadonlyFirst(t) => render_public_field_definition_readonly_first_transport(t),
         AnyTransport::PublicFieldDefinitionStaticMods(t) => render_public_field_definition_static_mods_transport(t),
+        AnyTransport::ReadonlyMarker(t) => render_readonly_marker_transport(t),
         AnyTransport::ReservedIdentifier(t) => render_reserved_identifier_transport(t),
+        AnyTransport::StaticMarker(t) => render_static_marker_transport(t),
         AnyTransport::_StringDouble(t) => render__string_double_transport(t),
         AnyTransport::_StringSingle(t) => render__string_single_transport(t),
-        AnyTransport::SubscriptExpressionOptionalChain(t) => render_subscript_expression_optional_chain_transport(t),
         AnyTransport::TypeIdentifier(t) => render_type_identifier_transport(t),
-        AnyTransport::TypeParameterConstMarker(t) => render_type_parameter_const_marker_transport(t),
-        AnyTransport::TypePredicateAnnotationTypePredicate(t) => render_type_predicate_annotation_type_predicate_transport(t),
         AnyTransport::TypeQueryCallExpression(t) => render_type_query_call_expression_transport(t),
         AnyTransport::TypeQueryCallExpressionInTypeAnnotation(t) => render_type_query_call_expression_in_type_annotation_transport(t),
         AnyTransport::TypeQueryInstantiationExpression(t) => render_type_query_instantiation_expression_transport(t),
@@ -22304,7 +19859,6 @@ pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::a
         AnyTransport::TypeQueryMemberExpressionInTypeAnnotation(t) => render_type_query_member_expression_in_type_annotation_transport(t),
         AnyTransport::TypeQuerySubscriptExpression(t) => render_type_query_subscript_expression_transport(t),
         AnyTransport::UnaryExpressionOperator(t) => render_unary_expression_operator_transport(t),
-        AnyTransport::UpdateExpressionOperator(t) => render_update_expression_operator_transport(t),
         AnyTransport::UpdateExpressionPostfix(t) => render_update_expression_postfix_transport(t),
         AnyTransport::UpdateExpressionPrefix(t) => render_update_expression_prefix_transport(t),
         AnyTransport::AbstractClassDeclaration(t) => render_abstract_class_declaration_transport(t),
@@ -22439,7 +19993,6 @@ pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::a
         AnyTransport::ObjectType(t) => render_object_type_transport(t),
         AnyTransport::OmittingTypeAnnotation(t) => render_omitting_type_annotation_transport(t),
         AnyTransport::OptingTypeAnnotation(t) => render_opting_type_annotation_transport(t),
-        AnyTransport::OptionalChain(t) => render_optional_chain_transport(t),
         AnyTransport::OptionalParameter(t) => render_optional_parameter_transport(t),
         AnyTransport::OptionalTupleParameter(t) => render_optional_tuple_parameter_transport(t),
         AnyTransport::OptionalType(t) => render_optional_type_transport(t),
@@ -22665,36 +20218,23 @@ fn transport_children(values: Vec<Box<AnyTransport>>) -> Result<Vec<TransportNod
 
 fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::askama::Error> {
     match transport {
-        AnyTransport::ForHeaderKind(data) => transport_to_node_for_header_kind(data),
-        AnyTransport::ForHeaderLetConstKindKind(data) => transport_to_node_for_header_let_const_kind_kind(data),
         AnyTransport::ForHeaderOperator(data) => transport_to_node_for_header_operator(data),
         AnyTransport::ForHeaderVarKindKind(data) => transport_to_node_for_header_var_kind_kind(data),
         AnyTransport::NumberOperator(data) => transport_to_node_number_operator(data),
-        AnyTransport::ParameterNameReadonlyMarker(data) => transport_to_node_parameter_name_readonly_marker(data),
-        AnyTransport::PublicFieldDefinitionAbstractFirstAbstractMarker(data) => transport_to_node_public_field_definition_abstract_first_abstract_marker(data),
-        AnyTransport::PublicFieldDefinitionAbstractFirstReadonlyMarker(data) => transport_to_node_public_field_definition_abstract_first_readonly_marker(data),
         AnyTransport::PublicFieldDefinitionAccessFirstDeclareMarker(data) => transport_to_node_public_field_definition_access_first_declare_marker(data),
         AnyTransport::PublicFieldDefinitionAccessorOptAccessorMarker(data) => transport_to_node_public_field_definition_accessor_opt_accessor_marker(data),
-        AnyTransport::PublicFieldDefinitionReadonlyFirstAbstractMarker(data) => transport_to_node_public_field_definition_readonly_first_abstract_marker(data),
-        AnyTransport::PublicFieldDefinitionReadonlyFirstReadonlyMarker(data) => transport_to_node_public_field_definition_readonly_first_readonly_marker(data),
-        AnyTransport::PublicFieldDefinitionStaticModsReadonlyMarker(data) => transport_to_node_public_field_definition_static_mods_readonly_marker(data),
-        AnyTransport::PublicFieldDefinitionStaticModsStaticMarker(data) => transport_to_node_public_field_definition_static_mods_static_marker(data),
-        AnyTransport::UpdateExpressionPostfixOperator(data) => transport_to_node_update_expression_postfix_operator(data),
-        AnyTransport::UpdateExpressionPrefixOperator(data) => transport_to_node_update_expression_prefix_operator(data),
-        AnyTransport::AbstractMethodSignatureAccessibilityModifier(data) => transport_to_node_abstract_method_signature_accessibility_modifier(data),
-        AnyTransport::AbstractMethodSignatureAccessorKind(data) => transport_to_node_abstract_method_signature_accessor_kind(data),
-        AnyTransport::AbstractMethodSignatureOptionalMarker(data) => transport_to_node_abstract_method_signature_optional_marker(data),
-        AnyTransport::AbstractMethodSignatureOverrideModifier(data) => transport_to_node_abstract_method_signature_override_modifier(data),
+        AnyTransport::AbstractMarker(data) => transport_to_node_abstract_marker(data),
+        AnyTransport::_AccessibilityModifier(data) => transport_to_node__accessibility_modifier(data),
+        AnyTransport::AccessorKind(data) => transport_to_node_accessor_kind(data),
         AnyTransport::_ArrowFunctionUCallSignature(data) => transport_to_node__arrow_function_ucall_signature(data),
-        AnyTransport::ArrowFunctionAsyncMarker(data) => transport_to_node_arrow_function_async_marker(data),
         AnyTransport::_ArrowFunctionParameter(data) => transport_to_node__arrow_function_parameter(data),
         AnyTransport::AssertsAnnotationAsserts(data) => transport_to_node_asserts_annotation_asserts(data),
         AnyTransport::AssignmentExpressionUsingMarker(data) => transport_to_node_assignment_expression_using_marker(data),
+        AnyTransport::AsyncMarker(data) => transport_to_node_async_marker(data),
         AnyTransport::AugmentedAssignmentExpressionOperator(data) => transport_to_node_augmented_assignment_expression_operator(data),
         AnyTransport::BinaryExpressionOperator(data) => transport_to_node_binary_expression_operator(data),
         AnyTransport::CallExpressionCall(data) => transport_to_node_call_expression_call(data),
         AnyTransport::CallExpressionMember(data) => transport_to_node_call_expression_member(data),
-        AnyTransport::CallExpressionOptionalChain(data) => transport_to_node_call_expression_optional_chain(data),
         AnyTransport::CallExpressionTemplateCall(data) => transport_to_node_call_expression_template_call(data),
         AnyTransport::_CallSignature(data) => transport_to_node__call_signature(data),
         AnyTransport::ClassBodyMember(data) => transport_to_node_class_body_member(data),
@@ -22702,9 +20242,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::ClassBodyMethodSig(data) => transport_to_node_class_body_method_sig(data),
         AnyTransport::_ClassHeritageExtendsClause(data) => transport_to_node__class_heritage_extends_clause(data),
         AnyTransport::_ClassHeritageImplementsClause(data) => transport_to_node__class_heritage_implements_clause(data),
-        AnyTransport::ConstructSignatureAbstractMarker(data) => transport_to_node_construct_signature_abstract_marker(data),
-        AnyTransport::ConstructorTypeAbstractMarker(data) => transport_to_node_constructor_type_abstract_marker(data),
-        AnyTransport::EnumDeclarationConstMarker(data) => transport_to_node_enum_declaration_const_marker(data),
+        AnyTransport::ConstMarker(data) => transport_to_node_const_marker(data),
         AnyTransport::ExportSpecifierExportKind(data) => transport_to_node_export_specifier_export_kind(data),
         AnyTransport::ExportStatementDefaultDeclArm(data) => transport_to_node_export_statement_default_decl_arm(data),
         AnyTransport::ExportStatementDefaultDeclArmDefaultKw(data) => transport_to_node_export_statement_default_decl_arm_default_kw(data),
@@ -22717,7 +20255,6 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::_ExportStatementNamespaceExport(data) => transport_to_node__export_statement_namespace_export(data),
         AnyTransport::_ExportStatementTypeExport(data) => transport_to_node__export_statement_type_export(data),
         AnyTransport::ExtendsClauseSingle(data) => transport_to_node_extends_clause_single(data),
-        AnyTransport::FieldDefinitionStaticMarker(data) => transport_to_node_field_definition_static_marker(data),
         AnyTransport::ForHeader(data) => transport_to_node_for_header(data),
         AnyTransport::ForHeaderLetConstKind(data) => transport_to_node_for_header_let_const_kind(data),
         AnyTransport::ForHeaderLhs(data) => transport_to_node_for_header_lhs(data),
@@ -22725,23 +20262,18 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::ForInStatementAwaitMarker(data) => transport_to_node_for_in_statement_await_marker(data),
         AnyTransport::ForStatementInitializer(data) => transport_to_node_for_statement_initializer(data),
         AnyTransport::FromClause(data) => transport_to_node_from_clause(data),
-        AnyTransport::FunctionDeclarationAsyncMarker(data) => transport_to_node_function_declaration_async_marker(data),
-        AnyTransport::FunctionExpressionAsyncMarker(data) => transport_to_node_function_expression_async_marker(data),
-        AnyTransport::FunctionSignatureAsyncMarker(data) => transport_to_node_function_signature_async_marker(data),
-        AnyTransport::GeneratorFunctionAsyncMarker(data) => transport_to_node_generator_function_async_marker(data),
-        AnyTransport::GeneratorFunctionDeclarationAsyncMarker(data) => transport_to_node_generator_function_declaration_async_marker(data),
         AnyTransport::ImportAttributeObject(data) => transport_to_node_import_attribute_object(data),
         AnyTransport::_ImportClauseDefaultImport(data) => transport_to_node__import_clause_default_import(data),
         AnyTransport::_ImportClauseNamedImports(data) => transport_to_node__import_clause_named_imports(data),
         AnyTransport::_ImportClauseNamespaceImport(data) => transport_to_node__import_clause_namespace_import(data),
         AnyTransport::ImportSpecifierAs(data) => transport_to_node_import_specifier_as(data),
-        AnyTransport::ImportSpecifierImportKind(data) => transport_to_node_import_specifier_import_kind(data),
         AnyTransport::_ImportSpecifierName(data) => transport_to_node__import_specifier_name(data),
         AnyTransport::IndexSignatureColon(data) => transport_to_node_index_signature_colon(data),
         AnyTransport::_IndexSignatureMappedTypeClause(data) => transport_to_node__index_signature_mapped_type_clause(data),
         AnyTransport::Initializer(data) => transport_to_node_initializer(data),
         AnyTransport::JsxStartOpeningElement(data) => transport_to_node_jsx_start_opening_element(data),
         AnyTransport::JsxString(data) => transport_to_node_jsx_string(data),
+        AnyTransport::Kind(data) => transport_to_node_kind(data),
         AnyTransport::KwAbstractMarker(data) => transport_to_node_kw_abstract_marker(data),
         AnyTransport::KwAccessorMarker(data) => transport_to_node_kw_accessor_marker(data),
         AnyTransport::KwAsserts(data) => transport_to_node_kw_asserts(data),
@@ -22754,35 +20286,18 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::KwStaticMarker(data) => transport_to_node_kw_static_marker(data),
         AnyTransport::KwTypePredicate(data) => transport_to_node_kw_type_predicate(data),
         AnyTransport::KwUsingMarker(data) => transport_to_node_kw_using_marker(data),
-        AnyTransport::LexicalDeclarationKind(data) => transport_to_node_lexical_declaration_kind(data),
         AnyTransport::LhsExpression(data) => transport_to_node_lhs_expression(data),
-        AnyTransport::MemberExpressionOptionalChain(data) => transport_to_node_member_expression_optional_chain(data),
-        AnyTransport::MethodDefinitionAccessibilityModifier(data) => transport_to_node_method_definition_accessibility_modifier(data),
-        AnyTransport::MethodDefinitionAccessorKind(data) => transport_to_node_method_definition_accessor_kind(data),
-        AnyTransport::MethodDefinitionAsyncMarker(data) => transport_to_node_method_definition_async_marker(data),
-        AnyTransport::MethodDefinitionOptionalMarker(data) => transport_to_node_method_definition_optional_marker(data),
-        AnyTransport::MethodDefinitionOverrideModifier(data) => transport_to_node_method_definition_override_modifier(data),
-        AnyTransport::MethodDefinitionReadonlyMarker(data) => transport_to_node_method_definition_readonly_marker(data),
-        AnyTransport::MethodDefinitionStaticMarker(data) => transport_to_node_method_definition_static_marker(data),
-        AnyTransport::MethodSignatureAccessibilityModifier(data) => transport_to_node_method_signature_accessibility_modifier(data),
-        AnyTransport::MethodSignatureAccessorKind(data) => transport_to_node_method_signature_accessor_kind(data),
-        AnyTransport::MethodSignatureAsyncMarker(data) => transport_to_node_method_signature_async_marker(data),
-        AnyTransport::MethodSignatureOptionalMarker(data) => transport_to_node_method_signature_optional_marker(data),
-        AnyTransport::MethodSignatureOverrideModifier(data) => transport_to_node_method_signature_override_modifier(data),
-        AnyTransport::MethodSignatureReadonlyMarker(data) => transport_to_node_method_signature_readonly_marker(data),
-        AnyTransport::MethodSignatureStaticMarker(data) => transport_to_node_method_signature_static_marker(data),
         AnyTransport::_Module(data) => transport_to_node__module(data),
         AnyTransport::_Number(data) => transport_to_node__number(data),
         AnyTransport::ObjectTypeClosing(data) => transport_to_node_object_type_closing(data),
         AnyTransport::ObjectTypeOpening(data) => transport_to_node_object_type_opening(data),
+        AnyTransport::Operator(data) => transport_to_node_operator(data),
+        AnyTransport::OptionalChain(data) => transport_to_node_optional_chain(data),
+        AnyTransport::OptionalMarker(data) => transport_to_node_optional_marker(data),
+        AnyTransport::_OverrideModifier(data) => transport_to_node__override_modifier(data),
         AnyTransport::ParameterName(data) => transport_to_node_parameter_name(data),
         AnyTransport::_ParenthesizedExpressionSequence(data) => transport_to_node__parenthesized_expression_sequence(data),
         AnyTransport::ParenthesizedExpressionTyped(data) => transport_to_node_parenthesized_expression_typed(data),
-        AnyTransport::PropertySignatureAccessibilityModifier(data) => transport_to_node_property_signature_accessibility_modifier(data),
-        AnyTransport::PropertySignatureOptionalMarker(data) => transport_to_node_property_signature_optional_marker(data),
-        AnyTransport::PropertySignatureOverrideModifier(data) => transport_to_node_property_signature_override_modifier(data),
-        AnyTransport::PropertySignatureReadonlyMarker(data) => transport_to_node_property_signature_readonly_marker(data),
-        AnyTransport::PropertySignatureStaticMarker(data) => transport_to_node_property_signature_static_marker(data),
         AnyTransport::PublicFieldDefinitionAbstractFirst(data) => transport_to_node_public_field_definition_abstract_first(data),
         AnyTransport::PublicFieldDefinitionAccessFirst(data) => transport_to_node_public_field_definition_access_first(data),
         AnyTransport::PublicFieldDefinitionAccessorOpt(data) => transport_to_node_public_field_definition_accessor_opt(data),
@@ -22790,13 +20305,12 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::PublicFieldDefinitionOptionalityMarker(data) => transport_to_node_public_field_definition_optionality_marker(data),
         AnyTransport::PublicFieldDefinitionReadonlyFirst(data) => transport_to_node_public_field_definition_readonly_first(data),
         AnyTransport::PublicFieldDefinitionStaticMods(data) => transport_to_node_public_field_definition_static_mods(data),
+        AnyTransport::ReadonlyMarker(data) => transport_to_node_readonly_marker(data),
         AnyTransport::ReservedIdentifier(data) => transport_to_node_reserved_identifier(data),
+        AnyTransport::StaticMarker(data) => transport_to_node_static_marker(data),
         AnyTransport::_StringDouble(data) => transport_to_node__string_double(data),
         AnyTransport::_StringSingle(data) => transport_to_node__string_single(data),
-        AnyTransport::SubscriptExpressionOptionalChain(data) => transport_to_node_subscript_expression_optional_chain(data),
         AnyTransport::TypeIdentifier(data) => transport_to_node_type_identifier(data),
-        AnyTransport::TypeParameterConstMarker(data) => transport_to_node_type_parameter_const_marker(data),
-        AnyTransport::TypePredicateAnnotationTypePredicate(data) => transport_to_node_type_predicate_annotation_type_predicate(data),
         AnyTransport::TypeQueryCallExpression(data) => transport_to_node_type_query_call_expression(data),
         AnyTransport::TypeQueryCallExpressionInTypeAnnotation(data) => transport_to_node_type_query_call_expression_in_type_annotation(data),
         AnyTransport::TypeQueryInstantiationExpression(data) => transport_to_node_type_query_instantiation_expression(data),
@@ -22804,7 +20318,6 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::TypeQueryMemberExpressionInTypeAnnotation(data) => transport_to_node_type_query_member_expression_in_type_annotation(data),
         AnyTransport::TypeQuerySubscriptExpression(data) => transport_to_node_type_query_subscript_expression(data),
         AnyTransport::UnaryExpressionOperator(data) => transport_to_node_unary_expression_operator(data),
-        AnyTransport::UpdateExpressionOperator(data) => transport_to_node_update_expression_operator(data),
         AnyTransport::UpdateExpressionPostfix(data) => transport_to_node_update_expression_postfix(data),
         AnyTransport::UpdateExpressionPrefix(data) => transport_to_node_update_expression_prefix(data),
         AnyTransport::AbstractClassDeclaration(data) => transport_to_node_abstract_class_declaration(data),
@@ -22939,7 +20452,6 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::ObjectType(data) => transport_to_node_object_type(data),
         AnyTransport::OmittingTypeAnnotation(data) => transport_to_node_omitting_type_annotation(data),
         AnyTransport::OptingTypeAnnotation(data) => transport_to_node_opting_type_annotation(data),
-        AnyTransport::OptionalChain(data) => transport_to_node_optional_chain(data),
         AnyTransport::OptionalParameter(data) => transport_to_node_optional_parameter(data),
         AnyTransport::OptionalTupleParameter(data) => transport_to_node_optional_tuple_parameter(data),
         AnyTransport::OptionalType(data) => transport_to_node_optional_type(data),
@@ -23101,34 +20613,6 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
     }
 }
 
-fn transport_to_node_for_header_kind(transport: ForHeaderKindEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "__for_header_kind" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_for_header_let_const_kind_kind(transport: ForHeaderLetConstKindKindEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "__for_header_let_const_kind_kind" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
 fn transport_to_node_for_header_operator(transport: ForHeaderOperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "__for_header_operator" — no parser symbol */,
@@ -23171,48 +20655,6 @@ fn transport_to_node_number_operator(transport: NumberOperatorEnum) -> Result<Tr
     ))
 }
 
-fn transport_to_node_parameter_name_readonly_marker(transport: ParameterNameReadonlyMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "__parameter_name_readonly_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_public_field_definition_abstract_first_abstract_marker(transport: PublicFieldDefinitionAbstractFirstAbstractMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "__public_field_definition_abstract_first_abstract_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_public_field_definition_abstract_first_readonly_marker(transport: PublicFieldDefinitionAbstractFirstReadonlyMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "__public_field_definition_abstract_first_readonly_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
 fn transport_to_node_public_field_definition_access_first_declare_marker(transport: PublicFieldDefinitionAccessFirstDeclareMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "__public_field_definition_access_first_declare_marker" — no parser symbol */,
@@ -23241,9 +20683,9 @@ fn transport_to_node_public_field_definition_accessor_opt_accessor_marker(transp
     ))
 }
 
-fn transport_to_node_public_field_definition_readonly_first_abstract_marker(transport: PublicFieldDefinitionReadonlyFirstAbstractMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_abstract_marker(transport: AbstractMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "__public_field_definition_readonly_first_abstract_marker" — no parser symbol */,
+        TransportKindId(0) /* "_abstract_marker" — no parser symbol */,
         None,
         None,
         true,
@@ -23255,9 +20697,9 @@ fn transport_to_node_public_field_definition_readonly_first_abstract_marker(tran
     ))
 }
 
-fn transport_to_node_public_field_definition_readonly_first_readonly_marker(transport: PublicFieldDefinitionReadonlyFirstReadonlyMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node__accessibility_modifier(transport: _AccessibilityModifierEnum) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "__public_field_definition_readonly_first_readonly_marker" — no parser symbol */,
+        TransportKindId(0) /* "_accessibility_modifier" — no parser symbol */,
         None,
         None,
         true,
@@ -23269,107 +20711,9 @@ fn transport_to_node_public_field_definition_readonly_first_readonly_marker(tran
     ))
 }
 
-fn transport_to_node_public_field_definition_static_mods_readonly_marker(transport: PublicFieldDefinitionStaticModsReadonlyMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_accessor_kind(transport: AccessorKindEnum) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "__public_field_definition_static_mods_readonly_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_public_field_definition_static_mods_static_marker(transport: PublicFieldDefinitionStaticModsStaticMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "__public_field_definition_static_mods_static_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_update_expression_postfix_operator(transport: UpdateExpressionPostfixOperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "__update_expression_postfix_operator" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_update_expression_prefix_operator(transport: UpdateExpressionPrefixOperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "__update_expression_prefix_operator" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_abstract_method_signature_accessibility_modifier(transport: AbstractMethodSignatureAccessibilityModifierEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_abstract_method_signature_accessibility_modifier" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_abstract_method_signature_accessor_kind(transport: AbstractMethodSignatureAccessorKindEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_abstract_method_signature_accessor_kind" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_abstract_method_signature_optional_marker(transport: AbstractMethodSignatureOptionalMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_abstract_method_signature_optional_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_abstract_method_signature_override_modifier(transport: AbstractMethodSignatureOverrideModifierEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_abstract_method_signature_override_modifier" — no parser symbol */,
+        TransportKindId(0) /* "_accessor_kind" — no parser symbol */,
         None,
         None,
         true,
@@ -23402,20 +20746,6 @@ fn transport_to_node__arrow_function_ucall_signature(transport: _ArrowFunctionUC
         transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
-    ))
-}
-
-fn transport_to_node_arrow_function_async_marker(transport: ArrowFunctionAsyncMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_arrow_function_async_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
     ))
 }
 
@@ -23454,6 +20784,20 @@ fn transport_to_node_asserts_annotation_asserts(transport: AssertsAnnotationAsse
 fn transport_to_node_assignment_expression_using_marker(transport: AssignmentExpressionUsingMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "_assignment_expression_using_marker" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_async_marker(transport: AsyncMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_async_marker" — no parser symbol */,
         None,
         None,
         true,
@@ -23534,20 +20878,6 @@ fn transport_to_node_call_expression_member(transport: CallExpressionMemberTrans
         transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
-    ))
-}
-
-fn transport_to_node_call_expression_optional_chain(transport: CallExpressionOptionalChainEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_call_expression_optional_chain" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
     ))
 }
 
@@ -23680,37 +21010,9 @@ fn transport_to_node__class_heritage_implements_clause(transport: _ClassHeritage
     ))
 }
 
-fn transport_to_node_construct_signature_abstract_marker(transport: ConstructSignatureAbstractMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_const_marker(transport: ConstMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "_construct_signature_abstract_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_constructor_type_abstract_marker(transport: ConstructorTypeAbstractMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_constructor_type_abstract_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_enum_declaration_const_marker(transport: EnumDeclarationConstMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_enum_declaration_const_marker" — no parser symbol */,
+        TransportKindId(0) /* "_const_marker" — no parser symbol */,
         None,
         None,
         true,
@@ -23935,20 +21237,6 @@ fn transport_to_node_extends_clause_single(transport: ExtendsClauseSingleTranspo
     ))
 }
 
-fn transport_to_node_field_definition_static_marker(transport: FieldDefinitionStaticMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_field_definition_static_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
 fn transport_to_node_for_header(transport: ForHeaderTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("operator".to_string(), transport_field_value(Box::new(AnyTransport::ForHeaderOperator(transport.operator)))?);
@@ -23970,7 +21258,7 @@ fn transport_to_node_for_header(transport: ForHeaderTransport) -> Result<Transpo
 
 fn transport_to_node_for_header_let_const_kind(transport: ForHeaderLetConstKindTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("kind".to_string(), transport_field_value(Box::new(AnyTransport::ForHeaderLetConstKindKind(transport.kind)))?);
+    fields.insert("kind".to_string(), transport_field_value(Box::new(AnyTransport::Kind(transport.kind)))?);
     fields.insert("left".to_string(), transport_field_value(transport.left)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = match transport.children {
@@ -24076,76 +21364,6 @@ fn transport_to_node_from_clause(transport: FromClauseTransport) -> Result<Trans
     ))
 }
 
-fn transport_to_node_function_declaration_async_marker(transport: FunctionDeclarationAsyncMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_function_declaration_async_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_function_expression_async_marker(transport: FunctionExpressionAsyncMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_function_expression_async_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_function_signature_async_marker(transport: FunctionSignatureAsyncMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_function_signature_async_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_generator_function_async_marker(transport: GeneratorFunctionAsyncMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_generator_function_async_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_generator_function_declaration_async_marker(transport: GeneratorFunctionDeclarationAsyncMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_generator_function_declaration_async_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
 fn transport_to_node_import_attribute_object(transport: ImportAttributeObjectEnum) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "_import_attribute_object" — no parser symbol */,
@@ -24227,20 +21445,6 @@ fn transport_to_node_import_specifier_as(transport: ImportSpecifierAsTransport) 
         transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
-    ))
-}
-
-fn transport_to_node_import_specifier_import_kind(transport: ImportSpecifierImportKindEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_import_specifier_import_kind" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
     ))
 }
 
@@ -24354,6 +21558,20 @@ fn transport_to_node_jsx_string(transport: JsxStringTransport) -> Result<Transpo
         transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
+    ))
+}
+
+fn transport_to_node_kind(transport: KindEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_kind" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
     ))
 }
 
@@ -24525,20 +21743,6 @@ fn transport_to_node_kw_using_marker(transport: KwUsingMarkerTransport) -> Resul
     ))
 }
 
-fn transport_to_node_lexical_declaration_kind(transport: LexicalDeclarationKindEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_lexical_declaration_kind" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
 fn transport_to_node_lhs_expression(transport: LhsExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -24553,216 +21757,6 @@ fn transport_to_node_lhs_expression(transport: LhsExpressionTransport) -> Result
         transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
-    ))
-}
-
-fn transport_to_node_member_expression_optional_chain(transport: MemberExpressionOptionalChainEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_member_expression_optional_chain" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_method_definition_accessibility_modifier(transport: MethodDefinitionAccessibilityModifierEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_method_definition_accessibility_modifier" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_method_definition_accessor_kind(transport: MethodDefinitionAccessorKindEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_method_definition_accessor_kind" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_method_definition_async_marker(transport: MethodDefinitionAsyncMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_method_definition_async_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_method_definition_optional_marker(transport: MethodDefinitionOptionalMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_method_definition_optional_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_method_definition_override_modifier(transport: MethodDefinitionOverrideModifierEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_method_definition_override_modifier" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_method_definition_readonly_marker(transport: MethodDefinitionReadonlyMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_method_definition_readonly_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_method_definition_static_marker(transport: MethodDefinitionStaticMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_method_definition_static_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_method_signature_accessibility_modifier(transport: MethodSignatureAccessibilityModifierEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_method_signature_accessibility_modifier" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_method_signature_accessor_kind(transport: MethodSignatureAccessorKindEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_method_signature_accessor_kind" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_method_signature_async_marker(transport: MethodSignatureAsyncMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_method_signature_async_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_method_signature_optional_marker(transport: MethodSignatureOptionalMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_method_signature_optional_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_method_signature_override_modifier(transport: MethodSignatureOverrideModifierEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_method_signature_override_modifier" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_method_signature_readonly_marker(transport: MethodSignatureReadonlyMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_method_signature_readonly_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_method_signature_static_marker(transport: MethodSignatureStaticMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_method_signature_static_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
     ))
 }
 
@@ -24834,11 +21828,67 @@ fn transport_to_node_object_type_opening(transport: ObjectTypeOpeningEnum) -> Re
     ))
 }
 
+fn transport_to_node_operator(transport: OperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_operator" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_optional_chain(transport: OptionalChainEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_optional_chain" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_optional_marker(transport: OptionalMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_optional_marker" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node__override_modifier(transport: _OverrideModifierEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_override_modifier" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
+    ))
+}
+
 fn transport_to_node_parameter_name(transport: ParameterNameTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("decorator".to_string(), transport_field_values(transport.decorator.into_iter().map(|v| Box::new(AnyTransport::Decorator(v))).collect::<Vec<_>>())?);
     if let Some(value) = transport.readonly_marker {
-        fields.insert("readonly_marker".to_string(), transport_field_value(Box::new(AnyTransport::ParameterNameReadonlyMarker(value)))?);
+        fields.insert("readonly_marker".to_string(), transport_field_value(Box::new(AnyTransport::ReadonlyMarker(value)))?);
     }
     fields.insert("pattern".to_string(), transport_field_value(transport.pattern)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -24896,81 +21946,11 @@ fn transport_to_node_parenthesized_expression_typed(transport: ParenthesizedExpr
     ))
 }
 
-fn transport_to_node_property_signature_accessibility_modifier(transport: PropertySignatureAccessibilityModifierEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_property_signature_accessibility_modifier" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_property_signature_optional_marker(transport: PropertySignatureOptionalMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_property_signature_optional_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_property_signature_override_modifier(transport: PropertySignatureOverrideModifierEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_property_signature_override_modifier" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_property_signature_readonly_marker(transport: PropertySignatureReadonlyMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_property_signature_readonly_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_property_signature_static_marker(transport: PropertySignatureStaticMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_property_signature_static_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
 fn transport_to_node_public_field_definition_abstract_first(transport: PublicFieldDefinitionAbstractFirstTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("abstract_marker".to_string(), transport_field_value(Box::new(AnyTransport::PublicFieldDefinitionAbstractFirstAbstractMarker(transport.abstract_marker)))?);
+    fields.insert("abstract_marker".to_string(), transport_field_value(Box::new(AnyTransport::AbstractMarker(transport.abstract_marker)))?);
     if let Some(value) = transport.readonly_marker {
-        fields.insert("readonly_marker".to_string(), transport_field_value(Box::new(AnyTransport::PublicFieldDefinitionAbstractFirstReadonlyMarker(value)))?);
+        fields.insert("readonly_marker".to_string(), transport_field_value(Box::new(AnyTransport::ReadonlyMarker(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -25061,9 +22041,9 @@ fn transport_to_node_public_field_definition_optionality_marker(transport: Publi
 
 fn transport_to_node_public_field_definition_readonly_first(transport: PublicFieldDefinitionReadonlyFirstTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("readonly_marker".to_string(), transport_field_value(Box::new(AnyTransport::PublicFieldDefinitionReadonlyFirstReadonlyMarker(transport.readonly_marker)))?);
+    fields.insert("readonly_marker".to_string(), transport_field_value(Box::new(AnyTransport::ReadonlyMarker(transport.readonly_marker)))?);
     if let Some(value) = transport.abstract_marker {
-        fields.insert("abstract_marker".to_string(), transport_field_value(Box::new(AnyTransport::PublicFieldDefinitionReadonlyFirstAbstractMarker(value)))?);
+        fields.insert("abstract_marker".to_string(), transport_field_value(Box::new(AnyTransport::AbstractMarker(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -25082,9 +22062,9 @@ fn transport_to_node_public_field_definition_readonly_first(transport: PublicFie
 
 fn transport_to_node_public_field_definition_static_mods(transport: PublicFieldDefinitionStaticModsTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("static_marker".to_string(), transport_field_value(Box::new(AnyTransport::PublicFieldDefinitionStaticModsStaticMarker(transport.static_marker)))?);
+    fields.insert("static_marker".to_string(), transport_field_value(Box::new(AnyTransport::StaticMarker(transport.static_marker)))?);
     if let Some(value) = transport.readonly_marker {
-        fields.insert("readonly_marker".to_string(), transport_field_value(Box::new(AnyTransport::PublicFieldDefinitionStaticModsReadonlyMarker(value)))?);
+        fields.insert("readonly_marker".to_string(), transport_field_value(Box::new(AnyTransport::ReadonlyMarker(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = match transport.children {
@@ -25104,6 +22084,20 @@ fn transport_to_node_public_field_definition_static_mods(transport: PublicFieldD
     ))
 }
 
+fn transport_to_node_readonly_marker(transport: ReadonlyMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_readonly_marker" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
+    ))
+}
+
 fn transport_to_node_reserved_identifier(transport: ReservedIdentifierTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "_reserved_identifier" — no parser symbol */,
@@ -25113,6 +22107,20 @@ fn transport_to_node_reserved_identifier(transport: ReservedIdentifierTransport)
         Some(transport.text),
         transport.transport_span,
         transport.transport_node_id.map(|v| v as u64),
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_static_marker(transport: StaticMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_static_marker" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
         None,
         None,
     ))
@@ -25152,20 +22160,6 @@ fn transport_to_node__string_single(transport: _StringSingleTransport) -> Result
     ))
 }
 
-fn transport_to_node_subscript_expression_optional_chain(transport: SubscriptExpressionOptionalChainEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_subscript_expression_optional_chain" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
 fn transport_to_node_type_identifier(transport: TypeIdentifierTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -25180,34 +22174,6 @@ fn transport_to_node_type_identifier(transport: TypeIdentifierTransport) -> Resu
         transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
-    ))
-}
-
-fn transport_to_node_type_parameter_const_marker(transport: TypeParameterConstMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_type_parameter_const_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_type_predicate_annotation_type_predicate(transport: TypePredicateAnnotationTypePredicateEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_type_predicate_annotation_type_predicate" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
     ))
 }
 
@@ -25339,24 +22305,10 @@ fn transport_to_node_unary_expression_operator(transport: UnaryExpressionOperato
     ))
 }
 
-fn transport_to_node_update_expression_operator(transport: UpdateExpressionOperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_update_expression_operator" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
 fn transport_to_node_update_expression_postfix(transport: UpdateExpressionPostfixTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("argument".to_string(), transport_field_value(expression_transport_to_any(transport.argument))?);
-    fields.insert("operator".to_string(), transport_field_value(Box::new(AnyTransport::UpdateExpressionPostfixOperator(transport.operator)))?);
+    fields.insert("operator".to_string(), transport_field_value(Box::new(AnyTransport::Operator(transport.operator)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -25374,7 +22326,7 @@ fn transport_to_node_update_expression_postfix(transport: UpdateExpressionPostfi
 
 fn transport_to_node_update_expression_prefix(transport: UpdateExpressionPrefixTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("operator".to_string(), transport_field_value(Box::new(AnyTransport::UpdateExpressionPrefixOperator(transport.operator)))?);
+    fields.insert("operator".to_string(), transport_field_value(Box::new(AnyTransport::Operator(transport.operator)))?);
     fields.insert("argument".to_string(), transport_field_value(expression_transport_to_any(transport.argument))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -25420,17 +22372,17 @@ fn transport_to_node_abstract_class_declaration(transport: AbstractClassDeclarat
 fn transport_to_node_abstract_method_signature(transport: AbstractMethodSignatureTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.accessibility_modifier {
-        fields.insert("accessibility_modifier".to_string(), transport_field_value(Box::new(AnyTransport::AbstractMethodSignatureAccessibilityModifier(value)))?);
+        fields.insert("accessibility_modifier".to_string(), transport_field_value(Box::new(AnyTransport::_AccessibilityModifier(value)))?);
     }
     if let Some(value) = transport.override_modifier {
-        fields.insert("override_modifier".to_string(), transport_field_value(Box::new(AnyTransport::AbstractMethodSignatureOverrideModifier(value)))?);
+        fields.insert("override_modifier".to_string(), transport_field_value(Box::new(AnyTransport::_OverrideModifier(value)))?);
     }
     if let Some(value) = transport.accessor_kind {
-        fields.insert("accessor_kind".to_string(), transport_field_value(Box::new(AnyTransport::AbstractMethodSignatureAccessorKind(value)))?);
+        fields.insert("accessor_kind".to_string(), transport_field_value(Box::new(AnyTransport::AccessorKind(value)))?);
     }
     fields.insert("name".to_string(), transport_field_value(property_name_transport_to_any(transport.name))?);
     if let Some(value) = transport.optional_marker {
-        fields.insert("optional_marker".to_string(), transport_field_value(Box::new(AnyTransport::AbstractMethodSignatureOptionalMarker(value)))?);
+        fields.insert("optional_marker".to_string(), transport_field_value(Box::new(AnyTransport::OptionalMarker(value)))?);
     }
     if let Some(value) = transport.type_parameters {
         fields.insert("type_parameters".to_string(), transport_field_value(Box::new(AnyTransport::TypeParameters(value)))?);
@@ -25625,7 +22577,7 @@ fn transport_to_node_arrow_function(transport: ArrowFunctionTransport) -> Result
 fn transport_to_node_arrow_function_uform_parameter(transport: ArrowFunctionUFormParameterTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.async_marker {
-        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::ArrowFunctionAsyncMarker(value)))?);
+        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::AsyncMarker(value)))?);
     }
     fields.insert("body".to_string(), transport_field_value(transport.body)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -25646,7 +22598,7 @@ fn transport_to_node_arrow_function_uform_parameter(transport: ArrowFunctionUFor
 fn transport_to_node_arrow_function_uform_ucall_signature(transport: ArrowFunctionUFormUCallSignatureTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.async_marker {
-        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::ArrowFunctionAsyncMarker(value)))?);
+        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::AsyncMarker(value)))?);
     }
     fields.insert("body".to_string(), transport_field_value(transport.body)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -26189,7 +23141,7 @@ fn transport_to_node_constraint(transport: ConstraintTransport) -> Result<Transp
 fn transport_to_node_construct_signature(transport: ConstructSignatureTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.abstract_marker {
-        fields.insert("abstract_marker".to_string(), transport_field_value(Box::new(AnyTransport::ConstructSignatureAbstractMarker(value)))?);
+        fields.insert("abstract_marker".to_string(), transport_field_value(Box::new(AnyTransport::AbstractMarker(value)))?);
     }
     if let Some(value) = transport.type_parameters {
         fields.insert("type_parameters".to_string(), transport_field_value(Box::new(AnyTransport::TypeParameters(value)))?);
@@ -26216,7 +23168,7 @@ fn transport_to_node_construct_signature(transport: ConstructSignatureTransport)
 fn transport_to_node_constructor_type(transport: ConstructorTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.abstract_marker {
-        fields.insert("abstract_marker".to_string(), transport_field_value(Box::new(AnyTransport::ConstructorTypeAbstractMarker(value)))?);
+        fields.insert("abstract_marker".to_string(), transport_field_value(Box::new(AnyTransport::AbstractMarker(value)))?);
     }
     if let Some(value) = transport.type_parameters {
         fields.insert("type_parameters".to_string(), transport_field_value(Box::new(AnyTransport::TypeParameters(value)))?);
@@ -26463,7 +23415,7 @@ fn transport_to_node_enum_body(transport: EnumBodyTransport) -> Result<Transport
 fn transport_to_node_enum_declaration(transport: EnumDeclarationTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.const_marker {
-        fields.insert("const_marker".to_string(), transport_field_value(Box::new(AnyTransport::EnumDeclarationConstMarker(value)))?);
+        fields.insert("const_marker".to_string(), transport_field_value(Box::new(AnyTransport::ConstMarker(value)))?);
     }
     fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(transport.name)))?);
     fields.insert("body".to_string(), transport_field_value(Box::new(AnyTransport::EnumBody(transport.body)))?);
@@ -26757,7 +23709,7 @@ fn transport_to_node_field_definition(transport: FieldDefinitionTransport) -> Re
     let mut fields = TransportHashMap::new();
     fields.insert("decorator".to_string(), transport_field_values(transport.decorator.into_iter().map(|v| Box::new(AnyTransport::Decorator(v))).collect::<Vec<_>>())?);
     if let Some(value) = transport.static_marker {
-        fields.insert("static_marker".to_string(), transport_field_value(Box::new(AnyTransport::FieldDefinitionStaticMarker(value)))?);
+        fields.insert("static_marker".to_string(), transport_field_value(Box::new(AnyTransport::StaticMarker(value)))?);
     }
     fields.insert("property".to_string(), transport_field_value(property_name_transport_to_any(transport.property))?);
     if let Some(value) = transport.value {
@@ -26880,7 +23832,7 @@ fn transport_to_node_formal_parameters(transport: FormalParametersTransport) -> 
 fn transport_to_node_function_declaration(transport: FunctionDeclarationTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.async_marker {
-        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::FunctionDeclarationAsyncMarker(value)))?);
+        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::AsyncMarker(value)))?);
     }
     fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(transport.name)))?);
     if let Some(value) = transport.type_parameters {
@@ -26912,7 +23864,7 @@ fn transport_to_node_function_declaration(transport: FunctionDeclarationTranspor
 fn transport_to_node_function_expression(transport: FunctionExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.async_marker {
-        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::FunctionExpressionAsyncMarker(value)))?);
+        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::AsyncMarker(value)))?);
     }
     if let Some(value) = transport.name {
         fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(value)))?);
@@ -26943,7 +23895,7 @@ fn transport_to_node_function_expression(transport: FunctionExpressionTransport)
 fn transport_to_node_function_signature(transport: FunctionSignatureTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.async_marker {
-        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::FunctionSignatureAsyncMarker(value)))?);
+        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::AsyncMarker(value)))?);
     }
     fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(transport.name)))?);
     if let Some(value) = transport.type_parameters {
@@ -26994,7 +23946,7 @@ fn transport_to_node_function_type(transport: FunctionTypeTransport) -> Result<T
 fn transport_to_node_generator_function(transport: GeneratorFunctionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.async_marker {
-        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::GeneratorFunctionAsyncMarker(value)))?);
+        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::AsyncMarker(value)))?);
     }
     if let Some(value) = transport.name {
         fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(value)))?);
@@ -27025,7 +23977,7 @@ fn transport_to_node_generator_function(transport: GeneratorFunctionTransport) -
 fn transport_to_node_generator_function_declaration(transport: GeneratorFunctionDeclarationTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.async_marker {
-        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::GeneratorFunctionDeclarationAsyncMarker(value)))?);
+        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::AsyncMarker(value)))?);
     }
     fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(transport.name)))?);
     if let Some(value) = transport.type_parameters {
@@ -27363,7 +24315,7 @@ fn transport_to_node_import_specifier(transport: ImportSpecifierTransport) -> Re
 fn transport_to_node_import_specifier_uform_name(transport: ImportSpecifierUFormNameTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.import_kind {
-        fields.insert("import_kind".to_string(), transport_field_value(Box::new(AnyTransport::ImportSpecifierImportKind(value)))?);
+        fields.insert("import_kind".to_string(), transport_field_value(Box::new(AnyTransport::ExportSpecifierExportKind(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::_ImportSpecifierName(v))).collect::<Vec<_>>())?);
@@ -27383,7 +24335,7 @@ fn transport_to_node_import_specifier_uform_name(transport: ImportSpecifierUForm
 fn transport_to_node_import_specifier_uform_as(transport: ImportSpecifierUFormAsTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.import_kind {
-        fields.insert("import_kind".to_string(), transport_field_value(Box::new(AnyTransport::ImportSpecifierImportKind(value)))?);
+        fields.insert("import_kind".to_string(), transport_field_value(Box::new(AnyTransport::ExportSpecifierExportKind(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::ImportSpecifierAs(v))).collect::<Vec<_>>())?);
@@ -27792,7 +24744,7 @@ fn transport_to_node_labeled_statement(transport: LabeledStatementTransport) -> 
 
 fn transport_to_node_lexical_declaration(transport: LexicalDeclarationTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("kind".to_string(), transport_field_value(Box::new(AnyTransport::LexicalDeclarationKind(transport.kind)))?);
+    fields.insert("kind".to_string(), transport_field_value(Box::new(AnyTransport::Kind(transport.kind)))?);
     fields.insert("declarators".to_string(), transport_field_values(transport.declarators.into_iter().map(|v| Box::new(AnyTransport::VariableDeclarator(v))).collect::<Vec<_>>())?);
     fields.insert("semicolon".to_string(), transport_field_value(semicolon_transport_to_any(transport.semicolon))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -27904,26 +24856,26 @@ fn transport_to_node_meta_property(transport: MetaPropertyTransport) -> Result<T
 fn transport_to_node_method_definition(transport: MethodDefinitionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.accessibility_modifier {
-        fields.insert("accessibility_modifier".to_string(), transport_field_value(Box::new(AnyTransport::MethodDefinitionAccessibilityModifier(value)))?);
+        fields.insert("accessibility_modifier".to_string(), transport_field_value(Box::new(AnyTransport::_AccessibilityModifier(value)))?);
     }
     if let Some(value) = transport.static_marker {
-        fields.insert("static_marker".to_string(), transport_field_value(Box::new(AnyTransport::MethodDefinitionStaticMarker(value)))?);
+        fields.insert("static_marker".to_string(), transport_field_value(Box::new(AnyTransport::StaticMarker(value)))?);
     }
     if let Some(value) = transport.override_modifier {
-        fields.insert("override_modifier".to_string(), transport_field_value(Box::new(AnyTransport::MethodDefinitionOverrideModifier(value)))?);
+        fields.insert("override_modifier".to_string(), transport_field_value(Box::new(AnyTransport::_OverrideModifier(value)))?);
     }
     if let Some(value) = transport.readonly_marker {
-        fields.insert("readonly_marker".to_string(), transport_field_value(Box::new(AnyTransport::MethodDefinitionReadonlyMarker(value)))?);
+        fields.insert("readonly_marker".to_string(), transport_field_value(Box::new(AnyTransport::ReadonlyMarker(value)))?);
     }
     if let Some(value) = transport.async_marker {
-        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::MethodDefinitionAsyncMarker(value)))?);
+        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::AsyncMarker(value)))?);
     }
     if let Some(value) = transport.accessor_kind {
-        fields.insert("accessor_kind".to_string(), transport_field_value(Box::new(AnyTransport::MethodDefinitionAccessorKind(value)))?);
+        fields.insert("accessor_kind".to_string(), transport_field_value(Box::new(AnyTransport::AccessorKind(value)))?);
     }
     fields.insert("name".to_string(), transport_field_value(property_name_transport_to_any(transport.name))?);
     if let Some(value) = transport.optional_marker {
-        fields.insert("optional_marker".to_string(), transport_field_value(Box::new(AnyTransport::MethodDefinitionOptionalMarker(value)))?);
+        fields.insert("optional_marker".to_string(), transport_field_value(Box::new(AnyTransport::OptionalMarker(value)))?);
     }
     if let Some(value) = transport.type_parameters {
         fields.insert("type_parameters".to_string(), transport_field_value(Box::new(AnyTransport::TypeParameters(value)))?);
@@ -27951,26 +24903,26 @@ fn transport_to_node_method_definition(transport: MethodDefinitionTransport) -> 
 fn transport_to_node_method_signature(transport: MethodSignatureTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.accessibility_modifier {
-        fields.insert("accessibility_modifier".to_string(), transport_field_value(Box::new(AnyTransport::MethodSignatureAccessibilityModifier(value)))?);
+        fields.insert("accessibility_modifier".to_string(), transport_field_value(Box::new(AnyTransport::_AccessibilityModifier(value)))?);
     }
     if let Some(value) = transport.static_marker {
-        fields.insert("static_marker".to_string(), transport_field_value(Box::new(AnyTransport::MethodSignatureStaticMarker(value)))?);
+        fields.insert("static_marker".to_string(), transport_field_value(Box::new(AnyTransport::StaticMarker(value)))?);
     }
     if let Some(value) = transport.override_modifier {
-        fields.insert("override_modifier".to_string(), transport_field_value(Box::new(AnyTransport::MethodSignatureOverrideModifier(value)))?);
+        fields.insert("override_modifier".to_string(), transport_field_value(Box::new(AnyTransport::_OverrideModifier(value)))?);
     }
     if let Some(value) = transport.readonly_marker {
-        fields.insert("readonly_marker".to_string(), transport_field_value(Box::new(AnyTransport::MethodSignatureReadonlyMarker(value)))?);
+        fields.insert("readonly_marker".to_string(), transport_field_value(Box::new(AnyTransport::ReadonlyMarker(value)))?);
     }
     if let Some(value) = transport.async_marker {
-        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::MethodSignatureAsyncMarker(value)))?);
+        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::AsyncMarker(value)))?);
     }
     if let Some(value) = transport.accessor_kind {
-        fields.insert("accessor_kind".to_string(), transport_field_value(Box::new(AnyTransport::MethodSignatureAccessorKind(value)))?);
+        fields.insert("accessor_kind".to_string(), transport_field_value(Box::new(AnyTransport::AccessorKind(value)))?);
     }
     fields.insert("name".to_string(), transport_field_value(property_name_transport_to_any(transport.name))?);
     if let Some(value) = transport.optional_marker {
-        fields.insert("optional_marker".to_string(), transport_field_value(Box::new(AnyTransport::MethodSignatureOptionalMarker(value)))?);
+        fields.insert("optional_marker".to_string(), transport_field_value(Box::new(AnyTransport::OptionalMarker(value)))?);
     }
     if let Some(value) = transport.type_parameters {
         fields.insert("type_parameters".to_string(), transport_field_value(Box::new(AnyTransport::TypeParameters(value)))?);
@@ -28292,25 +25244,11 @@ fn transport_to_node_opting_type_annotation(transport: OptingTypeAnnotationTrans
     ))
 }
 
-fn transport_to_node_optional_chain(transport: OptionalChainTransport) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(230) /* "optional_chain" */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
-        None,
-        None,
-    ))
-}
-
 fn transport_to_node_optional_parameter(transport: OptionalParameterTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("decorator".to_string(), transport_field_values(transport.decorator.into_iter().map(|v| Box::new(AnyTransport::Decorator(v))).collect::<Vec<_>>())?);
     if let Some(value) = transport.readonly_marker {
-        fields.insert("readonly_marker".to_string(), transport_field_value(Box::new(AnyTransport::ParameterNameReadonlyMarker(value)))?);
+        fields.insert("readonly_marker".to_string(), transport_field_value(Box::new(AnyTransport::ReadonlyMarker(value)))?);
     }
     fields.insert("pattern".to_string(), transport_field_value(transport.pattern)?);
     if let Some(value) = transport.r#type {
@@ -28554,20 +25492,20 @@ fn transport_to_node_program(transport: ProgramTransport) -> Result<TransportNod
 fn transport_to_node_property_signature(transport: PropertySignatureTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.accessibility_modifier {
-        fields.insert("accessibility_modifier".to_string(), transport_field_value(Box::new(AnyTransport::PropertySignatureAccessibilityModifier(value)))?);
+        fields.insert("accessibility_modifier".to_string(), transport_field_value(Box::new(AnyTransport::_AccessibilityModifier(value)))?);
     }
     if let Some(value) = transport.static_marker {
-        fields.insert("static_marker".to_string(), transport_field_value(Box::new(AnyTransport::PropertySignatureStaticMarker(value)))?);
+        fields.insert("static_marker".to_string(), transport_field_value(Box::new(AnyTransport::StaticMarker(value)))?);
     }
     if let Some(value) = transport.override_modifier {
-        fields.insert("override_modifier".to_string(), transport_field_value(Box::new(AnyTransport::PropertySignatureOverrideModifier(value)))?);
+        fields.insert("override_modifier".to_string(), transport_field_value(Box::new(AnyTransport::_OverrideModifier(value)))?);
     }
     if let Some(value) = transport.readonly_marker {
-        fields.insert("readonly_marker".to_string(), transport_field_value(Box::new(AnyTransport::PropertySignatureReadonlyMarker(value)))?);
+        fields.insert("readonly_marker".to_string(), transport_field_value(Box::new(AnyTransport::ReadonlyMarker(value)))?);
     }
     fields.insert("name".to_string(), transport_field_value(property_name_transport_to_any(transport.name))?);
     if let Some(value) = transport.optional_marker {
-        fields.insert("optional_marker".to_string(), transport_field_value(Box::new(AnyTransport::PropertySignatureOptionalMarker(value)))?);
+        fields.insert("optional_marker".to_string(), transport_field_value(Box::new(AnyTransport::OptionalMarker(value)))?);
     }
     if let Some(value) = transport.r#type {
         fields.insert("type".to_string(), transport_field_value(Box::new(AnyTransport::TypeAnnotation(value)))?);
@@ -28689,7 +25627,7 @@ fn transport_to_node_required_parameter(transport: RequiredParameterTransport) -
     let mut fields = TransportHashMap::new();
     fields.insert("decorator".to_string(), transport_field_values(transport.decorator.into_iter().map(|v| Box::new(AnyTransport::Decorator(v))).collect::<Vec<_>>())?);
     if let Some(value) = transport.readonly_marker {
-        fields.insert("readonly_marker".to_string(), transport_field_value(Box::new(AnyTransport::ParameterNameReadonlyMarker(value)))?);
+        fields.insert("readonly_marker".to_string(), transport_field_value(Box::new(AnyTransport::ReadonlyMarker(value)))?);
     }
     fields.insert("pattern".to_string(), transport_field_value(transport.pattern)?);
     if let Some(value) = transport.r#type {
@@ -28926,7 +25864,7 @@ fn transport_to_node_subscript_expression(transport: SubscriptExpressionTranspor
     let mut fields = TransportHashMap::new();
     fields.insert("object".to_string(), transport_field_value(transport.object)?);
     if let Some(value) = transport.optional_chain {
-        fields.insert("optional_chain".to_string(), transport_field_value(Box::new(AnyTransport::SubscriptExpressionOptionalChain(value)))?);
+        fields.insert("optional_chain".to_string(), transport_field_value(Box::new(AnyTransport::OptionalChain(value)))?);
     }
     fields.insert("index".to_string(), transport_field_value(expressions_transport_to_any(transport.index))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -29305,7 +26243,7 @@ fn transport_to_node_type_assertion(transport: TypeAssertionTransport) -> Result
 fn transport_to_node_type_parameter(transport: TypeParameterTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.const_marker {
-        fields.insert("const_marker".to_string(), transport_field_value(Box::new(AnyTransport::TypeParameterConstMarker(value)))?);
+        fields.insert("const_marker".to_string(), transport_field_value(Box::new(AnyTransport::ConstMarker(value)))?);
     }
     fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::TypeIdentifier(transport.name)))?);
     if let Some(value) = transport.constraint {

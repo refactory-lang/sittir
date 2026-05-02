@@ -561,7 +561,7 @@ export function _rangeExpressionBare(config: ConfigOf<T._RangeExpressionBare>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    operator(value?: T.RangeExpressionBareOperator) { return _fs(config, _rangeExpressionBare, 'operator', value, config?.operator); },
+    operator(value?: T.Operator) { return _fs(config, _rangeExpressionBare, 'operator', value, config?.operator); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -605,7 +605,7 @@ export function _rangeExpressionPostfix(config: ConfigOf<T.RangeExpressionPostfi
     $named: true as const,
     $fields: fields,
     start(value?: T.Expression) { return _fs(config, _rangeExpressionPostfix, 'start', value, config?.start); },
-    operator(value?: T.RangeExpressionPostfixOperator) { return _fs(config, _rangeExpressionPostfix, 'operator', value, config?.operator); },
+    operator(value?: T.Operator) { return _fs(config, _rangeExpressionPostfix, 'operator', value, config?.operator); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -625,7 +625,7 @@ export function _rangeExpressionPrefix(config: ConfigOf<T.RangeExpressionPrefix>
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    operator(value?: T.RangeExpressionPrefixOperator) { return _fs(config, _rangeExpressionPrefix, 'operator', value, config?.operator); },
+    operator(value?: T.Operator) { return _fs(config, _rangeExpressionPrefix, 'operator', value, config?.operator); },
     end(value?: T.Expression) { return _fs(config, _rangeExpressionPrefix, 'end', value, config?.end); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -1093,7 +1093,7 @@ export function asyncBlock(config: ConfigOf<T.AsyncBlock>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    moveMarker(value?: T.AsyncBlockMoveMarker | undefined) { return _fs(config, asyncBlock, 'moveMarker', value, config?.moveMarker); },
+    moveMarker(value?: T.MoveMarker | undefined) { return _fs(config, asyncBlock, 'moveMarker', value, config?.moveMarker); },
     block(value?: T.Block) { return _fs(config, asyncBlock, 'block', value, config?.block); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -1427,7 +1427,7 @@ export function closureExpressionUFormBlock(config: Omit<ConfigOf<T.ClosureExpre
       if (value === undefined) return fields.async_marker;
       return closureExpressionUFormBlock({ staticMarker: config.staticMarker, moveMarker: config.moveMarker, parameters: config.parameters, returnType: inner.$fields.return_type, body: inner.$fields.body, asyncMarker: value });
     },
-    moveMarker(value?: T.ClosureExpressionMoveMarker | undefined) {
+    moveMarker(value?: T.MoveMarker | undefined) {
       if (value === undefined) return fields.move_marker;
       return closureExpressionUFormBlock({ staticMarker: config.staticMarker, asyncMarker: config.asyncMarker, parameters: config.parameters, returnType: inner.$fields.return_type, body: inner.$fields.body, moveMarker: value });
     },
@@ -1475,7 +1475,7 @@ export function closureExpressionUFormExpr(config: Omit<ConfigOf<T.ClosureExpres
       if (value === undefined) return fields.async_marker;
       return closureExpressionUFormExpr({ staticMarker: config.staticMarker, moveMarker: config.moveMarker, parameters: config.parameters, body: inner.$fields.body, asyncMarker: value });
     },
-    moveMarker(value?: T.ClosureExpressionMoveMarker | undefined) {
+    moveMarker(value?: T.MoveMarker | undefined) {
       if (value === undefined) return fields.move_marker;
       return closureExpressionUFormExpr({ staticMarker: config.staticMarker, asyncMarker: config.asyncMarker, parameters: config.parameters, body: inner.$fields.body, moveMarker: value });
     },
@@ -1959,7 +1959,7 @@ export function externCrateDeclaration(config: ConfigOf<T.ExternCrateDeclaration
     $named: true as const,
     $fields: fields,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, externCrateDeclaration, 'visibilityModifier', value, config?.visibilityModifier); },
-    crate(value?: T.ExternCrateDeclarationCrate) { return _fs(config, externCrateDeclaration, 'crate', value, config?.crate); },
+    crate(value?: T._Crate) { return _fs(config, externCrateDeclaration, 'crate', value, config?.crate); },
     name(value?: T.Identifier) { return _fs(config, externCrateDeclaration, 'name', value, config?.name); },
     alias(value?: T.Identifier | undefined) { return _fs(config, externCrateDeclaration, 'alias', value, config?.alias); },
     render(this: AnyNodeData): string { return render(this); },
@@ -2133,11 +2133,11 @@ export function fieldPatternUFormShorthand(config: Omit<ConfigOf<T.FieldPatternU
     $variant: 'shorthand' as const,
     $fields: fields,
     $children: children,
-    refMarker(value?: T.FieldPatternRefMarker | undefined) {
+    refMarker(value?: T.RefMarker | undefined) {
       if (value === undefined) return fields.ref_marker;
       return fieldPatternUFormShorthand({ mutableSpecifier: config.mutableSpecifier, name: inner.$fields.name, refMarker: value });
     },
-    mutableSpecifier(value?: T.FieldPatternMutableSpecifier | undefined) {
+    mutableSpecifier(value?: T._MutableSpecifier | undefined) {
       if (value === undefined) return fields.mutable_specifier;
       return fieldPatternUFormShorthand({ refMarker: config.refMarker, name: inner.$fields.name, mutableSpecifier: value });
     },
@@ -2167,11 +2167,11 @@ export function fieldPatternUFormNamed(config: Omit<ConfigOf<T.FieldPatternUForm
     $variant: 'named' as const,
     $fields: fields,
     $children: children,
-    refMarker(value?: T.FieldPatternRefMarker | undefined) {
+    refMarker(value?: T.RefMarker | undefined) {
       if (value === undefined) return fields.ref_marker;
       return fieldPatternUFormNamed({ mutableSpecifier: config.mutableSpecifier, name: inner.$fields.name, pattern: inner.$fields.pattern, refMarker: value });
     },
-    mutableSpecifier(value?: T.FieldPatternMutableSpecifier | undefined) {
+    mutableSpecifier(value?: T._MutableSpecifier | undefined) {
       if (value === undefined) return fields.mutable_specifier;
       return fieldPatternUFormNamed({ refMarker: config.refMarker, name: inner.$fields.name, pattern: inner.$fields.pattern, mutableSpecifier: value });
     },
@@ -2451,7 +2451,7 @@ export function genBlock(config: ConfigOf<T.GenBlock>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    moveMarker(value?: T.GenBlockMoveMarker | undefined) { return _fs(config, genBlock, 'moveMarker', value, config?.moveMarker); },
+    moveMarker(value?: T.MoveMarker | undefined) { return _fs(config, genBlock, 'moveMarker', value, config?.moveMarker); },
     block(value?: T.Block) { return _fs(config, genBlock, 'block', value, config?.block); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -2655,7 +2655,7 @@ export function implItemUFormBody(config: Omit<ConfigOf<T.ImplItemUFormBody>, '$
     $variant: 'body' as const,
     $fields: fields,
     $children: children,
-    unsafeMarker(value?: T.ImplItemUnsafeMarker | undefined) {
+    unsafeMarker(value?: T.UnsafeMarker | undefined) {
       if (value === undefined) return fields.unsafe_marker;
       return implItemUFormBody({ typeParameters: config.typeParameters, negative: config.negative, trait: config.trait, type: config.type, whereClause: config.whereClause, body: inner.$fields.body, unsafeMarker: value });
     },
@@ -2706,7 +2706,7 @@ export function implItemUFormSemi(config: Omit<ConfigOf<T.ImplItemUFormSemi>, '$
     $named: true as const,
     $variant: 'semi' as const,
     $fields: fields,
-    unsafeMarker(value?: T.ImplItemUnsafeMarker | undefined) { return _fs(config, implItemUFormSemi, 'unsafeMarker', value, config?.unsafeMarker); },
+    unsafeMarker(value?: T.UnsafeMarker | undefined) { return _fs(config, implItemUFormSemi, 'unsafeMarker', value, config?.unsafeMarker); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, implItemUFormSemi, 'typeParameters', value, config?.typeParameters); },
     negative(value?: T.ImplItemNegative | undefined) { return _fs(config, implItemUFormSemi, 'negative', value, config?.negative); },
     trait(value?: T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | undefined) { return _fs(config, implItemUFormSemi, 'trait', value, config?.trait); },
@@ -2854,7 +2854,7 @@ export function letDeclaration(config: ConfigOf<T.LetDeclaration>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    mutableSpecifier(value?: T.LetDeclarationMutableSpecifier | undefined) { return _fs(config, letDeclaration, 'mutableSpecifier', value, config?.mutableSpecifier); },
+    mutableSpecifier(value?: T._MutableSpecifier | undefined) { return _fs(config, letDeclaration, 'mutableSpecifier', value, config?.mutableSpecifier); },
     pattern(value?: T.Pattern) { return _fs(config, letDeclaration, 'pattern', value, config?.pattern); },
     typeField(value?: T._Type | undefined) { return _fs(config, letDeclaration, 'type', value, config?.type); },
     value(value?: T.Expression | undefined) { return _fs(config, letDeclaration, 'value', value, config?.value); },
@@ -3424,7 +3424,7 @@ export function mutPattern(config: ConfigOf<T.MutPattern>) {
     $named: true as const,
     $fields: fields,
     $children: children,
-    mutableSpecifier(value?: T.MutPatternMutableSpecifier) { return _fs(config, mutPattern, 'mutableSpecifier', value, config?.mutableSpecifier); },
+    mutableSpecifier(value?: T._MutableSpecifier) { return _fs(config, mutPattern, 'mutableSpecifier', value, config?.mutableSpecifier); },
     child(value?: T.Pattern) {
       if (value === undefined) return children[0];
       return mutPattern({ ...config, children: [value] });
@@ -3555,7 +3555,7 @@ export function parameter(config: ConfigOf<T.Parameter>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    mutableSpecifier(value?: T.ParameterMutableSpecifier | undefined) { return _fs(config, parameter, 'mutableSpecifier', value, config?.mutableSpecifier); },
+    mutableSpecifier(value?: T._MutableSpecifier | undefined) { return _fs(config, parameter, 'mutableSpecifier', value, config?.mutableSpecifier); },
     pattern(value?: T.Pattern | T.Self) { return _fs(config, parameter, 'pattern', value, config?.pattern); },
     typeField(value?: T._Type) { return _fs(config, parameter, 'type', value, config?.type); },
     render(this: AnyNodeData): string { return render(this); },
@@ -3698,7 +3698,7 @@ export function rangeExpressionBare(config: ConfigOf<T.RangeExpressionBare>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    operator(value?: T.RangeExpressionBareOperator) { return _fs(config, rangeExpressionBare, 'operator', value, config?.operator); },
+    operator(value?: T.Operator) { return _fs(config, rangeExpressionBare, 'operator', value, config?.operator); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3763,7 +3763,7 @@ export function rangeExpressionUFormPostfix(config: Omit<ConfigOf<T.RangeExpress
       if (value === undefined) return inner.$fields.start;
       return rangeExpressionUFormPostfix({ operator: inner.$fields.operator, start: value });
     },
-    operator(value?: T.RangeExpressionPostfixOperator) {
+    operator(value?: T.Operator) {
       if (value === undefined) return inner.$fields.operator;
       return rangeExpressionUFormPostfix({ start: inner.$fields.start, operator: value });
     },
@@ -3784,7 +3784,7 @@ export function rangeExpressionUFormPrefix(config: Omit<ConfigOf<T.RangeExpressi
     $named: true as const,
     $variant: 'prefix' as const,
     $children: children,
-    operator(value?: T.RangeExpressionPrefixOperator) {
+    operator(value?: T.Operator) {
       if (value === undefined) return inner.$fields.operator;
       return rangeExpressionUFormPrefix({ end: inner.$fields.end, operator: value });
     },
@@ -3809,7 +3809,7 @@ export function rangeExpressionUFormBare(config: Omit<ConfigOf<T.RangeExpression
     $named: true as const,
     $variant: 'bare' as const,
     $children: children,
-    operator(value?: T.RangeExpressionBareOperator) {
+    operator(value?: T.Operator) {
       if (value === undefined) return inner.$fields.operator;
       return rangeExpressionUFormBare({ operator: value });
     },
@@ -3966,7 +3966,7 @@ export function referencePattern(config: ConfigOf<T.ReferencePattern>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    mutableSpecifier(value?: T.ReferencePatternMutableSpecifier | undefined) { return _fs(config, referencePattern, 'mutableSpecifier', value, config?.mutableSpecifier); },
+    mutableSpecifier(value?: T._MutableSpecifier | undefined) { return _fs(config, referencePattern, 'mutableSpecifier', value, config?.mutableSpecifier); },
     pattern(value?: T.Pattern) { return _fs(config, referencePattern, 'pattern', value, config?.pattern); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -3989,7 +3989,7 @@ export function referenceType(config: ConfigOf<T.ReferenceType>) {
     $named: true as const,
     $fields: fields,
     lifetime(value?: T.Lifetime | undefined) { return _fs(config, referenceType, 'lifetime', value, config?.lifetime); },
-    mutableSpecifier(value?: T.ReferenceTypeMutableSpecifier | undefined) { return _fs(config, referenceType, 'mutableSpecifier', value, config?.mutableSpecifier); },
+    mutableSpecifier(value?: T._MutableSpecifier | undefined) { return _fs(config, referenceType, 'mutableSpecifier', value, config?.mutableSpecifier); },
     typeField(value?: T._Type) { return _fs(config, referenceType, 'type', value, config?.type); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -4142,8 +4142,8 @@ export function selfParameter(config: ConfigOf<T.SelfParameter>) {
     $fields: fields,
     reference(value?: "&" | undefined) { return _fs(config, selfParameter, 'reference', value, config?.reference); },
     lifetime(value?: T.Lifetime | undefined) { return _fs(config, selfParameter, 'lifetime', value, config?.lifetime); },
-    mutableSpecifier(value?: T.SelfParameterMutableSpecifier | undefined) { return _fs(config, selfParameter, 'mutableSpecifier', value, config?.mutableSpecifier); },
-    self(value?: T.SelfParameterSelf) { return _fs(config, selfParameter, 'self', value, config?.self); },
+    mutableSpecifier(value?: T._MutableSpecifier | undefined) { return _fs(config, selfParameter, 'mutableSpecifier', value, config?.mutableSpecifier); },
+    self(value?: T._Self) { return _fs(config, selfParameter, 'self', value, config?.self); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -4237,7 +4237,7 @@ export function staticItem(config: ConfigOf<T.StaticItem>) {
     $named: true as const,
     $fields: fields,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, staticItem, 'visibilityModifier', value, config?.visibilityModifier); },
-    mutableSpecifier(value?: T.StaticItemRefMarker | T.StaticItemMutableSpecifier | undefined) { return _fs(config, staticItem, 'mutableSpecifier', value, config?.mutableSpecifier); },
+    mutableSpecifier(value?: T.RefMarker | T._MutableSpecifier | undefined) { return _fs(config, staticItem, 'mutableSpecifier', value, config?.mutableSpecifier); },
     name(value?: T.Identifier) { return _fs(config, staticItem, 'name', value, config?.name); },
     typeField(value?: T._Type) { return _fs(config, staticItem, 'type', value, config?.type); },
     value(value?: T.Expression | undefined) { return _fs(config, staticItem, 'value', value, config?.value); },
@@ -4735,7 +4735,7 @@ export function traitItem(config: ConfigOf<T.TraitItem>) {
     $named: true as const,
     $fields: fields,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, traitItem, 'visibilityModifier', value, config?.visibilityModifier); },
-    unsafeMarker(value?: T.TraitItemUnsafeMarker | undefined) { return _fs(config, traitItem, 'unsafeMarker', value, config?.unsafeMarker); },
+    unsafeMarker(value?: T.UnsafeMarker | undefined) { return _fs(config, traitItem, 'unsafeMarker', value, config?.unsafeMarker); },
     name(value?: T.TypeIdentifier) { return _fs(config, traitItem, 'name', value, config?.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, traitItem, 'typeParameters', value, config?.typeParameters); },
     bounds(value?: T.TraitBounds | undefined) { return _fs(config, traitItem, 'bounds', value, config?.bounds); },
@@ -5187,7 +5187,7 @@ export function variadicParameter(config?: ConfigOf<T.VariadicParameter>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    mutableSpecifier(value?: T.VariadicParameterMutableSpecifier | undefined) { return _fs(config, variadicParameter, 'mutableSpecifier', value, config?.mutableSpecifier); },
+    mutableSpecifier(value?: T._MutableSpecifier | undefined) { return _fs(config, variadicParameter, 'mutableSpecifier', value, config?.mutableSpecifier); },
     pattern(value?: T.Pattern | undefined) { return _fs(config, variadicParameter, 'pattern', value, config?.pattern); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {

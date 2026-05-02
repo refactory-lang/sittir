@@ -88,43 +88,34 @@ pub mod filters {
 
 #[derive(Debug, Clone)]
 pub enum AnyTransport {
-    RangeExpressionBareOperator(RangeExpressionBareOperatorEnum),
     RangeExpressionBinaryOperator(RangeExpressionBinaryOperatorEnum),
-    RangeExpressionPostfixOperator(RangeExpressionPostfixOperatorEnum),
-    RangeExpressionPrefixOperator(RangeExpressionPrefixOperatorEnum),
     VisibilityModifierInPathIn(VisibilityModifierInPathInEnum),
     VisibilityModifierPubPub(VisibilityModifierPubPubEnum),
     ArrayExpressionList(ArrayExpressionListTransport),
     ArrayExpressionSemi(ArrayExpressionSemiTransport),
-    AsyncBlockMoveMarker(AsyncBlockMoveMarkerEnum),
     BinaryExpressionOperator(BinaryExpressionOperatorEnum),
     ClosureExpressionAsyncMarker(ClosureExpressionAsyncMarkerEnum),
     ClosureExpressionBlock(ClosureExpressionBlockTransport),
     _ClosureExpressionExpr(_ClosureExpressionExprTransport),
-    ClosureExpressionMoveMarker(ClosureExpressionMoveMarkerEnum),
     ClosureExpressionStaticMarker(ClosureExpressionStaticMarkerEnum),
     CompoundAssignmentExprOperator(CompoundAssignmentExprOperatorEnum),
+    _Crate(_CrateEnum),
     _DelimTokenTreeBrace(_DelimTokenTreeBraceTransport),
     _DelimTokenTreeBracket(_DelimTokenTreeBracketTransport),
     _DelimTokenTreeParen(_DelimTokenTreeParenTransport),
     _ExpressionStatementBlockEnding(_ExpressionStatementBlockEndingTransport),
     _ExpressionStatementWithSemi(_ExpressionStatementWithSemiTransport),
-    ExternCrateDeclarationCrate(ExternCrateDeclarationCrateEnum),
     FieldIdentifier(FieldIdentifierTransport),
-    FieldPatternMutableSpecifier(FieldPatternMutableSpecifierEnum),
     FieldPatternNamed(FieldPatternNamedTransport),
-    FieldPatternRefMarker(FieldPatternRefMarkerEnum),
     _FieldPatternShorthand(_FieldPatternShorthandTransport),
     _ForeignModItemBody(_ForeignModItemBodyTransport),
     ForeignModItemSemi(ForeignModItemSemiTransport),
     FunctionTypeFnForm(FunctionTypeFnFormTransport),
     FunctionTypeTraitForm(FunctionTypeTraitFormTransport),
-    GenBlockMoveMarker(GenBlockMoveMarkerEnum),
     GenericTypeWithTurbofishTurbofish(GenericTypeWithTurbofishTurbofishEnum),
     _ImplItemBody(_ImplItemBodyTransport),
     ImplItemNegative(ImplItemNegativeEnum),
     ImplItemSemi(ImplItemSemiTransport),
-    ImplItemUnsafeMarker(ImplItemUnsafeMarkerEnum),
     InnerLineDocCommentMarker(InnerLineDocCommentMarkerTransport),
     KwAsyncMarker(KwAsyncMarkerTransport),
     KwIn(KwInTransport),
@@ -137,7 +128,6 @@ pub enum AnyTransport {
     KwTurbofish(KwTurbofishTransport),
     KwUnsafeMarker(KwUnsafeMarkerTransport),
     LetChain(LetChainTransport),
-    LetDeclarationMutableSpecifier(LetDeclarationMutableSpecifierEnum),
     LineCommentContent(LineCommentContentTransport),
     LineCommentDoc(LineCommentDocTransport),
     LineCommentRegularDslash(LineCommentRegularDslashTransport),
@@ -148,12 +138,13 @@ pub enum AnyTransport {
     MatchArmWithComma(MatchArmWithCommaTransport),
     ModItemExternal(ModItemExternalTransport),
     _ModItemInline(_ModItemInlineTransport),
-    MutPatternMutableSpecifier(MutPatternMutableSpecifierEnum),
+    MoveMarker(MoveMarkerEnum),
+    _MutableSpecifier(_MutableSpecifierEnum),
     NonSpecialToken(NonSpecialTokenTransport),
+    Operator(OperatorEnum),
     OrPatternBinary(OrPatternBinaryTransport),
     OrPatternPrefix(OrPatternPrefixTransport),
     OuterLineDocCommentMarker(OuterLineDocCommentMarkerTransport),
-    ParameterMutableSpecifier(ParameterMutableSpecifierEnum),
     PointerTypeConst(PointerTypeConstTransport),
     _PointerTypeMut(_PointerTypeMutTransport),
     PrimitiveType(PrimitiveTypeEnum),
@@ -164,15 +155,11 @@ pub enum AnyTransport {
     RangePatternLeftBare(RangePatternLeftBareTransport),
     RangePatternLeftWithRight(RangePatternLeftWithRightTransport),
     RangePatternPrefix(RangePatternPrefixTransport),
+    RefMarker(RefMarkerEnum),
     ReferenceExpressionRawConst(ReferenceExpressionRawConstTransport),
     ReferenceExpressionRawMut(ReferenceExpressionRawMutTransport),
-    ReferencePatternMutableSpecifier(ReferencePatternMutableSpecifierEnum),
-    ReferenceTypeMutableSpecifier(ReferenceTypeMutableSpecifierEnum),
     ReservedIdentifier(ReservedIdentifierTransport),
-    SelfParameterMutableSpecifier(SelfParameterMutableSpecifierEnum),
-    SelfParameterSelf(SelfParameterSelfEnum),
-    StaticItemMutableSpecifier(StaticItemMutableSpecifierEnum),
-    StaticItemRefMarker(StaticItemRefMarkerEnum),
+    _Self(_SelfEnum),
     StructItemBrace(StructItemBraceTransport),
     StructItemTuple(StructItemTupleTransport),
     StructItemUnit(StructItemUnitTransport),
@@ -183,10 +170,9 @@ pub enum AnyTransport {
     _TokenTreePatternBrace(_TokenTreePatternBraceTransport),
     _TokenTreePatternBracket(_TokenTreePatternBracketTransport),
     _TokenTreePatternParen(_TokenTreePatternParenTransport),
-    TraitItemUnsafeMarker(TraitItemUnsafeMarkerEnum),
     TypeIdentifier(TypeIdentifierTransport),
     UnaryExpressionOperator(UnaryExpressionOperatorEnum),
-    VariadicParameterMutableSpecifier(VariadicParameterMutableSpecifierEnum),
+    UnsafeMarker(UnsafeMarkerEnum),
     _VisibilityModifierCrate(_VisibilityModifierCrateTransport),
     VisibilityModifierInPath(VisibilityModifierInPathTransport),
     VisibilityModifierPub(VisibilityModifierPubTransport),
@@ -3832,59 +3818,6 @@ impl ::sittir_core::types::RenderableTransport for UseClauseTransport {
 
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum RangeExpressionBareOperatorEnum {
-    DotDot,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for RangeExpressionBareOperatorEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in RangeExpressionBareOperatorEnum"))?;
-        match text.as_str() {
-            ".." => Ok(Self::DotDot),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for RangeExpressionBareOperatorEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for RangeExpressionBareOperatorEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("RangeExpressionBareOperatorEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for RangeExpressionBareOperatorEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::DotDot => "..",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for RangeExpressionBareOperatorEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::DotDot => "..",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum RangeExpressionBinaryOperatorEnum {
     DotDot,
     DotDotDot,
@@ -3941,112 +3874,6 @@ impl ::sittir_core::types::RenderableTransport for RangeExpressionBinaryOperator
             Self::DotDot => "..",
             Self::DotDotDot => "...",
             Self::DotDotEq => "..=",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum RangeExpressionPostfixOperatorEnum {
-    DotDot,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for RangeExpressionPostfixOperatorEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in RangeExpressionPostfixOperatorEnum"))?;
-        match text.as_str() {
-            ".." => Ok(Self::DotDot),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for RangeExpressionPostfixOperatorEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for RangeExpressionPostfixOperatorEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("RangeExpressionPostfixOperatorEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for RangeExpressionPostfixOperatorEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::DotDot => "..",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for RangeExpressionPostfixOperatorEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::DotDot => "..",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum RangeExpressionPrefixOperatorEnum {
-    DotDot,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for RangeExpressionPrefixOperatorEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in RangeExpressionPrefixOperatorEnum"))?;
-        match text.as_str() {
-            ".." => Ok(Self::DotDot),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for RangeExpressionPrefixOperatorEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for RangeExpressionPrefixOperatorEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("RangeExpressionPrefixOperatorEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for RangeExpressionPrefixOperatorEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::DotDot => "..",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for RangeExpressionPrefixOperatorEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::DotDot => "..",
         }).map_err(::askama::Error::from)
     }
 }
@@ -4215,59 +4042,6 @@ impl ::sittir_core::types::RenderableTransport for ArrayExpressionSemiTransport 
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum AsyncBlockMoveMarkerEnum {
-    MoveKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for AsyncBlockMoveMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in AsyncBlockMoveMarkerEnum"))?;
-        match text.as_str() {
-            "move" => Ok(Self::MoveKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for AsyncBlockMoveMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AsyncBlockMoveMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("AsyncBlockMoveMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for AsyncBlockMoveMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::MoveKw => "move",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for AsyncBlockMoveMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::MoveKw => "move",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum BinaryExpressionOperatorEnum {
     AmpAmp,
 }
@@ -4427,59 +4201,6 @@ impl ::sittir_core::types::RenderableTransport for _ClosureExpressionExprTranspo
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ClosureExpressionMoveMarkerEnum {
-    MoveKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ClosureExpressionMoveMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in ClosureExpressionMoveMarkerEnum"))?;
-        match text.as_str() {
-            "move" => Ok(Self::MoveKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for ClosureExpressionMoveMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ClosureExpressionMoveMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ClosureExpressionMoveMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for ClosureExpressionMoveMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::MoveKw => "move",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for ClosureExpressionMoveMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::MoveKw => "move",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ClosureExpressionStaticMarkerEnum {
     StaticKw,
 }
@@ -4621,6 +4342,59 @@ impl ::sittir_core::types::RenderableTransport for CompoundAssignmentExprOperato
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum _CrateEnum {
+    CrateKw,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for _CrateEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in _CrateEnum"))?;
+        match text.as_str() {
+            "crate" => Ok(Self::CrateKw),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for _CrateEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for _CrateEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("_CrateEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for _CrateEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::CrateKw => "crate",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for _CrateEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::CrateKw => "crate",
+        }).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct _DelimTokenTreeBraceTransport {
@@ -4756,59 +4530,6 @@ impl ::sittir_core::types::RenderableTransport for _ExpressionStatementWithSemiT
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ExternCrateDeclarationCrateEnum {
-    CrateKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ExternCrateDeclarationCrateEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in ExternCrateDeclarationCrateEnum"))?;
-        match text.as_str() {
-            "crate" => Ok(Self::CrateKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for ExternCrateDeclarationCrateEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ExternCrateDeclarationCrateEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ExternCrateDeclarationCrateEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for ExternCrateDeclarationCrateEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::CrateKw => "crate",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for ExternCrateDeclarationCrateEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::CrateKw => "crate",
-        }).map_err(::askama::Error::from)
-    }
-}
-
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct FieldIdentifierTransport {
@@ -4836,59 +4557,6 @@ impl ::sittir_core::types::RenderableTransport for FieldIdentifierTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum FieldPatternMutableSpecifierEnum {
-    MutKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for FieldPatternMutableSpecifierEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in FieldPatternMutableSpecifierEnum"))?;
-        match text.as_str() {
-            "mut" => Ok(Self::MutKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for FieldPatternMutableSpecifierEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FieldPatternMutableSpecifierEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("FieldPatternMutableSpecifierEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for FieldPatternMutableSpecifierEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::MutKw => "mut",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for FieldPatternMutableSpecifierEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::MutKw => "mut",
-        }).map_err(::askama::Error::from)
-    }
-}
-
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct FieldPatternNamedTransport {
@@ -4913,59 +4581,6 @@ impl ::sittir_core::types::RenderableTransport for FieldPatternNamedTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_field_pattern_named_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum FieldPatternRefMarkerEnum {
-    RefKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for FieldPatternRefMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in FieldPatternRefMarkerEnum"))?;
-        match text.as_str() {
-            "ref" => Ok(Self::RefKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for FieldPatternRefMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FieldPatternRefMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("FieldPatternRefMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for FieldPatternRefMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::RefKw => "ref",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for FieldPatternRefMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::RefKw => "ref",
-        }).map_err(::askama::Error::from)
     }
 }
 
@@ -5097,59 +4712,6 @@ impl ::sittir_core::types::RenderableTransport for FunctionTypeTraitFormTranspor
     ) -> Result<(), ::askama::Error> {
         let s = render_function_type_trait_form_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum GenBlockMoveMarkerEnum {
-    MoveKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for GenBlockMoveMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in GenBlockMoveMarkerEnum"))?;
-        match text.as_str() {
-            "move" => Ok(Self::MoveKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for GenBlockMoveMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for GenBlockMoveMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("GenBlockMoveMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for GenBlockMoveMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::MoveKw => "move",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for GenBlockMoveMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::MoveKw => "move",
-        }).map_err(::askama::Error::from)
     }
 }
 
@@ -5307,59 +4869,6 @@ impl ::sittir_core::types::RenderableTransport for ImplItemSemiTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_impl_item_semi_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ImplItemUnsafeMarkerEnum {
-    UnsafeKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ImplItemUnsafeMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in ImplItemUnsafeMarkerEnum"))?;
-        match text.as_str() {
-            "unsafe" => Ok(Self::UnsafeKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for ImplItemUnsafeMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ImplItemUnsafeMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ImplItemUnsafeMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for ImplItemUnsafeMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::UnsafeKw => "unsafe",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for ImplItemUnsafeMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::UnsafeKw => "unsafe",
-        }).map_err(::askama::Error::from)
     }
 }
 
@@ -5665,59 +5174,6 @@ impl ::sittir_core::types::RenderableTransport for LetChainTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum LetDeclarationMutableSpecifierEnum {
-    MutKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LetDeclarationMutableSpecifierEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in LetDeclarationMutableSpecifierEnum"))?;
-        match text.as_str() {
-            "mut" => Ok(Self::MutKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for LetDeclarationMutableSpecifierEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LetDeclarationMutableSpecifierEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("LetDeclarationMutableSpecifierEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for LetDeclarationMutableSpecifierEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::MutKw => "mut",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for LetDeclarationMutableSpecifierEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::MutKw => "mut",
-        }).map_err(::askama::Error::from)
-    }
-}
-
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct LineCommentContentTransport {
@@ -5979,23 +5435,23 @@ impl ::sittir_core::types::RenderableTransport for _ModItemInlineTransport {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MutPatternMutableSpecifierEnum {
-    MutKw,
+pub enum MoveMarkerEnum {
+    MoveKw,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for MutPatternMutableSpecifierEnum {
+impl ::napi::bindgen_prelude::FromNapiValue for MoveMarkerEnum {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in MutPatternMutableSpecifierEnum"))?;
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in MoveMarkerEnum"))?;
         match text.as_str() {
-            "mut" => Ok(Self::MutKw),
+            "move" => Ok(Self::MoveKw),
             other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for MutPatternMutableSpecifierEnum",
+                "unknown $text value {:?} for MoveMarkerEnum",
                 other
             ))),
         }
@@ -6003,16 +5459,69 @@ impl ::napi::bindgen_prelude::FromNapiValue for MutPatternMutableSpecifierEnum {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MutPatternMutableSpecifierEnum {
+impl ::napi::bindgen_prelude::ToNapiValue for MoveMarkerEnum {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("MutPatternMutableSpecifierEnum is receive-only"))
+        Err(::napi::Error::from_reason("MoveMarkerEnum is receive-only"))
     }
 }
 
-impl ::std::fmt::Display for MutPatternMutableSpecifierEnum {
+impl ::std::fmt::Display for MoveMarkerEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::MoveKw => "move",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for MoveMarkerEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::MoveKw => "move",
+        }).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum _MutableSpecifierEnum {
+    MutKw,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for _MutableSpecifierEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in _MutableSpecifierEnum"))?;
+        match text.as_str() {
+            "mut" => Ok(Self::MutKw),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for _MutableSpecifierEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for _MutableSpecifierEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("_MutableSpecifierEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for _MutableSpecifierEnum {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         f.write_str(match self {
             Self::MutKw => "mut",
@@ -6020,7 +5529,7 @@ impl ::std::fmt::Display for MutPatternMutableSpecifierEnum {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for MutPatternMutableSpecifierEnum {
+impl ::sittir_core::types::RenderableTransport for _MutableSpecifierEnum {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6055,6 +5564,59 @@ impl ::sittir_core::types::RenderableTransport for NonSpecialTokenTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render_non_special_token_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum OperatorEnum {
+    DotDot,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for OperatorEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in OperatorEnum"))?;
+        match text.as_str() {
+            ".." => Ok(Self::DotDot),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for OperatorEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for OperatorEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("OperatorEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for OperatorEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::DotDot => "..",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for OperatorEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::DotDot => "..",
+        }).map_err(::askama::Error::from)
     }
 }
 
@@ -6133,59 +5695,6 @@ impl ::sittir_core::types::RenderableTransport for OuterLineDocCommentMarkerTran
     ) -> Result<(), ::askama::Error> {
         let s = render_outer_line_doc_comment_marker_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ParameterMutableSpecifierEnum {
-    MutKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ParameterMutableSpecifierEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in ParameterMutableSpecifierEnum"))?;
-        match text.as_str() {
-            "mut" => Ok(Self::MutKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for ParameterMutableSpecifierEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ParameterMutableSpecifierEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ParameterMutableSpecifierEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for ParameterMutableSpecifierEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::MutKw => "mut",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for ParameterMutableSpecifierEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::MutKw => "mut",
-        }).map_err(::askama::Error::from)
     }
 }
 
@@ -6371,7 +5880,7 @@ pub struct _RangeExpressionBareTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub operator: RangeExpressionBareOperatorEnum,
+    pub operator: OperatorEnum,
 }
 
 impl ::sittir_core::types::RenderableTransport for _RangeExpressionBareTransport {
@@ -6426,7 +5935,7 @@ pub struct RangeExpressionPostfixTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub start: ExpressionTransport,
-    pub operator: RangeExpressionPostfixOperatorEnum,
+    pub operator: OperatorEnum,
 }
 
 impl ::sittir_core::types::RenderableTransport for RangeExpressionPostfixTransport {
@@ -6452,7 +5961,7 @@ pub struct RangeExpressionPrefixTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub operator: RangeExpressionPrefixOperatorEnum,
+    pub operator: OperatorEnum,
     pub end: ExpressionTransport,
 }
 
@@ -6543,6 +6052,59 @@ impl ::sittir_core::types::RenderableTransport for RangePatternPrefixTransport {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RefMarkerEnum {
+    RefKw,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for RefMarkerEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in RefMarkerEnum"))?;
+        match text.as_str() {
+            "ref" => Ok(Self::RefKw),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for RefMarkerEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for RefMarkerEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("RefMarkerEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for RefMarkerEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::RefKw => "ref",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for RefMarkerEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::RefKw => "ref",
+        }).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ReferenceExpressionRawConstTransport {
@@ -6595,112 +6157,6 @@ impl ::sittir_core::types::RenderableTransport for ReferenceExpressionRawMutTran
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ReferencePatternMutableSpecifierEnum {
-    MutKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ReferencePatternMutableSpecifierEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in ReferencePatternMutableSpecifierEnum"))?;
-        match text.as_str() {
-            "mut" => Ok(Self::MutKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for ReferencePatternMutableSpecifierEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ReferencePatternMutableSpecifierEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ReferencePatternMutableSpecifierEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for ReferencePatternMutableSpecifierEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::MutKw => "mut",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for ReferencePatternMutableSpecifierEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::MutKw => "mut",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ReferenceTypeMutableSpecifierEnum {
-    MutKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ReferenceTypeMutableSpecifierEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in ReferenceTypeMutableSpecifierEnum"))?;
-        match text.as_str() {
-            "mut" => Ok(Self::MutKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for ReferenceTypeMutableSpecifierEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ReferenceTypeMutableSpecifierEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ReferenceTypeMutableSpecifierEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for ReferenceTypeMutableSpecifierEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::MutKw => "mut",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for ReferenceTypeMutableSpecifierEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::MutKw => "mut",
-        }).map_err(::askama::Error::from)
-    }
-}
-
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ReservedIdentifierTransport {
@@ -6729,76 +6185,23 @@ impl ::sittir_core::types::RenderableTransport for ReservedIdentifierTransport {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum SelfParameterMutableSpecifierEnum {
-    MutKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for SelfParameterMutableSpecifierEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in SelfParameterMutableSpecifierEnum"))?;
-        match text.as_str() {
-            "mut" => Ok(Self::MutKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for SelfParameterMutableSpecifierEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for SelfParameterMutableSpecifierEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("SelfParameterMutableSpecifierEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for SelfParameterMutableSpecifierEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::MutKw => "mut",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for SelfParameterMutableSpecifierEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::MutKw => "mut",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum SelfParameterSelfEnum {
+pub enum _SelfEnum {
     SelfKw,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for SelfParameterSelfEnum {
+impl ::napi::bindgen_prelude::FromNapiValue for _SelfEnum {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in SelfParameterSelfEnum"))?;
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in _SelfEnum"))?;
         match text.as_str() {
             "self" => Ok(Self::SelfKw),
             other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for SelfParameterSelfEnum",
+                "unknown $text value {:?} for _SelfEnum",
                 other
             ))),
         }
@@ -6806,16 +6209,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for SelfParameterSelfEnum {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for SelfParameterSelfEnum {
+impl ::napi::bindgen_prelude::ToNapiValue for _SelfEnum {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("SelfParameterSelfEnum is receive-only"))
+        Err(::napi::Error::from_reason("_SelfEnum is receive-only"))
     }
 }
 
-impl ::std::fmt::Display for SelfParameterSelfEnum {
+impl ::std::fmt::Display for _SelfEnum {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         f.write_str(match self {
             Self::SelfKw => "self",
@@ -6823,119 +6226,13 @@ impl ::std::fmt::Display for SelfParameterSelfEnum {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for SelfParameterSelfEnum {
+impl ::sittir_core::types::RenderableTransport for _SelfEnum {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         dest.write_str(match self {
             Self::SelfKw => "self",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum StaticItemMutableSpecifierEnum {
-    MutKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for StaticItemMutableSpecifierEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in StaticItemMutableSpecifierEnum"))?;
-        match text.as_str() {
-            "mut" => Ok(Self::MutKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for StaticItemMutableSpecifierEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for StaticItemMutableSpecifierEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("StaticItemMutableSpecifierEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for StaticItemMutableSpecifierEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::MutKw => "mut",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for StaticItemMutableSpecifierEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::MutKw => "mut",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum StaticItemRefMarkerEnum {
-    RefKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for StaticItemRefMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in StaticItemRefMarkerEnum"))?;
-        match text.as_str() {
-            "ref" => Ok(Self::RefKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for StaticItemRefMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for StaticItemRefMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("StaticItemRefMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for StaticItemRefMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::RefKw => "ref",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for StaticItemRefMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::RefKw => "ref",
         }).map_err(::askama::Error::from)
     }
 }
@@ -7292,59 +6589,6 @@ impl ::sittir_core::types::RenderableTransport for _TokenTreePatternParenTranspo
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum TraitItemUnsafeMarkerEnum {
-    UnsafeKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TraitItemUnsafeMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in TraitItemUnsafeMarkerEnum"))?;
-        match text.as_str() {
-            "unsafe" => Ok(Self::UnsafeKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for TraitItemUnsafeMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TraitItemUnsafeMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TraitItemUnsafeMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for TraitItemUnsafeMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::UnsafeKw => "unsafe",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for TraitItemUnsafeMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::UnsafeKw => "unsafe",
-        }).map_err(::askama::Error::from)
-    }
-}
-
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TypeIdentifierTransport {
@@ -7434,23 +6678,23 @@ impl ::sittir_core::types::RenderableTransport for UnaryExpressionOperatorEnum {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum VariadicParameterMutableSpecifierEnum {
-    MutKw,
+pub enum UnsafeMarkerEnum {
+    UnsafeKw,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for VariadicParameterMutableSpecifierEnum {
+impl ::napi::bindgen_prelude::FromNapiValue for UnsafeMarkerEnum {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in VariadicParameterMutableSpecifierEnum"))?;
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in UnsafeMarkerEnum"))?;
         match text.as_str() {
-            "mut" => Ok(Self::MutKw),
+            "unsafe" => Ok(Self::UnsafeKw),
             other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for VariadicParameterMutableSpecifierEnum",
+                "unknown $text value {:?} for UnsafeMarkerEnum",
                 other
             ))),
         }
@@ -7458,30 +6702,30 @@ impl ::napi::bindgen_prelude::FromNapiValue for VariadicParameterMutableSpecifie
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for VariadicParameterMutableSpecifierEnum {
+impl ::napi::bindgen_prelude::ToNapiValue for UnsafeMarkerEnum {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("VariadicParameterMutableSpecifierEnum is receive-only"))
+        Err(::napi::Error::from_reason("UnsafeMarkerEnum is receive-only"))
     }
 }
 
-impl ::std::fmt::Display for VariadicParameterMutableSpecifierEnum {
+impl ::std::fmt::Display for UnsafeMarkerEnum {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         f.write_str(match self {
-            Self::MutKw => "mut",
+            Self::UnsafeKw => "unsafe",
         })
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for VariadicParameterMutableSpecifierEnum {
+impl ::sittir_core::types::RenderableTransport for UnsafeMarkerEnum {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         dest.write_str(match self {
-            Self::MutKw => "mut",
+            Self::UnsafeKw => "unsafe",
         }).map_err(::askama::Error::from)
     }
 }
@@ -7841,7 +7085,7 @@ pub struct AsyncBlockTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub move_marker: Option<AsyncBlockMoveMarkerEnum>,
+    pub move_marker: Option<MoveMarkerEnum>,
     pub block: BlockTransport,
 }
 
@@ -8344,7 +7588,7 @@ pub struct ClosureExpressionUFormBlockTransport {
     pub transport_node_id: Option<f64>,
     pub static_marker: Option<ClosureExpressionStaticMarkerEnum>,
     pub async_marker: Option<ClosureExpressionAsyncMarkerEnum>,
-    pub move_marker: Option<ClosureExpressionMoveMarkerEnum>,
+    pub move_marker: Option<MoveMarkerEnum>,
     pub parameters: ClosureParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<ClosureExpressionBlockTransport>,
@@ -8375,7 +7619,7 @@ pub struct ClosureExpressionUFormExprTransport {
     pub transport_node_id: Option<f64>,
     pub static_marker: Option<ClosureExpressionStaticMarkerEnum>,
     pub async_marker: Option<ClosureExpressionAsyncMarkerEnum>,
-    pub move_marker: Option<ClosureExpressionMoveMarkerEnum>,
+    pub move_marker: Option<MoveMarkerEnum>,
     pub parameters: ClosureParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<_ClosureExpressionExprTransport>,
@@ -9195,7 +8439,7 @@ pub struct ExternCrateDeclarationTransport {
     pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "crate"))]
-    pub crate_: ExternCrateDeclarationCrateEnum,
+    pub crate_: _CrateEnum,
     pub name: IdentifierTransport,
     pub alias: Option<IdentifierTransport>,
 }
@@ -9454,8 +8698,8 @@ pub struct FieldPatternUFormShorthandTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub ref_marker: Option<FieldPatternRefMarkerEnum>,
-    pub mutable_specifier: Option<FieldPatternMutableSpecifierEnum>,
+    pub ref_marker: Option<RefMarkerEnum>,
+    pub mutable_specifier: Option<_MutableSpecifierEnum>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<_FieldPatternShorthandTransport>,
 }
@@ -9483,8 +8727,8 @@ pub struct FieldPatternUFormNamedTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub ref_marker: Option<FieldPatternRefMarkerEnum>,
-    pub mutable_specifier: Option<FieldPatternMutableSpecifierEnum>,
+    pub ref_marker: Option<RefMarkerEnum>,
+    pub mutable_specifier: Option<_MutableSpecifierEnum>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<FieldPatternNamedTransport>,
 }
@@ -9922,7 +9166,7 @@ pub struct GenBlockTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub move_marker: Option<GenBlockMoveMarkerEnum>,
+    pub move_marker: Option<MoveMarkerEnum>,
     pub block: BlockTransport,
 }
 
@@ -10208,7 +9452,7 @@ pub struct ImplItemUFormBodyTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub unsafe_marker: Option<ImplItemUnsafeMarkerEnum>,
+    pub unsafe_marker: Option<UnsafeMarkerEnum>,
     pub type_parameters: Option<TypeParametersTransport>,
     pub negative: Option<ImplItemNegativeEnum>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "trait"))]
@@ -10243,7 +9487,7 @@ pub struct ImplItemUFormSemiTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub unsafe_marker: Option<ImplItemUnsafeMarkerEnum>,
+    pub unsafe_marker: Option<UnsafeMarkerEnum>,
     pub type_parameters: Option<TypeParametersTransport>,
     pub negative: Option<ImplItemNegativeEnum>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "trait"))]
@@ -10438,7 +9682,7 @@ pub struct LetDeclarationTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub mutable_specifier: Option<LetDeclarationMutableSpecifierEnum>,
+    pub mutable_specifier: Option<_MutableSpecifierEnum>,
     pub pattern: PatternTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Option<_TypeTransport>,
@@ -11291,7 +10535,7 @@ pub struct MutPatternTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub mutable_specifier: MutPatternMutableSpecifierEnum,
+    pub mutable_specifier: _MutableSpecifierEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<PatternTransport>,
 }
@@ -11516,7 +10760,7 @@ pub struct ParameterTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub mutable_specifier: Option<ParameterMutableSpecifierEnum>,
+    pub mutable_specifier: Option<_MutableSpecifierEnum>,
     pub pattern: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: _TypeTransport,
@@ -11752,7 +10996,7 @@ pub struct RangeExpressionBareTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub operator: RangeExpressionBareOperatorEnum,
+    pub operator: OperatorEnum,
 }
 
 impl ::sittir_core::types::RenderableTransport for RangeExpressionBareTransport {
@@ -12144,7 +11388,7 @@ pub struct ReferencePatternTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub mutable_specifier: Option<ReferencePatternMutableSpecifierEnum>,
+    pub mutable_specifier: Option<_MutableSpecifierEnum>,
     pub pattern: PatternTransport,
 }
 
@@ -12172,7 +11416,7 @@ pub struct ReferenceTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub lifetime: Option<LifetimeTransport>,
-    pub mutable_specifier: Option<ReferenceTypeMutableSpecifierEnum>,
+    pub mutable_specifier: Option<_MutableSpecifierEnum>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: _TypeTransport,
 }
@@ -12414,9 +11658,9 @@ pub struct SelfParameterTransport {
     pub transport_node_id: Option<f64>,
     pub reference: Option<Box<AnyTransport>>,
     pub lifetime: Option<LifetimeTransport>,
-    pub mutable_specifier: Option<SelfParameterMutableSpecifierEnum>,
+    pub mutable_specifier: Option<_MutableSpecifierEnum>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "self"))]
-    pub self_: SelfParameterSelfEnum,
+    pub self_: _SelfEnum,
 }
 
 impl ::sittir_core::types::RenderableTransport for SelfParameterTransport {
@@ -13343,7 +12587,7 @@ pub struct TraitItemTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
-    pub unsafe_marker: Option<TraitItemUnsafeMarkerEnum>,
+    pub unsafe_marker: Option<UnsafeMarkerEnum>,
     pub name: TypeIdentifierTransport,
     pub type_parameters: Option<TypeParametersTransport>,
     pub bounds: Option<TraitBoundsTransport>,
@@ -13974,7 +13218,7 @@ pub struct VariadicParameterTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub mutable_specifier: Option<VariadicParameterMutableSpecifierEnum>,
+    pub mutable_specifier: Option<_MutableSpecifierEnum>,
     pub pattern: Option<PatternTransport>,
 }
 
@@ -16253,19 +15497,7 @@ impl ::askama::FastWritable for Renderable<'_> {
     }
 }
 
-fn render_range_expression_bare_operator_transport(t: &RangeExpressionBareOperatorEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
 fn render_range_expression_binary_operator_transport(t: &RangeExpressionBinaryOperatorEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_range_expression_postfix_operator_transport(t: &RangeExpressionPostfixOperatorEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_range_expression_prefix_operator_transport(t: &RangeExpressionPrefixOperatorEnum) -> Result<String, ::askama::Error> {
     Ok(t.to_string())
 }
 
@@ -16289,10 +15521,6 @@ fn render_array_expression_semi_transport(node: &ArrayExpressionSemiTransport) -
     Ok(node.transport_text.clone().unwrap_or_default())
 }
 
-fn render_async_block_move_marker_transport(t: &AsyncBlockMoveMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
 fn render_binary_expression_operator_transport(t: &BinaryExpressionOperatorEnum) -> Result<String, ::askama::Error> {
     Ok(t.to_string())
 }
@@ -16309,15 +15537,15 @@ fn render__closure_expression_expr_transport(node: &_ClosureExpressionExprTransp
     Ok(node.transport_text.clone().unwrap_or_default())
 }
 
-fn render_closure_expression_move_marker_transport(t: &ClosureExpressionMoveMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
 fn render_closure_expression_static_marker_transport(t: &ClosureExpressionStaticMarkerEnum) -> Result<String, ::askama::Error> {
     Ok(t.to_string())
 }
 
 fn render_compound_assignment_expr_operator_transport(t: &CompoundAssignmentExprOperatorEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
+}
+
+fn render__crate_transport(t: &_CrateEnum) -> Result<String, ::askama::Error> {
     Ok(t.to_string())
 }
 
@@ -16361,10 +15589,6 @@ fn render__expression_statement_with_semi_transport(node: &_ExpressionStatementW
     Ok(out)
 }
 
-fn render_extern_crate_declaration_crate_transport(t: &ExternCrateDeclarationCrateEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
 fn render_field_identifier_transport(node: &FieldIdentifierTransport) -> Result<String, ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
@@ -16380,16 +15604,8 @@ fn render_field_identifier_transport(node: &FieldIdentifierTransport) -> Result<
     template.render()
 }
 
-fn render_field_pattern_mutable_specifier_transport(t: &FieldPatternMutableSpecifierEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
 fn render_field_pattern_named_transport(node: &FieldPatternNamedTransport) -> Result<String, ::askama::Error> {
     Ok(node.transport_text.clone().unwrap_or_default())
-}
-
-fn render_field_pattern_ref_marker_transport(t: &FieldPatternRefMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
 }
 
 fn render__field_pattern_shorthand_transport(node: &_FieldPatternShorthandTransport) -> Result<String, ::askama::Error> {
@@ -16427,10 +15643,6 @@ fn render_function_type_trait_form_transport(node: &FunctionTypeTraitFormTranspo
     template.render()
 }
 
-fn render_gen_block_move_marker_transport(t: &GenBlockMoveMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
 fn render_generic_type_with_turbofish_turbofish_transport(t: &GenericTypeWithTurbofishTurbofishEnum) -> Result<String, ::askama::Error> {
     Ok(t.to_string())
 }
@@ -16445,10 +15657,6 @@ fn render_impl_item_negative_transport(t: &ImplItemNegativeEnum) -> Result<Strin
 
 fn render_impl_item_semi_transport(t: &ImplItemSemiTransport) -> Result<String, ::askama::Error> {
     Ok(t.text.clone())
-}
-
-fn render_impl_item_unsafe_marker_transport(t: &ImplItemUnsafeMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
 }
 
 fn render_inner_line_doc_comment_marker_transport(t: &InnerLineDocCommentMarkerTransport) -> Result<String, ::askama::Error> {
@@ -16510,10 +15718,6 @@ fn render_let_chain_transport(node: &LetChainTransport) -> Result<String, ::aska
     template.render()
 }
 
-fn render_let_declaration_mutable_specifier_transport(t: &LetDeclarationMutableSpecifierEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
 fn render_line_comment_content_transport(t: &LineCommentContentTransport) -> Result<String, ::askama::Error> {
     Ok(t.text.clone())
 }
@@ -16572,7 +15776,11 @@ fn render__mod_item_inline_transport(node: &_ModItemInlineTransport) -> Result<S
     Ok(node.transport_text.clone().unwrap_or_default())
 }
 
-fn render_mut_pattern_mutable_specifier_transport(t: &MutPatternMutableSpecifierEnum) -> Result<String, ::askama::Error> {
+fn render_move_marker_transport(t: &MoveMarkerEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
+}
+
+fn render__mutable_specifier_transport(t: &_MutableSpecifierEnum) -> Result<String, ::askama::Error> {
     Ok(t.to_string())
 }
 
@@ -16582,6 +15790,10 @@ fn render_non_special_token_transport(node: &NonSpecialTokenTransport) -> Result
         out.push_str(&child.as_ref().render_to_string()?);
     }
     Ok(out)
+}
+
+fn render_operator_transport(t: &OperatorEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
 }
 
 fn render_or_pattern_binary_transport(node: &OrPatternBinaryTransport) -> Result<String, ::askama::Error> {
@@ -16594,10 +15806,6 @@ fn render_or_pattern_prefix_transport(node: &OrPatternPrefixTransport) -> Result
 
 fn render_outer_line_doc_comment_marker_transport(t: &OuterLineDocCommentMarkerTransport) -> Result<String, ::askama::Error> {
     Ok(t.text.clone())
-}
-
-fn render_parameter_mutable_specifier_transport(t: &ParameterMutableSpecifierEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
 }
 
 fn render_pointer_type_const_transport(t: &PointerTypeConstTransport) -> Result<String, ::askama::Error> {
@@ -16644,6 +15852,10 @@ fn render_range_pattern_prefix_transport(node: &RangePatternPrefixTransport) -> 
     Ok(node.transport_text.clone().unwrap_or_default())
 }
 
+fn render_ref_marker_transport(t: &RefMarkerEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
+}
+
 fn render_reference_expression_raw_const_transport(t: &ReferenceExpressionRawConstTransport) -> Result<String, ::askama::Error> {
     Ok(t.text.clone())
 }
@@ -16663,14 +15875,6 @@ fn render_reference_expression_raw_mut_transport(node: &ReferenceExpressionRawMu
     template.render()
 }
 
-fn render_reference_pattern_mutable_specifier_transport(t: &ReferencePatternMutableSpecifierEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_reference_type_mutable_specifier_transport(t: &ReferenceTypeMutableSpecifierEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
 fn render_reserved_identifier_transport(node: &ReservedIdentifierTransport) -> Result<String, ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
@@ -16686,19 +15890,7 @@ fn render_reserved_identifier_transport(node: &ReservedIdentifierTransport) -> R
     template.render()
 }
 
-fn render_self_parameter_mutable_specifier_transport(t: &SelfParameterMutableSpecifierEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_self_parameter_self_transport(t: &SelfParameterSelfEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_static_item_mutable_specifier_transport(t: &StaticItemMutableSpecifierEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_static_item_ref_marker_transport(t: &StaticItemRefMarkerEnum) -> Result<String, ::askama::Error> {
+fn render__self_transport(t: &_SelfEnum) -> Result<String, ::askama::Error> {
     Ok(t.to_string())
 }
 
@@ -16778,10 +15970,6 @@ fn render__token_tree_pattern_paren_transport(node: &_TokenTreePatternParenTrans
     Ok(out)
 }
 
-fn render_trait_item_unsafe_marker_transport(t: &TraitItemUnsafeMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
 fn render_type_identifier_transport(node: &TypeIdentifierTransport) -> Result<String, ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
@@ -16801,7 +15989,7 @@ fn render_unary_expression_operator_transport(t: &UnaryExpressionOperatorEnum) -
     Ok(t.to_string())
 }
 
-fn render_variadic_parameter_mutable_specifier_transport(t: &VariadicParameterMutableSpecifierEnum) -> Result<String, ::askama::Error> {
+fn render_unsafe_marker_transport(t: &UnsafeMarkerEnum) -> Result<String, ::askama::Error> {
     Ok(t.to_string())
 }
 
@@ -20534,43 +19722,34 @@ fn render_use_clause_transport(t: &UseClauseTransport) -> Result<String, ::askam
 
 pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::askama::Error> {
     match transport {
-        AnyTransport::RangeExpressionBareOperator(t) => render_range_expression_bare_operator_transport(t),
         AnyTransport::RangeExpressionBinaryOperator(t) => render_range_expression_binary_operator_transport(t),
-        AnyTransport::RangeExpressionPostfixOperator(t) => render_range_expression_postfix_operator_transport(t),
-        AnyTransport::RangeExpressionPrefixOperator(t) => render_range_expression_prefix_operator_transport(t),
         AnyTransport::VisibilityModifierInPathIn(t) => render_visibility_modifier_in_path_in_transport(t),
         AnyTransport::VisibilityModifierPubPub(t) => render_visibility_modifier_pub_pub_transport(t),
         AnyTransport::ArrayExpressionList(t) => render_array_expression_list_transport(t),
         AnyTransport::ArrayExpressionSemi(t) => render_array_expression_semi_transport(t),
-        AnyTransport::AsyncBlockMoveMarker(t) => render_async_block_move_marker_transport(t),
         AnyTransport::BinaryExpressionOperator(t) => render_binary_expression_operator_transport(t),
         AnyTransport::ClosureExpressionAsyncMarker(t) => render_closure_expression_async_marker_transport(t),
         AnyTransport::ClosureExpressionBlock(t) => render_closure_expression_block_transport(t),
         AnyTransport::_ClosureExpressionExpr(t) => render__closure_expression_expr_transport(t),
-        AnyTransport::ClosureExpressionMoveMarker(t) => render_closure_expression_move_marker_transport(t),
         AnyTransport::ClosureExpressionStaticMarker(t) => render_closure_expression_static_marker_transport(t),
         AnyTransport::CompoundAssignmentExprOperator(t) => render_compound_assignment_expr_operator_transport(t),
+        AnyTransport::_Crate(t) => render__crate_transport(t),
         AnyTransport::_DelimTokenTreeBrace(t) => render__delim_token_tree_brace_transport(t),
         AnyTransport::_DelimTokenTreeBracket(t) => render__delim_token_tree_bracket_transport(t),
         AnyTransport::_DelimTokenTreeParen(t) => render__delim_token_tree_paren_transport(t),
         AnyTransport::_ExpressionStatementBlockEnding(t) => render__expression_statement_block_ending_transport(t),
         AnyTransport::_ExpressionStatementWithSemi(t) => render__expression_statement_with_semi_transport(t),
-        AnyTransport::ExternCrateDeclarationCrate(t) => render_extern_crate_declaration_crate_transport(t),
         AnyTransport::FieldIdentifier(t) => render_field_identifier_transport(t),
-        AnyTransport::FieldPatternMutableSpecifier(t) => render_field_pattern_mutable_specifier_transport(t),
         AnyTransport::FieldPatternNamed(t) => render_field_pattern_named_transport(t),
-        AnyTransport::FieldPatternRefMarker(t) => render_field_pattern_ref_marker_transport(t),
         AnyTransport::_FieldPatternShorthand(t) => render__field_pattern_shorthand_transport(t),
         AnyTransport::_ForeignModItemBody(t) => render__foreign_mod_item_body_transport(t),
         AnyTransport::ForeignModItemSemi(t) => render_foreign_mod_item_semi_transport(t),
         AnyTransport::FunctionTypeFnForm(t) => render_function_type_fn_form_transport(t),
         AnyTransport::FunctionTypeTraitForm(t) => render_function_type_trait_form_transport(t),
-        AnyTransport::GenBlockMoveMarker(t) => render_gen_block_move_marker_transport(t),
         AnyTransport::GenericTypeWithTurbofishTurbofish(t) => render_generic_type_with_turbofish_turbofish_transport(t),
         AnyTransport::_ImplItemBody(t) => render__impl_item_body_transport(t),
         AnyTransport::ImplItemNegative(t) => render_impl_item_negative_transport(t),
         AnyTransport::ImplItemSemi(t) => render_impl_item_semi_transport(t),
-        AnyTransport::ImplItemUnsafeMarker(t) => render_impl_item_unsafe_marker_transport(t),
         AnyTransport::InnerLineDocCommentMarker(t) => render_inner_line_doc_comment_marker_transport(t),
         AnyTransport::KwAsyncMarker(t) => render_kw_async_marker_transport(t),
         AnyTransport::KwIn(t) => render_kw_in_transport(t),
@@ -20583,7 +19762,6 @@ pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::a
         AnyTransport::KwTurbofish(t) => render_kw_turbofish_transport(t),
         AnyTransport::KwUnsafeMarker(t) => render_kw_unsafe_marker_transport(t),
         AnyTransport::LetChain(t) => render_let_chain_transport(t),
-        AnyTransport::LetDeclarationMutableSpecifier(t) => render_let_declaration_mutable_specifier_transport(t),
         AnyTransport::LineCommentContent(t) => render_line_comment_content_transport(t),
         AnyTransport::LineCommentDoc(t) => render_line_comment_doc_transport(t),
         AnyTransport::LineCommentRegularDslash(t) => render_line_comment_regular_dslash_transport(t),
@@ -20594,12 +19772,13 @@ pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::a
         AnyTransport::MatchArmWithComma(t) => render_match_arm_with_comma_transport(t),
         AnyTransport::ModItemExternal(t) => render_mod_item_external_transport(t),
         AnyTransport::_ModItemInline(t) => render__mod_item_inline_transport(t),
-        AnyTransport::MutPatternMutableSpecifier(t) => render_mut_pattern_mutable_specifier_transport(t),
+        AnyTransport::MoveMarker(t) => render_move_marker_transport(t),
+        AnyTransport::_MutableSpecifier(t) => render__mutable_specifier_transport(t),
         AnyTransport::NonSpecialToken(t) => render_non_special_token_transport(t),
+        AnyTransport::Operator(t) => render_operator_transport(t),
         AnyTransport::OrPatternBinary(t) => render_or_pattern_binary_transport(t),
         AnyTransport::OrPatternPrefix(t) => render_or_pattern_prefix_transport(t),
         AnyTransport::OuterLineDocCommentMarker(t) => render_outer_line_doc_comment_marker_transport(t),
-        AnyTransport::ParameterMutableSpecifier(t) => render_parameter_mutable_specifier_transport(t),
         AnyTransport::PointerTypeConst(t) => render_pointer_type_const_transport(t),
         AnyTransport::_PointerTypeMut(t) => render__pointer_type_mut_transport(t),
         AnyTransport::PrimitiveType(t) => render_primitive_type_transport(t),
@@ -20610,15 +19789,11 @@ pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::a
         AnyTransport::RangePatternLeftBare(t) => render_range_pattern_left_bare_transport(t),
         AnyTransport::RangePatternLeftWithRight(t) => render_range_pattern_left_with_right_transport(t),
         AnyTransport::RangePatternPrefix(t) => render_range_pattern_prefix_transport(t),
+        AnyTransport::RefMarker(t) => render_ref_marker_transport(t),
         AnyTransport::ReferenceExpressionRawConst(t) => render_reference_expression_raw_const_transport(t),
         AnyTransport::ReferenceExpressionRawMut(t) => render_reference_expression_raw_mut_transport(t),
-        AnyTransport::ReferencePatternMutableSpecifier(t) => render_reference_pattern_mutable_specifier_transport(t),
-        AnyTransport::ReferenceTypeMutableSpecifier(t) => render_reference_type_mutable_specifier_transport(t),
         AnyTransport::ReservedIdentifier(t) => render_reserved_identifier_transport(t),
-        AnyTransport::SelfParameterMutableSpecifier(t) => render_self_parameter_mutable_specifier_transport(t),
-        AnyTransport::SelfParameterSelf(t) => render_self_parameter_self_transport(t),
-        AnyTransport::StaticItemMutableSpecifier(t) => render_static_item_mutable_specifier_transport(t),
-        AnyTransport::StaticItemRefMarker(t) => render_static_item_ref_marker_transport(t),
+        AnyTransport::_Self(t) => render__self_transport(t),
         AnyTransport::StructItemBrace(t) => render_struct_item_brace_transport(t),
         AnyTransport::StructItemTuple(t) => render_struct_item_tuple_transport(t),
         AnyTransport::StructItemUnit(t) => render_struct_item_unit_transport(t),
@@ -20629,10 +19804,9 @@ pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::a
         AnyTransport::_TokenTreePatternBrace(t) => render__token_tree_pattern_brace_transport(t),
         AnyTransport::_TokenTreePatternBracket(t) => render__token_tree_pattern_bracket_transport(t),
         AnyTransport::_TokenTreePatternParen(t) => render__token_tree_pattern_paren_transport(t),
-        AnyTransport::TraitItemUnsafeMarker(t) => render_trait_item_unsafe_marker_transport(t),
         AnyTransport::TypeIdentifier(t) => render_type_identifier_transport(t),
         AnyTransport::UnaryExpressionOperator(t) => render_unary_expression_operator_transport(t),
-        AnyTransport::VariadicParameterMutableSpecifier(t) => render_variadic_parameter_mutable_specifier_transport(t),
+        AnyTransport::UnsafeMarker(t) => render_unsafe_marker_transport(t),
         AnyTransport::_VisibilityModifierCrate(t) => render__visibility_modifier_crate_transport(t),
         AnyTransport::VisibilityModifierInPath(t) => render_visibility_modifier_in_path_transport(t),
         AnyTransport::VisibilityModifierPub(t) => render_visibility_modifier_pub_transport(t),
@@ -20963,43 +20137,34 @@ fn transport_children(values: Vec<Box<AnyTransport>>) -> Result<Vec<TransportNod
 
 fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::askama::Error> {
     match transport {
-        AnyTransport::RangeExpressionBareOperator(data) => transport_to_node_range_expression_bare_operator(data),
         AnyTransport::RangeExpressionBinaryOperator(data) => transport_to_node_range_expression_binary_operator(data),
-        AnyTransport::RangeExpressionPostfixOperator(data) => transport_to_node_range_expression_postfix_operator(data),
-        AnyTransport::RangeExpressionPrefixOperator(data) => transport_to_node_range_expression_prefix_operator(data),
         AnyTransport::VisibilityModifierInPathIn(data) => transport_to_node_visibility_modifier_in_path_in(data),
         AnyTransport::VisibilityModifierPubPub(data) => transport_to_node_visibility_modifier_pub_pub(data),
         AnyTransport::ArrayExpressionList(data) => transport_to_node_array_expression_list(data),
         AnyTransport::ArrayExpressionSemi(data) => transport_to_node_array_expression_semi(data),
-        AnyTransport::AsyncBlockMoveMarker(data) => transport_to_node_async_block_move_marker(data),
         AnyTransport::BinaryExpressionOperator(data) => transport_to_node_binary_expression_operator(data),
         AnyTransport::ClosureExpressionAsyncMarker(data) => transport_to_node_closure_expression_async_marker(data),
         AnyTransport::ClosureExpressionBlock(data) => transport_to_node_closure_expression_block(data),
         AnyTransport::_ClosureExpressionExpr(data) => transport_to_node__closure_expression_expr(data),
-        AnyTransport::ClosureExpressionMoveMarker(data) => transport_to_node_closure_expression_move_marker(data),
         AnyTransport::ClosureExpressionStaticMarker(data) => transport_to_node_closure_expression_static_marker(data),
         AnyTransport::CompoundAssignmentExprOperator(data) => transport_to_node_compound_assignment_expr_operator(data),
+        AnyTransport::_Crate(data) => transport_to_node__crate(data),
         AnyTransport::_DelimTokenTreeBrace(data) => transport_to_node__delim_token_tree_brace(data),
         AnyTransport::_DelimTokenTreeBracket(data) => transport_to_node__delim_token_tree_bracket(data),
         AnyTransport::_DelimTokenTreeParen(data) => transport_to_node__delim_token_tree_paren(data),
         AnyTransport::_ExpressionStatementBlockEnding(data) => transport_to_node__expression_statement_block_ending(data),
         AnyTransport::_ExpressionStatementWithSemi(data) => transport_to_node__expression_statement_with_semi(data),
-        AnyTransport::ExternCrateDeclarationCrate(data) => transport_to_node_extern_crate_declaration_crate(data),
         AnyTransport::FieldIdentifier(data) => transport_to_node_field_identifier(data),
-        AnyTransport::FieldPatternMutableSpecifier(data) => transport_to_node_field_pattern_mutable_specifier(data),
         AnyTransport::FieldPatternNamed(data) => transport_to_node_field_pattern_named(data),
-        AnyTransport::FieldPatternRefMarker(data) => transport_to_node_field_pattern_ref_marker(data),
         AnyTransport::_FieldPatternShorthand(data) => transport_to_node__field_pattern_shorthand(data),
         AnyTransport::_ForeignModItemBody(data) => transport_to_node__foreign_mod_item_body(data),
         AnyTransport::ForeignModItemSemi(data) => transport_to_node_foreign_mod_item_semi(data),
         AnyTransport::FunctionTypeFnForm(data) => transport_to_node_function_type_fn_form(data),
         AnyTransport::FunctionTypeTraitForm(data) => transport_to_node_function_type_trait_form(data),
-        AnyTransport::GenBlockMoveMarker(data) => transport_to_node_gen_block_move_marker(data),
         AnyTransport::GenericTypeWithTurbofishTurbofish(data) => transport_to_node_generic_type_with_turbofish_turbofish(data),
         AnyTransport::_ImplItemBody(data) => transport_to_node__impl_item_body(data),
         AnyTransport::ImplItemNegative(data) => transport_to_node_impl_item_negative(data),
         AnyTransport::ImplItemSemi(data) => transport_to_node_impl_item_semi(data),
-        AnyTransport::ImplItemUnsafeMarker(data) => transport_to_node_impl_item_unsafe_marker(data),
         AnyTransport::InnerLineDocCommentMarker(data) => transport_to_node_inner_line_doc_comment_marker(data),
         AnyTransport::KwAsyncMarker(data) => transport_to_node_kw_async_marker(data),
         AnyTransport::KwIn(data) => transport_to_node_kw_in(data),
@@ -21012,7 +20177,6 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::KwTurbofish(data) => transport_to_node_kw_turbofish(data),
         AnyTransport::KwUnsafeMarker(data) => transport_to_node_kw_unsafe_marker(data),
         AnyTransport::LetChain(data) => transport_to_node_let_chain(data),
-        AnyTransport::LetDeclarationMutableSpecifier(data) => transport_to_node_let_declaration_mutable_specifier(data),
         AnyTransport::LineCommentContent(data) => transport_to_node_line_comment_content(data),
         AnyTransport::LineCommentDoc(data) => transport_to_node_line_comment_doc(data),
         AnyTransport::LineCommentRegularDslash(data) => transport_to_node_line_comment_regular_dslash(data),
@@ -21023,12 +20187,13 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::MatchArmWithComma(data) => transport_to_node_match_arm_with_comma(data),
         AnyTransport::ModItemExternal(data) => transport_to_node_mod_item_external(data),
         AnyTransport::_ModItemInline(data) => transport_to_node__mod_item_inline(data),
-        AnyTransport::MutPatternMutableSpecifier(data) => transport_to_node_mut_pattern_mutable_specifier(data),
+        AnyTransport::MoveMarker(data) => transport_to_node_move_marker(data),
+        AnyTransport::_MutableSpecifier(data) => transport_to_node__mutable_specifier(data),
         AnyTransport::NonSpecialToken(data) => transport_to_node_non_special_token(data),
+        AnyTransport::Operator(data) => transport_to_node_operator(data),
         AnyTransport::OrPatternBinary(data) => transport_to_node_or_pattern_binary(data),
         AnyTransport::OrPatternPrefix(data) => transport_to_node_or_pattern_prefix(data),
         AnyTransport::OuterLineDocCommentMarker(data) => transport_to_node_outer_line_doc_comment_marker(data),
-        AnyTransport::ParameterMutableSpecifier(data) => transport_to_node_parameter_mutable_specifier(data),
         AnyTransport::PointerTypeConst(data) => transport_to_node_pointer_type_const(data),
         AnyTransport::_PointerTypeMut(data) => transport_to_node__pointer_type_mut(data),
         AnyTransport::PrimitiveType(data) => transport_to_node_primitive_type(data),
@@ -21039,15 +20204,11 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::RangePatternLeftBare(data) => transport_to_node_range_pattern_left_bare(data),
         AnyTransport::RangePatternLeftWithRight(data) => transport_to_node_range_pattern_left_with_right(data),
         AnyTransport::RangePatternPrefix(data) => transport_to_node_range_pattern_prefix(data),
+        AnyTransport::RefMarker(data) => transport_to_node_ref_marker(data),
         AnyTransport::ReferenceExpressionRawConst(data) => transport_to_node_reference_expression_raw_const(data),
         AnyTransport::ReferenceExpressionRawMut(data) => transport_to_node_reference_expression_raw_mut(data),
-        AnyTransport::ReferencePatternMutableSpecifier(data) => transport_to_node_reference_pattern_mutable_specifier(data),
-        AnyTransport::ReferenceTypeMutableSpecifier(data) => transport_to_node_reference_type_mutable_specifier(data),
         AnyTransport::ReservedIdentifier(data) => transport_to_node_reserved_identifier(data),
-        AnyTransport::SelfParameterMutableSpecifier(data) => transport_to_node_self_parameter_mutable_specifier(data),
-        AnyTransport::SelfParameterSelf(data) => transport_to_node_self_parameter_self(data),
-        AnyTransport::StaticItemMutableSpecifier(data) => transport_to_node_static_item_mutable_specifier(data),
-        AnyTransport::StaticItemRefMarker(data) => transport_to_node_static_item_ref_marker(data),
+        AnyTransport::_Self(data) => transport_to_node__self(data),
         AnyTransport::StructItemBrace(data) => transport_to_node_struct_item_brace(data),
         AnyTransport::StructItemTuple(data) => transport_to_node_struct_item_tuple(data),
         AnyTransport::StructItemUnit(data) => transport_to_node_struct_item_unit(data),
@@ -21058,10 +20219,9 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::_TokenTreePatternBrace(data) => transport_to_node__token_tree_pattern_brace(data),
         AnyTransport::_TokenTreePatternBracket(data) => transport_to_node__token_tree_pattern_bracket(data),
         AnyTransport::_TokenTreePatternParen(data) => transport_to_node__token_tree_pattern_paren(data),
-        AnyTransport::TraitItemUnsafeMarker(data) => transport_to_node_trait_item_unsafe_marker(data),
         AnyTransport::TypeIdentifier(data) => transport_to_node_type_identifier(data),
         AnyTransport::UnaryExpressionOperator(data) => transport_to_node_unary_expression_operator(data),
-        AnyTransport::VariadicParameterMutableSpecifier(data) => transport_to_node_variadic_parameter_mutable_specifier(data),
+        AnyTransport::UnsafeMarker(data) => transport_to_node_unsafe_marker(data),
         AnyTransport::_VisibilityModifierCrate(data) => transport_to_node__visibility_modifier_crate(data),
         AnyTransport::VisibilityModifierInPath(data) => transport_to_node_visibility_modifier_in_path(data),
         AnyTransport::VisibilityModifierPub(data) => transport_to_node_visibility_modifier_pub(data),
@@ -21328,51 +20488,9 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
     }
 }
 
-fn transport_to_node_range_expression_bare_operator(transport: RangeExpressionBareOperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "__range_expression_bare_operator" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
 fn transport_to_node_range_expression_binary_operator(transport: RangeExpressionBinaryOperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "__range_expression_binary_operator" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_range_expression_postfix_operator(transport: RangeExpressionPostfixOperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "__range_expression_postfix_operator" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_range_expression_prefix_operator(transport: RangeExpressionPrefixOperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "__range_expression_prefix_operator" — no parser symbol */,
         None,
         None,
         true,
@@ -21451,20 +20569,6 @@ fn transport_to_node_array_expression_semi(transport: ArrayExpressionSemiTranspo
     ))
 }
 
-fn transport_to_node_async_block_move_marker(transport: AsyncBlockMoveMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_async_block_move_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
 fn transport_to_node_binary_expression_operator(transport: BinaryExpressionOperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "_binary_expression_operator" — no parser symbol */,
@@ -21532,20 +20636,6 @@ fn transport_to_node__closure_expression_expr(transport: _ClosureExpressionExprT
     ))
 }
 
-fn transport_to_node_closure_expression_move_marker(transport: ClosureExpressionMoveMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_closure_expression_move_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
 fn transport_to_node_closure_expression_static_marker(transport: ClosureExpressionStaticMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "_closure_expression_static_marker" — no parser symbol */,
@@ -21563,6 +20653,20 @@ fn transport_to_node_closure_expression_static_marker(transport: ClosureExpressi
 fn transport_to_node_compound_assignment_expr_operator(transport: CompoundAssignmentExprOperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "_compound_assignment_expr_operator" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node__crate(transport: _CrateEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_crate" — no parser symbol */,
         None,
         None,
         true,
@@ -21659,20 +20763,6 @@ fn transport_to_node__expression_statement_with_semi(transport: _ExpressionState
     ))
 }
 
-fn transport_to_node_extern_crate_declaration_crate(transport: ExternCrateDeclarationCrateEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_extern_crate_declaration_crate" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
 fn transport_to_node_field_identifier(transport: FieldIdentifierTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -21687,20 +20777,6 @@ fn transport_to_node_field_identifier(transport: FieldIdentifierTransport) -> Re
         transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
-    ))
-}
-
-fn transport_to_node_field_pattern_mutable_specifier(transport: FieldPatternMutableSpecifierEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_field_pattern_mutable_specifier" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
     ))
 }
 
@@ -21720,20 +20796,6 @@ fn transport_to_node_field_pattern_named(transport: FieldPatternNamedTransport) 
         transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
-    ))
-}
-
-fn transport_to_node_field_pattern_ref_marker(transport: FieldPatternRefMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_field_pattern_ref_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
     ))
 }
 
@@ -21825,20 +20887,6 @@ fn transport_to_node_function_type_trait_form(transport: FunctionTypeTraitFormTr
     ))
 }
 
-fn transport_to_node_gen_block_move_marker(transport: GenBlockMoveMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_gen_block_move_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
 fn transport_to_node_generic_type_with_turbofish_turbofish(transport: GenericTypeWithTurbofishTurbofishEnum) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "_generic_type_with_turbofish_turbofish" — no parser symbol */,
@@ -21894,20 +20942,6 @@ fn transport_to_node_impl_item_semi(transport: ImplItemSemiTransport) -> Result<
         Some(transport.text),
         transport.transport_span,
         transport.transport_node_id.map(|v| v as u64),
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_impl_item_unsafe_marker(transport: ImplItemUnsafeMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_impl_item_unsafe_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
         None,
         None,
     ))
@@ -22081,20 +21115,6 @@ fn transport_to_node_let_chain(transport: LetChainTransport) -> Result<Transport
         transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
-    ))
-}
-
-fn transport_to_node_let_declaration_mutable_specifier(transport: LetDeclarationMutableSpecifierEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_let_declaration_mutable_specifier" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
     ))
 }
 
@@ -22272,9 +21292,23 @@ fn transport_to_node__mod_item_inline(transport: _ModItemInlineTransport) -> Res
     ))
 }
 
-fn transport_to_node_mut_pattern_mutable_specifier(transport: MutPatternMutableSpecifierEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_move_marker(transport: MoveMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "_mut_pattern_mutable_specifier" — no parser symbol */,
+        TransportKindId(0) /* "_move_marker" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node__mutable_specifier(transport: _MutableSpecifierEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_mutable_specifier" — no parser symbol */,
         None,
         None,
         true,
@@ -22300,6 +21334,20 @@ fn transport_to_node_non_special_token(transport: NonSpecialTokenTransport) -> R
         transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
+    ))
+}
+
+fn transport_to_node_operator(transport: OperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_operator" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
     ))
 }
 
@@ -22354,20 +21402,6 @@ fn transport_to_node_outer_line_doc_comment_marker(transport: OuterLineDocCommen
     ))
 }
 
-fn transport_to_node_parameter_mutable_specifier(transport: ParameterMutableSpecifierEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_parameter_mutable_specifier" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
 fn transport_to_node_pointer_type_const(transport: PointerTypeConstTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(358) /* "_pointer_type_const" */,
@@ -22415,7 +21449,7 @@ fn transport_to_node_primitive_type(transport: PrimitiveTypeEnum) -> Result<Tran
 
 fn transport_to_node__range_expression_bare(transport: _RangeExpressionBareTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("operator".to_string(), transport_field_value(Box::new(AnyTransport::RangeExpressionBareOperator(transport.operator)))?);
+    fields.insert("operator".to_string(), transport_field_value(Box::new(AnyTransport::Operator(transport.operator)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -22454,7 +21488,7 @@ fn transport_to_node_range_expression_binary(transport: RangeExpressionBinaryTra
 fn transport_to_node_range_expression_postfix(transport: RangeExpressionPostfixTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("start".to_string(), transport_field_value(expression_transport_to_any(transport.start))?);
-    fields.insert("operator".to_string(), transport_field_value(Box::new(AnyTransport::RangeExpressionPostfixOperator(transport.operator)))?);
+    fields.insert("operator".to_string(), transport_field_value(Box::new(AnyTransport::Operator(transport.operator)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -22472,7 +21506,7 @@ fn transport_to_node_range_expression_postfix(transport: RangeExpressionPostfixT
 
 fn transport_to_node_range_expression_prefix(transport: RangeExpressionPrefixTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("operator".to_string(), transport_field_value(Box::new(AnyTransport::RangeExpressionPrefixOperator(transport.operator)))?);
+    fields.insert("operator".to_string(), transport_field_value(Box::new(AnyTransport::Operator(transport.operator)))?);
     fields.insert("end".to_string(), transport_field_value(expression_transport_to_any(transport.end))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -22539,6 +21573,20 @@ fn transport_to_node_range_pattern_prefix(transport: RangePatternPrefixTransport
     ))
 }
 
+fn transport_to_node_ref_marker(transport: RefMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_ref_marker" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
+    ))
+}
+
 fn transport_to_node_reference_expression_raw_const(transport: ReferenceExpressionRawConstTransport) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(361) /* "_reference_expression_raw_const" */,
@@ -22570,34 +21618,6 @@ fn transport_to_node_reference_expression_raw_mut(transport: ReferenceExpression
     ))
 }
 
-fn transport_to_node_reference_pattern_mutable_specifier(transport: ReferencePatternMutableSpecifierEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_reference_pattern_mutable_specifier" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_reference_type_mutable_specifier(transport: ReferenceTypeMutableSpecifierEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_reference_type_mutable_specifier" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
 fn transport_to_node_reserved_identifier(transport: ReservedIdentifierTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -22615,51 +21635,9 @@ fn transport_to_node_reserved_identifier(transport: ReservedIdentifierTransport)
     ))
 }
 
-fn transport_to_node_self_parameter_mutable_specifier(transport: SelfParameterMutableSpecifierEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node__self(transport: _SelfEnum) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "_self_parameter_mutable_specifier" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_self_parameter_self(transport: SelfParameterSelfEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_self_parameter_self" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_static_item_mutable_specifier(transport: StaticItemMutableSpecifierEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_static_item_mutable_specifier" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_static_item_ref_marker(transport: StaticItemRefMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_static_item_ref_marker" — no parser symbol */,
+        TransportKindId(0) /* "_self" — no parser symbol */,
         None,
         None,
         true,
@@ -22843,20 +21821,6 @@ fn transport_to_node__token_tree_pattern_paren(transport: _TokenTreePatternParen
     ))
 }
 
-fn transport_to_node_trait_item_unsafe_marker(transport: TraitItemUnsafeMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_trait_item_unsafe_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
 fn transport_to_node_type_identifier(transport: TypeIdentifierTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -22888,9 +21852,9 @@ fn transport_to_node_unary_expression_operator(transport: UnaryExpressionOperato
     ))
 }
 
-fn transport_to_node_variadic_parameter_mutable_specifier(transport: VariadicParameterMutableSpecifierEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_unsafe_marker(transport: UnsafeMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "_variadic_parameter_mutable_specifier" — no parser symbol */,
+        TransportKindId(0) /* "_unsafe_marker" — no parser symbol */,
         None,
         None,
         true,
@@ -23121,7 +22085,7 @@ fn transport_to_node_associated_type(transport: AssociatedTypeTransport) -> Resu
 fn transport_to_node_async_block(transport: AsyncBlockTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.move_marker {
-        fields.insert("move_marker".to_string(), transport_field_value(Box::new(AnyTransport::AsyncBlockMoveMarker(value)))?);
+        fields.insert("move_marker".to_string(), transport_field_value(Box::new(AnyTransport::MoveMarker(value)))?);
     }
     fields.insert("block".to_string(), transport_field_value(Box::new(AnyTransport::Block(transport.block)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -23426,7 +22390,7 @@ fn transport_to_node_closure_expression_uform_block(transport: ClosureExpression
         fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::ClosureExpressionAsyncMarker(value)))?);
     }
     if let Some(value) = transport.move_marker {
-        fields.insert("move_marker".to_string(), transport_field_value(Box::new(AnyTransport::ClosureExpressionMoveMarker(value)))?);
+        fields.insert("move_marker".to_string(), transport_field_value(Box::new(AnyTransport::MoveMarker(value)))?);
     }
     fields.insert("parameters".to_string(), transport_field_value(Box::new(AnyTransport::ClosureParameters(transport.parameters)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -23453,7 +22417,7 @@ fn transport_to_node_closure_expression_uform_expr(transport: ClosureExpressionU
         fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::ClosureExpressionAsyncMarker(value)))?);
     }
     if let Some(value) = transport.move_marker {
-        fields.insert("move_marker".to_string(), transport_field_value(Box::new(AnyTransport::ClosureExpressionMoveMarker(value)))?);
+        fields.insert("move_marker".to_string(), transport_field_value(Box::new(AnyTransport::MoveMarker(value)))?);
     }
     fields.insert("parameters".to_string(), transport_field_value(Box::new(AnyTransport::ClosureParameters(transport.parameters)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -23966,7 +22930,7 @@ fn transport_to_node_extern_crate_declaration(transport: ExternCrateDeclarationT
     if let Some(value) = transport.visibility_modifier {
         fields.insert("visibility_modifier".to_string(), transport_field_value(value)?);
     }
-    fields.insert("crate".to_string(), transport_field_value(Box::new(AnyTransport::ExternCrateDeclarationCrate(transport.crate_)))?);
+    fields.insert("crate".to_string(), transport_field_value(Box::new(AnyTransport::_Crate(transport.crate_)))?);
     fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(transport.name)))?);
     if let Some(value) = transport.alias {
         fields.insert("alias".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(value)))?);
@@ -24128,10 +23092,10 @@ fn transport_to_node_field_pattern(transport: FieldPatternTransport) -> Result<T
 fn transport_to_node_field_pattern_uform_shorthand(transport: FieldPatternUFormShorthandTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.ref_marker {
-        fields.insert("ref_marker".to_string(), transport_field_value(Box::new(AnyTransport::FieldPatternRefMarker(value)))?);
+        fields.insert("ref_marker".to_string(), transport_field_value(Box::new(AnyTransport::RefMarker(value)))?);
     }
     if let Some(value) = transport.mutable_specifier {
-        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::FieldPatternMutableSpecifier(value)))?);
+        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::_MutableSpecifier(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::_FieldPatternShorthand(v))).collect::<Vec<_>>())?);
@@ -24151,10 +23115,10 @@ fn transport_to_node_field_pattern_uform_shorthand(transport: FieldPatternUFormS
 fn transport_to_node_field_pattern_uform_named(transport: FieldPatternUFormNamedTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.ref_marker {
-        fields.insert("ref_marker".to_string(), transport_field_value(Box::new(AnyTransport::FieldPatternRefMarker(value)))?);
+        fields.insert("ref_marker".to_string(), transport_field_value(Box::new(AnyTransport::RefMarker(value)))?);
     }
     if let Some(value) = transport.mutable_specifier {
-        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::FieldPatternMutableSpecifier(value)))?);
+        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::_MutableSpecifier(value)))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::FieldPatternNamed(v))).collect::<Vec<_>>())?);
@@ -24406,7 +23370,7 @@ fn transport_to_node_function_type(transport: FunctionTypeTransport) -> Result<T
 fn transport_to_node_gen_block(transport: GenBlockTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.move_marker {
-        fields.insert("move_marker".to_string(), transport_field_value(Box::new(AnyTransport::GenBlockMoveMarker(value)))?);
+        fields.insert("move_marker".to_string(), transport_field_value(Box::new(AnyTransport::MoveMarker(value)))?);
     }
     fields.insert("block".to_string(), transport_field_value(Box::new(AnyTransport::Block(transport.block)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -24583,7 +23547,7 @@ fn transport_to_node_impl_item(transport: ImplItemTransport) -> Result<Transport
 fn transport_to_node_impl_item_uform_body(transport: ImplItemUFormBodyTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.unsafe_marker {
-        fields.insert("unsafe_marker".to_string(), transport_field_value(Box::new(AnyTransport::ImplItemUnsafeMarker(value)))?);
+        fields.insert("unsafe_marker".to_string(), transport_field_value(Box::new(AnyTransport::UnsafeMarker(value)))?);
     }
     if let Some(value) = transport.type_parameters {
         fields.insert("type_parameters".to_string(), transport_field_value(Box::new(AnyTransport::TypeParameters(value)))?);
@@ -24616,7 +23580,7 @@ fn transport_to_node_impl_item_uform_body(transport: ImplItemUFormBodyTransport)
 fn transport_to_node_impl_item_uform_semi(transport: ImplItemUFormSemiTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.unsafe_marker {
-        fields.insert("unsafe_marker".to_string(), transport_field_value(Box::new(AnyTransport::ImplItemUnsafeMarker(value)))?);
+        fields.insert("unsafe_marker".to_string(), transport_field_value(Box::new(AnyTransport::UnsafeMarker(value)))?);
     }
     if let Some(value) = transport.type_parameters {
         fields.insert("type_parameters".to_string(), transport_field_value(Box::new(AnyTransport::TypeParameters(value)))?);
@@ -24756,7 +23720,7 @@ fn transport_to_node_let_condition(transport: LetConditionTransport) -> Result<T
 fn transport_to_node_let_declaration(transport: LetDeclarationTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.mutable_specifier {
-        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::LetDeclarationMutableSpecifier(value)))?);
+        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::_MutableSpecifier(value)))?);
     }
     fields.insert("pattern".to_string(), transport_field_value(pattern_transport_to_any(transport.pattern))?);
     if let Some(value) = transport.r#type {
@@ -25265,7 +24229,7 @@ fn transport_to_node_mod_item_uform_inline(transport: ModItemUFormInlineTranspor
 
 fn transport_to_node_mut_pattern(transport: MutPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::MutPatternMutableSpecifier(transport.mutable_specifier)))?);
+    fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::_MutableSpecifier(transport.mutable_specifier)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| pattern_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
@@ -25389,7 +24353,7 @@ fn transport_to_node_ordered_field_declaration_list(transport: OrderedFieldDecla
 fn transport_to_node_parameter(transport: ParameterTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.mutable_specifier {
-        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::ParameterMutableSpecifier(value)))?);
+        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::_MutableSpecifier(value)))?);
     }
     fields.insert("pattern".to_string(), transport_field_value(transport.pattern)?);
     fields.insert("type".to_string(), transport_field_value(_type_transport_to_any(transport.r#type))?);
@@ -25523,7 +24487,7 @@ fn transport_to_node_qualified_type(transport: QualifiedTypeTransport) -> Result
 
 fn transport_to_node_range_expression_bare(transport: RangeExpressionBareTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("operator".to_string(), transport_field_value(Box::new(AnyTransport::RangeExpressionBareOperator(transport.operator)))?);
+    fields.insert("operator".to_string(), transport_field_value(Box::new(AnyTransport::Operator(transport.operator)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -25739,7 +24703,7 @@ fn transport_to_node_reference_expression(transport: ReferenceExpressionTranspor
 fn transport_to_node_reference_pattern(transport: ReferencePatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.mutable_specifier {
-        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::ReferencePatternMutableSpecifier(value)))?);
+        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::_MutableSpecifier(value)))?);
     }
     fields.insert("pattern".to_string(), transport_field_value(pattern_transport_to_any(transport.pattern))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -25763,7 +24727,7 @@ fn transport_to_node_reference_type(transport: ReferenceTypeTransport) -> Result
         fields.insert("lifetime".to_string(), transport_field_value(Box::new(AnyTransport::Lifetime(value)))?);
     }
     if let Some(value) = transport.mutable_specifier {
-        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::ReferenceTypeMutableSpecifier(value)))?);
+        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::_MutableSpecifier(value)))?);
     }
     fields.insert("type".to_string(), transport_field_value(_type_transport_to_any(transport.r#type))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -25939,9 +24903,9 @@ fn transport_to_node_self_parameter(transport: SelfParameterTransport) -> Result
         fields.insert("lifetime".to_string(), transport_field_value(Box::new(AnyTransport::Lifetime(value)))?);
     }
     if let Some(value) = transport.mutable_specifier {
-        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::SelfParameterMutableSpecifier(value)))?);
+        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::_MutableSpecifier(value)))?);
     }
-    fields.insert("self".to_string(), transport_field_value(Box::new(AnyTransport::SelfParameterSelf(transport.self_)))?);
+    fields.insert("self".to_string(), transport_field_value(Box::new(AnyTransport::_Self(transport.self_)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     Ok(transport_node_data(
@@ -26500,7 +25464,7 @@ fn transport_to_node_trait_item(transport: TraitItemTransport) -> Result<Transpo
         fields.insert("visibility_modifier".to_string(), transport_field_value(value)?);
     }
     if let Some(value) = transport.unsafe_marker {
-        fields.insert("unsafe_marker".to_string(), transport_field_value(Box::new(AnyTransport::TraitItemUnsafeMarker(value)))?);
+        fields.insert("unsafe_marker".to_string(), transport_field_value(Box::new(AnyTransport::UnsafeMarker(value)))?);
     }
     fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::TypeIdentifier(transport.name)))?);
     if let Some(value) = transport.type_parameters {
@@ -26957,7 +25921,7 @@ fn transport_to_node_use_wildcard(transport: UseWildcardTransport) -> Result<Tra
 fn transport_to_node_variadic_parameter(transport: VariadicParameterTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.mutable_specifier {
-        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::VariadicParameterMutableSpecifier(value)))?);
+        fields.insert("mutable_specifier".to_string(), transport_field_value(Box::new(AnyTransport::_MutableSpecifier(value)))?);
     }
     if let Some(value) = transport.pattern {
         fields.insert("pattern".to_string(), transport_field_value(pattern_transport_to_any(value))?);

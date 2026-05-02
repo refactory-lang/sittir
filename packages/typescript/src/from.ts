@@ -430,8 +430,7 @@ const _K39: readonly string[] = ["member_expression","subscript_expression","obj
 const _K40: readonly string[] = ["_public_field_definition_declare_first","_public_field_definition_access_first","_public_field_definition_static_mods","_public_field_definition_abstract_first","_public_field_definition_readonly_first","_public_field_definition_accessor_opt"];
 const _K41: readonly string[] = ["rest_pattern"];
 const _K42: readonly string[] = ["identifier","this","predefined_type"];
-const _K43: readonly string[] = ["_type_predicate_annotation_type_predicate"];
-const _K44: readonly string[] = ["type_predicate"];
+const _K43: readonly string[] = ["type_predicate"];
 
 export function abstractClassDeclarationFrom(input: T.AbstractClassDeclaration.Loose): ReturnType<typeof F.abstractClassDeclaration> | T.AbstractClassDeclaration {
   if (isNodeData(input)) return input;
@@ -447,9 +446,9 @@ export function abstractClassDeclarationFrom(input: T.AbstractClassDeclaration.L
 export function abstractMethodSignatureFrom(input: T.AbstractMethodSignature.Loose): ReturnType<typeof F.abstractMethodSignature> | T.AbstractMethodSignature {
   if (isNodeData(input)) return input;
   return F.abstractMethodSignature({
-    accessibilityModifier: _resolveOneLeaf<T.AbstractMethodSignatureAccessibilityModifier>(input.accessibilityModifier, "_abstract_method_signature_accessibility_modifier"),
+    accessibilityModifier: _resolveOneLeaf<T._AccessibilityModifier>(input.accessibilityModifier, "_accessibility_modifier"),
     overrideModifier: _resolveBooleanKeyword(input.overrideModifier),
-    accessorKind: _resolveOneLeaf<T.AbstractMethodSignatureAccessorKind>(input.accessorKind, "_abstract_method_signature_accessor_kind"),
+    accessorKind: _resolveOneLeaf<T.AccessorKind>(input.accessorKind, "_accessor_kind"),
     name: _resolveOne<T.PropertyName>(input.name, _K0, _K1),
     optionalMarker: _resolveBooleanKeyword(input.optionalMarker),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
@@ -1184,14 +1183,14 @@ export function importSpecifierFrom(input?: T.ImportSpecifier.Loose): ReturnType
 
 export function importSpecifierUFormNameFrom(input: Omit<ConfigOf<T.ImportSpecifierUFormName>, '$variant'>) {
   return F.importSpecifierUFormName({
-    importKind: _resolveOneLeaf<T.ImportSpecifierImportKind>(input.importKind, "_import_specifier_import_kind"),
+    importKind: _resolveOneLeaf<T.ExportSpecifierExportKind>(input.importKind, "_export_specifier_export_kind"),
     name: _resolveOneLeaf<T.ImportIdentifier>(input.name, "identifier"),
   });
 }
 
 export function importSpecifierUFormAsFrom(input: Omit<ConfigOf<T.ImportSpecifierUFormAs>, '$variant'>) {
   return F.importSpecifierUFormAs({
-    importKind: _resolveOneLeaf<T.ImportSpecifierImportKind>(input.importKind, "_import_specifier_import_kind"),
+    importKind: _resolveOneLeaf<T.ExportSpecifierExportKind>(input.importKind, "_export_specifier_export_kind"),
     name: _resolveOne<T.ModuleExportName | T.Identifier>(input.name, _super_import_identifier, _K19),
     alias: _resolveOneLeaf<T.ImportIdentifier>(input.alias, "identifier"),
   });
@@ -1294,7 +1293,7 @@ export function lexicalDeclarationFrom(input: T.LexicalDeclaration.Loose): Retur
   const _ne_declarators = _resolveManyBranch<T.VariableDeclarator>(input.declarators, "variable_declarator");
   _assertNonEmpty(_ne_declarators, 'lexical_declaration.declarators');
   return F.lexicalDeclaration({
-    kind: _resolveOneLeaf<T.LexicalDeclarationKind>(input.kind, "_lexical_declaration_kind"),
+    kind: _resolveOneLeaf<T.Kind>(input.kind, "_kind"),
     declarators: _ne_declarators,
     semicolon: _resolveOneLeaf<T.Semicolon>(input.semicolon, "_automatic_semicolon"),
   });
@@ -1342,12 +1341,12 @@ export function metaPropertyFrom(input: string | T.MetaProperty) {
 export function methodDefinitionFrom(input: T.MethodDefinition.Loose): ReturnType<typeof F.methodDefinition> | T.MethodDefinition {
   if (isNodeData(input)) return input;
   return F.methodDefinition({
-    accessibilityModifier: _resolveOneLeaf<T.MethodDefinitionAccessibilityModifier>(input.accessibilityModifier, "_method_definition_accessibility_modifier"),
+    accessibilityModifier: _resolveOneLeaf<T._AccessibilityModifier>(input.accessibilityModifier, "_accessibility_modifier"),
     staticMarker: _resolveBooleanKeyword(input.staticMarker),
     overrideModifier: _resolveBooleanKeyword(input.overrideModifier),
     readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
     asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
-    accessorKind: _resolveOneLeaf<T.MethodDefinitionAccessorKind>(input.accessorKind, "_method_definition_accessor_kind"),
+    accessorKind: _resolveOneLeaf<T.AccessorKind>(input.accessorKind, "_accessor_kind"),
     name: _resolveOne<T.PropertyName>(input.name, _K0, _K1),
     optionalMarker: _resolveBooleanKeyword(input.optionalMarker),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
@@ -1360,12 +1359,12 @@ export function methodDefinitionFrom(input: T.MethodDefinition.Loose): ReturnTyp
 export function methodSignatureFrom(input: T.MethodSignature.Loose): ReturnType<typeof F.methodSignature> | T.MethodSignature {
   if (isNodeData(input)) return input;
   return F.methodSignature({
-    accessibilityModifier: _resolveOneLeaf<T.MethodSignatureAccessibilityModifier>(input.accessibilityModifier, "_method_signature_accessibility_modifier"),
+    accessibilityModifier: _resolveOneLeaf<T._AccessibilityModifier>(input.accessibilityModifier, "_accessibility_modifier"),
     staticMarker: _resolveBooleanKeyword(input.staticMarker),
     overrideModifier: _resolveBooleanKeyword(input.overrideModifier),
     readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
     asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
-    accessorKind: _resolveOneLeaf<T.MethodSignatureAccessorKind>(input.accessorKind, "_method_signature_accessor_kind"),
+    accessorKind: _resolveOneLeaf<T.AccessorKind>(input.accessorKind, "_accessor_kind"),
     name: _resolveOne<T.PropertyName>(input.name, _K0, _K1),
     optionalMarker: _resolveBooleanKeyword(input.optionalMarker),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
@@ -1592,7 +1591,7 @@ export function programFrom(input: T.Program.Loose): ReturnType<typeof F.program
 export function propertySignatureFrom(input: T.PropertySignature.Loose): ReturnType<typeof F.propertySignature> | T.PropertySignature {
   if (isNodeData(input)) return input;
   return F.propertySignature({
-    accessibilityModifier: _resolveOneLeaf<T.PropertySignatureAccessibilityModifier>(input.accessibilityModifier, "_property_signature_accessibility_modifier"),
+    accessibilityModifier: _resolveOneLeaf<T._AccessibilityModifier>(input.accessibilityModifier, "_accessibility_modifier"),
     staticMarker: _resolveBooleanKeyword(input.staticMarker),
     overrideModifier: _resolveBooleanKeyword(input.overrideModifier),
     readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
@@ -1920,7 +1919,7 @@ export function typePredicateFrom(input: T.TypePredicate.Loose): ReturnType<type
 export function typePredicateAnnotationFrom(input: T.TypePredicateAnnotation.Loose): ReturnType<typeof F.typePredicateAnnotation> | T.TypePredicateAnnotation {
   if (isNodeData(input)) return input;
   return F.typePredicateAnnotation({
-    typePredicate: _resolveOne<T.TypePredicateAnnotationTypePredicate | T.TypePredicate>(input.typePredicate, _K43, _K44),
+    typePredicate: _resolveOne<T.AssertsAnnotationAsserts | T.TypePredicate>(input.typePredicate, _K9, _K43),
   });
 }
 
@@ -1972,13 +1971,13 @@ export function updateExpressionFrom(input?: T.UpdateExpression.Loose): ReturnTy
 export function updateExpressionUFormPostfixFrom(input: Omit<ConfigOf<T.UpdateExpressionUFormPostfix>, '$variant'>) {
   return F.updateExpressionUFormPostfix({
     argument: _resolveOne<T.Expression>(input.argument, _K2, _super_expression),
-    operator: _resolveOneLeaf<T.UpdateExpressionPostfixOperator>(input.operator, "__update_expression_postfix_operator"),
+    operator: _resolveOneLeaf<T.Operator>(input.operator, "_operator"),
   });
 }
 
 export function updateExpressionUFormPrefixFrom(input: Omit<ConfigOf<T.UpdateExpressionUFormPrefix>, '$variant'>) {
   return F.updateExpressionUFormPrefix({
-    operator: _resolveOneLeaf<T.UpdateExpressionPrefixOperator>(input.operator, "__update_expression_prefix_operator"),
+    operator: _resolveOneLeaf<T.Operator>(input.operator, "_operator"),
     argument: _resolveOne<T.Expression>(input.argument, _K2, _super_expression),
   });
 }

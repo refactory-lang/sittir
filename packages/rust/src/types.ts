@@ -13,25 +13,16 @@ export type LeafScalarMap = {
 };
 
 export type LeafStringMap = {
-  __range_expression_bare_operator: "..";
   __range_expression_binary_operator: ".." | "..." | "..=";
-  __range_expression_postfix_operator: "..";
-  __range_expression_prefix_operator: "..";
   __visibility_modifier_in_path_in: "in";
   __visibility_modifier_pub_pub: "pub";
-  _async_block_move_marker: "move";
   _binary_expression_operator: "&&";
   _closure_expression_async_marker: "async";
-  _closure_expression_move_marker: "move";
   _closure_expression_static_marker: "static";
   _compound_assignment_expr_operator: "+=" | "-=" | "*=" | "/=" | "%=" | "&=" | "|=" | "^=" | "<<=" | ">>=";
-  _extern_crate_declaration_crate: "crate";
-  _field_pattern_mutable_specifier: "mut";
-  _field_pattern_ref_marker: "ref";
-  _gen_block_move_marker: "move";
+  _crate: "crate";
   _generic_type_with_turbofish_turbofish: "::";
   _impl_item_negative: "!";
-  _impl_item_unsafe_marker: "unsafe";
   _kw_async_marker: "async";
   _kw_in: "in";
   _kw_move_marker: "move";
@@ -39,21 +30,16 @@ export type LeafStringMap = {
   _kw_ref_marker: "ref";
   _kw_static_marker: "static";
   _kw_unsafe_marker: "unsafe";
-  _let_declaration_mutable_specifier: "mut";
-  _mut_pattern_mutable_specifier: "mut";
-  _parameter_mutable_specifier: "mut";
+  _move_marker: "move";
+  _mutable_specifier: "mut";
+  _operator: "..";
   _pointer_type_const: "const";
   _primitive_type: "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char";
-  _reference_pattern_mutable_specifier: "mut";
-  _reference_type_mutable_specifier: "mut";
-  _self_parameter_mutable_specifier: "mut";
-  _self_parameter_self: "self";
-  _static_item_mutable_specifier: "mut";
-  _static_item_ref_marker: "ref";
+  _ref_marker: "ref";
+  _self: "self";
   _token_binding_pattern_type: "block" | "expr" | "expr_2021" | "ident" | "item" | "lifetime" | "literal" | "meta" | "pat" | "pat_param" | "path" | "stmt" | "tt" | "ty" | "vis";
-  _trait_item_unsafe_marker: "unsafe";
   _unary_expression_operator: "-" | "*" | "!";
-  _variadic_parameter_mutable_specifier: "mut";
+  _unsafe_marker: "unsafe";
   _wildcard_pattern: "_";
   boolean_literal: "true" | "false";
   crate: "crate";
@@ -314,25 +300,16 @@ export const enum SyntaxKind {
   WherePredicate = 'where_predicate',
   WhileExpression = 'while_expression',
   YieldExpression = 'yield_expression',
-  RangeExpressionBareOperator = '__range_expression_bare_operator',
   RangeExpressionBinaryOperator = '__range_expression_binary_operator',
-  RangeExpressionPostfixOperator = '__range_expression_postfix_operator',
-  RangeExpressionPrefixOperator = '__range_expression_prefix_operator',
   VisibilityModifierInPathIn = '__visibility_modifier_in_path_in',
   VisibilityModifierPubPub = '__visibility_modifier_pub_pub',
-  AsyncBlockMoveMarker = '_async_block_move_marker',
   BinaryExpressionOperator = '_binary_expression_operator',
   ClosureExpressionAsyncMarker = '_closure_expression_async_marker',
-  ClosureExpressionMoveMarker = '_closure_expression_move_marker',
   ClosureExpressionStaticMarker = '_closure_expression_static_marker',
   CompoundAssignmentExprOperator = '_compound_assignment_expr_operator',
-  ExternCrateDeclarationCrate = '_extern_crate_declaration_crate',
-  FieldPatternMutableSpecifier = '_field_pattern_mutable_specifier',
-  FieldPatternRefMarker = '_field_pattern_ref_marker',
-  GenBlockMoveMarker = '_gen_block_move_marker',
+  _Crate = '_crate',
   GenericTypeWithTurbofishTurbofish = '_generic_type_with_turbofish_turbofish',
   ImplItemNegative = '_impl_item_negative',
-  ImplItemUnsafeMarker = '_impl_item_unsafe_marker',
   KwAsyncMarker = '_kw_async_marker',
   KwIn = '_kw_in',
   KwMoveMarker = '_kw_move_marker',
@@ -340,24 +317,19 @@ export const enum SyntaxKind {
   KwRefMarker = '_kw_ref_marker',
   KwStaticMarker = '_kw_static_marker',
   KwUnsafeMarker = '_kw_unsafe_marker',
-  LetDeclarationMutableSpecifier = '_let_declaration_mutable_specifier',
   LineCommentContent = '_line_comment_content',
   LineCommentRegularDslash = '_line_comment_regular_dslash',
-  MutPatternMutableSpecifier = '_mut_pattern_mutable_specifier',
-  ParameterMutableSpecifier = '_parameter_mutable_specifier',
+  MoveMarker = '_move_marker',
+  _MutableSpecifier = '_mutable_specifier',
+  Operator = '_operator',
   PointerTypeConst = '_pointer_type_const',
   PrimitiveType = '_primitive_type',
+  RefMarker = '_ref_marker',
   ReferenceExpressionRawConst = '_reference_expression_raw_const',
-  ReferencePatternMutableSpecifier = '_reference_pattern_mutable_specifier',
-  ReferenceTypeMutableSpecifier = '_reference_type_mutable_specifier',
-  SelfParameterMutableSpecifier = '_self_parameter_mutable_specifier',
-  SelfParameterSelf = '_self_parameter_self',
-  StaticItemMutableSpecifier = '_static_item_mutable_specifier',
-  StaticItemRefMarker = '_static_item_ref_marker',
+  _Self = '_self',
   TokenBindingPatternType = '_token_binding_pattern_type',
-  TraitItemUnsafeMarker = '_trait_item_unsafe_marker',
   UnaryExpressionOperator = '_unary_expression_operator',
-  VariadicParameterMutableSpecifier = '_variadic_parameter_mutable_specifier',
+  UnsafeMarker = '_unsafe_marker',
   WildcardPattern = '_wildcard_pattern',
   BooleanLiteral = 'boolean_literal',
   CharLiteral = 'char_literal',
@@ -2217,7 +2189,7 @@ export interface _PointerTypeMut {
 export interface _RangeExpressionBare {
   readonly $type: TSKindId._RangeExpressionBare;
   readonly $fields: {
-    readonly operator: RangeExpressionBareOperator;
+    readonly operator: Operator;
   };
 }
 
@@ -2234,14 +2206,14 @@ export interface RangeExpressionPostfix {
   readonly $type: TSKindId.RangeExpressionPostfix;
   readonly $fields: {
     readonly start: Expression;
-    readonly operator: RangeExpressionPostfixOperator;
+    readonly operator: Operator;
   };
 }
 
 export interface RangeExpressionPrefix {
   readonly $type: TSKindId.RangeExpressionPrefix;
   readonly $fields: {
-    readonly operator: RangeExpressionPrefixOperator;
+    readonly operator: Operator;
     readonly end: Expression;
   };
 }
@@ -2397,7 +2369,7 @@ export interface AssociatedType {
 export interface AsyncBlock {
   readonly $type: TSKindId.AsyncBlock;
   readonly $fields: {
-    readonly move_marker?: BooleanKeyword<AsyncBlockMoveMarker>;
+    readonly move_marker?: BooleanKeyword<MoveMarker>;
     readonly block: Block;
   };
 }
@@ -2498,7 +2470,7 @@ export interface ClosureExpressionUFormBlock {
   readonly $fields: {
     readonly static_marker?: BooleanKeyword<ClosureExpressionStaticMarker>;
     readonly async_marker?: BooleanKeyword<ClosureExpressionAsyncMarker>;
-    readonly move_marker?: BooleanKeyword<ClosureExpressionMoveMarker>;
+    readonly move_marker?: BooleanKeyword<MoveMarker>;
     readonly parameters: ClosureParameters;
   };
   readonly $children: readonly [ClosureExpressionBlock];
@@ -2510,7 +2482,7 @@ export interface ClosureExpressionUFormExpr {
   readonly $fields: {
     readonly static_marker?: BooleanKeyword<ClosureExpressionStaticMarker>;
     readonly async_marker?: BooleanKeyword<ClosureExpressionAsyncMarker>;
-    readonly move_marker?: BooleanKeyword<ClosureExpressionMoveMarker>;
+    readonly move_marker?: BooleanKeyword<MoveMarker>;
     readonly parameters: ClosureParameters;
   };
   readonly $children: readonly [_ClosureExpressionExpr];
@@ -2673,7 +2645,7 @@ export interface ExternCrateDeclaration {
   readonly $type: TSKindId.ExternCrateDeclaration;
   readonly $fields: {
     readonly visibility_modifier?: VisibilityModifier;
-    readonly crate: ExternCrateDeclarationCrate;
+    readonly crate: _Crate;
     readonly name: Identifier;
     readonly alias?: Identifier;
   };
@@ -2733,8 +2705,8 @@ export interface FieldPatternUFormShorthand {
   readonly $type: TSKindId.FieldPattern;
   readonly $variant: 'shorthand';
   readonly $fields: {
-    readonly ref_marker?: BooleanKeyword<FieldPatternRefMarker>;
-    readonly mutable_specifier?: BooleanKeyword<FieldPatternMutableSpecifier>;
+    readonly ref_marker?: BooleanKeyword<RefMarker>;
+    readonly mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
   };
   readonly $children: readonly [_FieldPatternShorthand];
 }
@@ -2743,8 +2715,8 @@ export interface FieldPatternUFormNamed {
   readonly $type: TSKindId.FieldPattern;
   readonly $variant: 'named';
   readonly $fields: {
-    readonly ref_marker?: BooleanKeyword<FieldPatternRefMarker>;
-    readonly mutable_specifier?: BooleanKeyword<FieldPatternMutableSpecifier>;
+    readonly ref_marker?: BooleanKeyword<RefMarker>;
+    readonly mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
   };
   readonly $children: readonly [FieldPatternNamed];
 }
@@ -2839,7 +2811,7 @@ export interface FunctionType {
 export interface GenBlock {
   readonly $type: TSKindId.GenBlock;
   readonly $fields: {
-    readonly move_marker?: BooleanKeyword<GenBlockMoveMarker>;
+    readonly move_marker?: BooleanKeyword<MoveMarker>;
     readonly block: Block;
   };
 }
@@ -2905,7 +2877,7 @@ export interface ImplItemUFormBody {
   readonly $type: TSKindId.ImplItem;
   readonly $variant: 'body';
   readonly $fields: {
-    readonly unsafe_marker?: BooleanKeyword<ImplItemUnsafeMarker>;
+    readonly unsafe_marker?: BooleanKeyword<UnsafeMarker>;
     readonly type_parameters?: TypeParameters;
     readonly negative?: BooleanKeyword<ImplItemNegative>;
     readonly trait?: TypeIdentifier | ScopedTypeIdentifier | GenericType;
@@ -2919,7 +2891,7 @@ export interface ImplItemUFormSemi {
   readonly $type: TSKindId.ImplItem;
   readonly $variant: 'semi';
   readonly $fields: {
-    readonly unsafe_marker?: BooleanKeyword<ImplItemUnsafeMarker>;
+    readonly unsafe_marker?: BooleanKeyword<UnsafeMarker>;
     readonly type_parameters?: TypeParameters;
     readonly negative?: BooleanKeyword<ImplItemNegative>;
     readonly trait?: TypeIdentifier | ScopedTypeIdentifier | GenericType;
@@ -2971,7 +2943,7 @@ export interface LetCondition {
 export interface LetDeclaration {
   readonly $type: TSKindId.LetDeclaration;
   readonly $fields: {
-    readonly mutable_specifier?: BooleanKeyword<LetDeclarationMutableSpecifier>;
+    readonly mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
     readonly pattern: Pattern;
     readonly type?: _Type;
     readonly value?: Expression;
@@ -3157,7 +3129,7 @@ export type ModItem = ModItemUFormExternal | ModItemUFormInline;
 export interface MutPattern {
   readonly $type: TSKindId.MutPattern;
   readonly $fields: {
-    readonly mutable_specifier: MutPatternMutableSpecifier;
+    readonly mutable_specifier: _MutableSpecifier;
   };
   readonly $children: readonly [Pattern];
 }
@@ -3192,7 +3164,7 @@ export interface OrderedFieldDeclarationList {
 export interface Parameter {
   readonly $type: TSKindId.Parameter;
   readonly $fields: {
-    readonly mutable_specifier?: BooleanKeyword<ParameterMutableSpecifier>;
+    readonly mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
     readonly pattern: Pattern | Self;
     readonly type: _Type;
   };
@@ -3242,7 +3214,7 @@ export interface QualifiedType {
 export interface RangeExpressionBare {
   readonly $type: "range_expression_bare";
   readonly $fields: {
-    readonly operator: RangeExpressionBareOperator;
+    readonly operator: Operator;
   };
 }
 
@@ -3320,7 +3292,7 @@ export interface ReferenceExpression {
 export interface ReferencePattern {
   readonly $type: TSKindId.ReferencePattern;
   readonly $fields: {
-    readonly mutable_specifier?: BooleanKeyword<ReferencePatternMutableSpecifier>;
+    readonly mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
     readonly pattern: Pattern;
   };
 }
@@ -3329,7 +3301,7 @@ export interface ReferenceType {
   readonly $type: TSKindId.ReferenceType;
   readonly $fields: {
     readonly lifetime?: Lifetime;
-    readonly mutable_specifier?: BooleanKeyword<ReferenceTypeMutableSpecifier>;
+    readonly mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
     readonly type: _Type;
   };
 }
@@ -3381,8 +3353,8 @@ export interface SelfParameter {
   readonly $fields: {
     readonly reference?: BooleanKeyword<"&">;
     readonly lifetime?: Lifetime;
-    readonly mutable_specifier?: BooleanKeyword<SelfParameterMutableSpecifier>;
-    readonly self: SelfParameterSelf;
+    readonly mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
+    readonly self: _Self;
   };
 }
 
@@ -3411,7 +3383,7 @@ export interface StaticItem {
   readonly $type: TSKindId.StaticItem;
   readonly $fields: {
     readonly visibility_modifier?: VisibilityModifier;
-    readonly mutable_specifier?: StaticItemRefMarker | StaticItemMutableSpecifier;
+    readonly mutable_specifier?: RefMarker | _MutableSpecifier;
     readonly name: Identifier;
     readonly type: _Type;
     readonly value?: Expression;
@@ -3567,7 +3539,7 @@ export interface TraitItem {
   readonly $type: TSKindId.TraitItem;
   readonly $fields: {
     readonly visibility_modifier?: VisibilityModifier;
-    readonly unsafe_marker?: BooleanKeyword<TraitItemUnsafeMarker>;
+    readonly unsafe_marker?: BooleanKeyword<UnsafeMarker>;
     readonly name: TypeIdentifier;
     readonly type_parameters?: TypeParameters;
     readonly bounds?: TraitBounds;
@@ -3726,7 +3698,7 @@ export interface UseWildcard {
 export interface VariadicParameter {
   readonly $type: TSKindId.VariadicParameter;
   readonly $fields: {
-    readonly mutable_specifier?: BooleanKeyword<VariadicParameterMutableSpecifier>;
+    readonly mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
     readonly pattern?: Pattern;
   };
 }
@@ -3784,42 +3756,28 @@ export interface YieldExpression {
 
 
 // Leaf node types
-export type RangeExpressionBareOperator = Terminal<"__range_expression_bare_operator", "..">;
 export type RangeExpressionBinaryOperator = Terminal<"__range_expression_binary_operator", ".." | "..." | "..=">;
-export type RangeExpressionPostfixOperator = Terminal<"__range_expression_postfix_operator", "..">;
-export type RangeExpressionPrefixOperator = Terminal<"__range_expression_prefix_operator", "..">;
 export type VisibilityModifierInPathIn = Terminal<"__visibility_modifier_in_path_in", "in">;
 export type VisibilityModifierPubPub = Terminal<"__visibility_modifier_pub_pub", "pub">;
-export type AsyncBlockMoveMarker = Terminal<"_async_block_move_marker", "move">;
 export type BinaryExpressionOperator = Terminal<"_binary_expression_operator", "&&">;
 export type ClosureExpressionAsyncMarker = Terminal<"_closure_expression_async_marker", "async">;
-export type ClosureExpressionMoveMarker = Terminal<"_closure_expression_move_marker", "move">;
 export type ClosureExpressionStaticMarker = Terminal<"_closure_expression_static_marker", "static">;
 export type CompoundAssignmentExprOperator = Terminal<"_compound_assignment_expr_operator", "+=" | "-=" | "*=" | "/=" | "%=" | "&=" | "|=" | "^=" | "<<=" | ">>=">;
-export type ExternCrateDeclarationCrate = Terminal<"_extern_crate_declaration_crate", "crate">;
-export type FieldPatternMutableSpecifier = Terminal<"_field_pattern_mutable_specifier", "mut">;
-export type FieldPatternRefMarker = Terminal<"_field_pattern_ref_marker", "ref">;
-export type GenBlockMoveMarker = Terminal<"_gen_block_move_marker", "move">;
+export type _Crate = Terminal<"_crate", "crate">;
 export type GenericTypeWithTurbofishTurbofish = Terminal<"_generic_type_with_turbofish_turbofish", "::">;
 export type ImplItemNegative = Terminal<"_impl_item_negative", "!">;
-export type ImplItemUnsafeMarker = Terminal<"_impl_item_unsafe_marker", "unsafe">;
-export type LetDeclarationMutableSpecifier = Terminal<"_let_declaration_mutable_specifier", "mut">;
 export type LineCommentContent = Terminal<"_line_comment_content", string>;
 export type LineCommentRegularDslash = Terminal<"_line_comment_regular_dslash", string>;
-export type MutPatternMutableSpecifier = Terminal<"_mut_pattern_mutable_specifier", "mut">;
-export type ParameterMutableSpecifier = Terminal<"_parameter_mutable_specifier", "mut">;
+export type MoveMarker = Terminal<"_move_marker", "move">;
+export type _MutableSpecifier = Terminal<"_mutable_specifier", "mut">;
+export type Operator = Terminal<"_operator", "..">;
 export type PrimitiveType = Terminal<"_primitive_type", "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char">;
+export type RefMarker = Terminal<"_ref_marker", "ref">;
 export type ReferenceExpressionRawConst = Terminal<"_reference_expression_raw_const", string>;
-export type ReferencePatternMutableSpecifier = Terminal<"_reference_pattern_mutable_specifier", "mut">;
-export type ReferenceTypeMutableSpecifier = Terminal<"_reference_type_mutable_specifier", "mut">;
-export type SelfParameterMutableSpecifier = Terminal<"_self_parameter_mutable_specifier", "mut">;
-export type SelfParameterSelf = Terminal<"_self_parameter_self", "self">;
-export type StaticItemMutableSpecifier = Terminal<"_static_item_mutable_specifier", "mut">;
-export type StaticItemRefMarker = Terminal<"_static_item_ref_marker", "ref">;
+export type _Self = Terminal<"_self", "self">;
 export type TokenBindingPatternType = Terminal<"_token_binding_pattern_type", "block" | "expr" | "expr_2021" | "ident" | "item" | "lifetime" | "literal" | "meta" | "pat" | "pat_param" | "path" | "stmt" | "tt" | "ty" | "vis">;
-export type TraitItemUnsafeMarker = Terminal<"_trait_item_unsafe_marker", "unsafe">;
 export type UnaryExpressionOperator = Terminal<"_unary_expression_operator", "-" | "*" | "!">;
-export type VariadicParameterMutableSpecifier = Terminal<"_variadic_parameter_mutable_specifier", "mut">;
+export type UnsafeMarker = Terminal<"_unsafe_marker", "unsafe">;
 export type BooleanLiteral = Terminal<"boolean_literal", "true" | "false">;
 export type CharLiteral = Terminal<"char_literal", string>;
 export type Crate = Terminal<"crate", "crate">;
@@ -4104,42 +4062,28 @@ export interface WhereClauseTree extends TreeNode<'where_clause'> {}
 export interface WherePredicateTree extends TreeNode<'where_predicate'> {}
 export interface WhileExpressionTree extends TreeNode<'while_expression'> {}
 export interface YieldExpressionTree extends TreeNode<'yield_expression'> {}
-export interface RangeExpressionBareOperatorTree extends AnyTreeNode { readonly type: "__range_expression_bare_operator"; }
 export interface RangeExpressionBinaryOperatorTree extends AnyTreeNode { readonly type: "__range_expression_binary_operator"; }
-export interface RangeExpressionPostfixOperatorTree extends AnyTreeNode { readonly type: "__range_expression_postfix_operator"; }
-export interface RangeExpressionPrefixOperatorTree extends AnyTreeNode { readonly type: "__range_expression_prefix_operator"; }
 export interface VisibilityModifierInPathInTree extends AnyTreeNode { readonly type: "__visibility_modifier_in_path_in"; }
 export interface VisibilityModifierPubPubTree extends AnyTreeNode { readonly type: "__visibility_modifier_pub_pub"; }
-export interface AsyncBlockMoveMarkerTree extends AnyTreeNode { readonly type: "_async_block_move_marker"; }
 export interface BinaryExpressionOperatorTree extends AnyTreeNode { readonly type: "_binary_expression_operator"; }
 export interface ClosureExpressionAsyncMarkerTree extends AnyTreeNode { readonly type: "_closure_expression_async_marker"; }
-export interface ClosureExpressionMoveMarkerTree extends AnyTreeNode { readonly type: "_closure_expression_move_marker"; }
 export interface ClosureExpressionStaticMarkerTree extends AnyTreeNode { readonly type: "_closure_expression_static_marker"; }
 export interface CompoundAssignmentExprOperatorTree extends AnyTreeNode { readonly type: "_compound_assignment_expr_operator"; }
-export interface ExternCrateDeclarationCrateTree extends AnyTreeNode { readonly type: "_extern_crate_declaration_crate"; }
-export interface FieldPatternMutableSpecifierTree extends AnyTreeNode { readonly type: "_field_pattern_mutable_specifier"; }
-export interface FieldPatternRefMarkerTree extends AnyTreeNode { readonly type: "_field_pattern_ref_marker"; }
-export interface GenBlockMoveMarkerTree extends AnyTreeNode { readonly type: "_gen_block_move_marker"; }
+export interface _CrateTree extends AnyTreeNode { readonly type: "_crate"; }
 export interface GenericTypeWithTurbofishTurbofishTree extends AnyTreeNode { readonly type: "_generic_type_with_turbofish_turbofish"; }
 export interface ImplItemNegativeTree extends AnyTreeNode { readonly type: "_impl_item_negative"; }
-export interface ImplItemUnsafeMarkerTree extends AnyTreeNode { readonly type: "_impl_item_unsafe_marker"; }
-export interface LetDeclarationMutableSpecifierTree extends AnyTreeNode { readonly type: "_let_declaration_mutable_specifier"; }
 export interface LineCommentContentTree extends AnyTreeNode { readonly type: "_line_comment_content"; }
 export interface LineCommentRegularDslashTree extends AnyTreeNode { readonly type: "_line_comment_regular_dslash"; }
-export interface MutPatternMutableSpecifierTree extends AnyTreeNode { readonly type: "_mut_pattern_mutable_specifier"; }
-export interface ParameterMutableSpecifierTree extends AnyTreeNode { readonly type: "_parameter_mutable_specifier"; }
+export interface MoveMarkerTree extends AnyTreeNode { readonly type: "_move_marker"; }
+export interface _MutableSpecifierTree extends AnyTreeNode { readonly type: "_mutable_specifier"; }
+export interface OperatorTree extends AnyTreeNode { readonly type: "_operator"; }
 export interface PrimitiveTypeTree extends AnyTreeNode { readonly type: "_primitive_type"; }
+export interface RefMarkerTree extends AnyTreeNode { readonly type: "_ref_marker"; }
 export interface ReferenceExpressionRawConstTree extends AnyTreeNode { readonly type: "_reference_expression_raw_const"; }
-export interface ReferencePatternMutableSpecifierTree extends AnyTreeNode { readonly type: "_reference_pattern_mutable_specifier"; }
-export interface ReferenceTypeMutableSpecifierTree extends AnyTreeNode { readonly type: "_reference_type_mutable_specifier"; }
-export interface SelfParameterMutableSpecifierTree extends AnyTreeNode { readonly type: "_self_parameter_mutable_specifier"; }
-export interface SelfParameterSelfTree extends AnyTreeNode { readonly type: "_self_parameter_self"; }
-export interface StaticItemMutableSpecifierTree extends AnyTreeNode { readonly type: "_static_item_mutable_specifier"; }
-export interface StaticItemRefMarkerTree extends AnyTreeNode { readonly type: "_static_item_ref_marker"; }
+export interface _SelfTree extends AnyTreeNode { readonly type: "_self"; }
 export interface TokenBindingPatternTypeTree extends AnyTreeNode { readonly type: "_token_binding_pattern_type"; }
-export interface TraitItemUnsafeMarkerTree extends AnyTreeNode { readonly type: "_trait_item_unsafe_marker"; }
 export interface UnaryExpressionOperatorTree extends AnyTreeNode { readonly type: "_unary_expression_operator"; }
-export interface VariadicParameterMutableSpecifierTree extends AnyTreeNode { readonly type: "_variadic_parameter_mutable_specifier"; }
+export interface UnsafeMarkerTree extends AnyTreeNode { readonly type: "_unsafe_marker"; }
 export interface BooleanLiteralTree extends TreeNode<'boolean_literal'> {}
 export interface CharLiteralTree extends TreeNode<'char_literal'> {}
 export interface CrateTree extends AnyTreeNode { readonly type: "crate"; }
@@ -5022,42 +4966,28 @@ export interface KindMap {
   'where_predicate': WherePredicate;
   'while_expression': WhileExpression;
   'yield_expression': YieldExpression;
-  '__range_expression_bare_operator': RangeExpressionBareOperator;
   '__range_expression_binary_operator': RangeExpressionBinaryOperator;
-  '__range_expression_postfix_operator': RangeExpressionPostfixOperator;
-  '__range_expression_prefix_operator': RangeExpressionPrefixOperator;
   '__visibility_modifier_in_path_in': VisibilityModifierInPathIn;
   '__visibility_modifier_pub_pub': VisibilityModifierPubPub;
-  '_async_block_move_marker': AsyncBlockMoveMarker;
   '_binary_expression_operator': BinaryExpressionOperator;
   '_closure_expression_async_marker': ClosureExpressionAsyncMarker;
-  '_closure_expression_move_marker': ClosureExpressionMoveMarker;
   '_closure_expression_static_marker': ClosureExpressionStaticMarker;
   '_compound_assignment_expr_operator': CompoundAssignmentExprOperator;
-  '_extern_crate_declaration_crate': ExternCrateDeclarationCrate;
-  '_field_pattern_mutable_specifier': FieldPatternMutableSpecifier;
-  '_field_pattern_ref_marker': FieldPatternRefMarker;
-  '_gen_block_move_marker': GenBlockMoveMarker;
+  '_crate': _Crate;
   '_generic_type_with_turbofish_turbofish': GenericTypeWithTurbofishTurbofish;
   '_impl_item_negative': ImplItemNegative;
-  '_impl_item_unsafe_marker': ImplItemUnsafeMarker;
-  '_let_declaration_mutable_specifier': LetDeclarationMutableSpecifier;
   '_line_comment_content': LineCommentContent;
   '_line_comment_regular_dslash': LineCommentRegularDslash;
-  '_mut_pattern_mutable_specifier': MutPatternMutableSpecifier;
-  '_parameter_mutable_specifier': ParameterMutableSpecifier;
+  '_move_marker': MoveMarker;
+  '_mutable_specifier': _MutableSpecifier;
+  '_operator': Operator;
   '_primitive_type': PrimitiveType;
+  '_ref_marker': RefMarker;
   '_reference_expression_raw_const': ReferenceExpressionRawConst;
-  '_reference_pattern_mutable_specifier': ReferencePatternMutableSpecifier;
-  '_reference_type_mutable_specifier': ReferenceTypeMutableSpecifier;
-  '_self_parameter_mutable_specifier': SelfParameterMutableSpecifier;
-  '_self_parameter_self': SelfParameterSelf;
-  '_static_item_mutable_specifier': StaticItemMutableSpecifier;
-  '_static_item_ref_marker': StaticItemRefMarker;
+  '_self': _Self;
   '_token_binding_pattern_type': TokenBindingPatternType;
-  '_trait_item_unsafe_marker': TraitItemUnsafeMarker;
   '_unary_expression_operator': UnaryExpressionOperator;
-  '_variadic_parameter_mutable_specifier': VariadicParameterMutableSpecifier;
+  '_unsafe_marker': UnsafeMarker;
   'boolean_literal': BooleanLiteral;
   'char_literal': CharLiteral;
   'crate': Crate;
@@ -7027,20 +6957,8 @@ export interface TerminalTransport<K extends string, V extends string = string> 
 
 export interface LiteralTransport<K extends string, V extends string = K> extends TerminalTransport<K, V> {}
 
-export namespace RangeExpressionBareOperator {
-  export type Transport = TerminalTransport<"__range_expression_bare_operator", "..">;
-}
-
 export namespace RangeExpressionBinaryOperator {
   export type Transport = TerminalTransport<"__range_expression_binary_operator", ".." | "..." | "..=">;
-}
-
-export namespace RangeExpressionPostfixOperator {
-  export type Transport = TerminalTransport<"__range_expression_postfix_operator", "..">;
-}
-
-export namespace RangeExpressionPrefixOperator {
-  export type Transport = TerminalTransport<"__range_expression_prefix_operator", "..">;
 }
 
 export namespace VisibilityModifierInPathIn {
@@ -7079,10 +6997,6 @@ export namespace ArrayExpressionSemi {
   }
 }
 
-export namespace AsyncBlockMoveMarker {
-  export type Transport = TerminalTransport<"_async_block_move_marker", "move">;
-}
-
 export namespace BinaryExpressionOperator {
   export type Transport = TerminalTransport<"_binary_expression_operator", "&&">;
 }
@@ -7116,16 +7030,16 @@ export namespace _ClosureExpressionExpr {
   }
 }
 
-export namespace ClosureExpressionMoveMarker {
-  export type Transport = TerminalTransport<"_closure_expression_move_marker", "move">;
-}
-
 export namespace ClosureExpressionStaticMarker {
   export type Transport = TerminalTransport<"_closure_expression_static_marker", "static">;
 }
 
 export namespace CompoundAssignmentExprOperator {
   export type Transport = TerminalTransport<"_compound_assignment_expr_operator", "+=" | "-=" | "*=" | "/=" | "%=" | "&=" | "|=" | "^=" | "<<=" | ">>=">;
+}
+
+export namespace _Crate {
+  export type Transport = TerminalTransport<"_crate", "crate">;
 }
 
 export namespace _DelimTokenTreeBrace {
@@ -7188,10 +7102,6 @@ export namespace _ExpressionStatementWithSemi {
   }
 }
 
-export namespace ExternCrateDeclarationCrate {
-  export type Transport = TerminalTransport<"_extern_crate_declaration_crate", "crate">;
-}
-
 export namespace FieldIdentifier {
   export interface Transport {
     readonly $type: TSKindId.FieldIdentifier;
@@ -7202,10 +7112,6 @@ export namespace FieldIdentifier {
     readonly $nodeId?: number;
     readonly $children: readonly [Identifier.Transport];
   }
-}
-
-export namespace FieldPatternMutableSpecifier {
-  export type Transport = TerminalTransport<"_field_pattern_mutable_specifier", "mut">;
 }
 
 export namespace FieldPatternNamed {
@@ -7219,10 +7125,6 @@ export namespace FieldPatternNamed {
     readonly name: FieldIdentifier.Transport;
     readonly pattern: Pattern.Transport;
   }
-}
-
-export namespace FieldPatternRefMarker {
-  export type Transport = TerminalTransport<"_field_pattern_ref_marker", "ref">;
 }
 
 export namespace _FieldPatternShorthand {
@@ -7277,10 +7179,6 @@ export namespace FunctionTypeTraitForm {
   }
 }
 
-export namespace GenBlockMoveMarker {
-  export type Transport = TerminalTransport<"_gen_block_move_marker", "move">;
-}
-
 export namespace GenericTypeWithTurbofishTurbofish {
   export type Transport = TerminalTransport<"_generic_type_with_turbofish_turbofish", "::">;
 }
@@ -7303,10 +7201,6 @@ export namespace ImplItemNegative {
 
 export namespace ImplItemSemi {
   export type Transport = TerminalTransport<"_impl_item_semi", ";">;
-}
-
-export namespace ImplItemUnsafeMarker {
-  export type Transport = TerminalTransport<"_impl_item_unsafe_marker", "unsafe">;
 }
 
 export namespace InnerLineDocCommentMarker {
@@ -7363,10 +7257,6 @@ export namespace LetChain {
     readonly $nodeId?: number;
     readonly $children: readonly [LetChain.Transport | LetCondition.Transport | Expression.Transport];
   }
-}
-
-export namespace LetDeclarationMutableSpecifier {
-  export type Transport = TerminalTransport<"_let_declaration_mutable_specifier", "mut">;
 }
 
 export namespace LineCommentContent {
@@ -7465,8 +7355,12 @@ export namespace _ModItemInline {
   }
 }
 
-export namespace MutPatternMutableSpecifier {
-  export type Transport = TerminalTransport<"_mut_pattern_mutable_specifier", "mut">;
+export namespace MoveMarker {
+  export type Transport = TerminalTransport<"_move_marker", "move">;
+}
+
+export namespace _MutableSpecifier {
+  export type Transport = TerminalTransport<"_mutable_specifier", "mut">;
 }
 
 export namespace NonSpecialToken {
@@ -7479,6 +7373,10 @@ export namespace NonSpecialToken {
     readonly $nodeId?: number;
     readonly $children: readonly [Literal.Transport | Identifier.Transport | MutableSpecifier.Transport | Self.Transport | Super.Transport | Crate.Transport | PrimitiveType.Transport];
   }
+}
+
+export namespace Operator {
+  export type Transport = TerminalTransport<"_operator", "..">;
 }
 
 export namespace OrPatternBinary {
@@ -7510,10 +7408,6 @@ export namespace OuterLineDocCommentMarker {
   export type Transport = TerminalTransport<"_outer_line_doc_comment_marker", "/">;
 }
 
-export namespace ParameterMutableSpecifier {
-  export type Transport = TerminalTransport<"_parameter_mutable_specifier", "mut">;
-}
-
 export namespace PointerTypeConst {
   export type Transport = TerminalTransport<"_pointer_type_const", "const">;
 }
@@ -7542,7 +7436,7 @@ export namespace _RangeExpressionBare {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly operator: RangeExpressionBareOperator.Transport;
+    readonly operator: Operator.Transport;
   }
 }
 
@@ -7569,7 +7463,7 @@ export namespace RangeExpressionPostfix {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
     readonly start: Expression.Transport;
-    readonly operator: RangeExpressionPostfixOperator.Transport;
+    readonly operator: Operator.Transport;
   }
 }
 
@@ -7581,7 +7475,7 @@ export namespace RangeExpressionPrefix {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly operator: RangeExpressionPrefixOperator.Transport;
+    readonly operator: Operator.Transport;
     readonly end: Expression.Transport;
   }
 }
@@ -7614,6 +7508,10 @@ export namespace RangePatternPrefix {
   }
 }
 
+export namespace RefMarker {
+  export type Transport = TerminalTransport<"_ref_marker", "ref">;
+}
+
 export namespace ReferenceExpressionRawConst {
   export type Transport = TerminalTransport<"_reference_expression_raw_const", string>;
 }
@@ -7630,14 +7528,6 @@ export namespace ReferenceExpressionRawMut {
   }
 }
 
-export namespace ReferencePatternMutableSpecifier {
-  export type Transport = TerminalTransport<"_reference_pattern_mutable_specifier", "mut">;
-}
-
-export namespace ReferenceTypeMutableSpecifier {
-  export type Transport = TerminalTransport<"_reference_type_mutable_specifier", "mut">;
-}
-
 export namespace ReservedIdentifier {
   export interface Transport {
     readonly $type: "_reserved_identifier";
@@ -7650,20 +7540,8 @@ export namespace ReservedIdentifier {
   }
 }
 
-export namespace SelfParameterMutableSpecifier {
-  export type Transport = TerminalTransport<"_self_parameter_mutable_specifier", "mut">;
-}
-
-export namespace SelfParameterSelf {
-  export type Transport = TerminalTransport<"_self_parameter_self", "self">;
-}
-
-export namespace StaticItemMutableSpecifier {
-  export type Transport = TerminalTransport<"_static_item_mutable_specifier", "mut">;
-}
-
-export namespace StaticItemRefMarker {
-  export type Transport = TerminalTransport<"_static_item_ref_marker", "ref">;
+export namespace _Self {
+  export type Transport = TerminalTransport<"_self", "self">;
 }
 
 export namespace StructItemBrace {
@@ -7772,10 +7650,6 @@ export namespace _TokenTreePatternParen {
   }
 }
 
-export namespace TraitItemUnsafeMarker {
-  export type Transport = TerminalTransport<"_trait_item_unsafe_marker", "unsafe">;
-}
-
 export namespace TypeIdentifier {
   export interface Transport {
     readonly $type: TSKindId.TypeIdentifier;
@@ -7792,8 +7666,8 @@ export namespace UnaryExpressionOperator {
   export type Transport = TerminalTransport<"_unary_expression_operator", "-" | "*" | "!">;
 }
 
-export namespace VariadicParameterMutableSpecifier {
-  export type Transport = TerminalTransport<"_variadic_parameter_mutable_specifier", "mut">;
+export namespace UnsafeMarker {
+  export type Transport = TerminalTransport<"_unsafe_marker", "unsafe">;
 }
 
 export namespace _VisibilityModifierCrate {
@@ -7942,7 +7816,7 @@ export namespace AsyncBlock {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly move_marker?: AsyncBlockMoveMarker.Transport;
+    readonly move_marker?: MoveMarker.Transport;
     readonly block: Block.Transport;
   }
 }
@@ -8129,7 +8003,7 @@ export namespace ClosureExpressionUFormBlock {
     readonly $nodeId?: number;
     readonly static_marker?: ClosureExpressionStaticMarker.Transport;
     readonly async_marker?: ClosureExpressionAsyncMarker.Transport;
-    readonly move_marker?: ClosureExpressionMoveMarker.Transport;
+    readonly move_marker?: MoveMarker.Transport;
     readonly parameters: ClosureParameters.Transport;
     readonly $children: readonly [ClosureExpressionBlock.Transport];
   }
@@ -8146,7 +8020,7 @@ export namespace ClosureExpressionUFormExpr {
     readonly $nodeId?: number;
     readonly static_marker?: ClosureExpressionStaticMarker.Transport;
     readonly async_marker?: ClosureExpressionAsyncMarker.Transport;
-    readonly move_marker?: ClosureExpressionMoveMarker.Transport;
+    readonly move_marker?: MoveMarker.Transport;
     readonly parameters: ClosureParameters.Transport;
     readonly $children: readonly [_ClosureExpressionExpr.Transport];
   }
@@ -8480,7 +8354,7 @@ export namespace ExternCrateDeclaration {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
     readonly visibility_modifier?: VisibilityModifier.Transport;
-    readonly crate: ExternCrateDeclarationCrate.Transport;
+    readonly crate: _Crate.Transport;
     readonly name: Identifier.Transport;
     readonly alias?: Identifier.Transport;
   }
@@ -8584,8 +8458,8 @@ export namespace FieldPatternUFormShorthand {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly ref_marker?: FieldPatternRefMarker.Transport;
-    readonly mutable_specifier?: FieldPatternMutableSpecifier.Transport;
+    readonly ref_marker?: RefMarker.Transport;
+    readonly mutable_specifier?: _MutableSpecifier.Transport;
     readonly $children: readonly [_FieldPatternShorthand.Transport];
   }
 }
@@ -8599,8 +8473,8 @@ export namespace FieldPatternUFormNamed {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly ref_marker?: FieldPatternRefMarker.Transport;
-    readonly mutable_specifier?: FieldPatternMutableSpecifier.Transport;
+    readonly ref_marker?: RefMarker.Transport;
+    readonly mutable_specifier?: _MutableSpecifier.Transport;
     readonly $children: readonly [FieldPatternNamed.Transport];
   }
 }
@@ -8758,7 +8632,7 @@ export namespace GenBlock {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly move_marker?: GenBlockMoveMarker.Transport;
+    readonly move_marker?: MoveMarker.Transport;
     readonly block: Block.Transport;
   }
 }
@@ -8868,7 +8742,7 @@ export namespace ImplItemUFormBody {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly unsafe_marker?: ImplItemUnsafeMarker.Transport;
+    readonly unsafe_marker?: UnsafeMarker.Transport;
     readonly type_parameters?: TypeParameters.Transport;
     readonly negative?: ImplItemNegative.Transport;
     readonly trait?: TypeIdentifier.Transport | ScopedTypeIdentifier.Transport | GenericType.Transport;
@@ -8887,7 +8761,7 @@ export namespace ImplItemUFormSemi {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly unsafe_marker?: ImplItemUnsafeMarker.Transport;
+    readonly unsafe_marker?: UnsafeMarker.Transport;
     readonly type_parameters?: TypeParameters.Transport;
     readonly negative?: ImplItemNegative.Transport;
     readonly trait?: TypeIdentifier.Transport | ScopedTypeIdentifier.Transport | GenericType.Transport;
@@ -8977,7 +8851,7 @@ export namespace LetDeclaration {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly mutable_specifier?: LetDeclarationMutableSpecifier.Transport;
+    readonly mutable_specifier?: _MutableSpecifier.Transport;
     readonly pattern: Pattern.Transport;
     readonly type?: Type.Transport;
     readonly value?: Expression.Transport;
@@ -9314,7 +9188,7 @@ export namespace MutPattern {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly mutable_specifier: MutPatternMutableSpecifier.Transport;
+    readonly mutable_specifier: _MutableSpecifier.Transport;
     readonly $children: readonly [Pattern.Transport];
   }
 }
@@ -9389,7 +9263,7 @@ export namespace Parameter {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly mutable_specifier?: ParameterMutableSpecifier.Transport;
+    readonly mutable_specifier?: _MutableSpecifier.Transport;
     readonly pattern: Pattern.Transport | Self.Transport;
     readonly type: Type.Transport;
   }
@@ -9484,7 +9358,7 @@ export namespace RangeExpressionBare {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly operator: RangeExpressionBareOperator.Transport;
+    readonly operator: Operator.Transport;
   }
 }
 
@@ -9636,7 +9510,7 @@ export namespace ReferencePattern {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly mutable_specifier?: ReferencePatternMutableSpecifier.Transport;
+    readonly mutable_specifier?: _MutableSpecifier.Transport;
     readonly pattern: Pattern.Transport;
   }
 }
@@ -9650,7 +9524,7 @@ export namespace ReferenceType {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
     readonly lifetime?: Lifetime.Transport;
-    readonly mutable_specifier?: ReferenceTypeMutableSpecifier.Transport;
+    readonly mutable_specifier?: _MutableSpecifier.Transport;
     readonly type: Type.Transport;
   }
 }
@@ -9749,8 +9623,8 @@ export namespace SelfParameter {
     readonly $nodeId?: number;
     readonly reference?: LiteralTransport<"&", "&">;
     readonly lifetime?: Lifetime.Transport;
-    readonly mutable_specifier?: SelfParameterMutableSpecifier.Transport;
-    readonly self: SelfParameterSelf.Transport;
+    readonly mutable_specifier?: _MutableSpecifier.Transport;
+    readonly self: _Self.Transport;
   }
 }
 
@@ -9805,7 +9679,7 @@ export namespace StaticItem {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
     readonly visibility_modifier?: VisibilityModifier.Transport;
-    readonly mutable_specifier?: StaticItemRefMarker.Transport | StaticItemMutableSpecifier.Transport;
+    readonly mutable_specifier?: RefMarker.Transport | _MutableSpecifier.Transport;
     readonly name: Identifier.Transport;
     readonly type: Type.Transport;
     readonly value?: Expression.Transport;
@@ -10122,7 +9996,7 @@ export namespace TraitItem {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
     readonly visibility_modifier?: VisibilityModifier.Transport;
-    readonly unsafe_marker?: TraitItemUnsafeMarker.Transport;
+    readonly unsafe_marker?: UnsafeMarker.Transport;
     readonly name: TypeIdentifier.Transport;
     readonly type_parameters?: TypeParameters.Transport;
     readonly bounds?: TraitBounds.Transport;
@@ -10406,7 +10280,7 @@ export namespace VariadicParameter {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly mutable_specifier?: VariadicParameterMutableSpecifier.Transport;
+    readonly mutable_specifier?: _MutableSpecifier.Transport;
     readonly pattern?: Pattern.Transport;
   }
 }
@@ -10898,43 +10772,34 @@ export namespace UseClause {
 }
 
 export type TransportFor<K extends SyntaxKind | keyof KindMap> =
-  K extends "__range_expression_bare_operator" ? RangeExpressionBareOperator.Transport :
   K extends "__range_expression_binary_operator" ? RangeExpressionBinaryOperator.Transport :
-  K extends "__range_expression_postfix_operator" ? RangeExpressionPostfixOperator.Transport :
-  K extends "__range_expression_prefix_operator" ? RangeExpressionPrefixOperator.Transport :
   K extends "__visibility_modifier_in_path_in" ? VisibilityModifierInPathIn.Transport :
   K extends "__visibility_modifier_pub_pub" ? VisibilityModifierPubPub.Transport :
   K extends "_array_expression_list" ? ArrayExpressionList.Transport :
   K extends "_array_expression_semi" ? ArrayExpressionSemi.Transport :
-  K extends "_async_block_move_marker" ? AsyncBlockMoveMarker.Transport :
   K extends "_binary_expression_operator" ? BinaryExpressionOperator.Transport :
   K extends "_closure_expression_async_marker" ? ClosureExpressionAsyncMarker.Transport :
   K extends "_closure_expression_block" ? ClosureExpressionBlock.Transport :
   K extends "_closure_expression_expr" ? _ClosureExpressionExpr.Transport :
-  K extends "_closure_expression_move_marker" ? ClosureExpressionMoveMarker.Transport :
   K extends "_closure_expression_static_marker" ? ClosureExpressionStaticMarker.Transport :
   K extends "_compound_assignment_expr_operator" ? CompoundAssignmentExprOperator.Transport :
+  K extends "_crate" ? _Crate.Transport :
   K extends "_delim_token_tree_brace" ? _DelimTokenTreeBrace.Transport :
   K extends "_delim_token_tree_bracket" ? _DelimTokenTreeBracket.Transport :
   K extends "_delim_token_tree_paren" ? _DelimTokenTreeParen.Transport :
   K extends "_expression_statement_block_ending" ? _ExpressionStatementBlockEnding.Transport :
   K extends "_expression_statement_with_semi" ? _ExpressionStatementWithSemi.Transport :
-  K extends "_extern_crate_declaration_crate" ? ExternCrateDeclarationCrate.Transport :
   K extends "_field_identifier" ? FieldIdentifier.Transport :
-  K extends "_field_pattern_mutable_specifier" ? FieldPatternMutableSpecifier.Transport :
   K extends "_field_pattern_named" ? FieldPatternNamed.Transport :
-  K extends "_field_pattern_ref_marker" ? FieldPatternRefMarker.Transport :
   K extends "_field_pattern_shorthand" ? _FieldPatternShorthand.Transport :
   K extends "_foreign_mod_item_body" ? _ForeignModItemBody.Transport :
   K extends "_foreign_mod_item_semi" ? ForeignModItemSemi.Transport :
   K extends "_function_type_fn_form" ? FunctionTypeFnForm.Transport :
   K extends "_function_type_trait_form" ? FunctionTypeTraitForm.Transport :
-  K extends "_gen_block_move_marker" ? GenBlockMoveMarker.Transport :
   K extends "_generic_type_with_turbofish_turbofish" ? GenericTypeWithTurbofishTurbofish.Transport :
   K extends "_impl_item_body" ? _ImplItemBody.Transport :
   K extends "_impl_item_negative" ? ImplItemNegative.Transport :
   K extends "_impl_item_semi" ? ImplItemSemi.Transport :
-  K extends "_impl_item_unsafe_marker" ? ImplItemUnsafeMarker.Transport :
   K extends "_inner_line_doc_comment_marker" ? InnerLineDocCommentMarker.Transport :
   K extends "_kw_async_marker" ? KwAsyncMarker.Transport :
   K extends "_kw_in" ? KwIn.Transport :
@@ -10947,7 +10812,6 @@ export type TransportFor<K extends SyntaxKind | keyof KindMap> =
   K extends "_kw_turbofish" ? KwTurbofish.Transport :
   K extends "_kw_unsafe_marker" ? KwUnsafeMarker.Transport :
   K extends "_let_chain" ? LetChain.Transport :
-  K extends "_let_declaration_mutable_specifier" ? LetDeclarationMutableSpecifier.Transport :
   K extends "_line_comment_content" ? LineCommentContent.Transport :
   K extends "_line_comment_doc" ? LineCommentDoc.Transport :
   K extends "_line_comment_regular_dslash" ? LineCommentRegularDslash.Transport :
@@ -10958,12 +10822,13 @@ export type TransportFor<K extends SyntaxKind | keyof KindMap> =
   K extends "_match_arm_with_comma" ? MatchArmWithComma.Transport :
   K extends "_mod_item_external" ? ModItemExternal.Transport :
   K extends "_mod_item_inline" ? _ModItemInline.Transport :
-  K extends "_mut_pattern_mutable_specifier" ? MutPatternMutableSpecifier.Transport :
+  K extends "_move_marker" ? MoveMarker.Transport :
+  K extends "_mutable_specifier" ? _MutableSpecifier.Transport :
   K extends "_non_special_token" ? NonSpecialToken.Transport :
+  K extends "_operator" ? Operator.Transport :
   K extends "_or_pattern_binary" ? OrPatternBinary.Transport :
   K extends "_or_pattern_prefix" ? OrPatternPrefix.Transport :
   K extends "_outer_line_doc_comment_marker" ? OuterLineDocCommentMarker.Transport :
-  K extends "_parameter_mutable_specifier" ? ParameterMutableSpecifier.Transport :
   K extends "_pointer_type_const" ? PointerTypeConst.Transport :
   K extends "_pointer_type_mut" ? _PointerTypeMut.Transport :
   K extends "_primitive_type" ? PrimitiveType.Transport :
@@ -10974,15 +10839,11 @@ export type TransportFor<K extends SyntaxKind | keyof KindMap> =
   K extends "_range_pattern_left_bare" ? RangePatternLeftBare.Transport :
   K extends "_range_pattern_left_with_right" ? RangePatternLeftWithRight.Transport :
   K extends "_range_pattern_prefix" ? RangePatternPrefix.Transport :
+  K extends "_ref_marker" ? RefMarker.Transport :
   K extends "_reference_expression_raw_const" ? ReferenceExpressionRawConst.Transport :
   K extends "_reference_expression_raw_mut" ? ReferenceExpressionRawMut.Transport :
-  K extends "_reference_pattern_mutable_specifier" ? ReferencePatternMutableSpecifier.Transport :
-  K extends "_reference_type_mutable_specifier" ? ReferenceTypeMutableSpecifier.Transport :
   K extends "_reserved_identifier" ? ReservedIdentifier.Transport :
-  K extends "_self_parameter_mutable_specifier" ? SelfParameterMutableSpecifier.Transport :
-  K extends "_self_parameter_self" ? SelfParameterSelf.Transport :
-  K extends "_static_item_mutable_specifier" ? StaticItemMutableSpecifier.Transport :
-  K extends "_static_item_ref_marker" ? StaticItemRefMarker.Transport :
+  K extends "_self" ? _Self.Transport :
   K extends "_struct_item_brace" ? StructItemBrace.Transport :
   K extends "_struct_item_tuple" ? StructItemTuple.Transport :
   K extends "_struct_item_unit" ? StructItemUnit.Transport :
@@ -10993,10 +10854,9 @@ export type TransportFor<K extends SyntaxKind | keyof KindMap> =
   K extends "_token_tree_pattern_brace" ? _TokenTreePatternBrace.Transport :
   K extends "_token_tree_pattern_bracket" ? _TokenTreePatternBracket.Transport :
   K extends "_token_tree_pattern_paren" ? _TokenTreePatternParen.Transport :
-  K extends "_trait_item_unsafe_marker" ? TraitItemUnsafeMarker.Transport :
   K extends "_type_identifier" ? TypeIdentifier.Transport :
   K extends "_unary_expression_operator" ? UnaryExpressionOperator.Transport :
-  K extends "_variadic_parameter_mutable_specifier" ? VariadicParameterMutableSpecifier.Transport :
+  K extends "_unsafe_marker" ? UnsafeMarker.Transport :
   K extends "_visibility_modifier_crate" ? _VisibilityModifierCrate.Transport :
   K extends "_visibility_modifier_in_path" ? VisibilityModifierInPath.Transport :
   K extends "_visibility_modifier_pub" ? VisibilityModifierPub.Transport :
@@ -11263,43 +11123,34 @@ export type TransportFor<K extends SyntaxKind | keyof KindMap> =
   never;
 
 export type AnyTransport =
-  | RangeExpressionBareOperator.Transport
   | RangeExpressionBinaryOperator.Transport
-  | RangeExpressionPostfixOperator.Transport
-  | RangeExpressionPrefixOperator.Transport
   | VisibilityModifierInPathIn.Transport
   | VisibilityModifierPubPub.Transport
   | ArrayExpressionList.Transport
   | ArrayExpressionSemi.Transport
-  | AsyncBlockMoveMarker.Transport
   | BinaryExpressionOperator.Transport
   | ClosureExpressionAsyncMarker.Transport
   | ClosureExpressionBlock.Transport
   | _ClosureExpressionExpr.Transport
-  | ClosureExpressionMoveMarker.Transport
   | ClosureExpressionStaticMarker.Transport
   | CompoundAssignmentExprOperator.Transport
+  | _Crate.Transport
   | _DelimTokenTreeBrace.Transport
   | _DelimTokenTreeBracket.Transport
   | _DelimTokenTreeParen.Transport
   | _ExpressionStatementBlockEnding.Transport
   | _ExpressionStatementWithSemi.Transport
-  | ExternCrateDeclarationCrate.Transport
   | FieldIdentifier.Transport
-  | FieldPatternMutableSpecifier.Transport
   | FieldPatternNamed.Transport
-  | FieldPatternRefMarker.Transport
   | _FieldPatternShorthand.Transport
   | _ForeignModItemBody.Transport
   | ForeignModItemSemi.Transport
   | FunctionTypeFnForm.Transport
   | FunctionTypeTraitForm.Transport
-  | GenBlockMoveMarker.Transport
   | GenericTypeWithTurbofishTurbofish.Transport
   | _ImplItemBody.Transport
   | ImplItemNegative.Transport
   | ImplItemSemi.Transport
-  | ImplItemUnsafeMarker.Transport
   | InnerLineDocCommentMarker.Transport
   | KwAsyncMarker.Transport
   | KwIn.Transport
@@ -11312,7 +11163,6 @@ export type AnyTransport =
   | KwTurbofish.Transport
   | KwUnsafeMarker.Transport
   | LetChain.Transport
-  | LetDeclarationMutableSpecifier.Transport
   | LineCommentContent.Transport
   | LineCommentDoc.Transport
   | LineCommentRegularDslash.Transport
@@ -11323,12 +11173,13 @@ export type AnyTransport =
   | MatchArmWithComma.Transport
   | ModItemExternal.Transport
   | _ModItemInline.Transport
-  | MutPatternMutableSpecifier.Transport
+  | MoveMarker.Transport
+  | _MutableSpecifier.Transport
   | NonSpecialToken.Transport
+  | Operator.Transport
   | OrPatternBinary.Transport
   | OrPatternPrefix.Transport
   | OuterLineDocCommentMarker.Transport
-  | ParameterMutableSpecifier.Transport
   | PointerTypeConst.Transport
   | _PointerTypeMut.Transport
   | PrimitiveType.Transport
@@ -11339,15 +11190,11 @@ export type AnyTransport =
   | RangePatternLeftBare.Transport
   | RangePatternLeftWithRight.Transport
   | RangePatternPrefix.Transport
+  | RefMarker.Transport
   | ReferenceExpressionRawConst.Transport
   | ReferenceExpressionRawMut.Transport
-  | ReferencePatternMutableSpecifier.Transport
-  | ReferenceTypeMutableSpecifier.Transport
   | ReservedIdentifier.Transport
-  | SelfParameterMutableSpecifier.Transport
-  | SelfParameterSelf.Transport
-  | StaticItemMutableSpecifier.Transport
-  | StaticItemRefMarker.Transport
+  | _Self.Transport
   | StructItemBrace.Transport
   | StructItemTuple.Transport
   | StructItemUnit.Transport
@@ -11358,10 +11205,9 @@ export type AnyTransport =
   | _TokenTreePatternBrace.Transport
   | _TokenTreePatternBracket.Transport
   | _TokenTreePatternParen.Transport
-  | TraitItemUnsafeMarker.Transport
   | TypeIdentifier.Transport
   | UnaryExpressionOperator.Transport
-  | VariadicParameterMutableSpecifier.Transport
+  | UnsafeMarker.Transport
   | _VisibilityModifierCrate.Transport
   | VisibilityModifierInPath.Transport
   | VisibilityModifierPub.Transport

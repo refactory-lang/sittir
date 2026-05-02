@@ -831,7 +831,7 @@ export interface ForInClauseTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: ForInClauseAsyncMarkerEnum
+  asyncMarker?: AsyncMarkerEnum
   left: LeftHandSideTransport
   right: Array<ExpressionWithinForInClauseTransport>
 }
@@ -851,7 +851,7 @@ export interface ForStatementTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: ForStatementAsyncMarkerEnum
+  asyncMarker?: AsyncMarkerEnum
   left: LeftHandSideTransport
   right: ExpressionsTransport
   body: SuiteTransport
@@ -880,7 +880,7 @@ export interface FunctionDefinitionTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: FunctionDefinitionAsyncMarkerEnum
+  asyncMarker?: AsyncMarkerEnum
   name: IdentifierTransport
   typeParameters?: TypeParameterTransport
   parameters: ParametersTransport
@@ -1577,7 +1577,7 @@ export interface SplatPatternTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  identifier: SplatPatternIdentifierEnum
+  identifier: _IdentifierEnum
   '$children': Array<IdentifierTransport>
 }
 
@@ -1914,7 +1914,7 @@ export interface WithStatementTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  asyncMarker?: WithStatementAsyncMarkerEnum
+  asyncMarker?: AsyncMarkerEnum
   withClause: Box<AnyTransport>
   body: SuiteTransport
 }

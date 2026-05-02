@@ -197,7 +197,7 @@ export interface AsyncBlockTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  moveMarker?: AsyncBlockMoveMarkerEnum
+  moveMarker?: MoveMarkerEnum
   block: BlockTransport
 }
 
@@ -440,7 +440,7 @@ export interface ClosureExpressionUFormBlockTransport {
   '$nodeId'?: number
   staticMarker?: ClosureExpressionStaticMarkerEnum
   asyncMarker?: ClosureExpressionAsyncMarkerEnum
-  moveMarker?: ClosureExpressionMoveMarkerEnum
+  moveMarker?: MoveMarkerEnum
   parameters: ClosureParametersTransport
   '$children': Array<ClosureExpressionBlockTransport>
 }
@@ -453,7 +453,7 @@ export interface ClosureExpressionUFormExprTransport {
   '$nodeId'?: number
   staticMarker?: ClosureExpressionStaticMarkerEnum
   asyncMarker?: ClosureExpressionAsyncMarkerEnum
-  moveMarker?: ClosureExpressionMoveMarkerEnum
+  moveMarker?: MoveMarkerEnum
   parameters: ClosureParametersTransport
   '$children': Array<ClosureExpressionExprTransport>
 }
@@ -863,7 +863,7 @@ export interface ExternCrateDeclarationTransport {
   '$span'?: Span
   '$nodeId'?: number
   visibilityModifier?: Box<AnyTransport>
-  crate: ExternCrateDeclarationCrateEnum
+  crate: _CrateEnum
   name: IdentifierTransport
   alias?: IdentifierTransport
 }
@@ -986,8 +986,8 @@ export interface FieldPatternUFormNamedTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  refMarker?: FieldPatternRefMarkerEnum
-  mutableSpecifier?: FieldPatternMutableSpecifierEnum
+  refMarker?: RefMarkerEnum
+  mutableSpecifier?: _MutableSpecifierEnum
   '$children': Array<FieldPatternNamedTransport>
 }
 
@@ -997,8 +997,8 @@ export interface FieldPatternUFormShorthandTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  refMarker?: FieldPatternRefMarkerEnum
-  mutableSpecifier?: FieldPatternMutableSpecifierEnum
+  refMarker?: RefMarkerEnum
+  mutableSpecifier?: _MutableSpecifierEnum
   '$children': Array<FieldPatternShorthandTransport>
 }
 
@@ -1171,7 +1171,7 @@ export interface GenBlockTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  moveMarker?: GenBlockMoveMarkerEnum
+  moveMarker?: MoveMarkerEnum
   block: BlockTransport
 }
 
@@ -1309,7 +1309,7 @@ export interface ImplItemUFormBodyTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  unsafeMarker?: ImplItemUnsafeMarkerEnum
+  unsafeMarker?: UnsafeMarkerEnum
   typeParameters?: TypeParametersTransport
   negative?: ImplItemNegativeEnum
   trait?: Box<AnyTransport>
@@ -1324,7 +1324,7 @@ export interface ImplItemUFormSemiTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  unsafeMarker?: ImplItemUnsafeMarkerEnum
+  unsafeMarker?: UnsafeMarkerEnum
   typeParameters?: TypeParametersTransport
   negative?: ImplItemNegativeEnum
   trait?: Box<AnyTransport>
@@ -1517,7 +1517,7 @@ export interface LetDeclarationTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  mutableSpecifier?: LetDeclarationMutableSpecifierEnum
+  mutableSpecifier?: _MutableSpecifierEnum
   pattern: PatternTransport
   type?: _TypeTransport
   value?: ExpressionTransport
@@ -1919,7 +1919,7 @@ export interface MutPatternTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  mutableSpecifier: MutPatternMutableSpecifierEnum
+  mutableSpecifier: _MutableSpecifierEnum
   '$children': Array<PatternTransport>
 }
 
@@ -2034,7 +2034,7 @@ export interface ParameterTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  mutableSpecifier?: ParameterMutableSpecifierEnum
+  mutableSpecifier?: _MutableSpecifierEnum
   pattern: Box<AnyTransport>
   type: _TypeTransport
 }
@@ -2150,7 +2150,7 @@ export interface RangeExpressionBareTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  operator: RangeExpressionBareOperatorEnum
+  operator: OperatorEnum
 }
 
 export interface RangeExpressionBareTransport {
@@ -2159,7 +2159,7 @@ export interface RangeExpressionBareTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  operator: RangeExpressionBareOperatorEnum
+  operator: OperatorEnum
 }
 
 export interface RangeExpressionBinaryTransport {
@@ -2180,7 +2180,7 @@ export interface RangeExpressionPostfixTransport {
   '$span'?: Span
   '$nodeId'?: number
   start: ExpressionTransport
-  operator: RangeExpressionPostfixOperatorEnum
+  operator: OperatorEnum
 }
 
 export interface RangeExpressionPrefixTransport {
@@ -2189,7 +2189,7 @@ export interface RangeExpressionPrefixTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  operator: RangeExpressionPrefixOperatorEnum
+  operator: OperatorEnum
   end: ExpressionTransport
 }
 
@@ -2344,7 +2344,7 @@ export interface ReferencePatternTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  mutableSpecifier?: ReferencePatternMutableSpecifierEnum
+  mutableSpecifier?: _MutableSpecifierEnum
   pattern: PatternTransport
 }
 
@@ -2355,7 +2355,7 @@ export interface ReferenceTypeTransport {
   '$span'?: Span
   '$nodeId'?: number
   lifetime?: LifetimeTransport
-  mutableSpecifier?: ReferenceTypeMutableSpecifierEnum
+  mutableSpecifier?: _MutableSpecifierEnum
   type: _TypeTransport
 }
 
@@ -2467,8 +2467,8 @@ export interface SelfParameterTransport {
   '$nodeId'?: number
   reference?: Box<AnyTransport>
   lifetime?: LifetimeTransport
-  mutableSpecifier?: SelfParameterMutableSpecifierEnum
-  self: SelfParameterSelfEnum
+  mutableSpecifier?: _MutableSpecifierEnum
+  self: _SelfEnum
 }
 
 export interface SelfTransport {
@@ -2924,7 +2924,7 @@ export interface TraitItemTransport {
   '$span'?: Span
   '$nodeId'?: number
   visibilityModifier?: Box<AnyTransport>
-  unsafeMarker?: TraitItemUnsafeMarkerEnum
+  unsafeMarker?: UnsafeMarkerEnum
   name: TypeIdentifierTransport
   typeParameters?: TypeParametersTransport
   bounds?: TraitBoundsTransport
@@ -3210,7 +3210,7 @@ export interface VariadicParameterTransport {
   '$text'?: string
   '$span'?: Span
   '$nodeId'?: number
-  mutableSpecifier?: VariadicParameterMutableSpecifierEnum
+  mutableSpecifier?: _MutableSpecifierEnum
   pattern?: PatternTransport
 }
 

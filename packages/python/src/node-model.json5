@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 237,
+  "nodeCount": 233,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -438,6 +438,17 @@
       "children": []
     },
     {
+      "kind": "_async_marker",
+      "modelType": "enum",
+      "typeName": "AsyncMarker",
+      "factoryName": "asyncMarker",
+      "irKey": "asyncMarker",
+      "hidden": false,
+      "values": [
+        "async"
+      ]
+    },
+    {
       "kind": "_augmented_assignment_operator",
       "modelType": "enum",
       "typeName": "AugmentedAssignmentOperator",
@@ -630,36 +641,15 @@
       ]
     },
     {
-      "kind": "_for_in_clause_async_marker",
+      "kind": "_identifier",
       "modelType": "enum",
-      "typeName": "ForInClauseAsyncMarker",
-      "factoryName": "forInClauseAsyncMarker",
-      "irKey": "forInClauseAsyncMarker",
+      "typeName": "_Identifier",
+      "factoryName": "_identifier",
+      "irKey": "_identifier",
       "hidden": false,
       "values": [
-        "async"
-      ]
-    },
-    {
-      "kind": "_for_statement_async_marker",
-      "modelType": "enum",
-      "typeName": "ForStatementAsyncMarker",
-      "factoryName": "forStatementAsyncMarker",
-      "irKey": "forStatementAsyncMarker",
-      "hidden": false,
-      "values": [
-        "async"
-      ]
-    },
-    {
-      "kind": "_function_definition_async_marker",
-      "modelType": "enum",
-      "typeName": "FunctionDefinitionAsyncMarker",
-      "factoryName": "functionDefinitionAsyncMarker",
-      "irKey": "functionDefinitionAsyncMarker",
-      "hidden": false,
-      "values": [
-        "async"
+        "*",
+        "**"
       ]
     },
     {
@@ -1088,30 +1078,6 @@
       ]
     },
     {
-      "kind": "_splat_pattern_identifier",
-      "modelType": "enum",
-      "typeName": "SplatPatternIdentifier",
-      "factoryName": "splatPatternIdentifier",
-      "irKey": "splatPatternIdentifier",
-      "hidden": false,
-      "values": [
-        "*",
-        "**"
-      ]
-    },
-    {
-      "kind": "_splat_type_identifier",
-      "modelType": "enum",
-      "typeName": "SplatTypeIdentifier",
-      "factoryName": "splatTypeIdentifier",
-      "irKey": "splatTypeIdentifier",
-      "hidden": false,
-      "values": [
-        "*",
-        "**"
-      ]
-    },
-    {
       "kind": "_statement",
       "modelType": "supertype",
       "typeName": "Statement",
@@ -1262,17 +1228,6 @@
         }
       ],
       "separator": ","
-    },
-    {
-      "kind": "_with_statement_async_marker",
-      "modelType": "enum",
-      "typeName": "WithStatementAsyncMarker",
-      "factoryName": "withStatementAsyncMarker",
-      "irKey": "withStatementAsyncMarker",
-      "hidden": false,
-      "values": [
-        "async"
-      ]
     },
     {
       "kind": "aliased_import",
@@ -3872,7 +3827,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_for_in_clause_async_marker",
+              "name": "_async_marker",
               "unresolved": true
             }
           ],
@@ -3880,7 +3835,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_for_in_clause_async_marker"
+              "_async_marker"
             ]
           }
         },
@@ -3952,7 +3907,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_for_statement_async_marker",
+              "name": "_async_marker",
               "unresolved": true
             }
           ],
@@ -3960,7 +3915,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_for_statement_async_marker"
+              "_async_marker"
             ]
           }
         },
@@ -4113,7 +4068,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_function_definition_async_marker",
+              "name": "_async_marker",
               "unresolved": true
             }
           ],
@@ -4121,7 +4076,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_function_definition_async_marker"
+              "_async_marker"
             ]
           }
         },
@@ -6348,7 +6303,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_splat_pattern_identifier",
+              "name": "_identifier",
               "unresolved": true
             }
           ],
@@ -6356,7 +6311,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_splat_pattern_identifier"
+              "_identifier"
             ]
           }
         }
@@ -6398,7 +6353,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_splat_type_identifier",
+              "name": "_identifier",
               "unresolved": true
             },
             {
@@ -6412,7 +6367,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_splat_type_identifier",
+              "_identifier",
               "identifier"
             ]
           }
@@ -7679,7 +7634,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_with_statement_async_marker",
+              "name": "_async_marker",
               "unresolved": true
             }
           ],
@@ -7687,7 +7642,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_with_statement_async_marker"
+              "_async_marker"
             ]
           }
         },

@@ -416,7 +416,7 @@ const _K37: readonly string[] = ["identifier","super"];
 const _K38: readonly string[] = ["scoped_identifier","generic_type_with_turbofish","bracketed_type","generic_type"];
 const _K39: readonly string[] = ["scoped_identifier","generic_type_with_turbofish"];
 const _K40: readonly string[] = ["expression_statement","const_item","macro_invocation","macro_definition","attribute_item","inner_attribute_item","mod_item","foreign_mod_item","struct_item","union_item","enum_item","type_item","function_item","function_signature_item","impl_item","trait_item","associated_type","let_declaration","use_declaration","extern_crate_declaration","static_item"];
-const _K41: readonly string[] = ["_static_item_ref_marker","_static_item_mutable_specifier"];
+const _K41: readonly string[] = ["_ref_marker","_mutable_specifier"];
 const _K42: readonly string[] = ["_type_identifier","scoped_type_identifier_in_expression_position","generic_type_with_turbofish"];
 const _K43: readonly string[] = ["_type_identifier","scoped_type_identifier"];
 const _K44: readonly string[] = ["scoped_identifier","use_as_clause","use_list","scoped_use_list","use_wildcard"];
@@ -797,7 +797,7 @@ export function externCrateDeclarationFrom(input: T.ExternCrateDeclaration.Loose
   if (isNodeData(input)) return input;
   return F.externCrateDeclaration({
     visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
-    crate: _resolveOneLeaf<T.ExternCrateDeclarationCrate>(input.crate, "_extern_crate_declaration_crate"),
+    crate: _resolveOneLeaf<T._Crate>(input.crate, "_crate"),
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
     alias: _resolveOneLeaf<T.Identifier>(input.alias, "identifier"),
   });
@@ -1306,7 +1306,7 @@ export function modItemUFormInlineFrom(input: Omit<ConfigOf<T.ModItemUFormInline
 export function mutPatternFrom(input: T.MutPattern.Loose): ReturnType<typeof F.mutPattern> | T.MutPattern {
   if (isNodeData(input)) return input;
   return F.mutPattern({
-    mutableSpecifier: _resolveOneLeaf<T.MutPatternMutableSpecifier>(input.mutableSpecifier, "_mut_pattern_mutable_specifier"),
+    mutableSpecifier: _resolveOneLeaf<T._MutableSpecifier>(input.mutableSpecifier, "_mutable_specifier"),
     children: _resolveOne(input.children, _K9, _K10),
   });
 }
@@ -1406,7 +1406,7 @@ export function qualifiedTypeFrom(input: T.QualifiedType.Loose): ReturnType<type
 export function rangeExpressionBareFrom(input: T.RangeExpressionBare.Loose): ReturnType<typeof F.rangeExpressionBare> | T.RangeExpressionBare {
   if (isNodeData(input)) return input;
   return F.rangeExpressionBare({
-    operator: _resolveOneLeaf<T.RangeExpressionBareOperator>(input.operator, "__range_expression_bare_operator"),
+    operator: _resolveOneLeaf<T.Operator>(input.operator, "_operator"),
   });
 }
 
@@ -1426,20 +1426,20 @@ export function rangeExpressionUFormBinaryFrom(input: Omit<ConfigOf<T.RangeExpre
 export function rangeExpressionUFormPostfixFrom(input: Omit<ConfigOf<T.RangeExpressionUFormPostfix>, '$variant'>) {
   return F.rangeExpressionUFormPostfix({
     start: _resolveOne<T.Expression>(input.start, _K2, _K3),
-    operator: _resolveOneLeaf<T.RangeExpressionPostfixOperator>(input.operator, "__range_expression_postfix_operator"),
+    operator: _resolveOneLeaf<T.Operator>(input.operator, "_operator"),
   });
 }
 
 export function rangeExpressionUFormPrefixFrom(input: Omit<ConfigOf<T.RangeExpressionUFormPrefix>, '$variant'>) {
   return F.rangeExpressionUFormPrefix({
-    operator: _resolveOneLeaf<T.RangeExpressionPrefixOperator>(input.operator, "__range_expression_prefix_operator"),
+    operator: _resolveOneLeaf<T.Operator>(input.operator, "_operator"),
     end: _resolveOne<T.Expression>(input.end, _K2, _K3),
   });
 }
 
 export function rangeExpressionUFormBareFrom(input: Omit<ConfigOf<T.RangeExpressionUFormBare>, '$variant'>) {
   return F.rangeExpressionUFormBare({
-    operator: _resolveOneLeaf<T.RangeExpressionBareOperator>(input.operator, "__range_expression_bare_operator"),
+    operator: _resolveOneLeaf<T.Operator>(input.operator, "_operator"),
   });
 }
 
@@ -1567,7 +1567,7 @@ export function selfParameterFrom(input: T.SelfParameter.Loose): ReturnType<type
     reference: _resolveBooleanKeyword(input.reference),
     lifetime: _resolveOneBranch<T.Lifetime>(input.lifetime, "lifetime"),
     mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
-    self: _resolveOneLeaf<T.SelfParameterSelf>(input.self, "_self_parameter_self"),
+    self: _resolveOneLeaf<T._Self>(input.self, "_self"),
   });
 }
 
@@ -1604,7 +1604,7 @@ export function staticItemFrom(input: T.StaticItem.Loose): ReturnType<typeof F.s
   if (isNodeData(input)) return input;
   return F.staticItem({
     visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
-    mutableSpecifier: _resolveOne<T.StaticItemRefMarker | T.StaticItemMutableSpecifier>(input.mutableSpecifier, _K41, _K0),
+    mutableSpecifier: _resolveOne<T.RefMarker | T._MutableSpecifier>(input.mutableSpecifier, _K41, _K0),
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
     type: _resolveOne<T._Type>(input.type, _K4, _K5),
     value: _resolveOne<T.Expression>(input.value, _K2, _K3),

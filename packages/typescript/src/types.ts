@@ -13,46 +13,25 @@ export type LeafScalarMap = {
 };
 
 export type LeafStringMap = {
-  __for_header_kind: "var";
-  __for_header_let_const_kind_kind: "var";
   __for_header_operator: "in" | "of";
   __for_header_var_kind_kind: "var";
   __number_operator: "-" | "+";
-  __parameter_name_readonly_marker: "readonly";
-  __public_field_definition_abstract_first_abstract_marker: "abstract";
-  __public_field_definition_abstract_first_readonly_marker: "readonly";
   __public_field_definition_access_first_declare_marker: "declare";
   __public_field_definition_accessor_opt_accessor_marker: "accessor";
-  __public_field_definition_readonly_first_abstract_marker: "abstract";
-  __public_field_definition_readonly_first_readonly_marker: "readonly";
-  __public_field_definition_static_mods_readonly_marker: "readonly";
-  __public_field_definition_static_mods_static_marker: "static";
-  __update_expression_postfix_operator: "++" | "--";
-  __update_expression_prefix_operator: "++" | "--";
-  _abstract_method_signature_accessibility_modifier: "public" | "private" | "protected";
-  _abstract_method_signature_accessor_kind: "get" | "set" | "*";
-  _abstract_method_signature_optional_marker: "?";
-  _abstract_method_signature_override_modifier: "override";
-  _arrow_function_async_marker: "async";
+  _abstract_marker: "abstract";
+  _accessibility_modifier: "public" | "private" | "protected";
+  _accessor_kind: "get" | "set" | "*";
   _asserts_annotation_asserts: ":";
   _assignment_expression_using_marker: "using";
+  _async_marker: "async";
   _augmented_assignment_expression_operator: "+=" | "-=" | "*=" | "/=" | "%=" | "^=" | "&=" | "|=" | ">>=" | ">>>=" | "<<=" | "**=" | "&&=" | "||=" | "??=";
   _binary_expression_operator: "&&";
-  _call_expression_optional_chain: "?.";
-  _construct_signature_abstract_marker: "abstract";
-  _constructor_type_abstract_marker: "abstract";
-  _enum_declaration_const_marker: "const";
+  _const_marker: "const";
   _export_specifier_export_kind: "type" | "typeof";
-  _field_definition_static_marker: "static";
   _for_in_statement_await_marker: "await";
   _for_statement_initializer: ";";
-  _function_declaration_async_marker: "async";
-  _function_expression_async_marker: "async";
-  _function_signature_async_marker: "async";
-  _generator_function_async_marker: "async";
-  _generator_function_declaration_async_marker: "async";
   _import_attribute_object: "with" | "assert";
-  _import_specifier_import_kind: "type" | "typeof";
+  _kind: "let" | "const";
   _kw_abstract_marker: "abstract";
   _kw_accessor_marker: "accessor";
   _kw_async_marker: "async";
@@ -62,35 +41,16 @@ export type LeafStringMap = {
   _kw_readonly_marker: "readonly";
   _kw_static_marker: "static";
   _kw_using_marker: "using";
-  _lexical_declaration_kind: "let" | "const";
-  _member_expression_optional_chain: "?.";
-  _method_definition_accessibility_modifier: "public" | "private" | "protected";
-  _method_definition_accessor_kind: "get" | "set" | "*";
-  _method_definition_async_marker: "async";
-  _method_definition_optional_marker: "?";
-  _method_definition_override_modifier: "override";
-  _method_definition_readonly_marker: "readonly";
-  _method_definition_static_marker: "static";
-  _method_signature_accessibility_modifier: "public" | "private" | "protected";
-  _method_signature_accessor_kind: "get" | "set" | "*";
-  _method_signature_async_marker: "async";
-  _method_signature_optional_marker: "?";
-  _method_signature_override_modifier: "override";
-  _method_signature_readonly_marker: "readonly";
-  _method_signature_static_marker: "static";
   _object_type_closing: "}" | "|}";
   _object_type_opening: "{" | "{|";
-  _property_signature_accessibility_modifier: "public" | "private" | "protected";
-  _property_signature_optional_marker: "?";
-  _property_signature_override_modifier: "override";
-  _property_signature_readonly_marker: "readonly";
-  _property_signature_static_marker: "static";
+  _operator: "++" | "--";
+  _optional_chain: "?.";
+  _optional_marker: "?";
+  _override_modifier: "override";
   _public_field_definition_optionality_marker: "?" | "!";
-  _subscript_expression_optional_chain: "?.";
-  _type_parameter_const_marker: "const";
-  _type_predicate_annotation_type_predicate: ":";
+  _readonly_marker: "readonly";
+  _static_marker: "static";
   _unary_expression_operator: "!" | "~" | "-" | "+" | "typeof" | "void" | "delete";
-  _update_expression_operator: "++" | "--";
   accessibility_modifier: "public" | "private" | "protected";
   false: "false";
   import: "import";
@@ -383,46 +343,25 @@ export const enum SyntaxKind {
   WhileStatement = 'while_statement',
   WithStatement = 'with_statement',
   YieldExpression = 'yield_expression',
-  ForHeaderKind = '__for_header_kind',
-  ForHeaderLetConstKindKind = '__for_header_let_const_kind_kind',
   ForHeaderOperator = '__for_header_operator',
   ForHeaderVarKindKind = '__for_header_var_kind_kind',
   NumberOperator = '__number_operator',
-  ParameterNameReadonlyMarker = '__parameter_name_readonly_marker',
-  PublicFieldDefinitionAbstractFirstAbstractMarker = '__public_field_definition_abstract_first_abstract_marker',
-  PublicFieldDefinitionAbstractFirstReadonlyMarker = '__public_field_definition_abstract_first_readonly_marker',
   PublicFieldDefinitionAccessFirstDeclareMarker = '__public_field_definition_access_first_declare_marker',
   PublicFieldDefinitionAccessorOptAccessorMarker = '__public_field_definition_accessor_opt_accessor_marker',
-  PublicFieldDefinitionReadonlyFirstAbstractMarker = '__public_field_definition_readonly_first_abstract_marker',
-  PublicFieldDefinitionReadonlyFirstReadonlyMarker = '__public_field_definition_readonly_first_readonly_marker',
-  PublicFieldDefinitionStaticModsReadonlyMarker = '__public_field_definition_static_mods_readonly_marker',
-  PublicFieldDefinitionStaticModsStaticMarker = '__public_field_definition_static_mods_static_marker',
-  UpdateExpressionPostfixOperator = '__update_expression_postfix_operator',
-  UpdateExpressionPrefixOperator = '__update_expression_prefix_operator',
-  AbstractMethodSignatureAccessibilityModifier = '_abstract_method_signature_accessibility_modifier',
-  AbstractMethodSignatureAccessorKind = '_abstract_method_signature_accessor_kind',
-  AbstractMethodSignatureOptionalMarker = '_abstract_method_signature_optional_marker',
-  AbstractMethodSignatureOverrideModifier = '_abstract_method_signature_override_modifier',
-  ArrowFunctionAsyncMarker = '_arrow_function_async_marker',
+  AbstractMarker = '_abstract_marker',
+  _AccessibilityModifier = '_accessibility_modifier',
+  AccessorKind = '_accessor_kind',
   AssertsAnnotationAsserts = '_asserts_annotation_asserts',
   AssignmentExpressionUsingMarker = '_assignment_expression_using_marker',
+  AsyncMarker = '_async_marker',
   AugmentedAssignmentExpressionOperator = '_augmented_assignment_expression_operator',
   BinaryExpressionOperator = '_binary_expression_operator',
-  CallExpressionOptionalChain = '_call_expression_optional_chain',
-  ConstructSignatureAbstractMarker = '_construct_signature_abstract_marker',
-  ConstructorTypeAbstractMarker = '_constructor_type_abstract_marker',
-  EnumDeclarationConstMarker = '_enum_declaration_const_marker',
+  ConstMarker = '_const_marker',
   ExportSpecifierExportKind = '_export_specifier_export_kind',
-  FieldDefinitionStaticMarker = '_field_definition_static_marker',
   ForInStatementAwaitMarker = '_for_in_statement_await_marker',
   ForStatementInitializer = '_for_statement_initializer',
-  FunctionDeclarationAsyncMarker = '_function_declaration_async_marker',
-  FunctionExpressionAsyncMarker = '_function_expression_async_marker',
-  FunctionSignatureAsyncMarker = '_function_signature_async_marker',
-  GeneratorFunctionAsyncMarker = '_generator_function_async_marker',
-  GeneratorFunctionDeclarationAsyncMarker = '_generator_function_declaration_async_marker',
   ImportAttributeObject = '_import_attribute_object',
-  ImportSpecifierImportKind = '_import_specifier_import_kind',
+  Kind = '_kind',
   KwAbstractMarker = '_kw_abstract_marker',
   KwAccessorMarker = '_kw_accessor_marker',
   KwAsyncMarker = '_kw_async_marker',
@@ -432,36 +371,17 @@ export const enum SyntaxKind {
   KwReadonlyMarker = '_kw_readonly_marker',
   KwStaticMarker = '_kw_static_marker',
   KwUsingMarker = '_kw_using_marker',
-  LexicalDeclarationKind = '_lexical_declaration_kind',
-  MemberExpressionOptionalChain = '_member_expression_optional_chain',
-  MethodDefinitionAccessibilityModifier = '_method_definition_accessibility_modifier',
-  MethodDefinitionAccessorKind = '_method_definition_accessor_kind',
-  MethodDefinitionAsyncMarker = '_method_definition_async_marker',
-  MethodDefinitionOptionalMarker = '_method_definition_optional_marker',
-  MethodDefinitionOverrideModifier = '_method_definition_override_modifier',
-  MethodDefinitionReadonlyMarker = '_method_definition_readonly_marker',
-  MethodDefinitionStaticMarker = '_method_definition_static_marker',
-  MethodSignatureAccessibilityModifier = '_method_signature_accessibility_modifier',
-  MethodSignatureAccessorKind = '_method_signature_accessor_kind',
-  MethodSignatureAsyncMarker = '_method_signature_async_marker',
-  MethodSignatureOptionalMarker = '_method_signature_optional_marker',
-  MethodSignatureOverrideModifier = '_method_signature_override_modifier',
-  MethodSignatureReadonlyMarker = '_method_signature_readonly_marker',
-  MethodSignatureStaticMarker = '_method_signature_static_marker',
   ObjectTypeClosing = '_object_type_closing',
   ObjectTypeOpening = '_object_type_opening',
-  PropertySignatureAccessibilityModifier = '_property_signature_accessibility_modifier',
-  PropertySignatureOptionalMarker = '_property_signature_optional_marker',
-  PropertySignatureOverrideModifier = '_property_signature_override_modifier',
-  PropertySignatureReadonlyMarker = '_property_signature_readonly_marker',
-  PropertySignatureStaticMarker = '_property_signature_static_marker',
+  Operator = '_operator',
+  OptionalChain = '_optional_chain',
+  OptionalMarker = '_optional_marker',
+  _OverrideModifier = '_override_modifier',
   PublicFieldDefinitionOptionalityMarker = '_public_field_definition_optionality_marker',
+  ReadonlyMarker = '_readonly_marker',
   ReservedIdentifier = '_reserved_identifier',
-  SubscriptExpressionOptionalChain = '_subscript_expression_optional_chain',
-  TypeParameterConstMarker = '_type_parameter_const_marker',
-  TypePredicateAnnotationTypePredicate = '_type_predicate_annotation_type_predicate',
+  StaticMarker = '_static_marker',
   UnaryExpressionOperator = '_unary_expression_operator',
-  UpdateExpressionOperator = '_update_expression_operator',
   AccessibilityModifier = 'accessibility_modifier',
   Comment = 'comment',
   EscapeSequence = 'escape_sequence',
@@ -2207,7 +2127,7 @@ export interface ForHeader {
 export interface ForHeaderLetConstKind {
   readonly $type: TSKindId.ForHeaderLetConstKind;
   readonly $fields: {
-    readonly kind: ForHeaderLetConstKindKind;
+    readonly kind: Kind;
     readonly left: Identifier | DestructuringPattern;
   };
   readonly $children: readonly [AutomaticSemicolon];
@@ -2325,7 +2245,7 @@ export interface ParameterName {
   readonly $type: TSKindId.ParameterName;
   readonly $fields: {
     readonly decorator: readonly (Decorator)[];
-    readonly readonly_marker?: BooleanKeyword<ParameterNameReadonlyMarker>;
+    readonly readonly_marker?: BooleanKeyword<ReadonlyMarker>;
     readonly pattern: Pattern | This;
   };
   readonly $children: readonly [AccessibilityModifier | OverrideModifier];
@@ -2347,8 +2267,8 @@ export interface ParenthesizedExpressionTyped {
 export interface PublicFieldDefinitionAbstractFirst {
   readonly $type: TSKindId.PublicFieldDefinitionAbstractFirst;
   readonly $fields: {
-    readonly abstract_marker: PublicFieldDefinitionAbstractFirstAbstractMarker;
-    readonly readonly_marker?: BooleanKeyword<PublicFieldDefinitionAbstractFirstReadonlyMarker>;
+    readonly abstract_marker: AbstractMarker;
+    readonly readonly_marker?: BooleanKeyword<ReadonlyMarker>;
   };
 }
 
@@ -2375,16 +2295,16 @@ export interface PublicFieldDefinitionDeclareFirst {
 export interface PublicFieldDefinitionReadonlyFirst {
   readonly $type: TSKindId.PublicFieldDefinitionReadonlyFirst;
   readonly $fields: {
-    readonly readonly_marker: PublicFieldDefinitionReadonlyFirstReadonlyMarker;
-    readonly abstract_marker?: BooleanKeyword<PublicFieldDefinitionReadonlyFirstAbstractMarker>;
+    readonly readonly_marker: ReadonlyMarker;
+    readonly abstract_marker?: BooleanKeyword<AbstractMarker>;
   };
 }
 
 export interface PublicFieldDefinitionStaticMods {
   readonly $type: TSKindId.PublicFieldDefinitionStaticMods;
   readonly $fields: {
-    readonly static_marker: PublicFieldDefinitionStaticModsStaticMarker;
-    readonly readonly_marker?: BooleanKeyword<PublicFieldDefinitionStaticModsReadonlyMarker>;
+    readonly static_marker: StaticMarker;
+    readonly readonly_marker?: BooleanKeyword<ReadonlyMarker>;
   };
   readonly $children: readonly [OverrideModifier];
 }
@@ -2456,14 +2376,14 @@ export interface UpdateExpressionPostfix {
   readonly $type: TSKindId.UpdateExpressionPostfix;
   readonly $fields: {
     readonly argument: Expression;
-    readonly operator: UpdateExpressionPostfixOperator;
+    readonly operator: Operator;
   };
 }
 
 export interface UpdateExpressionPrefix {
   readonly $type: TSKindId.UpdateExpressionPrefix;
   readonly $fields: {
-    readonly operator: UpdateExpressionPrefixOperator;
+    readonly operator: Operator;
     readonly argument: Expression;
   };
 }
@@ -2482,11 +2402,11 @@ export interface AbstractClassDeclaration {
 export interface AbstractMethodSignature {
   readonly $type: TSKindId.AbstractMethodSignature;
   readonly $fields: {
-    readonly accessibility_modifier?: AbstractMethodSignatureAccessibilityModifier;
-    readonly override_modifier?: BooleanKeyword<AbstractMethodSignatureOverrideModifier>;
-    readonly accessor_kind?: AbstractMethodSignatureAccessorKind;
+    readonly accessibility_modifier?: _AccessibilityModifier;
+    readonly override_modifier?: BooleanKeyword<_OverrideModifier>;
+    readonly accessor_kind?: AccessorKind;
     readonly name: PropertyName;
-    readonly optional_marker?: BooleanKeyword<AbstractMethodSignatureOptionalMarker>;
+    readonly optional_marker?: BooleanKeyword<OptionalMarker>;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
     readonly return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
@@ -2549,7 +2469,7 @@ export interface ArrowFunctionUFormParameter {
   readonly $type: TSKindId.ArrowFunction;
   readonly $variant: 'parameter';
   readonly $fields: {
-    readonly async_marker?: BooleanKeyword<ArrowFunctionAsyncMarker>;
+    readonly async_marker?: BooleanKeyword<AsyncMarker>;
     readonly body: Expression | StatementBlock;
   };
   readonly $children: readonly [_ArrowFunctionParameter];
@@ -2559,7 +2479,7 @@ export interface ArrowFunctionUFormUCallSignature {
   readonly $type: TSKindId.ArrowFunction;
   readonly $variant: '_call_signature';
   readonly $fields: {
-    readonly async_marker?: BooleanKeyword<ArrowFunctionAsyncMarker>;
+    readonly async_marker?: BooleanKeyword<AsyncMarker>;
     readonly body: Expression | StatementBlock;
   };
   readonly $children: readonly [_ArrowFunctionUCallSignature];
@@ -2759,7 +2679,7 @@ export interface Constraint {
 export interface ConstructSignature {
   readonly $type: TSKindId.ConstructSignature;
   readonly $fields: {
-    readonly abstract_marker?: BooleanKeyword<ConstructSignatureAbstractMarker>;
+    readonly abstract_marker?: BooleanKeyword<AbstractMarker>;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
     readonly type?: TypeAnnotation;
@@ -2769,7 +2689,7 @@ export interface ConstructSignature {
 export interface ConstructorType {
   readonly $type: TSKindId.ConstructorType;
   readonly $fields: {
-    readonly abstract_marker?: BooleanKeyword<ConstructorTypeAbstractMarker>;
+    readonly abstract_marker?: BooleanKeyword<AbstractMarker>;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
     readonly type: Type;
@@ -2857,7 +2777,7 @@ export interface EnumBody {
 export interface EnumDeclaration {
   readonly $type: TSKindId.EnumDeclaration;
   readonly $fields: {
-    readonly const_marker?: BooleanKeyword<EnumDeclarationConstMarker>;
+    readonly const_marker?: BooleanKeyword<ConstMarker>;
     readonly name: Identifier;
     readonly body: EnumBody;
   };
@@ -2947,7 +2867,7 @@ export interface FieldDefinition {
   readonly $type: "field_definition";
   readonly $fields: {
     readonly decorator: readonly (Decorator)[];
-    readonly static_marker?: BooleanKeyword<FieldDefinitionStaticMarker>;
+    readonly static_marker?: BooleanKeyword<StaticMarker>;
     readonly property: PropertyName;
     readonly value?: Expression;
   };
@@ -2996,7 +2916,7 @@ export interface FormalParameters {
 export interface FunctionDeclaration {
   readonly $type: TSKindId.FunctionDeclaration;
   readonly $fields: {
-    readonly async_marker?: BooleanKeyword<FunctionDeclarationAsyncMarker>;
+    readonly async_marker?: BooleanKeyword<AsyncMarker>;
     readonly name: Identifier;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
@@ -3009,7 +2929,7 @@ export interface FunctionDeclaration {
 export interface FunctionExpression {
   readonly $type: TSKindId.FunctionExpression;
   readonly $fields: {
-    readonly async_marker?: BooleanKeyword<FunctionExpressionAsyncMarker>;
+    readonly async_marker?: BooleanKeyword<AsyncMarker>;
     readonly name?: Identifier;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
@@ -3021,7 +2941,7 @@ export interface FunctionExpression {
 export interface FunctionSignature {
   readonly $type: TSKindId.FunctionSignature;
   readonly $fields: {
-    readonly async_marker?: BooleanKeyword<FunctionSignatureAsyncMarker>;
+    readonly async_marker?: BooleanKeyword<AsyncMarker>;
     readonly name: Identifier;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
@@ -3042,7 +2962,7 @@ export interface FunctionType {
 export interface GeneratorFunction {
   readonly $type: TSKindId.GeneratorFunction;
   readonly $fields: {
-    readonly async_marker?: BooleanKeyword<GeneratorFunctionAsyncMarker>;
+    readonly async_marker?: BooleanKeyword<AsyncMarker>;
     readonly name?: Identifier;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
@@ -3054,7 +2974,7 @@ export interface GeneratorFunction {
 export interface GeneratorFunctionDeclaration {
   readonly $type: TSKindId.GeneratorFunctionDeclaration;
   readonly $fields: {
-    readonly async_marker?: BooleanKeyword<GeneratorFunctionDeclarationAsyncMarker>;
+    readonly async_marker?: BooleanKeyword<AsyncMarker>;
     readonly name: Identifier;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
@@ -3155,7 +3075,7 @@ export interface ImportSpecifierUFormName {
   readonly $type: TSKindId.ImportSpecifier;
   readonly $variant: 'name';
   readonly $fields: {
-    readonly import_kind?: ImportSpecifierImportKind;
+    readonly import_kind?: ExportSpecifierExportKind;
   };
   readonly $children: readonly [_ImportSpecifierName];
 }
@@ -3164,7 +3084,7 @@ export interface ImportSpecifierUFormAs {
   readonly $type: TSKindId.ImportSpecifier;
   readonly $variant: 'as';
   readonly $fields: {
-    readonly import_kind?: ImportSpecifierImportKind;
+    readonly import_kind?: ExportSpecifierExportKind;
   };
   readonly $children: readonly [ImportSpecifierAs];
 }
@@ -3315,7 +3235,7 @@ export interface LabeledStatement {
 export interface LexicalDeclaration {
   readonly $type: TSKindId.LexicalDeclaration;
   readonly $fields: {
-    readonly kind: LexicalDeclarationKind;
+    readonly kind: Kind;
     readonly declarators: NonEmptyArray<VariableDeclarator>;
     readonly semicolon: Semicolon;
   };
@@ -3354,14 +3274,14 @@ export interface MemberExpression {
 export interface MethodDefinition {
   readonly $type: TSKindId.MethodDefinition;
   readonly $fields: {
-    readonly accessibility_modifier?: MethodDefinitionAccessibilityModifier;
-    readonly static_marker?: BooleanKeyword<MethodDefinitionStaticMarker>;
-    readonly override_modifier?: BooleanKeyword<MethodDefinitionOverrideModifier>;
-    readonly readonly_marker?: BooleanKeyword<MethodDefinitionReadonlyMarker>;
-    readonly async_marker?: BooleanKeyword<MethodDefinitionAsyncMarker>;
-    readonly accessor_kind?: MethodDefinitionAccessorKind;
+    readonly accessibility_modifier?: _AccessibilityModifier;
+    readonly static_marker?: BooleanKeyword<StaticMarker>;
+    readonly override_modifier?: BooleanKeyword<_OverrideModifier>;
+    readonly readonly_marker?: BooleanKeyword<ReadonlyMarker>;
+    readonly async_marker?: BooleanKeyword<AsyncMarker>;
+    readonly accessor_kind?: AccessorKind;
     readonly name: PropertyName;
-    readonly optional_marker?: BooleanKeyword<MethodDefinitionOptionalMarker>;
+    readonly optional_marker?: BooleanKeyword<OptionalMarker>;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
     readonly return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
@@ -3372,14 +3292,14 @@ export interface MethodDefinition {
 export interface MethodSignature {
   readonly $type: TSKindId.MethodSignature;
   readonly $fields: {
-    readonly accessibility_modifier?: MethodSignatureAccessibilityModifier;
-    readonly static_marker?: BooleanKeyword<MethodSignatureStaticMarker>;
-    readonly override_modifier?: BooleanKeyword<MethodSignatureOverrideModifier>;
-    readonly readonly_marker?: BooleanKeyword<MethodSignatureReadonlyMarker>;
-    readonly async_marker?: BooleanKeyword<MethodSignatureAsyncMarker>;
-    readonly accessor_kind?: MethodSignatureAccessorKind;
+    readonly accessibility_modifier?: _AccessibilityModifier;
+    readonly static_marker?: BooleanKeyword<StaticMarker>;
+    readonly override_modifier?: BooleanKeyword<_OverrideModifier>;
+    readonly readonly_marker?: BooleanKeyword<ReadonlyMarker>;
+    readonly async_marker?: BooleanKeyword<AsyncMarker>;
+    readonly accessor_kind?: AccessorKind;
     readonly name: PropertyName;
-    readonly optional_marker?: BooleanKeyword<MethodSignatureOptionalMarker>;
+    readonly optional_marker?: BooleanKeyword<OptionalMarker>;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
     readonly return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
@@ -3488,7 +3408,7 @@ export interface OptionalParameter {
   readonly $type: TSKindId.OptionalParameter;
   readonly $fields: {
     readonly decorator: readonly (Decorator)[];
-    readonly readonly_marker?: BooleanKeyword<ParameterNameReadonlyMarker>;
+    readonly readonly_marker?: BooleanKeyword<ReadonlyMarker>;
     readonly pattern: Pattern | This;
     readonly type?: TypeAnnotation;
     readonly value?: Expression;
@@ -3563,12 +3483,12 @@ export interface Program {
 export interface PropertySignature {
   readonly $type: TSKindId.PropertySignature;
   readonly $fields: {
-    readonly accessibility_modifier?: PropertySignatureAccessibilityModifier;
-    readonly static_marker?: BooleanKeyword<PropertySignatureStaticMarker>;
-    readonly override_modifier?: BooleanKeyword<PropertySignatureOverrideModifier>;
-    readonly readonly_marker?: BooleanKeyword<PropertySignatureReadonlyMarker>;
+    readonly accessibility_modifier?: _AccessibilityModifier;
+    readonly static_marker?: BooleanKeyword<StaticMarker>;
+    readonly override_modifier?: BooleanKeyword<_OverrideModifier>;
+    readonly readonly_marker?: BooleanKeyword<ReadonlyMarker>;
     readonly name: PropertyName;
-    readonly optional_marker?: BooleanKeyword<PropertySignatureOptionalMarker>;
+    readonly optional_marker?: BooleanKeyword<OptionalMarker>;
     readonly type?: TypeAnnotation;
   };
 }
@@ -3604,7 +3524,7 @@ export interface RequiredParameter {
   readonly $type: TSKindId.RequiredParameter;
   readonly $fields: {
     readonly decorator: readonly (Decorator)[];
-    readonly readonly_marker?: BooleanKeyword<ParameterNameReadonlyMarker>;
+    readonly readonly_marker?: BooleanKeyword<ReadonlyMarker>;
     readonly pattern: Pattern | This;
     readonly type?: TypeAnnotation;
     readonly value?: Expression;
@@ -3687,7 +3607,7 @@ export interface SubscriptExpression {
   readonly $type: TSKindId.SubscriptExpression;
   readonly $fields: {
     readonly object: Expression | PrimaryExpression;
-    readonly optional_chain?: BooleanKeyword<SubscriptExpressionOptionalChain>;
+    readonly optional_chain?: BooleanKeyword<OptionalChain>;
     readonly index: Expressions;
   };
 }
@@ -3812,7 +3732,7 @@ export interface TypeAssertion {
 export interface TypeParameter {
   readonly $type: TSKindId.TypeParameter;
   readonly $fields: {
-    readonly const_marker?: BooleanKeyword<TypeParameterConstMarker>;
+    readonly const_marker?: BooleanKeyword<ConstMarker>;
     readonly name: TypeIdentifier;
     readonly constraint?: Constraint;
     readonly value?: DefaultType;
@@ -3835,7 +3755,7 @@ export interface TypePredicate {
 export interface TypePredicateAnnotation {
   readonly $type: TSKindId.TypePredicateAnnotation;
   readonly $fields: {
-    readonly type_predicate: TypePredicateAnnotationTypePredicate | TypePredicate;
+    readonly type_predicate: AssertsAnnotationAsserts | TypePredicate;
   };
 }
 
@@ -3915,76 +3835,36 @@ export interface YieldExpression {
 
 
 // Leaf node types
-export type ForHeaderKind = Terminal<"__for_header_kind", "var">;
-export type ForHeaderLetConstKindKind = Terminal<"__for_header_let_const_kind_kind", "var">;
 export type ForHeaderOperator = Terminal<"__for_header_operator", "in" | "of">;
 export type ForHeaderVarKindKind = Terminal<"__for_header_var_kind_kind", "var">;
 export type NumberOperator = Terminal<"__number_operator", "-" | "+">;
-export type ParameterNameReadonlyMarker = Terminal<"__parameter_name_readonly_marker", "readonly">;
-export type PublicFieldDefinitionAbstractFirstAbstractMarker = Terminal<"__public_field_definition_abstract_first_abstract_marker", "abstract">;
-export type PublicFieldDefinitionAbstractFirstReadonlyMarker = Terminal<"__public_field_definition_abstract_first_readonly_marker", "readonly">;
 export type PublicFieldDefinitionAccessFirstDeclareMarker = Terminal<"__public_field_definition_access_first_declare_marker", "declare">;
 export type PublicFieldDefinitionAccessorOptAccessorMarker = Terminal<"__public_field_definition_accessor_opt_accessor_marker", "accessor">;
-export type PublicFieldDefinitionReadonlyFirstAbstractMarker = Terminal<"__public_field_definition_readonly_first_abstract_marker", "abstract">;
-export type PublicFieldDefinitionReadonlyFirstReadonlyMarker = Terminal<"__public_field_definition_readonly_first_readonly_marker", "readonly">;
-export type PublicFieldDefinitionStaticModsReadonlyMarker = Terminal<"__public_field_definition_static_mods_readonly_marker", "readonly">;
-export type PublicFieldDefinitionStaticModsStaticMarker = Terminal<"__public_field_definition_static_mods_static_marker", "static">;
-export type UpdateExpressionPostfixOperator = Terminal<"__update_expression_postfix_operator", "++" | "--">;
-export type UpdateExpressionPrefixOperator = Terminal<"__update_expression_prefix_operator", "++" | "--">;
-export type AbstractMethodSignatureAccessibilityModifier = Terminal<"_abstract_method_signature_accessibility_modifier", "public" | "private" | "protected">;
-export type AbstractMethodSignatureAccessorKind = Terminal<"_abstract_method_signature_accessor_kind", "get" | "set" | "*">;
-export type AbstractMethodSignatureOptionalMarker = Terminal<"_abstract_method_signature_optional_marker", "?">;
-export type AbstractMethodSignatureOverrideModifier = Terminal<"_abstract_method_signature_override_modifier", "override">;
-export type ArrowFunctionAsyncMarker = Terminal<"_arrow_function_async_marker", "async">;
+export type AbstractMarker = Terminal<"_abstract_marker", "abstract">;
+export type _AccessibilityModifier = Terminal<"_accessibility_modifier", "public" | "private" | "protected">;
+export type AccessorKind = Terminal<"_accessor_kind", "get" | "set" | "*">;
 export type AssertsAnnotationAsserts = Terminal<"_asserts_annotation_asserts", ":">;
 export type AssignmentExpressionUsingMarker = Terminal<"_assignment_expression_using_marker", "using">;
+export type AsyncMarker = Terminal<"_async_marker", "async">;
 export type AugmentedAssignmentExpressionOperator = Terminal<"_augmented_assignment_expression_operator", "+=" | "-=" | "*=" | "/=" | "%=" | "^=" | "&=" | "|=" | ">>=" | ">>>=" | "<<=" | "**=" | "&&=" | "||=" | "??=">;
 export type BinaryExpressionOperator = Terminal<"_binary_expression_operator", "&&">;
-export type CallExpressionOptionalChain = Terminal<"_call_expression_optional_chain", "?.">;
-export type ConstructSignatureAbstractMarker = Terminal<"_construct_signature_abstract_marker", "abstract">;
-export type ConstructorTypeAbstractMarker = Terminal<"_constructor_type_abstract_marker", "abstract">;
-export type EnumDeclarationConstMarker = Terminal<"_enum_declaration_const_marker", "const">;
+export type ConstMarker = Terminal<"_const_marker", "const">;
 export type ExportSpecifierExportKind = Terminal<"_export_specifier_export_kind", "type" | "typeof">;
-export type FieldDefinitionStaticMarker = Terminal<"_field_definition_static_marker", "static">;
 export type ForInStatementAwaitMarker = Terminal<"_for_in_statement_await_marker", "await">;
 export type ForStatementInitializer = Terminal<"_for_statement_initializer", ";">;
-export type FunctionDeclarationAsyncMarker = Terminal<"_function_declaration_async_marker", "async">;
-export type FunctionExpressionAsyncMarker = Terminal<"_function_expression_async_marker", "async">;
-export type FunctionSignatureAsyncMarker = Terminal<"_function_signature_async_marker", "async">;
-export type GeneratorFunctionAsyncMarker = Terminal<"_generator_function_async_marker", "async">;
-export type GeneratorFunctionDeclarationAsyncMarker = Terminal<"_generator_function_declaration_async_marker", "async">;
 export type ImportAttributeObject = Terminal<"_import_attribute_object", "with" | "assert">;
-export type ImportSpecifierImportKind = Terminal<"_import_specifier_import_kind", "type" | "typeof">;
-export type LexicalDeclarationKind = Terminal<"_lexical_declaration_kind", "let" | "const">;
-export type MemberExpressionOptionalChain = Terminal<"_member_expression_optional_chain", "?.">;
-export type MethodDefinitionAccessibilityModifier = Terminal<"_method_definition_accessibility_modifier", "public" | "private" | "protected">;
-export type MethodDefinitionAccessorKind = Terminal<"_method_definition_accessor_kind", "get" | "set" | "*">;
-export type MethodDefinitionAsyncMarker = Terminal<"_method_definition_async_marker", "async">;
-export type MethodDefinitionOptionalMarker = Terminal<"_method_definition_optional_marker", "?">;
-export type MethodDefinitionOverrideModifier = Terminal<"_method_definition_override_modifier", "override">;
-export type MethodDefinitionReadonlyMarker = Terminal<"_method_definition_readonly_marker", "readonly">;
-export type MethodDefinitionStaticMarker = Terminal<"_method_definition_static_marker", "static">;
-export type MethodSignatureAccessibilityModifier = Terminal<"_method_signature_accessibility_modifier", "public" | "private" | "protected">;
-export type MethodSignatureAccessorKind = Terminal<"_method_signature_accessor_kind", "get" | "set" | "*">;
-export type MethodSignatureAsyncMarker = Terminal<"_method_signature_async_marker", "async">;
-export type MethodSignatureOptionalMarker = Terminal<"_method_signature_optional_marker", "?">;
-export type MethodSignatureOverrideModifier = Terminal<"_method_signature_override_modifier", "override">;
-export type MethodSignatureReadonlyMarker = Terminal<"_method_signature_readonly_marker", "readonly">;
-export type MethodSignatureStaticMarker = Terminal<"_method_signature_static_marker", "static">;
+export type Kind = Terminal<"_kind", "let" | "const">;
 export type ObjectTypeClosing = Terminal<"_object_type_closing", "}" | "|}">;
 export type ObjectTypeOpening = Terminal<"_object_type_opening", "{" | "{|">;
-export type PropertySignatureAccessibilityModifier = Terminal<"_property_signature_accessibility_modifier", "public" | "private" | "protected">;
-export type PropertySignatureOptionalMarker = Terminal<"_property_signature_optional_marker", "?">;
-export type PropertySignatureOverrideModifier = Terminal<"_property_signature_override_modifier", "override">;
-export type PropertySignatureReadonlyMarker = Terminal<"_property_signature_readonly_marker", "readonly">;
-export type PropertySignatureStaticMarker = Terminal<"_property_signature_static_marker", "static">;
+export type Operator = Terminal<"_operator", "++" | "--">;
+export type OptionalChain = Terminal<"_optional_chain", "?.">;
+export type OptionalMarker = Terminal<"_optional_marker", "?">;
+export type _OverrideModifier = Terminal<"_override_modifier", "override">;
 export type PublicFieldDefinitionOptionalityMarker = Terminal<"_public_field_definition_optionality_marker", "?" | "!">;
+export type ReadonlyMarker = Terminal<"_readonly_marker", "readonly">;
 export type ReservedIdentifier = Terminal<"_reserved_identifier", string>;
-export type SubscriptExpressionOptionalChain = Terminal<"_subscript_expression_optional_chain", "?.">;
-export type TypeParameterConstMarker = Terminal<"_type_parameter_const_marker", "const">;
-export type TypePredicateAnnotationTypePredicate = Terminal<"_type_predicate_annotation_type_predicate", ":">;
+export type StaticMarker = Terminal<"_static_marker", "static">;
 export type UnaryExpressionOperator = Terminal<"_unary_expression_operator", "!" | "~" | "-" | "+" | "typeof" | "void" | "delete">;
-export type UpdateExpressionOperator = Terminal<"_update_expression_operator", "++" | "--">;
 export type AccessibilityModifier = Terminal<"accessibility_modifier", "public" | "private" | "protected">;
 export type Comment = Terminal<"comment", string>;
 export type EscapeSequence = Terminal<"escape_sequence", string>;
@@ -4277,76 +4157,36 @@ export interface VariableDeclaratorTree extends TreeNode<'variable_declarator'> 
 export interface WhileStatementTree extends TreeNode<'while_statement'> {}
 export interface WithStatementTree extends TreeNode<'with_statement'> {}
 export interface YieldExpressionTree extends TreeNode<'yield_expression'> {}
-export interface ForHeaderKindTree extends AnyTreeNode { readonly type: "__for_header_kind"; }
-export interface ForHeaderLetConstKindKindTree extends AnyTreeNode { readonly type: "__for_header_let_const_kind_kind"; }
 export interface ForHeaderOperatorTree extends AnyTreeNode { readonly type: "__for_header_operator"; }
 export interface ForHeaderVarKindKindTree extends AnyTreeNode { readonly type: "__for_header_var_kind_kind"; }
 export interface NumberOperatorTree extends AnyTreeNode { readonly type: "__number_operator"; }
-export interface ParameterNameReadonlyMarkerTree extends AnyTreeNode { readonly type: "__parameter_name_readonly_marker"; }
-export interface PublicFieldDefinitionAbstractFirstAbstractMarkerTree extends AnyTreeNode { readonly type: "__public_field_definition_abstract_first_abstract_marker"; }
-export interface PublicFieldDefinitionAbstractFirstReadonlyMarkerTree extends AnyTreeNode { readonly type: "__public_field_definition_abstract_first_readonly_marker"; }
 export interface PublicFieldDefinitionAccessFirstDeclareMarkerTree extends AnyTreeNode { readonly type: "__public_field_definition_access_first_declare_marker"; }
 export interface PublicFieldDefinitionAccessorOptAccessorMarkerTree extends AnyTreeNode { readonly type: "__public_field_definition_accessor_opt_accessor_marker"; }
-export interface PublicFieldDefinitionReadonlyFirstAbstractMarkerTree extends AnyTreeNode { readonly type: "__public_field_definition_readonly_first_abstract_marker"; }
-export interface PublicFieldDefinitionReadonlyFirstReadonlyMarkerTree extends AnyTreeNode { readonly type: "__public_field_definition_readonly_first_readonly_marker"; }
-export interface PublicFieldDefinitionStaticModsReadonlyMarkerTree extends AnyTreeNode { readonly type: "__public_field_definition_static_mods_readonly_marker"; }
-export interface PublicFieldDefinitionStaticModsStaticMarkerTree extends AnyTreeNode { readonly type: "__public_field_definition_static_mods_static_marker"; }
-export interface UpdateExpressionPostfixOperatorTree extends AnyTreeNode { readonly type: "__update_expression_postfix_operator"; }
-export interface UpdateExpressionPrefixOperatorTree extends AnyTreeNode { readonly type: "__update_expression_prefix_operator"; }
-export interface AbstractMethodSignatureAccessibilityModifierTree extends AnyTreeNode { readonly type: "_abstract_method_signature_accessibility_modifier"; }
-export interface AbstractMethodSignatureAccessorKindTree extends AnyTreeNode { readonly type: "_abstract_method_signature_accessor_kind"; }
-export interface AbstractMethodSignatureOptionalMarkerTree extends AnyTreeNode { readonly type: "_abstract_method_signature_optional_marker"; }
-export interface AbstractMethodSignatureOverrideModifierTree extends AnyTreeNode { readonly type: "_abstract_method_signature_override_modifier"; }
-export interface ArrowFunctionAsyncMarkerTree extends AnyTreeNode { readonly type: "_arrow_function_async_marker"; }
+export interface AbstractMarkerTree extends AnyTreeNode { readonly type: "_abstract_marker"; }
+export interface _AccessibilityModifierTree extends AnyTreeNode { readonly type: "_accessibility_modifier"; }
+export interface AccessorKindTree extends AnyTreeNode { readonly type: "_accessor_kind"; }
 export interface AssertsAnnotationAssertsTree extends AnyTreeNode { readonly type: "_asserts_annotation_asserts"; }
 export interface AssignmentExpressionUsingMarkerTree extends AnyTreeNode { readonly type: "_assignment_expression_using_marker"; }
+export interface AsyncMarkerTree extends AnyTreeNode { readonly type: "_async_marker"; }
 export interface AugmentedAssignmentExpressionOperatorTree extends AnyTreeNode { readonly type: "_augmented_assignment_expression_operator"; }
 export interface BinaryExpressionOperatorTree extends AnyTreeNode { readonly type: "_binary_expression_operator"; }
-export interface CallExpressionOptionalChainTree extends AnyTreeNode { readonly type: "_call_expression_optional_chain"; }
-export interface ConstructSignatureAbstractMarkerTree extends AnyTreeNode { readonly type: "_construct_signature_abstract_marker"; }
-export interface ConstructorTypeAbstractMarkerTree extends AnyTreeNode { readonly type: "_constructor_type_abstract_marker"; }
-export interface EnumDeclarationConstMarkerTree extends AnyTreeNode { readonly type: "_enum_declaration_const_marker"; }
+export interface ConstMarkerTree extends AnyTreeNode { readonly type: "_const_marker"; }
 export interface ExportSpecifierExportKindTree extends AnyTreeNode { readonly type: "_export_specifier_export_kind"; }
-export interface FieldDefinitionStaticMarkerTree extends AnyTreeNode { readonly type: "_field_definition_static_marker"; }
 export interface ForInStatementAwaitMarkerTree extends AnyTreeNode { readonly type: "_for_in_statement_await_marker"; }
 export interface ForStatementInitializerTree extends AnyTreeNode { readonly type: "_for_statement_initializer"; }
-export interface FunctionDeclarationAsyncMarkerTree extends AnyTreeNode { readonly type: "_function_declaration_async_marker"; }
-export interface FunctionExpressionAsyncMarkerTree extends AnyTreeNode { readonly type: "_function_expression_async_marker"; }
-export interface FunctionSignatureAsyncMarkerTree extends AnyTreeNode { readonly type: "_function_signature_async_marker"; }
-export interface GeneratorFunctionAsyncMarkerTree extends AnyTreeNode { readonly type: "_generator_function_async_marker"; }
-export interface GeneratorFunctionDeclarationAsyncMarkerTree extends AnyTreeNode { readonly type: "_generator_function_declaration_async_marker"; }
 export interface ImportAttributeObjectTree extends AnyTreeNode { readonly type: "_import_attribute_object"; }
-export interface ImportSpecifierImportKindTree extends AnyTreeNode { readonly type: "_import_specifier_import_kind"; }
-export interface LexicalDeclarationKindTree extends AnyTreeNode { readonly type: "_lexical_declaration_kind"; }
-export interface MemberExpressionOptionalChainTree extends AnyTreeNode { readonly type: "_member_expression_optional_chain"; }
-export interface MethodDefinitionAccessibilityModifierTree extends AnyTreeNode { readonly type: "_method_definition_accessibility_modifier"; }
-export interface MethodDefinitionAccessorKindTree extends AnyTreeNode { readonly type: "_method_definition_accessor_kind"; }
-export interface MethodDefinitionAsyncMarkerTree extends AnyTreeNode { readonly type: "_method_definition_async_marker"; }
-export interface MethodDefinitionOptionalMarkerTree extends AnyTreeNode { readonly type: "_method_definition_optional_marker"; }
-export interface MethodDefinitionOverrideModifierTree extends AnyTreeNode { readonly type: "_method_definition_override_modifier"; }
-export interface MethodDefinitionReadonlyMarkerTree extends AnyTreeNode { readonly type: "_method_definition_readonly_marker"; }
-export interface MethodDefinitionStaticMarkerTree extends AnyTreeNode { readonly type: "_method_definition_static_marker"; }
-export interface MethodSignatureAccessibilityModifierTree extends AnyTreeNode { readonly type: "_method_signature_accessibility_modifier"; }
-export interface MethodSignatureAccessorKindTree extends AnyTreeNode { readonly type: "_method_signature_accessor_kind"; }
-export interface MethodSignatureAsyncMarkerTree extends AnyTreeNode { readonly type: "_method_signature_async_marker"; }
-export interface MethodSignatureOptionalMarkerTree extends AnyTreeNode { readonly type: "_method_signature_optional_marker"; }
-export interface MethodSignatureOverrideModifierTree extends AnyTreeNode { readonly type: "_method_signature_override_modifier"; }
-export interface MethodSignatureReadonlyMarkerTree extends AnyTreeNode { readonly type: "_method_signature_readonly_marker"; }
-export interface MethodSignatureStaticMarkerTree extends AnyTreeNode { readonly type: "_method_signature_static_marker"; }
+export interface KindTree extends AnyTreeNode { readonly type: "_kind"; }
 export interface ObjectTypeClosingTree extends AnyTreeNode { readonly type: "_object_type_closing"; }
 export interface ObjectTypeOpeningTree extends AnyTreeNode { readonly type: "_object_type_opening"; }
-export interface PropertySignatureAccessibilityModifierTree extends AnyTreeNode { readonly type: "_property_signature_accessibility_modifier"; }
-export interface PropertySignatureOptionalMarkerTree extends AnyTreeNode { readonly type: "_property_signature_optional_marker"; }
-export interface PropertySignatureOverrideModifierTree extends AnyTreeNode { readonly type: "_property_signature_override_modifier"; }
-export interface PropertySignatureReadonlyMarkerTree extends AnyTreeNode { readonly type: "_property_signature_readonly_marker"; }
-export interface PropertySignatureStaticMarkerTree extends AnyTreeNode { readonly type: "_property_signature_static_marker"; }
+export interface OperatorTree extends AnyTreeNode { readonly type: "_operator"; }
+export interface OptionalChainTree extends AnyTreeNode { readonly type: "_optional_chain"; }
+export interface OptionalMarkerTree extends AnyTreeNode { readonly type: "_optional_marker"; }
+export interface _OverrideModifierTree extends AnyTreeNode { readonly type: "_override_modifier"; }
 export interface PublicFieldDefinitionOptionalityMarkerTree extends AnyTreeNode { readonly type: "_public_field_definition_optionality_marker"; }
+export interface ReadonlyMarkerTree extends AnyTreeNode { readonly type: "_readonly_marker"; }
 export interface ReservedIdentifierTree extends AnyTreeNode { readonly type: "_reserved_identifier"; }
-export interface SubscriptExpressionOptionalChainTree extends AnyTreeNode { readonly type: "_subscript_expression_optional_chain"; }
-export interface TypeParameterConstMarkerTree extends AnyTreeNode { readonly type: "_type_parameter_const_marker"; }
-export interface TypePredicateAnnotationTypePredicateTree extends AnyTreeNode { readonly type: "_type_predicate_annotation_type_predicate"; }
+export interface StaticMarkerTree extends AnyTreeNode { readonly type: "_static_marker"; }
 export interface UnaryExpressionOperatorTree extends AnyTreeNode { readonly type: "_unary_expression_operator"; }
-export interface UpdateExpressionOperatorTree extends AnyTreeNode { readonly type: "_update_expression_operator"; }
 export interface AccessibilityModifierTree extends TreeNode<'accessibility_modifier'> {}
 export interface CommentTree extends TreeNode<'comment'> {}
 export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
@@ -5177,76 +5017,36 @@ export interface KindMap {
   'while_statement': WhileStatement;
   'with_statement': WithStatement;
   'yield_expression': YieldExpression;
-  '__for_header_kind': ForHeaderKind;
-  '__for_header_let_const_kind_kind': ForHeaderLetConstKindKind;
   '__for_header_operator': ForHeaderOperator;
   '__for_header_var_kind_kind': ForHeaderVarKindKind;
   '__number_operator': NumberOperator;
-  '__parameter_name_readonly_marker': ParameterNameReadonlyMarker;
-  '__public_field_definition_abstract_first_abstract_marker': PublicFieldDefinitionAbstractFirstAbstractMarker;
-  '__public_field_definition_abstract_first_readonly_marker': PublicFieldDefinitionAbstractFirstReadonlyMarker;
   '__public_field_definition_access_first_declare_marker': PublicFieldDefinitionAccessFirstDeclareMarker;
   '__public_field_definition_accessor_opt_accessor_marker': PublicFieldDefinitionAccessorOptAccessorMarker;
-  '__public_field_definition_readonly_first_abstract_marker': PublicFieldDefinitionReadonlyFirstAbstractMarker;
-  '__public_field_definition_readonly_first_readonly_marker': PublicFieldDefinitionReadonlyFirstReadonlyMarker;
-  '__public_field_definition_static_mods_readonly_marker': PublicFieldDefinitionStaticModsReadonlyMarker;
-  '__public_field_definition_static_mods_static_marker': PublicFieldDefinitionStaticModsStaticMarker;
-  '__update_expression_postfix_operator': UpdateExpressionPostfixOperator;
-  '__update_expression_prefix_operator': UpdateExpressionPrefixOperator;
-  '_abstract_method_signature_accessibility_modifier': AbstractMethodSignatureAccessibilityModifier;
-  '_abstract_method_signature_accessor_kind': AbstractMethodSignatureAccessorKind;
-  '_abstract_method_signature_optional_marker': AbstractMethodSignatureOptionalMarker;
-  '_abstract_method_signature_override_modifier': AbstractMethodSignatureOverrideModifier;
-  '_arrow_function_async_marker': ArrowFunctionAsyncMarker;
+  '_abstract_marker': AbstractMarker;
+  '_accessibility_modifier': _AccessibilityModifier;
+  '_accessor_kind': AccessorKind;
   '_asserts_annotation_asserts': AssertsAnnotationAsserts;
   '_assignment_expression_using_marker': AssignmentExpressionUsingMarker;
+  '_async_marker': AsyncMarker;
   '_augmented_assignment_expression_operator': AugmentedAssignmentExpressionOperator;
   '_binary_expression_operator': BinaryExpressionOperator;
-  '_call_expression_optional_chain': CallExpressionOptionalChain;
-  '_construct_signature_abstract_marker': ConstructSignatureAbstractMarker;
-  '_constructor_type_abstract_marker': ConstructorTypeAbstractMarker;
-  '_enum_declaration_const_marker': EnumDeclarationConstMarker;
+  '_const_marker': ConstMarker;
   '_export_specifier_export_kind': ExportSpecifierExportKind;
-  '_field_definition_static_marker': FieldDefinitionStaticMarker;
   '_for_in_statement_await_marker': ForInStatementAwaitMarker;
   '_for_statement_initializer': ForStatementInitializer;
-  '_function_declaration_async_marker': FunctionDeclarationAsyncMarker;
-  '_function_expression_async_marker': FunctionExpressionAsyncMarker;
-  '_function_signature_async_marker': FunctionSignatureAsyncMarker;
-  '_generator_function_async_marker': GeneratorFunctionAsyncMarker;
-  '_generator_function_declaration_async_marker': GeneratorFunctionDeclarationAsyncMarker;
   '_import_attribute_object': ImportAttributeObject;
-  '_import_specifier_import_kind': ImportSpecifierImportKind;
-  '_lexical_declaration_kind': LexicalDeclarationKind;
-  '_member_expression_optional_chain': MemberExpressionOptionalChain;
-  '_method_definition_accessibility_modifier': MethodDefinitionAccessibilityModifier;
-  '_method_definition_accessor_kind': MethodDefinitionAccessorKind;
-  '_method_definition_async_marker': MethodDefinitionAsyncMarker;
-  '_method_definition_optional_marker': MethodDefinitionOptionalMarker;
-  '_method_definition_override_modifier': MethodDefinitionOverrideModifier;
-  '_method_definition_readonly_marker': MethodDefinitionReadonlyMarker;
-  '_method_definition_static_marker': MethodDefinitionStaticMarker;
-  '_method_signature_accessibility_modifier': MethodSignatureAccessibilityModifier;
-  '_method_signature_accessor_kind': MethodSignatureAccessorKind;
-  '_method_signature_async_marker': MethodSignatureAsyncMarker;
-  '_method_signature_optional_marker': MethodSignatureOptionalMarker;
-  '_method_signature_override_modifier': MethodSignatureOverrideModifier;
-  '_method_signature_readonly_marker': MethodSignatureReadonlyMarker;
-  '_method_signature_static_marker': MethodSignatureStaticMarker;
+  '_kind': Kind;
   '_object_type_closing': ObjectTypeClosing;
   '_object_type_opening': ObjectTypeOpening;
-  '_property_signature_accessibility_modifier': PropertySignatureAccessibilityModifier;
-  '_property_signature_optional_marker': PropertySignatureOptionalMarker;
-  '_property_signature_override_modifier': PropertySignatureOverrideModifier;
-  '_property_signature_readonly_marker': PropertySignatureReadonlyMarker;
-  '_property_signature_static_marker': PropertySignatureStaticMarker;
+  '_operator': Operator;
+  '_optional_chain': OptionalChain;
+  '_optional_marker': OptionalMarker;
+  '_override_modifier': _OverrideModifier;
   '_public_field_definition_optionality_marker': PublicFieldDefinitionOptionalityMarker;
+  '_readonly_marker': ReadonlyMarker;
   '_reserved_identifier': ReservedIdentifier;
-  '_subscript_expression_optional_chain': SubscriptExpressionOptionalChain;
-  '_type_parameter_const_marker': TypeParameterConstMarker;
-  '_type_predicate_annotation_type_predicate': TypePredicateAnnotationTypePredicate;
+  '_static_marker': StaticMarker;
   '_unary_expression_operator': UnaryExpressionOperator;
-  '_update_expression_operator': UpdateExpressionOperator;
   'accessibility_modifier': AccessibilityModifier;
   'comment': Comment;
   'escape_sequence': EscapeSequence;
@@ -7426,14 +7226,6 @@ export interface TerminalTransport<K extends string, V extends string = string> 
 
 export interface LiteralTransport<K extends string, V extends string = K> extends TerminalTransport<K, V> {}
 
-export namespace ForHeaderKind {
-  export type Transport = TerminalTransport<"__for_header_kind", "var">;
-}
-
-export namespace ForHeaderLetConstKindKind {
-  export type Transport = TerminalTransport<"__for_header_let_const_kind_kind", "var">;
-}
-
 export namespace ForHeaderOperator {
   export type Transport = TerminalTransport<"__for_header_operator", "in" | "of">;
 }
@@ -7446,18 +7238,6 @@ export namespace NumberOperator {
   export type Transport = TerminalTransport<"__number_operator", "-" | "+">;
 }
 
-export namespace ParameterNameReadonlyMarker {
-  export type Transport = TerminalTransport<"__parameter_name_readonly_marker", "readonly">;
-}
-
-export namespace PublicFieldDefinitionAbstractFirstAbstractMarker {
-  export type Transport = TerminalTransport<"__public_field_definition_abstract_first_abstract_marker", "abstract">;
-}
-
-export namespace PublicFieldDefinitionAbstractFirstReadonlyMarker {
-  export type Transport = TerminalTransport<"__public_field_definition_abstract_first_readonly_marker", "readonly">;
-}
-
 export namespace PublicFieldDefinitionAccessFirstDeclareMarker {
   export type Transport = TerminalTransport<"__public_field_definition_access_first_declare_marker", "declare">;
 }
@@ -7466,44 +7246,16 @@ export namespace PublicFieldDefinitionAccessorOptAccessorMarker {
   export type Transport = TerminalTransport<"__public_field_definition_accessor_opt_accessor_marker", "accessor">;
 }
 
-export namespace PublicFieldDefinitionReadonlyFirstAbstractMarker {
-  export type Transport = TerminalTransport<"__public_field_definition_readonly_first_abstract_marker", "abstract">;
+export namespace AbstractMarker {
+  export type Transport = TerminalTransport<"_abstract_marker", "abstract">;
 }
 
-export namespace PublicFieldDefinitionReadonlyFirstReadonlyMarker {
-  export type Transport = TerminalTransport<"__public_field_definition_readonly_first_readonly_marker", "readonly">;
+export namespace _AccessibilityModifier {
+  export type Transport = TerminalTransport<"_accessibility_modifier", "public" | "private" | "protected">;
 }
 
-export namespace PublicFieldDefinitionStaticModsReadonlyMarker {
-  export type Transport = TerminalTransport<"__public_field_definition_static_mods_readonly_marker", "readonly">;
-}
-
-export namespace PublicFieldDefinitionStaticModsStaticMarker {
-  export type Transport = TerminalTransport<"__public_field_definition_static_mods_static_marker", "static">;
-}
-
-export namespace UpdateExpressionPostfixOperator {
-  export type Transport = TerminalTransport<"__update_expression_postfix_operator", "++" | "--">;
-}
-
-export namespace UpdateExpressionPrefixOperator {
-  export type Transport = TerminalTransport<"__update_expression_prefix_operator", "++" | "--">;
-}
-
-export namespace AbstractMethodSignatureAccessibilityModifier {
-  export type Transport = TerminalTransport<"_abstract_method_signature_accessibility_modifier", "public" | "private" | "protected">;
-}
-
-export namespace AbstractMethodSignatureAccessorKind {
-  export type Transport = TerminalTransport<"_abstract_method_signature_accessor_kind", "get" | "set" | "*">;
-}
-
-export namespace AbstractMethodSignatureOptionalMarker {
-  export type Transport = TerminalTransport<"_abstract_method_signature_optional_marker", "?">;
-}
-
-export namespace AbstractMethodSignatureOverrideModifier {
-  export type Transport = TerminalTransport<"_abstract_method_signature_override_modifier", "override">;
+export namespace AccessorKind {
+  export type Transport = TerminalTransport<"_accessor_kind", "get" | "set" | "*">;
 }
 
 export namespace _ArrowFunctionUCallSignature {
@@ -7518,10 +7270,6 @@ export namespace _ArrowFunctionUCallSignature {
     readonly parameters: FormalParameters.Transport;
     readonly return_type?: TypeAnnotation.Transport | AssertsAnnotation.Transport | TypePredicateAnnotation.Transport;
   }
-}
-
-export namespace ArrowFunctionAsyncMarker {
-  export type Transport = TerminalTransport<"_arrow_function_async_marker", "async">;
 }
 
 export namespace _ArrowFunctionParameter {
@@ -7542,6 +7290,10 @@ export namespace AssertsAnnotationAsserts {
 
 export namespace AssignmentExpressionUsingMarker {
   export type Transport = TerminalTransport<"_assignment_expression_using_marker", "using">;
+}
+
+export namespace AsyncMarker {
+  export type Transport = TerminalTransport<"_async_marker", "async">;
 }
 
 export namespace AugmentedAssignmentExpressionOperator {
@@ -7578,10 +7330,6 @@ export namespace CallExpressionMember {
     readonly type_arguments?: TypeArguments.Transport;
     readonly arguments: Arguments.Transport;
   }
-}
-
-export namespace CallExpressionOptionalChain {
-  export type Transport = TerminalTransport<"_call_expression_optional_chain", "?.">;
 }
 
 export namespace CallExpressionTemplateCall {
@@ -7672,16 +7420,8 @@ export namespace _ClassHeritageImplementsClause {
   }
 }
 
-export namespace ConstructSignatureAbstractMarker {
-  export type Transport = TerminalTransport<"_construct_signature_abstract_marker", "abstract">;
-}
-
-export namespace ConstructorTypeAbstractMarker {
-  export type Transport = TerminalTransport<"_constructor_type_abstract_marker", "abstract">;
-}
-
-export namespace EnumDeclarationConstMarker {
-  export type Transport = TerminalTransport<"_enum_declaration_const_marker", "const">;
+export namespace ConstMarker {
+  export type Transport = TerminalTransport<"_const_marker", "const">;
 }
 
 export namespace ExportSpecifierExportKind {
@@ -7826,10 +7566,6 @@ export namespace ExtendsClauseSingle {
   }
 }
 
-export namespace FieldDefinitionStaticMarker {
-  export type Transport = TerminalTransport<"_field_definition_static_marker", "static">;
-}
-
 export namespace ForHeader {
   export interface Transport {
     readonly $type: TSKindId.ForHeader;
@@ -7852,7 +7588,7 @@ export namespace ForHeaderLetConstKind {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly kind: ForHeaderLetConstKindKind.Transport;
+    readonly kind: Kind.Transport;
     readonly left: Identifier.Transport | DestructuringPattern.Transport;
     readonly $children?: readonly [AutomaticSemicolon.Transport];
   }
@@ -7902,26 +7638,6 @@ export namespace FromClause {
     readonly $nodeId?: number;
     readonly source: String.Transport;
   }
-}
-
-export namespace FunctionDeclarationAsyncMarker {
-  export type Transport = TerminalTransport<"_function_declaration_async_marker", "async">;
-}
-
-export namespace FunctionExpressionAsyncMarker {
-  export type Transport = TerminalTransport<"_function_expression_async_marker", "async">;
-}
-
-export namespace FunctionSignatureAsyncMarker {
-  export type Transport = TerminalTransport<"_function_signature_async_marker", "async">;
-}
-
-export namespace GeneratorFunctionAsyncMarker {
-  export type Transport = TerminalTransport<"_generator_function_async_marker", "async">;
-}
-
-export namespace GeneratorFunctionDeclarationAsyncMarker {
-  export type Transport = TerminalTransport<"_generator_function_declaration_async_marker", "async">;
 }
 
 export namespace ImportAttributeObject {
@@ -7975,10 +7691,6 @@ export namespace ImportSpecifierAs {
     readonly name: ModuleExportName.Transport | Identifier.Transport;
     readonly alias: ImportIdentifier.Transport;
   }
-}
-
-export namespace ImportSpecifierImportKind {
-  export type Transport = TerminalTransport<"_import_specifier_import_kind", "type" | "typeof">;
 }
 
 export namespace _ImportSpecifierName {
@@ -8056,6 +7768,10 @@ export namespace JsxString {
   }
 }
 
+export namespace Kind {
+  export type Transport = TerminalTransport<"_kind", "let" | "const">;
+}
+
 export namespace KwAbstractMarker {
   export type Transport = TerminalTransport<"_kw_abstract_marker", "abstract">;
 }
@@ -8104,10 +7820,6 @@ export namespace KwUsingMarker {
   export type Transport = TerminalTransport<"_kw_using_marker", "using">;
 }
 
-export namespace LexicalDeclarationKind {
-  export type Transport = TerminalTransport<"_lexical_declaration_kind", "let" | "const">;
-}
-
 export namespace LhsExpression {
   export interface Transport {
     readonly $type: "_lhs_expression";
@@ -8118,66 +7830,6 @@ export namespace LhsExpression {
     readonly $nodeId?: number;
     readonly $children: readonly [MemberExpression.Transport | SubscriptExpression.Transport | Identifier.Transport | ReservedIdentifier.Transport | DestructuringPattern.Transport | NonNullExpression.Transport];
   }
-}
-
-export namespace MemberExpressionOptionalChain {
-  export type Transport = TerminalTransport<"_member_expression_optional_chain", "?.">;
-}
-
-export namespace MethodDefinitionAccessibilityModifier {
-  export type Transport = TerminalTransport<"_method_definition_accessibility_modifier", "public" | "private" | "protected">;
-}
-
-export namespace MethodDefinitionAccessorKind {
-  export type Transport = TerminalTransport<"_method_definition_accessor_kind", "get" | "set" | "*">;
-}
-
-export namespace MethodDefinitionAsyncMarker {
-  export type Transport = TerminalTransport<"_method_definition_async_marker", "async">;
-}
-
-export namespace MethodDefinitionOptionalMarker {
-  export type Transport = TerminalTransport<"_method_definition_optional_marker", "?">;
-}
-
-export namespace MethodDefinitionOverrideModifier {
-  export type Transport = TerminalTransport<"_method_definition_override_modifier", "override">;
-}
-
-export namespace MethodDefinitionReadonlyMarker {
-  export type Transport = TerminalTransport<"_method_definition_readonly_marker", "readonly">;
-}
-
-export namespace MethodDefinitionStaticMarker {
-  export type Transport = TerminalTransport<"_method_definition_static_marker", "static">;
-}
-
-export namespace MethodSignatureAccessibilityModifier {
-  export type Transport = TerminalTransport<"_method_signature_accessibility_modifier", "public" | "private" | "protected">;
-}
-
-export namespace MethodSignatureAccessorKind {
-  export type Transport = TerminalTransport<"_method_signature_accessor_kind", "get" | "set" | "*">;
-}
-
-export namespace MethodSignatureAsyncMarker {
-  export type Transport = TerminalTransport<"_method_signature_async_marker", "async">;
-}
-
-export namespace MethodSignatureOptionalMarker {
-  export type Transport = TerminalTransport<"_method_signature_optional_marker", "?">;
-}
-
-export namespace MethodSignatureOverrideModifier {
-  export type Transport = TerminalTransport<"_method_signature_override_modifier", "override">;
-}
-
-export namespace MethodSignatureReadonlyMarker {
-  export type Transport = TerminalTransport<"_method_signature_readonly_marker", "readonly">;
-}
-
-export namespace MethodSignatureStaticMarker {
-  export type Transport = TerminalTransport<"_method_signature_static_marker", "static">;
 }
 
 export namespace _Module {
@@ -8214,6 +7866,22 @@ export namespace ObjectTypeOpening {
   export type Transport = TerminalTransport<"_object_type_opening", "{" | "{|">;
 }
 
+export namespace Operator {
+  export type Transport = TerminalTransport<"_operator", "++" | "--">;
+}
+
+export namespace OptionalChain {
+  export type Transport = TerminalTransport<"_optional_chain", "?.">;
+}
+
+export namespace OptionalMarker {
+  export type Transport = TerminalTransport<"_optional_marker", "?">;
+}
+
+export namespace _OverrideModifier {
+  export type Transport = TerminalTransport<"_override_modifier", "override">;
+}
+
 export namespace ParameterName {
   export interface Transport {
     readonly $type: TSKindId.ParameterName;
@@ -8223,7 +7891,7 @@ export namespace ParameterName {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
     readonly decorator: readonly (Decorator.Transport)[];
-    readonly readonly_marker?: ParameterNameReadonlyMarker.Transport;
+    readonly readonly_marker?: ReadonlyMarker.Transport;
     readonly pattern: Pattern.Transport | This.Transport;
     readonly $children?: readonly [AccessibilityModifier.Transport | OverrideModifier.Transport];
   }
@@ -8254,26 +7922,6 @@ export namespace ParenthesizedExpressionTyped {
   }
 }
 
-export namespace PropertySignatureAccessibilityModifier {
-  export type Transport = TerminalTransport<"_property_signature_accessibility_modifier", "public" | "private" | "protected">;
-}
-
-export namespace PropertySignatureOptionalMarker {
-  export type Transport = TerminalTransport<"_property_signature_optional_marker", "?">;
-}
-
-export namespace PropertySignatureOverrideModifier {
-  export type Transport = TerminalTransport<"_property_signature_override_modifier", "override">;
-}
-
-export namespace PropertySignatureReadonlyMarker {
-  export type Transport = TerminalTransport<"_property_signature_readonly_marker", "readonly">;
-}
-
-export namespace PropertySignatureStaticMarker {
-  export type Transport = TerminalTransport<"_property_signature_static_marker", "static">;
-}
-
 export namespace PublicFieldDefinitionAbstractFirst {
   export interface Transport {
     readonly $type: TSKindId.PublicFieldDefinitionAbstractFirst;
@@ -8282,8 +7930,8 @@ export namespace PublicFieldDefinitionAbstractFirst {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly abstract_marker: PublicFieldDefinitionAbstractFirstAbstractMarker.Transport;
-    readonly readonly_marker?: PublicFieldDefinitionAbstractFirstReadonlyMarker.Transport;
+    readonly abstract_marker: AbstractMarker.Transport;
+    readonly readonly_marker?: ReadonlyMarker.Transport;
   }
 }
 
@@ -8336,8 +7984,8 @@ export namespace PublicFieldDefinitionReadonlyFirst {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly readonly_marker: PublicFieldDefinitionReadonlyFirstReadonlyMarker.Transport;
-    readonly abstract_marker?: PublicFieldDefinitionReadonlyFirstAbstractMarker.Transport;
+    readonly readonly_marker: ReadonlyMarker.Transport;
+    readonly abstract_marker?: AbstractMarker.Transport;
   }
 }
 
@@ -8349,14 +7997,22 @@ export namespace PublicFieldDefinitionStaticMods {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly static_marker: PublicFieldDefinitionStaticModsStaticMarker.Transport;
-    readonly readonly_marker?: PublicFieldDefinitionStaticModsReadonlyMarker.Transport;
+    readonly static_marker: StaticMarker.Transport;
+    readonly readonly_marker?: ReadonlyMarker.Transport;
     readonly $children?: readonly [OverrideModifier.Transport];
   }
 }
 
+export namespace ReadonlyMarker {
+  export type Transport = TerminalTransport<"_readonly_marker", "readonly">;
+}
+
 export namespace ReservedIdentifier {
   export type Transport = TerminalTransport<"_reserved_identifier", string>;
+}
+
+export namespace StaticMarker {
+  export type Transport = TerminalTransport<"_static_marker", "static">;
 }
 
 export namespace _StringDouble {
@@ -8383,10 +8039,6 @@ export namespace _StringSingle {
   }
 }
 
-export namespace SubscriptExpressionOptionalChain {
-  export type Transport = TerminalTransport<"_subscript_expression_optional_chain", "?.">;
-}
-
 export namespace TypeIdentifier {
   export interface Transport {
     readonly $type: TSKindId.TypeIdentifier;
@@ -8397,14 +8049,6 @@ export namespace TypeIdentifier {
     readonly $nodeId?: number;
     readonly $children: readonly [Identifier.Transport];
   }
-}
-
-export namespace TypeParameterConstMarker {
-  export type Transport = TerminalTransport<"_type_parameter_const_marker", "const">;
-}
-
-export namespace TypePredicateAnnotationTypePredicate {
-  export type Transport = TerminalTransport<"_type_predicate_annotation_type_predicate", ":">;
 }
 
 export namespace TypeQueryCallExpression {
@@ -8489,10 +8133,6 @@ export namespace UnaryExpressionOperator {
   export type Transport = TerminalTransport<"_unary_expression_operator", "!" | "~" | "-" | "+" | "typeof" | "void" | "delete">;
 }
 
-export namespace UpdateExpressionOperator {
-  export type Transport = TerminalTransport<"_update_expression_operator", "++" | "--">;
-}
-
 export namespace UpdateExpressionPostfix {
   export interface Transport {
     readonly $type: TSKindId.UpdateExpressionPostfix;
@@ -8502,7 +8142,7 @@ export namespace UpdateExpressionPostfix {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
     readonly argument: Expression.Transport;
-    readonly operator: UpdateExpressionPostfixOperator.Transport;
+    readonly operator: Operator.Transport;
   }
 }
 
@@ -8514,7 +8154,7 @@ export namespace UpdateExpressionPrefix {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly operator: UpdateExpressionPrefixOperator.Transport;
+    readonly operator: Operator.Transport;
     readonly argument: Expression.Transport;
   }
 }
@@ -8543,11 +8183,11 @@ export namespace AbstractMethodSignature {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly accessibility_modifier?: AbstractMethodSignatureAccessibilityModifier.Transport;
-    readonly override_modifier?: AbstractMethodSignatureOverrideModifier.Transport;
-    readonly accessor_kind?: AbstractMethodSignatureAccessorKind.Transport;
+    readonly accessibility_modifier?: _AccessibilityModifier.Transport;
+    readonly override_modifier?: _OverrideModifier.Transport;
+    readonly accessor_kind?: AccessorKind.Transport;
     readonly name: PropertyName.Transport;
-    readonly optional_marker?: AbstractMethodSignatureOptionalMarker.Transport;
+    readonly optional_marker?: OptionalMarker.Transport;
     readonly type_parameters?: TypeParameters.Transport;
     readonly parameters: FormalParameters.Transport;
     readonly return_type?: TypeAnnotation.Transport | AssertsAnnotation.Transport | TypePredicateAnnotation.Transport;
@@ -8665,7 +8305,7 @@ export namespace ArrowFunctionUFormParameter {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly async_marker?: ArrowFunctionAsyncMarker.Transport;
+    readonly async_marker?: AsyncMarker.Transport;
     readonly body: Expression.Transport | StatementBlock.Transport;
     readonly $children: readonly [_ArrowFunctionParameter.Transport];
   }
@@ -8680,7 +8320,7 @@ export namespace ArrowFunctionUFormUCallSignature {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly async_marker?: ArrowFunctionAsyncMarker.Transport;
+    readonly async_marker?: AsyncMarker.Transport;
     readonly body: Expression.Transport | StatementBlock.Transport;
     readonly $children: readonly [_ArrowFunctionUCallSignature.Transport];
   }
@@ -9041,7 +8681,7 @@ export namespace ConstructSignature {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly abstract_marker?: ConstructSignatureAbstractMarker.Transport;
+    readonly abstract_marker?: AbstractMarker.Transport;
     readonly type_parameters?: TypeParameters.Transport;
     readonly parameters: FormalParameters.Transport;
     readonly type?: TypeAnnotation.Transport;
@@ -9056,7 +8696,7 @@ export namespace ConstructorType {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly abstract_marker?: ConstructorTypeAbstractMarker.Transport;
+    readonly abstract_marker?: AbstractMarker.Transport;
     readonly type_parameters?: TypeParameters.Transport;
     readonly parameters: FormalParameters.Transport;
     readonly type: Type.Transport;
@@ -9214,7 +8854,7 @@ export namespace EnumDeclaration {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly const_marker?: EnumDeclarationConstMarker.Transport;
+    readonly const_marker?: ConstMarker.Transport;
     readonly name: Identifier.Transport;
     readonly body: EnumBody.Transport;
   }
@@ -9398,7 +9038,7 @@ export namespace FieldDefinition {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
     readonly decorator: readonly (Decorator.Transport)[];
-    readonly static_marker?: FieldDefinitionStaticMarker.Transport;
+    readonly static_marker?: StaticMarker.Transport;
     readonly property: PropertyName.Transport;
     readonly value?: Expression.Transport;
   }
@@ -9479,7 +9119,7 @@ export namespace FunctionDeclaration {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly async_marker?: FunctionDeclarationAsyncMarker.Transport;
+    readonly async_marker?: AsyncMarker.Transport;
     readonly name: Identifier.Transport;
     readonly type_parameters?: TypeParameters.Transport;
     readonly parameters: FormalParameters.Transport;
@@ -9497,7 +9137,7 @@ export namespace FunctionExpression {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly async_marker?: FunctionExpressionAsyncMarker.Transport;
+    readonly async_marker?: AsyncMarker.Transport;
     readonly name?: Identifier.Transport;
     readonly type_parameters?: TypeParameters.Transport;
     readonly parameters: FormalParameters.Transport;
@@ -9514,7 +9154,7 @@ export namespace FunctionSignature {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly async_marker?: FunctionSignatureAsyncMarker.Transport;
+    readonly async_marker?: AsyncMarker.Transport;
     readonly name: Identifier.Transport;
     readonly type_parameters?: TypeParameters.Transport;
     readonly parameters: FormalParameters.Transport;
@@ -9545,7 +9185,7 @@ export namespace GeneratorFunction {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly async_marker?: GeneratorFunctionAsyncMarker.Transport;
+    readonly async_marker?: AsyncMarker.Transport;
     readonly name?: Identifier.Transport;
     readonly type_parameters?: TypeParameters.Transport;
     readonly parameters: FormalParameters.Transport;
@@ -9562,7 +9202,7 @@ export namespace GeneratorFunctionDeclaration {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly async_marker?: GeneratorFunctionDeclarationAsyncMarker.Transport;
+    readonly async_marker?: AsyncMarker.Transport;
     readonly name: Identifier.Transport;
     readonly type_parameters?: TypeParameters.Transport;
     readonly parameters: FormalParameters.Transport;
@@ -9766,7 +9406,7 @@ export namespace ImportSpecifierUFormName {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly import_kind?: ImportSpecifierImportKind.Transport;
+    readonly import_kind?: ExportSpecifierExportKind.Transport;
     readonly $children: readonly [_ImportSpecifierName.Transport];
   }
 }
@@ -9780,7 +9420,7 @@ export namespace ImportSpecifierUFormAs {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly import_kind?: ImportSpecifierImportKind.Transport;
+    readonly import_kind?: ExportSpecifierExportKind.Transport;
     readonly $children: readonly [ImportSpecifierAs.Transport];
   }
 }
@@ -10044,7 +9684,7 @@ export namespace LexicalDeclaration {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly kind: LexicalDeclarationKind.Transport;
+    readonly kind: Kind.Transport;
     readonly declarators: readonly (VariableDeclarator.Transport)[];
     readonly semicolon: Semicolon.Transport;
   }
@@ -10114,14 +9754,14 @@ export namespace MethodDefinition {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly accessibility_modifier?: MethodDefinitionAccessibilityModifier.Transport;
-    readonly static_marker?: MethodDefinitionStaticMarker.Transport;
-    readonly override_modifier?: MethodDefinitionOverrideModifier.Transport;
-    readonly readonly_marker?: MethodDefinitionReadonlyMarker.Transport;
-    readonly async_marker?: MethodDefinitionAsyncMarker.Transport;
-    readonly accessor_kind?: MethodDefinitionAccessorKind.Transport;
+    readonly accessibility_modifier?: _AccessibilityModifier.Transport;
+    readonly static_marker?: StaticMarker.Transport;
+    readonly override_modifier?: _OverrideModifier.Transport;
+    readonly readonly_marker?: ReadonlyMarker.Transport;
+    readonly async_marker?: AsyncMarker.Transport;
+    readonly accessor_kind?: AccessorKind.Transport;
     readonly name: PropertyName.Transport;
-    readonly optional_marker?: MethodDefinitionOptionalMarker.Transport;
+    readonly optional_marker?: OptionalMarker.Transport;
     readonly type_parameters?: TypeParameters.Transport;
     readonly parameters: FormalParameters.Transport;
     readonly return_type?: TypeAnnotation.Transport | AssertsAnnotation.Transport | TypePredicateAnnotation.Transport;
@@ -10137,14 +9777,14 @@ export namespace MethodSignature {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly accessibility_modifier?: MethodSignatureAccessibilityModifier.Transport;
-    readonly static_marker?: MethodSignatureStaticMarker.Transport;
-    readonly override_modifier?: MethodSignatureOverrideModifier.Transport;
-    readonly readonly_marker?: MethodSignatureReadonlyMarker.Transport;
-    readonly async_marker?: MethodSignatureAsyncMarker.Transport;
-    readonly accessor_kind?: MethodSignatureAccessorKind.Transport;
+    readonly accessibility_modifier?: _AccessibilityModifier.Transport;
+    readonly static_marker?: StaticMarker.Transport;
+    readonly override_modifier?: _OverrideModifier.Transport;
+    readonly readonly_marker?: ReadonlyMarker.Transport;
+    readonly async_marker?: AsyncMarker.Transport;
+    readonly accessor_kind?: AccessorKind.Transport;
     readonly name: PropertyName.Transport;
-    readonly optional_marker?: MethodSignatureOptionalMarker.Transport;
+    readonly optional_marker?: OptionalMarker.Transport;
     readonly type_parameters?: TypeParameters.Transport;
     readonly parameters: FormalParameters.Transport;
     readonly return_type?: TypeAnnotation.Transport | AssertsAnnotation.Transport | TypePredicateAnnotation.Transport;
@@ -10335,10 +9975,6 @@ export namespace OptingTypeAnnotation {
   }
 }
 
-export namespace OptionalChain {
-  export type Transport = TerminalTransport<"optional_chain", "?.">;
-}
-
 export namespace OptionalParameter {
   export interface Transport {
     readonly $type: TSKindId.OptionalParameter;
@@ -10348,7 +9984,7 @@ export namespace OptionalParameter {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
     readonly decorator: readonly (Decorator.Transport)[];
-    readonly readonly_marker?: ParameterNameReadonlyMarker.Transport;
+    readonly readonly_marker?: ReadonlyMarker.Transport;
     readonly pattern: Pattern.Transport | This.Transport;
     readonly type?: TypeAnnotation.Transport;
     readonly value?: Expression.Transport;
@@ -10494,12 +10130,12 @@ export namespace PropertySignature {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly accessibility_modifier?: PropertySignatureAccessibilityModifier.Transport;
-    readonly static_marker?: PropertySignatureStaticMarker.Transport;
-    readonly override_modifier?: PropertySignatureOverrideModifier.Transport;
-    readonly readonly_marker?: PropertySignatureReadonlyMarker.Transport;
+    readonly accessibility_modifier?: _AccessibilityModifier.Transport;
+    readonly static_marker?: StaticMarker.Transport;
+    readonly override_modifier?: _OverrideModifier.Transport;
+    readonly readonly_marker?: ReadonlyMarker.Transport;
     readonly name: PropertyName.Transport;
-    readonly optional_marker?: PropertySignatureOptionalMarker.Transport;
+    readonly optional_marker?: OptionalMarker.Transport;
     readonly type?: TypeAnnotation.Transport;
   }
 }
@@ -10563,7 +10199,7 @@ export namespace RequiredParameter {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
     readonly decorator: readonly (Decorator.Transport)[];
-    readonly readonly_marker?: ParameterNameReadonlyMarker.Transport;
+    readonly readonly_marker?: ReadonlyMarker.Transport;
     readonly pattern: Pattern.Transport | This.Transport;
     readonly type?: TypeAnnotation.Transport;
     readonly value?: Expression.Transport;
@@ -10721,7 +10357,7 @@ export namespace SubscriptExpression {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
     readonly object: Expression.Transport | PrimaryExpression.Transport;
-    readonly optional_chain?: SubscriptExpressionOptionalChain.Transport;
+    readonly optional_chain?: OptionalChain.Transport;
     readonly index: Expressions.Transport;
   }
 }
@@ -10962,7 +10598,7 @@ export namespace TypeParameter {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly const_marker?: TypeParameterConstMarker.Transport;
+    readonly const_marker?: ConstMarker.Transport;
     readonly name: TypeIdentifier.Transport;
     readonly constraint?: Constraint.Transport;
     readonly value?: DefaultType.Transport;
@@ -11002,7 +10638,7 @@ export namespace TypePredicateAnnotation {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly type_predicate: TypePredicateAnnotationTypePredicate.Transport | TypePredicate.Transport;
+    readonly type_predicate: AssertsAnnotationAsserts.Transport | TypePredicate.Transport;
   }
 }
 
@@ -11620,36 +11256,23 @@ export namespace Type {
 }
 
 export type TransportFor<K extends SyntaxKind | keyof KindMap> =
-  K extends "__for_header_kind" ? ForHeaderKind.Transport :
-  K extends "__for_header_let_const_kind_kind" ? ForHeaderLetConstKindKind.Transport :
   K extends "__for_header_operator" ? ForHeaderOperator.Transport :
   K extends "__for_header_var_kind_kind" ? ForHeaderVarKindKind.Transport :
   K extends "__number_operator" ? NumberOperator.Transport :
-  K extends "__parameter_name_readonly_marker" ? ParameterNameReadonlyMarker.Transport :
-  K extends "__public_field_definition_abstract_first_abstract_marker" ? PublicFieldDefinitionAbstractFirstAbstractMarker.Transport :
-  K extends "__public_field_definition_abstract_first_readonly_marker" ? PublicFieldDefinitionAbstractFirstReadonlyMarker.Transport :
   K extends "__public_field_definition_access_first_declare_marker" ? PublicFieldDefinitionAccessFirstDeclareMarker.Transport :
   K extends "__public_field_definition_accessor_opt_accessor_marker" ? PublicFieldDefinitionAccessorOptAccessorMarker.Transport :
-  K extends "__public_field_definition_readonly_first_abstract_marker" ? PublicFieldDefinitionReadonlyFirstAbstractMarker.Transport :
-  K extends "__public_field_definition_readonly_first_readonly_marker" ? PublicFieldDefinitionReadonlyFirstReadonlyMarker.Transport :
-  K extends "__public_field_definition_static_mods_readonly_marker" ? PublicFieldDefinitionStaticModsReadonlyMarker.Transport :
-  K extends "__public_field_definition_static_mods_static_marker" ? PublicFieldDefinitionStaticModsStaticMarker.Transport :
-  K extends "__update_expression_postfix_operator" ? UpdateExpressionPostfixOperator.Transport :
-  K extends "__update_expression_prefix_operator" ? UpdateExpressionPrefixOperator.Transport :
-  K extends "_abstract_method_signature_accessibility_modifier" ? AbstractMethodSignatureAccessibilityModifier.Transport :
-  K extends "_abstract_method_signature_accessor_kind" ? AbstractMethodSignatureAccessorKind.Transport :
-  K extends "_abstract_method_signature_optional_marker" ? AbstractMethodSignatureOptionalMarker.Transport :
-  K extends "_abstract_method_signature_override_modifier" ? AbstractMethodSignatureOverrideModifier.Transport :
+  K extends "_abstract_marker" ? AbstractMarker.Transport :
+  K extends "_accessibility_modifier" ? _AccessibilityModifier.Transport :
+  K extends "_accessor_kind" ? AccessorKind.Transport :
   K extends "_arrow_function__call_signature" ? _ArrowFunctionUCallSignature.Transport :
-  K extends "_arrow_function_async_marker" ? ArrowFunctionAsyncMarker.Transport :
   K extends "_arrow_function_parameter" ? _ArrowFunctionParameter.Transport :
   K extends "_asserts_annotation_asserts" ? AssertsAnnotationAsserts.Transport :
   K extends "_assignment_expression_using_marker" ? AssignmentExpressionUsingMarker.Transport :
+  K extends "_async_marker" ? AsyncMarker.Transport :
   K extends "_augmented_assignment_expression_operator" ? AugmentedAssignmentExpressionOperator.Transport :
   K extends "_binary_expression_operator" ? BinaryExpressionOperator.Transport :
   K extends "_call_expression_call" ? CallExpressionCall.Transport :
   K extends "_call_expression_member" ? CallExpressionMember.Transport :
-  K extends "_call_expression_optional_chain" ? CallExpressionOptionalChain.Transport :
   K extends "_call_expression_template_call" ? CallExpressionTemplateCall.Transport :
   K extends "_call_signature" ? _CallSignature.Transport :
   K extends "_class_body_member" ? ClassBodyMember.Transport :
@@ -11657,9 +11280,7 @@ export type TransportFor<K extends SyntaxKind | keyof KindMap> =
   K extends "_class_body_method_sig" ? ClassBodyMethodSig.Transport :
   K extends "_class_heritage_extends_clause" ? _ClassHeritageExtendsClause.Transport :
   K extends "_class_heritage_implements_clause" ? _ClassHeritageImplementsClause.Transport :
-  K extends "_construct_signature_abstract_marker" ? ConstructSignatureAbstractMarker.Transport :
-  K extends "_constructor_type_abstract_marker" ? ConstructorTypeAbstractMarker.Transport :
-  K extends "_enum_declaration_const_marker" ? EnumDeclarationConstMarker.Transport :
+  K extends "_const_marker" ? ConstMarker.Transport :
   K extends "_export_specifier_export_kind" ? ExportSpecifierExportKind.Transport :
   K extends "_export_statement_default_decl_arm" ? ExportStatementDefaultDeclArm.Transport :
   K extends "_export_statement_default_decl_arm_default_kw" ? ExportStatementDefaultDeclArmDefaultKw.Transport :
@@ -11672,7 +11293,6 @@ export type TransportFor<K extends SyntaxKind | keyof KindMap> =
   K extends "_export_statement_namespace_export" ? _ExportStatementNamespaceExport.Transport :
   K extends "_export_statement_type_export" ? _ExportStatementTypeExport.Transport :
   K extends "_extends_clause_single" ? ExtendsClauseSingle.Transport :
-  K extends "_field_definition_static_marker" ? FieldDefinitionStaticMarker.Transport :
   K extends "_for_header" ? ForHeader.Transport :
   K extends "_for_header_let_const_kind" ? ForHeaderLetConstKind.Transport :
   K extends "_for_header_lhs" ? ForHeaderLhs.Transport :
@@ -11680,23 +11300,18 @@ export type TransportFor<K extends SyntaxKind | keyof KindMap> =
   K extends "_for_in_statement_await_marker" ? ForInStatementAwaitMarker.Transport :
   K extends "_for_statement_initializer" ? ForStatementInitializer.Transport :
   K extends "_from_clause" ? FromClause.Transport :
-  K extends "_function_declaration_async_marker" ? FunctionDeclarationAsyncMarker.Transport :
-  K extends "_function_expression_async_marker" ? FunctionExpressionAsyncMarker.Transport :
-  K extends "_function_signature_async_marker" ? FunctionSignatureAsyncMarker.Transport :
-  K extends "_generator_function_async_marker" ? GeneratorFunctionAsyncMarker.Transport :
-  K extends "_generator_function_declaration_async_marker" ? GeneratorFunctionDeclarationAsyncMarker.Transport :
   K extends "_import_attribute_object" ? ImportAttributeObject.Transport :
   K extends "_import_clause_default_import" ? _ImportClauseDefaultImport.Transport :
   K extends "_import_clause_named_imports" ? _ImportClauseNamedImports.Transport :
   K extends "_import_clause_namespace_import" ? _ImportClauseNamespaceImport.Transport :
   K extends "_import_specifier_as" ? ImportSpecifierAs.Transport :
-  K extends "_import_specifier_import_kind" ? ImportSpecifierImportKind.Transport :
   K extends "_import_specifier_name" ? _ImportSpecifierName.Transport :
   K extends "_index_signature_colon" ? IndexSignatureColon.Transport :
   K extends "_index_signature_mapped_type_clause" ? _IndexSignatureMappedTypeClause.Transport :
   K extends "_initializer" ? Initializer.Transport :
   K extends "_jsx_start_opening_element" ? JsxStartOpeningElement.Transport :
   K extends "_jsx_string" ? JsxString.Transport :
+  K extends "_kind" ? Kind.Transport :
   K extends "_kw_abstract_marker" ? KwAbstractMarker.Transport :
   K extends "_kw_accessor_marker" ? KwAccessorMarker.Transport :
   K extends "_kw_asserts" ? KwAsserts.Transport :
@@ -11709,35 +11324,18 @@ export type TransportFor<K extends SyntaxKind | keyof KindMap> =
   K extends "_kw_static_marker" ? KwStaticMarker.Transport :
   K extends "_kw_type_predicate" ? KwTypePredicate.Transport :
   K extends "_kw_using_marker" ? KwUsingMarker.Transport :
-  K extends "_lexical_declaration_kind" ? LexicalDeclarationKind.Transport :
   K extends "_lhs_expression" ? LhsExpression.Transport :
-  K extends "_member_expression_optional_chain" ? MemberExpressionOptionalChain.Transport :
-  K extends "_method_definition_accessibility_modifier" ? MethodDefinitionAccessibilityModifier.Transport :
-  K extends "_method_definition_accessor_kind" ? MethodDefinitionAccessorKind.Transport :
-  K extends "_method_definition_async_marker" ? MethodDefinitionAsyncMarker.Transport :
-  K extends "_method_definition_optional_marker" ? MethodDefinitionOptionalMarker.Transport :
-  K extends "_method_definition_override_modifier" ? MethodDefinitionOverrideModifier.Transport :
-  K extends "_method_definition_readonly_marker" ? MethodDefinitionReadonlyMarker.Transport :
-  K extends "_method_definition_static_marker" ? MethodDefinitionStaticMarker.Transport :
-  K extends "_method_signature_accessibility_modifier" ? MethodSignatureAccessibilityModifier.Transport :
-  K extends "_method_signature_accessor_kind" ? MethodSignatureAccessorKind.Transport :
-  K extends "_method_signature_async_marker" ? MethodSignatureAsyncMarker.Transport :
-  K extends "_method_signature_optional_marker" ? MethodSignatureOptionalMarker.Transport :
-  K extends "_method_signature_override_modifier" ? MethodSignatureOverrideModifier.Transport :
-  K extends "_method_signature_readonly_marker" ? MethodSignatureReadonlyMarker.Transport :
-  K extends "_method_signature_static_marker" ? MethodSignatureStaticMarker.Transport :
   K extends "_module" ? _Module.Transport :
   K extends "_number" ? _Number.Transport :
   K extends "_object_type_closing" ? ObjectTypeClosing.Transport :
   K extends "_object_type_opening" ? ObjectTypeOpening.Transport :
+  K extends "_operator" ? Operator.Transport :
+  K extends "_optional_chain" ? OptionalChain.Transport :
+  K extends "_optional_marker" ? OptionalMarker.Transport :
+  K extends "_override_modifier" ? _OverrideModifier.Transport :
   K extends "_parameter_name" ? ParameterName.Transport :
   K extends "_parenthesized_expression_sequence" ? _ParenthesizedExpressionSequence.Transport :
   K extends "_parenthesized_expression_typed" ? ParenthesizedExpressionTyped.Transport :
-  K extends "_property_signature_accessibility_modifier" ? PropertySignatureAccessibilityModifier.Transport :
-  K extends "_property_signature_optional_marker" ? PropertySignatureOptionalMarker.Transport :
-  K extends "_property_signature_override_modifier" ? PropertySignatureOverrideModifier.Transport :
-  K extends "_property_signature_readonly_marker" ? PropertySignatureReadonlyMarker.Transport :
-  K extends "_property_signature_static_marker" ? PropertySignatureStaticMarker.Transport :
   K extends "_public_field_definition_abstract_first" ? PublicFieldDefinitionAbstractFirst.Transport :
   K extends "_public_field_definition_access_first" ? PublicFieldDefinitionAccessFirst.Transport :
   K extends "_public_field_definition_accessor_opt" ? PublicFieldDefinitionAccessorOpt.Transport :
@@ -11745,13 +11343,12 @@ export type TransportFor<K extends SyntaxKind | keyof KindMap> =
   K extends "_public_field_definition_optionality_marker" ? PublicFieldDefinitionOptionalityMarker.Transport :
   K extends "_public_field_definition_readonly_first" ? PublicFieldDefinitionReadonlyFirst.Transport :
   K extends "_public_field_definition_static_mods" ? PublicFieldDefinitionStaticMods.Transport :
+  K extends "_readonly_marker" ? ReadonlyMarker.Transport :
   K extends "_reserved_identifier" ? ReservedIdentifier.Transport :
+  K extends "_static_marker" ? StaticMarker.Transport :
   K extends "_string_double" ? _StringDouble.Transport :
   K extends "_string_single" ? _StringSingle.Transport :
-  K extends "_subscript_expression_optional_chain" ? SubscriptExpressionOptionalChain.Transport :
   K extends "_type_identifier" ? TypeIdentifier.Transport :
-  K extends "_type_parameter_const_marker" ? TypeParameterConstMarker.Transport :
-  K extends "_type_predicate_annotation_type_predicate" ? TypePredicateAnnotationTypePredicate.Transport :
   K extends "_type_query_call_expression" ? TypeQueryCallExpression.Transport :
   K extends "_type_query_call_expression_in_type_annotation" ? TypeQueryCallExpressionInTypeAnnotation.Transport :
   K extends "_type_query_instantiation_expression" ? TypeQueryInstantiationExpression.Transport :
@@ -11759,7 +11356,6 @@ export type TransportFor<K extends SyntaxKind | keyof KindMap> =
   K extends "_type_query_member_expression_in_type_annotation" ? TypeQueryMemberExpressionInTypeAnnotation.Transport :
   K extends "_type_query_subscript_expression" ? TypeQuerySubscriptExpression.Transport :
   K extends "_unary_expression_operator" ? UnaryExpressionOperator.Transport :
-  K extends "_update_expression_operator" ? UpdateExpressionOperator.Transport :
   K extends "_update_expression_postfix" ? UpdateExpressionPostfix.Transport :
   K extends "_update_expression_prefix" ? UpdateExpressionPrefix.Transport :
   K extends "abstract_class_declaration" ? AbstractClassDeclaration.Transport :
@@ -11894,7 +11490,6 @@ export type TransportFor<K extends SyntaxKind | keyof KindMap> =
   K extends "object_type" ? ObjectType.Transport :
   K extends "omitting_type_annotation" ? OmittingTypeAnnotation.Transport :
   K extends "opting_type_annotation" ? OptingTypeAnnotation.Transport :
-  K extends "optional_chain" ? OptionalChain.Transport :
   K extends "optional_parameter" ? OptionalParameter.Transport :
   K extends "optional_tuple_parameter" ? OptionalTupleParameter.Transport :
   K extends "optional_type" ? OptionalType.Transport :
@@ -12053,36 +11648,23 @@ export type TransportFor<K extends SyntaxKind | keyof KindMap> =
   never;
 
 export type AnyTransport =
-  | ForHeaderKind.Transport
-  | ForHeaderLetConstKindKind.Transport
   | ForHeaderOperator.Transport
   | ForHeaderVarKindKind.Transport
   | NumberOperator.Transport
-  | ParameterNameReadonlyMarker.Transport
-  | PublicFieldDefinitionAbstractFirstAbstractMarker.Transport
-  | PublicFieldDefinitionAbstractFirstReadonlyMarker.Transport
   | PublicFieldDefinitionAccessFirstDeclareMarker.Transport
   | PublicFieldDefinitionAccessorOptAccessorMarker.Transport
-  | PublicFieldDefinitionReadonlyFirstAbstractMarker.Transport
-  | PublicFieldDefinitionReadonlyFirstReadonlyMarker.Transport
-  | PublicFieldDefinitionStaticModsReadonlyMarker.Transport
-  | PublicFieldDefinitionStaticModsStaticMarker.Transport
-  | UpdateExpressionPostfixOperator.Transport
-  | UpdateExpressionPrefixOperator.Transport
-  | AbstractMethodSignatureAccessibilityModifier.Transport
-  | AbstractMethodSignatureAccessorKind.Transport
-  | AbstractMethodSignatureOptionalMarker.Transport
-  | AbstractMethodSignatureOverrideModifier.Transport
+  | AbstractMarker.Transport
+  | _AccessibilityModifier.Transport
+  | AccessorKind.Transport
   | _ArrowFunctionUCallSignature.Transport
-  | ArrowFunctionAsyncMarker.Transport
   | _ArrowFunctionParameter.Transport
   | AssertsAnnotationAsserts.Transport
   | AssignmentExpressionUsingMarker.Transport
+  | AsyncMarker.Transport
   | AugmentedAssignmentExpressionOperator.Transport
   | BinaryExpressionOperator.Transport
   | CallExpressionCall.Transport
   | CallExpressionMember.Transport
-  | CallExpressionOptionalChain.Transport
   | CallExpressionTemplateCall.Transport
   | _CallSignature.Transport
   | ClassBodyMember.Transport
@@ -12090,9 +11672,7 @@ export type AnyTransport =
   | ClassBodyMethodSig.Transport
   | _ClassHeritageExtendsClause.Transport
   | _ClassHeritageImplementsClause.Transport
-  | ConstructSignatureAbstractMarker.Transport
-  | ConstructorTypeAbstractMarker.Transport
-  | EnumDeclarationConstMarker.Transport
+  | ConstMarker.Transport
   | ExportSpecifierExportKind.Transport
   | ExportStatementDefaultDeclArm.Transport
   | ExportStatementDefaultDeclArmDefaultKw.Transport
@@ -12105,7 +11685,6 @@ export type AnyTransport =
   | _ExportStatementNamespaceExport.Transport
   | _ExportStatementTypeExport.Transport
   | ExtendsClauseSingle.Transport
-  | FieldDefinitionStaticMarker.Transport
   | ForHeader.Transport
   | ForHeaderLetConstKind.Transport
   | ForHeaderLhs.Transport
@@ -12113,23 +11692,18 @@ export type AnyTransport =
   | ForInStatementAwaitMarker.Transport
   | ForStatementInitializer.Transport
   | FromClause.Transport
-  | FunctionDeclarationAsyncMarker.Transport
-  | FunctionExpressionAsyncMarker.Transport
-  | FunctionSignatureAsyncMarker.Transport
-  | GeneratorFunctionAsyncMarker.Transport
-  | GeneratorFunctionDeclarationAsyncMarker.Transport
   | ImportAttributeObject.Transport
   | _ImportClauseDefaultImport.Transport
   | _ImportClauseNamedImports.Transport
   | _ImportClauseNamespaceImport.Transport
   | ImportSpecifierAs.Transport
-  | ImportSpecifierImportKind.Transport
   | _ImportSpecifierName.Transport
   | IndexSignatureColon.Transport
   | _IndexSignatureMappedTypeClause.Transport
   | Initializer.Transport
   | JsxStartOpeningElement.Transport
   | JsxString.Transport
+  | Kind.Transport
   | KwAbstractMarker.Transport
   | KwAccessorMarker.Transport
   | KwAsserts.Transport
@@ -12142,35 +11716,18 @@ export type AnyTransport =
   | KwStaticMarker.Transport
   | KwTypePredicate.Transport
   | KwUsingMarker.Transport
-  | LexicalDeclarationKind.Transport
   | LhsExpression.Transport
-  | MemberExpressionOptionalChain.Transport
-  | MethodDefinitionAccessibilityModifier.Transport
-  | MethodDefinitionAccessorKind.Transport
-  | MethodDefinitionAsyncMarker.Transport
-  | MethodDefinitionOptionalMarker.Transport
-  | MethodDefinitionOverrideModifier.Transport
-  | MethodDefinitionReadonlyMarker.Transport
-  | MethodDefinitionStaticMarker.Transport
-  | MethodSignatureAccessibilityModifier.Transport
-  | MethodSignatureAccessorKind.Transport
-  | MethodSignatureAsyncMarker.Transport
-  | MethodSignatureOptionalMarker.Transport
-  | MethodSignatureOverrideModifier.Transport
-  | MethodSignatureReadonlyMarker.Transport
-  | MethodSignatureStaticMarker.Transport
   | _Module.Transport
   | _Number.Transport
   | ObjectTypeClosing.Transport
   | ObjectTypeOpening.Transport
+  | Operator.Transport
+  | OptionalChain.Transport
+  | OptionalMarker.Transport
+  | _OverrideModifier.Transport
   | ParameterName.Transport
   | _ParenthesizedExpressionSequence.Transport
   | ParenthesizedExpressionTyped.Transport
-  | PropertySignatureAccessibilityModifier.Transport
-  | PropertySignatureOptionalMarker.Transport
-  | PropertySignatureOverrideModifier.Transport
-  | PropertySignatureReadonlyMarker.Transport
-  | PropertySignatureStaticMarker.Transport
   | PublicFieldDefinitionAbstractFirst.Transport
   | PublicFieldDefinitionAccessFirst.Transport
   | PublicFieldDefinitionAccessorOpt.Transport
@@ -12178,13 +11735,12 @@ export type AnyTransport =
   | PublicFieldDefinitionOptionalityMarker.Transport
   | PublicFieldDefinitionReadonlyFirst.Transport
   | PublicFieldDefinitionStaticMods.Transport
+  | ReadonlyMarker.Transport
   | ReservedIdentifier.Transport
+  | StaticMarker.Transport
   | _StringDouble.Transport
   | _StringSingle.Transport
-  | SubscriptExpressionOptionalChain.Transport
   | TypeIdentifier.Transport
-  | TypeParameterConstMarker.Transport
-  | TypePredicateAnnotationTypePredicate.Transport
   | TypeQueryCallExpression.Transport
   | TypeQueryCallExpressionInTypeAnnotation.Transport
   | TypeQueryInstantiationExpression.Transport
@@ -12192,7 +11748,6 @@ export type AnyTransport =
   | TypeQueryMemberExpressionInTypeAnnotation.Transport
   | TypeQuerySubscriptExpression.Transport
   | UnaryExpressionOperator.Transport
-  | UpdateExpressionOperator.Transport
   | UpdateExpressionPostfix.Transport
   | UpdateExpressionPrefix.Transport
   | AbstractClassDeclaration.Transport
@@ -12327,7 +11882,6 @@ export type AnyTransport =
   | ObjectType.Transport
   | OmittingTypeAnnotation.Transport
   | OptingTypeAnnotation.Transport
-  | OptionalChain.Transport
   | OptionalParameter.Transport
   | OptionalTupleParameter.Transport
   | OptionalType.Transport

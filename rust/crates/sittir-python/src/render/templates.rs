@@ -92,13 +92,12 @@ pub enum AnyTransport {
     AssignmentEq(AssignmentEqTransport),
     AssignmentType(AssignmentTypeTransport),
     AssignmentTyped(AssignmentTypedTransport),
+    AsyncMarker(AsyncMarkerEnum),
     AugmentedAssignmentOperator(AugmentedAssignmentOperatorEnum),
     BinaryOperatorOperator(BinaryOperatorOperatorEnum),
     BooleanOperatorOperator(BooleanOperatorOperatorEnum),
     ComprehensionClauses(ComprehensionClausesTransport),
-    ForInClauseAsyncMarker(ForInClauseAsyncMarkerEnum),
-    ForStatementAsyncMarker(ForStatementAsyncMarkerEnum),
-    FunctionDefinitionAsyncMarker(FunctionDefinitionAsyncMarkerEnum),
+    _Identifier(_IdentifierEnum),
     ImportList(ImportListTransport),
     IsNot(IsNotTransport),
     KeyValuePattern(KeyValuePatternTransport),
@@ -111,14 +110,11 @@ pub enum AnyTransport {
     NotIn(NotInTransport),
     SimplePatternNegative(SimplePatternNegativeTransport),
     SimpleStatements(SimpleStatementsTransport),
-    SplatPatternIdentifier(SplatPatternIdentifierEnum),
-    SplatTypeIdentifier(SplatTypeIdentifierEnum),
     Suite(SuiteTransport),
     _TuplePattern(_TuplePatternTransport),
     TypeAliasStatementType(TypeAliasStatementTypeEnum),
     UnaryOperatorOperator(UnaryOperatorOperatorEnum),
     _WithClauseParen(_WithClauseParenTransport),
-    WithStatementAsyncMarker(WithStatementAsyncMarkerEnum),
     AliasedImport(AliasedImportTransport),
     ArgumentList(ArgumentListTransport),
     AsPattern(AsPatternTransport),
@@ -2624,6 +2620,59 @@ impl ::sittir_core::types::RenderableTransport for AssignmentTypedTransport {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AsyncMarkerEnum {
+    AsyncKw,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for AsyncMarkerEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in AsyncMarkerEnum"))?;
+        match text.as_str() {
+            "async" => Ok(Self::AsyncKw),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown $text value {:?} for AsyncMarkerEnum",
+                other
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AsyncMarkerEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("AsyncMarkerEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for AsyncMarkerEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::AsyncKw => "async",
+        })
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for AsyncMarkerEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::AsyncKw => "async",
+        }).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum AugmentedAssignmentOperatorEnum {
     PlusEq,
     MinusEq,
@@ -2858,23 +2907,25 @@ impl ::sittir_core::types::RenderableTransport for ComprehensionClausesTransport
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ForInClauseAsyncMarkerEnum {
-    AsyncKw,
+pub enum _IdentifierEnum {
+    Star,
+    V2a_2a,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseAsyncMarkerEnum {
+impl ::napi::bindgen_prelude::FromNapiValue for _IdentifierEnum {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in ForInClauseAsyncMarkerEnum"))?;
+            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in _IdentifierEnum"))?;
         match text.as_str() {
-            "async" => Ok(Self::AsyncKw),
+            "*" => Ok(Self::Star),
+            "**" => Ok(Self::V2a_2a),
             other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for ForInClauseAsyncMarkerEnum",
+                "unknown $text value {:?} for _IdentifierEnum",
                 other
             ))),
         }
@@ -2882,136 +2933,32 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseAsyncMarkerEnum {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ForInClauseAsyncMarkerEnum {
+impl ::napi::bindgen_prelude::ToNapiValue for _IdentifierEnum {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ForInClauseAsyncMarkerEnum is receive-only"))
+        Err(::napi::Error::from_reason("_IdentifierEnum is receive-only"))
     }
 }
 
-impl ::std::fmt::Display for ForInClauseAsyncMarkerEnum {
+impl ::std::fmt::Display for _IdentifierEnum {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         f.write_str(match self {
-            Self::AsyncKw => "async",
+            Self::Star => "*",
+            Self::V2a_2a => "**",
         })
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for ForInClauseAsyncMarkerEnum {
+impl ::sittir_core::types::RenderableTransport for _IdentifierEnum {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         dest.write_str(match self {
-            Self::AsyncKw => "async",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ForStatementAsyncMarkerEnum {
-    AsyncKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ForStatementAsyncMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in ForStatementAsyncMarkerEnum"))?;
-        match text.as_str() {
-            "async" => Ok(Self::AsyncKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for ForStatementAsyncMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ForStatementAsyncMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ForStatementAsyncMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for ForStatementAsyncMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::AsyncKw => "async",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for ForStatementAsyncMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::AsyncKw => "async",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum FunctionDefinitionAsyncMarkerEnum {
-    AsyncKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for FunctionDefinitionAsyncMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in FunctionDefinitionAsyncMarkerEnum"))?;
-        match text.as_str() {
-            "async" => Ok(Self::AsyncKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for FunctionDefinitionAsyncMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FunctionDefinitionAsyncMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("FunctionDefinitionAsyncMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for FunctionDefinitionAsyncMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::AsyncKw => "async",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for FunctionDefinitionAsyncMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::AsyncKw => "async",
+            Self::Star => "*",
+            Self::V2a_2a => "**",
         }).map_err(::askama::Error::from)
     }
 }
@@ -3328,120 +3275,6 @@ impl ::sittir_core::types::RenderableTransport for SimpleStatementsTransport {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum SplatPatternIdentifierEnum {
-    Star,
-    V2a_2a,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternIdentifierEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in SplatPatternIdentifierEnum"))?;
-        match text.as_str() {
-            "*" => Ok(Self::Star),
-            "**" => Ok(Self::V2a_2a),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for SplatPatternIdentifierEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for SplatPatternIdentifierEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("SplatPatternIdentifierEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for SplatPatternIdentifierEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::Star => "*",
-            Self::V2a_2a => "**",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for SplatPatternIdentifierEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::Star => "*",
-            Self::V2a_2a => "**",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum SplatTypeIdentifierEnum {
-    Star,
-    V2a_2a,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for SplatTypeIdentifierEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in SplatTypeIdentifierEnum"))?;
-        match text.as_str() {
-            "*" => Ok(Self::Star),
-            "**" => Ok(Self::V2a_2a),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for SplatTypeIdentifierEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for SplatTypeIdentifierEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("SplatTypeIdentifierEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for SplatTypeIdentifierEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::Star => "*",
-            Self::V2a_2a => "**",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for SplatTypeIdentifierEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::Star => "*",
-            Self::V2a_2a => "**",
-        }).map_err(::askama::Error::from)
-    }
-}
-
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct SuiteTransport {
@@ -3634,59 +3467,6 @@ impl ::sittir_core::types::RenderableTransport for _WithClauseParenTransport {
     ) -> Result<(), ::askama::Error> {
         let s = render__with_clause_paren_transport(self)?;
         dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum WithStatementAsyncMarkerEnum {
-    AsyncKw,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for WithStatementAsyncMarkerEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?
-            .ok_or_else(|| ::napi::Error::from_reason("$text property missing in WithStatementAsyncMarkerEnum"))?;
-        match text.as_str() {
-            "async" => Ok(Self::AsyncKw),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown $text value {:?} for WithStatementAsyncMarkerEnum",
-                other
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for WithStatementAsyncMarkerEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("WithStatementAsyncMarkerEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for WithStatementAsyncMarkerEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::AsyncKw => "async",
-        })
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for WithStatementAsyncMarkerEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::AsyncKw => "async",
-        }).map_err(::askama::Error::from)
     }
 }
 
@@ -5104,7 +4884,7 @@ pub struct ForInClauseTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub async_marker: Option<ForInClauseAsyncMarkerEnum>,
+    pub async_marker: Option<AsyncMarkerEnum>,
     pub left: LeftHandSideTransport,
     pub right: Vec<ExpressionWithinForInClauseTransport>,
 }
@@ -5132,7 +4912,7 @@ pub struct ForStatementTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub async_marker: Option<ForStatementAsyncMarkerEnum>,
+    pub async_marker: Option<AsyncMarkerEnum>,
     pub left: LeftHandSideTransport,
     pub right: ExpressionsTransport,
     pub body: SuiteTransport,
@@ -5189,7 +4969,7 @@ pub struct FunctionDefinitionTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub async_marker: Option<FunctionDefinitionAsyncMarkerEnum>,
+    pub async_marker: Option<AsyncMarkerEnum>,
     pub name: IdentifierTransport,
     pub type_parameters: Option<TypeParameterTransport>,
     pub parameters: ParametersTransport,
@@ -6423,7 +6203,7 @@ pub struct SplatPatternTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub identifier: SplatPatternIdentifierEnum,
+    pub identifier: _IdentifierEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<IdentifierTransport>,
 }
@@ -7141,7 +6921,7 @@ pub struct WithStatementTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
     pub transport_node_id: Option<f64>,
-    pub async_marker: Option<WithStatementAsyncMarkerEnum>,
+    pub async_marker: Option<AsyncMarkerEnum>,
     pub with_clause: Box<AnyTransport>,
     pub body: SuiteTransport,
 }
@@ -8814,6 +8594,10 @@ fn render_assignment_typed_transport(node: &AssignmentTypedTransport) -> Result<
     Ok(node.transport_text.clone().unwrap_or_default())
 }
 
+fn render_async_marker_transport(t: &AsyncMarkerEnum) -> Result<String, ::askama::Error> {
+    Ok(t.to_string())
+}
+
 fn render_augmented_assignment_operator_transport(t: &AugmentedAssignmentOperatorEnum) -> Result<String, ::askama::Error> {
     Ok(t.to_string())
 }
@@ -8841,15 +8625,7 @@ fn render_comprehension_clauses_transport(node: &ComprehensionClausesTransport) 
     template.render()
 }
 
-fn render_for_in_clause_async_marker_transport(t: &ForInClauseAsyncMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_for_statement_async_marker_transport(t: &ForStatementAsyncMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_function_definition_async_marker_transport(t: &FunctionDefinitionAsyncMarkerEnum) -> Result<String, ::askama::Error> {
+fn render__identifier_transport(t: &_IdentifierEnum) -> Result<String, ::askama::Error> {
     Ok(t.to_string())
 }
 
@@ -8941,14 +8717,6 @@ fn render_simple_statements_transport(node: &SimpleStatementsTransport) -> Resul
     template.render()
 }
 
-fn render_splat_pattern_identifier_transport(t: &SplatPatternIdentifierEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
-fn render_splat_type_identifier_transport(t: &SplatTypeIdentifierEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
-}
-
 fn render_suite_transport(node: &SuiteTransport) -> Result<String, ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
@@ -8986,10 +8754,6 @@ fn render__with_clause_paren_transport(node: &_WithClauseParenTransport) -> Resu
         out.push_str(&render_with_item_transport(child)?);
     }
     Ok(out)
-}
-
-fn render_with_statement_async_marker_transport(t: &WithStatementAsyncMarkerEnum) -> Result<String, ::askama::Error> {
-    Ok(t.to_string())
 }
 
 fn render_aliased_import_transport(node: &AliasedImportTransport) -> Result<String, ::askama::Error> {
@@ -10998,13 +10762,12 @@ pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::a
         AnyTransport::AssignmentEq(t) => render_assignment_eq_transport(t),
         AnyTransport::AssignmentType(t) => render_assignment_type_transport(t),
         AnyTransport::AssignmentTyped(t) => render_assignment_typed_transport(t),
+        AnyTransport::AsyncMarker(t) => render_async_marker_transport(t),
         AnyTransport::AugmentedAssignmentOperator(t) => render_augmented_assignment_operator_transport(t),
         AnyTransport::BinaryOperatorOperator(t) => render_binary_operator_operator_transport(t),
         AnyTransport::BooleanOperatorOperator(t) => render_boolean_operator_operator_transport(t),
         AnyTransport::ComprehensionClauses(t) => render_comprehension_clauses_transport(t),
-        AnyTransport::ForInClauseAsyncMarker(t) => render_for_in_clause_async_marker_transport(t),
-        AnyTransport::ForStatementAsyncMarker(t) => render_for_statement_async_marker_transport(t),
-        AnyTransport::FunctionDefinitionAsyncMarker(t) => render_function_definition_async_marker_transport(t),
+        AnyTransport::_Identifier(t) => render__identifier_transport(t),
         AnyTransport::ImportList(t) => render_import_list_transport(t),
         AnyTransport::IsNot(t) => render_is_not_transport(t),
         AnyTransport::KeyValuePattern(t) => render_key_value_pattern_transport(t),
@@ -11017,14 +10780,11 @@ pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::a
         AnyTransport::NotIn(t) => render_not_in_transport(t),
         AnyTransport::SimplePatternNegative(t) => render_simple_pattern_negative_transport(t),
         AnyTransport::SimpleStatements(t) => render_simple_statements_transport(t),
-        AnyTransport::SplatPatternIdentifier(t) => render_splat_pattern_identifier_transport(t),
-        AnyTransport::SplatTypeIdentifier(t) => render_splat_type_identifier_transport(t),
         AnyTransport::Suite(t) => render_suite_transport(t),
         AnyTransport::_TuplePattern(t) => render__tuple_pattern_transport(t),
         AnyTransport::TypeAliasStatementType(t) => render_type_alias_statement_type_transport(t),
         AnyTransport::UnaryOperatorOperator(t) => render_unary_operator_operator_transport(t),
         AnyTransport::_WithClauseParen(t) => render__with_clause_paren_transport(t),
-        AnyTransport::WithStatementAsyncMarker(t) => render_with_statement_async_marker_transport(t),
         AnyTransport::AliasedImport(t) => render_aliased_import_transport(t),
         AnyTransport::ArgumentList(t) => render_argument_list_transport(t),
         AnyTransport::AsPattern(t) => render_as_pattern_transport(t),
@@ -11291,13 +11051,12 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::AssignmentEq(data) => transport_to_node_assignment_eq(data),
         AnyTransport::AssignmentType(data) => transport_to_node_assignment_type(data),
         AnyTransport::AssignmentTyped(data) => transport_to_node_assignment_typed(data),
+        AnyTransport::AsyncMarker(data) => transport_to_node_async_marker(data),
         AnyTransport::AugmentedAssignmentOperator(data) => transport_to_node_augmented_assignment_operator(data),
         AnyTransport::BinaryOperatorOperator(data) => transport_to_node_binary_operator_operator(data),
         AnyTransport::BooleanOperatorOperator(data) => transport_to_node_boolean_operator_operator(data),
         AnyTransport::ComprehensionClauses(data) => transport_to_node_comprehension_clauses(data),
-        AnyTransport::ForInClauseAsyncMarker(data) => transport_to_node_for_in_clause_async_marker(data),
-        AnyTransport::ForStatementAsyncMarker(data) => transport_to_node_for_statement_async_marker(data),
-        AnyTransport::FunctionDefinitionAsyncMarker(data) => transport_to_node_function_definition_async_marker(data),
+        AnyTransport::_Identifier(data) => transport_to_node__identifier(data),
         AnyTransport::ImportList(data) => transport_to_node_import_list(data),
         AnyTransport::IsNot(data) => transport_to_node_is_not(data),
         AnyTransport::KeyValuePattern(data) => transport_to_node_key_value_pattern(data),
@@ -11310,14 +11069,11 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::NotIn(data) => transport_to_node_not_in(data),
         AnyTransport::SimplePatternNegative(data) => transport_to_node_simple_pattern_negative(data),
         AnyTransport::SimpleStatements(data) => transport_to_node_simple_statements(data),
-        AnyTransport::SplatPatternIdentifier(data) => transport_to_node_splat_pattern_identifier(data),
-        AnyTransport::SplatTypeIdentifier(data) => transport_to_node_splat_type_identifier(data),
         AnyTransport::Suite(data) => transport_to_node_suite(data),
         AnyTransport::_TuplePattern(data) => transport_to_node__tuple_pattern(data),
         AnyTransport::TypeAliasStatementType(data) => transport_to_node_type_alias_statement_type(data),
         AnyTransport::UnaryOperatorOperator(data) => transport_to_node_unary_operator_operator(data),
         AnyTransport::_WithClauseParen(data) => transport_to_node__with_clause_paren(data),
-        AnyTransport::WithStatementAsyncMarker(data) => transport_to_node_with_statement_async_marker(data),
         AnyTransport::AliasedImport(data) => transport_to_node_aliased_import(data),
         AnyTransport::ArgumentList(data) => transport_to_node_argument_list(data),
         AnyTransport::AsPattern(data) => transport_to_node_as_pattern(data),
@@ -11588,6 +11344,20 @@ fn transport_to_node_assignment_typed(transport: AssignmentTypedTransport) -> Re
     ))
 }
 
+fn transport_to_node_async_marker(transport: AsyncMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_async_marker" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
+    ))
+}
+
 fn transport_to_node_augmented_assignment_operator(transport: AugmentedAssignmentOperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "_augmented_assignment_operator" — no parser symbol */,
@@ -11647,37 +11417,9 @@ fn transport_to_node_comprehension_clauses(transport: ComprehensionClausesTransp
     ))
 }
 
-fn transport_to_node_for_in_clause_async_marker(transport: ForInClauseAsyncMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node__identifier(transport: _IdentifierEnum) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "_for_in_clause_async_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_for_statement_async_marker(transport: ForStatementAsyncMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_for_statement_async_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_function_definition_async_marker(transport: FunctionDefinitionAsyncMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_function_definition_async_marker" — no parser symbol */,
+        TransportKindId(0) /* "_identifier" — no parser symbol */,
         None,
         None,
         true,
@@ -11882,34 +11624,6 @@ fn transport_to_node_simple_statements(transport: SimpleStatementsTransport) -> 
     ))
 }
 
-fn transport_to_node_splat_pattern_identifier(transport: SplatPatternIdentifierEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_splat_pattern_identifier" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
-fn transport_to_node_splat_type_identifier(transport: SplatTypeIdentifierEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_splat_type_identifier" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
 fn transport_to_node_suite(transport: SuiteTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -11986,20 +11700,6 @@ fn transport_to_node__with_clause_paren(transport: _WithClauseParenTransport) ->
         transport.transport_node_id.map(|v| v as u64),
         fields,
         children,
-    ))
-}
-
-fn transport_to_node_with_statement_async_marker(transport: WithStatementAsyncMarkerEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_with_statement_async_marker" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
     ))
 }
 
@@ -12905,7 +12605,7 @@ fn transport_to_node_float(transport: FloatTransport) -> Result<TransportNodeDat
 fn transport_to_node_for_in_clause(transport: ForInClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.async_marker {
-        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::ForInClauseAsyncMarker(value)))?);
+        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::AsyncMarker(value)))?);
     }
     fields.insert("left".to_string(), transport_field_value(left_hand_side_transport_to_any(transport.left))?);
     fields.insert("right".to_string(), transport_field_values(transport.right.into_iter().map(|v| expression_within_for_in_clause_transport_to_any(v)).collect::<Vec<_>>())?);
@@ -12927,7 +12627,7 @@ fn transport_to_node_for_in_clause(transport: ForInClauseTransport) -> Result<Tr
 fn transport_to_node_for_statement(transport: ForStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.async_marker {
-        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::ForStatementAsyncMarker(value)))?);
+        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::AsyncMarker(value)))?);
     }
     fields.insert("left".to_string(), transport_field_value(left_hand_side_transport_to_any(transport.left))?);
     fields.insert("right".to_string(), transport_field_value(expressions_transport_to_any(transport.right))?);
@@ -12970,7 +12670,7 @@ fn transport_to_node_format_specifier(transport: FormatSpecifierTransport) -> Re
 fn transport_to_node_function_definition(transport: FunctionDefinitionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.async_marker {
-        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::FunctionDefinitionAsyncMarker(value)))?);
+        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::AsyncMarker(value)))?);
     }
     fields.insert("name".to_string(), transport_field_value(Box::new(AnyTransport::Identifier(transport.name)))?);
     if let Some(value) = transport.type_parameters {
@@ -13808,7 +13508,7 @@ fn transport_to_node_slice(transport: SliceTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_splat_pattern(transport: SplatPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("identifier".to_string(), transport_field_value(Box::new(AnyTransport::SplatPatternIdentifier(transport.identifier)))?);
+    fields.insert("identifier".to_string(), transport_field_value(Box::new(AnyTransport::_Identifier(transport.identifier)))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| Box::new(AnyTransport::Identifier(v))).collect::<Vec<_>>())?);
     Ok(transport_node_data(
@@ -14264,7 +13964,7 @@ fn transport_to_node_with_item(transport: WithItemTransport) -> Result<Transport
 fn transport_to_node_with_statement(transport: WithStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.async_marker {
-        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::WithStatementAsyncMarker(value)))?);
+        fields.insert("async_marker".to_string(), transport_field_value(Box::new(AnyTransport::AsyncMarker(value)))?);
     }
     fields.insert("with_clause".to_string(), transport_field_value(transport.with_clause)?);
     fields.insert("body".to_string(), transport_field_value(Box::new(AnyTransport::Suite(transport.body)))?);

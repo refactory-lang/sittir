@@ -1327,6 +1327,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 };
 
 const _aliasTargetToSource: Record<string, string> = {
+  'async_marker': '_async_marker',
   'augmented_assignment_operator': '_augmented_assignment_operator',
   'binary_operator_operator': '_binary_operator_operator',
   'boolean_operator_operator': '_boolean_operator_operator',
@@ -1335,9 +1336,6 @@ const _aliasTargetToSource: Record<string, string> = {
   'expression_within_for_in_clause': '_expression_within_for_in_clause',
   'expressions': '_expressions',
   'f_expression': '_f_expression',
-  'for_in_clause_async_marker': '_for_in_clause_async_marker',
-  'for_statement_async_marker': '_for_statement_async_marker',
-  'function_definition_async_marker': '_function_definition_async_marker',
   'left_hand_side': '_left_hand_side',
   'match_block': '_match_block',
   'match_block_block': '_match_block_block',
@@ -1348,13 +1346,10 @@ const _aliasTargetToSource: Record<string, string> = {
   'simple_pattern_negative': '_simple_pattern_negative',
   'simple_statement': '_simple_statement',
   'simple_statements': '_simple_statements',
-  'splat_pattern_identifier': '_splat_pattern_identifier',
-  'splat_type_identifier': '_splat_type_identifier',
   'statement': '_statement',
   'suite': '_suite',
   'type_alias_statement_type': '_type_alias_statement_type',
   'unary_operator_operator': '_unary_operator_operator',
-  'with_statement_async_marker': '_with_statement_async_marker',
 };
 
 import { KIND_NAMES } from './types.js';
