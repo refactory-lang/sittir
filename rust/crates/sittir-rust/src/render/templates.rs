@@ -5730,7 +5730,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForeignModItemSemiTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -5886,7 +5887,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplItemSemiTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -5956,7 +5958,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for InnerLineDocCommentMarkerTranspo
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -6026,7 +6029,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAsyncMarkerTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -6096,7 +6100,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwInTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -6166,7 +6171,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwMoveMarkerTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -6236,7 +6242,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwNegativeTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -6306,7 +6313,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwOperatorTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -6376,7 +6384,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwPubTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -6446,7 +6455,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwRefMarkerTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -6516,7 +6526,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwStaticMarkerTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -6586,7 +6597,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwTurbofishTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -6656,7 +6668,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwUnsafeMarkerTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -6755,7 +6768,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineCommentContentTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -6853,7 +6867,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineCommentRegularDslashTranspor
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -7066,7 +7081,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModItemExternalTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -7250,7 +7266,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for OuterLineDocCommentMarkerTranspo
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -7320,7 +7337,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PointerTypeConstTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -7649,7 +7667,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternLeftBareTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -7775,7 +7794,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReferenceExpressionRawConstTrans
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -7963,7 +7983,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructItemUnitTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -8491,7 +8512,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for WildcardPatternTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -9240,7 +9262,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharLiteralTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -9651,7 +9674,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CrateTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -10026,7 +10050,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for EmptyStatementTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -10188,7 +10213,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for EscapeSequenceTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -11357,7 +11383,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -11656,7 +11683,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerLiteralTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -12560,7 +12588,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetavariableTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -12790,7 +12819,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for MutableSpecifierTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -12888,7 +12918,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NeverTypeTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -13809,7 +13840,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for RemainingFieldPatternTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -14053,7 +14085,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for Self_Transport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -14155,7 +14188,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ShebangTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -14574,7 +14608,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for SuperTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -15649,7 +15684,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnitExpressionTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -15719,7 +15755,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnitTypeTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -16267,7 +16304,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -16337,7 +16375,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for RawStringLiteralContentTransport
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -16407,7 +16446,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for FloatLiteralTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -16477,7 +16517,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for OuterBlockDocCommentMarkerTransp
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -16547,7 +16588,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for InnerBlockDocCommentMarkerTransp
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -16617,7 +16659,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineDocContentTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -16687,7 +16730,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ErrorSentinelTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -16757,7 +16801,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -16827,7 +16872,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseBracketTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -16897,7 +16943,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for SemiTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -16967,7 +17014,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -17037,7 +17085,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -17107,7 +17156,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for BraceTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -17177,7 +17227,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseBraceTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -17247,7 +17298,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -17317,7 +17369,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseParenTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -17387,7 +17440,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -17457,7 +17511,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for FnTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -17527,7 +17582,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -17597,7 +17653,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -17667,7 +17724,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for InTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -17737,7 +17795,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for MoveTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -17807,7 +17866,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotdotTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -17877,7 +17937,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PubTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -17947,7 +18008,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for RefTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -18017,7 +18079,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for StaticTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -18087,7 +18150,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnsafeTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -18157,7 +18221,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AndandTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -18227,7 +18292,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -18297,7 +18363,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokSqTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -18367,7 +18434,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -18437,7 +18505,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AwaitTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -18507,7 +18576,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -18577,7 +18647,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -18647,7 +18718,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -18717,7 +18789,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefaultTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -18787,7 +18860,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -18857,7 +18931,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -18927,7 +19002,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -18997,7 +19073,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -19067,7 +19144,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -19137,7 +19215,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for LetTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -19207,7 +19286,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for LoopTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -19277,7 +19357,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -19347,7 +19428,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -19417,7 +19499,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -19487,7 +19570,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -19557,7 +19641,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TraitTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -19627,7 +19712,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -19697,7 +19783,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnionTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -19767,7 +19854,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for UseTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -19837,7 +19925,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhereTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -19907,7 +19996,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -19977,7 +20067,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -20047,7 +20138,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -20117,7 +20209,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for RawTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -20187,7 +20280,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -20257,7 +20351,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for HashTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -20327,7 +20422,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -20397,7 +20493,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokSlashStarTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -20467,7 +20564,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokStarSlashTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -20537,7 +20635,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -20607,7 +20706,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -20677,7 +20777,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -20747,7 +20848,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -20817,7 +20919,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DynTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -20887,7 +20990,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -20957,7 +21061,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExternTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -21027,7 +21132,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for FatArrowTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -21097,7 +21203,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for MutTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -21167,7 +21274,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for MinusTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -21237,7 +21345,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -21307,7 +21416,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for QuestionTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -21377,7 +21487,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokDqTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -21447,7 +21558,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokDollarTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -21517,7 +21629,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -21587,7 +21700,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -21657,7 +21771,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -21727,7 +21842,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -26227,7 +26343,8 @@ fn transport_node_data(
     default_named: bool,
     text: Option<String>,
     span: Option<::sittir_core::types::Span>,
-    node_id: Option<u64>,
+    node_handle: Option<u32>,
+    child_index: Option<u16>,
     fields: Option<TransportHashMap<String, TransportFieldValue>>,
     children: Option<Vec<TransportNodeData>>,
 ) -> TransportNodeData {
@@ -26239,7 +26356,8 @@ fn transport_node_data(
         children,
         text,
         span,
-        node_id,
+        node_handle,
+        child_index,
     }
 }
 
@@ -26633,6 +26751,7 @@ fn transport_to_node_range_expression_binary_operator(transport: RangeExpression
         None,
         None,
         None,
+        None,
     ))
 }
 
@@ -26647,6 +26766,7 @@ fn transport_to_node_visibility_modifier_in_path_in(transport: bool) -> Result<T
         None,
         None,
         None,
+        None,
     ))
 }
 
@@ -26657,6 +26777,7 @@ fn transport_to_node_visibility_modifier_pub_pub(transport: bool) -> Result<Tran
         None,
         true,
         Some(if transport { "pub".to_string() } else { String::new() }),
+        None,
         None,
         None,
         None,
@@ -26677,7 +26798,8 @@ fn transport_to_node_array_expression_list(transport: ArrayExpressionListTranspo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -26697,7 +26819,8 @@ fn transport_to_node_array_expression_semi(transport: ArrayExpressionSemiTranspo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -26714,6 +26837,7 @@ fn transport_to_node_binary_expression_operator(transport: bool) -> Result<Trans
         None,
         None,
         None,
+        None,
     ))
 }
 
@@ -26724,6 +26848,7 @@ fn transport_to_node_closure_expression_async_marker(transport: bool) -> Result<
         None,
         true,
         Some(if transport { "async".to_string() } else { String::new() }),
+        None,
         None,
         None,
         None,
@@ -26746,7 +26871,8 @@ fn transport_to_node_closure_expression_block(transport: ClosureExpressionBlockT
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -26764,7 +26890,8 @@ fn transport_to_node__closure_expression_expr(transport: _ClosureExpressionExprT
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -26777,6 +26904,7 @@ fn transport_to_node_closure_expression_static_marker(transport: bool) -> Result
         None,
         true,
         Some(if transport { "static".to_string() } else { String::new() }),
+        None,
         None,
         None,
         None,
@@ -26795,6 +26923,7 @@ fn transport_to_node_compound_assignment_expr_operator(transport: CompoundAssign
         None,
         None,
         None,
+        None,
     ))
 }
 
@@ -26805,6 +26934,7 @@ fn transport_to_node__crate(transport: bool) -> Result<TransportNodeData, ::aska
         None,
         true,
         Some(if transport { "crate".to_string() } else { String::new() }),
+        None,
         None,
         None,
         None,
@@ -26823,7 +26953,8 @@ fn transport_to_node__delim_token_tree_brace(transport: _DelimTokenTreeBraceTran
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -26840,7 +26971,8 @@ fn transport_to_node__delim_token_tree_bracket(transport: _DelimTokenTreeBracket
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -26857,7 +26989,8 @@ fn transport_to_node__delim_token_tree_paren(transport: _DelimTokenTreeParenTran
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -26874,7 +27007,8 @@ fn transport_to_node__expression_statement_block_ending(transport: _ExpressionSt
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -26891,7 +27025,8 @@ fn transport_to_node__expression_statement_with_semi(transport: _ExpressionState
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -26908,7 +27043,8 @@ fn transport_to_node_field_identifier(transport: FieldIdentifierTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -26927,7 +27063,8 @@ fn transport_to_node_field_pattern_named(transport: FieldPatternNamedTransport) 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -26945,7 +27082,8 @@ fn transport_to_node__field_pattern_shorthand(transport: _FieldPatternShorthandT
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -26963,7 +27101,8 @@ fn transport_to_node__foreign_mod_item_body(transport: _ForeignModItemBodyTransp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -26977,7 +27116,8 @@ fn transport_to_node_foreign_mod_item_semi(transport: ForeignModItemSemiTranspor
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -26997,7 +27137,8 @@ fn transport_to_node_function_type_fn_form(transport: FunctionTypeFnFormTranspor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27015,7 +27156,8 @@ fn transport_to_node_function_type_trait_form(transport: FunctionTypeTraitFormTr
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27028,6 +27170,7 @@ fn transport_to_node_generic_type_with_turbofish_turbofish(transport: bool) -> R
         None,
         true,
         Some(if transport { "::".to_string() } else { String::new() }),
+        None,
         None,
         None,
         None,
@@ -27047,7 +27190,8 @@ fn transport_to_node__impl_item_body(transport: _ImplItemBodyTransport) -> Resul
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27064,6 +27208,7 @@ fn transport_to_node_impl_item_negative(transport: bool) -> Result<TransportNode
         None,
         None,
         None,
+        None,
     ))
 }
 
@@ -27075,7 +27220,8 @@ fn transport_to_node_impl_item_semi(transport: ImplItemSemiTransport) -> Result<
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -27089,7 +27235,8 @@ fn transport_to_node_inner_line_doc_comment_marker(transport: InnerLineDocCommen
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -27103,7 +27250,8 @@ fn transport_to_node_kw_async_marker(transport: KwAsyncMarkerTransport) -> Resul
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -27117,7 +27265,8 @@ fn transport_to_node_kw_in(transport: KwInTransport) -> Result<TransportNodeData
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -27131,7 +27280,8 @@ fn transport_to_node_kw_move_marker(transport: KwMoveMarkerTransport) -> Result<
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -27145,7 +27295,8 @@ fn transport_to_node_kw_negative(transport: KwNegativeTransport) -> Result<Trans
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -27159,7 +27310,8 @@ fn transport_to_node_kw_operator(transport: KwOperatorTransport) -> Result<Trans
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -27173,7 +27325,8 @@ fn transport_to_node_kw_pub(transport: KwPubTransport) -> Result<TransportNodeDa
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -27187,7 +27340,8 @@ fn transport_to_node_kw_ref_marker(transport: KwRefMarkerTransport) -> Result<Tr
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -27201,7 +27355,8 @@ fn transport_to_node_kw_static_marker(transport: KwStaticMarkerTransport) -> Res
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -27215,7 +27370,8 @@ fn transport_to_node_kw_turbofish(transport: KwTurbofishTransport) -> Result<Tra
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -27229,7 +27385,8 @@ fn transport_to_node_kw_unsafe_marker(transport: KwUnsafeMarkerTransport) -> Res
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -27246,7 +27403,8 @@ fn transport_to_node_let_chain(transport: LetChainTransport) -> Result<Transport
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27260,7 +27418,8 @@ fn transport_to_node_line_comment_content(transport: LineCommentContentTransport
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -27278,7 +27437,8 @@ fn transport_to_node_line_comment_doc(transport: LineCommentDocTransport) -> Res
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27292,7 +27452,8 @@ fn transport_to_node_line_comment_regular_dslash(transport: LineCommentRegularDs
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -27312,7 +27473,8 @@ fn transport_to_node__macro_definition_brace(transport: _MacroDefinitionBraceTra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27332,7 +27494,8 @@ fn transport_to_node__macro_definition_bracket(transport: _MacroDefinitionBracke
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27352,7 +27515,8 @@ fn transport_to_node__macro_definition_paren(transport: _MacroDefinitionParenTra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27370,7 +27534,8 @@ fn transport_to_node__match_arm_block_ending(transport: _MatchArmBlockEndingTran
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27388,7 +27553,8 @@ fn transport_to_node_match_arm_with_comma(transport: MatchArmWithCommaTransport)
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27402,7 +27568,8 @@ fn transport_to_node_mod_item_external(transport: ModItemExternalTransport) -> R
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -27420,7 +27587,8 @@ fn transport_to_node__mod_item_inline(transport: _ModItemInlineTransport) -> Res
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27433,6 +27601,7 @@ fn transport_to_node_move_marker(transport: bool) -> Result<TransportNodeData, :
         None,
         true,
         Some(if transport { "move".to_string() } else { String::new() }),
+        None,
         None,
         None,
         None,
@@ -27451,6 +27620,7 @@ fn transport_to_node__mutable_specifier(transport: bool) -> Result<TransportNode
         None,
         None,
         None,
+        None,
     ))
 }
 
@@ -27465,7 +27635,8 @@ fn transport_to_node_non_special_token(transport: NonSpecialTokenTransport) -> R
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27478,6 +27649,7 @@ fn transport_to_node_operator(transport: bool) -> Result<TransportNodeData, ::as
         None,
         true,
         Some(if transport { "..".to_string() } else { String::new() }),
+        None,
         None,
         None,
         None,
@@ -27498,7 +27670,8 @@ fn transport_to_node_or_pattern_binary(transport: OrPatternBinaryTransport) -> R
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27516,7 +27689,8 @@ fn transport_to_node_or_pattern_prefix(transport: OrPatternPrefixTransport) -> R
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27530,7 +27704,8 @@ fn transport_to_node_outer_line_doc_comment_marker(transport: OuterLineDocCommen
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -27544,7 +27719,8 @@ fn transport_to_node_pointer_type_const(transport: PointerTypeConstTransport) ->
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -27561,7 +27737,8 @@ fn transport_to_node__pointer_type_mut(transport: _PointerTypeMutTransport) -> R
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27574,6 +27751,7 @@ fn transport_to_node_primitive_type(transport: PrimitiveTypeEnum) -> Result<Tran
         None,
         true,
         Some(transport.to_string()),
+        None,
         None,
         None,
         None,
@@ -27593,7 +27771,8 @@ fn transport_to_node__range_expression_bare(transport: _RangeExpressionBareTrans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27613,7 +27792,8 @@ fn transport_to_node_range_expression_binary(transport: RangeExpressionBinaryTra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27632,7 +27812,8 @@ fn transport_to_node_range_expression_postfix(transport: RangeExpressionPostfixT
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27651,7 +27832,8 @@ fn transport_to_node_range_expression_prefix(transport: RangeExpressionPrefixTra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27665,7 +27847,8 @@ fn transport_to_node_range_pattern_left_bare(transport: RangePatternLeftBareTran
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -27683,7 +27866,8 @@ fn transport_to_node_range_pattern_left_with_right(transport: RangePatternLeftWi
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27701,7 +27885,8 @@ fn transport_to_node_range_pattern_prefix(transport: RangePatternPrefixTransport
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27718,6 +27903,7 @@ fn transport_to_node_ref_marker(transport: bool) -> Result<TransportNodeData, ::
         None,
         None,
         None,
+        None,
     ))
 }
 
@@ -27729,7 +27915,8 @@ fn transport_to_node_reference_expression_raw_const(transport: ReferenceExpressi
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -27746,7 +27933,8 @@ fn transport_to_node_reference_expression_raw_mut(transport: ReferenceExpression
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27763,7 +27951,8 @@ fn transport_to_node_reserved_identifier(transport: ReservedIdentifierTransport)
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27776,6 +27965,7 @@ fn transport_to_node__self(transport: bool) -> Result<TransportNodeData, ::askam
         None,
         true,
         Some(if transport { "self".to_string() } else { String::new() }),
+        None,
         None,
         None,
         None,
@@ -27798,7 +27988,8 @@ fn transport_to_node_struct_item_brace(transport: StructItemBraceTransport) -> R
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27819,7 +28010,8 @@ fn transport_to_node_struct_item_tuple(transport: StructItemTupleTransport) -> R
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27833,7 +28025,8 @@ fn transport_to_node_struct_item_unit(transport: StructItemUnitTransport) -> Res
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -27846,6 +28039,7 @@ fn transport_to_node_token_binding_pattern_type(transport: TokenBindingPatternTy
         None,
         true,
         Some(transport.to_string()),
+        None,
         None,
         None,
         None,
@@ -27864,7 +28058,8 @@ fn transport_to_node__token_tree_brace(transport: _TokenTreeBraceTransport) -> R
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27881,7 +28076,8 @@ fn transport_to_node__token_tree_bracket(transport: _TokenTreeBracketTransport) 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27898,7 +28094,8 @@ fn transport_to_node__token_tree_paren(transport: _TokenTreeParenTransport) -> R
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27915,7 +28112,8 @@ fn transport_to_node__token_tree_pattern_brace(transport: _TokenTreePatternBrace
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27932,7 +28130,8 @@ fn transport_to_node__token_tree_pattern_bracket(transport: _TokenTreePatternBra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27949,7 +28148,8 @@ fn transport_to_node__token_tree_pattern_paren(transport: _TokenTreePatternParen
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27966,7 +28166,8 @@ fn transport_to_node_type_identifier(transport: TypeIdentifierTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -27979,6 +28180,7 @@ fn transport_to_node_unary_expression_operator(transport: UnaryExpressionOperato
         None,
         true,
         Some(transport.to_string()),
+        None,
         None,
         None,
         None,
@@ -27997,6 +28199,7 @@ fn transport_to_node_unsafe_marker(transport: bool) -> Result<TransportNodeData,
         None,
         None,
         None,
+        None,
     ))
 }
 
@@ -28011,7 +28214,8 @@ fn transport_to_node__visibility_modifier_crate(transport: _VisibilityModifierCr
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28029,7 +28233,8 @@ fn transport_to_node_visibility_modifier_in_path(transport: VisibilityModifierIn
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28050,7 +28255,8 @@ fn transport_to_node_visibility_modifier_pub(transport: VisibilityModifierPubTra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28064,7 +28270,8 @@ fn transport_to_node_wildcard_pattern(transport: WildcardPatternTransport) -> Re
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -28085,7 +28292,8 @@ fn transport_to_node_abstract_type(transport: AbstractTypeTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28102,7 +28310,8 @@ fn transport_to_node_arguments(transport: ArgumentsTransport) -> Result<Transpor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28126,7 +28335,8 @@ fn transport_to_node_array_expression_uform_semi(transport: ArrayExpressionUForm
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28143,7 +28353,8 @@ fn transport_to_node_array_expression_uform_list(transport: ArrayExpressionUForm
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28164,7 +28375,8 @@ fn transport_to_node_array_type(transport: ArrayTypeTransport) -> Result<Transpo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28183,7 +28395,8 @@ fn transport_to_node_assignment_expression(transport: AssignmentExpressionTransp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28210,7 +28423,8 @@ fn transport_to_node_associated_type(transport: AssociatedTypeTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28231,7 +28445,8 @@ fn transport_to_node_async_block(transport: AsyncBlockTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28248,7 +28463,8 @@ fn transport_to_node_attribute(transport: AttributeTransport) -> Result<Transpor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28266,7 +28482,8 @@ fn transport_to_node_attribute_item(transport: AttributeItemTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28283,7 +28500,8 @@ fn transport_to_node_await_expression(transport: AwaitExpressionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28300,7 +28518,8 @@ fn transport_to_node_base_field_initializer(transport: BaseFieldInitializerTrans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28320,7 +28539,8 @@ fn transport_to_node_binary_expression(transport: BinaryExpressionTransport) -> 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28340,7 +28560,8 @@ fn transport_to_node_block(transport: BlockTransport) -> Result<TransportNodeDat
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28360,7 +28581,8 @@ fn transport_to_node_block_comment(transport: BlockCommentTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28373,6 +28595,7 @@ fn transport_to_node_boolean_literal(transport: BooleanLiteralEnum) -> Result<Tr
         None,
         true,
         Some(transport.to_string()),
+        None,
         None,
         None,
         None,
@@ -28393,7 +28616,8 @@ fn transport_to_node_bounded_type(transport: BoundedTypeTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28410,7 +28634,8 @@ fn transport_to_node_bracketed_type(transport: BracketedTypeTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28433,7 +28658,8 @@ fn transport_to_node_break_expression(transport: BreakExpressionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28452,7 +28678,8 @@ fn transport_to_node_call_expression(transport: CallExpressionTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28470,7 +28697,8 @@ fn transport_to_node_captured_pattern(transport: CapturedPatternTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28484,7 +28712,8 @@ fn transport_to_node_char_literal(transport: CharLiteralTransport) -> Result<Tra
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -28502,7 +28731,8 @@ fn transport_to_node_closure_expression_expr(transport: ClosureExpressionExprTra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28536,7 +28766,8 @@ fn transport_to_node_closure_expression_uform_block(transport: ClosureExpression
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28563,7 +28794,8 @@ fn transport_to_node_closure_expression_uform_expr(transport: ClosureExpressionU
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28580,7 +28812,8 @@ fn transport_to_node_closure_parameters(transport: ClosureParametersTransport) -
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28597,7 +28830,8 @@ fn transport_to_node_comment(transport: CommentTransport) -> Result<TransportNod
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28617,7 +28851,8 @@ fn transport_to_node_compound_assignment_expr(transport: CompoundAssignmentExprT
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28635,7 +28870,8 @@ fn transport_to_node_const_block(transport: ConstBlockTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28660,7 +28896,8 @@ fn transport_to_node_const_item(transport: ConstItemTransport) -> Result<Transpo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28682,7 +28919,8 @@ fn transport_to_node_const_parameter(transport: ConstParameterTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28702,7 +28940,8 @@ fn transport_to_node_continue_expression(transport: ContinueExpressionTransport)
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28716,7 +28955,8 @@ fn transport_to_node_crate(transport: CrateTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -28733,7 +28973,8 @@ fn transport_to_node_declaration_list(transport: DeclarationListTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28750,7 +28991,8 @@ fn transport_to_node_delim_token_tree_paren(transport: DelimTokenTreeParenTransp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28767,7 +29009,8 @@ fn transport_to_node_delim_token_tree_bracket(transport: DelimTokenTreeBracketTr
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28784,7 +29027,8 @@ fn transport_to_node_delim_token_tree_brace(transport: DelimTokenTreeBraceTransp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28809,7 +29053,8 @@ fn transport_to_node_delim_token_tree_uform_paren(transport: DelimTokenTreeUForm
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28826,7 +29071,8 @@ fn transport_to_node_delim_token_tree_uform_bracket(transport: DelimTokenTreeUFo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28843,7 +29089,8 @@ fn transport_to_node_delim_token_tree_uform_brace(transport: DelimTokenTreeUForm
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28861,7 +29108,8 @@ fn transport_to_node_dynamic_type(transport: DynamicTypeTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28878,7 +29126,8 @@ fn transport_to_node_else_clause(transport: ElseClauseTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28892,7 +29141,8 @@ fn transport_to_node_empty_statement(transport: EmptyStatementTransport) -> Resu
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -28920,7 +29170,8 @@ fn transport_to_node_enum_item(transport: EnumItemTransport) -> Result<Transport
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28947,7 +29198,8 @@ fn transport_to_node_enum_variant(transport: EnumVariantTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28964,7 +29216,8 @@ fn transport_to_node_enum_variant_list(transport: EnumVariantListTransport) -> R
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -28978,7 +29231,8 @@ fn transport_to_node_escape_sequence(transport: EscapeSequenceTransport) -> Resu
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -28995,7 +29249,8 @@ fn transport_to_node_expression_statement_with_semi(transport: ExpressionStateme
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29012,7 +29267,8 @@ fn transport_to_node_expression_statement_block_ending(transport: ExpressionStat
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29036,7 +29292,8 @@ fn transport_to_node_expression_statement_uform_with_semi(transport: ExpressionS
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29053,7 +29310,8 @@ fn transport_to_node_expression_statement_uform_block_ending(transport: Expressi
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29078,7 +29336,8 @@ fn transport_to_node_extern_crate_declaration(transport: ExternCrateDeclarationT
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29098,7 +29357,8 @@ fn transport_to_node_extern_modifier(transport: ExternModifierTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29120,7 +29380,8 @@ fn transport_to_node_field_declaration(transport: FieldDeclarationTransport) -> 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29137,7 +29398,8 @@ fn transport_to_node_field_declaration_list(transport: FieldDeclarationListTrans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29156,7 +29418,8 @@ fn transport_to_node_field_expression(transport: FieldExpressionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29175,7 +29438,8 @@ fn transport_to_node_field_initializer(transport: FieldInitializerTransport) -> 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29192,7 +29456,8 @@ fn transport_to_node_field_initializer_list(transport: FieldInitializerListTrans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29210,7 +29475,8 @@ fn transport_to_node_field_pattern_shorthand(transport: FieldPatternShorthandTra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29240,7 +29506,8 @@ fn transport_to_node_field_pattern_uform_shorthand(transport: FieldPatternUFormS
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29263,7 +29530,8 @@ fn transport_to_node_field_pattern_uform_named(transport: FieldPatternUFormNamed
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29286,7 +29554,8 @@ fn transport_to_node_for_expression(transport: ForExpressionTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29303,7 +29572,8 @@ fn transport_to_node_for_lifetimes(transport: ForLifetimesTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29321,7 +29591,8 @@ fn transport_to_node_foreign_mod_item_body(transport: ForeignModItemBodyTranspor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29349,7 +29620,8 @@ fn transport_to_node_foreign_mod_item_uform_semi(transport: ForeignModItemUFormS
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29370,7 +29642,8 @@ fn transport_to_node_foreign_mod_item_uform_body(transport: ForeignModItemUFormB
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29383,6 +29656,7 @@ fn transport_to_node_fragment_specifier(transport: FragmentSpecifierEnum) -> Res
         None,
         true,
         Some(transport.to_string()),
+        None,
         None,
         None,
         None,
@@ -29419,7 +29693,8 @@ fn transport_to_node_function_item(transport: FunctionItemTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29437,7 +29712,8 @@ fn transport_to_node_function_modifiers(transport: FunctionModifiersTransport) -
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29471,7 +29747,8 @@ fn transport_to_node_function_signature_item(transport: FunctionSignatureItemTra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29495,7 +29772,8 @@ fn transport_to_node_function_type(transport: FunctionTypeTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29516,7 +29794,8 @@ fn transport_to_node_gen_block(transport: GenBlockTransport) -> Result<Transport
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29535,7 +29814,8 @@ fn transport_to_node_generic_function(transport: GenericFunctionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29553,7 +29833,8 @@ fn transport_to_node_generic_pattern(transport: GenericPatternTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29572,7 +29853,8 @@ fn transport_to_node_generic_type(transport: GenericTypeTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29592,7 +29874,8 @@ fn transport_to_node_generic_type_with_turbofish(transport: GenericTypeWithTurbo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29611,7 +29894,8 @@ fn transport_to_node_higher_ranked_trait_bound(transport: HigherRankedTraitBound
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29625,7 +29909,8 @@ fn transport_to_node_identifier(transport: IdentifierTransport) -> Result<Transp
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -29647,7 +29932,8 @@ fn transport_to_node_if_expression(transport: IfExpressionTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29665,7 +29951,8 @@ fn transport_to_node_impl_item_body(transport: ImplItemBodyTransport) -> Result<
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29705,7 +29992,8 @@ fn transport_to_node_impl_item_uform_body(transport: ImplItemUFormBodyTransport)
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29738,7 +30026,8 @@ fn transport_to_node_impl_item_uform_semi(transport: ImplItemUFormSemiTransport)
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29757,7 +30046,8 @@ fn transport_to_node_index_expression(transport: IndexExpressionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29775,7 +30065,8 @@ fn transport_to_node_inner_attribute_item(transport: InnerAttributeItemTransport
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29789,7 +30080,8 @@ fn transport_to_node_integer_literal(transport: IntegerLiteralTransport) -> Resu
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -29807,7 +30099,8 @@ fn transport_to_node_label(transport: LabelTransport) -> Result<TransportNodeDat
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29826,7 +30119,8 @@ fn transport_to_node_last_match_arm(transport: LastMatchArmTransport) -> Result<
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29845,7 +30139,8 @@ fn transport_to_node_let_condition(transport: LetConditionTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29875,7 +30170,8 @@ fn transport_to_node_let_declaration(transport: LetDeclarationTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29893,7 +30189,8 @@ fn transport_to_node_lifetime(transport: LifetimeTransport) -> Result<TransportN
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29914,7 +30211,8 @@ fn transport_to_node_lifetime_parameter(transport: LifetimeParameterTransport) -
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29939,7 +30237,8 @@ fn transport_to_node_line_comment_uform_regular_dslash(transport: LineCommentUFo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29956,7 +30255,8 @@ fn transport_to_node_line_comment_uform_doc(transport: LineCommentUFormDocTransp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29973,7 +30273,8 @@ fn transport_to_node_line_comment_uform_content(transport: LineCommentUFormConte
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -29994,7 +30295,8 @@ fn transport_to_node_loop_expression(transport: LoopExpressionTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30014,7 +30316,8 @@ fn transport_to_node_macro_definition_paren(transport: MacroDefinitionParenTrans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30034,7 +30337,8 @@ fn transport_to_node_macro_definition_bracket(transport: MacroDefinitionBracketT
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30054,7 +30358,8 @@ fn transport_to_node_macro_definition_brace(transport: MacroDefinitionBraceTrans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30080,7 +30385,8 @@ fn transport_to_node_macro_definition_uform_paren(transport: MacroDefinitionUFor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30098,7 +30404,8 @@ fn transport_to_node_macro_definition_uform_bracket(transport: MacroDefinitionUF
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30116,7 +30423,8 @@ fn transport_to_node_macro_definition_uform_brace(transport: MacroDefinitionUFor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30135,7 +30443,8 @@ fn transport_to_node_macro_invocation(transport: MacroInvocationTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30154,7 +30463,8 @@ fn transport_to_node_macro_rule(transport: MacroRuleTransport) -> Result<Transpo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30172,7 +30482,8 @@ fn transport_to_node_match_arm_block_ending(transport: MatchArmBlockEndingTransp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30197,7 +30508,8 @@ fn transport_to_node_match_arm_uform_with_comma(transport: MatchArmUFormWithComm
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30215,7 +30527,8 @@ fn transport_to_node_match_arm_uform_block_ending(transport: MatchArmUFormBlockE
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30235,7 +30548,8 @@ fn transport_to_node_match_block(transport: MatchBlockTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30254,7 +30568,8 @@ fn transport_to_node_match_expression(transport: MatchExpressionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30274,7 +30589,8 @@ fn transport_to_node_match_pattern(transport: MatchPatternTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30288,7 +30604,8 @@ fn transport_to_node_metavariable(transport: MetavariableTransport) -> Result<Tr
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -30306,7 +30623,8 @@ fn transport_to_node_mod_item_inline(transport: ModItemInlineTransport) -> Resul
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30334,7 +30652,8 @@ fn transport_to_node_mod_item_uform_external(transport: ModItemUFormExternalTran
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30355,7 +30674,8 @@ fn transport_to_node_mod_item_uform_inline(transport: ModItemUFormInlineTranspor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30373,7 +30693,8 @@ fn transport_to_node_mut_pattern(transport: MutPatternTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30387,7 +30708,8 @@ fn transport_to_node_mutable_specifier(transport: MutableSpecifierTransport) -> 
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -30405,7 +30727,8 @@ fn transport_to_node_negative_literal(transport: NegativeLiteralTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30419,7 +30742,8 @@ fn transport_to_node_never_type(transport: NeverTypeTransport) -> Result<Transpo
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -30443,7 +30767,8 @@ fn transport_to_node_or_pattern_uform_binary(transport: OrPatternUFormBinaryTran
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30460,7 +30785,8 @@ fn transport_to_node_or_pattern_uform_prefix(transport: OrPatternUFormPrefixTran
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30478,7 +30804,8 @@ fn transport_to_node_ordered_field_declaration_list(transport: OrderedFieldDecla
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30500,7 +30827,8 @@ fn transport_to_node_parameter(transport: ParameterTransport) -> Result<Transpor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30517,7 +30845,8 @@ fn transport_to_node_parameters(transport: ParametersTransport) -> Result<Transp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30534,7 +30863,8 @@ fn transport_to_node_parenthesized_expression(transport: ParenthesizedExpression
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30551,7 +30881,8 @@ fn transport_to_node_pointer_type_mut(transport: PointerTypeMutTransport) -> Res
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30576,7 +30907,8 @@ fn transport_to_node_pointer_type_uform_const(transport: PointerTypeUFormConstTr
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30594,7 +30926,8 @@ fn transport_to_node_pointer_type_uform_mut(transport: PointerTypeUFormMutTransp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30613,7 +30946,8 @@ fn transport_to_node_qualified_type(transport: QualifiedTypeTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30631,7 +30965,8 @@ fn transport_to_node_range_expression_bare(transport: RangeExpressionBareTranspo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30657,7 +30992,8 @@ fn transport_to_node_range_expression_uform_binary(transport: RangeExpressionUFo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30674,7 +31010,8 @@ fn transport_to_node_range_expression_uform_postfix(transport: RangeExpressionUF
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30691,7 +31028,8 @@ fn transport_to_node_range_expression_uform_prefix(transport: RangeExpressionUFo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30708,7 +31046,8 @@ fn transport_to_node_range_expression_uform_bare(transport: RangeExpressionUForm
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30734,7 +31073,8 @@ fn transport_to_node_range_pattern_uform_left_with_right(transport: RangePattern
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30752,7 +31092,8 @@ fn transport_to_node_range_pattern_uform_left_bare(transport: RangePatternUFormL
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30769,7 +31110,8 @@ fn transport_to_node_range_pattern_uform_prefix(transport: RangePatternUFormPref
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30793,7 +31135,8 @@ fn transport_to_node_raw_string_literal(transport: RawStringLiteralTransport) ->
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30810,7 +31153,8 @@ fn transport_to_node_ref_pattern(transport: RefPatternTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30828,7 +31172,8 @@ fn transport_to_node_reference_expression(transport: ReferenceExpressionTranspor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30849,7 +31194,8 @@ fn transport_to_node_reference_pattern(transport: ReferencePatternTransport) -> 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30873,7 +31219,8 @@ fn transport_to_node_reference_type(transport: ReferenceTypeTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30887,7 +31234,8 @@ fn transport_to_node_remaining_field_pattern(transport: RemainingFieldPatternTra
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -30904,7 +31252,8 @@ fn transport_to_node_removed_trait_bound(transport: RemovedTraitBoundTransport) 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30924,7 +31273,8 @@ fn transport_to_node_return_expression(transport: ReturnExpressionTransport) -> 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30945,7 +31295,8 @@ fn transport_to_node_scoped_identifier(transport: ScopedIdentifierTransport) -> 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30966,7 +31317,8 @@ fn transport_to_node_scoped_type_identifier(transport: ScopedTypeIdentifierTrans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -30987,7 +31339,8 @@ fn transport_to_node_scoped_type_identifier_in_expression_position(transport: Sc
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31008,7 +31361,8 @@ fn transport_to_node_scoped_use_list(transport: ScopedUseListTransport) -> Resul
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31022,7 +31376,8 @@ fn transport_to_node_self(transport: Self_Transport) -> Result<TransportNodeData
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -31049,7 +31404,8 @@ fn transport_to_node_self_parameter(transport: SelfParameterTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31063,7 +31419,8 @@ fn transport_to_node_shebang(transport: ShebangTransport) -> Result<TransportNod
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -31082,7 +31439,8 @@ fn transport_to_node_shorthand_field_initializer(transport: ShorthandFieldInitia
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31099,7 +31457,8 @@ fn transport_to_node_slice_pattern(transport: SlicePatternTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31120,7 +31479,8 @@ fn transport_to_node_source_file(transport: SourceFileTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31148,7 +31508,8 @@ fn transport_to_node_static_item(transport: StaticItemTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31165,7 +31526,8 @@ fn transport_to_node_string_literal(transport: StringLiteralTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31184,7 +31546,8 @@ fn transport_to_node_struct_expression(transport: StructExpressionTransport) -> 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31216,7 +31579,8 @@ fn transport_to_node_struct_item_uform_brace(transport: StructItemUFormBraceTran
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31240,7 +31604,8 @@ fn transport_to_node_struct_item_uform_tuple(transport: StructItemUFormTupleTran
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31264,7 +31629,8 @@ fn transport_to_node_struct_item_uform_unit(transport: StructItemUFormUnitTransp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31282,7 +31648,8 @@ fn transport_to_node_struct_pattern(transport: StructPatternTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31296,7 +31663,8 @@ fn transport_to_node_super(transport: SuperTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -31315,7 +31683,8 @@ fn transport_to_node_token_binding_pattern(transport: TokenBindingPatternTranspo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31332,7 +31701,8 @@ fn transport_to_node_token_repetition(transport: TokenRepetitionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31349,7 +31719,8 @@ fn transport_to_node_token_repetition_pattern(transport: TokenRepetitionPatternT
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31366,7 +31737,8 @@ fn transport_to_node_token_tree_paren(transport: TokenTreeParenTransport) -> Res
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31383,7 +31755,8 @@ fn transport_to_node_token_tree_bracket(transport: TokenTreeBracketTransport) ->
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31400,7 +31773,8 @@ fn transport_to_node_token_tree_brace(transport: TokenTreeBraceTransport) -> Res
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31425,7 +31799,8 @@ fn transport_to_node_token_tree_uform_paren(transport: TokenTreeUFormParenTransp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31442,7 +31817,8 @@ fn transport_to_node_token_tree_uform_bracket(transport: TokenTreeUFormBracketTr
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31459,7 +31835,8 @@ fn transport_to_node_token_tree_uform_brace(transport: TokenTreeUFormBraceTransp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31476,7 +31853,8 @@ fn transport_to_node_token_tree_pattern_paren(transport: TokenTreePatternParenTr
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31493,7 +31871,8 @@ fn transport_to_node_token_tree_pattern_bracket(transport: TokenTreePatternBrack
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31510,7 +31889,8 @@ fn transport_to_node_token_tree_pattern_brace(transport: TokenTreePatternBraceTr
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31535,7 +31915,8 @@ fn transport_to_node_token_tree_pattern_uform_paren(transport: TokenTreePatternU
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31552,7 +31933,8 @@ fn transport_to_node_token_tree_pattern_uform_bracket(transport: TokenTreePatter
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31569,7 +31951,8 @@ fn transport_to_node_token_tree_pattern_uform_brace(transport: TokenTreePatternU
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31586,7 +31969,8 @@ fn transport_to_node_trait_bounds(transport: TraitBoundsTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31620,7 +32004,8 @@ fn transport_to_node_trait_item(transport: TraitItemTransport) -> Result<Transpo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31638,7 +32023,8 @@ fn transport_to_node_try_block(transport: TryBlockTransport) -> Result<Transport
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31656,7 +32042,8 @@ fn transport_to_node_try_expression(transport: TryExpressionTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31677,7 +32064,8 @@ fn transport_to_node_tuple_expression(transport: TupleExpressionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31694,7 +32082,8 @@ fn transport_to_node_tuple_pattern(transport: TuplePatternTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31712,7 +32101,8 @@ fn transport_to_node_tuple_struct_pattern(transport: TupleStructPatternTransport
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31729,7 +32119,8 @@ fn transport_to_node_tuple_type(transport: TupleTypeTransport) -> Result<Transpo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31746,7 +32137,8 @@ fn transport_to_node_type_arguments(transport: TypeArgumentsTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31768,7 +32160,8 @@ fn transport_to_node_type_binding(transport: TypeBindingTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31787,7 +32180,8 @@ fn transport_to_node_type_cast_expression(transport: TypeCastExpressionTransport
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31818,7 +32212,8 @@ fn transport_to_node_type_item(transport: TypeItemTransport) -> Result<Transport
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31842,7 +32237,8 @@ fn transport_to_node_type_parameter(transport: TypeParameterTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31859,7 +32255,8 @@ fn transport_to_node_type_parameters(transport: TypeParametersTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31878,7 +32275,8 @@ fn transport_to_node_unary_expression(transport: UnaryExpressionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31906,7 +32304,8 @@ fn transport_to_node_union_item(transport: UnionItemTransport) -> Result<Transpo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31920,7 +32319,8 @@ fn transport_to_node_unit_expression(transport: UnitExpressionTransport) -> Resu
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -31934,7 +32334,8 @@ fn transport_to_node_unit_type(transport: UnitTypeTransport) -> Result<Transport
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -31952,7 +32353,8 @@ fn transport_to_node_unsafe_block(transport: UnsafeBlockTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31971,7 +32373,8 @@ fn transport_to_node_use_as_clause(transport: UseAsClauseTransport) -> Result<Tr
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -31988,7 +32391,8 @@ fn transport_to_node_use_bounds(transport: UseBoundsTransport) -> Result<Transpo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -32009,7 +32413,8 @@ fn transport_to_node_use_declaration(transport: UseDeclarationTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -32026,7 +32431,8 @@ fn transport_to_node_use_list(transport: UseListTransport) -> Result<TransportNo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -32046,7 +32452,8 @@ fn transport_to_node_use_wildcard(transport: UseWildcardTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -32069,7 +32476,8 @@ fn transport_to_node_variadic_parameter(transport: VariadicParameterTransport) -
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -32086,7 +32494,8 @@ fn transport_to_node_visibility_modifier_crate(transport: VisibilityModifierCrat
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -32111,7 +32520,8 @@ fn transport_to_node_visibility_modifier_uform_in_path(transport: VisibilityModi
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -32128,7 +32538,8 @@ fn transport_to_node_visibility_modifier_uform_crate(transport: VisibilityModifi
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -32145,7 +32556,8 @@ fn transport_to_node_visibility_modifier_uform_pub(transport: VisibilityModifier
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -32162,7 +32574,8 @@ fn transport_to_node_where_clause(transport: WhereClauseTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -32181,7 +32594,8 @@ fn transport_to_node_where_predicate(transport: WherePredicateTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -32203,7 +32617,8 @@ fn transport_to_node_while_expression(transport: WhileExpressionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -32223,7 +32638,8 @@ fn transport_to_node_yield_expression(transport: YieldExpressionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -32237,7 +32653,8 @@ fn transport_to_node_string_content(transport: StringContentTransport) -> Result
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32251,7 +32668,8 @@ fn transport_to_node_raw_string_literal_content(transport: RawStringLiteralConte
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32265,7 +32683,8 @@ fn transport_to_node_float_literal(transport: FloatLiteralTransport) -> Result<T
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32279,7 +32698,8 @@ fn transport_to_node_outer_block_doc_comment_marker(transport: OuterBlockDocComm
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32293,7 +32713,8 @@ fn transport_to_node_inner_block_doc_comment_marker(transport: InnerBlockDocComm
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32307,7 +32728,8 @@ fn transport_to_node_line_doc_content(transport: LineDocContentTransport) -> Res
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32321,7 +32743,8 @@ fn transport_to_node_error_sentinel(transport: ErrorSentinelTransport) -> Result
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32335,7 +32758,8 @@ fn transport_to_node_bracket(transport: BracketTransport) -> Result<TransportNod
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32349,7 +32773,8 @@ fn transport_to_node_close_bracket(transport: CloseBracketTransport) -> Result<T
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32363,7 +32788,8 @@ fn transport_to_node_semi(transport: SemiTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32377,7 +32803,8 @@ fn transport_to_node_arrow(transport: ArrowTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32391,7 +32818,8 @@ fn transport_to_node_anonymous(transport: AnonymousTransport) -> Result<Transpor
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32405,7 +32833,8 @@ fn transport_to_node_brace(transport: BraceTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32419,7 +32848,8 @@ fn transport_to_node_close_brace(transport: CloseBraceTransport) -> Result<Trans
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32433,7 +32863,8 @@ fn transport_to_node_paren(transport: ParenTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32447,7 +32878,8 @@ fn transport_to_node_close_paren(transport: CloseParenTransport) -> Result<Trans
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32461,7 +32893,8 @@ fn transport_to_node_colon(transport: ColonTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32475,7 +32908,8 @@ fn transport_to_node_fn(transport: FnTransport) -> Result<TransportNodeData, ::a
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32489,7 +32923,8 @@ fn transport_to_node_bang(transport: BangTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32503,7 +32938,8 @@ fn transport_to_node_async(transport: AsyncTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32517,7 +32953,8 @@ fn transport_to_node_in(transport: InTransport) -> Result<TransportNodeData, ::a
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32531,7 +32968,8 @@ fn transport_to_node_move(transport: MoveTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32545,7 +32983,8 @@ fn transport_to_node_dotdot(transport: DotdotTransport) -> Result<TransportNodeD
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32559,7 +32998,8 @@ fn transport_to_node_pub(transport: PubTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32573,7 +33013,8 @@ fn transport_to_node_ref(transport: RefTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32587,7 +33028,8 @@ fn transport_to_node_static(transport: StaticTransport) -> Result<TransportNodeD
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32601,7 +33043,8 @@ fn transport_to_node_unsafe(transport: UnsafeTransport) -> Result<TransportNodeD
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32615,7 +33058,8 @@ fn transport_to_node_andand(transport: AndandTransport) -> Result<TransportNodeD
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32629,7 +33073,8 @@ fn transport_to_node_comma(transport: CommaTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32643,7 +33088,8 @@ fn transport_to_node_tok_sq(transport: TokSqTransport) -> Result<TransportNodeDa
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32657,7 +33103,8 @@ fn transport_to_node_as(transport: AsTransport) -> Result<TransportNodeData, ::a
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32671,7 +33118,8 @@ fn transport_to_node_await(transport: AwaitTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32685,7 +33133,8 @@ fn transport_to_node_break(transport: BreakTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32699,7 +33148,8 @@ fn transport_to_node_const(transport: ConstTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32713,7 +33163,8 @@ fn transport_to_node_continue(transport: ContinueTransport) -> Result<TransportN
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32727,7 +33178,8 @@ fn transport_to_node_default(transport: DefaultTransport) -> Result<TransportNod
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32741,7 +33193,8 @@ fn transport_to_node_enum(transport: EnumTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32755,7 +33208,8 @@ fn transport_to_node_for(transport: ForTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32769,7 +33223,8 @@ fn transport_to_node_gen(transport: GenTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32783,7 +33238,8 @@ fn transport_to_node_if(transport: IfTransport) -> Result<TransportNodeData, ::a
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32797,7 +33253,8 @@ fn transport_to_node_impl(transport: ImplTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32811,7 +33268,8 @@ fn transport_to_node_let(transport: LetTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32825,7 +33283,8 @@ fn transport_to_node_loop(transport: LoopTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32839,7 +33298,8 @@ fn transport_to_node_match(transport: MatchTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32853,7 +33313,8 @@ fn transport_to_node_mod(transport: ModTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32867,7 +33328,8 @@ fn transport_to_node_return(transport: ReturnTransport) -> Result<TransportNodeD
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32881,7 +33343,8 @@ fn transport_to_node_struct(transport: StructTransport) -> Result<TransportNodeD
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32895,7 +33358,8 @@ fn transport_to_node_trait(transport: TraitTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32909,7 +33373,8 @@ fn transport_to_node_type(transport: TypeTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32923,7 +33388,8 @@ fn transport_to_node_union(transport: UnionTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32937,7 +33403,8 @@ fn transport_to_node_use(transport: UseTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32951,7 +33418,8 @@ fn transport_to_node_where(transport: WhereTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32965,7 +33433,8 @@ fn transport_to_node_while(transport: WhileTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32979,7 +33448,8 @@ fn transport_to_node_pipe(transport: PipeTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -32993,7 +33463,8 @@ fn transport_to_node_slash(transport: SlashTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33007,7 +33478,8 @@ fn transport_to_node_raw(transport: RawTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33021,7 +33493,8 @@ fn transport_to_node_eq(transport: EqTransport) -> Result<TransportNodeData, ::a
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33035,7 +33508,8 @@ fn transport_to_node_hash(transport: HashTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33049,7 +33523,8 @@ fn transport_to_node_dot(transport: DotTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33063,7 +33538,8 @@ fn transport_to_node_tok_slash_star(transport: TokSlashStarTransport) -> Result<
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33077,7 +33553,8 @@ fn transport_to_node_tok_star_slash(transport: TokStarSlashTransport) -> Result<
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33091,7 +33568,8 @@ fn transport_to_node_plus(transport: PlusTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33105,7 +33583,8 @@ fn transport_to_node_lt(transport: LtTransport) -> Result<TransportNodeData, ::a
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33119,7 +33598,8 @@ fn transport_to_node_gt(transport: GtTransport) -> Result<TransportNodeData, ::a
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33133,7 +33613,8 @@ fn transport_to_node_at(transport: AtTransport) -> Result<TransportNodeData, ::a
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33147,7 +33628,8 @@ fn transport_to_node_dyn(transport: DynTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33161,7 +33643,8 @@ fn transport_to_node_else(transport: ElseTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33175,7 +33658,8 @@ fn transport_to_node_extern(transport: ExternTransport) -> Result<TransportNodeD
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33189,7 +33673,8 @@ fn transport_to_node_fat_arrow(transport: FatArrowTransport) -> Result<Transport
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33203,7 +33688,8 @@ fn transport_to_node_mut(transport: MutTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33217,7 +33703,8 @@ fn transport_to_node_minus(transport: MinusTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33231,7 +33718,8 @@ fn transport_to_node_amp(transport: AmpTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33245,7 +33733,8 @@ fn transport_to_node_question(transport: QuestionTransport) -> Result<TransportN
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33259,7 +33748,8 @@ fn transport_to_node_tok_dq(transport: TokDqTransport) -> Result<TransportNodeDa
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33273,7 +33763,8 @@ fn transport_to_node_tok_dollar(transport: TokDollarTransport) -> Result<Transpo
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33287,7 +33778,8 @@ fn transport_to_node_try(transport: TryTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33301,7 +33793,8 @@ fn transport_to_node_star(transport: StarTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33315,7 +33808,8 @@ fn transport_to_node_ellipsis(transport: EllipsisTransport) -> Result<TransportN
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -33329,7 +33823,8 @@ fn transport_to_node_yield(transport: YieldTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))

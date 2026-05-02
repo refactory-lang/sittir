@@ -3174,7 +3174,8 @@ function renderTransportBridge(
 		'    default_named: bool,',
 		'    text: Option<String>,',
 		'    span: Option<::sittir_core::types::Span>,',
-		'    node_id: Option<u64>,',
+		'    node_handle: Option<u32>,',
+		'    child_index: Option<u16>,',
 		'    fields: Option<TransportHashMap<String, TransportFieldValue>>,',
 		'    children: Option<Vec<TransportNodeData>>,',
 		') -> TransportNodeData {',
@@ -3186,7 +3187,8 @@ function renderTransportBridge(
 		'        children,',
 		'        text,',
 		'        span,',
-		'        node_id,',
+		'        node_handle,',
+		'        child_index,',
 		'    }',
 		'}',
 		'',
@@ -3229,7 +3231,7 @@ function renderTransportBridge(
 				id !== undefined
 					? `TransportKindId(${id}) /* ${safeKind} */`
 					: `TransportKindId(0) /* ${safeKind} — no parser symbol */`;
-			return `        AnyTransport::${rustLiteralTransportVariantName(literal, index)} => Ok(transport_node_data(${kindArg}, None, None, false, Some(${JSON.stringify(literal.text)}.to_string()), None, None, None, None)),`;
+			return `        AnyTransport::${rustLiteralTransportVariantName(literal, index)} => Ok(transport_node_data(${kindArg}, None, None, false, Some(${JSON.stringify(literal.text)}.to_string()), None, None, None, None, None)),`;
 		}),
 		'    }',
 		'}',
@@ -3384,8 +3386,8 @@ function renderTransportDataToNodeFn(
 	lines.push(`        ${defaultNamed ? 'true' : 'false'},`);
 	lines.push(hasOptionalText ? '        transport.transport_text,' : '        None,');
 	lines.push('        transport.transport_span,');
-	// transport_node_id is Option<f64> on the wire (JS number); NodeData uses u64.
-	lines.push('        transport.transport_node_id.map(|v| v as u64),');
+	lines.push('        transport.transport_node_handle.map(|v| v as u32),');
+	lines.push('        transport.transport_child_index.map(|v| v as u16),');
 	lines.push('        fields,');
 	lines.push('        children,');
 	lines.push('    ))');
@@ -3679,13 +3681,14 @@ function renderTerminalTransportToNodeFn(
 				'        None,',
 				'        None,',
 				'        None,',
+				'        None,',
 				'    ))',
 				'}',
 				''
 			];
 		}
 		// Multi-member enum: the transport type IS the Rust enum (no wrapper struct).
-		// Metadata fields (source, named, span, node_id) are not available on the
+		// Metadata fields (source, named, span, node_handle, child_index) are not available on the
 		// enum — all default to None. The text is derived from the enum's Display impl.
 		return [
 			`fn ${rustTransportToNodeFnName(node.typeName)}(transport: ${typeName}) -> Result<TransportNodeData, ::askama::Error> {`,
@@ -3695,6 +3698,7 @@ function renderTerminalTransportToNodeFn(
 			'        None,',
 			'        true,',
 			'        Some(transport.to_string()),',
+			'        None,',
 			'        None,',
 			'        None,',
 			'        None,',
@@ -3714,8 +3718,8 @@ function renderTerminalTransportToNodeFn(
 		'        true,',
 		'        Some(transport.text),',
 		'        transport.transport_span,',
-		// transport_node_id is Option<f64> on the wire (JS number); NodeData uses u64.
-		'        transport.transport_node_id.map(|v| v as u64),',
+		'        transport.transport_node_handle.map(|v| v as u32),',
+		'        transport.transport_child_index.map(|v| v as u16),',
 		'        None,',
 		'        None,',
 		'    ))',
@@ -3924,7 +3928,8 @@ function renderLeafTransportNapiImpls(structName: string): string[] {
 	lines.push(`            transport_source: None,`);
 	lines.push(`            transport_named: None,`);
 	lines.push(`            transport_span: None,`);
-	lines.push(`            transport_node_id: None,`);
+	lines.push(`            transport_node_handle: None,`);
+	lines.push(`            transport_child_index: None,`);
 	lines.push(`            text,`);
 	lines.push(`        })`);
 	lines.push(`    }`);
