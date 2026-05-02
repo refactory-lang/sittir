@@ -95,11 +95,19 @@ refs. These are available to every emitter via the nodeMap — they just
 need to be applied to the factory/readNode/wrap/config surfaces, not
 only the transport surface.
 
+**readNode storage model:** both terminal and nonterminal children store
+`$text` (source span). Terminal children ARE their text — plain string at
+the slot. Nonterminal children store `{ $type, $text, $nodeId }` stubs;
+drill-in via `$nodeId` materializes the full NodeData object. This is
+what readNode already does at the shallow level — the change is dropping
+the `{ $type, $source, $named }` wrapper for terminals.
+
 **Surfaces to change:**
 1. Factory emitter — terminal slots store `text` not `leafFactory(text)`
-2. readNode (JS) — terminal children → `$text` strings in `$fields`
+2. readNode (JS) — terminal children → plain `$text` strings at slot
 3. readNode (Rust/napi) — same
-4. wrap.ts — lazy getters for terminal slots return strings
+4. wrap.ts — lazy getters for terminal slots return strings;
+   nonterminal getters drill via `$nodeId` as today
 5. Config/Loose types — terminal field types become `string`
 6. Projection — becomes identity (zero conversion)
 
