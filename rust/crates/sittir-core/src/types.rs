@@ -1,5 +1,5 @@
 //! Primitive `NodeData` + `FieldValue` + `Span` + `Source` + `Edit` +
-//! `KindId` — the 8-`$`-field boundary shape that crosses JS↔Rust, plus
+//! `KindId` — the 9-`$`-field boundary shape that crosses JS↔Rust, plus
 //! the numeric kind discriminant for the KindID runtime migration. See
 //! data-model.md §1 for the authoritative contract.
 //!
@@ -9,8 +9,9 @@
 //!
 //! Invariants (enforced by struct + serde attributes):
 //! - `$type`, `$source`, `$named` are required on the wire.
-//! - `$fields`, `$children`, `$text`, `$span`, `$nodeId` are elided
-//!   when `None` (serde `skip_serializing_if = "Option::is_none"`).
+//! - `$fields`, `$children`, `$text`, `$span`, `$nodeHandle`,
+//!   `$childIndex` are elided when `None`
+//!   (serde `skip_serializing_if = "Option::is_none"`).
 //! - No other top-level `$`-prefixed keys are emitted — enrichment
 //!   fields (`$variant`, `$raw`, supertype labels) live on the TS side.
 //! - `$text` appears only on leaves (no children, no named fields).
@@ -74,7 +75,7 @@ impl From<KindId> for u16 {
     }
 }
 
-/// Primitive NodeData — the wire shape. Exactly eight `$`-prefixed
+/// Primitive NodeData — the wire shape. Exactly nine `$`-prefixed
 /// top-level fields. Enrichment (`$variant`, etc.) is TS-side only.
 ///
 /// `type_` is a numeric `KindId` (parser.c-derived symbol ID) rather than
@@ -105,16 +106,20 @@ pub struct NodeData {
     #[serde(rename = "$span", default, skip_serializing_if = "Option::is_none")]
     pub span: Option<Span>,
 
-    /// Tree-sitter's canonical node id (from `Node::id()`, a pointer-
-    /// derived `usize`). Identical id-space on both engines: JS-side
-    /// `TreeHandle.nodeById` and the napi `readNode($nodeId)` consume
-    /// the same value. Was a synthetic monotonic counter pre-fix —
-    /// that invented a parallel id-space and broke drill-in dispatch
-    /// across engines. Serialized as a JSON number; macOS / Linux
-    /// user-space pointers fit in 53 bits so the f64 round-trip is
-    /// exact.
-    #[serde(rename = "$nodeId", default, skip_serializing_if = "Option::is_none")]
-    pub node_id: Option<u64>,
+    /// Index into the `ParsedTree.nodes` vec — O(1) lookup for the
+    /// tree-sitter `Node` that produced this `NodeData`. Stamped by
+    /// `ParsedTree::push_node` after `read_node` returns. `None` on
+    /// factory-constructed nodes and on nodes that haven't been
+    /// registered in a node table yet.
+    #[serde(rename = "$nodeHandle", default, skip_serializing_if = "Option::is_none")]
+    pub node_handle: Option<u32>,
+
+    /// Position of this node within its parent's children array.
+    /// Set during `read_children` traversal. Enables O(1) child-index
+    /// navigation: `parent.child(child_index)` instead of DFS by id.
+    /// `None` on root nodes and factory-constructed nodes.
+    #[serde(rename = "$childIndex", default, skip_serializing_if = "Option::is_none")]
+    pub child_index: Option<u16>,
 }
 
 /// Where a `NodeData` originated. `Ts` = `readNode` over a tree-sitter

@@ -2,21 +2,20 @@
 //!
 //! For each of the three in-scope grammars (rust / typescript / python),
 //! we parse a small source and assert the emitted `NodeData` has
-//! **exactly** the 8 allowed `$`-prefixed top-level fields and no
+//! **exactly** the 9 allowed `$`-prefixed top-level fields and no
 //! others — SC-007 shape gate. Walks the entire tree to check every
 //! emitted NodeData (not just the root), so enrichment fields that
 //! might slip in on leaves vs branches are both covered.
 //!
 //! Also sanity-checks that `$source` is always `"ts"` from this code
-//! path, that `$nodeId` values are unique (pointer-derived, not a
-//! sequential counter), and that field-slot arity produces `Single` vs
-//! `Multiple` correctly.
+//! path, that `$childIndex` values are set on non-root nodes, and that
+//! field-slot arity produces `Single` vs `Multiple` correctly.
 
 use serde_json::Value;
 use sittir_core::read_node::read_node;
 use sittir_core::types::{NodeData, Source};
 
-/// The eight top-level keys permitted on the wire, per data-model.md §1.
+/// The nine top-level keys permitted on the wire, per data-model.md §1.
 const ALLOWED_TOP_LEVEL_KEYS: &[&str] = &[
     "$type",
     "$source",
@@ -25,7 +24,8 @@ const ALLOWED_TOP_LEVEL_KEYS: &[&str] = &[
     "$children",
     "$text",
     "$span",
-    "$nodeId",
+    "$nodeHandle",
+    "$childIndex",
 ];
 
 /// Recursively assert that every object-shaped JSON node in `value`
@@ -86,7 +86,10 @@ fn rust_top_level_node_has_allowed_keys_only() {
     let json = serde_json::to_value(&node).expect("serialize");
     assert_shape(&json, "rust.root");
     assert_eq!(node.source, Source::Ts, "source must be ts");
-    assert!(node.node_id.is_some(), "nodeId assigned");
+    // node_handle is None at read time (stamped by ParsedTree::push_node
+    // after the read returns); child_index is None for root.
+    assert!(node.node_handle.is_none(), "root node_handle not stamped by raw read_node");
+    assert!(node.child_index.is_none(), "root has no child_index");
     assert!(node.span.is_some(), "span populated");
 }
 
@@ -129,51 +132,50 @@ fn no_enrichment_fields_on_any_node() {
 }
 
 #[test]
-fn node_ids_are_unique() {
-    // Every emitted NodeData carries a distinct `$nodeId`. IDs are
-    // tree-sitter's pointer-derived `Node::id()` values (not a
-    // sequential counter), so they are unique within a tree but not
-    // necessarily contiguous or starting at 0.
+fn child_index_set_on_non_root_nodes() {
+    // Every non-root NodeData carries a `$childIndex` indicating its
+    // position within the parent's children array. Root has no
+    // child_index. node_handle is None at raw read_node time (stamped
+    // by ParsedTree::push_node).
     let lang: tree_sitter::Language = tree_sitter_python::LANGUAGE.into();
     let source = "x = 1\ny = 2\n";
     let node = parse_and_read(lang, source);
     let json = serde_json::to_value(&node).expect("serialize");
-    let mut ids: Vec<u64> = Vec::new();
-    collect_node_ids(&json, &mut ids);
-    assert!(!ids.is_empty(), "should see at least the root");
-    // All IDs must be distinct within the tree.
-    let before = ids.len();
-    ids.sort_unstable();
-    ids.dedup();
-    assert_eq!(ids.len(), before, "node IDs must be unique within the tree");
-    // Root must carry its own node_id.
-    assert!(node.node_id.is_some(), "root must have a nodeId");
+    let mut child_indices: Vec<u16> = Vec::new();
+    collect_child_indices(&json, &mut child_indices, false);
+    assert!(!child_indices.is_empty(), "should see child_index on non-root nodes");
+    // Root must NOT have a child_index.
+    assert!(node.child_index.is_none(), "root must not have a childIndex");
+    // Root must NOT have node_handle at raw read time (stamped later).
+    assert!(node.node_handle.is_none(), "root node_handle not stamped by raw read_node");
 }
 
-/// Pre-order walk over the JSON NodeData tree, pushing every `$nodeId`
-/// encountered into `out`. Recurses through `$fields` and `$children`.
-fn collect_node_ids(value: &Value, out: &mut Vec<u64>) {
+/// Pre-order walk over the JSON NodeData tree, collecting `$childIndex`
+/// values. Recurses through `$fields` and `$children`.
+fn collect_child_indices(value: &Value, out: &mut Vec<u16>, is_child: bool) {
     match value {
         Value::Object(map) => {
-            if let Some(Value::Number(n)) = map.get("$nodeId") {
-                if let Some(id) = n.as_u64() {
-                    out.push(id);
+            if is_child {
+                if let Some(Value::Number(n)) = map.get("$childIndex") {
+                    if let Some(idx) = n.as_u64() {
+                        out.push(idx as u16);
+                    }
                 }
             }
             if let Some(Value::Object(fmap)) = map.get("$fields") {
                 for fv in fmap.values() {
-                    collect_node_ids(fv, out);
+                    collect_child_indices(fv, out, true);
                 }
             }
             if let Some(Value::Array(arr)) = map.get("$children") {
                 for c in arr {
-                    collect_node_ids(c, out);
+                    collect_child_indices(c, out, true);
                 }
             }
         }
         Value::Array(arr) => {
             for v in arr {
-                collect_node_ids(v, out);
+                collect_child_indices(v, out, true);
             }
         }
         _ => {}

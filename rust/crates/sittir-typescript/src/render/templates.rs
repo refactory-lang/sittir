@@ -26804,7 +26804,7 @@ fn transport_node_data(
     default_named: bool,
     text: Option<String>,
     span: Option<::sittir_core::types::Span>,
-    node_id: Option<u64>,
+    _node_id: Option<u64>,
     fields: Option<TransportHashMap<String, TransportFieldValue>>,
     children: Option<Vec<TransportNodeData>>,
 ) -> TransportNodeData {
@@ -26816,7 +26816,8 @@ fn transport_node_data(
         children,
         text,
         span,
-        node_id,
+        node_handle: None,
+        child_index: None,
     }
 }
 

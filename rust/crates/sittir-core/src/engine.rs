@@ -18,7 +18,6 @@ use crate::read_node::read_node;
 use crate::splice::apply_edits as splice_apply_edits;
 use crate::types::{Edit, FormatRecord, NodeData, Source};
 
-const MAX_SAFE_NODE_ID: u64 = 9_007_199_254_740_991;
 
 /// Grammar-specific hooks used by the shared native engine.
 pub trait EngineGrammar: Copy {
@@ -73,7 +72,6 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// - The node borrows from `self.tree`.
     /// - `self.nodes` is dropped before `self.tree` (field declaration order).
     /// - Same pattern as ast-grep's `PinnedNodeData`.
-    #[allow(dead_code)] // Used in Task 2
     fn push_node(&mut self, node: tree_sitter::Node<'_>) -> u32 {
         let handle = self.nodes.len() as u32;
         // SAFETY: node borrows from self.tree which outlives self.nodes
@@ -85,27 +83,57 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     /// Read the root node of the parsed tree into a `NodeData`.
-    pub fn read_root(&self) -> NodeData {
-        read_node(&self.tree, &self.source, None)
+    /// Stamps `node_handle` on the returned root and pushes the root
+    /// node into the node table for subsequent child navigation.
+    pub fn read_root(&mut self) -> NodeData {
+        // Read first (borrows tree + source immutably).
+        let mut data = read_node(&self.tree, &self.source, None);
+        // Push root into node table. We inline the push_node logic
+        // here to avoid a self-borrow conflict (root_node() borrows
+        // self.tree, but push_node needs &mut self).
+        let handle = self.nodes.len() as u32;
+        // SAFETY: root_node borrows from self.tree which outlives
+        // self.nodes (nodes declared after tree → dropped first).
+        let root: tree_sitter::Node<'static> =
+            unsafe { std::mem::transmute(self.tree.root_node()) };
+        self.nodes.push(StoredNode::Ts(root));
+        data.node_handle = Some(handle);
+        data
     }
 
-    /// Read a specific node by its tree-sitter `Node::id()`.
+    /// Read a child node by handle + child_index.
     ///
-    /// This signature will change in Task 2 to use handle+childIndex.
-    pub fn read_node(&self, node_id: f64) -> Result<String, String> {
-        let id = validate_node_id(node_id)?;
-        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-            read_node(&self.tree, &self.source, Some(id))
-        }));
-        match result {
-            Ok(data) => {
-                serde_json::to_string(&data).map_err(|e| format!("serialize NodeData failed: {e}"))
-            }
-            Err(panic_payload) => Err(panic_msg(
-                panic_payload,
-                &format!("node id {id} not found in current tree"),
-            )),
-        }
+    /// Looks up the parent node from the node table at `handle`, then
+    /// calls `parent.child(child_index)` to get the target node, reads
+    /// it into a `NodeData`, pushes the result into the node table, and
+    /// stamps `node_handle`.
+    pub fn read_child(&mut self, handle: u32, child_index: u16) -> Result<String, String> {
+        let parent_node = match self.nodes.get(handle as usize) {
+            Some(StoredNode::Ts(n)) => *n,
+            None => return Err(format!("handle {handle} not found in node table")),
+        };
+        let child_node = parent_node.child(child_index as u32).ok_or_else(|| {
+            format!(
+                "child_index {child_index} out of bounds for handle {handle} (child_count={})",
+                parent_node.child_count()
+            )
+        })?;
+        let mut data = read_node(&self.tree, &self.source, Some(child_node));
+        let new_handle = self.push_node(child_node);
+        data.node_handle = Some(new_handle);
+        serde_json::to_string(&data).map_err(|e| format!("serialize NodeData failed: {e}"))
+    }
+
+    /// Backward-compat bridge: read a specific node by tree-sitter
+    /// `Node::id()`. Will be removed in Task 3 when grammar crates
+    /// switch to handle-based navigation.
+    #[allow(dead_code)]
+    pub fn read_node_by_id(&self, node_id: u64) -> Result<String, String> {
+        let root = self.tree.root_node();
+        let found = find_by_id(root, node_id)
+            .ok_or_else(|| format!("node id {node_id} not found in current tree"))?;
+        let data = read_node(&self.tree, &self.source, Some(found));
+        serde_json::to_string(&data).map_err(|e| format!("serialize NodeData failed: {e}"))
     }
 
     /// Render a `NodeData` from JSON using the grammar's render dispatch.
@@ -224,7 +252,7 @@ impl<G: EngineGrammar> Engine<G> {
     /// `render` calls. Backward-compat bridge; grammar crates will switch
     /// to `Engine::parse` + `ParsedTree` methods in Task 3.
     pub fn parse_and_read(&mut self, source: String) -> Result<String, String> {
-        let parsed = self.parse(source)?;
+        let mut parsed = self.parse(source)?;
         let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
             parsed.read_root()
         }));
@@ -242,13 +270,16 @@ impl<G: EngineGrammar> Engine<G> {
         }
     }
 
-    /// Read a sub-node by id from the cached tree. Backward-compat bridge.
-    pub fn read_node(&mut self, node_id: f64) -> Result<String, String> {
+    /// Read a child node by handle + child_index from the cached tree.
+    /// Backward-compat bridge for grammar crate napi wrappers.
+    pub fn read_node(&mut self, handle: f64, child_index: f64) -> Result<String, String> {
         let cached = self
             .cached_tree
-            .as_ref()
+            .as_mut()
             .ok_or_else(|| "no tree cached — call parseAndRead first".to_string())?;
-        cached.read_node(node_id)
+        let h = handle as u32;
+        let ci = child_index as u16;
+        cached.read_child(h, ci)
     }
 
     /// Render from JSON with engine-level format override. Backward-compat bridge.
@@ -300,26 +331,22 @@ impl<G: EngineGrammar> Engine<G> {
     }
 }
 
-fn validate_node_id(node_id: f64) -> Result<u64, String> {
-    if !node_id.is_finite() {
-        return Err(format!(
-            "invalid node id {node_id}: expected a finite non-negative safe integer"
-        ));
+
+/// Depth-first search for the tree-sitter node whose canonical
+/// `Node::id()` matches `target`. Backward-compat helper for
+/// `read_node_by_id`; will be removed in Task 3.
+#[allow(dead_code)]
+fn find_by_id<'a>(node: tree_sitter::Node<'a>, target: u64) -> Option<tree_sitter::Node<'a>> {
+    if node.id() as u64 == target {
+        return Some(node);
     }
-    if node_id < 0.0 {
-        return Err(format!(
-            "invalid node id {node_id}: expected a non-negative safe integer"
-        ));
+    let mut cursor = node.walk();
+    for child in node.children(&mut cursor) {
+        if let Some(found) = find_by_id(child, target) {
+            return Some(found);
+        }
     }
-    if node_id.fract() != 0.0 {
-        return Err(format!("invalid node id {node_id}: expected an integer"));
-    }
-    if node_id > MAX_SAFE_NODE_ID as f64 {
-        return Err(format!(
-            "invalid node id {node_id}: exceeds Number.MAX_SAFE_INTEGER"
-        ));
-    }
-    Ok(node_id as u64)
+    None
 }
 
 fn resolve_render_format<'a>(
@@ -399,7 +426,8 @@ mod tests {
             children: None,
             text: Some("x".to_string()),
             span: None,
-            node_id: None,
+            node_handle: None,
+            child_index: None,
         }
     }
 

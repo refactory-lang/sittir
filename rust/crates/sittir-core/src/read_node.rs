@@ -1,6 +1,6 @@
 //! tree-sitter `Tree` → primitive `NodeData` traversal. Spec 012 T022.
 //!
-//! Produces the exact 8-`$`-field wire shape defined in data-model.md §1.
+//! Produces the exact wire shape defined in data-model.md §1.
 //! **NO enrichment** happens here — no `$variant`, no keyword promotion,
 //! no supertype inference. Those live on the TypeScript
 //! `readTreeNode` / `_wrapTable` side (post-boundary). Rust ships the
@@ -10,20 +10,19 @@
 //!
 //! For every visited tree-sitter node, exactly these fields are set:
 //!
-//! - `$type`     — node kind (e.g. `function_item`).
-//! - `$source`   — always `"ts"` for this code path.
-//! - `$named`    — `node.is_named()`.
-//! - `$fields`   — `HashMap<raw_field_name, FieldValue>` populated via
+//! - `$type`       — node kind (numeric `KindId`).
+//! - `$source`     — always `"ts"` for this code path.
+//! - `$named`      — `node.is_named()`.
+//! - `$fields`     — `HashMap<raw_field_name, FieldValue>` populated via
 //!   `field_name_for_child()`. Multiple children on the same field name
 //!   collapse into `FieldValue::Multiple`; single → `FieldValue::Single`.
-//! - `$children` — children with NO field name (or anonymous if the
+//! - `$children`   — children with NO field name (or anonymous if the
 //!   caller retains them). Leaves skip this.
-//! - `$text`     — leaf text. Populated ONLY on leaves (no named children).
-//! - `$span`     — `{start, end}` from `node.byte_range()`.
-//! - `$nodeId`   — tree-sitter's canonical `Node::id()` (a pointer-
-//!   derived `usize`, surfaced as `u64` on the wire). Identical id-
-//!   space on both engines so drill-in dispatch (`engine.readNode(id)`
-//!   vs JS `tree.nodeById(id)`) is symmetric.
+//! - `$text`       — leaf text. Populated ONLY on leaves (no named children).
+//! - `$span`       — `{start, end}` from `node.byte_range()`.
+//! - `$nodeHandle` — `None` at read time; stamped by `ParsedTree::push_node`.
+//! - `$childIndex` — position within parent's children array (set during
+//!   `read_children`). `None` on the root node.
 
 use crate::types::{FieldValue, KindId, NodeData, Source, Span};
 use std::collections::HashMap;
@@ -33,47 +32,21 @@ use std::collections::HashMap;
 ///
 /// # Arguments
 ///
-/// * `tree`    — the parsed tree. Borrowed; not mutated.
-/// * `source`  — the source string the tree was parsed from. Used for
+/// * `tree`   — the parsed tree. Borrowed; not mutated.
+/// * `source` — the source string the tree was parsed from. Used for
 ///   extracting leaf `$text` via byte-range slicing.
-/// * `node_id` — which node to start reading from, addressed by
-///   tree-sitter's `Node::id()`. `None` reads the root node.
+/// * `target` — the tree-sitter `Node` to read. `None` reads the root.
 ///
-/// # Panics
-///
-/// Panics if `node_id` is `Some(id)` but no node with that id exists
-/// in the current tree. The napi wrapper translates this into the
-/// `"node id N not found in current tree"` error surface.
-pub fn read_node(tree: &tree_sitter::Tree, source: &str, node_id: Option<u64>) -> NodeData {
-    let root = tree.root_node();
-    match node_id {
-        None => read_ts_node(root, source),
-        Some(target) => match find_by_id(root, target) {
-            Some(found) => read_ts_node(found, source),
-            None => panic!("node id {target} not found in current tree"),
-        },
-    }
-}
-
-/// Depth-first search for the tree-sitter node whose canonical
-/// `Node::id()` matches `target`.
-fn find_by_id<'a>(node: tree_sitter::Node<'a>, target: u64) -> Option<tree_sitter::Node<'a>> {
-    if node.id() as u64 == target {
-        return Some(node);
-    }
-    let mut cursor = node.walk();
-    for child in node.children(&mut cursor) {
-        if let Some(found) = find_by_id(child, target) {
-            return Some(found);
-        }
-    }
-    None
+/// The caller supplies the `Node` directly (obtained via
+/// `ParsedTree.nodes[handle]` + `parent.child(child_index)`), so no
+/// DFS search is needed.
+pub fn read_node(tree: &tree_sitter::Tree, source: &str, target: Option<tree_sitter::Node>) -> NodeData {
+    let node = target.unwrap_or_else(|| tree.root_node());
+    read_ts_node(node, source)
 }
 
 /// Recursive core — converts a tree-sitter `Node` into `NodeData`.
 fn read_ts_node(node: tree_sitter::Node<'_>, source: &str) -> NodeData {
-    let assigned_id = node.id() as u64;
-
     // Phase B-inverse: use tree-sitter's numeric kind_id() directly instead
     // of the string kind() so NodeData.type_: KindId flows end-to-end without
     // a heap-allocated String per node.
@@ -117,7 +90,12 @@ fn read_ts_node(node: tree_sitter::Node<'_>, source: &str) -> NodeData {
         children,
         text,
         span: Some(span),
-        node_id: Some(assigned_id),
+        // node_handle is stamped by ParsedTree::push_node after read
+        // returns — not known at recursive traversal time.
+        node_handle: None,
+        // child_index is set by read_children on each child; the root
+        // node has no parent, so it stays None.
+        child_index: None,
     }
 }
 
@@ -146,7 +124,10 @@ fn read_children(
             None => continue,
         };
         let field_name = node.field_name_for_child(i);
-        let data = read_ts_node(child, source);
+        let mut data = read_ts_node(child, source);
+        // Stamp the child's position within the parent's children array
+        // so that ParsedTree can navigate back to it via parent.child(i).
+        data.child_index = Some(i as u16);
         match field_name {
             Some(name) => fields_acc.entry(name.to_string()).or_default().push(data),
             None => children_acc.push(data),

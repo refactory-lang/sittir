@@ -87,8 +87,8 @@ impl SittirEngine {
     }
 
     #[napi]
-    pub fn read_node(&mut self, node_id: f64) -> Result<String> {
-        self.inner.read_node(node_id).map_err(Error::from_reason)
+    pub fn read_node(&mut self, handle: f64, child_index: f64) -> Result<String> {
+        self.inner.read_node(handle, child_index).map_err(Error::from_reason)
     }
 
     /// Render a typed transport object (napi-native, numeric `$type`).
