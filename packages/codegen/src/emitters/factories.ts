@@ -207,17 +207,22 @@ function collectUsesHoistedPolymorphForm(nodeMap: NodeMap): boolean {
 }
 
 /**
- * Emit the `_fs` and `_fsm` fluent setter helper function source lines.
+ * Emit the `_setField` and `_setFields` fluent setter helper function source lines,
+ * plus the `_b` shared branch-methods constant and the `_leafMethods` helper.
  *
- * @returns Array of source lines for the two helpers (without trailing blank line).
+ * @returns Array of source lines for all shared helpers (without trailing blank line).
  * @remarks
  *   Shared by every factory's per-field getter/setter methods so the generated
  *   bodies are one function call instead of a hand-inlined ternary.
  *
- *   - `_fs` (fluent set) — singular-valued fields. Setter branch calls the factory
+ *   - `_setField` — singular-valued fields. Setter branch calls the factory
  *     with the new field; getter branch returns the current value.
- *   - `_fsm` (fluent multi) — repeated-valued fields. Setter is rest-params —
+ *   - `_setFields` — repeated-valued fields. Setter is rest-params —
  *     empty array → return current, otherwise rebuild with the new array.
+ *   - `_b` — shared `render` + `toEdit` methods spread into every branch factory.
+ *     Only `replace` varies per factory (the target tree type).
+ *   - `_leafMethods` — shared `render` + `toEdit` for leaf/keyword/enum factories
+ *     where the output is a fixed text value.
  *
  *   The generics are intentionally loose: `T[K] | R` is the narrowest useful
  *   return type (a field value OR a rebuilt fluent node). Call sites cast at
@@ -226,7 +231,7 @@ function collectUsesHoistedPolymorphForm(nodeMap: NodeMap): boolean {
  */
 function emitFluentSetterHelpers(): string[] {
 	return [
-		'function _fs<T, R, K extends keyof T>(',
+		'function _setField<T, R, K extends keyof T>(',
 		'  cfg: T | undefined,',
 		'  fn: (c: T) => R,',
 		'  key: K,',
@@ -235,7 +240,7 @@ function emitFluentSetterHelpers(): string[] {
 		'): T[K] | R | undefined {',
 		'  return v !== undefined ? fn({ ...((cfg ?? {}) as T), [key]: v } as T) : cur;',
 		'}',
-		'function _fsm<T, R, K extends keyof T>(',
+		'function _setFields<T, R, K extends keyof T>(',
 		'  cfg: T | undefined,',
 		'  fn: (c: T) => R,',
 		'  key: K,',
@@ -243,7 +248,23 @@ function emitFluentSetterHelpers(): string[] {
 		'  cur: T[K] | undefined,',
 		'): T[K] | R | undefined {',
 		'  return v.length ? fn({ ...((cfg ?? {}) as T), [key]: v } as T) : cur;',
-		'}'
+		'}',
+		'const _b = {',
+		'  render(this: AnyNodeData): string { return render(this); },',
+		'  toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {',
+		'    if (typeof startOrRange === \'number\') return toEdit(this, startOrRange, endPos!);',
+		'    return toEdit(this, startOrRange);',
+		'  },',
+		'};',
+		'function _leafMethods(text: string) {',
+		'  return {',
+		'    render: () => text,',
+		'    toEdit: (s: number | ByteRange, e?: number): Edit =>',
+		'      typeof s === \'number\'',
+		'        ? { startPos: s, endPos: e!, insertedText: text }',
+		'        : { startPos: s.start.index, endPos: s.end.index, insertedText: text },',
+		'  };',
+		'}',
 	];
 }
 
@@ -1455,7 +1476,7 @@ function resolvePolymorphFormVariantName(
  * @returns Array of source lines for the getter/setter methods (ready to splice into
  *   the `return { ... }` object literal).
  * @remarks
- *   Bodies delegate to `_fs` / `_fsm` helpers (T042j) so each line is one call
+ *   Bodies delegate to `_setField` / `_setFields` helpers (T042j) so each line is one call
  *   instead of a hand-inlined ternary. The explicit parameter / return type
  *   annotations keep consumer IntelliSense seeing the exact per-field shape.
  *
@@ -1482,7 +1503,7 @@ function emitFluentFieldMethods(
 		const fMultiple = isMultiple(f);
 		const param = fMultiple ? 'values' : 'value';
 		// Pass `config?.<propertyName>` (Config-surface type) as the
-		// "current value" to _fs / _fsm — NOT `fields.<name>` (internal
+		// "current value" to _setField / _setFields — NOT `fields.<name>` (internal
 		// storage). For boolean-keyword fields the two differ:
 		// Config exposes `boolean`, storage holds the literal string
 		// array ("async"[]). Using the Config form keeps the setter's
@@ -1504,13 +1525,13 @@ function emitFluentFieldMethods(
 				? `NonEmptyArray<${elemType}>`
 				: `${elemForArray}[]`;
 			lines.push(
-				`    ${method}(...${param}: ${restType}) { return _fsm(config, ${fn}, '${f.propertyName}', ${param}, ${curExpr}); },`
+				`    ${method}(...${param}: ${restType}) { return _setFields(config, ${fn}, '${f.propertyName}', ${param}, ${curExpr}); },`
 			);
 		} else {
 			const elemType = fieldElementType(f, nodeMap);
 			const paramType = isRequired(f) ? elemType : `${elemType} | undefined`;
 			lines.push(
-				`    ${method}(${param}?: ${paramType}) { return _fs(config, ${fn}, '${f.propertyName}', ${param}, ${curExpr}); },`
+				`    ${method}(${param}?: ${paramType}) { return _setField(config, ${fn}, '${f.propertyName}', ${param}, ${curExpr}); },`
 			);
 		}
 	}
@@ -1625,7 +1646,7 @@ function emitPolymorphFactory(
 	if (forms.length === 0) {
 		// Defensive stub — shouldn't happen after classifier fix.
 		const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap, kindEntries);
-		return `export function ${fn}(_config?: unknown) { return { $type: ${typeExpr}, $source: 'factory' as const, $named: true as const, render(this: AnyNodeData): string { return render(this); }, toEdit(this: AnyNodeData, s: number | ByteRange, e?: number): Edit { return typeof s === 'number' ? toEdit(this, s, e!) : toEdit(this, s); }, replace(this: AnyNodeData, t: T.${node.treeTypeName}): Edit { const r = t.range(); return toEdit(this, r); } }; }`;
+		return `export function ${fn}(_config?: unknown) { return { $type: ${typeExpr}, $source: 'factory' as const, $named: true as const, ..._b, replace(this: AnyNodeData, t: T.${node.treeTypeName}): Edit { const r = t.range(); return toEdit(this, r); } }; }`;
 	}
 
 	const parts: string[] = [];
@@ -2125,8 +2146,7 @@ function emitTextFactory(
 		`    $source: 'factory' as const,`,
 		'    $named: true as const,',
 		`    $text: ${textExpr},`,
-		`    render: () => ${textExpr},`,
-		`    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: ${textExpr} } : { startPos: s.start.index, endPos: s.end.index, insertedText: ${textExpr} },`,
+		`    ..._leafMethods(${textExpr}),`,
 		`    replace: (t: T.${node.treeTypeName}) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: ${textExpr} }; },`,
 		'  };',
 		'}'
@@ -2217,19 +2237,11 @@ function stripUselessEscapes(pattern: string): string {
  * toEdit(...), replace(target).
  */
 function factorySuffix(treeTypeName: string): string[] {
-	// `this: AnyNodeData` parameter on each method short-circuits the
-	// assignability check TS otherwise performs by expanding the
-	// factory's entire return-type object-literal — the factory output
-	// has all AnyNodeData fields plus extra methods, so it's assignable
-	// by width, and the explicit `this` annotation tells TS to trust
-	// the shape without recursively verifying it. Replaces the previous
-	// `as unknown as AnyNodeData` cast at each call site.
+	// `_b` carries the shared `render` + `toEdit` methods (typed via
+	// `this: AnyNodeData` to short-circuit TS assignability expansion).
+	// Only `replace` is per-factory (varies by tree type).
 	return [
-		`    render(this: AnyNodeData): string { return render(this); },`,
-		`    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {`,
-		`      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);`,
-		`      return toEdit(this, startOrRange);`,
-		`    },`,
+		`    ..._b,`,
 		`    replace(this: AnyNodeData, target: T.${treeTypeName}): Edit { const r = target.range(); return toEdit(this, r); },`
 	];
 }
